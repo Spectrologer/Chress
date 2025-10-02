@@ -28,6 +28,7 @@ export class ZoneGenerator {
         // Add random features (skip if this is the house zone to avoid cluttering)
         if (!(zoneX === 0 && zoneY === 0)) {
             this.addRandomFeatures();
+            this.addRandomItem();
         }
         
         // Ensure exit accessibility
@@ -99,6 +100,24 @@ export class ZoneGenerator {
                 continue;
             } else {
                 this.grid[y][x] = TILE_TYPES.GRASS;
+            }
+        }
+    }
+
+    addRandomItem() {
+        // Add one water OR food item per zone (randomly choose which)
+        const isWater = Math.random() < 0.5;
+        const itemType = isWater ? TILE_TYPES.WATER : TILE_TYPES.FOOD;
+        
+        // Try to place the item in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = itemType;
+                break; // Successfully placed item
             }
         }
     }

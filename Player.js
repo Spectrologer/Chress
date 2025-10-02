@@ -6,6 +6,8 @@ export class Player {
         this.y = 1;
         this.currentZone = { x: 0, y: 0 };
         this.visitedZones = new Set();
+        this.thirst = 50;
+        this.hunger = 50;
         this.markZoneVisited(0, 0);
     }
 
@@ -48,6 +50,16 @@ export class Player {
         
         // Check if the new position is walkable
         if (this.isWalkable(newX, newY, grid)) {
+            // Check if there's an item to pick up at the new position
+            const tileType = grid[newY][newX];
+            if (tileType === TILE_TYPES.WATER) {
+                this.restoreThirst(10);
+                grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
+            } else if (tileType === TILE_TYPES.FOOD) {
+                this.restoreHunger(10);
+                grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
+            }
+            
             this.x = newX;
             this.y = newY;
             return true;
@@ -64,9 +76,11 @@ export class Player {
         
         const tileType = grid[y][x];
         
-        // Player can walk on floor and exit tiles only (grass/shrubbery tiles are not passable)
+        // Player can walk on floor, exit, water, and food tiles
         return tileType === TILE_TYPES.FLOOR || 
-               tileType === TILE_TYPES.EXIT;
+               tileType === TILE_TYPES.EXIT ||
+               tileType === TILE_TYPES.WATER ||
+               tileType === TILE_TYPES.FOOD;
     }
 
     setPosition(x, y) {
@@ -176,7 +190,48 @@ export class Player {
         this.x = 4;
         this.y = 7;
         this.currentZone = { x: 0, y: 0 };
+        this.thirst = 50;
+        this.hunger = 50;
         this.visitedZones.clear();
         this.markZoneVisited(0, 0);
+    }
+
+    // Thirst and Hunger management
+    getThirst() {
+        return this.thirst;
+    }
+
+    getHunger() {
+        return this.hunger;
+    }
+
+    setThirst(value) {
+        this.thirst = Math.max(0, Math.min(50, value));
+    }
+
+    setHunger(value) {
+        this.hunger = Math.max(0, Math.min(50, value));
+    }
+
+    decreaseThirst(amount = 1) {
+        this.setThirst(this.thirst - amount);
+    }
+
+    decreaseHunger(amount = 1) {
+        this.setHunger(this.hunger - amount);
+    }
+
+    restoreThirst(amount = 10) {
+        this.setThirst(this.thirst + amount);
+    }
+
+    restoreHunger(amount = 10) {
+        this.setHunger(this.hunger + amount);
+    }
+
+    onZoneTransition() {
+        // Called when player moves to a new zone
+        this.decreaseThirst();
+        this.decreaseHunger();
     }
 }

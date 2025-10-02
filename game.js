@@ -110,6 +110,7 @@ class Game {
         // Update UI
         this.updatePlayerPosition();
         this.updateZoneDisplay();
+        this.updatePlayerStats();
     }
     
     generateZone() {
@@ -138,6 +139,9 @@ class Game {
         // Update player's current zone
         this.player.setCurrentZone(newZoneX, newZoneY);
         
+        // Decrease thirst and hunger when moving to a new zone
+        this.player.onZoneTransition();
+        
         // Generate or load the new zone
         this.generateZone();
         
@@ -150,6 +154,7 @@ class Game {
         // Update UI
         this.updateZoneDisplay();
         this.updatePlayerPosition();
+        this.updatePlayerStats();
     }
     
     setupControls() {
@@ -451,6 +456,7 @@ class Game {
         
         // Update UI
         this.updatePlayerPosition();
+        this.updatePlayerStats();
     }
     
     resetGame() {
@@ -466,6 +472,7 @@ class Game {
         // Update UI
         this.updatePlayerPosition();
         this.updateZoneDisplay();
+        this.updatePlayerStats();
     }
     
     updatePlayerPosition() {
@@ -477,6 +484,22 @@ class Game {
         const zone = this.player.getCurrentZone();
         document.getElementById('current-zone').textContent = `${zone.x}, ${zone.y}`;
         this.renderZoneMap();
+    }
+    
+    updatePlayerStats() {
+        // Update thirst bar (💧)
+        const thirstPercentage = (this.player.getThirst() / 50) * 100;
+        const thirstBar = document.querySelector('.mana-bar .bar-fill');
+        if (thirstBar) {
+            thirstBar.style.width = `${thirstPercentage}%`;
+        }
+        
+        // Update hunger bar (🥩)
+        const hungerPercentage = (this.player.getHunger() / 50) * 100;
+        const hungerBar = document.querySelector('.health-bar .bar-fill');
+        if (hungerBar) {
+            hungerBar.style.width = `${hungerPercentage}%`;
+        }
     }
     
     renderZoneMap() {

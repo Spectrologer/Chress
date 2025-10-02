@@ -1,4 +1,4 @@
-import { IMAGE_ASSETS, TOTAL_IMAGES, TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from './constants.js';
+import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES, TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from './constants.js';
 
 export class TextureManager {
     constructor() {
@@ -12,8 +12,15 @@ export class TextureManager {
         return new Promise((resolve) => {
             this.onAllImagesLoaded = resolve;
             
+            // Load regular assets
             IMAGE_ASSETS.forEach(assetName => {
                 const imageKey = assetName.replace('.png', '');
+                this.loadImage(imageKey, assetName);
+            });
+
+            // Load food assets
+            FOOD_ASSETS.forEach(assetName => {
+                const imageKey = assetName.replace('.png', '').replace('/', '_');
                 this.loadImage(imageKey, assetName);
             });
 
@@ -487,6 +494,10 @@ export class TextureManager {
             this.renderGrassTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (tileType === TILE_TYPES.HOUSE) {
             this.renderHouseTile(ctx, x, y, pixelX, pixelY, grid);
+        } else if (tileType === TILE_TYPES.WATER) {
+            this.renderWaterTile(ctx, pixelX, pixelY);
+        } else if (tileType === TILE_TYPES.FOOD) {
+            this.renderFoodTile(ctx, x, y, pixelX, pixelY);
         } else {
             this.renderFloorTile(ctx, pixelX, pixelY, tileType);
         }
@@ -696,5 +707,53 @@ export class TextureManager {
         ctx.webkitImageSmoothingEnabled = false;
         ctx.mozImageSmoothingEnabled = false;
         ctx.msImageSmoothingEnabled = false;
+    }
+
+    renderWaterTile(ctx, pixelX, pixelY) {
+        // First draw the floor background
+        ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+        ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        
+        // Try to draw the water image if loaded, otherwise use fallback
+        if (this.isImageLoaded('water')) {
+            ctx.drawImage(this.images.water, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.WATER];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+            
+            ctx.fillStyle = '#87CEEB';
+            ctx.font = '32px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('💧', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
+    renderFoodTile(ctx, x, y, pixelX, pixelY) {
+        // Use position-based seeded random to ensure consistent food type for same location
+        const seed = x * 1000 + y;
+        const foodIndex = seed % FOOD_ASSETS.length;
+        const foodAsset = FOOD_ASSETS[foodIndex];
+        const foodKey = foodAsset.replace('.png', '').replace('/', '_');
+        
+        // First draw the floor background
+        ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+        ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        
+        // Try to draw the food image if loaded, otherwise use fallback
+        if (this.isImageLoaded(foodKey)) {
+            ctx.drawImage(this.images[foodKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.FOOD];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+            
+            ctx.fillStyle = '#8B4513';
+            ctx.font = '32px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🥖', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
     }
 }

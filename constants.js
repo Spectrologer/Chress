@@ -10,7 +10,9 @@ export const TILE_TYPES = {
     GRASS: 2,
     EXIT: 3,
     ROCK: 4,
-    HOUSE: 5
+    HOUSE: 5,
+    WATER: 6,
+    FOOD: 7
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -20,7 +22,9 @@ export const TILE_COLORS = {
     [TILE_TYPES.GRASS]: '#228B22',
     [TILE_TYPES.EXIT]: '#ffcb8d',  // Same as floor - opening is indicator enough
     [TILE_TYPES.ROCK]: '#666666',
-    [TILE_TYPES.HOUSE]: '#D2691E'  // Brown/orange for house
+    [TILE_TYPES.HOUSE]: '#D2691E',  // Brown/orange for house
+    [TILE_TYPES.WATER]: '#4169E1',  // Blue for water
+    [TILE_TYPES.FOOD]: '#FF6347'    // Red/orange for food
 };
 
 // Direction constants for exits and movements
@@ -43,7 +47,36 @@ export const IMAGE_ASSETS = [
     'bush.png',
     'dircle.png',
     'house.png',
+    'water.png',
     'SeparateAnim/Special2.png'
 ];
 
-export const TOTAL_IMAGES = IMAGE_ASSETS.length;
+// Food image assets
+export const FOOD_ASSETS = [
+    'Food/Beaf.png',
+    'Food/Calamari.png',
+    'Food/Fish.png',
+    'Food/FortuneCookie.png',
+    'Food/Honey.png',
+    'Food/Meat.png',
+    'Food/Noodle.png',
+    'Food/Nut.png',
+    'Food/Nut2.png',
+    'Food/Octopus.png',
+    'Food/Onigiri.png',
+    'Food/Seed1.png',
+    'Food/Seed2.png',
+    'Food/Seed3.png',
+    'Food/SeedBig1.png',
+    'Food/SeedBig2.png',
+    'Food/SeedBig3.png',
+    'Food/SeedLarge.png',
+    'Food/SeedLargeWhite.png',
+    'Food/Shrimp.png',
+    'Food/Sushi.png',
+    'Food/Sushi2.png',
+    'Food/TeaLeaf.png',
+    'Food/Yakitori.png'
+];
+
+export const TOTAL_IMAGES = IMAGE_ASSETS.length + FOOD_ASSETS.length;
