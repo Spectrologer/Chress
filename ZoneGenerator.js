@@ -1,0 +1,177 @@
+import { TILE_TYPES, GRID_SIZE } from './constants.js';
+
+export class ZoneGenerator {
+    constructor() {
+        this.grid = null;
+    }
+
+    generateZone(zoneX, zoneY, existingZones, zoneConnections) {
+        // Check if this zone already exists
+        const zoneKey = `${zoneX},${zoneY}`;
+        if (existingZones.has(zoneKey)) {
+            // Load existing zone
+            return existingZones.get(zoneKey);
+        }
+
+        // Generate new zone structure
+        this.initializeGrid();
+        this.addWallBorders();
+        
+        // Generate exits using pre-determined connections
+        this.generateExits(zoneX, zoneY, zoneConnections);
+        
+        // Add random features
+        this.addRandomFeatures();
+        
+        // Ensure exit accessibility
+        this.ensureExitAccess();
+        
+        // Return a copy of the generated grid
+        return JSON.parse(JSON.stringify(this.grid));
+    }
+
+    initializeGrid() {
+        // Initialize grid with floor tiles
+        this.grid = [];
+        for (let y = 0; y < GRID_SIZE; y++) {
+            this.grid[y] = [];
+            for (let x = 0; x < GRID_SIZE; x++) {
+                this.grid[y][x] = TILE_TYPES.FLOOR;
+            }
+        }
+    }
+
+    addWallBorders() {
+        // Add some walls around the borders
+        for (let i = 0; i < GRID_SIZE; i++) {
+            this.grid[0][i] = TILE_TYPES.WALL; // Top border
+            this.grid[GRID_SIZE - 1][i] = TILE_TYPES.WALL; // Bottom border
+            this.grid[i][0] = TILE_TYPES.WALL; // Left border
+            this.grid[i][GRID_SIZE - 1] = TILE_TYPES.WALL; // Right border
+        }
+    }
+
+    generateExits(zoneX, zoneY, zoneConnections) {
+        // Apply the predetermined exits to current zone
+        const zoneKey = `${zoneX},${zoneY}`;
+        const connections = zoneConnections.get(zoneKey);
+        
+        if (connections) {
+            // Apply exits based on pre-generated connections
+            if (connections.north !== null) {
+                this.grid[0][connections.north] = TILE_TYPES.EXIT;
+            }
+            if (connections.south !== null) {
+                this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.EXIT;
+            }
+            if (connections.west !== null) {
+                this.grid[connections.west][0] = TILE_TYPES.EXIT;
+            }
+            if (connections.east !== null) {
+                this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.EXIT;
+            }
+        }
+    }
+
+    addRandomFeatures() {
+        // Add some random rocks, dirt, and grass patches
+        const featureCount = Math.floor(Math.random() * 15) + 10;
+        
+        for (let i = 0; i < featureCount; i++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            
+            // Skip if this would block the starting position
+            if (x === 1 && y === 1) continue;
+            
+            const featureType = Math.random();
+            if (featureType < 0.4) {
+                this.grid[y][x] = TILE_TYPES.ROCK; // Use rock instead of wall for interior obstacles
+            } else if (featureType < 0.7) {
+                // Leave as dirt (TILE_TYPES.FLOOR) - this will use directional textures
+                continue;
+            } else {
+                this.grid[y][x] = TILE_TYPES.GRASS;
+            }
+        }
+    }
+
+    ensureExitAccess() {
+        // Find all exit tiles and ensure they have clear paths
+        const exits = [];
+        
+        // Collect all exits
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                if (this.grid[y][x] === TILE_TYPES.EXIT) {
+                    exits.push({ x, y });
+                }
+            }
+        }
+        
+        // For each exit, ensure there's a clear path inward
+        exits.forEach(exit => {
+            this.clearPathToExit(exit.x, exit.y);
+        });
+    }
+
+    clearPathToExit(exitX, exitY) {
+        // Clear at least one adjacent tile inward from the exit
+        let inwardX = exitX;
+        let inwardY = exitY;
+        
+        // Determine inward direction based on exit position
+        if (exitY === 0) {
+            // Top edge - clear downward
+            inwardY = 1;
+        } else if (exitY === GRID_SIZE - 1) {
+            // Bottom edge - clear upward
+            inwardY = GRID_SIZE - 2;
+        } else if (exitX === 0) {
+            // Left edge - clear rightward
+            inwardX = 1;
+        } else if (exitX === GRID_SIZE - 1) {
+            // Right edge - clear leftward
+            inwardX = GRID_SIZE - 2;
+        }
+        
+        // Clear the adjacent tile
+        this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
+        
+        // Also clear a path toward the center to ensure connectivity
+        this.clearPathToCenter(inwardX, inwardY);
+    }
+
+    clearPathToCenter(startX, startY) {
+        // Clear a simple path toward the center area
+        const centerX = Math.floor(GRID_SIZE / 2);
+        const centerY = Math.floor(GRID_SIZE / 2);
+        
+        let currentX = startX;
+        let currentY = startY;
+        
+        // Clear tiles along a path toward center (simplified pathfinding)
+        while (Math.abs(currentX - centerX) > 1 || Math.abs(currentY - centerY) > 1) {
+            // Move toward center one step at a time
+            if (currentX < centerX) {
+                currentX++;
+            } else if (currentX > centerX) {
+                currentX--;
+            } else if (currentY < centerY) {
+                currentY++;
+            } else if (currentY > centerY) {
+                currentY--;
+            }
+            
+            // Clear this tile if it's not already floor or exit
+            if (this.grid[currentY][currentX] === TILE_TYPES.WALL || this.grid[currentY][currentX] === TILE_TYPES.ROCK) {
+                this.grid[currentY][currentX] = TILE_TYPES.FLOOR;
+            }
+            
+            // Prevent infinite loops
+            if (currentX === centerX && currentY === centerY) {
+                break;
+            }
+        }
+    }
+}

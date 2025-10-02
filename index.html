@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiChress - Roguelike</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>BiChress</h1>
+    <div class="game-container">
+        <div class="header-area">
+            <div class="map-container">
+                <canvas id="zoneMap" width="120" height="120"></canvas>
+            </div>
+        </div>
+        <div class="game-info">
+            <p>Position: <span id="player-pos">0, 0</span></p>
+            <p>Zone: <span id="current-zone">0, 0</span></p>
+        </div>
+        <div class="game-area">
+            <canvas id="gameCanvas" width="192" height="192"></canvas>
+        </div>
+        <div class="controls">
+            <p>Zone: <span id="zone-info">Generated</span></p>
+            <button id="generate-zone">Generate New Zone</button>
+        </div>
+    </div>
+    <script type="module" src="constants.js"></script>
+    <script type="module" src="TextureManager.js"></script>
+    <script type="module" src="ConnectionManager.js"></script>
+    <script type="module" src="ZoneGenerator.js"></script>
+    <script type="module" src="Player.js"></script>
+    <script type="module" src="game.js"></script>
+</body>
+</html>
