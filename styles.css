@@ -84,7 +84,7 @@ body {
 
 .modern-player-card {
     background: #fffbe9;
-    border-radius: 18px;
+    border-radius: 0px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 0 #e2cfa2;
     padding: 18px 12px;
     max-width: 400px;
@@ -187,8 +187,9 @@ body {
 .map-inventory-wrapper {
     display: flex;
     gap: 16px;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
+    align-items: center;
 }
 
 .player-inventory {
@@ -224,14 +225,6 @@ body {
     border-radius: 8px;
     border: 1px solid #e2cfa2;
     background: #f5e6c0;
-}
-.minimap-info {
-    font-size: 0.9em;
-    color: #7a5c2e;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    align-items: center;
 }
 
 .character-profile {

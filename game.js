@@ -516,12 +516,12 @@ class Game {
     
     updatePlayerPosition() {
         const pos = this.player.getPosition();
-        document.getElementById('player-pos').textContent = `${pos.x}, ${pos.y}`;
+        // document.getElementById('player-pos').textContent = `${pos.x}, ${pos.y}`;
     }
     
     updateZoneDisplay() {
         const zone = this.player.getCurrentZone();
-        document.getElementById('current-zone').textContent = `${zone.x}, ${zone.y}`;
+        // document.getElementById('current-zone').textContent = `${zone.x}, ${zone.y}`;
         this.renderZoneMap();
     }
     
