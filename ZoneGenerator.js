@@ -4,6 +4,7 @@ import { Enemy } from './Enemy.js';
 export class ZoneGenerator {
     static zoneCounter = 0;
     static enemyCounter = 0;
+    static axeSpawned = false;
     constructor() {
         this.grid = null;
         this.enemies = null;
@@ -44,8 +45,12 @@ export class ZoneGenerator {
             if (Math.random() < 0.11) {
                 this.addRandomEnemy();
             }
+            // Try to spawn rare axe item once per world session in nearby zones
+            if (!ZoneGenerator.axeSpawned && Math.abs(zoneX) <= 4 && Math.abs(zoneY) <= 4 && Math.random() < 0.02) {
+                this.addAxeItem();
+            }
         }
-        
+
         // Ensure exit accessibility
         this.ensureExitAccess();
 
@@ -140,16 +145,33 @@ export class ZoneGenerator {
                 foodType: selectedFood
             };
         }
-        
+
         // Try to place the item in a valid location (max 50 attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
             const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
             const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            
+
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = itemType;
                 break; // Successfully placed item
+            }
+        }
+    }
+
+    addAxeItem() {
+        // Add the rare axe item
+
+        // Try to place the axe in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.AXE;
+                ZoneGenerator.axeSpawned = true;
+                break; // Successfully placed axe
             }
         }
     }

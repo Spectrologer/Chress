@@ -71,9 +71,22 @@ export class Player {
                         this.restoreHunger(10);
                     }
                     grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
+                } else if (tile === TILE_TYPES.AXE) {
+                    if (this.inventory.length < 6) {
+                        this.inventory.push({ type: 'axe' });
+                    } // If inventory full, can't pick up axe (unlike consumables)
+                    grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
                 }
             this.x = newX;
             this.y = newY;
+
+            // Check if moved onto grass with axe - cut it
+            const hasAxe = this.inventory.some(item => item.type === 'axe');
+            if (hasAxe && tile === TILE_TYPES.GRASS) {
+                grid[newY][newX] = TILE_TYPES.FLOOR; // Cut the shrubbery
+                this.decreaseHunger(); // Cutting costs hunger
+            }
+
             return true;
         }
         
@@ -85,14 +98,25 @@ export class Player {
         if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) {
             return false;
         }
-        
+
         const tile = grid[y][x];
-        
-        // Player can walk on floor, exit, water, and food tiles
-        return tile === TILE_TYPES.FLOOR || 
-               tile === TILE_TYPES.EXIT ||
-               tile === TILE_TYPES.WATER ||
-               (tile && tile.type === TILE_TYPES.FOOD);
+
+        // Player can walk on floor, exit, water, food, and axe tiles
+        if (tile === TILE_TYPES.FLOOR ||
+            tile === TILE_TYPES.EXIT ||
+            tile === TILE_TYPES.WATER ||
+            tile === TILE_TYPES.AXE ||
+            (tile && tile.type === TILE_TYPES.FOOD)) {
+            return true;
+        }
+
+        // Check if there's an axe in inventory - allows walking on grass to cut it
+        const hasAxe = this.inventory.some(item => item.type === 'axe');
+        if (hasAxe && tile === TILE_TYPES.GRASS) {
+            return true;
+        }
+
+        return false;
     }
 
     setPosition(x, y) {

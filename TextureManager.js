@@ -500,6 +500,8 @@ export class TextureManager {
             this.renderFoodTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (tileType === TILE_TYPES.ENEMY) {
             this.renderEnemyTile(ctx, x, y, pixelX, pixelY, grid);
+        } else if (tileType === TILE_TYPES.AXE) {
+            this.renderAxeTile(ctx, x, y, pixelX, pixelY, grid);
         } else {
             this.renderFloorTile(ctx, pixelX, pixelY, tileType);
         }
@@ -777,6 +779,26 @@ export class TextureManager {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🦎', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
+    renderAxeTile(ctx, x, y, pixelX, pixelY, grid) {
+        // First draw the directional floor background
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+
+        // Try to draw the axe image if loaded, otherwise use fallback
+        if (this.isImageLoaded('axe')) {
+            ctx.drawImage(this.images.axe, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.ROCK]; // Use rock color for axe
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#666666';
+            ctx.font = '32px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🪓', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 

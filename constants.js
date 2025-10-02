@@ -13,7 +13,8 @@ export const TILE_TYPES = {
     HOUSE: 5,
     WATER: 6,
     FOOD: 7,
-    ENEMY: 8
+    ENEMY: 8,
+    AXE: 9
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -52,7 +53,8 @@ export const IMAGE_ASSETS = [
     'water.png',
     'SeparateAnim/Special2.png',
     'SeparateAnim/dead.png',
-    'fauna/lizardy.png'
+    'fauna/lizardy.png',
+    'axe.png'
 ];
 
 // Food image assets

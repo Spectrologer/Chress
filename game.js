@@ -452,6 +452,13 @@ class Game {
             case 'arrowright':
                 newX++;
                 break;
+            case 'k':
+                // Add axe to inventory for testing
+                if (this.player.inventory.length < 6) {
+                    this.player.inventory.push({ type: 'axe' });
+                    this.updatePlayerStats(); // Refresh inventory display
+                }
+                return; // Don't move, just add item
             default:
                 return;
         }
@@ -500,6 +507,7 @@ class Game {
         // Reset all game state
         this.zones.clear();
         this.connectionManager.clear();
+        this.zoneGenerator.constructor.axeSpawned = false; // Reset axe spawn
         this.player.reset();
         this.enemies = [];
         this.defeatedEnemies = new Set();
@@ -563,15 +571,26 @@ class Game {
                     slot.classList.add(`item-${foodName}`);
                 } else if (item.type === 'water') {
                     slot.classList.add('item-water');
+                } else if (item.type === 'axe') {
+                    slot.classList.add('item-axe');
+                } else if (item.type === 'tool') {
+                    slot.classList.add('item-tool');
                 }
                 slot.onclick = () => {
                     if (this.player.isDead()) return;
                     if (item.type === 'food') {
                         this.player.restoreHunger(10);
+                        this.player.inventory.splice(idx, 1);
                     } else if (item.type === 'water') {
                         this.player.restoreThirst(10);
+                        this.player.inventory.splice(idx, 1);
+                    } else if (item.type === 'axe') {
+                        // Drop axe at player's current position
+                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
+                            this.grid[this.player.y][this.player.x] = TILE_TYPES.AXE;
+                            this.player.inventory.splice(idx, 1);
+                        }
                     }
-                    this.player.inventory.splice(idx, 1);
                     this.updatePlayerStats();
                 };
                 inventoryGrid.appendChild(slot);

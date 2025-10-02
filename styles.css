@@ -570,6 +570,13 @@ body {
     background-position: center;
 }
 
+.inventory-slot.item-axe {
+    background-image: url('Images/axe.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 /* Redesigned Stat Bars */
 .stat-bar {
     display: flex;
