@@ -495,9 +495,9 @@ export class TextureManager {
         } else if (tileType === TILE_TYPES.HOUSE) {
             this.renderHouseTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (tileType === TILE_TYPES.WATER) {
-            this.renderWaterTile(ctx, pixelX, pixelY);
+            this.renderWaterTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (tileType === TILE_TYPES.FOOD) {
-            this.renderFoodTile(ctx, x, y, pixelX, pixelY);
+            this.renderFoodTile(ctx, x, y, pixelX, pixelY, grid);
         } else {
             this.renderFloorTile(ctx, pixelX, pixelY, tileType);
         }
@@ -709,11 +709,10 @@ export class TextureManager {
         ctx.msImageSmoothingEnabled = false;
     }
 
-    renderWaterTile(ctx, pixelX, pixelY) {
-        // First draw the floor background
-        ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
-        ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        
+    renderWaterTile(ctx, x, y, pixelX, pixelY, grid) {
+        // First draw the directional floor background (like rock, shrubbery, etc.)
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+
         // Try to draw the water image if loaded, otherwise use fallback
         if (this.isImageLoaded('water')) {
             ctx.drawImage(this.images.water, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
@@ -721,7 +720,7 @@ export class TextureManager {
             // Fallback to colored square with emoji
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.WATER];
             ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
-            
+
             ctx.fillStyle = '#87CEEB';
             ctx.font = '32px Arial';
             ctx.textAlign = 'center';
@@ -730,17 +729,16 @@ export class TextureManager {
         }
     }
 
-    renderFoodTile(ctx, x, y, pixelX, pixelY) {
+    renderFoodTile(ctx, x, y, pixelX, pixelY, grid) {
         // Use position-based seeded random to ensure consistent food type for same location
         const seed = x * 1000 + y;
         const foodIndex = seed % FOOD_ASSETS.length;
         const foodAsset = FOOD_ASSETS[foodIndex];
         const foodKey = foodAsset.replace('.png', '').replace('/', '_');
-        
-        // First draw the floor background
-        ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
-        ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        
+
+        // First draw the directional floor background (like rock, shrubbery, etc.)
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+
         // Try to draw the food image if loaded, otherwise use fallback
         if (this.isImageLoaded(foodKey)) {
             ctx.drawImage(this.images[foodKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
@@ -748,12 +746,24 @@ export class TextureManager {
             // Fallback to colored square with emoji
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.FOOD];
             ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
-            
+
             ctx.fillStyle = '#8B4513';
             ctx.font = '32px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🥖', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
+    }
+
+    createEmptyGrid() {
+        // Create a simple empty grid for fallback rendering if grid is not available
+        const grid = [];
+        for (let y = 0; y < GRID_SIZE; y++) {
+            grid[y] = [];
+            for (let x = 0; x < GRID_SIZE; x++) {
+                grid[y][x] = TILE_TYPES.FLOOR;
+            }
+        }
+        return grid;
     }
 }

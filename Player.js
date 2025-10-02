@@ -8,6 +8,7 @@ export class Player {
         this.visitedZones = new Set();
         this.thirst = 50;
         this.hunger = 50;
+        this.inventory = [];
         this.markZoneVisited(0, 0);
     }
 
@@ -53,13 +54,12 @@ export class Player {
             // Check if there's an item to pick up at the new position
             const tileType = grid[newY][newX];
             if (tileType === TILE_TYPES.WATER) {
-                this.restoreThirst(10);
+                this.inventory.push({ type: 'water' });
                 grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
             } else if (tileType === TILE_TYPES.FOOD) {
-                this.restoreHunger(10);
+                this.inventory.push({ type: 'food' });
                 grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
             }
-            
             this.x = newX;
             this.y = newY;
             return true;

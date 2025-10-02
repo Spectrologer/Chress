@@ -493,12 +493,44 @@ class Game {
         if (thirstBar) {
             thirstBar.style.width = `${thirstPercentage}%`;
         }
-        
         // Update hunger bar (🥩)
         const hungerPercentage = (this.player.getHunger() / 50) * 100;
         const hungerBar = document.querySelector('.health-bar .bar-fill');
         if (hungerBar) {
             hungerBar.style.width = `${hungerPercentage}%`;
+        }
+
+        // Render inventory items
+        const inventoryGrid = document.querySelector('.inventory-grid');
+        if (inventoryGrid) {
+            // Clear previous items
+            inventoryGrid.innerHTML = '';
+            this.player.inventory.forEach((item, idx) => {
+                const slot = document.createElement('div');
+                slot.className = 'inventory-slot';
+                slot.style.cursor = 'pointer';
+                if (item.type === 'food') {
+                    slot.innerHTML = '<span title="Food">🥖</span>';
+                } else if (item.type === 'water') {
+                    slot.innerHTML = '<span title="Water">💧</span>';
+                }
+                slot.onclick = () => {
+                    if (item.type === 'food') {
+                        this.player.restoreHunger(10);
+                    } else if (item.type === 'water') {
+                        this.player.restoreThirst(10);
+                    }
+                    this.player.inventory.splice(idx, 1);
+                    this.updatePlayerStats();
+                };
+                inventoryGrid.appendChild(slot);
+            });
+            // Fill remaining slots
+            for (let i = this.player.inventory.length; i < 4; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'inventory-slot';
+                inventoryGrid.appendChild(slot);
+            }
         }
     }
     

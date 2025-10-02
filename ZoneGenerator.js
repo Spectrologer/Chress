@@ -1,6 +1,7 @@
 import { TILE_TYPES, GRID_SIZE } from './constants.js';
 
 export class ZoneGenerator {
+    static zoneCounter = 0;
     constructor() {
         this.grid = null;
     }
@@ -28,7 +29,10 @@ export class ZoneGenerator {
         // Add random features (skip if this is the house zone to avoid cluttering)
         if (!(zoneX === 0 && zoneY === 0)) {
             this.addRandomFeatures();
-            this.addRandomItem();
+            ZoneGenerator.zoneCounter++;
+            if (ZoneGenerator.zoneCounter % 9 === 0) {
+                this.addRandomItem();
+            }
         }
         
         // Ensure exit accessibility
