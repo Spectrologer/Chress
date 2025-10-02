@@ -498,6 +498,8 @@ export class TextureManager {
             this.renderWaterTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (tileType === TILE_TYPES.FOOD) {
             this.renderFoodTile(ctx, x, y, pixelX, pixelY, grid);
+        } else if (tileType === TILE_TYPES.ENEMY) {
+            this.renderEnemyTile(ctx, x, y, pixelX, pixelY, grid);
         } else {
             this.renderFloorTile(ctx, pixelX, pixelY, tileType);
         }
@@ -751,6 +753,30 @@ export class TextureManager {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🥖', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
+    renderEnemyTile(ctx, x, y, pixelX, pixelY, grid) {
+        // Use the stored enemyType from the grid tile
+        const tile = grid[y][x];
+        let enemyKey = 'fauna/lizardy';
+
+        // First draw the directional floor background
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+
+        // Try to draw the enemy image if loaded, otherwise use fallback
+        if (this.isImageLoaded(enemyKey)) {
+            ctx.drawImage(this.images[enemyKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.ENEMY];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#FF1493';
+            ctx.font = '32px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🦎', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 

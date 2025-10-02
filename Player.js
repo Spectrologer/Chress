@@ -11,6 +11,8 @@ export class Player {
         this.inventory = [];
         this.dead = false;
         this.sprite = 'SeparateAnim/Special2';
+        this.health = 3;  // Player has 3 hearts
+        this.attackAnimation = 0; // Frames remaining for attack animation
         this.markZoneVisited(0, 0);
     }
 
@@ -202,6 +204,7 @@ export class Player {
     this.currentZone = { x: 0, y: 0 };
     this.thirst = 50;
     this.hunger = 50;
+    this.health = 3;
     this.dead = false;
     this.sprite = 'SeparateAnim/Special2';
     this.visitedZones.clear();
@@ -229,6 +232,22 @@ export class Player {
         if (this.hunger === 0) {
             this.setDead();
         }
+    }
+
+    // Health management (for enemy attacks)
+    getHealth() {
+        return this.health;
+    }
+
+    setHealth(value) {
+        this.health = Math.max(0, value);
+        if (this.health <= 0) {
+            this.setDead();
+        }
+    }
+
+    takeDamage(amount = 1) {
+        this.setHealth(this.health - amount);
     }
 
     decreaseThirst(amount = 1) {
@@ -262,5 +281,15 @@ export class Player {
         // Called when player moves to a new zone
         this.decreaseThirst();
         this.decreaseHunger();
+    }
+
+    startAttackAnimation() {
+        this.attackAnimation = 10; // 10 frames of attack animation
+    }
+
+    updateAnimations() {
+        if (this.attackAnimation > 0) {
+            this.attackAnimation--;
+        }
     }
 }

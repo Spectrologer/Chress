@@ -12,7 +12,8 @@ export const TILE_TYPES = {
     ROCK: 4,
     HOUSE: 5,
     WATER: 6,
-    FOOD: 7
+    FOOD: 7,
+    ENEMY: 8
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -24,7 +25,8 @@ export const TILE_COLORS = {
     [TILE_TYPES.ROCK]: '#666666',
     [TILE_TYPES.HOUSE]: '#D2691E',  // Brown/orange for house
     [TILE_TYPES.WATER]: '#4169E1',  // Blue for water
-    [TILE_TYPES.FOOD]: '#FF6347'    // Red/orange for food
+    [TILE_TYPES.FOOD]: '#FF6347',    // Red/orange for food
+    [TILE_TYPES.ENEMY]: '#32CD32'    // Lime green for enemy
 };
 
 // Direction constants for exits and movements
@@ -49,7 +51,8 @@ export const IMAGE_ASSETS = [
     'house.png',
     'water.png',
     'SeparateAnim/Special2.png',
-    'SeparateAnim/dead.png'
+    'SeparateAnim/dead.png',
+    'fauna/lizardy.png'
 ];
 
 // Food image assets

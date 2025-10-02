@@ -1,9 +1,12 @@
 import { TILE_TYPES, GRID_SIZE } from './constants.js';
+import { Enemy } from './Enemy.js';
 
 export class ZoneGenerator {
     static zoneCounter = 0;
+    static enemyCounter = 0;
     constructor() {
         this.grid = null;
+        this.enemies = null;
         this.currentZoneX = null;
         this.currentZoneY = null;
     }
@@ -20,8 +23,7 @@ export class ZoneGenerator {
         }
 
         // Generate new zone structure
-        this.initializeGrid();
-        this.addWallBorders();
+        this.initialize();
         
         // Special handling for the starting zone (0,0) - add house
         if (zoneX === 0 && zoneY === 0) {
@@ -38,16 +40,23 @@ export class ZoneGenerator {
             if (ZoneGenerator.zoneCounter % 9 === 0) {
                 this.addRandomItem(foodAssets);
             }
+            // Add enemy with similar frequency as food/water (~10% chance per zone)
+            if (Math.random() < 0.11) {
+                this.addRandomEnemy();
+            }
         }
         
         // Ensure exit accessibility
         this.ensureExitAccess();
-        
-        // Return a copy of the generated grid
-        return JSON.parse(JSON.stringify(this.grid));
+
+        // Return the generated grid and enemies
+        return { 
+            grid: JSON.parse(JSON.stringify(this.grid)), 
+            enemies: [...this.enemies] 
+        };
     }
 
-    initializeGrid() {
+    initialize() {
         // Initialize grid with floor tiles
         this.grid = [];
         for (let y = 0; y < GRID_SIZE; y++) {
@@ -56,6 +65,8 @@ export class ZoneGenerator {
                 this.grid[y][x] = TILE_TYPES.FLOOR;
             }
         }
+        this.enemies = [];
+        this.addWallBorders();
     }
 
     addWallBorders() {
@@ -139,6 +150,23 @@ export class ZoneGenerator {
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = itemType;
                 break; // Successfully placed item
+            }
+        }
+    }
+
+    addRandomEnemy() {
+        // Add one enemy per zone (lizard for now)
+
+        // Try to place the enemy in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                ZoneGenerator.enemyCounter++;
+                this.enemies.push({ x, y, enemyType: 'lizard', id: ZoneGenerator.enemyCounter });
+                break; // Successfully placed enemy
             }
         }
     }

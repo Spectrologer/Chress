@@ -3,6 +3,7 @@ import { TextureManager } from './TextureManager.js';
 import { ConnectionManager } from './ConnectionManager.js';
 import { ZoneGenerator } from './ZoneGenerator.js';
 import { Player } from './Player.js';
+import { Enemy } from './Enemy.js';
 
 // Game state
 class Game {
@@ -28,6 +29,8 @@ class Game {
         // Zone management
         this.zones = new Map(); // Stores generated zones by coordinate key
         this.grid = null; // Current zone grid
+        this.enemies = []; // Current zone enemies
+        this.defeatedEnemies = new Set(); // Tracks defeated enemy positions: "zoneX,zoneY,enemyX,enemyY"
         this.gameStarted = false;
         
         // Path execution state
@@ -97,16 +100,16 @@ class Game {
     init() {
         // Generate initial zone
         this.generateZone();
-        
+
         // Ensure player starts on a valid tile
         this.grid[this.player.y][this.player.x] = TILE_TYPES.FLOOR;
-        
+
         // Set up event listeners
         this.setupControls();
-        
+
         // Start game loop
         this.gameLoop();
-        
+
         // Update UI
         this.updatePlayerPosition();
         this.updateZoneDisplay();
@@ -116,24 +119,28 @@ class Game {
     generateZone() {
         const currentZone = this.player.getCurrentZone();
         console.log('Generating zone for:', currentZone);
-        
+
         // Generate chunk connections for current area
         this.connectionManager.generateChunkConnections(currentZone.x, currentZone.y);
-        
+
         // Generate or load the zone
-        this.grid = this.zoneGenerator.generateZone(
-            currentZone.x, 
-            currentZone.y, 
-            this.zones, 
+        let zoneData = this.zoneGenerator.generateZone(
+            currentZone.x,
+            currentZone.y,
+            this.zones,
             this.connectionManager.zoneConnections,
             FOOD_ASSETS
         );
-        
+
+        this.grid = zoneData.grid;
+        this.enemies = (zoneData.enemies || []).map(e => new Enemy(e));
+
         console.log('Generated grid:', this.grid ? `${this.grid.length}x${this.grid[0]?.length}` : 'null');
-        
+        console.log('Generated enemies:', this.enemies.length);
+
         // Save the generated zone
         const zoneKey = `${currentZone.x},${currentZone.y}`;
-        this.zones.set(zoneKey, JSON.parse(JSON.stringify(this.grid)));
+        this.zones.set(zoneKey, zoneData);
     }
     
     transitionToZone(newZoneX, newZoneY, exitSide) {
@@ -449,9 +456,42 @@ class Game {
                 return;
         }
         event.preventDefault();
-        this.player.move(newX, newY, this.grid, (zoneX, zoneY, exitSide) => {
-            this.transitionToZone(zoneX, zoneY, exitSide);
-        });
+
+        // Check if player is trying to move onto an enemy tile
+        const enemyAtTarget = this.enemies.find(enemy => enemy.x === newX && enemy.y === newY);
+        let playerMoved = false;
+
+        if (enemyAtTarget) {
+            // Player attacks enemy - register as attack, defeat enemy
+            console.log('Player attacks enemy!');
+            this.player.startAttackAnimation();
+            enemyAtTarget.takeDamage(999); // Ensure enemy is dead
+            console.log('Player defeated enemy!');
+
+            // Record that this enemy position is defeated to prevent respawning
+            const currentZone = this.player.getCurrentZone();
+            this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemyAtTarget.x},${enemyAtTarget.y}`);
+
+            // Remove enemy immediately so it doesn't attack back this turn
+            this.enemies = this.enemies.filter(e => e !== enemyAtTarget);
+
+            // Also update the stored zone data to remove the dead enemy from persistence
+            const zoneKey = `${currentZone.x},${currentZone.y}`;
+            if (this.zones.has(zoneKey)) {
+                const zoneData = this.zones.get(zoneKey);
+                zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtTarget.id);
+                this.zones.set(zoneKey, zoneData);
+            }
+            // Player does not move
+        } else {
+            // Normal movement
+            playerMoved = this.player.move(newX, newY, this.grid, (zoneX, zoneY, exitSide) => {
+                this.transitionToZone(zoneX, zoneY, exitSide);
+            });
+        }
+
+        this.handleEnemyMovements();
+        this.checkCollisions();
         this.updatePlayerPosition();
         this.updatePlayerStats();
     }
@@ -461,11 +501,13 @@ class Game {
         this.zones.clear();
         this.connectionManager.clear();
         this.player.reset();
-        
+        this.enemies = [];
+        this.defeatedEnemies = new Set();
+
         // Generate starting zone
         this.generateZone();
         this.grid[this.player.y][this.player.x] = TILE_TYPES.FLOOR;
-        
+
         // Update UI
         this.updatePlayerPosition();
         this.updateZoneDisplay();
@@ -495,6 +537,18 @@ class Game {
         // Update thirst and hunger bars
         this.updateProgressBar('thirst-progress', this.player.getThirst(), 50);
         this.updateProgressBar('hunger-progress', this.player.getHunger(), 50);
+
+        // Update heart display
+        const hearts = document.querySelectorAll('.heart-icon');
+        hearts.forEach((heart, index) => {
+            if (index < this.player.getHealth()) {
+                heart.style.opacity = '1';
+                heart.style.filter = 'none'; // Full visibility for full hearts
+            } else {
+                heart.style.opacity = '0.3';
+                heart.style.filter = 'grayscale(100%)'; // Dimmed for lost hearts
+            }
+        });
 
         // Render inventory items
         const inventoryGrid = document.querySelector('.inventory-list');
@@ -596,10 +650,13 @@ class Game {
     render() {
         // Clear canvas
         this.ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-        
+
         // Draw grid
         this.drawGrid();
-        
+
+        // Draw enemies
+        this.drawEnemies();
+
         // Draw player
         this.drawPlayer();
     }
@@ -635,28 +692,98 @@ class Game {
         let spriteKey = this.player.sprite;
         if (this.player.isDead()) {
             spriteKey = 'SeparateAnim/dead';
+        } else if (this.player.attackAnimation > 0) {
+            spriteKey = 'SeparateAnim/Attack';
         }
         const playerImage = this.textureManager.getImage(spriteKey);
         if (playerImage && playerImage.complete) {
             this.ctx.drawImage(
                 playerImage,
-                pos.x * TILE_SIZE, 
-                pos.y * TILE_SIZE, 
-                TILE_SIZE, 
+                pos.x * TILE_SIZE,
+                pos.y * TILE_SIZE,
+                TILE_SIZE,
                 TILE_SIZE
             );
         } else {
             this.ctx.fillStyle = '#ff4444';
             this.ctx.fillRect(
-                pos.x * TILE_SIZE + 2, 
-                pos.y * TILE_SIZE + 2, 
-                TILE_SIZE - 4, 
+                pos.x * TILE_SIZE + 2,
+                pos.y * TILE_SIZE + 2,
+                TILE_SIZE - 4,
                 TILE_SIZE - 4
             );
         }
     }
-    
+
+    handleEnemyMovements() {
+        for (let enemy of this.enemies) {
+            enemy.moveTowards(this.player, this.grid);
+        }
+    }
+
+    checkCollisions() {
+        // Since attacks are now handled during movement attempts, this is mainly for safety
+        // in case of any unexpected overlaps (e.g., from zone loading)
+        const playerPos = this.player.getPosition();
+
+        // Check for any remaining overlaps and handle them
+        this.enemies = this.enemies.filter(enemy => {
+            if (enemy.x === playerPos.x && enemy.y === playerPos.y) {
+                // If enemy and player are somehow on same tile, enemy attacks and dies
+                this.player.takeDamage(enemy.attack);
+                this.justAttacked = true;
+                console.log(`Unexpected collision: Enemy hit player! Player health: ${this.player.getHealth()}`);
+                if (this.player.isDead()) {
+                    console.log('Player died!');
+                }
+                console.log('Enemy removed due to collision');
+                return false; // Remove enemy
+            }
+            return true;
+        });
+    }
+
+    drawEnemies() {
+        for (let enemy of this.enemies) {
+            let enemyKey = 'fauna/lizardy';
+
+            // Determine sprite based on animation state
+            if (enemy.deathAnimation > 0) {
+                enemyKey = 'SeparateAnim/dead';
+            } else if (enemy.attackAnimation > 0) {
+                enemyKey = 'SeparateAnim/Attack';
+            }
+
+            const enemyImage = this.textureManager.getImage(enemyKey);
+            if (enemyImage && enemyImage.complete) {
+                this.ctx.drawImage(
+                    enemyImage,
+                    enemy.x * TILE_SIZE,
+                    enemy.y * TILE_SIZE,
+                    TILE_SIZE,
+                    TILE_SIZE
+                );
+            } else {
+                // Fallback
+                this.ctx.fillStyle = '#32CD32';
+                this.ctx.fillRect(
+                    enemy.x * TILE_SIZE + 2,
+                    enemy.y * TILE_SIZE + 2,
+                    TILE_SIZE - 4,
+                    TILE_SIZE - 4
+                );
+            }
+        }
+    }
+
     gameLoop() {
+        // Update animations
+        this.player.updateAnimations();
+        this.enemies.forEach(enemy => enemy.updateAnimations());
+
+        // Remove enemies whose death animation has finished
+        this.enemies = this.enemies.filter(enemy => enemy.deathAnimation === 0);
+
         this.render();
         requestAnimationFrame(() => this.gameLoop());
     }
