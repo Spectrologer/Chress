@@ -8,13 +8,13 @@
 body {
     font-family: 'Courier New', monospace;
     background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #CD853F 100%);
-    color: #F4E4BC;
+    color: #2F1B14;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 20px;
+    padding: 10px;
 }
 
 .page-header {
@@ -26,153 +26,258 @@ body {
     padding: 0;
     max-width: none;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    justify-content: space-between;
 }
 
 .header-area {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    gap: 30px;
+    margin-bottom: 15px;
+    gap: 20px;
     max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
+    flex-shrink: 0;
 }
 
+/* Character Card Deluxe Parchment Theme */
 .character-card {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    align-items: flex-start;
+    gap: 20px;
     background: 
-        radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 30%),
-        radial-gradient(circle at 80% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 25%),
-        radial-gradient(circle at 40% 60%, rgba(160, 82, 45, 0.08) 0%, transparent 20%),
-        linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
-    border: none;
-    border-radius: 0;
-    padding: 15px;
+        /* Fine texture overlay */
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path fill="%239C7E4F" fill-opacity="0.1" d="M0 2h2V0h2v4H2v-2H0V2z"></path></svg>'),
+        /* Parchment stains */
+        radial-gradient(circle at 10% 20%, rgba(188, 143, 143, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 85% 70%, rgba(210, 180, 140, 0.25) 0%, transparent 50%),
+        /* Base parchment gradient */
+        linear-gradient(140deg, #FDF5E6 0%, #FAEBD7 30%, #F5DEB3 60%, #DEB887 100%);
+    
+    padding: 18px;
     position: relative;
-    filter: 
-        sepia(20%) 
-        saturate(1.2) 
-        contrast(1.1)
-        drop-shadow(3px 3px 6px rgba(139, 69, 19, 0.4));
+    
+    /* Decorative multi-layered border */
+    border: 1px solid #C19A6B;
+    box-shadow: 
+        inset 0 0 20px rgba(139, 69, 19, 0.15), /* Inner shadow for depth */
+        0 0 0 3px #A0522D, /* Mid border */
+        0 0 0 5px #8B4513, /* Outer border */
+        8px 8px 16px rgba(0, 0, 0, 0.5); /* Main drop shadow */
+
+    /* Filters for an aged, rich look */
+    filter: sepia(30%) saturate(1.3) contrast(1.05) brightness(1.05);
 }
 
 .character-profile {
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
 }
 
+.character-hearts {
+    font-size: 2em;
+    letter-spacing: -5px;
+    color: #C0392B; /* A richer red */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.character-name {
+    font-family: 'Cinzel', serif;
+    font-weight: 900; /* Bolder */
+    font-size: 4em;
+    color: #3A2418; /* Darker, richer brown */
+    text-shadow: 
+        1px 1px 0px #D2B48C, /* Highlight */
+        2px 2px 3px rgba(0, 0, 0, 0.6); /* Deeper shadow */
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.character-level {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #4A3228;
+    background: rgba(139, 69, 19, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(139, 69, 19, 0.2);
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    margin-top: -4px;
+}
+
+/* Ornate, inset frame for the character image */
 .character-profile img {
-    width: 64px;
-    height: 64px;
-    border: 2px solid #8B4513;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.8);
+    width: 100px;
+    height: 100px;
+    
+    /* Inset frame effect */
+    border: 2px solid #7A4A3A;
+    border-radius: 10px;
+    padding: 4px; /* Space between image and frame */
+    background: linear-gradient(145deg, #D2B48C, #B8860B); /* Gold-ish backing */
+    
+    /* Multi-layered shadow for depth */
+    box-shadow:
+        inset 0 0 8px rgba(0, 0, 0, 0.6), /* Inner shadow on frame */
+        3px 3px 6px rgba(0, 0, 0, 0.4); /* Outer shadow */
+    
     display: block;
 }
 
 .character-stats {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    min-width: 160px;
+    gap: 12px; /* Increased gap */
+    min-width: 180px;
+    flex: 1;
 }
 
 .character-extra {
-    margin-top: 10px;
+    margin-top: 15px;
     display: flex;
-    gap: 15px;
+    gap: 20px;
     flex-wrap: wrap;
     justify-content: space-between;
 }
 
 .stats-menu, .inventory-menu {
     flex: 1;
-    min-width: 120px;
+    min-width: 140px;
 }
 
 .stats-menu h4, .inventory-menu h4 {
-    margin: 5px 0;
-    font-size: 1em;
-    color: #8B4513;
+    margin: 0 0 10px 0;
+    font-size: 1.5em;
+    color: #3A2418;
     text-align: center;
-    font-weight: bold;
+    font-weight: 900;
+    font-family: 'Cinzel', serif;
+    text-shadow: 1px 1px 1px #D2B48C;
 }
 
-.stats-menu p {
-    margin: 2px 0;
-    font-size: 0.9em;
-    color: #8B4513;
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 8px;
+    place-items: center;
+}
+
+.stat-item {
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 0;
+    font-size: 4.2em;
+    color: #3A2418;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 55px;
+    box-shadow: none;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .inventory-grid {
+    background: 
+        repeating-linear-gradient(45deg, 
+            rgba(139, 69, 19, 0.2), 
+            rgba(139, 69, 19, 0.2) 10px, 
+            rgba(139, 69, 19, 0.3) 10px, 
+            rgba(139, 69, 19, 0.3) 20px);
+    border: 2px solid #8B4513;
+    border-radius: 6px;
+    min-height: 70px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+    padding: 5px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
+    grid-template-columns: repeat(4, 1fr);
 }
 
 .inventory-slot {
-    background: rgba(139, 69, 19, 0.3);
-    border: 1px solid #8B4513;
-    border-radius: 3px;
-    padding: 4px;
-    font-size: 0.8em;
-    text-align: center;
-    color: #8B4513;
-    height: 30px;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+.inventory-slot img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+/* Redesigned Stat Bars */
 .stat-bar {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
 }
 
 .stat-label {
-    color: #8B4513;
-    width: 20px;
-    text-align: right;
+    color: #3A2418;
+    width: 28px;
+    text-align: center;
+    font-size: 2em;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
 }
 
 .bar-container {
     flex: 1;
-    height: 12px;
-    background: rgba(139, 69, 19, 0.3);
-    border: 1px solid #8B4513;
-    border-radius: 6px;
+    height: 16px; /* Taller bar */
+    background: rgba(0, 0, 0, 0.3); /* Darker background for contrast */
+    border: 1px solid #61382B;
+    border-radius: 8px;
     overflow: hidden;
     position: relative;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Adding a subtle gloss effect to the bar fill */
+.bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(255,255,255,0));
+    border-radius: 8px 8px 0 0;
 }
 
 .bar-fill {
     height: 100%;
-    border-radius: 5px;
-    transition: width 0.3s ease;
+    border-radius: 7px;
+    transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* Smoother transition */
+    background-color: transparent;
 }
 
 .health-fill {
-    background: linear-gradient(90deg, #FF6B6B, #FF8E8E);
+    background-image: repeating-linear-gradient(-45deg, #D32F2F, #D32F2F 5px, #FF5252 5px, #FF5252 10px);
 }
 
 .mana-fill {
-    background: linear-gradient(90deg, #4ECDC4, #7FDBDA);
-}
-
-.stat-value {
-    color: #8B4513;
-    font-size: 11px;
-    width: 50px;
-    text-align: left;
+    background-image: repeating-linear-gradient(-45deg, #1976D2, #1976D2 5px, #448AFF 5px, #448AFF 10px);
 }
 
 h1 {
-    font-family: 'Cinzel', 'Creepster', 'Nosifer', 'Griffy', 'Times New Roman', serif;
+    font-family: 'MedievalSharp', serif;
     font-size: 4.5em;
     font-weight: 900;
     margin: 0 0 30px 0;
@@ -194,7 +299,16 @@ h1 {
 .game-area {
     display: flex;
     justify-content: center;
-    margin: 20px 0;
+    flex: 1;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.minimap-area {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+    padding-bottom: 20px;
 }
 
 .game-parchment {
@@ -205,7 +319,7 @@ h1 {
         linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
     border: none;
     border-radius: 0;
-    padding: 20px;
+    padding: 15px;
     position: relative;
     filter: 
         sepia(20%) 
@@ -257,24 +371,30 @@ h1 {
 
 .map-container {
     background: 
-        radial-gradient(circle at 30% 30%, rgba(139, 69, 19, 0.12) 0%, transparent 25%),
-        radial-gradient(circle at 70% 70%, rgba(160, 82, 45, 0.1) 0%, transparent 30%),
-        radial-gradient(circle at 50% 10%, rgba(139, 69, 19, 0.08) 0%, transparent 20%),
-        linear-gradient(145deg, #F5DEB3 0%, #DEB887 40%, #D2B48C 80%, #C19A6B 100%);
+        /* Aged parchment stains and texture */
+        radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.18) 0%, transparent 20%),
+        radial-gradient(circle at 75% 75%, rgba(160, 82, 45, 0.15) 0%, transparent 25%),
+        radial-gradient(circle at 50% 10%, rgba(205, 133, 63, 0.12) 0%, transparent 15%),
+        radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 18%),
+        radial-gradient(circle at 80% 20%, rgba(160, 82, 45, 0.08) 0%, transparent 12%),
+        /* Main parchment background */
+        linear-gradient(145deg, #F5DEB3 0%, #F0E68C 20%, #DEB887 40%, #D2B48C 70%, #C19A6B 100%);
     border-radius: 0;
-    padding: 12px;
+    padding: 20px;
     border: none;
     position: relative;
     flex-shrink: 0;
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
     filter: 
-        sepia(15%) 
-        saturate(1.1) 
-        contrast(1.05)
-        drop-shadow(2px 2px 5px rgba(139, 69, 19, 0.3));
+        sepia(20%) 
+        saturate(1.15) 
+        contrast(1.08)
+        brightness(1.02)
+        drop-shadow(3px 3px 8px rgba(139, 69, 19, 0.4));
 }
 
 /* Frayed parchment edges */
@@ -321,18 +441,38 @@ h1 {
 }
 
 #zoneMap {
-    border: 1px solid #8B4513;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #F5DEB3 0%, #F4E4BC 50%, #DEB887 100%);
+    border: 2px solid #8B4513;
+    border-radius: 12px;
+    background: 
+        /* Aged parchment texture */
+        radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 15%),
+        radial-gradient(circle at 80% 30%, rgba(160, 82, 45, 0.12) 0%, transparent 12%),
+        radial-gradient(circle at 60% 80%, rgba(205, 133, 63, 0.1) 0%, transparent 18%),
+        radial-gradient(circle at 30% 70%, rgba(139, 69, 19, 0.08) 0%, transparent 10%),
+        /* Main parchment gradient */
+        linear-gradient(135deg, #F5DEB3 0%, #F0E68C 25%, #DEB887 50%, #D2B48C 75%, #C19A6B 100%);
     display: block;
-    width: 120px;
-    height: 120px;
+    width: 200px;
+    height: 200px;
     position: relative;
     box-shadow:
-        0 0 0 2px #D2691E,
-        0 0 0 4px #CD853F,
-        inset 0 0 20px rgba(139, 69, 19, 0.1),
-        0 4px 8px rgba(139, 69, 19, 0.3);
+        /* Multiple border effect */
+        0 0 0 1px #A0522D,
+        0 0 0 3px #D2691E,
+        0 0 0 5px #CD853F,
+        0 0 0 6px #8B4513,
+        /* Inner aging shadow */
+        inset 0 0 30px rgba(139, 69, 19, 0.2),
+        inset 0 0 50px rgba(160, 82, 45, 0.1),
+        /* Outer shadow */
+        0 6px 12px rgba(139, 69, 19, 0.4),
+        0 3px 6px rgba(139, 69, 19, 0.3);
+    /* Additional parchment effects */
+    filter: 
+        sepia(20%) 
+        saturate(1.2) 
+        contrast(1.1)
+        brightness(1.05);
 }
 
 .minimap-info {
@@ -357,8 +497,8 @@ h1 {
     background-color: #F5DEB3;
     display: block;
     margin: 0 auto;
-    width: 768px;
-    height: 768px;
+    width: 640px;
+    height: 640px;
     max-width: 95vw;
     max-height: 70vh;
     box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
@@ -371,120 +511,133 @@ h1 {
 /* Mobile Responsive Styles */
 @media screen and (max-width: 768px) {
     body {
-        padding: 10px;
+        padding: 2px;
     }
-    
+
     .page-header {
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
-    
+
     h1 {
-        font-size: 3.2em;
-        margin: 0 0 15px 0;
+        font-size: clamp(2.5em, 10vw, 3.2em);
+        margin: 0 0 10px 0;
         letter-spacing: 3px;
         font-weight: 900;
     }
-    
+
     .game-container {
-        padding: 10px;
+        padding: 2px;
         max-width: 100%;
         width: 100%;
     }
-    
+
     .header-area {
         flex-direction: column;
         align-items: stretch;
-        gap: 15px;
-        margin-bottom: 10px;
+        gap: 10px;
+        margin-bottom: 5px;
         max-width: 100%;
     }
-    
+
     .character-card {
         width: 100%;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-areas: "profile stats";
+        align-items: flex-start;
+        padding: 12px;
+        gap: 12px;
     }
-    
+
+    .character-profile {
+        grid-area: profile;
+    }
+
     .character-profile img {
-        width: 72px;
-        height: 72px;
+        width: clamp(68px, 20vw, 80px);
+        height: clamp(68px, 20vw, 80px);
     }
-    
+
+    .character-name {
+        font-size: clamp(2em, 8vw, 2.8em);
+    }
+
+    .character-level {
+        font-size: clamp(0.8em, 3vw, 0.9em);
+    }
+
     .character-stats {
-        min-width: 120px;
+        grid-area: stats;
+        width: 100%;
+        min-width: auto;
+        gap: 8px;
     }
-    
+
+    .character-extra {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 5px;
+        place-items: center;
+    }
+
+    .stat-item {
+        min-height: 40px;
+        font-size: clamp(2.2em, 6.5vw, 3em);
+        padding: 6px 4px;
+    }
+
     #zoneMap {
-        width: 180px;
-        height: 180px;
+        width: clamp(160px, 45vw, 180px);
+        height: clamp(160px, 45vw, 180px);
+        margin: 0 auto; /* Center the minimap */
     }
 
     .minimap-info p {
-        font-size: 1.0em;
+        font-size: clamp(0.85em, 3.5vw, 1em);
         margin: 2px 0;
         text-shadow: none;
     }
 
-    .map-container {
-        padding: 10px;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .minimap-area {
+        margin: 5px 0;
+        padding-bottom: 5px;
     }
-    
+
+    .map-container {
+        padding: 12px;
+        width: 100%;
+        flex-direction: column;
+        max-width: 100%;
+        overflow: hidden; /* Prevent overflow */
+    }
+
+    .game-parchment {
+        padding: 5px;
+    }
+
+    .game-area {
+        margin: 5px 0;
+    }
+
     #gameCanvas {
         width: 100%;
         max-width: 95vw;
         height: auto;
-        max-height: 75vh;
+        max-height: 70vh;
         aspect-ratio: 1;
         touch-action: none; /* Prevent default touch behaviors */
     }
-    
+
     /* Add visual feedback for touch interactions */
     #gameCanvas:active {
         opacity: 0.9;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    h1 {
-        font-size: 2.5em;
-        letter-spacing: 2px;
-        font-weight: 900;
-    }
-    
-    .game-container {
-        padding: 5px;
-    }
-    
-    .character-card {
-        flex-shrink: 0;
-        flex: 1;
-        padding: 15px;
-    }
-    
-    .character-profile img {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .character-stats {
-        min-width: 140px;
-    }
-    
-    #zoneMap {
-        width: 160px;
-        height: 160px;
-    }
-    
-    #gameCanvas {
-        max-width: 95vw;
-        max-height: 70vh;
-    }
-    
-    .minimap-info p {
-        font-size: 0.85em;
-        margin: 2px 0;
     }
 }

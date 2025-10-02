@@ -1,4 +1,4 @@
-import { IMAGE_ASSETS, TOTAL_IMAGES, TILE_COLORS, TILE_TYPES, TILE_SIZE } from './constants.js';
+import { IMAGE_ASSETS, TOTAL_IMAGES, TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from './constants.js';
 
 export class TextureManager {
     constructor() {
@@ -485,6 +485,8 @@ export class TextureManager {
             this.renderRockTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (tileType === TILE_TYPES.GRASS) {
             this.renderGrassTile(ctx, x, y, pixelX, pixelY, grid);
+        } else if (tileType === TILE_TYPES.HOUSE) {
+            this.renderHouseTile(ctx, x, y, pixelX, pixelY, grid);
         } else {
             this.renderFloorTile(ctx, pixelX, pixelY, tileType);
         }
@@ -610,6 +612,65 @@ export class TextureManager {
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.GRASS];
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
+    }
+
+    renderHouseTile(ctx, x, y, pixelX, pixelY, grid) {
+        // First render dirt background
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+        
+        // Then render the house part
+        if (this.isImageLoaded('house')) {
+            // For a 3x3 house, we need to determine which part of the house image to draw
+            // Find the house area bounds to determine the position within the house
+            const houseInfo = this.findHousePosition(x, y, grid);
+            
+            if (houseInfo) {
+                // Calculate which part of the house image to use
+                const partX = x - houseInfo.startX;
+                const partY = y - houseInfo.startY;
+                
+                // Draw the corresponding part of the house image
+                // Divide the house image into 3x3 parts
+                const partWidth = this.images.house.width / 3;
+                const partHeight = this.images.house.height / 3;
+                
+                ctx.drawImage(
+                    this.images.house,
+                    partX * partWidth, partY * partHeight, // Source position
+                    partWidth, partHeight, // Source size
+                    pixelX, pixelY, // Destination position
+                    TILE_SIZE, TILE_SIZE // Destination size
+                );
+            }
+        } else {
+            // Fallback color rendering
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.HOUSE];
+            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        }
+    }
+
+    findHousePosition(targetX, targetY, grid) {
+        // Find the top-left corner of the house that contains this tile
+        for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
+            for (let startX = Math.max(0, targetX - 2); startX <= Math.min(GRID_SIZE - 3, targetX); startX++) {
+                // Check if there's a 3x3 house starting at this position
+                let isHouse = true;
+                for (let y = startY; y < startY + 3 && isHouse; y++) {
+                    for (let x = startX; x < startX + 3 && isHouse; x++) {
+                        if (y >= 0 && y < GRID_SIZE && x >= 0 && x < GRID_SIZE && 
+                            grid[y][x] !== TILE_TYPES.HOUSE) {
+                            isHouse = false;
+                        }
+                    }
+                }
+                
+                if (isHouse && targetX >= startX && targetX < startX + 3 && 
+                    targetY >= startY && targetY < startY + 3) {
+                    return { startX, startY };
+                }
+            }
+        }
+        return null;
     }
 
     drawRotatedImage(ctx, image, x, y, rotation) {

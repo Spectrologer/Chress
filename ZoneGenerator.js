@@ -17,11 +17,18 @@ export class ZoneGenerator {
         this.initializeGrid();
         this.addWallBorders();
         
+        // Special handling for the starting zone (0,0) - add house
+        if (zoneX === 0 && zoneY === 0) {
+            this.addHouse();
+        }
+        
         // Generate exits using pre-determined connections
         this.generateExits(zoneX, zoneY, zoneConnections);
         
-        // Add random features
-        this.addRandomFeatures();
+        // Add random features (skip if this is the house zone to avoid cluttering)
+        if (!(zoneX === 0 && zoneY === 0)) {
+            this.addRandomFeatures();
+        }
         
         // Ensure exit accessibility
         this.ensureExitAccess();
@@ -171,6 +178,37 @@ export class ZoneGenerator {
             // Prevent infinite loops
             if (currentX === centerX && currentY === centerY) {
                 break;
+            }
+        }
+    }
+
+    addHouse() {
+        // Place a 3x3 house in the center-left area of zone (0,0)
+        // Position it so the player can spawn in front of it (to the south)
+        const houseStartX = 3; // Start at x=3
+        const houseStartY = 3; // Start at y=3
+        
+        // Place the 3x3 house
+        for (let y = houseStartY; y < houseStartY + 3; y++) {
+            for (let x = houseStartX; x < houseStartX + 3; x++) {
+                if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1) {
+                    this.grid[y][x] = TILE_TYPES.HOUSE;
+                }
+            }
+        }
+        
+        // Clear the area in front of the house (south side) for player spawn
+        for (let x = houseStartX; x < houseStartX + 3; x++) {
+            const frontY = houseStartY + 3; // One row south of the house
+            if (frontY < GRID_SIZE - 1) {
+                this.grid[frontY][x] = TILE_TYPES.FLOOR;
+            }
+        }
+        
+        // Clear a bit more space around the house
+        for (let y = houseStartY + 3; y < houseStartY + 5 && y < GRID_SIZE - 1; y++) {
+            for (let x = houseStartX - 1; x < houseStartX + 4 && x >= 1 && x < GRID_SIZE - 1; x++) {
+                this.grid[y][x] = TILE_TYPES.FLOOR;
             }
         }
     }

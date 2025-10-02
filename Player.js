@@ -64,9 +64,8 @@ export class Player {
         
         const tileType = grid[y][x];
         
-        // Player can walk on floor, grass, and exit tiles
+        // Player can walk on floor and exit tiles only (grass/shrubbery tiles are not passable)
         return tileType === TILE_TYPES.FLOOR || 
-               tileType === TILE_TYPES.GRASS || 
                tileType === TILE_TYPES.EXIT;
     }
 
@@ -113,35 +112,35 @@ export class Player {
         
         switch (exitSide) {
             case 'top':
-                // Coming from bottom, enter at the bottom exit if it exists
+                // Coming from bottom, enter at the bottom exit (on the exit tile itself)
                 if (connections.south !== null) {
-                    this.setPosition(connections.south, GRID_SIZE - 2);
+                    this.setPosition(connections.south, GRID_SIZE - 1);
                 } else {
-                    this.setPosition(Math.floor(GRID_SIZE / 2), GRID_SIZE - 2);
+                    this.setPosition(Math.floor(GRID_SIZE / 2), GRID_SIZE - 1);
                 }
                 break;
             case 'bottom':
-                // Coming from top, enter at the top exit if it exists
+                // Coming from top, enter at the top exit (on the exit tile itself)
                 if (connections.north !== null) {
-                    this.setPosition(connections.north, 1);
+                    this.setPosition(connections.north, 0);
                 } else {
-                    this.setPosition(Math.floor(GRID_SIZE / 2), 1);
+                    this.setPosition(Math.floor(GRID_SIZE / 2), 0);
                 }
                 break;
             case 'left':
-                // Coming from right, enter at the right exit if it exists
+                // Coming from right, enter at the right exit (on the exit tile itself)
                 if (connections.east !== null) {
-                    this.setPosition(GRID_SIZE - 2, connections.east);
+                    this.setPosition(GRID_SIZE - 1, connections.east);
                 } else {
-                    this.setPosition(GRID_SIZE - 2, Math.floor(GRID_SIZE / 2));
+                    this.setPosition(GRID_SIZE - 1, Math.floor(GRID_SIZE / 2));
                 }
                 break;
             case 'right':
-                // Coming from left, enter at the left exit if it exists
+                // Coming from left, enter at the left exit (on the exit tile itself)
                 if (connections.west !== null) {
-                    this.setPosition(1, connections.west);
+                    this.setPosition(0, connections.west);
                 } else {
-                    this.setPosition(1, Math.floor(GRID_SIZE / 2));
+                    this.setPosition(0, Math.floor(GRID_SIZE / 2));
                 }
                 break;
             default:
@@ -172,8 +171,10 @@ export class Player {
     }
 
     reset() {
-        this.x = 1;
-        this.y = 1;
+        // Place player in front of the house at zone (0,0)
+        // House is at (3,3) to (5,5), so place player at (4,7) - centered in front
+        this.x = 4;
+        this.y = 7;
         this.currentZone = { x: 0, y: 0 };
         this.visitedZones.clear();
         this.markZoneVisited(0, 0);

@@ -1,7 +1,7 @@
 // Game constants
-export const GRID_SIZE = 12;
+export const GRID_SIZE = 10;
 export const TILE_SIZE = 64;
-export const CANVAS_SIZE = GRID_SIZE * TILE_SIZE; // 768x768 pixels
+export const CANVAS_SIZE = GRID_SIZE * TILE_SIZE; // 640x640 pixels
 
 // Tile types
 export const TILE_TYPES = {
@@ -9,7 +9,8 @@ export const TILE_TYPES = {
     WALL: 1,
     GRASS: 2,
     EXIT: 3,
-    ROCK: 4
+    ROCK: 4,
+    HOUSE: 5
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -18,7 +19,8 @@ export const TILE_COLORS = {
     [TILE_TYPES.WALL]: '#8B4513',
     [TILE_TYPES.GRASS]: '#228B22',
     [TILE_TYPES.EXIT]: '#ffcb8d',  // Same as floor - opening is indicator enough
-    [TILE_TYPES.ROCK]: '#666666'
+    [TILE_TYPES.ROCK]: '#666666',
+    [TILE_TYPES.HOUSE]: '#D2691E'  // Brown/orange for house
 };
 
 // Direction constants for exits and movements
@@ -39,7 +41,9 @@ export const IMAGE_ASSETS = [
     'dirt_corner2.png',
     'shrubbery.png',
     'bush.png',
-    'dircle.png'
+    'dircle.png',
+    'house.png',
+    'SeparateAnim/Special2.png'
 ];
 
 export const TOTAL_IMAGES = IMAGE_ASSETS.length;
