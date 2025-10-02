@@ -4,26 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BiChress - Roguelike</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Creepster&family=Nosifer&family=Griffy&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>BiChress</h1>
+    <div class="page-header">
+        <h1>BiChress</h1>
+    </div>
     <div class="game-container">
         <div class="header-area">
+            <div class="character-card">
+                <div class="character-profile">
+                    <img src="Images/faceset.png" alt="Character Profile" id="character-face">
+                </div>
+                <div class="character-stats">
+                    <div class="stat-bar health-bar">
+                        <div class="stat-label">HP</div>
+                        <div class="bar-container">
+                            <div class="bar-fill health-fill" style="width: 85%"></div>
+                        </div>
+                        <div class="stat-value">85/100</div>
+                    </div>
+                    <div class="stat-bar mana-bar">
+                        <div class="stat-label">MP</div>
+                        <div class="bar-container">
+                            <div class="bar-fill mana-fill" style="width: 60%"></div>
+                        </div>
+                        <div class="stat-value">60/100</div>
+                    </div>
+                    <div class="character-extra">
+                        <div class="stats-menu">
+                            <h4>Stats</h4>
+                            <p>Level: 1</p>
+                            <p>Strength: 10</p>
+                            <p>Dexterity: 10</p>
+                            <p>Intelligence: 10</p>
+                        </div>
+                        <div class="inventory-menu">
+                            <h4>Inventory</h4>
+                            <div class="inventory-grid">
+                                <div class="inventory-slot">Sword</div>
+                                <div class="inventory-slot">Shield</div>
+                                <div class="inventory-slot">Potion</div>
+                                <div class="inventory-slot">Key</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="map-container">
-                <canvas id="zoneMap" width="120" height="120"></canvas>
+                <canvas id="zoneMap"></canvas>
+                <div class="minimap-info">
+                    <p>Position: <span id="player-pos">0, 0</span></p>
+                    <p>Zone: <span id="current-zone">0, 0</span></p>
+                </div>
             </div>
         </div>
-        <div class="game-info">
-            <p>Position: <span id="player-pos">0, 0</span></p>
-            <p>Zone: <span id="current-zone">0, 0</span></p>
-        </div>
         <div class="game-area">
-            <canvas id="gameCanvas" width="192" height="192"></canvas>
-        </div>
-        <div class="controls">
-            <p>Zone: <span id="zone-info">Generated</span></p>
-            <button id="generate-zone">Generate New Zone</button>
+            <div class="game-parchment">
+                <canvas id="gameCanvas"></canvas>
+            </div>
         </div>
     </div>
     <script type="module" src="constants.js"></script>

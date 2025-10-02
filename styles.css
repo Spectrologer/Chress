@@ -10,45 +10,185 @@ body {
     background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #CD853F 100%);
     color: #F4E4BC;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding: 20px;
+}
+
+.page-header {
+    margin-bottom: 20px;
 }
 
 .game-container {
     text-align: center;
-    background: linear-gradient(145deg, #D2B48C, #F4A460);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 0 30px rgba(139, 69, 19, 0.4), inset 0 2px 10px rgba(255, 255, 255, 0.1);
-    border: 2px solid #CD853F;
+    padding: 0;
+    max-width: none;
+    width: 100%;
 }
 
 .header-area {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    gap: 30px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.character-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 25%),
+        radial-gradient(circle at 40% 60%, rgba(160, 82, 45, 0.08) 0%, transparent 20%),
+        linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
+    border: none;
+    border-radius: 0;
+    padding: 15px;
+    position: relative;
+    filter: 
+        sepia(20%) 
+        saturate(1.2) 
+        contrast(1.1)
+        drop-shadow(3px 3px 6px rgba(139, 69, 19, 0.4));
+}
+
+.character-profile {
+    flex-shrink: 0;
+}
+
+.character-profile img {
+    width: 64px;
+    height: 64px;
+    border: 2px solid #8B4513;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    display: block;
+}
+
+.character-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 160px;
+}
+
+.character-extra {
+    margin-top: 10px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.stats-menu, .inventory-menu {
+    flex: 1;
+    min-width: 120px;
+}
+
+.stats-menu h4, .inventory-menu h4 {
+    margin: 5px 0;
+    font-size: 1em;
+    color: #8B4513;
+    text-align: center;
+    font-weight: bold;
+}
+
+.stats-menu p {
+    margin: 2px 0;
+    font-size: 0.9em;
+    color: #8B4513;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+}
+
+.inventory-slot {
+    background: rgba(139, 69, 19, 0.3);
+    border: 1px solid #8B4513;
+    border-radius: 3px;
+    padding: 4px;
+    font-size: 0.8em;
+    text-align: center;
+    color: #8B4513;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.stat-label {
+    color: #8B4513;
+    width: 20px;
+    text-align: right;
+}
+
+.bar-container {
+    flex: 1;
+    height: 12px;
+    background: rgba(139, 69, 19, 0.3);
+    border: 1px solid #8B4513;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.health-fill {
+    background: linear-gradient(90deg, #FF6B6B, #FF8E8E);
+}
+
+.mana-fill {
+    background: linear-gradient(90deg, #4ECDC4, #7FDBDA);
+}
+
+.stat-value {
+    color: #8B4513;
+    font-size: 11px;
+    width: 50px;
+    text-align: left;
 }
 
 h1 {
-    font-size: 2.5em;
-    margin: 0 0 20px 0;
+    font-family: 'Cinzel', 'Creepster', 'Nosifer', 'Griffy', 'Times New Roman', serif;
+    font-size: 4.5em;
+    font-weight: 900;
+    margin: 0 0 30px 0;
     color: #F4E4BC;
-    text-shadow: 2px 2px 4px rgba(139, 69, 19, 0.8), 0 0 10px rgba(255, 140, 0, 0.3);
+    text-shadow: 
+        4px 4px 8px rgba(139, 69, 19, 0.9), 
+        0 0 20px rgba(255, 140, 0, 0.6),
+        0 0 40px rgba(255, 140, 0, 0.3),
+        2px 2px 0px #8B4513,
+        -2px -2px 0px #CD853F;
     font-weight: bold;
     text-align: center;
-}
-
-.game-info {
-    margin-bottom: 20px;
-}
-
-.game-info p {
-    margin: 5px 0;
-    font-size: 1.1em;
-    color: #8B4513;
-    font-weight: bold;
+    letter-spacing: 4px;
+    transform: rotate(-1deg);
+    filter: drop-shadow(3px 3px 6px rgba(0, 0, 0, 0.5));
+    text-transform: uppercase;
 }
 
 .game-area {
@@ -57,20 +197,158 @@ h1 {
     margin: 20px 0;
 }
 
+.game-parchment {
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 25%),
+        radial-gradient(circle at 40% 60%, rgba(160, 82, 45, 0.08) 0%, transparent 20%),
+        linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
+    border: none;
+    border-radius: 0;
+    padding: 20px;
+    position: relative;
+    filter: 
+        sepia(20%) 
+        saturate(1.2) 
+        contrast(1.1)
+        drop-shadow(4px 4px 8px rgba(139, 69, 19, 0.5));
+}
+
+/* Frayed parchment edges for game area */
+.game-parchment::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: inherit;
+    z-index: -1;
+    clip-path: polygon(
+        0% 3%, 2% 0%, 8% 2%, 12% 0%, 18% 3%, 25% 1%, 
+        32% 4%, 38% 1%, 45% 2%, 52% 0%, 58% 3%, 65% 1%, 
+        72% 3%, 78% 0%, 85% 2%, 92% 0%, 98% 3%, 100% 8%,
+        98% 15%, 100% 22%, 97% 28%, 100% 35%, 98% 42%, 
+        100% 48%, 97% 55%, 100% 62%, 98% 68%, 100% 75%, 
+        97% 82%, 100% 88%, 98% 95%, 92% 100%, 85% 98%, 
+        78% 100%, 72% 97%, 65% 100%, 58% 97%, 52% 100%, 
+        45% 98%, 38% 100%, 32% 96%, 25% 100%, 18% 97%, 
+        12% 100%, 8% 98%, 2% 100%, 0% 97%, 3% 88%, 
+        0% 82%, 2% 75%, 0% 68%, 3% 62%, 0% 55%, 2% 48%, 
+        0% 42%, 3% 35%, 0% 28%, 2% 22%, 0% 15%, 3% 8%
+    );
+}
+
+.game-parchment::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 15% 25%, rgba(139, 69, 19, 0.1) 0%, transparent 8%),
+        radial-gradient(circle at 85% 75%, rgba(160, 82, 45, 0.08) 0%, transparent 6%),
+        radial-gradient(circle at 65% 15%, rgba(139, 69, 19, 0.06) 0%, transparent 4%),
+        radial-gradient(circle at 25% 85%, rgba(160, 82, 45, 0.1) 0%, transparent 7%);
+    pointer-events: none;
+    mix-blend-mode: multiply;
+}
+
 .map-container {
-    background: linear-gradient(145deg, #DEB887, #D2B48C);
-    border-radius: 6px;
-    padding: 8px;
-    border: 2px solid #B8860B;
-    box-shadow: 0 2px 8px rgba(139, 69, 19, 0.3);
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(139, 69, 19, 0.12) 0%, transparent 25%),
+        radial-gradient(circle at 70% 70%, rgba(160, 82, 45, 0.1) 0%, transparent 30%),
+        radial-gradient(circle at 50% 10%, rgba(139, 69, 19, 0.08) 0%, transparent 20%),
+        linear-gradient(145deg, #F5DEB3 0%, #DEB887 40%, #D2B48C 80%, #C19A6B 100%);
+    border-radius: 0;
+    padding: 12px;
+    border: none;
+    position: relative;
     flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    filter: 
+        sepia(15%) 
+        saturate(1.1) 
+        contrast(1.05)
+        drop-shadow(2px 2px 5px rgba(139, 69, 19, 0.3));
+}
+
+/* Frayed parchment edges */
+.character-card::before,
+.map-container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: inherit;
+    z-index: -1;
+    clip-path: polygon(
+        0% 3%, 2% 0%, 8% 2%, 12% 0%, 18% 3%, 25% 1%, 
+        32% 4%, 38% 1%, 45% 2%, 52% 0%, 58% 3%, 65% 1%, 
+        72% 3%, 78% 0%, 85% 2%, 92% 0%, 98% 3%, 100% 8%,
+        98% 15%, 100% 22%, 97% 28%, 100% 35%, 98% 42%, 
+        100% 48%, 97% 55%, 100% 62%, 98% 68%, 100% 75%, 
+        97% 82%, 100% 88%, 98% 95%, 92% 100%, 85% 98%, 
+        78% 100%, 72% 97%, 65% 100%, 58% 97%, 52% 100%, 
+        45% 98%, 38% 100%, 32% 96%, 25% 100%, 18% 97%, 
+        12% 100%, 8% 98%, 2% 100%, 0% 97%, 3% 88%, 
+        0% 82%, 2% 75%, 0% 68%, 3% 62%, 0% 55%, 2% 48%, 
+        0% 42%, 3% 35%, 0% 28%, 2% 22%, 0% 15%, 3% 8%
+    );
+}
+
+.character-card::after,
+.map-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 15% 25%, rgba(139, 69, 19, 0.1) 0%, transparent 8%),
+        radial-gradient(circle at 85% 75%, rgba(160, 82, 45, 0.08) 0%, transparent 6%),
+        radial-gradient(circle at 65% 15%, rgba(139, 69, 19, 0.06) 0%, transparent 4%),
+        radial-gradient(circle at 25% 85%, rgba(160, 82, 45, 0.1) 0%, transparent 7%);
+    pointer-events: none;
+    mix-blend-mode: multiply;
 }
 
 #zoneMap {
-    border: 2px solid #8B4513;
-    border-radius: 4px;
-    background-color: #F5DEB3;
+    border: 1px solid #8B4513;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #F5DEB3 0%, #F4E4BC 50%, #DEB887 100%);
     display: block;
+    width: 120px;
+    height: 120px;
+    position: relative;
+    box-shadow:
+        0 0 0 2px #D2691E,
+        0 0 0 4px #CD853F,
+        inset 0 0 20px rgba(139, 69, 19, 0.1),
+        0 4px 8px rgba(139, 69, 19, 0.3);
+}
+
+.minimap-info {
+    margin-top: 8px;
+    text-align: center;
+}
+
+.minimap-info p {
+    margin: 4px 0;
+    font-size: 1.2em;
+    color: #000000;
+    font-weight: bold;
+    text-shadow: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
 }
 
 #gameCanvas {
@@ -79,8 +357,10 @@ h1 {
     background-color: #F5DEB3;
     display: block;
     margin: 0 auto;
-    width: 384px;
-    height: 384px;
+    width: 768px;
+    height: 768px;
+    max-width: 95vw;
+    max-height: 70vh;
     box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
@@ -88,33 +368,123 @@ h1 {
     image-rendering: crisp-edges;
 }
 
-.controls {
-    margin-top: 15px;
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .page-header {
+        margin-bottom: 10px;
+    }
+    
+    h1 {
+        font-size: 3.2em;
+        margin: 0 0 15px 0;
+        letter-spacing: 3px;
+        font-weight: 900;
+    }
+    
+    .game-container {
+        padding: 10px;
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .header-area {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        margin-bottom: 10px;
+        max-width: 100%;
+    }
+    
+    .character-card {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .character-profile img {
+        width: 72px;
+        height: 72px;
+    }
+    
+    .character-stats {
+        min-width: 120px;
+    }
+    
+    #zoneMap {
+        width: 180px;
+        height: 180px;
+    }
+
+    .minimap-info p {
+        font-size: 1.0em;
+        margin: 2px 0;
+        text-shadow: none;
+    }
+
+    .map-container {
+        padding: 10px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    #gameCanvas {
+        width: 100%;
+        max-width: 95vw;
+        height: auto;
+        max-height: 75vh;
+        aspect-ratio: 1;
+        touch-action: none; /* Prevent default touch behaviors */
+    }
+    
+    /* Add visual feedback for touch interactions */
+    #gameCanvas:active {
+        opacity: 0.9;
+    }
 }
 
-.controls p {
-    margin: 10px 0;
-    font-size: 1.1em;
-    color: #8B4513;
-    font-weight: bold;
-}
-
-#generate-zone {
-    background: linear-gradient(145deg, #DAA520, #B8860B);
-    color: #F4E4BC;
-    border: 2px solid #8B4513;
-    padding: 12px 24px;
-    font-size: 1em;
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 3px 10px rgba(139, 69, 19, 0.3);
-}
-
-#generate-zone:hover {
-    background: linear-gradient(145deg, #B8860B, #DAA520);
-    transform: translateY(-1px);
-    box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4);
+@media screen and (max-width: 480px) {
+    h1 {
+        font-size: 2.5em;
+        letter-spacing: 2px;
+        font-weight: 900;
+    }
+    
+    .game-container {
+        padding: 5px;
+    }
+    
+    .character-card {
+        flex-shrink: 0;
+        flex: 1;
+        padding: 15px;
+    }
+    
+    .character-profile img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .character-stats {
+        min-width: 140px;
+    }
+    
+    #zoneMap {
+        width: 160px;
+        height: 160px;
+    }
+    
+    #gameCanvas {
+        max-width: 95vw;
+        max-height: 70vh;
+    }
+    
+    .minimap-info p {
+        font-size: 0.85em;
+        margin: 2px 0;
+    }
 }

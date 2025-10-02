@@ -12,6 +12,9 @@ class Game {
         this.mapCanvas = document.getElementById('zoneMap');
         this.mapCtx = this.mapCanvas.getContext('2d');
         
+        // Set canvas sizes
+        this.setupCanvasSize();
+        
         // Configure canvases for crisp pixel art
         TextureManager.configureCanvas(this.ctx);
         TextureManager.configureCanvas(this.mapCtx);
@@ -29,6 +32,23 @@ class Game {
         
         // Load assets and start game
         this.loadAssets();
+    }
+    
+    setupCanvasSize() {
+        // Set internal canvas size to maintain pixel-perfect rendering
+        this.canvas.width = CANVAS_SIZE;
+        this.canvas.height = CANVAS_SIZE;
+        this.mapCanvas.width = 120;
+        this.mapCanvas.height = 120;
+        
+        // Handle resize for responsive design
+        window.addEventListener('resize', () => this.handleResize());
+        this.handleResize();
+    }
+    
+    handleResize() {
+        // Let CSS handle the display size for responsiveness
+        // The canvas internal size stays fixed for pixel-perfect rendering
     }
     
     async loadAssets() {
@@ -114,9 +134,48 @@ class Game {
             this.handleKeyPress(event);
         });
         
-        // Generate new zone button
-        document.getElementById('generate-zone').addEventListener('click', () => {
-            this.resetGame();
+        // Touch controls for mobile
+        this.setupTouchControls();
+    }
+    
+    setupTouchControls() {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const minSwipeDistance = 30;
+        
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        });
+        
+        this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            
+            // Determine if this was a swipe gesture
+            if (Math.abs(deltaX) > minSwipeDistance || Math.abs(deltaY) > minSwipeDistance) {
+                let direction = '';
+                
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    // Horizontal swipe
+                    direction = deltaX > 0 ? 'arrowright' : 'arrowleft';
+                } else {
+                    // Vertical swipe
+                    direction = deltaY > 0 ? 'arrowdown' : 'arrowup';
+                }
+                
+                // Simulate key press
+                this.handleKeyPress({ key: direction, preventDefault: () => {} });
+            }
+        });
+        
+        // Prevent default touch behaviors
+        this.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
         });
     }
     

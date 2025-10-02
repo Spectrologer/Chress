@@ -1,7 +1,7 @@
 // Game constants
 export const GRID_SIZE = 12;
-export const TILE_SIZE = 16;
-export const CANVAS_SIZE = GRID_SIZE * TILE_SIZE; // 192x192 pixels
+export const TILE_SIZE = 64;
+export const CANVAS_SIZE = GRID_SIZE * TILE_SIZE; // 768x768 pixels
 
 // Tile types
 export const TILE_TYPES = {
