@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, TILE_TYPES } from './constants.js';
+import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, TILE_TYPES, FOOD_ASSETS } from './constants.js';
 import { TextureManager } from './TextureManager.js';
 import { ConnectionManager } from './ConnectionManager.js';
 import { ZoneGenerator } from './ZoneGenerator.js';
@@ -125,7 +125,8 @@ class Game {
             currentZone.x, 
             currentZone.y, 
             this.zones, 
-            this.connectionManager.zoneConnections
+            this.connectionManager.zoneConnections,
+            FOOD_ASSETS
         );
         
         console.log('Generated grid:', this.grid ? `${this.grid.length}x${this.grid[0]?.length}` : 'null');
@@ -482,22 +483,21 @@ class Game {
         this.renderZoneMap();
     }
     
+    updateProgressBar(barId, currentValue, maxValue) {
+        const percentage = (currentValue / maxValue) * 100;
+        const barElement = document.getElementById(barId);
+        if (barElement) {
+            barElement.style.width = `${percentage}%`;
+        }
+    }
+
     updatePlayerStats() {
-        // Update thirst bar (💧)
-        const thirstPercentage = (this.player.getThirst() / 50) * 100;
-        const thirstBar = document.querySelector('.mana-bar .bar-fill');
-        if (thirstBar) {
-            thirstBar.style.width = `${thirstPercentage}%`;
-        }
-        // Update hunger bar (🥩)
-        const hungerPercentage = (this.player.getHunger() / 50) * 100;
-        const hungerBar = document.querySelector('.health-bar .bar-fill');
-        if (hungerBar) {
-            hungerBar.style.width = `${hungerPercentage}%`;
-        }
+        // Update thirst and hunger bars
+        this.updateProgressBar('thirst-progress', this.player.getThirst(), 50);
+        this.updateProgressBar('hunger-progress', this.player.getHunger(), 50);
 
         // Render inventory items
-        const inventoryGrid = document.querySelector('.inventory-grid');
+        const inventoryGrid = document.querySelector('.inventory-list');
         if (inventoryGrid) {
             inventoryGrid.innerHTML = '';
             this.player.inventory.forEach((item, idx) => {
@@ -505,9 +505,10 @@ class Game {
                 slot.className = 'inventory-slot';
                 slot.style.cursor = this.player.isDead() ? 'not-allowed' : 'pointer';
                 if (item.type === 'food') {
-                    slot.innerHTML = '<span title="Food">🥖</span>';
+                    const foodName = item.foodType.split('/').pop().split('.')[0].toLowerCase();
+                    slot.classList.add(`item-${foodName}`);
                 } else if (item.type === 'water') {
-                    slot.innerHTML = '<span title="Water">💧</span>';
+                    slot.classList.add('item-water');
                 }
                 slot.onclick = () => {
                     if (this.player.isDead()) return;
@@ -521,7 +522,7 @@ class Game {
                 };
                 inventoryGrid.appendChild(slot);
             });
-            for (let i = this.player.inventory.length; i < 4; i++) {
+            for (let i = this.player.inventory.length; i < 6; i++) {
                 const slot = document.createElement('div');
                 slot.className = 'inventory-slot';
                 inventoryGrid.appendChild(slot);
@@ -612,9 +613,13 @@ class Game {
         
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
-                const tileType = this.grid[y][x];
+                const tile = this.grid[y][x];
                 try {
-                    this.textureManager.renderTile(this.ctx, x, y, tileType, this.grid);
+                    if (tile && tile.type === TILE_TYPES.FOOD) {
+                        this.textureManager.renderTile(this.ctx, x, y, tile.type, this.grid, tile.foodType);
+                    } else {
+                        this.textureManager.renderTile(this.ctx, x, y, tile, this.grid);
+                    }
                 } catch (error) {
                     console.error(`Error rendering tile at ${x},${y}:`, error);
                     // Fallback rendering

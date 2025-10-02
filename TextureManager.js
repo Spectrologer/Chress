@@ -730,10 +730,9 @@ export class TextureManager {
     }
 
     renderFoodTile(ctx, x, y, pixelX, pixelY, grid) {
-        // Use position-based seeded random to ensure consistent food type for same location
-        const seed = x * 1000 + y;
-        const foodIndex = seed % FOOD_ASSETS.length;
-        const foodAsset = FOOD_ASSETS[foodIndex];
+        // Use the stored foodType from the grid tile, don't re-seed
+        const tile = grid[y][x];
+        const foodAsset = tile.foodType;
         const foodKey = foodAsset.replace('.png', '').replace('/', '_');
 
         // First draw the directional floor background (like rock, shrubbery, etc.)

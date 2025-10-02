@@ -4,9 +4,14 @@ export class ZoneGenerator {
     static zoneCounter = 0;
     constructor() {
         this.grid = null;
+        this.currentZoneX = null;
+        this.currentZoneY = null;
     }
 
-    generateZone(zoneX, zoneY, existingZones, zoneConnections) {
+    generateZone(zoneX, zoneY, existingZones, zoneConnections, foodAssets) {
+        this.currentZoneX = zoneX;
+        this.currentZoneY = zoneY;
+
         // Check if this zone already exists
         const zoneKey = `${zoneX},${zoneY}`;
         if (existingZones.has(zoneKey)) {
@@ -31,7 +36,7 @@ export class ZoneGenerator {
             this.addRandomFeatures();
             ZoneGenerator.zoneCounter++;
             if (ZoneGenerator.zoneCounter % 9 === 0) {
-                this.addRandomItem();
+                this.addRandomItem(foodAssets);
             }
         }
         
@@ -108,10 +113,22 @@ export class ZoneGenerator {
         }
     }
 
-    addRandomItem() {
+    addRandomItem(foodAssets) {
         // Add one water OR food item per zone (randomly choose which)
         const isWater = Math.random() < 0.5;
-        const itemType = isWater ? TILE_TYPES.WATER : TILE_TYPES.FOOD;
+        let itemType;
+        if (isWater) {
+            itemType = TILE_TYPES.WATER;
+        } else {
+            // Use seeded random based on zone position to ensure consistency
+            const zoneKey = this.getZoneKey();
+            const seed = this.hashCode(zoneKey) % foodAssets.length;
+            const selectedFood = foodAssets[seed];
+            itemType = {
+                type: TILE_TYPES.FOOD,
+                foodType: selectedFood
+            };
+        }
         
         // Try to place the item in a valid location (max 50 attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
@@ -234,5 +251,20 @@ export class ZoneGenerator {
                 this.grid[y][x] = TILE_TYPES.FLOOR;
             }
         }
+    }
+
+    getZoneKey() {
+        return `${this.currentZoneX},${this.currentZoneY}`;
+    }
+
+    hashCode(str) {
+        let hash = 0;
+        if (str.length === 0) return hash;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convert to 32bit integer
+        }
+        return Math.abs(hash);
     }
 }

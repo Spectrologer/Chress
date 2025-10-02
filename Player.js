@@ -54,14 +54,22 @@ export class Player {
         // Check if the new position is walkable
         if (this.isWalkable(newX, newY, grid)) {
             // Check if there's an item to pick up at the new position
-            const tileType = grid[newY][newX];
-            if (tileType === TILE_TYPES.WATER) {
-                this.inventory.push({ type: 'water' });
-                grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
-            } else if (tileType === TILE_TYPES.FOOD) {
-                this.inventory.push({ type: 'food' });
-                grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
-            }
+            const tile = grid[newY][newX];
+                if (tile === TILE_TYPES.WATER) {
+                    if (this.inventory.length < 6) {
+                        this.inventory.push({ type: 'water' });
+                    } else {
+                        this.restoreThirst(10);
+                    }
+                    grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
+                } else if (tile && tile.type === TILE_TYPES.FOOD) {
+                    if (this.inventory.length < 6) {
+                        this.inventory.push({ type: 'food', foodType: tile.foodType });
+                    } else {
+                        this.restoreHunger(10);
+                    }
+                    grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
+                }
             this.x = newX;
             this.y = newY;
             return true;
@@ -76,13 +84,13 @@ export class Player {
             return false;
         }
         
-        const tileType = grid[y][x];
+        const tile = grid[y][x];
         
         // Player can walk on floor, exit, water, and food tiles
-        return tileType === TILE_TYPES.FLOOR || 
-               tileType === TILE_TYPES.EXIT ||
-               tileType === TILE_TYPES.WATER ||
-               tileType === TILE_TYPES.FOOD;
+        return tile === TILE_TYPES.FLOOR || 
+               tile === TILE_TYPES.EXIT ||
+               tile === TILE_TYPES.WATER ||
+               (tile && tile.type === TILE_TYPES.FOOD);
     }
 
     setPosition(x, y) {

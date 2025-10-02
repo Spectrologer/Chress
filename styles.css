@@ -1,3 +1,5 @@
+/* This is a mobile browser game meant to be played in portrait mode. All design considerations should adhere to this. */
+
 /* Global Styles */
 * {
     margin: 0;
@@ -31,7 +33,6 @@ body {
     transform: translateY(-120px) scale(0.85);
     pointer-events: none;
 }
-}
 
 .bichress-header-img {
     max-width: 420px;
@@ -54,7 +55,6 @@ body {
     .page-header {
         margin-bottom: 12px;
     }
-}
 }
 
 .game-container {
@@ -81,32 +81,157 @@ body {
 }
 
 /* Character Card Deluxe Parchment Theme */
-.character-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
-    background: 
-        /* Fine texture overlay */
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path fill="%239C7E4F" fill-opacity="0.1" d="M0 2h2V0h2v4H2v-2H0V2z"></path></svg>'),
-        /* Parchment stains */
-        radial-gradient(circle at 10% 20%, rgba(188, 143, 143, 0.2) 0%, transparent 40%),
-        radial-gradient(circle at 85% 70%, rgba(210, 180, 140, 0.25) 0%, transparent 50%),
-        /* Base parchment gradient */
-        linear-gradient(140deg, #FDF5E6 0%, #FAEBD7 30%, #F5DEB3 60%, #DEB887 100%);
-    
-    padding: 18px;
-    position: relative;
-    
-    /* Decorative multi-layered border */
-    border: 1px solid #C19A6B;
-    box-shadow: 
-        inset 0 0 20px rgba(139, 69, 19, 0.15), /* Inner shadow for depth */
-        0 0 0 3px #A0522D, /* Mid border */
-        0 0 0 5px #8B4513, /* Outer border */
-        8px 8px 16px rgba(0, 0, 0, 0.5); /* Main drop shadow */
 
-    /* Filters for an aged, rich look */
-    filter: sepia(30%) saturate(1.3) contrast(1.05) brightness(1.05);
+.modern-player-card {
+    background: #fffbe9;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 0 #e2cfa2;
+    padding: 18px 12px;
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    border: 2px solid #e2cfa2;
+}
+
+.player-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: space-between;
+}
+.player-portrait {
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    border: 3px solid #7A4A3A;
+    padding: 2px;
+    background: linear-gradient(145deg, #D2B48C, #B8860B);
+    object-fit: cover;
+    box-shadow:
+        inset 0 0 6px rgba(0, 0, 0, 0.4),
+        0 3px 8px rgba(0, 0, 0, 0.15);
+}
+.player-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.player-name {
+    font-family: 'Cinzel', serif;
+    font-size: 2em;
+    font-weight: 700;
+    color: #7a5c2e;
+    letter-spacing: 1px;
+}
+.player-level {
+    font-size: 1em;
+    color: #b89b5e;
+    font-family: 'Courier New', monospace;
+}
+.player-health {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.heart-icon {
+    width: 24px;
+    height: 24px;
+}
+.player-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.bar-label {
+    width: 50px;
+    text-align: right;
+    font-weight: 600;
+    color: #7a5c2e;
+}
+.bar-track {
+    flex: 1;
+    height: 14px;
+    background: #f5e6c0;
+    border-radius: 7px;
+    border: 1px solid #e2cfa2;
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 7px;
+    transition: width 0.3s ease-in-out;
+}
+#hunger-progress {
+    background: linear-gradient(90deg, #d32f2f 60%, #ff5252 100%);
+}
+#thirst-progress {
+    background: linear-gradient(90deg, #1976d2 60%, #448aff 100%);
+}
+.player-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+}
+
+.map-inventory-wrapper {
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.player-inventory {
+    flex: 1;
+}
+
+.inventory-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+
+.inventory-slot {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f5e6c0;
+    border: 1px solid #e2cfa2;
+    border-radius: 6px;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.player-map {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.player-map canvas {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    border: 1px solid #e2cfa2;
+    background: #f5e6c0;
+}
+.minimap-info {
+    font-size: 0.9em;
+    color: #7a5c2e;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
 }
 
 .character-profile {
@@ -170,28 +295,56 @@ body {
 }
 
 .character-stats {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+        "profile bar"
+        "extra extra";
+    gap: 15px;
+    align-items: start;
+}
+
+.character-bars {
     display: flex;
     flex-direction: column;
-    gap: 12px; /* Increased gap */
-    min-width: 180px;
-    flex: 1;
+    gap: 5px;
+    grid-area: bar;
 }
 
 .character-extra {
-    margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Responsive columns */
+    grid-template-areas: "menu map inventory";
+    gap: 10px; /* Increased gap for better spacing */
+    grid-area: extra;
+    width: 100%; /* Ensure it uses full available width */
+}
+
+.map-container {
+    position: relative;
+    flex-shrink: 0;
     display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column; /* Changed to column for better mobile layout */
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Adjusted gap */
+    grid-area: map;
 }
 
 .stats-menu, .inventory-menu {
-    flex: 1;
-    min-width: 140px;
+    min-width: 0; /* Remove min-width to allow shrinking */
+}
+
+.stats-menu {
+    grid-area: menu;
+}
+
+.inventory-menu {
+    grid-area: inventory;
 }
 
 .stats-menu h4, .inventory-menu h4 {
-    margin: 0 0 10px 0;
+    margin: 0 0 5px 0;
     font-size: 1.5em;
     color: #3A2418;
     text-align: center;
@@ -204,7 +357,7 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 10px;
+    gap: 2px;
     margin-bottom: 8px;
     place-items: center;
 }
@@ -214,40 +367,33 @@ body {
     border: none;
     border-radius: 6px;
     padding: 0;
-    font-size: 4.2em;
+    font-size: 3em;
     color: #3A2418;
     text-align: center;
     font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 55px;
+    min-height: 40px;
     box-shadow: none;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .inventory-grid {
-    background: 
-        repeating-linear-gradient(45deg, 
-            rgba(139, 69, 19, 0.2), 
-            rgba(139, 69, 19, 0.2) 10px, 
-            rgba(139, 69, 19, 0.3) 10px, 
+    background:
+        repeating-linear-gradient(45deg,
+            rgba(139, 69, 19, 0.2),
+            rgba(139, 69, 19, 0.2) 10px,
+            rgba(139, 69, 19, 0.3) 10px,
             rgba(139, 69, 19, 0.3) 20px);
     border: 2px solid #8B4513;
     border-radius: 6px;
-    min-height: 70px;
+    min-height: 140px;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
     padding: 5px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-}
-
-.inventory-slot {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); /* Responsive grid */
+    gap: 5px; /* Add gap between items */
 }
 
 .inventory-slot img {
@@ -256,27 +402,202 @@ body {
     object-fit: contain;
 }
 
+.inventory-slot.item-water {
+    background-image: url('Images/water.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-beaf {
+    background-image: url('Images/Food/Beaf.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-calamari {
+    background-image: url('Images/Food/Calamari.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-fish {
+    background-image: url('Images/Food/Fish.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-fortunecookie {
+    background-image: url('Images/Food/FortuneCookie.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-honey {
+    background-image: url('Images/Food/Honey.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-meat {
+    background-image: url('Images/Food/Meat.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-noodle {
+    background-image: url('Images/Food/Noodle.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-nut {
+    background-image: url('Images/Food/Nut.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-nut2 {
+    background-image: url('Images/Food/Nut2.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-octopus {
+    background-image: url('Images/Food/Octopus.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-onigiri {
+    background-image: url('Images/Food/Onigiri.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-seed1 {
+    background-image: url('Images/Food/Seed1.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-seed2 {
+    background-image: url('Images/Food/Seed2.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-seed3 {
+    background-image: url('Images/Food/Seed3.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-seedbig1 {
+    background-image: url('Images/Food/SeedBig1.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-seedbig2 {
+    background-image: url('Images/Food/SeedBig2.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-seedbig3 {
+    background-image: url('Images/Food/SeedBig3.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-seedlarge {
+    background-image: url('Images/Food/SeedLarge.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-seedlargewhite {
+    background-image: url('Images/Food/SeedLargeWhite.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-shrimp {
+    background-image: url('Images/Food/Shrimp.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-sushi {
+    background-image: url('Images/Food/Sushi.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-sushi2 {
+    background-image: url('Images/Food/Sushi2.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-tealeaf {
+    background-image: url('Images/Food/TeaLeaf.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.item-yakitori {
+    background-image: url('Images/Food/Yakitori.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 /* Redesigned Stat Bars */
 .stat-bar {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     font-size: 14px;
     font-weight: bold;
 }
 
 .stat-label {
     color: #3A2418;
-    width: 28px;
+    width: 24px;
     text-align: center;
-    font-size: 2em;
+    font-size: 1.5em;
     font-family: 'Cinzel', serif;
     font-weight: 700;
 }
 
 .bar-container {
-    flex: 1;
-    height: 16px; /* Taller bar */
+    flex: 0.5;
+    height: 12px; /* Taller bar */
     background: rgba(0, 0, 0, 0.3); /* Darker background for contrast */
     border: 1px solid #61382B;
     border-radius: 8px;
@@ -340,12 +661,7 @@ h1 {
     margin: 15px 0;
 }
 
-.minimap-area {
-    display: flex;
-    justify-content: center;
-    margin: 15px 0;
-    padding-bottom: 20px;
-}
+
 
 .game-parchment {
     background: 
@@ -406,18 +722,6 @@ h1 {
 }
 
 .map-container {
-    background: 
-        /* Aged parchment stains and texture */
-        radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.18) 0%, transparent 20%),
-        radial-gradient(circle at 75% 75%, rgba(160, 82, 45, 0.15) 0%, transparent 25%),
-        radial-gradient(circle at 50% 10%, rgba(205, 133, 63, 0.12) 0%, transparent 15%),
-        radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 18%),
-        radial-gradient(circle at 80% 20%, rgba(160, 82, 45, 0.08) 0%, transparent 12%),
-        /* Main parchment background */
-        linear-gradient(145deg, #F5DEB3 0%, #F0E68C 20%, #DEB887 40%, #D2B48C 70%, #C19A6B 100%);
-    border-radius: 0;
-    padding: 20px;
-    border: none;
     position: relative;
     flex-shrink: 0;
     display: flex;
@@ -425,17 +729,11 @@ h1 {
     align-items: center;
     justify-content: center;
     gap: 15px;
-    filter: 
-        sepia(20%) 
-        saturate(1.15) 
-        contrast(1.08)
-        brightness(1.02)
-        drop-shadow(3px 3px 8px rgba(139, 69, 19, 0.4));
+    grid-area: map;
 }
 
 /* Frayed parchment edges */
-.character-card::before,
-.map-container::before {
+.character-card::before {
     content: '';
     position: absolute;
     top: -2px;
@@ -445,29 +743,28 @@ h1 {
     background: inherit;
     z-index: -1;
     clip-path: polygon(
-        0% 3%, 2% 0%, 8% 2%, 12% 0%, 18% 3%, 25% 1%, 
-        32% 4%, 38% 1%, 45% 2%, 52% 0%, 58% 3%, 65% 1%, 
+        0% 3%, 2% 0%, 8% 2%, 12% 0%, 18% 3%, 25% 1%,
+        32% 4%, 38% 1%, 45% 2%, 52% 0%, 58% 3%, 65% 1%,
         72% 3%, 78% 0%, 85% 2%, 92% 0%, 98% 3%, 100% 8%,
-        98% 15%, 100% 22%, 97% 28%, 100% 35%, 98% 42%, 
-        100% 48%, 97% 55%, 100% 62%, 98% 68%, 100% 75%, 
-        97% 82%, 100% 88%, 98% 95%, 92% 100%, 85% 98%, 
-        78% 100%, 72% 97%, 65% 100%, 58% 97%, 52% 100%, 
-        45% 98%, 38% 100%, 32% 96%, 25% 100%, 18% 97%, 
-        12% 100%, 8% 98%, 2% 100%, 0% 97%, 3% 88%, 
-        0% 82%, 2% 75%, 0% 68%, 3% 62%, 0% 55%, 2% 48%, 
+        98% 15%, 100% 22%, 97% 28%, 100% 35%, 98% 42%,
+        100% 48%, 97% 55%, 100% 62%, 98% 68%, 100% 75%,
+        97% 82%, 100% 88%, 98% 95%, 92% 100%, 85% 98%,
+        78% 100%, 72% 97%, 65% 100%, 58% 97%, 52% 100%,
+        45% 98%, 38% 100%, 32% 96%, 25% 100%, 18% 97%,
+        12% 100%, 8% 98%, 2% 100%, 0% 97%, 3% 88%,
+        0% 82%, 2% 75%, 0% 68%, 3% 62%, 0% 55%, 2% 48%,
         0% 42%, 3% 35%, 0% 28%, 2% 22%, 0% 15%, 3% 8%
     );
 }
 
-.character-card::after,
-.map-container::after {
+.character-card::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
         radial-gradient(circle at 15% 25%, rgba(139, 69, 19, 0.1) 0%, transparent 8%),
         radial-gradient(circle at 85% 75%, rgba(160, 82, 45, 0.08) 0%, transparent 6%),
         radial-gradient(circle at 65% 15%, rgba(139, 69, 19, 0.06) 0%, transparent 4%),
@@ -577,21 +874,40 @@ h1 {
 
     .character-card {
         width: 100%;
-        display: grid;
-        grid-template-columns: auto 1fr;
-        grid-template-areas: "profile stats";
-        align-items: flex-start;
+        display: grid; /* Changed to grid */
+        grid-template-columns: 1fr; /* Single column layout */
+        align-items: center;
         padding: 12px;
         gap: 12px;
     }
 
     .character-profile {
-        grid-area: profile;
+        text-align: center;
+        grid-area: profile; /* Assign grid area */
+    }
+
+    .character-stats {
+        display: grid;
+        width: 100%; /* Ensure it takes full width */
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto;
+        grid-template-areas:
+            "profile bar"
+            "extra extra";
+        gap: 10px;
+        align-items: start; /* Align items to the start */
+    }
+
+    .character-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
     }
 
     .character-profile img {
         width: clamp(68px, 20vw, 80px);
         height: clamp(68px, 20vw, 80px);
+        margin: 0 auto;
     }
 
     .character-name {
@@ -602,32 +918,22 @@ h1 {
         font-size: clamp(0.8em, 3vw, 0.9em);
     }
 
-    .character-stats {
-        grid-area: stats;
-        width: 100%;
-        min-width: auto;
-        gap: 8px;
-    }
-
-    .character-extra {
-        width: 100%;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 8px;
+    .bar-container {
+        height: 8px;
     }
 
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         grid-template-rows: repeat(2, 1fr);
-        gap: 5px;
+        gap: 2px;
         place-items: center;
     }
 
     .stat-item {
-        min-height: 40px;
-        font-size: clamp(2.2em, 6.5vw, 3em);
-        padding: 6px 4px;
+        min-height: 20px;
+        font-size: clamp(1em, 3vw, 1.5em);
+        padding: 4px 2px;
     }
 
     #zoneMap {
@@ -642,10 +948,7 @@ h1 {
         text-shadow: none;
     }
 
-    .minimap-area {
-        margin: 5px 0;
-        padding-bottom: 5px;
-    }
+
 
     .map-container {
         padding: 12px;

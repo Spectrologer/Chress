@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- This is a mobile browser game meant to be played in portrait mode. All design considerations should adhere to this. -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,25 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Creepster&family=Nosifer&family=Griffy&family=MedievalSharp&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .inventory-slot span {
-            font-size: 2.5em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            width: 100%;
-        }
-        .inventory-slot {
-            min-width: 48px;
-            min-height: 48px;
-            height: 56px;
-            width: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
 </head>
 <body>
     <div class="page-header">
@@ -34,45 +16,51 @@
     </div>
     <div class="game-container">
         <div class="header-area">
-            <div class="character-card">
-                <div class="character-profile">
-                    <div class="character-hearts">❤️ ❤️ ❤️</div>
-                    <div class="character-name">CHALK</div>
-                    <div class="character-level">LVL 1</div>
-                    <img src="Images/faceset.png" alt="Character Profile" id="character-face">
-                </div>
-                <div class="character-stats">
-                    <div class="stat-bar health-bar">
-                        <div class="stat-label"><span>🥩</span></div>
-                        <div class="bar-container">
-                            <div class="bar-fill health-fill" style="width: 85%"></div>
-                            <div class="bar-notches"></div>
+            <div class="character-card-container"> <!-- New container -->
+                <div class="character-card modern-player-card">
+                    <div class="player-header">
+                        <img src="Images/faceset.png" alt="Player Portrait" class="player-portrait">
+                        <div class="player-info">
+                            <div class="player-name">CHALK</div>
+                            <div class="player-level">Level 1</div>
+                        </div>
+                        <div class="player-health">
+                            <img src="Images/heart.png" alt="Heart" class="heart-icon">
+                            <img src="Images/heart.png" alt="Heart" class="heart-icon">
+                            <img src="Images/heart.png" alt="Heart" class="heart-icon">
                         </div>
                     </div>
-                    <div class="stat-bar mana-bar">
-                        <div class="stat-label"><span>💧</span></div>
-                        <div class="bar-container">
-                            <div class="bar-fill mana-fill" style="width: 60%"></div>
-                            <div class="bar-notches"></div>
-                        </div>
-                    </div>
-                    <div class="character-extra">
-                        <div class="stats-menu">
-                            <h4>Stats</h4>
-                            <div class="stats-grid">
-                                <div class="stat-item">♦ 10</div>
-                                <div class="stat-item">♠ 10</div>
-                                <div class="stat-item">♣ 10</div>
-                                <div class="stat-item">♥ 7</div>
+                    <div class="player-bars">
+                        <div class="bar hunger-bar">
+                            <span class="bar-label">Hunger</span>
+                            <div class="bar-track">
+                                <div id="hunger-progress" class="progress-fill"></div>
                             </div>
                         </div>
-                        <div class="inventory-menu">
-                            <h4>Inventory</h4>
-                            <div class="inventory-grid">
-                                <div class="inventory-slot"></div>
-                                <div class="inventory-slot"></div>
-                                <div class="inventory-slot"></div>
-                                <div class="inventory-slot"></div>
+                        <div class="bar thirst-bar">
+                            <span class="bar-label">Thirst</span>
+                            <div class="bar-track">
+                                <div id="thirst-progress" class="progress-fill"></div>
+                            </div>
+                    </div>
+                    <div class="player-details">
+                        <div class="map-inventory-wrapper">
+                            <div class="player-map">
+                                <canvas id="zoneMap"></canvas>
+                                <div class="minimap-info">
+                                    <span>Pos: <span id="player-pos">0,0</span></span>
+                                    <span>Zone: <span id="current-zone">0,0</span></span>
+                                </div>
+                            </div>
+                            <div class="player-inventory">
+                                <div class="inventory-list">
+                                    <div class="inventory-slot"></div>
+                                    <div class="inventory-slot"></div>
+                                    <div class="inventory-slot"></div>
+                                    <div class="inventory-slot"></div>
+                                    <div class="inventory-slot"></div>
+                                    <div class="inventory-slot"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -82,15 +70,6 @@
         <div class="game-area">
             <div class="game-parchment">
                 <canvas id="gameCanvas"></canvas>
-            </div>
-        </div>
-        <div class="minimap-area">
-            <div class="map-container">
-                <canvas id="zoneMap"></canvas>
-                <div class="minimap-info">
-                    <p>Position: <span id="player-pos">0, 0</span></p>
-                    <p>Zone: <span id="current-zone">0, 0</span></p>
-                </div>
             </div>
         </div>
     </div>
