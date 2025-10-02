@@ -421,10 +421,12 @@ class Game {
     }
     
     handleKeyPress(event) {
+        if (this.player.isDead()) {
+            return;
+        }
         const currentPos = this.player.getPosition();
         let newX = currentPos.x;
         let newY = currentPos.y;
-        
         switch(event.key.toLowerCase()) {
             case 'w':
             case 'arrowup':
@@ -443,18 +445,12 @@ class Game {
                 newX++;
                 break;
             default:
-                return; // Don't prevent default for other keys
+                return;
         }
-        
-        // Prevent default behavior for movement keys
         event.preventDefault();
-        
-        // Attempt to move player
         this.player.move(newX, newY, this.grid, (zoneX, zoneY, exitSide) => {
             this.transitionToZone(zoneX, zoneY, exitSide);
         });
-        
-        // Update UI
         this.updatePlayerPosition();
         this.updatePlayerStats();
     }
@@ -503,18 +499,18 @@ class Game {
         // Render inventory items
         const inventoryGrid = document.querySelector('.inventory-grid');
         if (inventoryGrid) {
-            // Clear previous items
             inventoryGrid.innerHTML = '';
             this.player.inventory.forEach((item, idx) => {
                 const slot = document.createElement('div');
                 slot.className = 'inventory-slot';
-                slot.style.cursor = 'pointer';
+                slot.style.cursor = this.player.isDead() ? 'not-allowed' : 'pointer';
                 if (item.type === 'food') {
                     slot.innerHTML = '<span title="Food">🥖</span>';
                 } else if (item.type === 'water') {
                     slot.innerHTML = '<span title="Water">💧</span>';
                 }
                 slot.onclick = () => {
+                    if (this.player.isDead()) return;
                     if (item.type === 'food') {
                         this.player.restoreHunger(10);
                     } else if (item.type === 'water') {
@@ -525,7 +521,6 @@ class Game {
                 };
                 inventoryGrid.appendChild(slot);
             });
-            // Fill remaining slots
             for (let i = this.player.inventory.length; i < 4; i++) {
                 const slot = document.createElement('div');
                 slot.className = 'inventory-slot';
@@ -632,10 +627,12 @@ class Game {
     
     drawPlayer() {
         const pos = this.player.getPosition();
-        const playerImage = this.textureManager.getImage('SeparateAnim/Special2');
-        
+        let spriteKey = this.player.sprite;
+        if (this.player.isDead()) {
+            spriteKey = 'SeparateAnim/dead';
+        }
+        const playerImage = this.textureManager.getImage(spriteKey);
         if (playerImage && playerImage.complete) {
-            // Draw the Special2.png image for the player
             this.ctx.drawImage(
                 playerImage,
                 pos.x * TILE_SIZE, 
@@ -644,7 +641,6 @@ class Game {
                 TILE_SIZE
             );
         } else {
-            // Fallback to colored rectangle if image isn't loaded
             this.ctx.fillStyle = '#ff4444';
             this.ctx.fillRect(
                 pos.x * TILE_SIZE + 2, 

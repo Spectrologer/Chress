@@ -30,14 +30,14 @@
 </head>
 <body>
     <div class="page-header">
-        <h1>BiChress</h1>
+        <img src="Images/bichress.png" alt="BiChress Logo" class="bichress-header-img">
     </div>
     <div class="game-container">
         <div class="header-area">
             <div class="character-card">
                 <div class="character-profile">
                     <div class="character-hearts">❤️ ❤️ ❤️</div>
-                    <div class="character-name">CHAK</div>
+                    <div class="character-name">CHALK</div>
                     <div class="character-level">LVL 1</div>
                     <img src="Images/faceset.png" alt="Character Profile" id="character-face">
                 </div>
@@ -94,11 +94,23 @@
             </div>
         </div>
     </div>
-    <script type="module" src="constants.js"></script>
-    <script type="module" src="TextureManager.js"></script>
-    <script type="module" src="ConnectionManager.js"></script>
-    <script type="module" src="ZoneGenerator.js"></script>
-    <script type="module" src="Player.js"></script>
-    <script type="module" src="game.js"></script>
+        <script type="module" src="constants.js"></script>
+        <script type="module" src="TextureManager.js"></script>
+        <script type="module" src="ConnectionManager.js"></script>
+        <script type="module" src="ZoneGenerator.js"></script>
+        <script type="module" src="Player.js"></script>
+        <script type="module" src="game.js"></script>
+        <script>
+                            // Hide the BICHRESS header image after 3 seconds, with upward movement only
+                            window.addEventListener('DOMContentLoaded', function() {
+                                setTimeout(function() {
+                                    const header = document.querySelector('.page-header');
+                                    if (header) {
+                                        header.classList.add('hide-header');
+                                        setTimeout(() => header.style.display = 'none', 1800);
+                                    }
+                                }, 3000);
+                            });
+        </script>
 </body>
 </html>

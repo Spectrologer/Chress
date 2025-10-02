@@ -9,6 +9,8 @@ export class Player {
         this.thirst = 50;
         this.hunger = 50;
         this.inventory = [];
+        this.dead = false;
+        this.sprite = 'SeparateAnim/Special2';
         this.markZoneVisited(0, 0);
     }
 
@@ -185,15 +187,17 @@ export class Player {
     }
 
     reset() {
-        // Place player in front of the house at zone (0,0)
-        // House is at (3,3) to (5,5), so place player at (4,7) - centered in front
-        this.x = 4;
-        this.y = 7;
-        this.currentZone = { x: 0, y: 0 };
-        this.thirst = 50;
-        this.hunger = 50;
-        this.visitedZones.clear();
-        this.markZoneVisited(0, 0);
+    // Place player in front of the house at zone (0,0)
+    // House is at (3,3) to (5,5), so place player at (4,7) - centered in front
+    this.x = 4;
+    this.y = 7;
+    this.currentZone = { x: 0, y: 0 };
+    this.thirst = 50;
+    this.hunger = 50;
+    this.dead = false;
+    this.sprite = 'SeparateAnim/Special2';
+    this.visitedZones.clear();
+    this.markZoneVisited(0, 0);
     }
 
     // Thirst and Hunger management
@@ -207,10 +211,16 @@ export class Player {
 
     setThirst(value) {
         this.thirst = Math.max(0, Math.min(50, value));
+        if (this.thirst === 0) {
+            this.setDead();
+        }
     }
 
     setHunger(value) {
         this.hunger = Math.max(0, Math.min(50, value));
+        if (this.hunger === 0) {
+            this.setDead();
+        }
     }
 
     decreaseThirst(amount = 1) {
@@ -227,6 +237,17 @@ export class Player {
 
     restoreHunger(amount = 10) {
         this.setHunger(this.hunger + amount);
+    }
+
+    setDead() {
+        if (!this.dead) {
+            this.dead = true;
+            this.sprite = 'SeparateAnim/dead';
+        }
+    }
+
+    isDead() {
+        return this.dead;
     }
 
     onZoneTransition() {

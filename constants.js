@@ -48,7 +48,8 @@ export const IMAGE_ASSETS = [
     'dircle.png',
     'house.png',
     'water.png',
-    'SeparateAnim/Special2.png'
+    'SeparateAnim/Special2.png',
+    'SeparateAnim/dead.png'
 ];
 
 // Food image assets
