@@ -15,7 +15,11 @@ export class TextureManager {
             // Load regular assets
             IMAGE_ASSETS.forEach(assetName => {
                 let imageKey;
-                if (assetName.startsWith('floors/dirt/')) {
+                if (assetName === 'floors/frontier/desert.png') {
+                    imageKey = 'desert';
+                } else if (assetName === 'flora/succulent.png') {
+                    imageKey = 'succulent';
+                } else if (assetName.startsWith('floors/dirt/')) {
                     imageKey = assetName.replace('floors/dirt/', '').replace('.png', '');
                 } else {
                     imageKey = assetName.replace('.png', '');
@@ -483,7 +487,7 @@ export class TextureManager {
     }
 
     // Render a single tile with appropriate texture
-    renderTile(ctx, x, y, tileType, grid) {
+    renderTile(ctx, x, y, tileType, grid, zoneLevel) {
         const pixelX = x * TILE_SIZE;
         const pixelY = y * TILE_SIZE;
 
@@ -491,43 +495,48 @@ export class TextureManager {
         const actualType = tileType && tileType.type ? tileType.type : tileType;
 
         if (actualType === TILE_TYPES.EXIT) {
-            this.renderExitTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderExitTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.WALL) {
-            this.renderWallTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderWallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType >= TILE_TYPES.PINK_FLOOR && actualType <= TILE_TYPES.YELLOW_FLOOR) {
             // Tinted floors - render with color
             this.renderFloorTile(ctx, pixelX, pixelY, actualType);
         } else if (actualType === TILE_TYPES.FLOOR) {
-            this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+            this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.ROCK) {
-            this.renderRockTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderRockTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.GRASS) {
-            this.renderGrassTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderGrassTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.HOUSE) {
-            this.renderHouseTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.WATER) {
-            this.renderWaterTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderWaterTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.FOOD) {
-            this.renderFoodTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderFoodTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.ENEMY) {
-            this.renderEnemyTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderEnemyTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.AXE) {
-            this.renderAxeTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderAxeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.HAMMER) {
-            this.renderHammerTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderHammerTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.SPEAR) {
-            this.renderSpearTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderSpearTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.NOTE) {
-        this.renderNoteTile(ctx, x, y, pixelX, pixelY, grid);
-    } else if (actualType === TILE_TYPES.SHRUBBERY) {
-        this.renderGrassTile(ctx, x, y, pixelX, pixelY, grid);
+            this.renderNoteTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        } else if (actualType === TILE_TYPES.SHRUBBERY) {
+        this.renderGrassTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
     } else {
         this.renderFloorTile(ctx, pixelX, pixelY, actualType);
     }
     }
 
-    renderExitTile(ctx, x, y, pixelX, pixelY, grid) {
-        // Complex exit tile rendering with various directional textures
+    renderExitTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+    // Frontier zones (level >=4) use desert background for exit tiles
+        if (zoneLevel >= 4 && this.isImageLoaded('desert')) {
+            ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            return;
+        }
+        // ...existing code...
         if (this.shouldUseDirtTunnelHorizontal(x, y, grid) && this.isImageLoaded('dirt_tunnel')) {
             ctx.drawImage(this.images.dirt_tunnel, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else if (this.shouldUseDirtTunnelVertical(x, y, grid) && this.isImageLoaded('dirt_tunnel')) {
@@ -561,7 +570,23 @@ export class TextureManager {
         }
     }
 
-    renderWallTile(ctx, x, y, pixelX, pixelY, grid) {
+    renderWallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+        // Frontier zones (level >=4) use desert background and succulent on top
+        if (zoneLevel >= 4) {
+            if (this.isImageLoaded('desert')) {
+                ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = '#DEB887';
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            if (this.isImageLoaded('succulent')) {
+                ctx.drawImage(this.images.succulent, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = '#228B22'; // Green for succulent fallback
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            return;
+        }
         // First draw background dirt
         if (this.isImageLoaded('dircle')) {
             ctx.drawImage(this.images.dircle, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
@@ -590,7 +615,18 @@ export class TextureManager {
         }
     }
 
-    renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid) {
+    renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+    // Frontier zones (level >=4) use desert texture for all passable tiles
+        if (zoneLevel >= 4) {
+            if (this.isImageLoaded('desert')) {
+                ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = '#C2B280'; // Tarnished gold for desert
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            return;
+        }
+
         // Floor tiles use the same sophisticated directional logic as exits
         if (this.shouldUseDirtCorner2NorthSouth(x, y, grid) && this.isImageLoaded('dirt_corner2')) {
             ctx.drawImage(this.images.dirt_corner2, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
@@ -624,9 +660,9 @@ export class TextureManager {
         }
     }
 
-    renderRockTile(ctx, x, y, pixelX, pixelY, grid) {
+    renderRockTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
         // Rock tiles: draw dirt background first, then rock on top
-        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Then draw rock on top
         if (this.isImageLoaded('rock')) {
@@ -637,9 +673,9 @@ export class TextureManager {
         }
     }
 
-    renderGrassTile(ctx, x, y, pixelX, pixelY, grid) {
+    renderGrassTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
         // Grass tiles: draw dirt background first, then shrubbery on top
-        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Then draw shrubbery on top
         if (this.isImageLoaded('shrubbery')) {
@@ -650,9 +686,9 @@ export class TextureManager {
         }
     }
 
-    renderHouseTile(ctx, x, y, pixelX, pixelY, grid) {
+    renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
         // First render dirt background
-        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Then render the house part
         if (this.isImageLoaded('house')) {
@@ -734,9 +770,9 @@ export class TextureManager {
         ctx.msImageSmoothingEnabled = false;
     }
 
-    renderWaterTile(ctx, x, y, pixelX, pixelY, grid) {
+    renderWaterTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
         // First draw the directional floor background (like rock, shrubbery, etc.)
-        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the water image if loaded, otherwise use fallback
         if (this.isImageLoaded('water')) {
@@ -754,14 +790,18 @@ export class TextureManager {
         }
     }
 
-    renderFoodTile(ctx, x, y, pixelX, pixelY, grid) {
+    renderFoodTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
         // Use the stored foodType from the grid tile
         const tile = grid[y][x];
         const foodAsset = tile.foodType;
         const foodKey = foodAsset.replace('.png', '').replace('/', '_');
 
-        // First draw the directional floor background (like rock, shrubbery, etc.)
-        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+        // First draw the base tile
+        if (zoneLevel >= 4 && this.isImageLoaded('desert')) {
+            ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        }
 
         // Try to draw the food image if loaded, otherwise use fallback
         if (this.isImageLoaded(foodKey)) {
@@ -779,13 +819,17 @@ export class TextureManager {
         }
     }
 
-    renderEnemyTile(ctx, x, y, pixelX, pixelY, grid) {
+    renderEnemyTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
         // Use the stored enemyType from the grid tile
         const tile = grid[y][x];
         let enemyKey = 'fauna/lizardy';
 
-        // First draw the directional floor background
-        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+        // First draw the base tile
+        if (zoneLevel >= 4 && this.isImageLoaded('desert')) {
+            ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        }
 
         // Try to draw the enemy image if loaded, otherwise use fallback
         if (this.isImageLoaded(enemyKey)) {
@@ -803,9 +847,13 @@ export class TextureManager {
         }
     }
 
-    renderAxeTile(ctx, x, y, pixelX, pixelY, grid) {
-        // First draw the directional floor background
-        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+    renderAxeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+        // First draw the base tile
+        if (zoneLevel >= 4 && this.isImageLoaded('desert')) {
+            ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        }
 
         // Try to draw the axe image if loaded, otherwise use fallback
         if (this.isImageLoaded('axe')) {
@@ -823,9 +871,9 @@ export class TextureManager {
         }
     }
 
-    renderHammerTile(ctx, x, y, pixelX, pixelY, grid) {
-        // First draw the directional floor background
-        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+    renderHammerTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+    // First draw the base tile
+    this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the hammer image if loaded, otherwise use fallback
         if (this.isImageLoaded('hammer')) {
@@ -843,9 +891,9 @@ export class TextureManager {
         }
     }
 
-    renderSpearTile(ctx, x, y, pixelX, pixelY, grid) {
-        // First draw the directional floor background
-        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+    renderSpearTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+    // First draw the base tile
+    this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the spear image if loaded, otherwise use fallback
         if (this.isImageLoaded('spear')) {
@@ -888,9 +936,9 @@ export class TextureManager {
         }
     }
 
-    renderNoteTile(ctx, x, y, pixelX, pixelY, grid) {
-        // First draw the directional floor background
-        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+    renderNoteTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+    // First draw the base tile
+    this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the note image if loaded, otherwise use fallback
         if (this.isImageLoaded('note')) {

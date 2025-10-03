@@ -55,7 +55,8 @@ export class ConnectionManager {
                 // Use zone coordinates for some determinacy in position while still randomizing existence
                 const seed = (zoneX * 73 + zoneY * 97) % validRange;
                 const position = seed + 2;
-                return position;
+                // Clamp position to valid range to prevent out-of-bounds errors
+                return Math.max(2, Math.min(GRID_SIZE - 3, position));
             }
             return null;
         }
@@ -91,7 +92,8 @@ export class ConnectionManager {
         const validRange = GRID_SIZE - 4; // Avoid 2 tiles from each edge
         const position = (seed % validRange) + 2;
 
-        return position;
+        // Clamp position to valid range to prevent out-of-bounds errors
+        return Math.max(2, Math.min(GRID_SIZE - 3, position));
     }
 
     ensureMinimumConnectivity(zoneX, zoneY, connections) {
@@ -113,7 +115,7 @@ export class ConnectionManager {
             // Force an exit in the chosen direction
             const validRange = GRID_SIZE - 4;
             const position = ((zoneX * 73 + zoneY * 97) % validRange) + 2;
-            connections[forcedDirection] = position;
+            connections[forcedDirection] = Math.max(2, Math.min(GRID_SIZE - 3, position));
         }
 
         // Special case: ensure the starting zone (0,0) has multiple connections with variation
@@ -178,7 +180,7 @@ export class ConnectionManager {
                 }
                 if (connections[direction] === null) {
                     // Fallback if no valid position found
-                    connections[direction] = basePosition;
+                    connections[direction] = Math.max(2, Math.min(GRID_SIZE - 3, basePosition));
                 }
             }
         }

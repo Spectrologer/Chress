@@ -591,6 +591,20 @@ class Game {
                     this.updatePlayerStats(); // Refresh inventory display
                 }
                 return; // Don't process as movement
+            case 'o':
+                // Teleport to a frontier zone for testing
+                this.player.setCurrentZone(17, 0); // Frontier zone (distance 17+)
+                this.generateZone();
+                // Position player in center of the zone
+                const centerX2 = Math.floor(GRID_SIZE / 2);
+                const centerY2 = Math.floor(GRID_SIZE / 2);
+                this.player.setPosition(centerX2, centerY2);
+                this.player.ensureValidPosition(this.grid);
+                // Update UI
+                this.updateZoneDisplay();
+                this.updatePlayerPosition();
+                this.updatePlayerStats();
+                break;
             case 'q':
                 this.performSpearAttack('NE');
                 return;
@@ -869,15 +883,24 @@ class Game {
             console.error('Grid is null, cannot render');
             return;
         }
-        
+
+        // Calculate zone level for texture rendering
+        const zone = this.player.getCurrentZone();
+        const dist = Math.max(Math.abs(zone.x), Math.abs(zone.y));
+        let zoneLevel = 1;
+        if (dist <= 2) zoneLevel = 1;
+        else if (dist <= 8) zoneLevel = 2;
+        else if (dist <= 16) zoneLevel = 3;
+        else zoneLevel = 4;
+
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
                 const tile = this.grid[y][x];
                 try {
                     if (tile && tile.type === TILE_TYPES.FOOD) {
-                        this.textureManager.renderTile(this.ctx, x, y, tile.type, this.grid, tile.foodType);
+                        this.textureManager.renderTile(this.ctx, x, y, tile.type, this.grid, zoneLevel);
                     } else {
-                        this.textureManager.renderTile(this.ctx, x, y, tile, this.grid);
+                        this.textureManager.renderTile(this.ctx, x, y, tile, this.grid, zoneLevel);
                     }
                 } catch (error) {
                     console.error(`Error rendering tile at ${x},${y}:`, error);

@@ -81,7 +81,9 @@ export const IMAGE_ASSETS = [
     'axe.png',
     'hammer.png',
     'spear.png',
-    'note.png'
+    'note.png',
+    'floors/frontier/desert.png',
+    'flora/succulent.png'
 ];
 
 // Food image assets

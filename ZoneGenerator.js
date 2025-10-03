@@ -119,6 +119,7 @@ export class ZoneGenerator {
     }
 
     generateZone(zoneX, zoneY, existingZones, zoneConnections, foodAssets) {
+        this.foodAssets = foodAssets;
         this.currentZoneX = zoneX;
         this.currentZoneY = zoneY;
 
@@ -344,8 +345,8 @@ export class ZoneGenerator {
                     // 65% chance for food
                     // Use seeded random for consistency
                     const zoneKey = this.getZoneKey();
-                    const seed = this.hashCode(zoneKey) % foodAssets.length;
-                    const selectedFood = foodAssets[seed];
+                    const seed = this.hashCode(zoneKey) % this.foodAssets.length;
+                    const selectedFood = this.foodAssets[seed];
                     this.grid[y][x] = {
                         type: TILE_TYPES.FOOD,
                         foodType: selectedFood
