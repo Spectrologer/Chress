@@ -19,6 +19,10 @@ export class TextureManager {
                     imageKey = 'desert';
                 } else if (assetName === 'flora/succulent.png') {
                     imageKey = 'succulent';
+                } else if (assetName === 'flora/stump.png') {
+                    imageKey = 'stump';
+                } else if (assetName === 'flora/blocklily.png') {
+                    imageKey = 'blocklily';
                 } else if (assetName.startsWith('floors/dirt/')) {
                     imageKey = assetName.replace('floors/dirt/', '').replace('.png', '');
                 } else {
@@ -585,6 +589,42 @@ export class TextureManager {
                 ctx.drawImage(this.images.succulent, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
                 ctx.fillStyle = '#228B22'; // Green for succulent fallback
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            return;
+        }
+        // Wilds zones (level 3) use blocklily.png for walls
+        else if (zoneLevel === 3) {
+            // First draw dirt background
+            if (this.isImageLoaded('dircle')) {
+                ctx.drawImage(this.images.dircle, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            // Then overlay blocklily on top
+            if (this.isImageLoaded('blocklily')) {
+                ctx.drawImage(this.images.blocklily, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = '#228B22'; // Green fallback
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            return;
+        }
+        // Woods zones (level 2) use stump.png for walls
+        else if (zoneLevel === 2) {
+            // First draw dirt background
+            if (this.isImageLoaded('dircle')) {
+                ctx.drawImage(this.images.dircle, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            // Then overlay stump on top
+            if (this.isImageLoaded('stump')) {
+                ctx.drawImage(this.images.stump, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = '#8B4513'; // Brown fallback
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
             return;

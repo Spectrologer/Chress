@@ -86,7 +86,9 @@ export const IMAGE_ASSETS = [
     'note.png',
     'well.png',
     'floors/frontier/desert.png',
-    'flora/succulent.png'
+    'flora/succulent.png',
+    'flora/stump.png',
+    'flora/blocklily.png'
 ];
 
 // Food image assets
