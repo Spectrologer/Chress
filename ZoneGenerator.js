@@ -15,6 +15,17 @@ export class ZoneGenerator {
         this.currentZoneY = null;
     }
 
+    checkNoteExists() {
+        for (let y = 0; y < this.grid.length; y++) {
+            for (let x = 0; x < this.grid[y].length; x++) {
+                if (this.grid[y][x].type === TILE_TYPES.NOTE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     generateZone(zoneX, zoneY, existingZones, zoneConnections, foodAssets) {
         this.currentZoneX = zoneX;
         this.currentZoneY = zoneY;
@@ -125,8 +136,12 @@ export class ZoneGenerator {
         // Add some random rocks, dirt, grass, and shrubbery patches
         let featureCount = Math.floor(Math.random() * 15) + 10;
 
+        // Reduce feature density in home area (zone level 1)
+        if (this.getZoneLevel() === 1) {
+            featureCount = Math.floor(featureCount * 0.7); // Reduce by 30%
+        }
         // Increase feature density in Wilds (zone level 2)
-        if (this.getZoneLevel() === 2) {
+        else if (this.getZoneLevel() === 2) {
             featureCount += 5;
         }
 
@@ -139,7 +154,8 @@ export class ZoneGenerator {
 
             const featureType = Math.random();
             let zoneLevel = this.getZoneLevel();
-            if (featureType < 0.35) {
+            let rockThreshold = zoneLevel === 1 ? 0.25 : 0.35;
+            if (featureType < rockThreshold) {
                 this.grid[y][x] = TILE_TYPES.ROCK; // Use rock instead of wall for interior obstacles
             } else if (featureType < (zoneLevel === 2 ? 0.55 : 0.4)) {
                 this.grid[y][x] = TILE_TYPES.SHRUBBERY; // More shrubbery in Wilds
@@ -148,6 +164,49 @@ export class ZoneGenerator {
                 continue;
             } else {
                 this.grid[y][x] = TILE_TYPES.GRASS;
+            }
+        }
+
+        // Add chance tiles past the frontier (zone level 3)
+        if (this.getZoneLevel() === 3 && Math.random() < 0.15) { // 15% chance
+            this.addChanceTile();
+        }
+    }
+
+    addChanceTile() {
+        // Add a chance tile: could be an extra water, food, or note (5% chance)
+
+        // Try to place a chance tile in a valid location (max 20 attempts)
+        for (let attempts = 0; attempts < 20; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                const chanceType = Math.random();
+                if (chanceType < 0.05) {
+                    // 5% chance for a note
+                    if (!this.checkNoteExists()) {
+                        const message = Note.getProceduralMessage(this.currentZoneX, this.currentZoneY);
+                        this.grid[y][x] = {
+                            type: TILE_TYPES.NOTE,
+                            note: new Note(message, x, y)
+                        };
+                    }
+                } else if (chanceType < 0.35) {
+                    // 30% chance for water
+                    this.grid[y][x] = TILE_TYPES.WATER;
+                } else {
+                    // 65% chance for food
+                    // Use seeded random for consistency
+                    const zoneKey = this.getZoneKey();
+                    const seed = this.hashCode(zoneKey) % 25; // Assuming 25 food types
+                    this.grid[y][x] = {
+                        type: TILE_TYPES.FOOD,
+                        foodType: `Food/Seed${seed + 1}.png` // Assuming seed images exist
+                    };
+                }
+                break; // Successfully placed chance tile
             }
         }
     }
@@ -186,6 +245,8 @@ export class ZoneGenerator {
         // Add the rare axe item
 
         // Try to place the axe in a valid location (max 50 attempts)
+        let axeX = null;
+        let axeY = null;
         for (let attempts = 0; attempts < 50; attempts++) {
             const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
             const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
@@ -193,9 +254,16 @@ export class ZoneGenerator {
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = TILE_TYPES.AXE;
+                axeX = x;
+                axeY = y;
                 ZoneGenerator.axeSpawned = true;
                 break; // Successfully placed axe
             }
+        }
+
+        // Ensure a clear path to the axe from the center
+        if (axeX !== null && axeY !== null) {
+            this.clearPathToCenter(axeX, axeY);
         }
     }
 
@@ -217,7 +285,8 @@ export class ZoneGenerator {
     }
 
     addNote() {
-        // Add the note with a specific message
+        // Add the note with a procedural message
+        if (this.checkNoteExists()) return;
 
         // Try to place the note in a valid location (max 50 attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
@@ -226,9 +295,10 @@ export class ZoneGenerator {
 
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                const message = Note.getProceduralMessage(this.currentZoneX, this.currentZoneY);
                 this.grid[y][x] = {
                     type: TILE_TYPES.NOTE,
-                    note: new Note("Your axe should be around here somewhere. - Crayn", x, y)
+                    note: new Note(message, x, y)
                 };
                 ZoneGenerator.noteSpawned = true;
                 break; // Successfully placed note
@@ -237,16 +307,18 @@ export class ZoneGenerator {
     }
 
     addSecondNote() {
-        // Add the second note with a specific message, placed at a fixed location in the starting zone
+        // Add the second note with a procedural message, placed at a fixed location in the starting zone
         // Position must be clear of house and clearing areas
+        if (this.checkNoteExists()) return;
         const x = 1; // Left side, should be clear of house area
         const y = 8; // Further down but still within 2 tiles from start in some sense
 
         // Only place if it's in bounds and on a floor tile (should be after house placement)
         if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1 && this.grid[y][x] === TILE_TYPES.FLOOR) {
+            const message = Note.getProceduralMessage(this.currentZoneX, this.currentZoneY);
             this.grid[y][x] = {
                 type: TILE_TYPES.NOTE,
-                note: new Note("Fighting's never worth it! Sometimes.", x, y)
+                note: new Note(message, x, y)
             };
             console.log(`Added second note at (${x}, ${y})`);
         } else {
