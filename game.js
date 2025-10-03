@@ -651,6 +651,7 @@ class Game {
 
         if (enemyAtTarget) {
             // Player attacks enemy - simple bump of attacked tile
+            this.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
             console.log('Player attacks enemy!');
             enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
             enemyAtTarget.takeDamage(999); // Ensure enemy is dead
@@ -1081,23 +1082,53 @@ class Game {
                 enemyKey = 'SeparateAnim/dead';
             }
 
+                // Dramatic attack animation: scale, flash, shake
+                let scale = 1;
+                let flash = false;
+                let shakeX = 0, shakeY = 0;
+                if (enemy.attackAnimation > 0) {
+                    // Scale up and flash red for first half, shake for second half
+                    if (enemy.attackAnimation > 7) {
+                        scale = 1.35;
+                        flash = true;
+                    } else {
+                        scale = 1.15;
+                        shakeX = (Math.random() - 0.5) * 8;
+                        shakeY = (Math.random() - 0.5) * 8;
+                    }
+                }
+
             const enemyImage = this.textureManager.getImage(enemyKey);
             if (enemyImage && enemyImage.complete) {
+                    this.ctx.save();
+                    // Center scaling on enemy
+                    const cx = enemy.x * TILE_SIZE + enemy.bumpOffsetX + TILE_SIZE / 2 + shakeX;
+                    const cy = enemy.y * TILE_SIZE + enemy.bumpOffsetY + TILE_SIZE / 2 + shakeY;
+                    this.ctx.translate(cx, cy);
+                    this.ctx.scale(scale, scale);
+                    this.ctx.translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
+                    if (flash) {
+                        this.ctx.globalAlpha = 0.7;
+                        this.ctx.filter = 'brightness(1.5) drop-shadow(0 0 8px red)';
+                    }
                 this.ctx.drawImage(
                     enemyImage,
-                    enemy.x * TILE_SIZE + enemy.bumpOffsetX,
-                    enemy.y * TILE_SIZE + enemy.bumpOffsetY,
-                    TILE_SIZE,
-                    TILE_SIZE
+                        0,
+                        0,
+                        TILE_SIZE,
+                        TILE_SIZE
                 );
+                    this.ctx.filter = 'none';
+                    this.ctx.globalAlpha = 1.0;
+                    this.ctx.restore();
             } else {
                 // Fallback
                 this.ctx.fillStyle = '#32CD32';
                 this.ctx.fillRect(
-                    enemy.x * TILE_SIZE + enemy.bumpOffsetX + 2,
-                    enemy.y * TILE_SIZE + enemy.bumpOffsetY + 2,
-                    TILE_SIZE - 4,
-                    TILE_SIZE - 4
+                        enemy.x * TILE_SIZE + enemy.bumpOffsetX + 2,
+                        enemy.y * TILE_SIZE + enemy.bumpOffsetY + 2,
+                        TILE_SIZE - 4,
+                        TILE_SIZE - 4
                 );
             }
         }

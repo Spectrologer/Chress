@@ -388,9 +388,9 @@ export class Player {
 
     startBump(deltaX, deltaY) {
         // Set initial bump offset (towards the other entity)
-        this.bumpOffsetX = deltaX * 16; // Half tile (TILE_SIZE is 64, but 16 for subtle bump)
-        this.bumpOffsetY = deltaY * 16;
-        this.bumpFrames = 10; // 10 frames of bump animation
+        this.bumpOffsetX = deltaX * 24; // Increased from 16 for more impact
+        this.bumpOffsetY = deltaY * 24;
+        this.bumpFrames = 15; // Increased from 10 for longer animation
     }
 
     startAttackAnimation() {
@@ -401,8 +401,8 @@ export class Player {
         if (this.bumpFrames > 0) {
             this.bumpFrames--;
             // Gradually reduce the offset
-            this.bumpOffsetX *= 0.8;
-            this.bumpOffsetY *= 0.8;
+            this.bumpOffsetX *= 0.85; // Adjusted decay for smoother return
+            this.bumpOffsetY *= 0.85;
         }
         if (this.attackAnimation > 0) {
             this.attackAnimation--;

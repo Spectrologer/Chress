@@ -39,7 +39,9 @@ export class Enemy {
                     console.log('Enemy tries to move onto player - registering one attack!');
                     player.takeDamage(this.attack);
                     player.startBump(this.x - playerX, this.y - playerY);
-                    this.justAttacked = true;
+                    this.startBump(playerX - this.x, playerY - this.y);
+                        this.justAttacked = true;
+                        this.attackAnimation = 15; // Dramatic attack animation frames
                     console.log(`Enemy hit player! Player health: ${player.getHealth()}`);
                     if (player.isDead()) {
                         console.log('Player died!');
@@ -167,9 +169,9 @@ export class Enemy {
 
     startBump(deltaX, deltaY) {
         // Set initial bump offset (towards the other entity)
-        this.bumpOffsetX = deltaX * 16; // Half tile (TILE_SIZE is 64, but 16 for subtle bump)
-        this.bumpOffsetY = deltaY * 16;
-        this.bumpFrames = 10; // 10 frames of bump animation
+        this.bumpOffsetX = deltaX * 24; // Increased from 16 for more impact
+        this.bumpOffsetY = deltaY * 24;
+        this.bumpFrames = 15; // Increased from 10 for longer animation
     }
 
     updateAnimations() {
@@ -179,8 +181,11 @@ export class Enemy {
         if (this.bumpFrames > 0) {
             this.bumpFrames--;
             // Gradually reduce the offset
-            this.bumpOffsetX *= 0.8;
-            this.bumpOffsetY *= 0.8;
+            this.bumpOffsetX *= 0.85; // Adjusted decay for smoother return
+            this.bumpOffsetY *= 0.85;
         }
+            if (this.attackAnimation > 0) {
+                this.attackAnimation--;
+            }
     }
 }
