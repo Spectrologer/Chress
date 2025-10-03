@@ -53,8 +53,8 @@ export class ZoneGenerator {
             if (!ZoneGenerator.axeSpawned && Math.abs(zoneX) <= 1 && Math.abs(zoneY) <= 1) {
                 this.addAxeItem();
             }
-            // Spawn hammer item once per world session in Wilds zones (zone level 2)
-            if (!ZoneGenerator.hammerSpawned && this.getZoneLevel() === 2) {
+            // Spawn hammer item once per world session in Frontier zones (zone level 3)
+            if (!ZoneGenerator.hammerSpawned && this.getZoneLevel() === 3) {
                 this.addHammerItem();
             }
         }
@@ -399,8 +399,8 @@ export class ZoneGenerator {
     getZoneLevel() {
         const dist = Math.max(Math.abs(this.currentZoneX), Math.abs(this.currentZoneY));
         if (dist <= 1) return 1; // Home: 3x3 zone area around house (zone 0,0)
-        else if (dist <= 3) return 2; // Wilds: 4x4 to 6x6 zone area (extending out to distance 3)
-        else return 3; // Frontier: 7x7 onward (distance 4+)
+        else if (dist <= 7) return 2; // Wilds: 4x4 to 7x7 zone areas
+        else return 3; // Frontier: 8x8 onward
     }
 
     blockExitsWithShrubbery(zoneX, zoneY, connections) {

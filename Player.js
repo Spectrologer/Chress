@@ -97,7 +97,9 @@ export class Player {
             // Check if moved onto rock with hammer - break it
             const hasHammer = this.inventory.some(item => item.type === 'hammer');
             if (hasHammer && tile === TILE_TYPES.ROCK) {
-                grid[newY][newX] = TILE_TYPES.FLOOR; // Break rock to floor
+                // Check if this rock is on border and was a blocked exit - restore exit if so
+                const isBorder = newY === 0 || newY === GRID_SIZE - 1 || newX === 0 || newX === GRID_SIZE - 1;
+                grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR; // Restore blocked exit if on border
                 this.decreaseHunger(2); // Breaking costs 2 hunger
             }
 
