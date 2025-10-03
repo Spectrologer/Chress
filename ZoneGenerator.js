@@ -6,6 +6,7 @@ export class ZoneGenerator {
     static zoneCounter = 0;
     static enemyCounter = 0;
     static axeSpawned = false;
+    static hammerSpawned = false;
     static noteSpawned = false;
     constructor() {
         this.grid = null;
@@ -48,9 +49,13 @@ export class ZoneGenerator {
             if (Math.random() < 0.11) {
                 this.addRandomEnemy();
             }
-            // Try to spawn rare axe item once per world session in nearby zones
-            if (!ZoneGenerator.axeSpawned && Math.abs(zoneX) <= 4 && Math.abs(zoneY) <= 4 && Math.random() < 0.02) {
+            // Spawn axe item once per world session in zones within 2x2 area around house (Math.abs(zoneX) <= 1 && Math.abs(zoneY) <= 1)
+            if (!ZoneGenerator.axeSpawned && Math.abs(zoneX) <= 1 && Math.abs(zoneY) <= 1) {
                 this.addAxeItem();
+            }
+            // Spawn hammer item once per world session in Wilds zones (zone level 2)
+            if (!ZoneGenerator.hammerSpawned && this.getZoneLevel() === 2) {
+                this.addHammerItem();
             }
         }
         // Try to spawn note once per world session in zones within 1 of home (including home)
@@ -95,7 +100,7 @@ export class ZoneGenerator {
         // Apply the predetermined exits to current zone
         const zoneKey = `${zoneX},${zoneY}`;
         const connections = zoneConnections.get(zoneKey);
-        
+
         if (connections) {
             // Apply exits based on pre-generated connections
             if (connections.north !== null) {
@@ -111,22 +116,33 @@ export class ZoneGenerator {
                 this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.EXIT;
             }
         }
+
+        // Block some exits with shrubbery in Frontier regions (zone level 3)
+        this.blockExitsWithShrubbery(zoneX, zoneY, connections);
     }
 
     addRandomFeatures() {
-        // Add some random rocks, dirt, and grass patches
-        const featureCount = Math.floor(Math.random() * 15) + 10;
-        
+        // Add some random rocks, dirt, grass, and shrubbery patches
+        let featureCount = Math.floor(Math.random() * 15) + 10;
+
+        // Increase feature density in Wilds (zone level 2)
+        if (this.getZoneLevel() === 2) {
+            featureCount += 5;
+        }
+
         for (let i = 0; i < featureCount; i++) {
             const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
             const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            
+
             // Skip if this would block the starting position
             if (x === 1 && y === 1) continue;
-            
+
             const featureType = Math.random();
-            if (featureType < 0.4) {
+            let zoneLevel = this.getZoneLevel();
+            if (featureType < 0.35) {
                 this.grid[y][x] = TILE_TYPES.ROCK; // Use rock instead of wall for interior obstacles
+            } else if (featureType < (zoneLevel === 2 ? 0.55 : 0.4)) {
+                this.grid[y][x] = TILE_TYPES.SHRUBBERY; // More shrubbery in Wilds
             } else if (featureType < 0.7) {
                 // Leave as dirt (TILE_TYPES.FLOOR) - this will use directional textures
                 continue;
@@ -179,6 +195,23 @@ export class ZoneGenerator {
                 this.grid[y][x] = TILE_TYPES.AXE;
                 ZoneGenerator.axeSpawned = true;
                 break; // Successfully placed axe
+            }
+        }
+    }
+
+    addHammerItem() {
+        // Add the rare hammer item
+
+        // Try to place the hammer in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.HAMMER;
+                ZoneGenerator.hammerSpawned = true;
+                break; // Successfully placed hammer
             }
         }
     }
@@ -361,5 +394,48 @@ export class ZoneGenerator {
             hash = hash & hash; // Convert to 32bit integer
         }
         return Math.abs(hash);
+    }
+
+    getZoneLevel() {
+        const dist = Math.max(Math.abs(this.currentZoneX), Math.abs(this.currentZoneY));
+        if (dist <= 1) return 1; // Home: 3x3 zone area around house (zone 0,0)
+        else if (dist <= 3) return 2; // Wilds: 4x4 to 6x6 zone area (extending out to distance 3)
+        else return 3; // Frontier: 7x7 onward (distance 4+)
+    }
+
+    blockExitsWithShrubbery(zoneX, zoneY, connections) {
+        if (this.getZoneLevel() !== 3 || !connections) {
+            return;
+        }
+
+        // Block exits with either rock (20% chance) or shrubbery (20% chance) in Frontier
+        if (connections.north !== null) {
+            if (Math.random() < 0.2) {
+                this.grid[0][connections.north] = TILE_TYPES.ROCK;
+            } else if (Math.random() < 0.4) {
+                this.grid[0][connections.north] = TILE_TYPES.SHRUBBERY;
+            }
+        }
+        if (connections.south !== null) {
+            if (Math.random() < 0.2) {
+                this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.ROCK;
+            } else if (Math.random() < 0.4) {
+                this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.SHRUBBERY;
+            }
+        }
+        if (connections.west !== null) {
+            if (Math.random() < 0.2) {
+                this.grid[connections.west][0] = TILE_TYPES.ROCK;
+            } else if (Math.random() < 0.4) {
+                this.grid[connections.west][0] = TILE_TYPES.SHRUBBERY;
+            }
+        }
+        if (connections.east !== null) {
+            if (Math.random() < 0.2) {
+                this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.ROCK;
+            } else if (Math.random() < 0.4) {
+                this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.SHRUBBERY;
+            }
+        }
     }
 }

@@ -76,15 +76,29 @@ export class Player {
                         this.inventory.push({ type: 'axe' });
                     } // If inventory full, can't pick up axe (unlike consumables)
                     grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
+                } else if (tile === TILE_TYPES.HAMMER) {
+                    if (this.inventory.length < 6) {
+                        this.inventory.push({ type: 'hammer' });
+                    } // If inventory full, can't pick up hammer (unlike consumables)
+                    grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
                 }
             this.x = newX;
             this.y = newY;
 
-            // Check if moved onto grass with axe - cut it
+            // Check if moved onto grass or shrubbery with axe - cut it
             const hasAxe = this.inventory.some(item => item.type === 'axe');
-            if (hasAxe && tile === TILE_TYPES.GRASS) {
-                grid[newY][newX] = TILE_TYPES.FLOOR; // Cut the shrubbery
+            if (hasAxe && (tile === TILE_TYPES.GRASS || tile === TILE_TYPES.SHRUBBERY)) {
+                // If cutting shrubbery on border, restore exit if it was blocking one
+                const isBorder = newX === 0 || newX === GRID_SIZE - 1 || newY === 0 || newY === GRID_SIZE - 1;
+                grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
                 this.decreaseHunger(); // Cutting costs hunger
+            }
+
+            // Check if moved onto rock with hammer - break it
+            const hasHammer = this.inventory.some(item => item.type === 'hammer');
+            if (hasHammer && tile === TILE_TYPES.ROCK) {
+                grid[newY][newX] = TILE_TYPES.FLOOR; // Break rock to floor
+                this.decreaseHunger(2); // Breaking costs 2 hunger
             }
 
             return true;
@@ -101,19 +115,26 @@ export class Player {
 
         const tile = grid[y][x];
 
-        // Player can walk on floor, exit, water, food, axe, and note tiles
+        // Player can walk on floor, exit, water, food, axe, hammer, and note tiles
         if (tile === TILE_TYPES.FLOOR ||
             tile === TILE_TYPES.EXIT ||
             tile === TILE_TYPES.WATER ||
             tile === TILE_TYPES.AXE ||
+            tile === TILE_TYPES.HAMMER ||
             (tile && tile.type === TILE_TYPES.NOTE) ||
             (tile && tile.type === TILE_TYPES.FOOD)) {
             return true;
         }
 
-        // Check if there's an axe in inventory - allows walking on grass to cut it
+        // Check if there's an axe in inventory - allows walking on grass and shrubbery to cut it
         const hasAxe = this.inventory.some(item => item.type === 'axe');
-        if (hasAxe && tile === TILE_TYPES.GRASS) {
+        if (hasAxe && (tile === TILE_TYPES.GRASS || tile === TILE_TYPES.SHRUBBERY)) {
+            return true;
+        }
+
+        // Check if there's a hammer in inventory - allows walking on rocks to break them
+        const hasHammer = this.inventory.some(item => item.type === 'hammer');
+        if (hasHammer && tile === TILE_TYPES.ROCK) {
             return true;
         }
 
@@ -154,13 +175,13 @@ export class Player {
     positionAfterTransition(exitSide, connectionManager) {
         // Position player based on which exit they used and where the corresponding entrance is
         const connections = connectionManager.getConnections(this.currentZone.x, this.currentZone.y);
-        
+
         if (!connections) {
             // Fallback to center if no connections found
             this.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
             return;
         }
-        
+
         switch (exitSide) {
             case 'top':
                 // Coming from bottom, enter at the bottom exit (on the exit tile itself)

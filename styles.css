@@ -577,6 +577,13 @@ body {
     background-position: center;
 }
 
+.inventory-slot.item-hammer {
+    background-image: url('Images/hammer.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 /* Redesigned Stat Bars */
 .stat-bar {
     display: flex;

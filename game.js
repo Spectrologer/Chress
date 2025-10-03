@@ -155,7 +155,13 @@ class Game {
         
         // Position player based on which exit they used
         this.player.positionAfterTransition(exitSide, this.connectionManager);
-        
+
+        // If player spawned on shrubbery, remove it (restore exit)
+        const playerPos = this.player.getPosition();
+        if (this.grid[playerPos.y][playerPos.x] === TILE_TYPES.SHRUBBERY) {
+            this.grid[playerPos.y][playerPos.x] = TILE_TYPES.EXIT;
+        }
+
         // Ensure player is on a walkable tile
         this.player.ensureValidPosition(this.grid);
         
@@ -459,6 +465,13 @@ class Game {
                     this.updatePlayerStats(); // Refresh inventory display
                 }
                 return; // Don't move, just add item
+            case 'h':
+                // Add hammer to inventory for testing
+                if (this.player.inventory.length < 6) {
+                    this.player.inventory.push({ type: 'hammer' });
+                    this.updatePlayerStats(); // Refresh inventory display
+                }
+                return; // Don't move, just add item
             default:
                 return;
         }
@@ -510,6 +523,7 @@ class Game {
         this.zones.clear();
         this.connectionManager.clear();
         this.zoneGenerator.constructor.axeSpawned = false; // Reset axe spawn
+        this.zoneGenerator.constructor.hammerSpawned = false; // Reset hammer spawn
         this.zoneGenerator.constructor.noteSpawned = false; // Reset note spawn
         this.player.reset();
         this.enemies = [];
@@ -576,6 +590,8 @@ class Game {
                     slot.classList.add('item-water');
                 } else if (item.type === 'axe') {
                     slot.classList.add('item-axe');
+                } else if (item.type === 'hammer') {
+                    slot.classList.add('item-hammer');
                 } else if (item.type === 'tool') {
                     slot.classList.add('item-tool');
                 }
@@ -587,12 +603,18 @@ class Game {
                     } else if (item.type === 'water') {
                         this.player.restoreThirst(10);
                         this.player.inventory.splice(idx, 1);
-                    } else if (item.type === 'axe') {
-                        // Drop axe at player's current position
-                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                            this.grid[this.player.y][this.player.x] = TILE_TYPES.AXE;
-                            this.player.inventory.splice(idx, 1);
-                        }
+                } else if (item.type === 'axe') {
+                    // Drop axe at player's current position
+                    if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
+                        this.grid[this.player.y][this.player.x] = TILE_TYPES.AXE;
+                        this.player.inventory.splice(idx, 1);
+                    }
+                } else if (item.type === 'hammer') {
+                    // Drop hammer at player's current position
+                    if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
+                        this.grid[this.player.y][this.player.x] = TILE_TYPES.HAMMER;
+                        this.player.inventory.splice(idx, 1);
+                    }
                     }
                     this.updatePlayerStats();
                 };

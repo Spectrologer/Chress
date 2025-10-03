@@ -505,11 +505,15 @@ export class TextureManager {
             this.renderEnemyTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (actualType === TILE_TYPES.AXE) {
             this.renderAxeTile(ctx, x, y, pixelX, pixelY, grid);
+        } else if (actualType === TILE_TYPES.HAMMER) {
+            this.renderHammerTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (actualType === TILE_TYPES.NOTE) {
-            this.renderNoteTile(ctx, x, y, pixelX, pixelY, grid);
-        } else {
-            this.renderFloorTile(ctx, pixelX, pixelY, actualType);
-        }
+        this.renderNoteTile(ctx, x, y, pixelX, pixelY, grid);
+    } else if (actualType === TILE_TYPES.SHRUBBERY) {
+        this.renderGrassTile(ctx, x, y, pixelX, pixelY, grid);
+    } else {
+        this.renderFloorTile(ctx, pixelX, pixelY, actualType);
+    }
     }
 
     renderExitTile(ctx, x, y, pixelX, pixelY, grid) {
@@ -804,6 +808,26 @@ export class TextureManager {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🪓', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
+    renderHammerTile(ctx, x, y, pixelX, pixelY, grid) {
+        // First draw the directional floor background
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+
+        // Try to draw the hammer image if loaded, otherwise use fallback
+        if (this.isImageLoaded('hammer')) {
+            ctx.drawImage(this.images.hammer, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.HAMMER];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#666666';
+            ctx.font = '32px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🔨', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 
