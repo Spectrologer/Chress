@@ -34,7 +34,10 @@ class Game {
         this.defeatedEnemies = new Set(); // Tracks defeated enemy positions: "zoneX,zoneY,enemyX,enemyY"
         this.gameStarted = false;
         this.currentRegion = null; // Tracks current region name to avoid repeated notifications
-        
+
+        // Enemy wait mechanism for zone entry
+        this.justEnteredZone = false; // Flag to skip enemy movements on zone entry
+
         // Path execution state
         this.isExecutingPath = false;
         
@@ -110,8 +113,11 @@ class Game {
         // Generate initial zone
         this.generateZone();
 
-        // Ensure player starts on a valid tile
-        this.grid[this.player.y][this.player.x] = TILE_TYPES.FLOOR;
+        // Ensure player starts on a valid tile, but do not overwrite notes
+        const startTile = this.grid[this.player.y][this.player.x];
+        if (!startTile || (typeof startTile === 'string' && startTile !== TILE_TYPES.NOTE) || (typeof startTile === 'object' && startTile.type !== TILE_TYPES.NOTE)) {
+            this.grid[this.player.y][this.player.x] = TILE_TYPES.FLOOR;
+        }
 
         // Set initial region (starting at 0,0 = "Home")
         const initialZone = this.player.getCurrentZone();
@@ -156,7 +162,10 @@ class Game {
         this.zones.set(zoneKey, zoneData);
     }
     
-    transitionToZone(newZoneX, newZoneY, exitSide) {
+    transitionToZone(newZoneX, newZoneY, exitSide, exitX, exitY) {
+        // Set flag to skip enemy movements this turn since player just entered zone
+        this.justEnteredZone = true;
+
         // Check if this is entering a new region category
         const newRegion = this.generateRegionName(newZoneX, newZoneY);
         const isNewRegion = newRegion !== this.currentRegion;
@@ -177,7 +186,7 @@ class Game {
         this.generateZone();
 
         // Position player based on which exit they used
-        this.player.positionAfterTransition(exitSide, this.connectionManager);
+        this.positionPlayerAfterZoneTransition(exitSide, exitX, exitY);
 
         // If player spawned on shrubbery, remove it (restore exit)
         const playerPos = this.player.getPosition();
@@ -192,6 +201,39 @@ class Game {
         this.updateZoneDisplay();
         this.updatePlayerPosition();
         this.updatePlayerStats();
+    }
+
+    positionPlayerAfterZoneTransition(exitSide, exitX, exitY) {
+        switch (exitSide) {
+            case 'bottom':
+                // Came from bottom, enter north side at corresponding x position
+                this.grid[0][exitX] = TILE_TYPES.EXIT;
+                this.zoneGenerator.clearPathToExit(exitX, 0);
+                this.player.setPosition(exitX, 0);
+                break;
+            case 'top':
+                // Came from top, enter south side at corresponding x position
+                this.grid[GRID_SIZE - 1][exitX] = TILE_TYPES.EXIT;
+                this.zoneGenerator.clearPathToExit(exitX, GRID_SIZE - 1);
+                this.player.setPosition(exitX, GRID_SIZE - 1);
+                break;
+            case 'right':
+                // Came from right, enter west side at corresponding y position
+                this.grid[exitY][0] = TILE_TYPES.EXIT;
+                this.zoneGenerator.clearPathToExit(0, exitY);
+                this.player.setPosition(0, exitY);
+                break;
+            case 'left':
+                // Came from left, enter east side at corresponding y position
+                this.grid[exitY][GRID_SIZE - 1] = TILE_TYPES.EXIT;
+                this.zoneGenerator.clearPathToExit(GRID_SIZE - 1, exitY);
+                this.player.setPosition(GRID_SIZE - 1, exitY);
+                break;
+            default:
+                // Fallback to center
+                this.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
+                break;
+        }
     }
     
     setupControls() {
@@ -574,6 +616,8 @@ class Game {
             // Player attacks enemy - register as attack, defeat enemy
             console.log('Player attacks enemy!');
             this.player.startAttackAnimation();
+            this.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
+            enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
             enemyAtTarget.takeDamage(999); // Ensure enemy is dead
             console.log('Player defeated enemy!');
 
@@ -595,16 +639,20 @@ class Game {
         } else {
             // Normal movement
             playerMoved = this.player.move(newX, newY, this.grid, (zoneX, zoneY, exitSide) => {
-                this.transitionToZone(zoneX, zoneY, exitSide);
+                this.transitionToZone(zoneX, zoneY, exitSide, currentPos.x, currentPos.y);
             });
         }
 
-        this.handleEnemyMovements();
+        // Handle enemy movements based on zone entry flag
+        if (this.justEnteredZone) {
+            this.justEnteredZone = false; // Reset flag after skipping enemy movement
+        } else if (playerMoved) {
+            this.handleEnemyMovements();
+        }
+
         this.checkCollisions();
         this.updatePlayerPosition();
         this.updatePlayerStats();
-        // Check if player is on a note tile (needs to be checked every frame for persistence)
-        this.checkNoteInteraction();
     }
     
     resetGame() {
@@ -843,26 +891,26 @@ class Game {
     
     drawPlayer() {
         const pos = this.player.getPosition();
-        let spriteKey = this.player.sprite;
-        if (this.player.isDead()) {
-            spriteKey = 'SeparateAnim/dead';
-        } else if (this.player.attackAnimation > 0) {
+        let spriteKey = 'SeparateAnim/Special2'; // Default idle sprite
+        if (this.player.attackAnimation > 0) {
             spriteKey = 'SeparateAnim/Attack';
+        } else if (this.player.isDead()) {
+            spriteKey = 'SeparateAnim/dead';
         }
         const playerImage = this.textureManager.getImage(spriteKey);
         if (playerImage && playerImage.complete) {
             this.ctx.drawImage(
                 playerImage,
-                pos.x * TILE_SIZE,
-                pos.y * TILE_SIZE,
+                pos.x * TILE_SIZE + this.player.bumpOffsetX,
+                pos.y * TILE_SIZE + this.player.bumpOffsetY,
                 TILE_SIZE,
                 TILE_SIZE
             );
         } else {
             this.ctx.fillStyle = '#ff4444';
             this.ctx.fillRect(
-                pos.x * TILE_SIZE + 2,
-                pos.y * TILE_SIZE + 2,
+                pos.x * TILE_SIZE + this.player.bumpOffsetX + 2,
+                pos.y * TILE_SIZE + this.player.bumpOffsetY + 2,
                 TILE_SIZE - 4,
                 TILE_SIZE - 4
             );
@@ -935,8 +983,15 @@ class Game {
 
     showMessage(text) {
         const messageBox = document.getElementById('messageBox');
+        let displayText = text;
+        if (!displayText || displayText.trim() === '') {
+            displayText = '[No message found for this note]';
+            console.warn('Note message is empty or undefined:', text);
+        } else {
+            console.log('Note message:', displayText);
+        }
         if (messageBox) {
-            messageBox.textContent = text;
+            messageBox.textContent = displayText;
             messageBox.classList.add('show');
         }
     }
@@ -980,16 +1035,14 @@ class Game {
             // Determine sprite based on animation state
             if (enemy.deathAnimation > 0) {
                 enemyKey = 'SeparateAnim/dead';
-            } else if (enemy.attackAnimation > 0) {
-                enemyKey = 'SeparateAnim/Attack';
             }
 
             const enemyImage = this.textureManager.getImage(enemyKey);
             if (enemyImage && enemyImage.complete) {
                 this.ctx.drawImage(
                     enemyImage,
-                    enemy.x * TILE_SIZE,
-                    enemy.y * TILE_SIZE,
+                    enemy.x * TILE_SIZE + enemy.bumpOffsetX,
+                    enemy.y * TILE_SIZE + enemy.bumpOffsetY,
                     TILE_SIZE,
                     TILE_SIZE
                 );
@@ -997,8 +1050,8 @@ class Game {
                 // Fallback
                 this.ctx.fillStyle = '#32CD32';
                 this.ctx.fillRect(
-                    enemy.x * TILE_SIZE + 2,
-                    enemy.y * TILE_SIZE + 2,
+                    enemy.x * TILE_SIZE + enemy.bumpOffsetX + 2,
+                    enemy.y * TILE_SIZE + enemy.bumpOffsetY + 2,
                     TILE_SIZE - 4,
                     TILE_SIZE - 4
                 );
@@ -1047,6 +1100,8 @@ class Game {
             // Spear attack - defeat enemy
             console.log(`Player attacks enemy with spear at (${targetX}, ${targetY})!`);
             this.player.startAttackAnimation();
+            this.player.startBump(targetX - playerPos.x, targetY - playerPos.y);
+            enemyAtTarget.startBump(playerPos.x - targetX, playerPos.y - targetY);
             enemyAtTarget.takeDamage(999); // Ensure enemy is dead
             console.log('Player defeated enemy!');
 
@@ -1076,6 +1131,12 @@ class Game {
 
         // Remove enemies whose death animation has finished
         this.enemies = this.enemies.filter(enemy => enemy.deathAnimation === 0);
+
+        // Check if player is on a note tile (needs to be checked every frame for persistence)
+        this.checkNoteInteraction();
+
+        // Check if player is on a note tile (needs to be checked every frame for persistence)
+        this.checkNoteInteraction();
 
         this.render();
         requestAnimationFrame(() => this.gameLoop());

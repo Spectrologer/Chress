@@ -9,6 +9,9 @@ export class Enemy {
         this.justAttacked = false;
         this.attackAnimation = 0; // Frames remaining for attack animation
         this.deathAnimation = 0; // Frames remaining for death animation
+        this.bumpOffsetX = 0;
+        this.bumpOffsetY = 0;
+        this.bumpFrames = 0;
     }
 
     planMoveTowards(player, grid, enemies, playerPos) {
@@ -35,7 +38,7 @@ export class Enemy {
                     // Enemy tries to move onto player - register attack
                     console.log('Enemy tries to move onto player - registering one attack!');
                     player.takeDamage(this.attack);
-                    this.startAttackAnimation();
+                    player.startBump(this.x - playerX, this.y - playerY);
                     this.justAttacked = true;
                     console.log(`Enemy hit player! Player health: ${player.getHealth()}`);
                     if (player.isDead()) {
@@ -156,23 +159,28 @@ export class Enemy {
         return this.health <= 0;
     }
 
-    startAttackAnimation() {
-        this.attackAnimation = 10; // 10 frames of attack animation
-    }
+
 
     startDeathAnimation() {
         this.deathAnimation = 15; // 15 frames of death animation
     }
 
+    startBump(deltaX, deltaY) {
+        // Set initial bump offset (towards the other entity)
+        this.bumpOffsetX = deltaX * 16; // Half tile (TILE_SIZE is 64, but 16 for subtle bump)
+        this.bumpOffsetY = deltaY * 16;
+        this.bumpFrames = 10; // 10 frames of bump animation
+    }
+
     updateAnimations() {
-        if (this.attackAnimation > 0) {
-            this.attackAnimation--;
-            if (this.attackAnimation === 0) {
-                this.justAttacked = false;
-            }
-        }
         if (this.deathAnimation > 0) {
             this.deathAnimation--;
+        }
+        if (this.bumpFrames > 0) {
+            this.bumpFrames--;
+            // Gradually reduce the offset
+            this.bumpOffsetX *= 0.8;
+            this.bumpOffsetY *= 0.8;
         }
     }
 }

@@ -49,7 +49,7 @@ export class ConnectionManager {
         // Special case: randomize exits for the starting zone (0,0) to add variation
         if (zoneX === 0 && zoneY === 0) {
             // Use random chance for exits instead of deterministic
-            if (Math.random() < 0.7) { // 70% chance of having an exit
+            if (Math.random() < 0.95) { // Increased chance for more interconnected home
                 // Convert to valid exit position (avoiding corners and edges)
                 const validRange = GRID_SIZE - 4; // Avoid 2 tiles from each edge
                 // Use zone coordinates for some determinacy in position while still randomizing existence
@@ -77,9 +77,10 @@ export class ConnectionManager {
                 break;
         }
 
-        // Increase connection probability for zones adjacent to (0,0)
-        const isAdjacentToStart = Math.max(Math.abs(zoneX), Math.abs(zoneY)) === 1;
-        const nullThreshold = isAdjacentToStart ? 20 : 30; // 80% chance for adjacent zones, 70% otherwise
+        // Make home zones (dist <= 2) highly interconnected with exits on almost all sides
+        const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
+        const isHome = dist <= 2;
+        const nullThreshold = isHome ? 5 : 30; // 95% chance for home zones, 70% otherwise
 
         // Chance of having an exit on this side
         if ((seed % 100) < nullThreshold) {
@@ -97,24 +98,24 @@ export class ConnectionManager {
         // Count existing connections
         const hasConnections = [
             connections.north !== null,
-            connections.south !== null, 
+            connections.south !== null,
             connections.west !== null,
             connections.east !== null
         ].filter(Boolean).length;
-        
+
         // If no connections exist, force at least one
         if (hasConnections === 0) {
             // Choose a direction based on zone coordinates to ensure deterministic behavior
             const seed = (zoneX * 137 + zoneY * 149) % 4;
             const directions = ['north', 'south', 'west', 'east'];
             const forcedDirection = directions[seed];
-            
+
             // Force an exit in the chosen direction
             const validRange = GRID_SIZE - 4;
             const position = ((zoneX * 73 + zoneY * 97) % validRange) + 2;
             connections[forcedDirection] = position;
         }
-        
+
         // Special case: ensure the starting zone (0,0) has multiple connections with variation
         if (zoneX === 0 && zoneY === 0 && hasConnections < 2) {
             // Force at least 2 connections for the starting zone, but with random directions
@@ -132,6 +133,53 @@ export class ConnectionManager {
             for (let i = 0; i < connectionsNeeded; i++) {
                 const direction = availableDirections[i];
                 connections[direction] = Math.floor(GRID_SIZE / 2);
+            }
+        }
+
+        // For home zones (dist <= 2), ensure fully interconnected (4 connections mandatory)
+        const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
+        const isHome = dist <= 2;
+        if (isHome && hasConnections < 4) {
+            // Force connections on all sides for home zones
+            const directions = ['north', 'south', 'west', 'east'];
+            const availableDirections = directions.filter(dir => connections[dir] === null);
+
+            // Shuffle available directions for randomness
+            for (let i = availableDirections.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [availableDirections[i], availableDirections[j]] = [availableDirections[j], availableDirections[i]];
+            }
+
+            // Add connections to ensure we have 4, avoiding adjacent exits on same border
+            for (let i = 0; i < availableDirections.length; i++) {
+                const direction = availableDirections[i];
+                const validRange = GRID_SIZE - 4;
+                let basePosition = ((zoneX * 73 + zoneY * 97 + i * 31) % validRange) + 2;
+                // Find a position not adjacent to existing exits on the same border
+                for (let attempt = 0; attempt < 20; attempt++) {
+                    const candidate = ((basePosition + attempt) % validRange) + 2; // Properly wrap within valid range
+
+                    // Check if this position is adjacent to any existing exit on the same border
+                    let isAdjacent = false;
+
+                    // Check against existing connections for this direction
+                    const existingExits = [];
+                    if (direction === 'north' && connections.north !== null) existingExits.push(connections.north);
+                    else if (direction === 'south' && connections.south !== null) existingExits.push(connections.south);
+                    else if (direction === 'west' && connections.west !== null) existingExits.push(connections.west);
+                    else if (direction === 'east' && connections.east !== null) existingExits.push(connections.east);
+
+                    isAdjacent = existingExits.some(pos => Math.abs(pos - candidate) <= 1);
+
+                    if (!isAdjacent) {
+                        connections[direction] = candidate;
+                        break; // Found valid position
+                    }
+                }
+                if (connections[direction] === null) {
+                    // Fallback if no valid position found
+                    connections[direction] = basePosition;
+                }
             }
         }
     }

@@ -16,6 +16,9 @@ export class Player {
         // Special zone mechanics
         this.smellOranges = false;
         this.smellLemons = false;
+        this.bumpOffsetX = 0;
+        this.bumpOffsetY = 0;
+        this.bumpFrames = 0;
         this.markZoneVisited(0, 0);
     }
 
@@ -303,6 +306,9 @@ export class Player {
     this.visitedZones.clear();
     this.smellOranges = false;
     this.smellLemons = false;
+    this.bumpOffsetX = 0;
+    this.bumpOffsetY = 0;
+    this.bumpFrames = 0;
     this.markZoneVisited(0, 0);
     }
 
@@ -343,6 +349,10 @@ export class Player {
 
     takeDamage(amount = 1) {
         this.setHealth(this.health - amount);
+        // Remove bump animation for damage feedback
+        this.bumpOffsetX = 0;
+        this.bumpOffsetY = 0;
+        this.bumpFrames = 0;
     }
 
     decreaseThirst(amount = 1) {
@@ -378,11 +388,26 @@ export class Player {
         this.decreaseHunger();
     }
 
+
+
+    startBump(deltaX, deltaY) {
+        // Set initial bump offset (towards the other entity)
+        this.bumpOffsetX = deltaX * 16; // Half tile (TILE_SIZE is 64, but 16 for subtle bump)
+        this.bumpOffsetY = deltaY * 16;
+        this.bumpFrames = 10; // 10 frames of bump animation
+    }
+
     startAttackAnimation() {
-        this.attackAnimation = 10; // 10 frames of attack animation
+        this.attackAnimation = 20; // 20 frames of attack animation
     }
 
     updateAnimations() {
+        if (this.bumpFrames > 0) {
+            this.bumpFrames--;
+            // Gradually reduce the offset
+            this.bumpOffsetX *= 0.8;
+            this.bumpOffsetY *= 0.8;
+        }
         if (this.attackAnimation > 0) {
             this.attackAnimation--;
         }

@@ -16,6 +16,52 @@ export class ZoneGenerator {
         this.enemies = null;
         this.currentZoneX = null;
         this.currentZoneY = null;
+        this.playerSpawn = null; // {x, y}
+    }
+    /**
+     * Find a valid spawn tile for the player that is not occupied by an enemy, item, or impassable tile.
+     * Returns {x, y} or null if none found.
+     */
+    findValidPlayerSpawn() {
+        // Prefer spawning in front of house in home zone
+        if (this.currentZoneX === 0 && this.currentZoneY === 0) {
+            const houseStartX = 3;
+            const houseStartY = 3;
+            const frontY = houseStartY + 3;
+            for (let x = houseStartX; x < houseStartX + 3; x++) {
+                if (this.isTileFree(x, frontY)) {
+                    return { x, y: frontY };
+                }
+            }
+        }
+        // Otherwise, pick a random free floor tile
+        let candidates = [];
+        for (let y = 1; y < GRID_SIZE - 1; y++) {
+            for (let x = 1; x < GRID_SIZE - 1; x++) {
+                if (this.isTileFree(x, y)) {
+                    candidates.push({ x, y });
+                }
+            }
+        }
+        if (candidates.length > 0) {
+            return candidates[Math.floor(Math.random() * candidates.length)];
+        }
+        return null;
+    }
+
+    /**
+     * Checks if a tile is free for player spawn (not occupied, not impassable)
+     */
+    isTileFree(x, y) {
+        const tile = this.grid[y][x];
+        // Check for impassable tiles
+        if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE) return false;
+        // Check for enemy
+        if (this.enemies && this.enemies.some(e => e.x === x && e.y === y)) return false;
+        // Check for items (axe, hammer, spear, note, etc.)
+        // If items are stored in grid, check type
+        if (tile === TILE_TYPES.AXE || tile === TILE_TYPES.HAMMER || tile === TILE_TYPES.SPEAR || tile === TILE_TYPES.NOTE) return false;
+        return true;
     }
 
     checkNoteExists() {
@@ -171,10 +217,14 @@ export class ZoneGenerator {
         // Ensure exit accessibility
         this.ensureExitAccess();
 
-        // Return the generated grid and enemies
-        return { 
-            grid: JSON.parse(JSON.stringify(this.grid)), 
-            enemies: [...this.enemies] 
+        // Find a valid player spawn tile
+        this.playerSpawn = this.findValidPlayerSpawn();
+
+        // Return the generated grid, enemies, and player spawn
+        return {
+            grid: JSON.parse(JSON.stringify(this.grid)),
+            enemies: [...this.enemies],
+            playerSpawn: this.playerSpawn ? { ...this.playerSpawn } : null
         };
     }
 
@@ -421,15 +471,17 @@ export class ZoneGenerator {
     addSpecificNote(messageIndex) {
         if (this.checkNoteExists()) return;
 
-        let area;
-        const level = this.getZoneLevel();
-        if (level === 1) area = 'home';
-        else if (level === 2) area = 'wilds';
-        else if (level === 3) area = 'frontier';
-        else return;
+    let area;
+    const level = this.getZoneLevel();
+    if (level === 1) area = 'home';
+    else if (level === 2) area = 'woods';
+    else if (level === 3) area = 'wilds';
+    else if (level === 4) area = 'frontier';
+    else return;
 
-        const message = Note.getMessageByIndex(area, messageIndex);
-        if (Note.spawnedMessages.has(message)) return;
+    const message = Note.getMessageByIndex(area, messageIndex);
+    console.log('[Note Debug] addSpecificNote:', { area, messageIndex, message });
+    if (Note.spawnedMessages.has(message)) return;
 
         // Try to place the note in a valid location (max 50 attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
@@ -545,6 +597,22 @@ export class ZoneGenerator {
             this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
         }
 
+        // Clear adjacent inward tiles to create wider entry area (3x3 around inward tile)
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (dx === 0 && dy === 0) continue;
+                const nx = inwardX + dx;
+                const ny = inwardY + dy;
+                if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
+                    const tile = this.grid[ny][nx];
+                    const isTinted = tile >= TILE_TYPES.PINK_FLOOR && tile <= TILE_TYPES.YELLOW_FLOOR;
+                    if ((!isSpecialZone || !isTinted) && (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY)) {
+                        this.grid[ny][nx] = TILE_TYPES.FLOOR;
+                    }
+                }
+            }
+        }
+
         // Also clear a path toward the center to ensure connectivity
         this.clearPathToCenter(inwardX, inwardY);
     }
@@ -635,10 +703,11 @@ export class ZoneGenerator {
     }
 
     getZoneLevel() {
-        const dist = Math.max(Math.abs(this.currentZoneX), Math.abs(this.currentZoneY));
-        if (dist <= 2) return 1; // Home: 5x5 zone area around house (zone 0,0)
-        else if (dist <= 9) return 2; // Wilds: 6x6 to 9x9 zone areas
-        else return 3; // Frontier: 10x10 onward
+    const dist = Math.max(Math.abs(this.currentZoneX), Math.abs(this.currentZoneY));
+    if (dist <= 2) return 1; // Home
+    else if (dist <= 8) return 2; // Woods
+    else if (dist <= 16) return 3; // Wilds
+    else return 4; // Frontier
     }
 
     blockExitsWithShrubbery(zoneX, zoneY, connections) {
