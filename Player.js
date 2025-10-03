@@ -13,6 +13,9 @@ export class Player {
         this.sprite = 'SeparateAnim/Special2';
         this.health = 3;  // Player has 3 hearts
         this.attackAnimation = 0; // Frames remaining for attack animation
+        // Special zone mechanics
+        this.smellOranges = false;
+        this.smellLemons = false;
         this.markZoneVisited(0, 0);
     }
 
@@ -85,6 +88,13 @@ export class Player {
             this.x = newX;
             this.y = newY;
 
+            // Set smells when stepping on scent tiles
+            if (tile === TILE_TYPES.ORANGE_FLOOR) {
+                this.smellOranges = true;
+            } else if (tile === TILE_TYPES.PURPLE_FLOOR) {
+                this.smellLemons = true;
+            }
+
             // Check if moved onto grass or shrubbery with axe - cut it
             const hasAxe = this.inventory.some(item => item.type === 'axe');
             if (hasAxe && (tile === TILE_TYPES.GRASS || tile === TILE_TYPES.SHRUBBERY)) {
@@ -117,6 +127,35 @@ export class Player {
 
         const tile = grid[y][x];
 
+        // Tinted floor tiles
+        if (tile === TILE_TYPES.PINK_FLOOR ||
+            tile === TILE_TYPES.ORANGE_FLOOR ||
+            tile === TILE_TYPES.PURPLE_FLOOR) {
+            return true; // Always walkable
+        }
+
+        if (tile === TILE_TYPES.RED_FLOOR) {
+            // Can walk if coming from purple or red tile
+            const fromTile = grid[this.y][this.x];
+            return fromTile === TILE_TYPES.PURPLE_FLOOR || fromTile === TILE_TYPES.RED_FLOOR;
+        }
+
+        if (tile === TILE_TYPES.BLUE_FLOOR) {
+            // Walkable unless smelling like oranges
+            return !this.smellOranges;
+        }
+
+        if (tile === TILE_TYPES.GREEN_FLOOR) {
+            // Walkable unless smelling like lemons
+            return !this.smellLemons;
+        }
+
+        if (tile === TILE_TYPES.YELLOW_FLOOR) {
+            // Never walkable
+            return false;
+        }
+
+        // Regular tiles
         // Player can walk on floor, exit, water, food, axe, hammer, and note tiles
         if (tile === TILE_TYPES.FLOOR ||
             tile === TILE_TYPES.EXIT ||
@@ -256,6 +295,8 @@ export class Player {
     this.dead = false;
     this.sprite = 'SeparateAnim/Special2';
     this.visitedZones.clear();
+    this.smellOranges = false;
+    this.smellLemons = false;
     this.markZoneVisited(0, 0);
     }
 

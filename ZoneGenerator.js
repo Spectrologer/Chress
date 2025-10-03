@@ -26,6 +26,49 @@ export class ZoneGenerator {
         return false;
     }
 
+    addSpecialTintZone() {
+        // Generate the special tinted dirt zone with colors and effects - fill entire zone
+
+        const tintTypes = [TILE_TYPES.PINK_FLOOR, TILE_TYPES.RED_FLOOR, TILE_TYPES.ORANGE_FLOOR,
+                           TILE_TYPES.PURPLE_FLOOR, TILE_TYPES.BLUE_FLOOR, TILE_TYPES.GREEN_FLOOR,
+                           TILE_TYPES.YELLOW_FLOOR];
+
+        // Replace ALL interior floor tiles with randomly tinted versions
+        for (let y = 1; y < GRID_SIZE - 1; y++) {
+            for (let x = 1; x < GRID_SIZE - 1; x++) {
+                if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                    const randomTint = tintTypes[Math.floor(Math.random() * tintTypes.length)];
+                    this.grid[y][x] = randomTint;
+                }
+            }
+        }
+
+        // Process yellow tile effects: electrify nearby water and paralyze nearby crocodiles
+        for (let y = 1; y < GRID_SIZE - 1; y++) {
+            for (let x = 1; x < GRID_SIZE - 1; x++) {
+                if (this.grid[y][x] === TILE_TYPES.YELLOW_FLOOR) {
+                    // Check adjacent tiles (all 8 directions)
+                    for (let dy = -1; dy <= 1; dy++) {
+                        for (let dx = -1; dx <= 1; dx++) {
+                            if (dx === 0 && dy === 0) continue; // Skip center
+                            const nx = x + dx;
+                            const ny = y + dy;
+                            if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
+                                if (this.grid[ny][nx] === TILE_TYPES.BLUE_FLOOR) {
+                                    // Electrify water - make impassable (orange tile for puzzle room consistency)
+                                    this.grid[ny][nx] = TILE_TYPES.ORANGE_FLOOR;
+                                } else if (this.grid[ny][nx] === TILE_TYPES.GREEN_FLOOR) {
+                                    // Paralyze crocodiles - make safe to walk on
+                                    this.grid[ny][nx] = TILE_TYPES.PINK_FLOOR;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     generateZone(zoneX, zoneY, existingZones, zoneConnections, foodAssets) {
         this.currentZoneX = zoneX;
         this.currentZoneY = zoneY;
@@ -51,13 +94,16 @@ export class ZoneGenerator {
         
         // Add random features (skip if this is the house zone to avoid cluttering)
         if (!(zoneX === 0 && zoneY === 0)) {
-            this.addRandomFeatures();
+            // Skip random features for the special tinted dirt zone
+            if (!(zoneX === 8 && zoneY === 8)) {
+                this.addRandomFeatures();
+            }
             ZoneGenerator.zoneCounter++;
-            if (ZoneGenerator.zoneCounter % 9 === 0) {
+            if (ZoneGenerator.zoneCounter % 9 === 0 && !(zoneX === 8 && zoneY === 8)) {
                 this.addRandomItem(foodAssets);
             }
             // Add enemy with similar frequency as food/water (~10% chance per zone)
-            if (Math.random() < 0.11) {
+            if (Math.random() < 0.11 && !(zoneX === 8 && zoneY === 8)) {
                 this.addRandomEnemy();
             }
             // Spawn axe item once per world session in zones within 2x2 area around house (Math.abs(zoneX) <= 1 && Math.abs(zoneY) <= 1)
@@ -67,6 +113,10 @@ export class ZoneGenerator {
             // Spawn hammer item once per world session in Frontier zones (zone level 3)
             if (!ZoneGenerator.hammerSpawned && this.getZoneLevel() === 3) {
                 this.addHammerItem();
+            }
+            // Special tinted dirt easter egg zone in the frontier (zone level 3)
+            if (zoneX === 8 && zoneY === 8) {
+                this.addSpecialTintZone();
             }
         }
         // Try to spawn note once per world session in zones within 1 of home (including home)
@@ -366,7 +416,7 @@ export class ZoneGenerator {
         // Clear at least one adjacent tile inward from the exit
         let inwardX = exitX;
         let inwardY = exitY;
-        
+
         // Determine inward direction based on exit position
         if (exitY === 0) {
             // Top edge - clear downward
@@ -381,10 +431,17 @@ export class ZoneGenerator {
             // Right edge - clear leftward
             inwardX = GRID_SIZE - 2;
         }
-        
-        // Clear the adjacent tile
-        this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
-        
+
+        // Check if this is the special tinted zone - only clear non-tinted tiles
+        const isSpecialZone = (this.currentZoneX === 8 && this.currentZoneY === 8);
+        const currentTile = this.grid[inwardY][inwardX];
+        const isTintedTile = currentTile >= TILE_TYPES.PINK_FLOOR && currentTile <= TILE_TYPES.YELLOW_FLOOR;
+
+        if (!isSpecialZone || !isTintedTile) {
+            // Clear the adjacent tile
+            this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
+        }
+
         // Also clear a path toward the center to ensure connectivity
         this.clearPathToCenter(inwardX, inwardY);
     }
@@ -393,10 +450,13 @@ export class ZoneGenerator {
         // Clear a simple path toward the center area
         const centerX = Math.floor(GRID_SIZE / 2);
         const centerY = Math.floor(GRID_SIZE / 2);
-        
+
         let currentX = startX;
         let currentY = startY;
-        
+
+        // Check if this is the special tinted zone - don't clear tinted tiles
+        const isSpecialZone = (this.currentZoneX === 8 && this.currentZoneY === 8);
+
         // Clear tiles along a path toward center (simplified pathfinding)
         while (Math.abs(currentX - centerX) > 1 || Math.abs(currentY - centerY) > 1) {
             // Move toward center one step at a time
@@ -409,12 +469,15 @@ export class ZoneGenerator {
             } else if (currentY > centerY) {
                 currentY--;
             }
-            
-            // Clear this tile if it's not already floor or exit
-            if (this.grid[currentY][currentX] === TILE_TYPES.WALL || this.grid[currentY][currentX] === TILE_TYPES.ROCK) {
+
+            // Clear this tile if it's not already floor or exit, and not a tinted tile in special zone
+            const currentTile = this.grid[currentY][currentX];
+            const isTintedTile = currentTile >= TILE_TYPES.PINK_FLOOR && currentTile <= TILE_TYPES.YELLOW_FLOOR;
+            if ((this.grid[currentY][currentX] === TILE_TYPES.WALL || this.grid[currentY][currentX] === TILE_TYPES.ROCK) &&
+                !(isSpecialZone && isTintedTile)) {
                 this.grid[currentY][currentX] = TILE_TYPES.FLOOR;
             }
-            
+
             // Prevent infinite loops
             if (currentX === centerX && currentY === centerY) {
                 break;

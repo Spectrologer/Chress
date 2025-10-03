@@ -489,6 +489,9 @@ export class TextureManager {
             this.renderExitTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (actualType === TILE_TYPES.WALL) {
             this.renderWallTile(ctx, x, y, pixelX, pixelY, grid);
+        } else if (actualType >= TILE_TYPES.PINK_FLOOR && actualType <= TILE_TYPES.YELLOW_FLOOR) {
+            // Tinted floors - render with color
+            this.renderFloorTile(ctx, pixelX, pixelY, actualType);
         } else if (actualType === TILE_TYPES.FLOOR) {
             this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
         } else if (actualType === TILE_TYPES.ROCK) {
@@ -570,10 +573,12 @@ export class TextureManager {
     }
 
     renderFloorTile(ctx, pixelX, pixelY, tileType) {
-        if (this.isImageLoaded('dirt')) {
+        // Use dirt image for normal floor, or fall back to colors for tinted floors
+        if (tileType === TILE_TYPES.FLOOR && this.isImageLoaded('dirt')) {
             ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            ctx.fillStyle = TILE_COLORS[tileType];
+            // For tinted floors or when dirt image is not loaded, use the tile color
+            ctx.fillStyle = TILE_COLORS[tileType] || '#ffcb8d';
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
     }

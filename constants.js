@@ -17,7 +17,15 @@ export const TILE_TYPES = {
     AXE: 9,
     HAMMER: 10,
     NOTE: 11,
-    SHRUBBERY: 12
+    SHRUBBERY: 12,
+    // Tinted dirt tiles for special zone
+    PINK_FLOOR: 13,
+    RED_FLOOR: 14,
+    ORANGE_FLOOR: 15,
+    PURPLE_FLOOR: 16,
+    BLUE_FLOOR: 17,
+    GREEN_FLOOR: 18,
+    YELLOW_FLOOR: 19
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -33,7 +41,14 @@ export const TILE_COLORS = {
     [TILE_TYPES.ENEMY]: '#32CD32',   // Lime green for enemy
     [TILE_TYPES.NOTE]: '#FFFF00',    // Yellow for note
     [TILE_TYPES.HAMMER]: '#8B4513',  // Brown for hammer
-    [TILE_TYPES.SHRUBBERY]: '#228B22' // Green for shrubbery
+    [TILE_TYPES.SHRUBBERY]: '#228B22', // Green for shrubbery
+    [TILE_TYPES.PINK_FLOOR]: '#FFB6C1',    // Light pink
+    [TILE_TYPES.RED_FLOOR]: '#DC143C',     // Crimson red
+    [TILE_TYPES.ORANGE_FLOOR]: '#FFA500', // Orange
+    [TILE_TYPES.PURPLE_FLOOR]: '#9370DB',   // Medium purple
+    [TILE_TYPES.BLUE_FLOOR]: '#00BFFF',   // Deep sky blue
+    [TILE_TYPES.GREEN_FLOOR]: '#32CD32',  // Lime green
+    [TILE_TYPES.YELLOW_FLOOR]: '#FFD700'  // Gold
 };
 
 // Direction constants for exits and movements

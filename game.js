@@ -472,6 +472,20 @@ class Game {
                     this.updatePlayerStats(); // Refresh inventory display
                 }
                 return; // Don't move, just add item
+            case 'z':
+                // Teleport to tile puzzle zone (3,3) for testing
+                this.player.setCurrentZone(3, 3);
+                this.generateZone();
+                // Position player in center of the zone
+                const centerX = Math.floor(GRID_SIZE / 2);
+                const centerY = Math.floor(GRID_SIZE / 2);
+                this.player.setPosition(centerX, centerY);
+                this.player.ensureValidPosition(this.grid);
+                // Update UI
+                this.updateZoneDisplay();
+                this.updatePlayerPosition();
+                this.updatePlayerStats();
+                return; // Don't process as movement
             default:
                 return;
         }
