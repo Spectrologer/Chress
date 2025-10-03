@@ -605,6 +605,29 @@ class Game {
                 this.updatePlayerPosition();
                 this.updatePlayerStats();
                 break;
+            case 'l':
+                // Spawn a lizardy enemy for testing
+                const availableTiles = [];
+                for (let y = 0; y < GRID_SIZE; y++) {
+                    for (let x = 0; x < GRID_SIZE; x++) {
+                        const tile = this.grid[y][x];
+                        const playerPos = this.player.getPosition();
+                        const hasEnemy = this.enemies.some(e => e.x === x && e.y === y);
+                        if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
+                            availableTiles.push({x, y});
+                        }
+                    }
+                }
+                if (availableTiles.length > 0) {
+                    const spawnPos = availableTiles[Math.floor(Math.random() * availableTiles.length)];
+                    const enemyId = Date.now(); // Simple unique ID
+                    const newEnemy = new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardy', id: enemyId});
+                    this.enemies.push(newEnemy);
+                    console.log(`Spawned lizardy enemy at (${spawnPos.x}, ${spawnPos.y})`);
+                } else {
+                    console.log('No available tiles to spawn enemy');
+                }
+                break;
             case 'q':
                 this.performSpearAttack('NE');
                 return;
@@ -627,10 +650,8 @@ class Game {
         let playerMoved = false;
 
         if (enemyAtTarget) {
-            // Player attacks enemy - register as attack, defeat enemy
+            // Player attacks enemy - simple bump of attacked tile
             console.log('Player attacks enemy!');
-            this.player.startAttackAnimation();
-            this.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
             enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
             enemyAtTarget.takeDamage(999); // Ensure enemy is dead
             console.log('Player defeated enemy!');
@@ -1120,10 +1141,8 @@ class Game {
         // Check if there's an enemy at the target position
         const enemyAtTarget = this.enemies.find(enemy => enemy.x === targetX && enemy.y === targetY);
         if (enemyAtTarget) {
-            // Spear attack - defeat enemy
+            // Spear attack - simple bump of attacked tile
             console.log(`Player attacks enemy with spear at (${targetX}, ${targetY})!`);
-            this.player.startAttackAnimation();
-            this.player.startBump(targetX - playerPos.x, targetY - playerPos.y);
             enemyAtTarget.startBump(playerPos.x - targetX, playerPos.y - targetY);
             enemyAtTarget.takeDamage(999); // Ensure enemy is dead
             console.log('Player defeated enemy!');

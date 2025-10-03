@@ -349,10 +349,6 @@ export class Player {
 
     takeDamage(amount = 1) {
         this.setHealth(this.health - amount);
-        // Remove bump animation for damage feedback
-        this.bumpOffsetX = 0;
-        this.bumpOffsetY = 0;
-        this.bumpFrames = 0;
     }
 
     decreaseThirst(amount = 1) {
