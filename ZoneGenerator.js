@@ -8,6 +8,7 @@ export class ZoneGenerator {
     static axeSpawned = false;
     static hammerSpawned = false;
     static spearSpawned = false;
+    static wellSpawned = false;
 
     // Pre-determined spawn locations for special items
     static axeSpawnZone = null;
@@ -175,6 +176,11 @@ export class ZoneGenerator {
         // Special handling for the starting zone (0,0) - add house
         if (zoneX === 0 && zoneY === 0) {
             this.addHouse();
+        }
+
+        // Add a unique well to level 4 (Frontier) zones
+        if (this.getZoneLevel() === 4 && !ZoneGenerator.wellSpawned) {
+            this.addWell();
         }
         
         // Generate exits using pre-determined connections
@@ -709,6 +715,37 @@ export class ZoneGenerator {
         for (let y = houseStartY + 3; y < houseStartY + 5 && y < GRID_SIZE - 1; y++) {
             for (let x = houseStartX - 1; x < houseStartX + 4 && x >= 1 && x < GRID_SIZE - 1; x++) {
                 this.grid[y][x] = TILE_TYPES.FLOOR;
+            }
+        }
+    }
+
+    addWell() {
+        // Place a 2x2 well in Frontier zones (level 4) randomly, avoiding borders
+        // Try to place the well in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            // Place away from borders
+            const x = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // x from 1 to GRID_SIZE-3
+            const y = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // y from 1 to GRID_SIZE-3
+
+            // Check if all 2x2 tiles are free floor and not house
+            let free = true;
+            for (let dy = 0; dy < 2 && free; dy++) {
+                for (let dx = 0; dx < 2 && free; dx++) {
+                    if (this.grid[y + dy][x + dx] !== TILE_TYPES.FLOOR) {
+                        free = false;
+                    }
+                }
+            }
+
+            if (free) {
+                // Place the 2x2 well
+                for (let dy = 0; dy < 2; dy++) {
+                    for (let dx = 0; dx < 2; dx++) {
+                        this.grid[y + dy][x + dx] = TILE_TYPES.WELL;
+                    }
+                }
+                ZoneGenerator.wellSpawned = true;
+                break; // Successfully placed well
             }
         }
     }

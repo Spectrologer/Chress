@@ -80,18 +80,18 @@ export class Player {
                 } else if (tile === TILE_TYPES.AXE) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'axe' });
-                    } // If inventory full, can't pick up axe (unlike consumables)
-                    grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
+                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                    } // If inventory full, can't pick up axe and it remains on ground
                 } else if (tile === TILE_TYPES.HAMMER) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'hammer' });
-                    } // If inventory full, can't pick up hammer (unlike consumables)
-                    grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
+                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                    } // If inventory full, can't pick up hammer and it remains on ground
                 } else if (tile === TILE_TYPES.SPEAR) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'spear' });
-                    } // If inventory full, can't pick up spear (unlike consumables)
-                    grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
+                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                    } // If inventory full, can't pick up spear and it remains on ground
                 }
             this.x = newX;
             this.y = newY;

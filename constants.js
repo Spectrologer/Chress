@@ -19,14 +19,15 @@ export const TILE_TYPES = {
     NOTE: 11,
     SPEAR: 12,
     SHRUBBERY: 13,
+    WELL: 14,
     // Tinted dirt tiles for special zone
-    PINK_FLOOR: 14,
-    RED_FLOOR: 15,
-    ORANGE_FLOOR: 16,
-    PURPLE_FLOOR: 17,
-    BLUE_FLOOR: 18,
-    GREEN_FLOOR: 19,
-    YELLOW_FLOOR: 20
+    PINK_FLOOR: 15,
+    RED_FLOOR: 16,
+    ORANGE_FLOOR: 17,
+    PURPLE_FLOOR: 18,
+    BLUE_FLOOR: 19,
+    GREEN_FLOOR: 20,
+    YELLOW_FLOOR: 21
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -44,6 +45,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.HAMMER]: '#8B4513',  // Brown for hammer
     [TILE_TYPES.SPEAR]: '#8B4513',   // Brown for spear
     [TILE_TYPES.SHRUBBERY]: '#228B22', // Green for shrubbery
+    [TILE_TYPES.WELL]: '#D2691E',   // Brown/orange for well
     [TILE_TYPES.PINK_FLOOR]: '#FFB6C1',    // Light pink
     [TILE_TYPES.RED_FLOOR]: '#DC143C',     // Crimson red
     [TILE_TYPES.ORANGE_FLOOR]: '#FFA500', // Orange
@@ -82,6 +84,7 @@ export const IMAGE_ASSETS = [
     'hammer.png',
     'spear.png',
     'note.png',
+    'well.png',
     'floors/frontier/desert.png',
     'flora/succulent.png'
 ];
