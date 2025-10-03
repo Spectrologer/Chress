@@ -11,39 +11,24 @@ export class Enemy {
         this.deathAnimation = 0; // Frames remaining for death animation
     }
 
-    moveTowards(player, grid) {
-        // Improved pathfinding: try up to two directions to better reach the player
-        const playerX = player.x;
-        const playerY = player.y;
+    planMoveTowards(player, grid, enemies, playerPos) {
+        const playerX = playerPos.x;
+        const playerY = playerPos.y;
 
         // Check if player is already at the same position
         if (this.x === playerX && this.y === playerY) {
-            return; // Can't move onto player
+            return null; // Can't move onto player
         }
 
-        // Calculate direction to player
-        const dx = playerX - this.x;
-        const dy = playerY - this.y;
+        // Use BFS to find the shortest path to the player
+        const path = this.findPath(this.x, this.y, playerX, playerY, grid);
 
-        // Try movements in order of preference until one succeeds
-        const possibleMoves = [];
+        if (path && path.length > 1) {
+            const next = path[1];
+            const newX = next.x;
+            const newY = next.y;
 
-        if (Math.abs(dx) >= Math.abs(dy)) {
-            // Prefer horizontal movement
-            possibleMoves.push({x: this.x + (dx > 0 ? 1 : dx < 0 ? -1 : 0), y: this.y}); // Horizontal
-            possibleMoves.push({x: this.x, y: this.y + (dy > 0 ? 1 : dy < 0 ? -1 : 0)}); // Vertical
-        } else {
-            // Prefer vertical movement
-            possibleMoves.push({x: this.x, y: this.y + (dy > 0 ? 1 : dy < 0 ? -1 : 0)}); // Vertical
-            possibleMoves.push({x: this.x + (dx > 0 ? 1 : dx < 0 ? -1 : 0), y: this.y}); // Horizontal
-        }
-
-        // Try each possible move
-        for (const move of possibleMoves) {
-            const newX = move.x;
-            const newY = move.y;
-
-            // Check if within bounds and walkable
+            // Check if within bounds and walkable (should be, since path found)
             if (this.isWalkable(newX, newY, grid)) {
                 // Check if the target position has the player
                 if (newX === playerX && newY === playerY) {
@@ -57,17 +42,94 @@ export class Enemy {
                         console.log('Player died!');
                     }
                     // Enemy does not move
-                    return;
+                    return null;
                 } else {
-                    // Move normally
-                    this.x = newX;
-                    this.y = newY;
-                    return;
+                    // Check if another enemy is already at the target position
+                    const enemyAtTarget = enemies.find(enemy => enemy.x === newX && enemy.y === newY);
+                    if (enemyAtTarget) {
+                        // Can't move onto another enemy, stay put
+                        return null;
+                    } else {
+                        // Return intended move
+                        return { x: newX, y: newY };
+                    }
                 }
             }
         }
 
-        // If no movement possible, stay put
+        // No path found or no valid move, stay put
+        return null;
+    }
+
+    // For backward compatibility or single enemy move (though we won't use this anymore)
+    moveTowards(player, grid) {
+        const move = this.planMoveTowards(player, grid, [], player.getPosition());
+        if (move) {
+            this.x = move.x;
+            this.y = move.y;
+        }
+    }
+
+    findPath(startX, startY, targetX, targetY, grid) {
+        let directions;
+        if (this.enemyType === 'lizardo') {
+            // Lizardo can move orthogonally AND diagonally (8 directions)
+            directions = [
+                { x: 0, y: -1 }, // North
+                { x: 0, y: 1 },  // South
+                { x: -1, y: 0 }, // West
+                { x: 1, y: 0 },  // East
+                { x: -1, y: -1 }, // Northwest
+                { x: 1, y: -1 },  // Northeast
+                { x: -1, y: 1 },  // Southwest
+                { x: 1, y: 1 }    // Southeast
+            ];
+        } else {
+            // Regular lizard: only orthogonal movement (4 directions)
+            directions = [
+                { x: 0, y: -1 }, // North
+                { x: 0, y: 1 },  // South
+                { x: -1, y: 0 }, // West
+                { x: 1, y: 0 }   // East
+            ];
+        }
+
+        const visited = new Set();
+        const parent = new Map();
+        const queue = [{ x: startX, y: startY }];
+
+        visited.add(`${startX},${startY}`);
+        parent.set(`${startX},${startY}`, null);
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+
+            if (current.x === targetX && current.y === targetY) {
+                // Reconstruct path
+                const path = [];
+                let pos = current;
+                while (pos) {
+                    path.unshift(pos);
+                    const key = `${pos.x},${pos.y}`;
+                    pos = parent.get(key);
+                }
+                return path; // path[0] is start (this), path[1] is next step
+            }
+
+            for (const dir of directions) {
+                const nx = current.x + dir.x;
+                const ny = current.y + dir.y;
+                const key = `${nx},${ny}`;
+
+                if (!visited.has(key) && this.isWalkable(nx, ny, grid)) {
+                    visited.add(key);
+                    parent.set(key, current);
+                    queue.push({ x: nx, y: ny });
+                }
+            }
+        }
+
+        return null; // No path found
     }
 
     isWalkable(x, y, grid) {
@@ -105,6 +167,9 @@ export class Enemy {
     updateAnimations() {
         if (this.attackAnimation > 0) {
             this.attackAnimation--;
+            if (this.attackAnimation === 0) {
+                this.justAttacked = false;
+            }
         }
         if (this.deathAnimation > 0) {
             this.deathAnimation--;

@@ -8,6 +8,9 @@ export class ZoneGenerator {
     static axeSpawned = false;
     static hammerSpawned = false;
     static noteSpawned = false;
+    static spearSpawned = false;
+    static rareWeaponChosen = false;
+    static chosenWeapon = null;
     constructor() {
         this.grid = null;
         this.enemies = null;
@@ -82,11 +85,44 @@ export class ZoneGenerator {
 
         // Generate new zone structure
         this.initialize();
-        
-        // Special handling for the starting zone (0,0) - add house and second note
+
+        // Add specific notes for regions before adding house or other features
+        const homeNoteMap = {
+            '0,0': 0,
+            '1,0': 1,
+            '0,1': 2,
+            '-1,0': 3,
+            '0,-1': 4
+        };
+        if (homeNoteMap[zoneKey]) {
+            this.addSpecificNote(homeNoteMap[zoneKey]);
+        }
+
+        const wildsNoteMap = {
+            '3,0': 0,
+            '3,1': 1,
+            '4,0': 2,
+            '4,1': 3,
+            '4,2': 4
+        };
+        if (wildsNoteMap[zoneKey]) {
+            this.addSpecificNote(wildsNoteMap[zoneKey]);
+        }
+
+        const frontierNoteMap = {
+            '10,0': 0,
+            '10,1': 1,
+            '11,0': 2,
+            '11,1': 3,
+            '11,2': 4
+        };
+        if (frontierNoteMap[zoneKey]) {
+            this.addSpecificNote(frontierNoteMap[zoneKey]);
+        }
+
+        // Special handling for the starting zone (0,0) - add house
         if (zoneX === 0 && zoneY === 0) {
             this.addHouse();
-            this.addSecondNote();
         }
         
         // Generate exits using pre-determined connections
@@ -103,26 +139,34 @@ export class ZoneGenerator {
                 this.addRandomItem(foodAssets);
             }
             // Add enemy with similar frequency as food/water (~10% chance per zone)
-            if (Math.random() < 0.11 && !(zoneX === 8 && zoneY === 8)) {
+            const zoneLevel = this.getZoneLevel();
+            const enemyProbability = zoneLevel === 2 ? 0.15 : zoneLevel === 3 ? 0.22 : 0.11;
+            if (Math.random() < enemyProbability && !(zoneX === 8 && zoneY === 8)) {
                 this.addRandomEnemy();
             }
-            // Spawn axe item once per world session in zones within 2x2 area around house (Math.abs(zoneX) <= 1 && Math.abs(zoneY) <= 1)
-            if (!ZoneGenerator.axeSpawned && Math.abs(zoneX) <= 1 && Math.abs(zoneY) <= 1) {
+            // Choose rare weapon type once per world session for Frontier zones
+            if (!ZoneGenerator.rareWeaponChosen && this.getZoneLevel() === 3) {
+                ZoneGenerator.chosenWeapon = Math.random() < 0.5 ? 'hammer' : 'spear';
+                ZoneGenerator.rareWeaponChosen = true;
+            }
+            // Spawn axe item once per world session in zones within 5x5 area around house (Math.abs(zoneX) <= 2 && Math.abs(zoneY) <= 2)
+            if (!ZoneGenerator.axeSpawned && Math.abs(zoneX) <= 2 && Math.abs(zoneY) <= 2) {
                 this.addAxeItem();
             }
-            // Spawn hammer item once per world session in Frontier zones (zone level 3)
-            if (!ZoneGenerator.hammerSpawned && this.getZoneLevel() === 3) {
+            // Spawn chosen rare weapon item once per world session in Frontier zones (zone level 3)
+            if (ZoneGenerator.chosenWeapon === 'hammer' && !ZoneGenerator.hammerSpawned && this.getZoneLevel() === 3) {
                 this.addHammerItem();
+            }
+            // Spawn chosen rare weapon item once per world session in Frontier zones (zone level 3)
+            if (ZoneGenerator.chosenWeapon === 'spear' && !ZoneGenerator.spearSpawned && this.getZoneLevel() === 3) {
+                this.addSpearItem();
             }
             // Special tinted dirt easter egg zone in the frontier (zone level 3)
             if (zoneX === 8 && zoneY === 8) {
                 this.addSpecialTintZone();
             }
         }
-        // Try to spawn note once per world session in zones within 1 of home (including home)
-        if (!ZoneGenerator.noteSpawned && Math.max(Math.abs(zoneX), Math.abs(zoneY)) <= 1 && Math.random() < 0.5) {
-            this.addNote();
-        }
+
 
         // Ensure exit accessibility
         this.ensureExitAccess();
@@ -250,10 +294,11 @@ export class ZoneGenerator {
                     // 65% chance for food
                     // Use seeded random for consistency
                     const zoneKey = this.getZoneKey();
-                    const seed = this.hashCode(zoneKey) % 25; // Assuming 25 food types
+                    const seed = this.hashCode(zoneKey) % foodAssets.length;
+                    const selectedFood = foodAssets[seed];
                     this.grid[y][x] = {
                         type: TILE_TYPES.FOOD,
-                        foodType: `Food/Seed${seed + 1}.png` // Assuming seed images exist
+                        foodType: selectedFood
                     };
                 }
                 break; // Successfully placed chance tile
@@ -334,6 +379,23 @@ export class ZoneGenerator {
         }
     }
 
+    addSpearItem() {
+        // Add the rare spear item
+
+        // Try to place the spear in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.SPEAR;
+                ZoneGenerator.spearSpawned = true;
+                break; // Successfully placed spear
+            }
+        }
+    }
+
     addNote() {
         // Add the note with a procedural message
         if (this.checkNoteExists()) return;
@@ -356,41 +418,82 @@ export class ZoneGenerator {
         }
     }
 
-    addSecondNote() {
-        // Add the second note with a procedural message, placed at a fixed location in the starting zone
-        // Position must be clear of house and clearing areas
+    addSpecificNote(messageIndex) {
         if (this.checkNoteExists()) return;
-        const x = 1; // Left side, should be clear of house area
-        const y = 8; // Further down but still within 2 tiles from start in some sense
 
-        // Only place if it's in bounds and on a floor tile (should be after house placement)
-        if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1 && this.grid[y][x] === TILE_TYPES.FLOOR) {
-            const message = Note.getProceduralMessage(this.currentZoneX, this.currentZoneY);
-            this.grid[y][x] = {
-                type: TILE_TYPES.NOTE,
-                note: new Note(message, x, y)
-            };
-            console.log(`Added second note at (${x}, ${y})`);
-        } else {
-            console.log(`Could not add second note at (${x}, ${y}): bounds check failed or tile not floor. Current tile:`, this.grid[y][x]);
-        }
-    }
+        let area;
+        const level = this.getZoneLevel();
+        if (level === 1) area = 'home';
+        else if (level === 2) area = 'wilds';
+        else if (level === 3) area = 'frontier';
+        else return;
 
-    addRandomEnemy() {
-        // Add one enemy per zone (lizard for now)
+        const message = Note.getMessageByIndex(area, messageIndex);
+        if (Note.spawnedMessages.has(message)) return;
 
-        // Try to place the enemy in a valid location (max 50 attempts)
+        // Try to place the note in a valid location (max 50 attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            let x, y;
+            if (this.currentZoneX === 0 && this.currentZoneY === 0) {
+                // Fixed location for home zone second note
+                x = 1;
+                y = 8;
+            } else {
+                x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+                y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            }
 
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                ZoneGenerator.enemyCounter++;
-                this.enemies.push({ x, y, enemyType: 'lizard', id: ZoneGenerator.enemyCounter });
-                break; // Successfully placed enemy
+                this.grid[y][x] = {
+                    type: TILE_TYPES.NOTE,
+                    note: new Note(message, x, y)
+                };
+                Note.spawnedMessages.add(message);
+                break; // Successfully placed note
             }
         }
+    }
+
+
+
+    addRandomEnemy() {
+        // Add multiple lizards based on zone level
+        let enemyCount = 1; // Default for home
+        const zoneLevel = this.getZoneLevel();
+        if (zoneLevel === 2) {
+            // Wilds: 2-4 lizards
+            enemyCount = Math.floor(Math.random() * 3) + 2;
+        } else if (zoneLevel === 3) {
+            // Frontier: 3-5 lizards
+            enemyCount = Math.floor(Math.random() * 3) + 3;
+        }
+
+        for (let count = 0; count < enemyCount; count++) {
+            // Try to place the enemy in a valid location (max 50 attempts per enemy)
+            for (let attempts = 0; attempts < 50; attempts++) {
+                const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+                const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+                // Only place on floor tiles (not on walls, rocks, grass, etc.) and not already occupied by enemy
+                if (this.grid[y][x] === TILE_TYPES.FLOOR && !this.isTileOccupiedByEnemy(x, y)) {
+                ZoneGenerator.enemyCounter++;
+                // Determine enemy type - lizardo in frontier zones (level 3)
+                const enemyType = (this.getZoneLevel() === 3 && Math.random() < 0.5) ? 'lizardo' : 'lizard';
+                this.enemies.push({ x, y, enemyType: enemyType, id: ZoneGenerator.enemyCounter });
+                break; // Successfully placed enemy
+                }
+            }
+        }
+    }
+
+    isTileOccupiedByEnemy(x, y) {
+        for (const enemy of this.enemies) {
+            if (enemy.x === x && enemy.y === y) {
+                return true;
+            }
+        }
+        return false;
     }
 
     ensureExitAccess() {
@@ -473,7 +576,7 @@ export class ZoneGenerator {
             // Clear this tile if it's not already floor or exit, and not a tinted tile in special zone
             const currentTile = this.grid[currentY][currentX];
             const isTintedTile = currentTile >= TILE_TYPES.PINK_FLOOR && currentTile <= TILE_TYPES.YELLOW_FLOOR;
-            if ((this.grid[currentY][currentX] === TILE_TYPES.WALL || this.grid[currentY][currentX] === TILE_TYPES.ROCK) &&
+            if ((this.grid[currentY][currentX] === TILE_TYPES.WALL || this.grid[currentY][currentX] === TILE_TYPES.ROCK || this.grid[currentY][currentX] === TILE_TYPES.SHRUBBERY) &&
                 !(isSpecialZone && isTintedTile)) {
                 this.grid[currentY][currentX] = TILE_TYPES.FLOOR;
             }
@@ -533,9 +636,9 @@ export class ZoneGenerator {
 
     getZoneLevel() {
         const dist = Math.max(Math.abs(this.currentZoneX), Math.abs(this.currentZoneY));
-        if (dist <= 1) return 1; // Home: 3x3 zone area around house (zone 0,0)
-        else if (dist <= 7) return 2; // Wilds: 4x4 to 7x7 zone areas
-        else return 3; // Frontier: 8x8 onward
+        if (dist <= 2) return 1; // Home: 5x5 zone area around house (zone 0,0)
+        else if (dist <= 9) return 2; // Wilds: 6x6 to 9x9 zone areas
+        else return 3; // Frontier: 10x10 onward
     }
 
     blockExitsWithShrubbery(zoneX, zoneY, connections) {

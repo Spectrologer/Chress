@@ -84,6 +84,11 @@ export class Player {
                         this.inventory.push({ type: 'hammer' });
                     } // If inventory full, can't pick up hammer (unlike consumables)
                     grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
+                } else if (tile === TILE_TYPES.SPEAR) {
+                    if (this.inventory.length < 6) {
+                        this.inventory.push({ type: 'spear' });
+                    } // If inventory full, can't pick up spear (unlike consumables)
+                    grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
                 }
             this.x = newX;
             this.y = newY;
@@ -156,12 +161,13 @@ export class Player {
         }
 
         // Regular tiles
-        // Player can walk on floor, exit, water, food, axe, hammer, and note tiles
+        // Player can walk on floor, exit, water, food, axe, hammer, spear, and note tiles
         if (tile === TILE_TYPES.FLOOR ||
             tile === TILE_TYPES.EXIT ||
             tile === TILE_TYPES.WATER ||
             tile === TILE_TYPES.AXE ||
             tile === TILE_TYPES.HAMMER ||
+            tile === TILE_TYPES.SPEAR ||
             (tile && tile.type === TILE_TYPES.NOTE) ||
             (tile && tile.type === TILE_TYPES.FOOD)) {
             return true;

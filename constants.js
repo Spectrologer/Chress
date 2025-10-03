@@ -17,15 +17,16 @@ export const TILE_TYPES = {
     AXE: 9,
     HAMMER: 10,
     NOTE: 11,
-    SHRUBBERY: 12,
+    SPEAR: 12,
+    SHRUBBERY: 13,
     // Tinted dirt tiles for special zone
-    PINK_FLOOR: 13,
-    RED_FLOOR: 14,
-    ORANGE_FLOOR: 15,
-    PURPLE_FLOOR: 16,
-    BLUE_FLOOR: 17,
-    GREEN_FLOOR: 18,
-    YELLOW_FLOOR: 19
+    PINK_FLOOR: 14,
+    RED_FLOOR: 15,
+    ORANGE_FLOOR: 16,
+    PURPLE_FLOOR: 17,
+    BLUE_FLOOR: 18,
+    GREEN_FLOOR: 19,
+    YELLOW_FLOOR: 20
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -41,6 +42,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.ENEMY]: '#32CD32',   // Lime green for enemy
     [TILE_TYPES.NOTE]: '#FFFF00',    // Yellow for note
     [TILE_TYPES.HAMMER]: '#8B4513',  // Brown for hammer
+    [TILE_TYPES.SPEAR]: '#8B4513',   // Brown for spear
     [TILE_TYPES.SHRUBBERY]: '#228B22', // Green for shrubbery
     [TILE_TYPES.PINK_FLOOR]: '#FFB6C1',    // Light pink
     [TILE_TYPES.RED_FLOOR]: '#DC143C',     // Crimson red
@@ -61,51 +63,53 @@ export const DIRECTIONS = {
 
 // Image asset names
 export const IMAGE_ASSETS = [
-    'dirt.png',
+    'floors/dirt/dirt.png',
     'rock.png',
-    'dirt_north.png',
-    'dirt_corner.png',
-    'dirt_tunnel.png',
-    'dirt_corner2.png',
+    'floors/dirt/dirt_north.png',
+    'floors/dirt/dirt_corner.png',
+    'floors/dirt/dirt_tunnel.png',
+    'floors/dirt/dirt_corner2.png',
     'shrubbery.png',
     'bush.png',
-    'dircle.png',
+    'floors/dirt/dircle.png',
     'house.png',
     'water.png',
     'SeparateAnim/Special2.png',
     'SeparateAnim/dead.png',
     'fauna/lizardy.png',
+    'fauna/lizardo.png',
     'axe.png',
     'hammer.png',
+    'spear.png',
     'note.png'
 ];
 
 // Food image assets
 export const FOOD_ASSETS = [
-    'Food/Beaf.png',
-    'Food/Calamari.png',
-    'Food/Fish.png',
+    'Food/meat/Beaf.png',
+    'Food/meat/Calamari.png',
+    'Food/meat/Fish.png',
     'Food/FortuneCookie.png',
     'Food/Honey.png',
-    'Food/Meat.png',
+    'Food/meat/Meat.png',
     'Food/Noodle.png',
-    'Food/Nut.png',
-    'Food/Nut2.png',
-    'Food/Octopus.png',
-    'Food/Onigiri.png',
-    'Food/Seed1.png',
-    'Food/Seed2.png',
-    'Food/Seed3.png',
-    'Food/SeedBig1.png',
-    'Food/SeedBig2.png',
-    'Food/SeedBig3.png',
-    'Food/SeedLarge.png',
-    'Food/SeedLargeWhite.png',
-    'Food/Shrimp.png',
-    'Food/Sushi.png',
-    'Food/Sushi2.png',
+    'Food/nut/Nut.png',
+    'Food/nut/Nut2.png',
+    'Food/meat/Octopus.png',
+    'Food/sushi/Onigiri.png',
+    'Food/seeds/Seed1.png',
+    'Food/seeds/Seed2.png',
+    'Food/seeds/Seed3.png',
+    'Food/seeds/SeedBig1.png',
+    'Food/seeds/SeedBig2.png',
+    'Food/seeds/SeedBig3.png',
+    'Food/seeds/SeedLarge.png',
+    'Food/seeds/SeedLargeWhite.png',
+    'Food/meat/Shrimp.png',
+    'Food/sushi/Sushi.png',
+    'Food/sushi/Sushi2.png',
     'Food/TeaLeaf.png',
-    'Food/Yakitori.png'
+    'Food/meat/Yakitori.png'
 ];
 
 export const TOTAL_IMAGES = IMAGE_ASSETS.length + FOOD_ASSETS.length;

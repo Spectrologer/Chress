@@ -14,7 +14,12 @@ export class TextureManager {
 
             // Load regular assets
             IMAGE_ASSETS.forEach(assetName => {
-                const imageKey = assetName.replace('.png', '');
+                let imageKey;
+                if (assetName.startsWith('floors/dirt/')) {
+                    imageKey = assetName.replace('floors/dirt/', '').replace('.png', '');
+                } else {
+                    imageKey = assetName.replace('.png', '');
+                }
                 this.loadImage(imageKey, assetName);
             });
 
@@ -510,6 +515,8 @@ export class TextureManager {
             this.renderAxeTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (actualType === TILE_TYPES.HAMMER) {
             this.renderHammerTile(ctx, x, y, pixelX, pixelY, grid);
+        } else if (actualType === TILE_TYPES.SPEAR) {
+            this.renderSpearTile(ctx, x, y, pixelX, pixelY, grid);
         } else if (actualType === TILE_TYPES.NOTE) {
         this.renderNoteTile(ctx, x, y, pixelX, pixelY, grid);
     } else if (actualType === TILE_TYPES.SHRUBBERY) {
@@ -833,6 +840,51 @@ export class TextureManager {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🔨', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
+    renderSpearTile(ctx, x, y, pixelX, pixelY, grid) {
+        // First draw the directional floor background
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+
+        // Try to draw the spear image if loaded, otherwise use fallback
+        if (this.isImageLoaded('spear')) {
+            // Scale spear to fit within tile while maintaining aspect ratio
+            const spearImage = this.images.spear;
+            const aspectRatio = spearImage.width / spearImage.height;
+
+            let scaledWidth, scaledHeight;
+            if (aspectRatio > 1) {
+                // Image is wider than tall
+                scaledWidth = TILE_SIZE;
+                scaledHeight = TILE_SIZE / aspectRatio;
+            } else {
+                // Image is taller than wide (or square)
+                scaledHeight = TILE_SIZE;
+                scaledWidth = TILE_SIZE * aspectRatio;
+            }
+
+            // Center the image in the tile
+            const offsetX = (TILE_SIZE - scaledWidth) / 2;
+            const offsetY = (TILE_SIZE - scaledHeight) / 2;
+
+            ctx.drawImage(
+                spearImage,
+                pixelX + offsetX,
+                pixelY + offsetY,
+                scaledWidth,
+                scaledHeight
+            );
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.SPEAR];
+            ctx.fillRect(pixelX + 2, pixelY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+
+            ctx.fillStyle = '#666666';
+            ctx.font = '24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🔱', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 

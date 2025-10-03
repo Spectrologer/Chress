@@ -77,8 +77,12 @@ export class ConnectionManager {
                 break;
         }
 
-        // 70% chance of having an exit on this side
-        if ((seed % 100) < 30) {
+        // Increase connection probability for zones adjacent to (0,0)
+        const isAdjacentToStart = Math.max(Math.abs(zoneX), Math.abs(zoneY)) === 1;
+        const nullThreshold = isAdjacentToStart ? 20 : 30; // 80% chance for adjacent zones, 70% otherwise
+
+        // Chance of having an exit on this side
+        if ((seed % 100) < nullThreshold) {
             return null; // No exit on this side
         }
 

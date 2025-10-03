@@ -4,6 +4,7 @@ import { ConnectionManager } from './ConnectionManager.js';
 import { ZoneGenerator } from './ZoneGenerator.js';
 import { Player } from './Player.js';
 import { Enemy } from './Enemy.js';
+import { Note } from './Note.js';
 
 // Game state
 class Game {
@@ -32,6 +33,7 @@ class Game {
         this.enemies = []; // Current zone enemies
         this.defeatedEnemies = new Set(); // Tracks defeated enemy positions: "zoneX,zoneY,enemyX,enemyY"
         this.gameStarted = false;
+        this.currentRegion = null; // Tracks current region name to avoid repeated notifications
         
         // Path execution state
         this.isExecutingPath = false;
@@ -83,10 +85,17 @@ class Game {
             console.log('Starting asset loading...');
             await this.textureManager.loadAssets();
             console.log('All assets loaded successfully');
+            // Filter food assets to only those that loaded successfully
+            this.availableFoodAssets = FOOD_ASSETS.filter(foodAsset => {
+                const foodKey = foodAsset.replace('.png', '').replace('/', '_');
+                return this.textureManager.isImageLoaded(foodKey);
+            });
+            console.log(`Found ${this.availableFoodAssets.length} available food assets out of ${FOOD_ASSETS.length}`);
             console.log('Available images:', Object.keys(this.textureManager.images));
             this.startGame();
         } catch (error) {
             console.error('Error loading assets:', error);
+            this.availableFoodAssets = []; // No foods if loading failed
             this.startGame(); // Start anyway with fallback colors
         }
     }
@@ -103,6 +112,10 @@ class Game {
 
         // Ensure player starts on a valid tile
         this.grid[this.player.y][this.player.x] = TILE_TYPES.FLOOR;
+
+        // Set initial region (starting at 0,0 = "Home")
+        const initialZone = this.player.getCurrentZone();
+        this.currentRegion = this.generateRegionName(initialZone.x, initialZone.y);
 
         // Set up event listeners
         this.setupControls();
@@ -129,7 +142,7 @@ class Game {
             currentZone.y,
             this.zones,
             this.connectionManager.zoneConnections,
-            FOOD_ASSETS
+            this.availableFoodAssets
         );
 
         this.grid = zoneData.grid;
@@ -144,15 +157,25 @@ class Game {
     }
     
     transitionToZone(newZoneX, newZoneY, exitSide) {
+        // Check if this is entering a new region category
+        const newRegion = this.generateRegionName(newZoneX, newZoneY);
+        const isNewRegion = newRegion !== this.currentRegion;
+
         // Update player's current zone
         this.player.setCurrentZone(newZoneX, newZoneY);
-        
+
+        // Show region notification only if entering a new region
+        if (isNewRegion) {
+            this.showRegionNotification(newZoneX, newZoneY);
+            this.currentRegion = newRegion; // Update current region
+        }
+
         // Decrease thirst and hunger when moving to a new zone
         this.player.onZoneTransition();
-        
+
         // Generate or load the new zone
         this.generateZone();
-        
+
         // Position player based on which exit they used
         this.player.positionAfterTransition(exitSide, this.connectionManager);
 
@@ -164,7 +187,7 @@ class Game {
 
         // Ensure player is on a walkable tile
         this.player.ensureValidPosition(this.grid);
-        
+
         // Update UI
         this.updateZoneDisplay();
         this.updatePlayerPosition();
@@ -267,9 +290,34 @@ class Game {
     handleTap(screenX, screenY) {
         const gridCoords = this.screenToGridCoordinates(screenX, screenY);
         const playerPos = this.player.getPosition();
-        
+
         console.log(`Tap at screen: (${screenX}, ${screenY}) -> grid: (${gridCoords.x}, ${gridCoords.y})`);
-        
+
+        // Check if player has spear and if tapped on enemy for spear attack
+        const hasSpear = this.player.inventory.some(item => item.type === 'spear');
+        const enemyAtCoords = this.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
+        if (hasSpear && enemyAtCoords) {
+            // Calculate direction from player to enemy
+            const dx = gridCoords.x - playerPos.x;
+            const dy = gridCoords.y - playerPos.y;
+
+            // Check if it's a valid diagonal direction and adjacent
+            if (Math.abs(dx) === 1 && Math.abs(dy) === 1) {
+                let direction = '';
+                if (dy === -1) {
+                    if (dx === 1) direction = 'NE';
+                    else if (dx === -1) direction = 'NW';
+                } else if (dy === 1) {
+                    if (dx === 1) direction = 'SE';
+                    else if (dx === -1) direction = 'SW';
+                }
+                if (direction) {
+                    this.performSpearAttack(direction);
+                    return; // Attack performed, don't move
+                }
+            }
+        }
+
         // If player is on an exit tile, check for zone transition gestures
         if (this.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
             const transitionTriggered = this.checkForZoneTransitionGesture(gridCoords, playerPos);
@@ -277,17 +325,17 @@ class Game {
                 return;
             }
         }
-        
+
         // Check if tapped tile is an exit and player is already on it - trigger zone transition
-        if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y && 
+        if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y &&
             this.grid[gridCoords.y][gridCoords.x] === TILE_TYPES.EXIT) {
             this.handleExitTap(gridCoords.x, gridCoords.y);
             return;
         }
-        
+
         // Find path to target
         const path = this.findPath(playerPos.x, playerPos.y, gridCoords.x, gridCoords.y);
-        
+
         if (path && path.length > 0) {
             console.log(`Found path with ${path.length} steps:`, path);
             this.executePath(path);
@@ -472,7 +520,14 @@ class Game {
                     this.updatePlayerStats(); // Refresh inventory display
                 }
                 return; // Don't move, just add item
-            case 'z':
+            case 'r':
+                // Add spear to inventory for testing
+                if (this.player.inventory.length < 6) {
+                    this.player.inventory.push({ type: 'spear' });
+                    this.updatePlayerStats(); // Refresh inventory display
+                }
+                return; // Don't move, just add item
+            case 'p':
                 // Teleport to tile puzzle zone (3,3) for testing
                 this.player.setCurrentZone(3, 3);
                 this.generateZone();
@@ -486,6 +541,26 @@ class Game {
                 this.updatePlayerPosition();
                 this.updatePlayerStats();
                 return; // Don't process as movement
+            case 'f':
+                // Add random food to inventory for testing
+                if (this.availableFoodAssets.length > 0) {
+                    const randomFood = this.availableFoodAssets[Math.floor(Math.random() * this.availableFoodAssets.length)];
+                    this.player.inventory.push({ type: 'food', foodType: randomFood });
+                    this.updatePlayerStats(); // Refresh inventory display
+                }
+                return; // Don't process as movement
+            case 'q':
+                this.performSpearAttack('NE');
+                return;
+            case 'e':
+                this.performSpearAttack('NW');
+                return;
+            case 'z':
+                this.performSpearAttack('SW');
+                return;
+            case 'c':
+                this.performSpearAttack('SE');
+                return;
             default:
                 return;
         }
@@ -539,13 +614,20 @@ class Game {
         this.zoneGenerator.constructor.axeSpawned = false; // Reset axe spawn
         this.zoneGenerator.constructor.hammerSpawned = false; // Reset hammer spawn
         this.zoneGenerator.constructor.noteSpawned = false; // Reset note spawn
+        this.zoneGenerator.constructor.spearSpawned = false; // Reset spear spawn
+        Note.spawnedMessages.clear(); // Reset spawned message tracking
         this.player.reset();
         this.enemies = [];
         this.defeatedEnemies = new Set();
+        this.currentRegion = null; // Reset region tracking
 
         // Generate starting zone
         this.generateZone();
         this.grid[this.player.y][this.player.x] = TILE_TYPES.FLOOR;
+
+        // Set initial region
+        const initialZone = this.player.getCurrentZone();
+        this.currentRegion = this.generateRegionName(initialZone.x, initialZone.y);
 
         // Update UI
         this.updatePlayerPosition();
@@ -598,14 +680,22 @@ class Game {
                 slot.className = 'inventory-slot';
                 slot.style.cursor = this.player.isDead() ? 'not-allowed' : 'pointer';
                 if (item.type === 'food') {
-                    const foodName = item.foodType.split('/').pop().split('.')[0].toLowerCase();
-                    slot.classList.add(`item-${foodName}`);
+                    // Add the actual food sprite image to inventory slot
+                    const foodImg = document.createElement('img');
+                    foodImg.src = `Images/${item.foodType}`;
+                    foodImg.style.width = '100%';
+                    foodImg.style.height = '100%';
+                    foodImg.style.objectFit = 'contain';
+                    foodImg.style.imageRendering = 'pixelated';
+                    slot.appendChild(foodImg);
                 } else if (item.type === 'water') {
                     slot.classList.add('item-water');
                 } else if (item.type === 'axe') {
                     slot.classList.add('item-axe');
                 } else if (item.type === 'hammer') {
                     slot.classList.add('item-hammer');
+                } else if (item.type === 'spear') {
+                    slot.classList.add('item-spear');
                 } else if (item.type === 'tool') {
                     slot.classList.add('item-tool');
                 }
@@ -629,8 +719,14 @@ class Game {
                         this.grid[this.player.y][this.player.x] = TILE_TYPES.HAMMER;
                         this.player.inventory.splice(idx, 1);
                     }
+                } else if (item.type === 'spear') {
+                    // Drop spear at player's current position
+                    if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
+                        this.grid[this.player.y][this.player.x] = TILE_TYPES.SPEAR;
+                        this.player.inventory.splice(idx, 1);
                     }
-                    this.updatePlayerStats();
+                }
+                this.updatePlayerStats();
                 };
                 inventoryGrid.appendChild(slot);
             });
@@ -774,8 +870,27 @@ class Game {
     }
 
     handleEnemyMovements() {
+        const plannedMoves = new Map(); // enemy -> intended position
+        const playerPos = this.player.getPosition();
+
+        // Phase 1: Plan moves
         for (let enemy of this.enemies) {
-            enemy.moveTowards(this.player, this.grid);
+            const move = enemy.planMoveTowards(this.player, this.grid, this.enemies, playerPos);
+            if (move) {
+                const key = `${move.x},${move.y}`;
+                // Only add if no other enemy is planning this tile
+                if (!plannedMoves.has(key)) {
+                    plannedMoves.set(key, enemy);
+                }
+                // If multiple enemies want the same tile, only the first one gets it
+            }
+        }
+
+        // Phase 2: Apply valid moves
+        for (let [key, enemy] of plannedMoves) {
+            const move = key.split(',').map(Number);
+            enemy.x = move[0];
+            enemy.y = move[1];
         }
     }
 
@@ -786,10 +901,9 @@ class Game {
 
         // Check for any remaining overlaps and handle them
         this.enemies = this.enemies.filter(enemy => {
-            if (enemy.x === playerPos.x && enemy.y === playerPos.y) {
+            if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked) {
                 // If enemy and player are somehow on same tile, enemy attacks and dies
                 this.player.takeDamage(enemy.attack);
-                this.justAttacked = true;
                 console.log(`Unexpected collision: Enemy hit player! Player health: ${this.player.getHealth()}`);
                 if (this.player.isDead()) {
                     console.log('Player died!');
@@ -827,9 +941,41 @@ class Game {
         }
     }
 
+    showRegionNotification(zoneX, zoneY) {
+        const regionNotification = document.getElementById('regionNotification');
+        if (!regionNotification) return;
+
+        // Generate region name based on zone coordinates
+        const regionName = this.generateRegionName(zoneX, zoneY);
+
+        // Show the notification
+        regionNotification.textContent = regionName;
+        regionNotification.classList.add('show');
+
+        // Auto-hide after short duration (2 seconds)
+        setTimeout(() => {
+            regionNotification.classList.remove('show');
+        }, 2000);
+    }
+
+    generateRegionName(zoneX, zoneY) {
+        // Determine region category based on distance from origin
+        const distance = Math.max(Math.abs(zoneX), Math.abs(zoneY));
+
+        if (distance <= 2) return 'Home';
+        else if (distance <= 8) return 'Woods';
+        else if (distance <= 16) return 'Wilds';
+        else return 'Frontier';
+    }
+
     drawEnemies() {
         for (let enemy of this.enemies) {
-            let enemyKey = 'fauna/lizardy';
+            let enemyKey;
+            if (enemy.enemyType === 'lizardo') {
+                enemyKey = 'fauna/lizardo';
+            } else {
+                enemyKey = 'fauna/lizardy';
+            }
 
             // Determine sprite based on animation state
             if (enemy.deathAnimation > 0) {
@@ -857,6 +1003,69 @@ class Game {
                     TILE_SIZE - 4
                 );
             }
+        }
+    }
+
+    // Perform spear attack in specified direction
+    performSpearAttack(direction) {
+        // Check if player has a spear
+        const hasSpear = this.player.inventory.some(item => item.type === 'spear');
+        if (!hasSpear) return;
+
+        const playerPos = this.player.getPosition();
+        let targetX = playerPos.x;
+        let targetY = playerPos.y;
+
+        // Calculate target position based on direction
+        switch (direction) {
+            case 'NE':
+                targetX += 1;
+                targetY -= 1;
+                break;
+            case 'NW':
+                targetX -= 1;
+                targetY -= 1;
+                break;
+            case 'SW':
+                targetX -= 1;
+                targetY += 1;
+                break;
+            case 'SE':
+                targetX += 1;
+                targetY += 1;
+                break;
+        }
+
+        // Check bounds
+        if (targetX < 0 || targetX >= GRID_SIZE || targetY < 0 || targetY >= GRID_SIZE) {
+            return; // Out of bounds, no attack
+        }
+
+        // Check if there's an enemy at the target position
+        const enemyAtTarget = this.enemies.find(enemy => enemy.x === targetX && enemy.y === targetY);
+        if (enemyAtTarget) {
+            // Spear attack - defeat enemy
+            console.log(`Player attacks enemy with spear at (${targetX}, ${targetY})!`);
+            this.player.startAttackAnimation();
+            enemyAtTarget.takeDamage(999); // Ensure enemy is dead
+            console.log('Player defeated enemy!');
+
+            // Record that this enemy position is defeated to prevent respawning
+            const currentZone = this.player.getCurrentZone();
+            this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemyAtTarget.x},${enemyAtTarget.y}`);
+
+            // Remove enemy immediately
+            this.enemies = this.enemies.filter(e => e !== enemyAtTarget);
+
+            // Update stored zone data
+            const zoneKey = `${currentZone.x},${currentZone.y}`;
+            if (this.zones.has(zoneKey)) {
+                const zoneData = this.zones.get(zoneKey);
+                zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtTarget.id);
+                this.zones.set(zoneKey, zoneData);
+            }
+
+            this.updatePlayerStats(); // Refresh UI after attack
         }
     }
 
