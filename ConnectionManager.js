@@ -51,12 +51,12 @@ export class ConnectionManager {
             // Use random chance for exits instead of deterministic
             if (Math.random() < 0.95) { // Increased chance for more interconnected home
                 // Convert to valid exit position (avoiding corners and edges)
-                const validRange = GRID_SIZE - 4; // Avoid 2 tiles from each edge
+                const validRange = GRID_SIZE - 6; // Avoid 3 tiles from each edge
                 // Use zone coordinates for some determinacy in position while still randomizing existence
                 const seed = (zoneX * 73 + zoneY * 97) % validRange;
-                const position = seed + 2;
+                const position = seed + 3;
                 // Clamp position to valid range to prevent out-of-bounds errors
-                return Math.max(2, Math.min(GRID_SIZE - 3, position));
+                return Math.max(3, Math.min(GRID_SIZE - 4, position));
             }
             return null;
         }
@@ -89,11 +89,11 @@ export class ConnectionManager {
         }
 
         // Convert seed to valid exit position (avoiding corners and edges)
-        const validRange = GRID_SIZE - 4; // Avoid 2 tiles from each edge
-        const position = (seed % validRange) + 2;
+        const validRange = GRID_SIZE - 6; // Avoid 3 tiles from each edge
+        const position = (seed % validRange) + 3;
 
         // Clamp position to valid range to prevent out-of-bounds errors
-        return Math.max(2, Math.min(GRID_SIZE - 3, position));
+        return Math.max(3, Math.min(GRID_SIZE - 4, position));
     }
 
     ensureMinimumConnectivity(zoneX, zoneY, connections) {
@@ -113,9 +113,9 @@ export class ConnectionManager {
             const forcedDirection = directions[seed];
 
             // Force an exit in the chosen direction
-            const validRange = GRID_SIZE - 4;
-            const position = ((zoneX * 73 + zoneY * 97) % validRange) + 2;
-            connections[forcedDirection] = Math.max(2, Math.min(GRID_SIZE - 3, position));
+            const validRange = GRID_SIZE - 6;
+            const position = ((zoneX * 73 + zoneY * 97) % validRange) + 3;
+            connections[forcedDirection] = Math.max(3, Math.min(GRID_SIZE - 4, position));
         }
 
         // Special case: ensure the starting zone (0,0) has multiple connections with variation
@@ -155,11 +155,11 @@ export class ConnectionManager {
             // Add connections to ensure we have 4, avoiding adjacent exits on same border
             for (let i = 0; i < availableDirections.length; i++) {
                 const direction = availableDirections[i];
-                const validRange = GRID_SIZE - 4;
-                let basePosition = ((zoneX * 73 + zoneY * 97 + i * 31) % validRange) + 2;
+                const validRange = GRID_SIZE - 6;
+                let basePosition = ((zoneX * 73 + zoneY * 97 + i * 31) % validRange) + 3;
                 // Find a position not adjacent to existing exits on the same border
                 for (let attempt = 0; attempt < 20; attempt++) {
-                    const candidate = ((basePosition + attempt) % validRange) + 2; // Properly wrap within valid range
+                    const candidate = ((basePosition + attempt) % validRange) + 3; // Properly wrap within valid range
 
                     // Check if this position is adjacent to any existing exit on the same border
                     let isAdjacent = false;
@@ -180,7 +180,7 @@ export class ConnectionManager {
                 }
                 if (connections[direction] === null) {
                     // Fallback if no valid position found
-                    connections[direction] = Math.max(2, Math.min(GRID_SIZE - 3, basePosition));
+                    connections[direction] = Math.max(3, Math.min(GRID_SIZE - 4, basePosition));
                 }
             }
         }

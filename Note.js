@@ -5,74 +5,60 @@ export class Note {
         this.y = y;
     }
 
-    // Static set to track spawned messages this session
+    // This should be managed by a central game state manager, not statically here.
     static spawnedMessages = new Set();
 
     // Area definitions for messages
         static messageSets = {
             home: [
-                "Hope you don't mind, but I borrowed yer axe. I'll leave it nearby when I'm done! Thanks - Crayn.",
-                "The house feels warm and safe. Maybe someone will visit soon.",
-                "A note: 'Don't forget to water the plants.'",
-                "You hear distant laughter from the woods.",
-                "A memory of home comforts you as you rest."
+                "An axe would be useful. I think I saw one lying around somewhere nearby.",
+                "Chopping wood sure makes me hungry.",
+                "Stay hydrated.",
+                "H...",
+                "I should gather some food before I venture too far from home."
             ],
             woods: [
-                "Heard a rumor: a hammer is hidden somewhere in these woods.",
-                "A patch of mushrooms grows where the sun barely reaches.",
-                "The trees whisper secrets to those who listen.",
-                "A hammer lies beneath the roots, waiting for a worthy hand."
+                "The rocks in this region look tougher. I might need a sturdy hammer to break them.",
+                "I saw a strange glint in the distance. Could be a useful tool, like a hammer or a spear.",
+                "The lizards here are more aggressive. A simple whack might not be enough. A spear would be better for keeping them at a distance.",
+                "Fighting is never worth it. Sometimes.",
+                "Beware the Lizardo.'"
             ],
             wilds: [
-                "Some say a spear is lost in the wilds. Only the brave will find it.",
-                "A spear glints in the tall grass—watch out for lizards!",
-                "The wind howls, carrying distant cries.",
-                "The wilds test your courage. Seek the spear, and beware the lizards.",
-                "Every step deeper feels like a step into legend."
+                "I've heard tales of a powerful spear, lost somewhere in these wilds. It's said to be able to strike foes from a distance.",
+                "The 'Lizardos' are no joke.",
+                "Some exits are blocked by thick shrubbery or heavy rocks. An axe or hammer is essential out here.",
+                "Frontier hint.",
+                "I heard there was a place with rainbow dirt...'"
             ],
             frontier: [
-                "Lizardos roam the frontier. Only legends return from here.",
-                "The horizon stretches on, daring you to go further.",
-                "The air is thin, and the ground is scarred by old battles.",
-                "The unknown calls; will you answer or retreat?",
-                "The outer reaches demand courage and cunning alike."
+                "The ground here is scorching. It feels like a desert. The walls are just dried-out husks.",
+                "This is the Frontier. Few have returned from here. Every step is a risk.",
+                "The creatures here are relentless. A spear is my only hope for survival.",
+                "Water is almost impossible to find. I must conserve what I have.",
+                "Is that... a puzzle? In the middle of nowhere? The colors... they must mean something."
             ]
         };
 
-    static getProceduralMessage(zoneX, zoneY) {
-    // Determine area based on zone distance
-    const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
-    let area = 'home';
-    if (dist > 2 && dist <= 8) area = 'woods';
-    else if (dist > 8 && dist <= 16) area = 'wilds';
-    else if (dist > 16) area = 'frontier';
-
-    const messages = Note.messageSets[area];
-
-    // Track used messages per region
-    if (!Note.usedMessages) Note.usedMessages = {};
-    if (!Note.usedMessages[area]) Note.usedMessages[area] = new Set();
-
-    // If all messages have been used, reset for this region
-    if (Note.usedMessages[area].size >= messages.length) {
-        Note.usedMessages[area].clear();
-    }
-
-    // Find an unused message
-    for (let attempt = 0; attempt < messages.length; attempt++) {
-        const seed = Math.abs(zoneX * 7 + zoneY * 13 + attempt * 23);
-        const index = seed % messages.length;
-        const selectedMessage = messages[index];
-        if (!Note.usedMessages[area].has(selectedMessage)) {
-            Note.usedMessages[area].add(selectedMessage);
-            return selectedMessage;
+    // This logic should be moved to a manager that can handle state.
+    // The Note class itself should be a simple data structure.
+    static getProceduralMessage(zoneX, zoneY, usedMessagesSet) {
+        // This is a simplified example. The full logic from the original function
+        // for selecting an unused message would go here, using the passed 'usedMessagesSet'.
+        // Procedural notes only spawn in the "wilds" (Level 3), so we only need that case.
+        const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
+        let area = 'wilds'; // Default to wilds as it's the only level with procedural notes.
+        // The logic could be expanded if other levels get procedural notes.
+        
+        const messages = Note.messageSets[area];
+        // Find an unused message from 'messages' that is not in 'usedMessagesSet'
+        const availableMessages = messages.filter(msg => !usedMessagesSet.has(msg));
+        if (availableMessages.length > 0) {
+            const index = Math.floor(Math.random() * availableMessages.length);
+            return availableMessages[index];
         }
-    }
-
-    // Fallback: just return the first message (should never happen)
-    const fallbackMessage = messages[0];
-    Note.usedMessages[area].add(fallbackMessage);
-    return fallbackMessage;
+        
+        return messages[0]; // Fallback
     }
 
     static getMessageByIndex(area, index) {

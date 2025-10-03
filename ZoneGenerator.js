@@ -7,16 +7,21 @@ export class ZoneGenerator {
     static enemyCounter = 0;
     static axeSpawned = false;
     static hammerSpawned = false;
-    static noteSpawned = false;
     static spearSpawned = false;
-    static rareWeaponChosen = false;
-    static chosenWeapon = null;
+
+    // Pre-determined spawn locations for special items
+    static axeSpawnZone = null;
+    static hammerSpawnZone = null;
+    static spearSpawnZone = null;
+
     constructor() {
         this.grid = null;
         this.enemies = null;
         this.currentZoneX = null;
         this.currentZoneY = null;
         this.playerSpawn = null; // {x, y}
+        // Initialize item locations if they haven't been set for this session
+        ZoneGenerator.initializeItemLocations();
     }
     /**
      * Find a valid spawn tile for the player that is not occupied by an enemy, item, or impassable tile.
@@ -182,32 +187,27 @@ export class ZoneGenerator {
                 this.addRandomFeatures();
             }
             ZoneGenerator.zoneCounter++;
-            if (ZoneGenerator.zoneCounter % 9 === 0 && !(zoneX === 8 && zoneY === 8)) {
-                this.addRandomItem(foodAssets);
-            }
+            // Add level-based food and water spawning
+            this.addLevelBasedFoodAndWater(foodAssets);
+
             // Add enemy with similar frequency as food/water (~10% chance per zone)
             const zoneLevel = this.getZoneLevel();
             const enemyProbability = zoneLevel === 2 ? 0.15 : zoneLevel === 3 ? 0.22 : 0.11;
             if (Math.random() < enemyProbability && !(zoneX === 8 && zoneY === 8)) {
                 this.addRandomEnemy();
             }
-            // Choose rare weapon type once per world session for Frontier zones
-            if (!ZoneGenerator.rareWeaponChosen && this.getZoneLevel() === 3) {
-                ZoneGenerator.chosenWeapon = Math.random() < 0.5 ? 'hammer' : 'spear';
-                ZoneGenerator.rareWeaponChosen = true;
-            }
-            // Spawn axe item once per world session in zones within 5x5 area around house (Math.abs(zoneX) <= 2 && Math.abs(zoneY) <= 2)
-            if (!ZoneGenerator.axeSpawned && Math.abs(zoneX) <= 2 && Math.abs(zoneY) <= 2) {
+
+            // Check if the current zone is the designated spawn zone for an item
+            if (ZoneGenerator.axeSpawnZone && zoneX === ZoneGenerator.axeSpawnZone.x && zoneY === ZoneGenerator.axeSpawnZone.y && !ZoneGenerator.axeSpawned) {
                 this.addAxeItem();
             }
-            // Spawn chosen rare weapon item once per world session in Frontier zones (zone level 3)
-            if (ZoneGenerator.chosenWeapon === 'hammer' && !ZoneGenerator.hammerSpawned && this.getZoneLevel() === 3) {
+            if (ZoneGenerator.hammerSpawnZone && zoneX === ZoneGenerator.hammerSpawnZone.x && zoneY === ZoneGenerator.hammerSpawnZone.y && !ZoneGenerator.hammerSpawned) {
                 this.addHammerItem();
             }
-            // Spawn chosen rare weapon item once per world session in Frontier zones (zone level 3)
-            if (ZoneGenerator.chosenWeapon === 'spear' && !ZoneGenerator.spearSpawned && this.getZoneLevel() === 3) {
+            if (ZoneGenerator.spearSpawnZone && zoneX === ZoneGenerator.spearSpawnZone.x && zoneY === ZoneGenerator.spearSpawnZone.y && !ZoneGenerator.spearSpawned) {
                 this.addSpearItem();
             }
+
             // Special tinted dirt easter egg zone in the frontier (zone level 3)
             if (zoneX === 8 && zoneY === 8) {
                 this.addSpecialTintZone();
@@ -387,6 +387,31 @@ export class ZoneGenerator {
         }
     }
 
+    addLevelBasedFoodAndWater(foodAssets) {
+        const zoneLevel = this.getZoneLevel();
+        let spawnChance = 0;
+
+        switch (zoneLevel) {
+            case 1: // Home
+                spawnChance = 0.40;
+                break;
+            case 2: // Woods
+                spawnChance = 0.25;
+                break;
+            case 3: // Wilds
+                spawnChance = 0.15;
+                break;
+            case 4: // Frontier
+                spawnChance = 0.05;
+                break;
+        }
+
+        // Add the item if the random chance succeeds
+        if (Math.random() < spawnChance) {
+            this.addRandomItem(foodAssets);
+        }
+    }
+
     addAxeItem() {
         // Add the rare axe item
 
@@ -463,14 +488,12 @@ export class ZoneGenerator {
                     type: TILE_TYPES.NOTE,
                     note: new Note(message, x, y)
                 };
-                ZoneGenerator.noteSpawned = true;
                 break; // Successfully placed note
             }
         }
     }
 
     addSpecificNote(messageIndex) {
-        if (this.checkNoteExists()) return;
 
     let area;
     const level = this.getZoneLevel();
@@ -483,6 +506,8 @@ export class ZoneGenerator {
     const message = Note.getMessageByIndex(area, messageIndex);
     console.log('[Note Debug] addSpecificNote:', { area, messageIndex, message });
     if (Note.spawnedMessages.has(message)) return;
+
+    if (this.checkNoteExists()) return;
 
         // Try to place the note in a valid location (max 50 attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
@@ -745,5 +770,36 @@ export class ZoneGenerator {
                 this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.SHRUBBERY;
             }
         }
+    }
+
+    static initializeItemLocations() {
+        if (this.axeSpawnZone && this.hammerSpawnZone && this.spearSpawnZone) {
+            return; // Already initialized
+        }
+
+        // Level 1 (Home): dist 1-2
+        this.axeSpawnZone = this.getRandomZoneForLevel(1, 2);
+
+        // Level 2 (Woods): dist 3-8
+        this.hammerSpawnZone = this.getRandomZoneForLevel(3, 8);
+
+        // Level 3 (Wilds): dist 9-16
+        this.spearSpawnZone = this.getRandomZoneForLevel(9, 16);
+
+        console.log('Special Item Locations:', {
+            axe: this.axeSpawnZone,
+            hammer: this.hammerSpawnZone,
+            spear: this.spearSpawnZone
+        });
+    }
+
+    static getRandomZoneForLevel(minDist, maxDist) {
+        let x, y;
+        do {
+            const range = maxDist * 2 + 1;
+            x = Math.floor(Math.random() * range) - maxDist;
+            y = Math.floor(Math.random() * range) - maxDist;
+        } while (Math.max(Math.abs(x), Math.abs(y)) < minDist || Math.max(Math.abs(x), Math.abs(y)) > maxDist);
+        return { x, y };
     }
 }
