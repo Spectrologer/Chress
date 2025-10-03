@@ -101,11 +101,12 @@ export class Player {
 
         const tile = grid[y][x];
 
-        // Player can walk on floor, exit, water, food, and axe tiles
+        // Player can walk on floor, exit, water, food, axe, and note tiles
         if (tile === TILE_TYPES.FLOOR ||
             tile === TILE_TYPES.EXIT ||
             tile === TILE_TYPES.WATER ||
             tile === TILE_TYPES.AXE ||
+            (tile && tile.type === TILE_TYPES.NOTE) ||
             (tile && tile.type === TILE_TYPES.FOOD)) {
             return true;
         }

@@ -72,13 +72,13 @@ export class Enemy {
 
     isWalkable(x, y, grid) {
         // Same logic as Player.isWalkable but enemies can also walk on water/food
-        // Enemies avoid walls, rocks, grass, house, but can walk on floor, exit, water, food
+        // Enemies avoid walls, rocks, grass, house, but can walk on floor, exit, water, food, notes
         if (x < 0 || x >= grid.length || y < 0 || y >= grid.length) {
             return false;
         }
 
         const tile = grid[y][x];
-        return tile === 0 || tile === 3 || tile === 6 || (tile && tile.type === 7);  // FLOOR, EXIT, WATER, FOOD
+        return tile === 0 || tile === 3 || tile === 6 || (tile && tile.type === 7) || (tile && tile.type === 10);  // FLOOR, EXIT, WATER, FOOD, NOTE
     }
 
     takeDamage(damage) {

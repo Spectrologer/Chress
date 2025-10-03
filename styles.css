@@ -980,3 +980,67 @@ h1 {
         opacity: 0.9;
     }
 }
+
+/* Message Box */
+.message-box {
+    margin: 10px 0;
+    padding: 10px 15px;
+    background: #fffbe9;
+    border: 2px solid #e2cfa2;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    font-family: 'Cinzel', serif;
+    font-size: 1.2em;
+    color: #7a5c2e;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    max-width: 600px;
+    width: 90%;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    position: relative;
+}
+
+.message-box.show {
+    opacity: 1;
+}
+
+.message-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    margin: 0;
+    pointer-events: none;
+    font-size: 1.5em;
+    max-width: 500px;
+    width: auto;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.message-box::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: rgba(139, 69, 19, 0.05);
+    z-index: -1;
+    clip-path: polygon(
+        0% 3%, 2% 0%, 8% 2%, 12% 0%, 18% 3%, 25% 1%,
+        32% 4%, 38% 1%, 45% 2%, 52% 0%, 58% 3%, 65% 1%,
+        72% 3%, 78% 0%, 85% 2%, 92% 0%, 98% 3%, 100% 8%,
+        98% 15%, 100% 22%, 97% 28%, 100% 35%, 98% 42%,
+        100% 48%, 97% 55%, 100% 62%, 98% 68%, 100% 75%,
+        97% 82%, 100% 88%, 98% 95%, 92% 100%, 85% 98%,
+        78% 100%, 72% 97%, 65% 100%, 58% 97%, 52% 100%,
+        45% 98%, 38% 100%, 32% 96%, 25% 100%, 18% 97%,
+        12% 100%, 8% 98%, 2% 100%, 0% 97%, 3% 88%,
+        0% 82%, 2% 75%, 0% 68%, 3% 62%, 0% 55%, 2% 48%,
+        0% 42%, 3% 35%, 0% 28%, 2% 22%, 0% 15%, 3% 8%
+    );
+}

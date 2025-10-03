@@ -11,7 +11,7 @@ export class TextureManager {
     async loadAssets() {
         return new Promise((resolve) => {
             this.onAllImagesLoaded = resolve;
-            
+
             // Load regular assets
             IMAGE_ASSETS.forEach(assetName => {
                 const imageKey = assetName.replace('.png', '');
@@ -37,7 +37,7 @@ export class TextureManager {
 
     loadImage(key, filename) {
         this.images[key] = new Image();
-        
+
         this.images[key].onload = () => {
             console.log(`${filename} texture loaded successfully`);
             this.imagesLoaded++;
@@ -45,7 +45,7 @@ export class TextureManager {
                 this.onAllImagesLoaded();
             }
         };
-        
+
         this.images[key].onerror = () => {
             console.log(`Could not load Images/${filename}, using fallback colors`);
             this.imagesLoaded++;
@@ -53,7 +53,7 @@ export class TextureManager {
                 this.onAllImagesLoaded();
             }
         };
-        
+
         this.images[key].src = `Images/${filename}`;
     }
 
@@ -70,50 +70,50 @@ export class TextureManager {
     shouldUseDirtTunnelHorizontal(x, y, grid) {
         const GRID_SIZE = grid.length;
         if (x === 0 || x === GRID_SIZE - 1) return false;
-        
+
         const hasWestWall = grid[y][x - 1] === TILE_TYPES.WALL;
         const hasEastWall = grid[y][x + 1] === TILE_TYPES.WALL;
-        
+
         if (!hasWestWall || !hasEastWall) return false;
-        
+
         const passableDirections = [
             { dx: 0, dy: -1 }, { dx: 0, dy: 1 },
             { dx: 1, dy: -1 }, { dx: -1, dy: -1 },
             { dx: 1, dy: 1 }, { dx: -1, dy: 1 }
         ];
-        
+
         return this.checkPassableDirections(x, y, grid, passableDirections);
     }
 
     shouldUseDirtTunnelVertical(x, y, grid) {
         const GRID_SIZE = grid.length;
         if (y === 0 || y === GRID_SIZE - 1) return false;
-        
+
         const hasNorthWall = grid[y - 1][x] === TILE_TYPES.WALL;
         const hasSouthWall = grid[y + 1][x] === TILE_TYPES.WALL;
-        
+
         if (!hasNorthWall || !hasSouthWall) return false;
-        
+
         const passableDirections = [
             { dx: -1, dy: 0 }, { dx: 1, dy: 0 },
             { dx: -1, dy: -1 }, { dx: 1, dy: -1 },
             { dx: -1, dy: 1 }, { dx: 1, dy: 1 }
         ];
-        
+
         return this.checkPassableDirections(x, y, grid, passableDirections);
     }
 
     shouldUseDirtNorth(x, y, grid) {
         const GRID_SIZE = grid.length;
         if (y === 0) return false; // Can't check north if at top edge
-        
+
         // Must have wall to the north
         const hasNorthWall = grid[y - 1][x] === TILE_TYPES.WALL;
         if (!hasNorthWall) return false;
-        
+
         // Check for additional wall patterns that work with dirt_north
         let hasValidPattern = false;
-        
+
         // Pattern 1: North + Northeast walls, passable elsewhere
         if (x < GRID_SIZE - 1) {
             const hasNorthEastWall = grid[y - 1][x + 1] === TILE_TYPES.WALL;
@@ -130,7 +130,7 @@ export class TextureManager {
                 if (passableCount >= 4) hasValidPattern = true;
             }
         }
-        
+
         // Pattern 2: North + Northwest walls, passable elsewhere
         if (!hasValidPattern && x > 0) {
             const hasNorthWestWall = grid[y - 1][x - 1] === TILE_TYPES.WALL;
@@ -147,21 +147,21 @@ export class TextureManager {
                 if (passableCount >= 4) hasValidPattern = true;
             }
         }
-        
+
         return hasValidPattern;
     }
 
     shouldUseDirtSouth(x, y, grid) {
         const GRID_SIZE = grid.length;
         if (y === GRID_SIZE - 1) return false; // Can't check south if at bottom edge
-        
+
         // Must have wall to the south
         const hasSouthWall = grid[y + 1][x] === TILE_TYPES.WALL;
         if (!hasSouthWall) return false;
-        
+
         // Check for additional wall patterns that work with dirt_south (rotated dirt_north)
         let hasValidPattern = false;
-        
+
         // Pattern 1: South + Southeast walls, passable elsewhere
         if (x < GRID_SIZE - 1) {
             const hasSouthEastWall = grid[y + 1][x + 1] === TILE_TYPES.WALL;
@@ -177,7 +177,7 @@ export class TextureManager {
                 if (passableCount >= 4) hasValidPattern = true;
             }
         }
-        
+
         // Pattern 2: South + Southwest walls, passable elsewhere
         if (!hasValidPattern && x > 0) {
             const hasSouthWestWall = grid[y + 1][x - 1] === TILE_TYPES.WALL;
@@ -193,21 +193,21 @@ export class TextureManager {
                 if (passableCount >= 4) hasValidPattern = true;
             }
         }
-        
+
         return hasValidPattern;
     }
 
     shouldUseDirtEast(x, y, grid) {
         const GRID_SIZE = grid.length;
         if (x === GRID_SIZE - 1) return false; // Can't check east if at right edge
-        
+
         // Must have wall to the east
         const hasEastWall = grid[y][x + 1] === TILE_TYPES.WALL;
         if (!hasEastWall) return false;
-        
+
         // Check for additional wall patterns that work with dirt_east (rotated dirt_north)
         let hasValidPattern = false;
-        
+
         // Pattern 1: East + Northeast walls, passable elsewhere
         if (y > 0) {
             const hasNorthEastWall = grid[y - 1][x + 1] === TILE_TYPES.WALL;
@@ -223,7 +223,7 @@ export class TextureManager {
                 if (passableCount >= 4) hasValidPattern = true;
             }
         }
-        
+
         // Pattern 2: East + Southeast walls, passable elsewhere
         if (!hasValidPattern && y < GRID_SIZE - 1) {
             const hasSouthEastWall = grid[y + 1][x + 1] === TILE_TYPES.WALL;
@@ -239,21 +239,21 @@ export class TextureManager {
                 if (passableCount >= 4) hasValidPattern = true;
             }
         }
-        
+
         return hasValidPattern;
     }
 
     shouldUseDirtWest(x, y, grid) {
         const GRID_SIZE = grid.length;
         if (x === 0) return false; // Can't check west if at left edge
-        
+
         // Must have wall to the west
         const hasWestWall = grid[y][x - 1] === TILE_TYPES.WALL;
         if (!hasWestWall) return false;
-        
+
         // Check for additional wall patterns that work with dirt_west (rotated dirt_north)
         let hasValidPattern = false;
-        
+
         // Pattern 1: West + Northwest walls, passable elsewhere
         if (y > 0) {
             const hasNorthWestWall = grid[y - 1][x - 1] === TILE_TYPES.WALL;
@@ -269,7 +269,7 @@ export class TextureManager {
                 if (passableCount >= 4) hasValidPattern = true;
             }
         }
-        
+
         // Pattern 2: West + Southwest walls, passable elsewhere
         if (!hasValidPattern && y < GRID_SIZE - 1) {
             const hasSouthWestWall = grid[y + 1][x - 1] === TILE_TYPES.WALL;
@@ -285,18 +285,18 @@ export class TextureManager {
                 if (passableCount >= 4) hasValidPattern = true;
             }
         }
-        
+
         return hasValidPattern;
     }
 
     countPassableDirections(x, y, grid, directions) {
         const GRID_SIZE = grid.length;
         let passableCount = 0;
-        
+
         for (let dir of directions) {
             const checkX = x + dir.dx;
             const checkY = y + dir.dy;
-            
+
             // Count as passable if out of bounds or not a wall
             if (checkX < 0 || checkX >= GRID_SIZE || checkY < 0 || checkY >= GRID_SIZE) {
                 passableCount++;
@@ -304,26 +304,26 @@ export class TextureManager {
                 passableCount++;
             }
         }
-        
+
         return passableCount;
     }
 
     checkPassableDirections(x, y, grid, directions) {
         const GRID_SIZE = grid.length;
-        
+
         for (let dir of directions) {
             const newX = x + dir.dx;
             const newY = y + dir.dy;
-            
+
             if (newX < 0 || newX >= GRID_SIZE || newY < 0 || newY >= GRID_SIZE) {
                 continue;
             }
-            
+
             if (grid[newY][newX] === TILE_TYPES.WALL) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -332,19 +332,19 @@ export class TextureManager {
         const GRID_SIZE = grid.length;
         // Use dirt_corner for northeast corner: walls to N and E, passable tiles to S and W
         if (x === GRID_SIZE - 1 || y === 0) return false; // Can't check if at edges
-        
+
         // Must have walls to the north and east
         const hasNorthWall = grid[y - 1][x] === TILE_TYPES.WALL;
         const hasEastWall = grid[y][x + 1] === TILE_TYPES.WALL;
-        
+
         if (!hasNorthWall || !hasEastWall) {
             return false;
         }
-        
+
         // Must have passable tiles to the south and west
         const hasSouthPassable = (y < GRID_SIZE - 1) ? grid[y + 1][x] !== TILE_TYPES.WALL : true;
         const hasWestPassable = (x > 0) ? grid[y][x - 1] !== TILE_TYPES.WALL : true;
-        
+
         return hasSouthPassable && hasWestPassable;
     }
 
@@ -352,19 +352,19 @@ export class TextureManager {
         const GRID_SIZE = grid.length;
         // Use dirt_corner rotated 90° for southeast corner: walls to S and E, passable tiles to N and W
         if (x === GRID_SIZE - 1 || y === GRID_SIZE - 1) return false; // Can't check if at edges
-        
+
         // Must have walls to the south and east
         const hasSouthWall = grid[y + 1][x] === TILE_TYPES.WALL;
         const hasEastWall = grid[y][x + 1] === TILE_TYPES.WALL;
-        
+
         if (!hasSouthWall || !hasEastWall) {
             return false;
         }
-        
+
         // Must have passable tiles to the north and west
         const hasNorthPassable = (y > 0) ? grid[y - 1][x] !== TILE_TYPES.WALL : true;
         const hasWestPassable = (x > 0) ? grid[y][x - 1] !== TILE_TYPES.WALL : true;
-        
+
         return hasNorthPassable && hasWestPassable;
     }
 
@@ -372,19 +372,19 @@ export class TextureManager {
         const GRID_SIZE = grid.length;
         // Use dirt_corner rotated 180° for southwest corner: walls to S and W, passable tiles to N and E
         if (x === 0 || y === GRID_SIZE - 1) return false; // Can't check if at edges
-        
+
         // Must have walls to the south and west
         const hasSouthWall = grid[y + 1][x] === TILE_TYPES.WALL;
         const hasWestWall = grid[y][x - 1] === TILE_TYPES.WALL;
-        
+
         if (!hasSouthWall || !hasWestWall) {
             return false;
         }
-        
+
         // Must have passable tiles to the north and east
         const hasNorthPassable = (y > 0) ? grid[y - 1][x] !== TILE_TYPES.WALL : true;
         const hasEastPassable = (x < GRID_SIZE - 1) ? grid[y][x + 1] !== TILE_TYPES.WALL : true;
-        
+
         return hasNorthPassable && hasEastPassable;
     }
 
@@ -392,19 +392,19 @@ export class TextureManager {
         const GRID_SIZE = grid.length;
         // Use dirt_corner rotated 270° for northwest corner: walls to N and W, passable tiles to S and E
         if (x === 0 || y === 0) return false; // Can't check if at edges
-        
+
         // Must have walls to the north and west
         const hasNorthWall = grid[y - 1][x] === TILE_TYPES.WALL;
         const hasWestWall = grid[y][x - 1] === TILE_TYPES.WALL;
-        
+
         if (!hasNorthWall || !hasWestWall) {
             return false;
         }
-        
+
         // Must have passable tiles to the south and east
         const hasSouthPassable = (y < GRID_SIZE - 1) ? grid[y + 1][x] !== TILE_TYPES.WALL : true;
         const hasEastPassable = (x < GRID_SIZE - 1) ? grid[y][x + 1] !== TILE_TYPES.WALL : true;
-        
+
         return hasSouthPassable && hasEastPassable;
     }
 
@@ -412,68 +412,68 @@ export class TextureManager {
     shouldUseDirtCorner2NorthSouth(x, y, grid) {
         const GRID_SIZE = grid.length;
         if (y === 0 || y === GRID_SIZE - 1 || x === 0 || x === GRID_SIZE - 1) return false;
-        
+
         const hasNorthEastWall = grid[y - 1][x + 1] === TILE_TYPES.WALL;
         const hasNorthWestWall = grid[y - 1][x - 1] === TILE_TYPES.WALL;
-        
+
         if (!hasNorthEastWall || !hasNorthWestWall) return false;
-        
+
         const passableDirections = [
             { dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 },
             { dx: 1, dy: 1 }, { dx: -1, dy: 1 }
         ];
-        
+
         return this.checkPassableDirections(x, y, grid, passableDirections);
     }
 
     shouldUseDirtCorner2EastWest(x, y, grid) {
         const GRID_SIZE = grid.length;
         if (y === 0 || y === GRID_SIZE - 1 || x === 0 || x === GRID_SIZE - 1) return false;
-        
+
         const hasNorthEastWall = grid[y - 1][x + 1] === TILE_TYPES.WALL;
         const hasSouthEastWall = grid[y + 1][x + 1] === TILE_TYPES.WALL;
-        
+
         if (!hasNorthEastWall || !hasSouthEastWall) return false;
-        
+
         const passableDirections = [
             { dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 },
             { dx: -1, dy: -1 }, { dx: -1, dy: 1 }
         ];
-        
+
         return this.checkPassableDirections(x, y, grid, passableDirections);
     }
 
     shouldUseDirtCorner2SouthNorth(x, y, grid) {
         const GRID_SIZE = grid.length;
         if (y === 0 || y === GRID_SIZE - 1 || x === 0 || x === GRID_SIZE - 1) return false;
-        
+
         const hasSouthEastWall = grid[y + 1][x + 1] === TILE_TYPES.WALL;
         const hasSouthWestWall = grid[y + 1][x - 1] === TILE_TYPES.WALL;
-        
+
         if (!hasSouthEastWall || !hasSouthWestWall) return false;
-        
+
         const passableDirections = [
             { dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 },
             { dx: 1, dy: -1 }, { dx: -1, dy: -1 }
         ];
-        
+
         return this.checkPassableDirections(x, y, grid, passableDirections);
     }
 
     shouldUseDirtCorner2WestEast(x, y, grid) {
         const GRID_SIZE = grid.length;
         if (y === 0 || y === GRID_SIZE - 1 || x === 0) return false;
-        
+
         const hasSouthWestWall = grid[y + 1][x - 1] === TILE_TYPES.WALL;
         const hasNorthWestWall = grid[y - 1][x - 1] === TILE_TYPES.WALL;
-        
+
         if (!hasSouthWestWall || !hasNorthWestWall) return false;
-        
+
         const passableDirections = [
             { dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 },
             { dx: 1, dy: -1 }, { dx: 1, dy: 1 }
         ];
-        
+
         return this.checkPassableDirections(x, y, grid, passableDirections);
     }
 
@@ -482,28 +482,33 @@ export class TextureManager {
         const pixelX = x * TILE_SIZE;
         const pixelY = y * TILE_SIZE;
 
-        if (tileType === TILE_TYPES.EXIT) {
+        // Handle object tiles (like notes)
+        const actualType = tileType && tileType.type ? tileType.type : tileType;
+
+        if (actualType === TILE_TYPES.EXIT) {
             this.renderExitTile(ctx, x, y, pixelX, pixelY, grid);
-        } else if (tileType === TILE_TYPES.WALL) {
+        } else if (actualType === TILE_TYPES.WALL) {
             this.renderWallTile(ctx, x, y, pixelX, pixelY, grid);
-        } else if (tileType === TILE_TYPES.FLOOR) {
+        } else if (actualType === TILE_TYPES.FLOOR) {
             this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
-        } else if (tileType === TILE_TYPES.ROCK) {
+        } else if (actualType === TILE_TYPES.ROCK) {
             this.renderRockTile(ctx, x, y, pixelX, pixelY, grid);
-        } else if (tileType === TILE_TYPES.GRASS) {
+        } else if (actualType === TILE_TYPES.GRASS) {
             this.renderGrassTile(ctx, x, y, pixelX, pixelY, grid);
-        } else if (tileType === TILE_TYPES.HOUSE) {
+        } else if (actualType === TILE_TYPES.HOUSE) {
             this.renderHouseTile(ctx, x, y, pixelX, pixelY, grid);
-        } else if (tileType === TILE_TYPES.WATER) {
+        } else if (actualType === TILE_TYPES.WATER) {
             this.renderWaterTile(ctx, x, y, pixelX, pixelY, grid);
-        } else if (tileType === TILE_TYPES.FOOD) {
+        } else if (actualType === TILE_TYPES.FOOD) {
             this.renderFoodTile(ctx, x, y, pixelX, pixelY, grid);
-        } else if (tileType === TILE_TYPES.ENEMY) {
+        } else if (actualType === TILE_TYPES.ENEMY) {
             this.renderEnemyTile(ctx, x, y, pixelX, pixelY, grid);
-        } else if (tileType === TILE_TYPES.AXE) {
+        } else if (actualType === TILE_TYPES.AXE) {
             this.renderAxeTile(ctx, x, y, pixelX, pixelY, grid);
+        } else if (actualType === TILE_TYPES.NOTE) {
+            this.renderNoteTile(ctx, x, y, pixelX, pixelY, grid);
         } else {
-            this.renderFloorTile(ctx, pixelX, pixelY, tileType);
+            this.renderFloorTile(ctx, pixelX, pixelY, actualType);
         }
     }
 
@@ -550,7 +555,7 @@ export class TextureManager {
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
-        
+
         // Then draw bush on top
         if (this.isImageLoaded('bush')) {
             ctx.drawImage(this.images.bush, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
@@ -606,7 +611,7 @@ export class TextureManager {
     renderRockTile(ctx, x, y, pixelX, pixelY, grid) {
         // Rock tiles: draw dirt background first, then rock on top
         this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
-        
+
         // Then draw rock on top
         if (this.isImageLoaded('rock')) {
             ctx.drawImage(this.images.rock, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
@@ -619,7 +624,7 @@ export class TextureManager {
     renderGrassTile(ctx, x, y, pixelX, pixelY, grid) {
         // Grass tiles: draw dirt background first, then shrubbery on top
         this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
-        
+
         // Then draw shrubbery on top
         if (this.isImageLoaded('shrubbery')) {
             ctx.drawImage(this.images.shrubbery, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
@@ -632,23 +637,23 @@ export class TextureManager {
     renderHouseTile(ctx, x, y, pixelX, pixelY, grid) {
         // First render dirt background
         this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
-        
+
         // Then render the house part
         if (this.isImageLoaded('house')) {
             // For a 3x3 house, we need to determine which part of the house image to draw
             // Find the house area bounds to determine the position within the house
             const houseInfo = this.findHousePosition(x, y, grid);
-            
+
             if (houseInfo) {
                 // Calculate which part of the house image to use
                 const partX = x - houseInfo.startX;
                 const partY = y - houseInfo.startY;
-                
+
                 // Draw the corresponding part of the house image
                 // Divide the house image into 3x3 parts
                 const partWidth = this.images.house.width / 3;
                 const partHeight = this.images.house.height / 3;
-                
+
                 ctx.drawImage(
                     this.images.house,
                     partX * partWidth, partY * partHeight, // Source position
@@ -672,14 +677,14 @@ export class TextureManager {
                 let isHouse = true;
                 for (let y = startY; y < startY + 3 && isHouse; y++) {
                     for (let x = startX; x < startX + 3 && isHouse; x++) {
-                        if (y >= 0 && y < GRID_SIZE && x >= 0 && x < GRID_SIZE && 
+                        if (y >= 0 && y < GRID_SIZE && x >= 0 && x < GRID_SIZE &&
                             grid[y][x] !== TILE_TYPES.HOUSE) {
                             isHouse = false;
                         }
                     }
                 }
-                
-                if (isHouse && targetX >= startX && targetX < startX + 3 && 
+
+                if (isHouse && targetX >= startX && targetX < startX + 3 &&
                     targetY >= startY && targetY < startY + 3) {
                     return { startX, startY };
                 }
@@ -734,7 +739,7 @@ export class TextureManager {
     }
 
     renderFoodTile(ctx, x, y, pixelX, pixelY, grid) {
-        // Use the stored foodType from the grid tile, don't re-seed
+        // Use the stored foodType from the grid tile
         const tile = grid[y][x];
         const foodAsset = tile.foodType;
         const foodKey = foodAsset.replace('.png', '').replace('/', '_');
@@ -802,15 +807,23 @@ export class TextureManager {
         }
     }
 
-    createEmptyGrid() {
-        // Create a simple empty grid for fallback rendering if grid is not available
-        const grid = [];
-        for (let y = 0; y < GRID_SIZE; y++) {
-            grid[y] = [];
-            for (let x = 0; x < GRID_SIZE; x++) {
-                grid[y][x] = TILE_TYPES.FLOOR;
-            }
+    renderNoteTile(ctx, x, y, pixelX, pixelY, grid) {
+        // First draw the directional floor background
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid);
+
+        // Try to draw the note image if loaded, otherwise use fallback
+        if (this.isImageLoaded('note')) {
+            ctx.drawImage(this.images.note, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.NOTE];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#000000';
+            ctx.font = '32px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('📝', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
-        return grid;
     }
 }

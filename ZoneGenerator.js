@@ -1,10 +1,12 @@
 import { TILE_TYPES, GRID_SIZE } from './constants.js';
 import { Enemy } from './Enemy.js';
+import { Note } from './Note.js';
 
 export class ZoneGenerator {
     static zoneCounter = 0;
     static enemyCounter = 0;
     static axeSpawned = false;
+    static noteSpawned = false;
     constructor() {
         this.grid = null;
         this.enemies = null;
@@ -26,9 +28,10 @@ export class ZoneGenerator {
         // Generate new zone structure
         this.initialize();
         
-        // Special handling for the starting zone (0,0) - add house
+        // Special handling for the starting zone (0,0) - add house and second note
         if (zoneX === 0 && zoneY === 0) {
             this.addHouse();
+            this.addSecondNote();
         }
         
         // Generate exits using pre-determined connections
@@ -49,6 +52,10 @@ export class ZoneGenerator {
             if (!ZoneGenerator.axeSpawned && Math.abs(zoneX) <= 4 && Math.abs(zoneY) <= 4 && Math.random() < 0.02) {
                 this.addAxeItem();
             }
+        }
+        // Try to spawn note once per world session in zones within 1 of home (including home)
+        if (!ZoneGenerator.noteSpawned && Math.max(Math.abs(zoneX), Math.abs(zoneY)) <= 1 && Math.random() < 0.5) {
+            this.addNote();
         }
 
         // Ensure exit accessibility
@@ -173,6 +180,44 @@ export class ZoneGenerator {
                 ZoneGenerator.axeSpawned = true;
                 break; // Successfully placed axe
             }
+        }
+    }
+
+    addNote() {
+        // Add the note with a specific message
+
+        // Try to place the note in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = {
+                    type: TILE_TYPES.NOTE,
+                    note: new Note("Your axe should be around here somewhere. - Crayn", x, y)
+                };
+                ZoneGenerator.noteSpawned = true;
+                break; // Successfully placed note
+            }
+        }
+    }
+
+    addSecondNote() {
+        // Add the second note with a specific message, placed at a fixed location in the starting zone
+        // Position must be clear of house and clearing areas
+        const x = 1; // Left side, should be clear of house area
+        const y = 8; // Further down but still within 2 tiles from start in some sense
+
+        // Only place if it's in bounds and on a floor tile (should be after house placement)
+        if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1 && this.grid[y][x] === TILE_TYPES.FLOOR) {
+            this.grid[y][x] = {
+                type: TILE_TYPES.NOTE,
+                note: new Note("Fighting's never worth it! Sometimes.", x, y)
+            };
+            console.log(`Added second note at (${x}, ${y})`);
+        } else {
+            console.log(`Could not add second note at (${x}, ${y}): bounds check failed or tile not floor. Current tile:`, this.grid[y][x]);
         }
     }
 

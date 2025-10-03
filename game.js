@@ -501,6 +501,8 @@ class Game {
         this.checkCollisions();
         this.updatePlayerPosition();
         this.updatePlayerStats();
+        // Check if player is on a note tile (needs to be checked every frame for persistence)
+        this.checkNoteInteraction();
     }
     
     resetGame() {
@@ -508,6 +510,7 @@ class Game {
         this.zones.clear();
         this.connectionManager.clear();
         this.zoneGenerator.constructor.axeSpawned = false; // Reset axe spawn
+        this.zoneGenerator.constructor.noteSpawned = false; // Reset note spawn
         this.player.reset();
         this.enemies = [];
         this.defeatedEnemies = new Set();
@@ -760,6 +763,32 @@ class Game {
             }
             return true;
         });
+    }
+
+    checkNoteInteraction() {
+        const playerPos = this.player.getPosition();
+        const messageBox = document.getElementById('messageBox');
+
+        const tile = this.grid[playerPos.y][playerPos.x];
+        if (tile && tile.type === TILE_TYPES.NOTE) {
+            // Show message if not already showing
+            if (!messageBox.classList.contains('show')) {
+                this.showMessage(tile.note.message);
+            }
+        } else {
+            // Hide message if player steps off the note
+            if (messageBox.classList.contains('show')) {
+                messageBox.classList.remove('show');
+            }
+        }
+    }
+
+    showMessage(text) {
+        const messageBox = document.getElementById('messageBox');
+        if (messageBox) {
+            messageBox.textContent = text;
+            messageBox.classList.add('show');
+        }
     }
 
     drawEnemies() {

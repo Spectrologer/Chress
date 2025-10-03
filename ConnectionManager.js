@@ -45,8 +45,23 @@ export class ConnectionManager {
     getDeterministicExit(side, zoneX, zoneY) {
         // Create deterministic exit positions based on zone coordinates
         // Not all sides will have exits - some zones may be dead ends or have limited connections
+
+        // Special case: randomize exits for the starting zone (0,0) to add variation
+        if (zoneX === 0 && zoneY === 0) {
+            // Use random chance for exits instead of deterministic
+            if (Math.random() < 0.7) { // 70% chance of having an exit
+                // Convert to valid exit position (avoiding corners and edges)
+                const validRange = GRID_SIZE - 4; // Avoid 2 tiles from each edge
+                // Use zone coordinates for some determinacy in position while still randomizing existence
+                const seed = (zoneX * 73 + zoneY * 97) % validRange;
+                const position = seed + 2;
+                return position;
+            }
+            return null;
+        }
+
         let seed;
-        
+
         switch (side) {
             case 'north':
                 seed = (zoneX * 73 + (zoneY - 1) * 97) % 1000;
@@ -61,16 +76,16 @@ export class ConnectionManager {
                 seed = ((zoneX + 1) * 73 + zoneY * 97) % 1000;
                 break;
         }
-        
+
         // 70% chance of having an exit on this side
         if ((seed % 100) < 30) {
             return null; // No exit on this side
         }
-        
+
         // Convert seed to valid exit position (avoiding corners and edges)
         const validRange = GRID_SIZE - 4; // Avoid 2 tiles from each edge
         const position = (seed % validRange) + 2;
-        
+
         return position;
     }
 
@@ -96,14 +111,23 @@ export class ConnectionManager {
             connections[forcedDirection] = position;
         }
         
-        // Special case: ensure the starting zone (0,0) has multiple connections
+        // Special case: ensure the starting zone (0,0) has multiple connections with variation
         if (zoneX === 0 && zoneY === 0 && hasConnections < 2) {
-            // Force at least 2 connections for the starting zone
-            if (connections.east === null) {
-                connections.east = Math.floor(GRID_SIZE / 2);
+            // Force at least 2 connections for the starting zone, but with random directions
+            const directions = ['north', 'south', 'west', 'east'];
+            const availableDirections = directions.filter(dir => connections[dir] === null);
+
+            // Shuffle available directions for randomness
+            for (let i = availableDirections.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [availableDirections[i], availableDirections[j]] = [availableDirections[j], availableDirections[i]];
             }
-            if (connections.south === null) {
-                connections.south = Math.floor(GRID_SIZE / 2);
+
+            // Add connections to ensure we have at least 2
+            const connectionsNeeded = Math.min(2 - hasConnections, availableDirections.length);
+            for (let i = 0; i < connectionsNeeded; i++) {
+                const direction = availableDirections[i];
+                connections[direction] = Math.floor(GRID_SIZE / 2);
             }
         }
     }
@@ -123,6 +147,8 @@ export class ConnectionManager {
                     west: this.getDeterministicExit('west', zoneX, zoneY - 1),
                     east: this.getDeterministicExit('east', zoneX, zoneY - 1)
                 };
+                // Ensure minimum connectivity for newly created adjacent zone
+                this.ensureMinimumConnectivity(zoneX, zoneY - 1, northConnections);
                 this.zoneConnections.set(northKey, northConnections);
             } else {
                 // Both zones want a connection here
@@ -141,6 +167,8 @@ export class ConnectionManager {
                     west: this.getDeterministicExit('west', zoneX, zoneY + 1),
                     east: this.getDeterministicExit('east', zoneX, zoneY + 1)
                 };
+                // Ensure minimum connectivity for newly created adjacent zone
+                this.ensureMinimumConnectivity(zoneX, zoneY + 1, southConnections);
                 this.zoneConnections.set(southKey, southConnections);
             } else {
                 southConnections.north = connections.south;
@@ -158,6 +186,8 @@ export class ConnectionManager {
                     west: this.getDeterministicExit('west', zoneX - 1, zoneY),
                     east: connections.west // Match this zone's west exit
                 };
+                // Ensure minimum connectivity for newly created adjacent zone
+                this.ensureMinimumConnectivity(zoneX - 1, zoneY, westConnections);
                 this.zoneConnections.set(westKey, westConnections);
             } else {
                 westConnections.east = connections.west;
@@ -175,6 +205,8 @@ export class ConnectionManager {
                     west: connections.east, // Match this zone's east exit
                     east: this.getDeterministicExit('east', zoneX + 1, zoneY)
                 };
+                // Ensure minimum connectivity for newly created adjacent zone
+                this.ensureMinimumConnectivity(zoneX + 1, zoneY, eastConnections);
                 this.zoneConnections.set(eastKey, eastConnections);
             } else {
                 eastConnections.west = connections.east;
