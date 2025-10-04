@@ -29,7 +29,8 @@ export const TILE_TYPES = {
     PURPLE_FLOOR: 20,
     BLUE_FLOOR: 21,
     GREEN_FLOOR: 22,
-    YELLOW_FLOOR: 23
+    YELLOW_FLOOR: 23,
+    BOMB: 24
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -56,7 +57,8 @@ export const TILE_COLORS = {
     [TILE_TYPES.PURPLE_FLOOR]: '#9370DB',   // Medium purple
     [TILE_TYPES.BLUE_FLOOR]: '#00BFFF',   // Deep sky blue
     [TILE_TYPES.GREEN_FLOOR]: '#32CD32',  // Lime green
-    [TILE_TYPES.YELLOW_FLOOR]: '#FFD700'  // Gold
+    [TILE_TYPES.YELLOW_FLOOR]: '#FFD700', // Gold
+    [TILE_TYPES.BOMB]: '#FF0000'  // Red for bomb
 };
 
 // Direction constants for exits and movements
@@ -87,6 +89,7 @@ export const IMAGE_ASSETS = [
     'axe.png',
     'hammer.png',
     'spear.png',
+    'bomb.png',
     'note.png',
     'well.png',
     'deadtree.png',

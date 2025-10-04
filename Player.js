@@ -92,6 +92,11 @@ export class Player {
                         this.inventory.push({ type: 'spear' });
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
                     } // If inventory full, can't pick up spear and it remains on ground
+                } else if (tile === TILE_TYPES.BOMB) {
+                    if (this.inventory.length < 6) {
+                        this.inventory.push({ type: 'bomb' });
+                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                    } // If inventory full, can't pick up spear and it remains on ground
                 }
             this.x = newX;
             this.y = newY;
@@ -171,6 +176,7 @@ export class Player {
             tile === TILE_TYPES.AXE ||
             tile === TILE_TYPES.HAMMER ||
             tile === TILE_TYPES.SPEAR ||
+            tile === TILE_TYPES.BOMB ||
             (tile && tile.type === TILE_TYPES.NOTE) ||
             (tile && tile.type === TILE_TYPES.FOOD) ||
             tile === TILE_TYPES.LION) {

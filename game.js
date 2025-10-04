@@ -129,6 +129,9 @@ class Game {
         // Start game loop
         this.gameLoop();
 
+        // Expose game instance to console for debugging/cheating
+        window.game = this;
+
         // Update UI
         this.updatePlayerPosition();
         this.updateZoneDisplay();
@@ -354,6 +357,21 @@ class Game {
             return; // Interaction attempted, completion status varies
         }
 
+        // Check if player has a bomb and tapped on a wall
+        const hasBomb = this.player.inventory.some(item => item.type === 'bomb');
+        const wallAtPosition = this.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.WALL;
+        if (hasBomb && wallAtPosition) {
+            // Consume bomb and create an exit
+            const bombIndex = this.player.inventory.findIndex(item => item.type === 'bomb');
+            if (bombIndex !== -1) {
+                this.player.inventory.splice(bombIndex, 1);
+                this.grid[gridCoords.y][gridCoords.x] = TILE_TYPES.EXIT;
+                this.updatePlayerStats();
+                // Player turn is used, handle enemy moves
+                this.handleEnemyMovements();
+                return;
+            }
+        }
         // Check if player has spear and if tapped on enemy for spear attack
         const hasSpear = this.player.inventory.some(item => item.type === 'spear');
         const enemyAtCoords = this.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
@@ -591,6 +609,13 @@ class Game {
                     this.updatePlayerStats(); // Refresh inventory display
                 }
                 return; // Don't move, just add item
+            case 'b':
+                // Add bomb to inventory for testing
+                if (this.player.inventory.length < 6) {
+                    this.player.inventory.push({ type: 'bomb' });
+                    this.updatePlayerStats(); // Refresh inventory display
+                }
+                return; // Don't move, just add item
             case 'p':
                 // Teleport to tile puzzle zone (3,3) for testing
                 this.player.setCurrentZone(3, 3);
@@ -821,6 +846,8 @@ class Game {
                     slot.classList.add('item-hammer');
                 } else if (item.type === 'spear') {
                     slot.classList.add('item-spear');
+                } else if (item.type === 'bomb') {
+                    slot.classList.add('item-bomb');
                 } else if (item.type === 'tool') {
                     slot.classList.add('item-tool');
                 }
@@ -850,6 +877,10 @@ class Game {
                         this.grid[this.player.y][this.player.x] = TILE_TYPES.SPEAR;
                         this.player.inventory.splice(idx, 1);
                     }
+                } else if (item.type === 'bomb') {
+                    // Drop bomb at player's current position on whatever tile it rests on
+                    this.grid[this.player.y][this.player.x] = TILE_TYPES.BOMB;
+                    this.player.inventory.splice(idx, 1);
                 }
                 this.updatePlayerStats();
                 };
@@ -1270,6 +1301,14 @@ class Game {
                         TILE_SIZE - 4
                 );
             }
+        }
+    }
+
+    // Console command to add bomb to inventory
+    addBomb() {
+        if (this.player.inventory.length < 6) {
+            this.player.inventory.push({ type: 'bomb' });
+            this.updatePlayerStats();
         }
     }
 

@@ -591,6 +591,13 @@ body {
     background-position: center;
 }
 
+.inventory-slot.item-bomb {
+    background-image: url('Images/bomb.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 /* Redesigned Stat Bars */
 .stat-bar {
     display: flex;

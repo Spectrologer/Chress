@@ -525,6 +525,8 @@ export class TextureManager {
             this.renderHammerTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.SPEAR) {
             this.renderSpearTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        } else if (actualType === TILE_TYPES.BOMB) {
+            this.renderBombTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.NOTE) {
             this.renderNoteTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.SHRUBBERY) {
@@ -1097,6 +1099,26 @@ export class TextureManager {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🔱', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
+    renderBombTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+        // First draw the base tile
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the bomb image if loaded, otherwise use fallback
+        if (this.isImageLoaded('bomb')) {
+            ctx.drawImage(this.images.bomb, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.BOMB];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#333333';
+            ctx.font = '32px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('💣', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 

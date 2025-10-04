@@ -226,6 +226,12 @@ export class ZoneGenerator {
                 this.addLionItem();
             }
 
+            // Add a bomb with a 3% chance in zones level 2-4
+            const zoneLevelForBomb = this.getZoneLevel();
+            if (zoneLevelForBomb >= 2 && zoneLevelForBomb <= 4 && Math.random() < 0.03) {
+                this.addBombItem();
+            }
+
             // Special tinted dirt easter egg zone in the frontier (zone level 3)
             if (zoneX === 8 && zoneY === 8) {
                 this.addSpecialTintZone();
@@ -486,6 +492,22 @@ export class ZoneGenerator {
                 this.grid[y][x] = TILE_TYPES.SPEAR;
                 ZoneGenerator.spearSpawned = true;
                 break; // Successfully placed spear
+            }
+        }
+    }
+
+    addBombItem() {
+        // Add the bomb item
+
+        // Try to place the bomb in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.BOMB;
+                break; // Successfully placed bomb
             }
         }
     }
