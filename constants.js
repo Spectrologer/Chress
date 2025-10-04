@@ -20,14 +20,15 @@ export const TILE_TYPES = {
     SPEAR: 12,
     SHRUBBERY: 13,
     WELL: 14,
+    DEADTREE: 15,
     // Tinted dirt tiles for special zone
-    PINK_FLOOR: 15,
-    RED_FLOOR: 16,
-    ORANGE_FLOOR: 17,
-    PURPLE_FLOOR: 18,
-    BLUE_FLOOR: 19,
-    GREEN_FLOOR: 20,
-    YELLOW_FLOOR: 21
+    PINK_FLOOR: 16,
+    RED_FLOOR: 17,
+    ORANGE_FLOOR: 18,
+    PURPLE_FLOOR: 19,
+    BLUE_FLOOR: 20,
+    GREEN_FLOOR: 21,
+    YELLOW_FLOOR: 22
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -46,6 +47,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.SPEAR]: '#8B4513',   // Brown for spear
     [TILE_TYPES.SHRUBBERY]: '#228B22', // Green for shrubbery
     [TILE_TYPES.WELL]: '#D2691E',   // Brown/orange for well
+    [TILE_TYPES.DEADTREE]: '#8B4513',   // Brown for deadtree
     [TILE_TYPES.PINK_FLOOR]: '#FFB6C1',    // Light pink
     [TILE_TYPES.RED_FLOOR]: '#DC143C',     // Crimson red
     [TILE_TYPES.ORANGE_FLOOR]: '#FFA500', // Orange
@@ -85,6 +87,7 @@ export const IMAGE_ASSETS = [
     'spear.png',
     'note.png',
     'well.png',
+    'deadtree.png',
     'floors/frontier/desert.png',
     'flora/succulent.png',
     'flora/stump.png',

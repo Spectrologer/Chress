@@ -9,6 +9,7 @@ export class ZoneGenerator {
     static hammerSpawned = false;
     static spearSpawned = false;
     static wellSpawned = false;
+    static deadTreeSpawned = false;
 
     // Pre-determined spawn locations for special items
     static axeSpawnZone = null;
@@ -61,7 +62,7 @@ export class ZoneGenerator {
     isTileFree(x, y) {
         const tile = this.grid[y][x];
         // Check for impassable tiles
-        if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE) return false;
+        if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.DEADTREE || tile === TILE_TYPES.WELL) return false;
         // Check for enemy
         if (this.enemies && this.enemies.some(e => e.x === x && e.y === y)) return false;
         // Check for items (axe, hammer, spear, note, etc.)
@@ -182,7 +183,12 @@ export class ZoneGenerator {
         if (this.getZoneLevel() === 4 && !ZoneGenerator.wellSpawned) {
             this.addWell();
         }
-        
+
+        // Add a unique dead tree to level 2 (Woods) zones
+        if (this.getZoneLevel() === 2 && !ZoneGenerator.deadTreeSpawned) {
+            this.addDeadTree();
+        }
+
         // Generate exits using pre-determined connections
         this.generateExits(zoneX, zoneY, zoneConnections);
         
@@ -746,6 +752,38 @@ export class ZoneGenerator {
                 }
                 ZoneGenerator.wellSpawned = true;
                 break; // Successfully placed well
+            }
+        }
+    }
+
+    addDeadTree() {
+        // Place a 2x2 dead tree in Woods zones (level 2) randomly, avoiding borders
+        // Try to place the dead tree in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            // Place away from borders
+            const x = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // x from 1 to GRID_SIZE-3
+            const y = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // y from 1 to GRID_SIZE-3
+
+            // Check if all 2x2 tiles are free floor and not house
+            let free = true;
+            for (let dy = 0; dy < 2 && free; dy++) {
+                for (let dx = 0; dx < 2 && free; dx++) {
+                    if (this.grid[y + dy][x + dx] !== TILE_TYPES.FLOOR) {
+                        free = false;
+                    }
+                }
+            }
+
+            if (free) {
+                // Place the 2x2 dead tree
+                for (let dy = 0; dy < 2; dy++) {
+                    for (let dx = 0; dx < 2; dx++) {
+                        this.grid[y + dy][x + dx] = TILE_TYPES.DEADTREE;
+                    }
+                }
+                ZoneGenerator.deadTreeSpawned = true;
+                console.log(`Dead tree spawned at zone (${this.currentZoneX}, ${this.currentZoneY})`);
+                break; // Successfully placed dead tree
             }
         }
     }

@@ -20,7 +20,7 @@ export class Note {
             woods: [
                 "The rocks in this region look tougher. I might need a sturdy hammer to break them.",
                 "I saw a strange glint in the distance. Could be a useful tool, like a hammer or a spear.",
-                "The lizards here are more aggressive. A simple whack might not be enough. A spear would be better for keeping them at a distance.",
+                "The .",
                 "Fighting is never worth it. Sometimes.",
                 "Beware the Lizardo.'"
             ],

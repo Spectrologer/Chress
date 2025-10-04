@@ -531,7 +531,9 @@ export class TextureManager {
         this.renderGrassTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.WELL) {
             this.renderWellTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-    } else {
+        } else if (actualType === TILE_TYPES.DEADTREE) {
+            this.renderDeadTreeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        } else {
         this.renderFloorTile(ctx, pixelX, pixelY, actualType);
     }
     }
@@ -838,6 +840,65 @@ export class TextureManager {
                 }
 
                 if (isWell && targetX >= startX && targetX < startX + 2 &&
+                    targetY >= startY && targetY < startY + 2) {
+                    return { startX, startY };
+                }
+            }
+        }
+        return null;
+    }
+
+    renderDeadTreeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+        // First render dirt background
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Then render the dead tree part
+        if (this.isImageLoaded('deadtree')) {
+            // For a 2x2 dead tree, we need to determine which part of the dead tree image to draw
+            // Find the dead tree area bounds to determine the position within the dead tree
+            const deadtreeInfo = this.findDeadTreePosition(x, y, grid);
+
+            if (deadtreeInfo) {
+                // Calculate which part of the dead tree image to use
+                const partX = x - deadtreeInfo.startX;
+                const partY = y - deadtreeInfo.startY;
+
+                // Draw the corresponding part of the dead tree image
+                // Divide the dead tree image into 2x2 parts
+                const partWidth = this.images.deadtree.width / 2;
+                const partHeight = this.images.deadtree.height / 2;
+
+                ctx.drawImage(
+                    this.images.deadtree,
+                    partX * partWidth, partY * partHeight, // Source position
+                    partWidth, partHeight, // Source size
+                    pixelX, pixelY, // Destination position
+                    TILE_SIZE, TILE_SIZE // Destination size
+                );
+            }
+        } else {
+            // Fallback color rendering
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.DEADTREE];
+            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        }
+    }
+
+    findDeadTreePosition(targetX, targetY, grid) {
+        // Find the top-left corner of the dead tree that contains this tile
+        for (let startY = Math.max(0, targetY - 1); startY <= Math.min(GRID_SIZE - 2, targetY); startY++) {
+            for (let startX = Math.max(0, targetX - 1); startX <= Math.min(GRID_SIZE - 2, targetX); startX++) {
+                // Check if there's a 2x2 dead tree starting at this position
+                let isDeadTree = true;
+                for (let y = startY; y < startY + 2 && isDeadTree; y++) {
+                    for (let x = startX; x < startX + 2 && isDeadTree; x++) {
+                        if (y >= 0 && y < GRID_SIZE && x >= 0 && x < GRID_SIZE &&
+                            grid[y][x] !== TILE_TYPES.DEADTREE) {
+                            isDeadTree = false;
+                        }
+                    }
+                }
+
+                if (isDeadTree && targetX >= startX && targetX < startX + 2 &&
                     targetY >= startY && targetY < startY + 2) {
                     return { startX, startY };
                 }
