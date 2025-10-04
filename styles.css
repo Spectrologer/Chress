@@ -1050,7 +1050,13 @@ h1 {
 }
 
 /* The message box for notes now just uses the overlay styles */
-.message-box { display: none; }
+.message-box {
+    display: none;
+}
+.message-box.show {
+    display: flex;
+    opacity: 1;
+}
 
 .message-box::before {
     content: '';
