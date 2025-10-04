@@ -537,6 +537,8 @@ export class TextureManager {
             this.renderDeadTreeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.LION) {
             this.renderLionTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        } else if (actualType === TILE_TYPES.SQUIG) {
+            this.renderSquigTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else {
         this.renderFloorTile(ctx, pixelX, pixelY, actualType);
     }
@@ -1159,6 +1161,26 @@ export class TextureManager {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🦁', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
+    renderSquigTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+    // First draw the base tile
+    this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the squig image if loaded, otherwise use fallback
+        if (this.isImageLoaded('fauna/squig')) {
+            ctx.drawImage(this.images['fauna/squig'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.SQUIG];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#FFD700';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🐸', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 }

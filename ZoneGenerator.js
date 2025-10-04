@@ -9,6 +9,7 @@ export class ZoneGenerator {
     static hammerSpawned = false;
     static spearSpawned = false;
     static lionSpawned = false;
+    static squigSpawned = false;
     static wellSpawned = false;
     static deadTreeSpawned = false;
 
@@ -224,6 +225,11 @@ export class ZoneGenerator {
             // Add a rare lion with low chance to spawn per zone (not level, but per zone)
             if (!ZoneGenerator.lionSpawned && Math.random() < 0.02) { // 2% chance
                 this.addLionItem();
+            }
+
+            // Add a rare squig with low chance to spawn per zone (not level, but per zone)
+            if (!ZoneGenerator.squigSpawned && Math.random() < 0.02) { // 2% chance
+                this.addSquigItem();
             }
 
             // Add a bomb with a 3% chance in zones level 2-4
@@ -910,6 +916,24 @@ export class ZoneGenerator {
                 ZoneGenerator.lionSpawned = true;
                 console.log(`Lion spawned at zone (${this.currentZoneX}, ${this.currentZoneY}) at (${x}, ${y})`);
                 break; // Successfully placed lion
+            }
+        }
+    }
+
+    addSquigItem() {
+        // Add the rare squig item
+
+        // Try to place the squig in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.SQUIG;
+                ZoneGenerator.squigSpawned = true;
+                console.log(`Squig spawned at zone (${this.currentZoneX}, ${this.currentZoneY}) at (${x}, ${y})`);
+                break; // Successfully placed squig
             }
         }
     }

@@ -22,6 +22,7 @@ export const TILE_TYPES = {
     WELL: 14,
     DEADTREE: 15,
     LION: 16,
+    SQUIG: 25,
     // Tinted dirt tiles for special zone
     PINK_FLOOR: 17,
     RED_FLOOR: 18,
@@ -51,6 +52,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.WELL]: '#D2691E',   // Brown/orange for well
     [TILE_TYPES.DEADTREE]: '#8B4513',   // Brown for deadtree
     [TILE_TYPES.LION]: '#FFD700',    // Gold for lion
+    [TILE_TYPES.SQUIG]: '#FFD700',   // Gold for squig
     [TILE_TYPES.PINK_FLOOR]: '#FFB6C1',    // Light pink
     [TILE_TYPES.RED_FLOOR]: '#DC143C',     // Crimson red
     [TILE_TYPES.ORANGE_FLOOR]: '#FFA500', // Orange
@@ -94,6 +96,7 @@ export const IMAGE_ASSETS = [
     'well.png',
     'deadtree.png',
     'lion.png',
+    'fauna/squig.png',
     'floors/frontier/desert.png',
     'flora/succulent.png',
     'flora/stump.png',

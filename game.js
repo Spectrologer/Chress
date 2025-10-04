@@ -357,6 +357,25 @@ class Game {
             return; // Interaction attempted, completion status varies
         }
 
+        // Check if tapped on squig for interaction
+        const squigAtPosition = this.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.SQUIG;
+        console.log(`Checking squig at position (${gridCoords.x}, ${gridCoords.y}):`, this.grid[gridCoords.y]?.[gridCoords.x], "TILE_TYPES.SQUIG:", TILE_TYPES.SQUIG, "Is squig:", squigAtPosition);
+        if (squigAtPosition) {
+            console.log("Squig found at tapped position!");
+            // Check if player is adjacent to the squig (including diagonal, but excluding self)
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+            console.log(`Player at (${playerPos.x}, ${playerPos.y}), dx=${dx}, dy=${dy}, isAdjacent=${isAdjacent}`);
+            if (isAdjacent) {
+                console.log("Player is adjacent, triggering squig interaction");
+                this.interactWithSquig();
+            } else {
+                console.log(`Squig interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, squig at ${gridCoords.x},${gridCoords.y})`);
+            }
+            return; // Interaction attempted, completion status varies
+        }
+
         // Check if player has a bomb and tapped on a wall
         const hasBomb = this.player.inventory.some(item => item.type === 'bomb');
         const wallAtPosition = this.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.WALL;
@@ -693,6 +712,24 @@ class Game {
                     console.log('No available tiles to spawn lion');
                 }
                 break;
+            case 'u':
+                // Spawn squig for testing (debug command)
+                const squigTiles = [];
+                for (let y = 0; y < GRID_SIZE; y++) {
+                    for (let x = 0; x < GRID_SIZE; x++) {
+                        if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                            squigTiles.push({x, y});
+                        }
+                    }
+                }
+                if (squigTiles.length > 0) {
+                    const spawnPos = squigTiles[Math.floor(Math.random() * squigTiles.length)];
+                    this.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.SQUIG;
+                    console.log(`Debug: Squig spawned at (${spawnPos.x}, ${spawnPos.y})`);
+                } else {
+                    console.log('No available tiles to spawn squig');
+                }
+                break;
             case 'q':
                 this.performSpearAttack('NE');
                 return;
@@ -765,6 +802,7 @@ class Game {
         this.zoneGenerator.constructor.noteSpawned = false; // Reset note spawn
         this.zoneGenerator.constructor.spearSpawned = false; // Reset spear spawn
         this.zoneGenerator.constructor.lionSpawned = false; // Reset lion spawn
+        this.zoneGenerator.constructor.squigSpawned = false; // Reset squig spawn
         Note.spawnedMessages.clear(); // Reset spawned message tracking
         this.player.reset();
         this.enemies = [];
@@ -1135,23 +1173,68 @@ class Game {
         }
     }
 
+    checkSquigInteraction() {
+        const playerPos = this.player.getPosition();
+        const messageOverlay = document.getElementById('messageOverlay');
+
+        // Find all squig positions
+        const squigs = [];
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                if (this.grid[y][x] === TILE_TYPES.SQUIG) {
+                    squigs.push({ x, y });
+                }
+            }
+        }
+
+        // Check if player is adjacent to any squig
+        const isAdjacentToSquig = squigs.some(squig => {
+            const dx = Math.abs(squig.x - playerPos.x);
+            const dy = Math.abs(squig.y - playerPos.y);
+            return (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+        });
+
+        // Check if player has seeds
+        const hasSeeds = this.player.inventory.some(item => item.type === 'food' && item.foodType.includes('seeds/'));
+
+        if (isAdjacentToSquig && !hasSeeds) {
+            // Show message even if overlay is already showing (allow multiple messages)
+            this.showOverlayMessageSilent('Give seeds!', 'Images/fauna/lionface.png'); // Placeholder face image
+        }
+    }
+
     showOverlayMessageSilent(text, imageSrc) {
         const messageElement = document.getElementById('messageOverlay');
         if (messageElement) {
             const displayText = text || '[No message found]';
-            if (imageSrc) {
-                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
+            const wasAlreadyShowing = messageElement.classList.contains('show');
+
+            if (wasAlreadyShowing) {
+                // Append to existing message content
+                if (imageSrc) {
+                    messageElement.innerHTML += `<br><img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 5px auto; image-rendering: pixelated;">${displayText}`;
+                } else {
+                    messageElement.innerHTML += `<br>${displayText}`;
+                }
             } else {
-                messageElement.textContent = displayText;
+                // New message - replace content
+                if (imageSrc) {
+                    messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
+                } else {
+                    messageElement.textContent = displayText;
+                }
             }
+
             messageElement.classList.add('show');
 
-            // Auto-hide after 2 seconds
-            setTimeout(() => {
-                if (messageElement.classList.contains('show')) {
-                    messageElement.classList.remove('show');
-                }
-            }, 2000);
+            // Set auto-hide timeout only if this is the first message
+            if (!wasAlreadyShowing) {
+                setTimeout(() => {
+                    if (messageElement.classList.contains('show')) {
+                        messageElement.classList.remove('show');
+                    }
+                }, 2000);
+            }
         }
     }
 
@@ -1203,6 +1286,20 @@ class Game {
         if (meatIndex >= 0) {
             // Consume the meat
             this.player.inventory.splice(meatIndex, 1);
+            // Add water to inventory
+            this.player.inventory.push({ type: 'water' });
+            // Update stats to reflect the change
+            this.updatePlayerStats();
+        }
+        // Else: no trade, message already shown automatically
+    }
+
+    interactWithSquig() {
+        // Check if player has seeds in inventory
+        const seedsIndex = this.player.inventory.findIndex(item => item.type === 'food' && item.foodType.includes('seeds/'));
+        if (seedsIndex >= 0) {
+            // Consume the seeds
+            this.player.inventory.splice(seedsIndex, 1);
             // Add water to inventory
             this.player.inventory.push({ type: 'water' });
             // Update stats to reflect the change
@@ -1388,6 +1485,9 @@ class Game {
 
         // Check lion interaction for automatic message
         this.checkLionInteraction();
+
+        // Check squig interaction for automatic message
+        this.checkSquigInteraction();
 
         this.render();
         requestAnimationFrame(() => this.gameLoop());
