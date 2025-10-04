@@ -31,7 +31,8 @@ export const TILE_TYPES = {
     BLUE_FLOOR: 21,
     GREEN_FLOOR: 22,
     YELLOW_FLOOR: 23,
-    BOMB: 24
+    BOMB: 24,
+    SIGN: 26
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -60,7 +61,8 @@ export const TILE_COLORS = {
     [TILE_TYPES.BLUE_FLOOR]: '#00BFFF',   // Deep sky blue
     [TILE_TYPES.GREEN_FLOOR]: '#32CD32',  // Lime green
     [TILE_TYPES.YELLOW_FLOOR]: '#FFD700', // Gold
-    [TILE_TYPES.BOMB]: '#FF0000'  // Red for bomb
+    [TILE_TYPES.BOMB]: '#FF0000',  // Red for bomb
+    [TILE_TYPES.SIGN]: '#8B4513' // Saddle brown for sign
 };
 
 // Direction constants for exits and movements
@@ -100,7 +102,8 @@ export const IMAGE_ASSETS = [
     'floors/frontier/desert.png',
     'flora/succulent.png',
     'flora/stump.png',
-    'flora/blocklily.png'
+    'flora/blocklily.png',
+    'sign.png'
 ];
 
 // Food image assets

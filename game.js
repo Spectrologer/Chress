@@ -288,16 +288,16 @@ class Game {
         if (targetX < 0 || targetX >= GRID_SIZE || targetY < 0 || targetY >= GRID_SIZE) {
             return null;
         }
-        
-        if (!this.player.isWalkable(targetX, targetY, this.grid)) {
+
+        if (!this.player.isWalkable(targetX, targetY, this.grid, startX, startY)) {
             return null;
         }
-        
+
         // If already at target, no movement needed
         if (startX === targetX && startY === targetY) {
             return [];
         }
-        
+
         const queue = [{x: startX, y: startY, path: []}];
         const visited = new Set([`${startX},${startY}`]);
         const directions = [
@@ -306,35 +306,35 @@ class Game {
             {dx: -1, dy: 0, key: 'arrowleft'},  // West
             {dx: 1, dy: 0, key: 'arrowright'}   // East
         ];
-        
+
         while (queue.length > 0) {
             const current = queue.shift();
-            
+
             // Check all four directions
             for (const dir of directions) {
                 const newX = current.x + dir.dx;
                 const newY = current.y + dir.dy;
                 const key = `${newX},${newY}`;
-                
+
                 if (visited.has(key)) continue;
                 visited.add(key);
-                
+
                 // Check if position is within bounds and walkable
                 if (newX >= 0 && newX < GRID_SIZE && newY >= 0 && newY < GRID_SIZE &&
-                    this.player.isWalkable(newX, newY, this.grid)) {
-                    
+                    this.player.isWalkable(newX, newY, this.grid, current.x, current.y)) {
+
                     const newPath = [...current.path, dir.key];
-                    
+
                     // Check if we reached the target
                     if (newX === targetX && newY === targetY) {
                         return newPath;
                     }
-                    
+
                     queue.push({x: newX, y: newY, path: newPath});
                 }
             }
         }
-        
+
         // No path found
         return null;
     }
@@ -589,7 +589,9 @@ class Game {
     }
     
     handleKeyPress(event) {
+        console.log('Key pressed: ' + event.key);
         if (this.player.isDead()) {
+            console.log('Player is dead');
             return;
         }
       // Hide any persistent overlay messages when the player acts
@@ -1493,6 +1495,9 @@ class Game {
         // Check squig interaction for automatic message
         this.checkSquigInteraction();
 
+        // Check sign interaction for automatic message
+        this.checkSignInteraction();
+
         if (this.player.isDead()) {
             this.showGameOverScreen();
             // Don't continue the game loop logic if dead, just wait for restart.
@@ -1503,6 +1508,38 @@ class Game {
 
         this.render();
         requestAnimationFrame(() => this.gameLoop());
+    }
+
+    checkSignInteraction() {
+        const playerPos = this.player.getPosition();
+        const messageOverlay = document.getElementById('messageOverlay');
+
+        // Find all sign positions and their messages
+        const signs = [];
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                const tile = this.grid[y][x];
+                if (tile && tile.type === TILE_TYPES.SIGN) {
+                    signs.push({ x, y, message: tile.message });
+                }
+            }
+        }
+
+        let adjacentSignMessage = null;
+        for (const sign of signs) {
+            const dx = Math.abs(sign.x - playerPos.x);
+            const dy = Math.abs(sign.y - playerPos.y);
+            if ((dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0)) {
+                adjacentSignMessage = sign.message;
+                break; // Found an adjacent sign
+            }
+        }
+
+        if (adjacentSignMessage && !messageOverlay.classList.contains('show')) {
+            this.showMessage(adjacentSignMessage, 'Images/sign.png', true);
+        } else if (!adjacentSignMessage && messageOverlay.classList.contains('show')) {
+            // This might hide other messages, so be careful. Let's let them time out.
+        }
     }
 
     showGameOverScreen() {

@@ -65,12 +65,12 @@ export class ZoneGenerator {
     isTileFree(x, y) {
         const tile = this.grid[y][x];
         // Check for impassable tiles
-        if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.DEADTREE || tile === TILE_TYPES.WELL) return false;
+        if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.DEADTREE || tile === TILE_TYPES.WELL || tile === TILE_TYPES.SIGN || (tile && tile.type === TILE_TYPES.SIGN)) return false;
         // Check for enemy
         if (this.enemies && this.enemies.some(e => e.x === x && e.y === y)) return false;
         // Check for items (axe, hammer, spear, note, etc.)
         // If items are stored in grid, check type
-        if (tile === TILE_TYPES.AXE || tile === TILE_TYPES.HAMMER || tile === TILE_TYPES.SPEAR || tile === TILE_TYPES.NOTE) return false;
+        if (tile === TILE_TYPES.AXE || tile === TILE_TYPES.HAMMER || tile === TILE_TYPES.SPEAR || tile === TILE_TYPES.NOTE || (tile && tile.type === TILE_TYPES.NOTE)) return false;
         return true;
     }
 
@@ -180,6 +180,7 @@ export class ZoneGenerator {
         // Special handling for the starting zone (0,0) - add house
         if (zoneX === 0 && zoneY === 0) {
             this.addHouse();
+            this.addSign("Chalk, Woodcutting Services");
         }
 
         // Add a unique well to level 4 (Frontier) zones
@@ -757,6 +758,23 @@ export class ZoneGenerator {
         for (let y = houseStartY + 3; y < houseStartY + 5 && y < GRID_SIZE - 1; y++) {
             for (let x = houseStartX - 1; x < houseStartX + 4 && x >= 1 && x < GRID_SIZE - 1; x++) {
                 this.grid[y][x] = TILE_TYPES.FLOOR;
+            }
+        }
+    }
+
+    addSign(message) {
+        // Try to place the sign in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = {
+                    type: TILE_TYPES.SIGN,
+                    message: message
+                };
+                break; // Successfully placed sign
             }
         }
     }

@@ -11,11 +11,11 @@ export class Note {
     // Area definitions for messages
         static messageSets = {
             home: [
-                "An axe would be useful. I think I saw one lying around somewhere nearby.",
-                "Chopping wood sure makes me hungry.",
-                "Stay hydrated.",
-                "H...",
-                "I should gather some food before I venture too far from home."
+                "Borrowed your axe. I'll leave it where it is when I'm done. - Crayn",
+                "Chopping wood sure makes me hungry. -Crayn",
+                "Stay hydrated. - Crayn",
+                "I wouldn't wan't to get caught without an axe out here. - Crayn",
+                "If you starve to death, you will die. - Crayn"
             ],
             woods: [
                 "The rocks in this region look tougher. I might need a sturdy hammer to break them.",

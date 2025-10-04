@@ -23,6 +23,7 @@ export class Player {
     }
 
     move(newX, newY, grid, onZoneTransition) {
+        console.log('Attempting to move from ' + this.x + ',' + this.y + ' to ' + newX + ',' + newY)
         // Check if the new position is off-grid while player is on an exit tile
         if ((newX < 0 || newX >= GRID_SIZE || newY < 0 || newY >= GRID_SIZE)) {
             // Only allow off-grid movement if player is currently on an exit tile
@@ -59,8 +60,10 @@ export class Player {
             return false; // Can't move off-grid unless on exit
         }
         
+        console.log('Tile at target: ' + grid[newY][newX])
         // Check if the new position is walkable
-        if (this.isWalkable(newX, newY, grid)) {
+        console.log('Is walkable: ' + this.isWalkable(newX, newY, grid, this.x, this.y))
+        if (this.isWalkable(newX, newY, grid, this.x, this.y)) {
             // Check if there's an item to pick up at the new position
             const tile = grid[newY][newX];
                 if (tile === TILE_TYPES.WATER) {
@@ -132,7 +135,7 @@ export class Player {
         return false;
     }
 
-    isWalkable(x, y, grid) {
+    isWalkable(x, y, grid, fromX = this.x, fromY = this.y) {
         // Check if position is within bounds
         if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) {
             return false;
@@ -149,7 +152,7 @@ export class Player {
 
         if (tile === TILE_TYPES.RED_FLOOR) {
             // Can walk if coming from purple or red tile
-            const fromTile = grid[this.y][this.x];
+            const fromTile = grid[fromY][fromX];
             return fromTile === TILE_TYPES.PURPLE_FLOOR || fromTile === TILE_TYPES.RED_FLOOR;
         }
 
@@ -181,6 +184,11 @@ export class Player {
             (tile && tile.type === TILE_TYPES.FOOD) ||
             tile === TILE_TYPES.LION) {
             return true;
+        }
+
+        // Signs are not walkable
+        if (tile && tile.type === TILE_TYPES.SIGN) {
+            return false;
         }
 
         // Check if there's an axe in inventory - allows walking on grass and shrubbery to cut it
