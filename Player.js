@@ -315,6 +315,7 @@ export class Player {
     this.currentZone = { x: 0, y: 0 };
     this.thirst = 50;
     this.hunger = 50;
+    this.inventory = [];
     this.health = 3;
     this.dead = false;
     this.sprite = 'SeparateAnim/Special2';

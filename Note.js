@@ -14,15 +14,15 @@ export class Note {
                 "Borrowed your axe. I'll leave it where it is when I'm done. - Crayn",
                 "Chopping wood sure makes me hungry. -Crayn",
                 "Stay hydrated. - Crayn",
-                "I wouldn't wan't to get caught without an axe out here. - Crayn",
+                "Fighting is never worth it. Sometimes- Crayn",
                 "If you starve to death, you will die. - Crayn"
             ],
             woods: [
-                "The rocks in this region look tougher. I might need a sturdy hammer to break them.",
-                "I saw a strange glint in the distance. Could be a useful tool, like a hammer or a spear.",
-                "The .",
+                "I'd hate to get caught without a hammer in the wilds. - Crayn",
+                "If I could have any superpower, I'd be able to move diagonally. - Crayn",
+                "The trees here are thick. I need a good axe to get through.",
                 "Fighting is never worth it. Sometimes.",
-                "Beware the Lizardo.'"
+                "Beware Lizardo. - Crayn",
             ],
             wilds: [
                 "I've heard tales of a powerful spear, lost somewhere in these wilds. It's said to be able to strike foes from a distance.",
