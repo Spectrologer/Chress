@@ -8,6 +8,7 @@ export class ZoneGenerator {
     static axeSpawned = false;
     static hammerSpawned = false;
     static spearSpawned = false;
+    static lionSpawned = false;
     static wellSpawned = false;
     static deadTreeSpawned = false;
 
@@ -218,6 +219,11 @@ export class ZoneGenerator {
             }
             if (ZoneGenerator.spearSpawnZone && zoneX === ZoneGenerator.spearSpawnZone.x && zoneY === ZoneGenerator.spearSpawnZone.y && !ZoneGenerator.spearSpawned) {
                 this.addSpearItem();
+            }
+
+            // Add a rare lion with low chance to spawn per zone (not level, but per zone)
+            if (!ZoneGenerator.lionSpawned && Math.random() < 0.02) { // 2% chance
+                this.addLionItem();
             }
 
             // Special tinted dirt easter egg zone in the frontier (zone level 3)
@@ -866,6 +872,24 @@ export class ZoneGenerator {
             hammer: this.hammerSpawnZone,
             spear: this.spearSpawnZone
         });
+    }
+
+    addLionItem() {
+        // Add the rare lion item
+
+        // Try to place the lion in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.LION;
+                ZoneGenerator.lionSpawned = true;
+                console.log(`Lion spawned at zone (${this.currentZoneX}, ${this.currentZoneY}) at (${x}, ${y})`);
+                break; // Successfully placed lion
+            }
+        }
     }
 
     static getRandomZoneForLevel(minDist, maxDist) {

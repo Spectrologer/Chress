@@ -335,6 +335,25 @@ class Game {
 
         console.log(`Tap at screen: (${screenX}, ${screenY}) -> grid: (${gridCoords.x}, ${gridCoords.y})`);
 
+        // Check if tapped on lion for interaction
+        const lionAtPosition = this.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.LION;
+        console.log(`Checking lion at position (${gridCoords.x}, ${gridCoords.y}):`, this.grid[gridCoords.y]?.[gridCoords.x], "TILE_TYPES.LION:", TILE_TYPES.LION, "Is lion:", lionAtPosition);
+        if (lionAtPosition) {
+            console.log("Lion found at tapped position!");
+            // Check if player is adjacent to the lion (including diagonal, but excluding self)
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+            console.log(`Player at (${playerPos.x}, ${playerPos.y}), dx=${dx}, dy=${dy}, isAdjacent=${isAdjacent}`);
+            if (isAdjacent) {
+                console.log("Player is adjacent, triggering lion interaction");
+                this.interactWithLion();
+            } else {
+                console.log(`Lion interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, lion at ${gridCoords.x},${gridCoords.y})`);
+            }
+            return; // Interaction attempted, completion status varies
+        }
+
         // Check if player has spear and if tapped on enemy for spear attack
         const hasSpear = this.player.inventory.some(item => item.type === 'spear');
         const enemyAtCoords = this.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
@@ -528,6 +547,9 @@ class Game {
         if (this.player.isDead()) {
             return;
         }
+      // Hide any persistent overlay messages when the player acts
+        this.hideOverlayMessage();
+
         const currentPos = this.player.getPosition();
         let newX = currentPos.x;
         let newY = currentPos.y;
@@ -628,6 +650,24 @@ class Game {
                     console.log('No available tiles to spawn enemy');
                 }
                 break;
+            case 'm':
+                // Spawn lion for testing (debug command)
+                const lionTiles = [];
+                for (let y = 0; y < GRID_SIZE; y++) {
+                    for (let x = 0; x < GRID_SIZE; x++) {
+                        if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                            lionTiles.push({x, y});
+                        }
+                    }
+                }
+                if (lionTiles.length > 0) {
+                    const spawnPos = lionTiles[Math.floor(Math.random() * lionTiles.length)];
+                    this.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.LION;
+                    console.log(`Debug: Lion spawned at (${spawnPos.x}, ${spawnPos.y})`);
+                } else {
+                    console.log('No available tiles to spawn lion');
+                }
+                break;
             case 'q':
                 this.performSpearAttack('NE');
                 return;
@@ -699,6 +739,7 @@ class Game {
         this.zoneGenerator.constructor.hammerSpawned = false; // Reset hammer spawn
         this.zoneGenerator.constructor.noteSpawned = false; // Reset note spawn
         this.zoneGenerator.constructor.spearSpawned = false; // Reset spear spawn
+        this.zoneGenerator.constructor.lionSpawned = false; // Reset lion spawn
         Note.spawnedMessages.clear(); // Reset spawned message tracking
         this.player.reset();
         this.enemies = [];
@@ -1026,19 +1067,117 @@ class Game {
         }
     }
 
-    showMessage(text) {
-        const messageBox = document.getElementById('messageBox');
+    checkLionInteraction() {
+        const playerPos = this.player.getPosition();
+        const messageOverlay = document.getElementById('messageOverlay');
+
+        // Find all lion positions
+        const lions = [];
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                if (this.grid[y][x] === TILE_TYPES.LION) {
+                    lions.push({ x, y });
+                }
+            }
+        }
+
+        // Check if player is adjacent to any lion
+        const isAdjacentToLion = lions.some(lion => {
+            const dx = Math.abs(lion.x - playerPos.x);
+            const dy = Math.abs(lion.y - playerPos.y);
+            return (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+        });
+
+        // Check if player has meat
+        const hasMeat = this.player.inventory.some(item => item.type === 'food' && item.foodType.includes('meat/'));
+
+        if (isAdjacentToLion && !hasMeat) {
+            // Show message if not already showing
+            if (!messageOverlay.classList.contains('show')) {
+                this.showOverlayMessageSilent('Give meat!', 'Images/fauna/lionface.png');
+            }
+        } else {
+            // Hide message if not adjacent or has meat
+            if (messageOverlay.classList.contains('show')) {
+                messageOverlay.classList.remove('show');
+            }
+        }
+    }
+
+    showOverlayMessageSilent(text, imageSrc) {
+        const messageElement = document.getElementById('messageOverlay');
+        if (messageElement) {
+            const displayText = text || '[No message found]';
+            if (imageSrc) {
+                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
+            } else {
+                messageElement.textContent = displayText;
+            }
+            messageElement.classList.add('show');
+
+            // Auto-hide after 2 seconds
+            setTimeout(() => {
+                if (messageElement.classList.contains('show')) {
+                    messageElement.classList.remove('show');
+                }
+            }, 2000);
+        }
+    }
+
+    showMessage(text, imageSrc = null, useOverlay = false) {
+        const messageElementId = useOverlay ? 'messageOverlay' : 'messageBox';
+        const messageElement = document.getElementById(messageElementId);
+        console.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}`);
         let displayText = text;
         if (!displayText || displayText.trim() === '') {
             displayText = '[No message found for this note]';
             console.warn('Note message is empty or undefined:', text);
+        }
+        if (messageElement) {
+            console.log(`${messageElementId} found, setting HTML content`);
+            // Use innerHTML to set content with image if provided
+            if (imageSrc) {
+                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
+            } else {
+                messageElement.textContent = displayText;
+            }
+            messageElement.classList.add('show');
+            console.log("Message set and show class added");
+
+            // Auto-hide overlay messages after 2 seconds
+            if (useOverlay) {
+                setTimeout(() => {
+                    if (messageElement.classList.contains('show')) {
+                        messageElement.classList.remove('show');
+                        console.log("Auto-hiding overlay message due to timeout.");
+                    }
+                }, 2000);
+            }
         } else {
-            console.log('Note message:', displayText);
+            console.error(`${messageElementId} element not found`);
         }
-        if (messageBox) {
-            messageBox.textContent = displayText;
-            messageBox.classList.add('show');
+    }
+
+    hideOverlayMessage() {
+        const messageOverlay = document.getElementById('messageOverlay');
+        if (messageOverlay && messageOverlay.classList.contains('show')) {
+            messageOverlay.classList.remove('show');
+            console.log("Hiding overlay message.");
         }
+    }
+
+    interactWithLion() {
+        // Check if player has meat in inventory
+        const meatIndex = this.player.inventory.findIndex(item => item.type === 'food' && item.foodType.includes('meat/'));
+        if (meatIndex >= 0) {
+            // Consume the meat
+            this.player.inventory.splice(meatIndex, 1);
+            // Add water to inventory
+            this.player.inventory.push({ type: 'water' });
+            // Update stats to reflect the change
+            this.updatePlayerStats();
+        }
+        // Else: no trade, message already shown automatically
     }
 
     showRegionNotification(zoneX, zoneY) {
@@ -1208,8 +1347,8 @@ class Game {
         // Check if player is on a note tile (needs to be checked every frame for persistence)
         this.checkNoteInteraction();
 
-        // Check if player is on a note tile (needs to be checked every frame for persistence)
-        this.checkNoteInteraction();
+        // Check lion interaction for automatic message
+        this.checkLionInteraction();
 
         this.render();
         requestAnimationFrame(() => this.gameLoop());

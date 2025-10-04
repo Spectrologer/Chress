@@ -1021,19 +1021,36 @@ h1 {
     opacity: 1;
 }
 
-.message-overlay {
+.message-overlay, #messageOverlay {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1000;
+    z-index: 1001; /* Above region notification */
     margin: 0;
-    pointer-events: none;
-    font-size: 1.5em;
-    max-width: 500px;
-    width: auto;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    padding: 15px 25px;
+    background: #fffbe9;
+    border: 2px solid #e2cfa2;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    font-family: 'Cinzel', serif;
+    font-size: 1.4em;
+    color: #7a5c2e;
+    text-align: center;
+    max-width: 90vw;
+    width: auto; /* Let content define width */
+    opacity: 0;
+    pointer-events: none; /* Hidden by default */
+    transition: opacity 0.3s ease-in-out;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
+.message-overlay.show, #messageOverlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* The message box for notes now just uses the overlay styles */
+.message-box { display: none; }
 
 .message-box::before {
     content: '';
