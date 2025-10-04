@@ -12,6 +12,7 @@ export class ZoneGenerator {
     static squigSpawned = false;
     static wellSpawned = false;
     static deadTreeSpawned = false;
+    static puzzleZoneSpawned = false; // Track if the puzzle zone has been spawned
 
     // Pre-determined spawn locations for special items
     static axeSpawnZone = null;
@@ -196,10 +197,6 @@ export class ZoneGenerator {
         
         // Add random features (skip if this is the house zone to avoid cluttering)
         if (!(zoneX === 0 && zoneY === 0)) {
-            // Skip random features for the special tinted dirt zone
-            if (!(zoneX === 8 && zoneY === 8)) {
-                this.addRandomFeatures();
-            }
             ZoneGenerator.zoneCounter++;
             // Add level-based food and water spawning
             this.addLevelBasedFoodAndWater(foodAssets);
@@ -207,7 +204,7 @@ export class ZoneGenerator {
             // Add enemy with similar frequency as food/water (~10% chance per zone)
             const zoneLevel = this.getZoneLevel();
             const enemyProbability = zoneLevel === 2 ? 0.15 : zoneLevel === 3 ? 0.22 : 0.11;
-            if (Math.random() < enemyProbability && !(zoneX === 8 && zoneY === 8)) {
+            if (Math.random() < enemyProbability) {
                 this.addRandomEnemy();
             }
 
@@ -238,12 +235,17 @@ export class ZoneGenerator {
                 this.addBombItem();
             }
 
-            // Special tinted dirt easter egg zone in the frontier (zone level 3)
-            if (zoneX === 8 && zoneY === 8) {
+            // Special tinted dirt easter egg zone - very rare chance in the Wilds (zone level 3)
+            if (this.getZoneLevel() === 3 && !ZoneGenerator.puzzleZoneSpawned && Math.random() < 0.01) { // 1% chance
                 this.addSpecialTintZone();
+                ZoneGenerator.puzzleZoneSpawned = true;
+                console.log(`Special puzzle zone spawned at (${this.currentZoneX}, ${this.currentZoneY})`);
+            } else {
+                // Only add random features if it's not the puzzle zone
+                this.addRandomFeatures();
             }
         }
-
+        
 
         // Ensure exit accessibility
         this.ensureExitAccess();

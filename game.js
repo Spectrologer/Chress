@@ -126,6 +126,14 @@ class Game {
         // Set up event listeners
         this.setupControls();
 
+        // Game over screen
+        document.getElementById('restart-button').addEventListener('click', () => {
+            this.hideGameOverScreen();
+            this.resetGame();
+            // Restart the game loop since the player is no longer dead
+            this.gameLoop();
+        });
+
         // Start game loop
         this.gameLoop();
 
@@ -636,18 +644,8 @@ class Game {
                 }
                 return; // Don't move, just add item
             case 'p':
-                // Teleport to tile puzzle zone (3,3) for testing
-                this.player.setCurrentZone(3, 3);
-                this.generateZone();
-                // Position player in center of the zone
-                const centerX = Math.floor(GRID_SIZE / 2);
-                const centerY = Math.floor(GRID_SIZE / 2);
-                this.player.setPosition(centerX, centerY);
-                this.player.ensureValidPosition(this.grid);
-                // Update UI
-                this.updateZoneDisplay();
-                this.updatePlayerPosition();
-                this.updatePlayerStats();
+                // Debug command to find the puzzle zone if it has spawned
+                console.log("The puzzle zone is now a rare random encounter and cannot be teleported to directly.");
                 return; // Don't process as movement
             case 'f':
                 // Add random food to inventory for testing
@@ -1163,7 +1161,8 @@ class Game {
         if (isAdjacentToLion && !hasMeat) {
             // Show message if not already showing
             if (!messageOverlay.classList.contains('show')) {
-                this.showOverlayMessageSilent('Give meat!', 'Images/fauna/lionface.png');
+                // Show lion's name and new message
+                this.showOverlayMessageSilent('<span class="character-name">Penne</span><br>TRADE FOR MEAT!', 'Images/lion.png');
             }
         } else {
             // Hide message if not adjacent or has meat
@@ -1199,7 +1198,7 @@ class Game {
 
         if (isAdjacentToSquig && !hasSeeds) {
             // Show message even if overlay is already showing (allow multiple messages)
-            this.showOverlayMessageSilent('Give seeds!', 'Images/fauna/lionface.png'); // Placeholder face image
+            this.showOverlayMessageSilent('<span class="character-name">Squig</span><br>Seeds please!', 'Images/fauna/squigface.png');
         }
     }
 
@@ -1478,6 +1477,11 @@ class Game {
         this.enemies.forEach(enemy => enemy.updateAnimations());
 
         // Remove enemies whose death animation has finished
+        this.enemies.forEach(enemy => {
+            if (enemy.isDead() && enemy.deathAnimation === 0) {
+                enemy.startDeathAnimation();
+            }
+        });
         this.enemies = this.enemies.filter(enemy => enemy.deathAnimation === 0);
 
         // Check if player is on a note tile (needs to be checked every frame for persistence)
@@ -1489,8 +1493,30 @@ class Game {
         // Check squig interaction for automatic message
         this.checkSquigInteraction();
 
+        if (this.player.isDead()) {
+            this.showGameOverScreen();
+            // Don't continue the game loop logic if dead, just wait for restart.
+            // We still need to render to see the final state.
+            this.render();
+            return;
+        }
+
         this.render();
         requestAnimationFrame(() => this.gameLoop());
+    }
+
+    showGameOverScreen() {
+        const overlay = document.getElementById('game-over-overlay');
+        const zonesDiscovered = document.getElementById('zones-discovered');
+        zonesDiscovered.textContent = this.player.getVisitedZones().size;
+        overlay.style.display = 'flex';
+    }
+
+    hideGameOverScreen() {
+        const overlay = document.getElementById('game-over-overlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
     }
 }
 

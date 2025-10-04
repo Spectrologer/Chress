@@ -246,7 +246,7 @@ body {
 .character-name {
     font-family: 'Cinzel', serif;
     font-weight: 900; /* Bolder */
-    font-size: 4em;
+    font-size: 1em;
     color: #3A2418; /* Darker, richer brown */
     text-shadow: 
         1px 1px 0px #D2B48C, /* Highlight */
@@ -1056,6 +1056,12 @@ h1 {
     pointer-events: auto;
 }
 
+/* Smaller font for character names in message overlays */
+.message-overlay .character-name,
+#messageOverlay .character-name {
+    font-size: 0.7em;
+}
+
 /* The message box for notes now just uses the overlay styles */
 .message-box {
     display: none;
@@ -1128,4 +1134,67 @@ h1 {
 .region-notification-overlay.show {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+}
+
+/* Game Over Overlay */
+.game-over-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1101; /* Above other overlays */
+    opacity: 1;
+}
+
+.game-over-box {
+    background: #fffbe9;
+    border: 3px solid #e2cfa2;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    font-family: 'Cinzel', serif;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.game-over-box h1 {
+    color: #7a5c2e;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.game-over-box p {
+    color: #5a4223;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+.game-over-box button {
+    background: linear-gradient(135deg, #CD853F, #B8860B);
+    border: 2px solid #8B4513;
+    color: #3A2418;
+    padding: 12px 24px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1em;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+}
+
+.game-over-box button:hover {
+    background: linear-gradient(135deg, #B8860B, #CD853F);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5);
 }
