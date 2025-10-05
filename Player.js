@@ -181,6 +181,7 @@ export class Player {
             tile === TILE_TYPES.SPEAR ||
             tile === TILE_TYPES.BOMB ||
             (tile && tile.type === TILE_TYPES.FOOD) ||
+            (tile && tile.type === TILE_TYPES.NOTE) ||
             tile === TILE_TYPES.LION) {
             return true;
         }

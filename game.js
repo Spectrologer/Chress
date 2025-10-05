@@ -671,6 +671,24 @@ class Game {
                 this.updatePlayerPosition();
                 this.updatePlayerStats();
                 break;
+            case 'y':
+                // Force spawn of whispering canyon for testing
+                console.log('Forcing whispering canyon generation...');
+                ZoneGenerator.forceCanyonSpawn = true;
+                this.player.setCurrentZone(18, 0); // Far frontier zone
+                this.generateZone();
+                ZoneGenerator.forceCanyonSpawn = false; // Reset for normal gameplay
+                // Position player in center of the zone
+                const centerXc = Math.floor(GRID_SIZE / 2);
+                const centerYc = Math.floor(GRID_SIZE / 2);
+                this.player.setPosition(centerXc, centerYc);
+                this.player.ensureValidPosition(this.grid);
+                // Update UI
+                this.updateZoneDisplay();
+                this.updatePlayerPosition();
+                this.updatePlayerStats();
+                console.log('Teleported to canyon zone. If canyon generated, it will be forced.');
+                break;
             case 'l':
                 // Spawn a lizardy enemy for testing
                 const availableTiles = [];

@@ -37,6 +37,18 @@ export class Note {
                 "The creatures here are relentless. A spear is my only hope for survival.",
                 "Water is almost impossible to find. I must conserve what I have.",
                 "Is that... a puzzle? In the middle of nowhere? The colors... they must mean something."
+            ],
+            canyon: [
+                "Echoes of the past whisper through these walls. Listen carefully.",
+                "The canyon breathes with ancient secrets. Can you hear them?",
+                "Strange formations line the path. They seem to watch you.",
+                "Footsteps echo endlessly here. Are they yours, or something else's?",
+                "The wind carries voices from another time. What are they saying?",
+                "Rocks shaped like faces. Are they smiling or warning?",
+                "Each turn reveals something new. Don't miss the signs.",
+                "The canyon has stories to tell. But do you have the patience to listen?",
+                "Shadows dance on the walls. Movement without sound.",
+                "This place remembers everything. What will it remember of you?"
             ]
         };
 
@@ -63,5 +75,10 @@ export class Note {
 
     static getMessageByIndex(area, index) {
         return Note.messageSets[area][index];
+    }
+
+    static getCanyonMessage() {
+        const messages = Note.messageSets.canyon;
+        return messages[Math.floor(Math.random() * messages.length)];
     }
 }
