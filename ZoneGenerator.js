@@ -204,7 +204,7 @@ export class ZoneGenerator {
 
             // Add enemy with similar frequency as food/water (~10% chance per zone)
             const zoneLevel = this.getZoneLevel();
-            const enemyProbability = zoneLevel === 2 ? 0.15 : zoneLevel === 3 ? 0.22 : 0.11;
+            const enemyProbability = zoneLevel === 2 ? 0.15 : zoneLevel === 3 ? 0.17 : zoneLevel === 4 ? 0.22 : 0.11;
             if (Math.random() < enemyProbability) {
                 this.addRandomEnemy();
             }
@@ -306,7 +306,7 @@ export class ZoneGenerator {
             }
         }
 
-        // Block some exits with shrubbery in Frontier regions (zone level 3)
+        // Block some exits with shrubbery in Frontier regions (zone level 4)
         this.blockExitsWithShrubbery(zoneX, zoneY, connections);
     }
 
@@ -318,8 +318,8 @@ export class ZoneGenerator {
         if (this.getZoneLevel() === 1) {
             featureCount = Math.floor(featureCount * 0.7); // Reduce by 30%
         }
-        // Increase feature density in Wilds (zone level 2)
-        else if (this.getZoneLevel() === 2) {
+        // Increase feature density in Wilds (zone level 3)
+        else if (this.getZoneLevel() === 3) {
             featureCount += 5;
         }
 
@@ -589,11 +589,14 @@ export class ZoneGenerator {
         let enemyCount = 1; // Default for home
         const zoneLevel = this.getZoneLevel();
         if (zoneLevel === 2) {
-            // Wilds: 2-4 lizards
-            enemyCount = Math.floor(Math.random() * 3) + 2;
+            // Woods: 1-2 lizards
+            enemyCount = Math.floor(Math.random() * 2) + 1;
         } else if (zoneLevel === 3) {
-            // Frontier: 3-5 lizards
-            enemyCount = Math.floor(Math.random() * 3) + 3;
+            // Wilds: 1-3 lizards
+            enemyCount = Math.floor(Math.random() * 3) + 1;
+        } else if (zoneLevel === 4) {
+            // Frontier: 1-4 lizards
+            enemyCount = Math.floor(Math.random() * 4) + 1;
         }
 
         for (let count = 0; count < enemyCount; count++) {
@@ -605,8 +608,8 @@ export class ZoneGenerator {
                 // Only place on floor tiles (not on walls, rocks, grass, etc.) and not already occupied by enemy
                 if (this.grid[y][x] === TILE_TYPES.FLOOR && !this.isTileOccupiedByEnemy(x, y)) {
                 ZoneGenerator.enemyCounter++;
-                // Determine enemy type - lizardo in frontier zones (level 3)
-                const enemyType = (this.getZoneLevel() === 3 && Math.random() < 0.5) ? 'lizardo' : 'lizard';
+                // Determine enemy type - 'lizardo' appears in the Wilds (level 3)
+                const enemyType = (zoneLevel === 3 && Math.random() < 0.5) ? 'lizardo' : 'lizardy';
                 this.enemies.push({ x, y, enemyType: enemyType, id: ZoneGenerator.enemyCounter });
                 break; // Successfully placed enemy
                 }
@@ -866,7 +869,7 @@ export class ZoneGenerator {
     }
 
     blockExitsWithShrubbery(zoneX, zoneY, connections) {
-        if (this.getZoneLevel() !== 3 || !connections) {
+        if (this.getZoneLevel() !== 4 || !connections) {
             return;
         }
 
