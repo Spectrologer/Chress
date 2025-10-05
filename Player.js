@@ -143,6 +143,11 @@ export class Player {
 
         const tile = grid[y][x];
 
+        // Signs are not walkable
+        if ((tile && tile.type === TILE_TYPES.SIGN) || tile === TILE_TYPES.SIGN) {
+            return false;
+        }
+
         // Tinted floor tiles
         if (tile === TILE_TYPES.PINK_FLOOR ||
             tile === TILE_TYPES.ORANGE_FLOOR ||
@@ -181,14 +186,9 @@ export class Player {
             tile === TILE_TYPES.SPEAR ||
             tile === TILE_TYPES.BOMB ||
             (tile && tile.type === TILE_TYPES.FOOD) ||
-            (tile && tile.type === TILE_TYPES.NOTE) ||
+            (tile && tile.type === TILE_TYPES.NOTE && tile.note) || // Specifically check for a note object
             tile === TILE_TYPES.LION) {
             return true;
-        }
-
-        // Signs are not walkable
-        if (tile && tile.type === TILE_TYPES.SIGN) {
-            return false;
         }
 
         // Check if there's an axe in inventory - allows walking on grass and shrubbery to cut it

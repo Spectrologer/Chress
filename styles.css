@@ -1097,8 +1097,8 @@ h1 {
 .message-overlay, #messageOverlay {
     position: fixed;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    right: 50px;
+    transform: translateY(-50%);
     z-index: 1001; /* Above region notification */
     margin: 0;
     padding: 15px 25px;
@@ -1110,7 +1110,8 @@ h1 {
     font-size: 1.4em;
     color: #7a5c2e;
     text-align: center;
-    max-width: 90vw;
+    max-width: 300px;
+    min-width: 200px;
     width: auto; /* Let content define width */
     opacity: 0;
     pointer-events: none; /* Hidden by default */

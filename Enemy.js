@@ -1,3 +1,5 @@
+import { TILE_TYPES } from './constants.js';
+
 export class Enemy {
     constructor(data) {
         this.x = data.x;
@@ -200,7 +202,7 @@ export class Enemy {
         }
 
         const tile = grid[y][x];
-        return tile === 0 || tile === 3 || tile === 6 || (tile && tile.type === 7);  // FLOOR, EXIT, WATER, FOOD
+        return (tile === 0 || tile === 3 || tile === 6 || (tile && tile.type === 7)) && !((tile && tile.type === TILE_TYPES.SIGN) || tile === TILE_TYPES.SIGN);  // FLOOR, EXIT, WATER, FOOD, but not SIGN
     }
 
     performRamFromDistance(player, playerX, playerY, grid) {

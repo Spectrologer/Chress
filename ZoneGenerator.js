@@ -1,6 +1,6 @@
 import { TILE_TYPES, GRID_SIZE } from './constants.js';
 import { Enemy } from './Enemy.js';
-import { Note } from './Note.js';
+import { Sign } from './Sign.js';
 
 export class ZoneGenerator {
     static zoneCounter = 0;
@@ -14,12 +14,6 @@ export class ZoneGenerator {
     static deadTreeSpawned = false;
     static puzzleZoneSpawned = false; // Track if the puzzle zone has been spawned
     static firstFrontierSignPlaced = false;
-    static canyonSpawned = false; // Track if the whispering canyon has been spawned
-    static canyonZone = null; // {x, y} coordinates of the canyon zone
-    static forceCanyonSpawn = false; // Debug flag to force canyon generation
-    static forceFoodWaterRoom = false; // Debug flag to force food/water room generation
-    static foodWaterRoomSpawned = false; // Track if the food/water room has been spawned
-    static foodWaterRoomZone = null; // {x, y} coordinates of the food/water room zone
 
     // Pre-determined spawn locations for special items
     static axeSpawnZone = null;
@@ -75,16 +69,15 @@ export class ZoneGenerator {
         if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.DEADTREE || tile === TILE_TYPES.WELL || tile === TILE_TYPES.SIGN || (tile && tile.type === TILE_TYPES.SIGN)) return false;
         // Check for enemy
         if (this.enemies && this.enemies.some(e => e.x === x && e.y === y)) return false;
-        // Check for items (axe, hammer, spear, note, etc.)
-        // If items are stored in grid, check type
-        if (tile === TILE_TYPES.AXE || tile === TILE_TYPES.HAMMER || tile === TILE_TYPES.SPEAR || tile === TILE_TYPES.NOTE || (tile && tile.type === TILE_TYPES.NOTE)) return false;
+        // Check for items (axe, hammer, spear, etc.)
+        if (tile === TILE_TYPES.AXE || tile === TILE_TYPES.HAMMER || tile === TILE_TYPES.SPEAR) return false;
         return true;
     }
 
-    checkNoteExists() {
+    checkSignExists() {
         for (let y = 0; y < this.grid.length; y++) {
             for (let x = 0; x < this.grid[y].length; x++) {
-                if (this.grid[y][x].type === TILE_TYPES.NOTE) {
+                if (this.grid[y][x].type === TILE_TYPES.SIGN) {
                     return true;
                 }
             }
@@ -200,12 +193,6 @@ export class ZoneGenerator {
             this.addDeadTree();
         }
 
-        // Check for canyon zone generation first (before exits, so they connect)
-        const zoneLevel = this.getZoneLevel();
-        if (this.shouldGenerateCanyon(zoneLevel)) {
-            this.generateCanyon();
-        }
-
         // Generate exits using pre-determined connections
         this.generateExits(zoneX, zoneY, zoneConnections);
 
@@ -218,50 +205,42 @@ export class ZoneGenerator {
         // Add random features (skip if this is the house zone to avoid cluttering)
         if (!(zoneX === 0 && zoneY === 0)) {
             ZoneGenerator.zoneCounter++;
-            // Skip enemy and item spawning in the canyon zone
-            const isCanyonZone = ZoneGenerator.canyonZone &&
-                zoneX === ZoneGenerator.canyonZone.x && zoneY === ZoneGenerator.canyonZone.y;
+            // Add level-based food and water spawning
+            this.addLevelBasedFoodAndWater(foodAssets);
 
-            // Add level-based food and water spawning (unless canyon zone)
-            if (!isCanyonZone) {
-                this.addLevelBasedFoodAndWater(foodAssets);
+            // Add enemy with native level-based probability plus flat increase per zones discovered (1% per 10 zones)
+            const zoneLevel = this.getZoneLevel();
+            const baseEnemyProbability = zoneLevel === 2 ? 0.15 : zoneLevel === 3 ? 0.17 : zoneLevel === 4 ? 0.22 : 0.11;
+            const enemyProbability = baseEnemyProbability + Math.floor(ZoneGenerator.zoneCounter / 10) * 0.01;
+            if (Math.random() < enemyProbability) {
+                this.addRandomEnemy();
             }
 
-            if (!isCanyonZone) {
-                // Add enemy with native level-based probability plus flat increase per zones discovered (1% per 10 zones)
-                const zoneLevel = this.getZoneLevel();
-                const baseEnemyProbability = zoneLevel === 2 ? 0.15 : zoneLevel === 3 ? 0.17 : zoneLevel === 4 ? 0.22 : 0.11;
-                const enemyProbability = baseEnemyProbability + Math.floor(ZoneGenerator.zoneCounter / 10) * 0.01;
-                if (Math.random() < enemyProbability) {
-                    this.addRandomEnemy();
-                }
+            // Check if the current zone is the designated spawn zone for an item
+            if (ZoneGenerator.axeSpawnZone && zoneX === ZoneGenerator.axeSpawnZone.x && zoneY === ZoneGenerator.axeSpawnZone.y && !ZoneGenerator.axeSpawned) {
+                this.addAxeItem();
+            }
+            if (ZoneGenerator.hammerSpawnZone && zoneX === ZoneGenerator.hammerSpawnZone.x && zoneY === ZoneGenerator.hammerSpawnZone.y && !ZoneGenerator.hammerSpawned) {
+                this.addHammerItem();
+            }
+            if (ZoneGenerator.spearSpawnZone && zoneX === ZoneGenerator.spearSpawnZone.x && zoneY === ZoneGenerator.spearSpawnZone.y && !ZoneGenerator.spearSpawned) {
+                this.addSpearItem();
+            }
 
-                // Check if the current zone is the designated spawn zone for an item
-                if (ZoneGenerator.axeSpawnZone && zoneX === ZoneGenerator.axeSpawnZone.x && zoneY === ZoneGenerator.axeSpawnZone.y && !ZoneGenerator.axeSpawned) {
-                    this.addAxeItem();
-                }
-                if (ZoneGenerator.hammerSpawnZone && zoneX === ZoneGenerator.hammerSpawnZone.x && zoneY === ZoneGenerator.hammerSpawnZone.y && !ZoneGenerator.hammerSpawned) {
-                    this.addHammerItem();
-                }
-                if (ZoneGenerator.spearSpawnZone && zoneX === ZoneGenerator.spearSpawnZone.x && zoneY === ZoneGenerator.spearSpawnZone.y && !ZoneGenerator.spearSpawned) {
-                    this.addSpearItem();
-                }
+            // Add a rare lion with low chance to spawn per zone (not level, but per zone)
+            if (!ZoneGenerator.lionSpawned && Math.random() < 0.02) { // 2% chance
+                this.addLionItem();
+            }
 
-                // Add a rare lion with low chance to spawn per zone (not level, but per zone)
-                if (!ZoneGenerator.lionSpawned && Math.random() < 0.02) { // 2% chance
-                    this.addLionItem();
-                }
+            // Add a rare squig with low chance to spawn per zone (not level, but per zone)
+            if (!ZoneGenerator.squigSpawned && Math.random() < 0.02) { // 2% chance
+                this.addSquigItem();
+            }
 
-                // Add a rare squig with low chance to spawn per zone (not level, but per zone)
-                if (!ZoneGenerator.squigSpawned && Math.random() < 0.02) { // 2% chance
-                    this.addSquigItem();
-                }
-
-                // Add a bomb with a 3% chance in zones level 2-4
-                const zoneLevelForBomb = this.getZoneLevel();
-                if (zoneLevelForBomb >= 2 && zoneLevelForBomb <= 4 && Math.random() < 0.03) {
-                    this.addBombItem();
-                }
+            // Add a bomb with a 3% chance in zones level 2-4
+            const zoneLevelForBomb = this.getZoneLevel();
+            if (zoneLevelForBomb >= 2 && zoneLevelForBomb <= 4 && Math.random() < 0.03) {
+                this.addBombItem();
             }
 
             // Special tinted dirt easter egg zone - very rare chance in the Wilds (zone level 3)
@@ -341,28 +320,10 @@ export class ZoneGenerator {
     addRandomFeatures() {
         const zoneLevel = this.getZoneLevel();
 
-        // Check for canyon zone generation first (rare special zones)
-        if (this.shouldGenerateCanyon(zoneLevel)) {
-            this.generateCanyon();
-            return;
-        }
-
         // Check for maze zone generation
         if (this.shouldGenerateMaze(zoneLevel)) {
             this.generateMaze();
             return;
-        }
-
-        // Check for special zone types before general features
-        if (this.shouldGenerateOrchard(zoneLevel)) {
-            this.generateOrchard();
-            return; // Stop further feature generation
-        }
-
-        // Check for special food/water room generation
-        if (this.shouldGenerateFoodWaterRoom(zoneLevel)) {
-            this.generateFoodWaterRoom();
-            return; // Stop further feature generation
         }
 
         // Add some random rocks, dirt, grass, and shrubbery patches
@@ -419,12 +380,12 @@ export class ZoneGenerator {
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 const chanceType = Math.random();
                 if (chanceType < 0.05) {
-                    // 5% chance for a note
-                    if (!this.checkNoteExists()) {
-                        const message = Note.getProceduralMessage(this.currentZoneX, this.currentZoneY);
+                    // 5% chance for a sign
+                    if (!this.checkSignExists()) {
+                        const message = Sign.getProceduralMessage(this.currentZoneX, this.currentZoneY);
                         this.grid[y][x] = {
-                            type: TILE_TYPES.NOTE,
-                            note: new Note(message, x, y)
+                            type: TILE_TYPES.SIGN,
+                            message: message
                         };
                     }
                 } else if (chanceType < 0.35) {
@@ -577,9 +538,9 @@ export class ZoneGenerator {
         }
     }
 
-    addNote() {
+        addNote() {
         // Add the note with a procedural message
-        if (this.checkNoteExists()) return;
+        if (this.checkSignExists()) return;
 
         // Try to place the note in a valid location (max 50 attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
@@ -590,10 +551,10 @@ export class ZoneGenerator {
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 const message = Note.getProceduralMessage(this.currentZoneX, this.currentZoneY);
                 this.grid[y][x] = {
-                    type: TILE_TYPES.NOTE,
-                    note: new Note(message, x, y)
+                    type: TILE_TYPES.SIGN,
+                    message: message
                 };
-                break; // Successfully placed note
+                break; // Successfully placed sign
             }
         }
     }
@@ -608,11 +569,11 @@ export class ZoneGenerator {
     else if (level === 4) area = 'frontier';
     else return;
 
-    const message = Note.getMessageByIndex(area, messageIndex);
+    const message = Sign.getMessageByIndex(area, messageIndex);
     console.log('[Note Debug] addSpecificNote:', { area, messageIndex, message });
-    if (Note.spawnedMessages.has(message)) return;
+    if (Sign.spawnedMessages.has(message)) return;
 
-    if (this.checkNoteExists()) return;
+    if (this.checkSignExists()) return;
 
         // Try to place the note in a valid location (max 50 attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
@@ -629,11 +590,11 @@ export class ZoneGenerator {
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = {
-                    type: TILE_TYPES.NOTE,
-                    note: new Note(message, x, y)
+                    type: TILE_TYPES.SIGN,
+                    message: message
                 };
-                Note.spawnedMessages.add(message);
-                break; // Successfully placed note
+                Sign.spawnedMessages.add(message);
+                break; // Successfully placed sign
             }
         }
     }
@@ -1055,14 +1016,6 @@ export class ZoneGenerator {
         return Math.random() < probability;
     }
 
-    shouldGenerateCanyon(zoneLevel) {
-        // Only in Frontier zones (level 4), rare chance
-        if (zoneLevel === 4 && (!ZoneGenerator.canyonSpawned || ZoneGenerator.forceCanyonSpawn)) {
-            return ZoneGenerator.forceCanyonSpawn || Math.random() < 0.03; // Force or 3% chance in Frontier zones
-        }
-        return false;
-    }
-
     generateMaze() {
         // Fill interior with walls first
         for (let y = 1; y < GRID_SIZE - 1; y++) {
@@ -1132,87 +1085,6 @@ export class ZoneGenerator {
                 }
             }
         }
-    }
-
-    shouldGenerateOrchard(zoneLevel) {
-        // 3% chance in Woods, 2% in Wilds
-        let probability = 0;
-        switch (zoneLevel) {
-            case 2: // Woods
-                probability = 0.03;
-                break;
-            case 3: // Wilds
-                probability = 0.02;
-                break;
-            default:
-                return false;
-        }
-        return Math.random() < probability;
-    }
-
-    shouldGenerateFoodWaterRoom(zoneLevel) {
-        // Only in Wilds zones (level 3), 8% chance (same as maze generation probability)
-        if (zoneLevel === 3 && (!ZoneGenerator.foodWaterRoomSpawned || ZoneGenerator.forceFoodWaterRoom)) {
-            return ZoneGenerator.forceFoodWaterRoom || Math.random() < 0.08;
-        }
-        return false;
-    }
-
-    generateFoodWaterRoom() {
-        // Create a special food and water room with 3-10 food/water items
-        const itemCount = Math.floor(Math.random() * 8) + 3; // 3-10 items
-
-        for (let i = 0; i < itemCount; i++) {
-            this.addRandomItem(this.foodAssets); // Use existing method to place food or water
-        }
-
-        ZoneGenerator.foodWaterRoomSpawned = true;
-        ZoneGenerator.foodWaterRoomZone = { x: this.currentZoneX, y: this.currentZoneY };
-        console.log(`Special food/water room spawned at (${this.currentZoneX}, ${this.currentZoneY}) with ${itemCount} items`);
-    }
-
-    generateOrchard() {
-        // Fill the interior with a high density of fruit bushes
-        for (let y = 1; y < GRID_SIZE - 1; y++) {
-            for (let x = 1; x < GRID_SIZE - 1; x++) {
-                if (this.grid[y][x] === TILE_TYPES.FLOOR && Math.random() < 0.75) {
-                    // this.grid[y][x] = TILE_TYPES.FRUIT_BUSH; // Assuming FRUIT_BUSH is a new tile type
-                }
-            }
-        }
-    }
-
-    generateCanyon() {
-        // Create the Whispering Canyon: linear path flanked by walls, with signs as "whispering rock formations"
-
-        // Fill most interior with walls, leaving a vertical path down the center
-        const pathX = Math.floor(GRID_SIZE / 2); // Center column for the path
-        const pathWidth = 3; // Width of the path (odd number for symmetry)
-
-        // Create walls everywhere except the path, and some walls become signs
-        for (let y = 1; y < GRID_SIZE - 1; y++) {
-            for (let x = 1; x < GRID_SIZE - 1; x++) {
-                const distanceFromPath = Math.abs(x - pathX);
-                if (distanceFromPath <= Math.floor(pathWidth / 2)) {
-                    // Clear path - leave as floor
-                    continue;
-                } else if (distanceFromPath === Math.floor(pathWidth / 2) + 1 && Math.random() < 0.3) {
-                    // 30% chance to turn adjacent wall tiles into signs (like whispering rock formations along the edge)
-                    const message = Note.getCanyonMessage();
-                    this.grid[y][x] = {
-                        type: TILE_TYPES.SIGN,
-                        message: message
-                    };
-                } else {
-                    // Regular wall
-                    this.grid[y][x] = TILE_TYPES.WALL;
-                }
-            }
-        }
-
-        ZoneGenerator.canyonSpawned = true;
-        ZoneGenerator.canyonZone = { x: this.currentZoneX, y: this.currentZoneY };
-        console.log(`Whispering Canyon spawned at (${this.currentZoneX}, ${this.currentZoneY})`);
     }
 
     static getRandomZoneForLevel(minDist, maxDist) {

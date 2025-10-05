@@ -1,4 +1,4 @@
-export class Note {
+export class Sign {
     constructor(message, x, y) {
         this.message = message;
         this.x = x;
@@ -42,9 +42,7 @@ export class Note {
                 "The canyon breathes with ancient secrets. Can you hear them?",
                 "Strange formations line the path. They seem to watch you.",
                 "Footsteps echo endlessly here. Are they yours, or something else's?",
-                "The wind carries voices from another time. What are they saying?",
-                "Rocks shaped like faces. Are they smiling or warning?",
-        
+                "The wind carries voices from another time. What are they saying?",        
             ]
         };
 
@@ -58,23 +56,23 @@ export class Note {
         let area = 'wilds'; // Default to wilds as it's the only level with procedural notes.
         // The logic could be expanded if other levels get procedural notes.
         
-        const messages = Note.messageSets[area];
+        const messages = Sign.messageSets[area];
         // Find an unused message from 'messages' that is not in 'usedMessagesSet'
         const availableMessages = messages.filter(msg => !usedMessagesSet.has(msg));
         if (availableMessages.length > 0) {
             const index = Math.floor(Math.random() * availableMessages.length);
             return availableMessages[index];
         }
-        
+
         return messages[0]; // Fallback
     }
 
     static getMessageByIndex(area, index) {
-        return Note.messageSets[area][index];
+        return Sign.messageSets[area][index];
     }
 
     static getCanyonMessage() {
-        const messages = Note.messageSets.canyon;
+        const messages = Sign.messageSets.canyon;
         return messages[Math.floor(Math.random() * messages.length)];
     }
 }

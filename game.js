@@ -4,7 +4,7 @@ import { ConnectionManager } from './ConnectionManager.js';
 import { ZoneGenerator } from './ZoneGenerator.js';
 import { Player } from './Player.js';
 import { Enemy } from './Enemy.js';
-import { Note } from './Note.js';
+import { Sign } from './Sign.js';
 
 // Game state
 class Game {
@@ -113,9 +113,9 @@ class Game {
         // Generate initial zone
         this.generateZone();
 
-        // Ensure player starts on a valid tile, but do not overwrite notes
+        // Ensure player starts on a valid tile, but do not overwrite signs
         const startTile = this.grid[this.player.y][this.player.x];
-        if (!startTile || (typeof startTile === 'string' && startTile !== TILE_TYPES.NOTE) || (typeof startTile === 'object' && startTile.type !== TILE_TYPES.NOTE)) {
+        if (!startTile || (typeof startTile === 'string' && startTile !== TILE_TYPES.SIGN) || (typeof startTile === 'object' && startTile.type !== TILE_TYPES.SIGN)) {
             this.grid[this.player.y][this.player.x] = TILE_TYPES.FLOOR;
         }
 
@@ -286,6 +286,12 @@ class Game {
     findPath(startX, startY, targetX, targetY) {
         // Check if target is within bounds and walkable
         if (targetX < 0 || targetX >= GRID_SIZE || targetY < 0 || targetY >= GRID_SIZE) {
+            return null;
+        }
+
+        // Explicitly make signs unwalkable for pathfinding
+        const targetTile = this.grid[targetY]?.[targetX];
+        if ((targetTile && targetTile.type === TILE_TYPES.SIGN) || targetTile === TILE_TYPES.SIGN) {
             return null;
         }
 
@@ -880,7 +886,7 @@ class Game {
         this.zoneGenerator.constructor.lionSpawned = false; // Reset lion spawn
         this.zoneGenerator.constructor.squigSpawned = false; // Reset squig spawn
         this.zoneGenerator.constructor.foodWaterRoomSpawned = false; // Reset food/water room spawn
-        Note.spawnedMessages.clear(); // Reset spawned message tracking
+        Sign.spawnedMessages.clear(); // Reset spawned message tracking
         this.player.reset();
         this.enemies = [];
         this.defeatedEnemies = new Set();
@@ -1642,9 +1648,6 @@ class Game {
         // Check squig interaction for automatic message
         this.checkSquigInteraction();
 
-        // Check note interaction for automatic message
-        this.checkNoteInteraction();
-
         // Check sign interaction for automatic message
         this.checkSignInteraction();
 
@@ -1664,24 +1667,24 @@ class Game {
         const playerPos = this.player.getPosition();
         const messageOverlay = document.getElementById('messageOverlay');
 
-        // Find all note positions and their messages
-        const notes = [];
+        // Find all note/sign positions and their messages (now all are signs)
+        const signs = [];
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
                 const tile = this.grid[y][x];
-                if (tile && tile.type === TILE_TYPES.NOTE) {
-                    notes.push({ x, y, message: tile.note.message });
+                if (tile && tile.type === TILE_TYPES.SIGN) {
+                    signs.push({ x, y, message: tile.message });
                 }
             }
         }
 
         let adjacentNoteMessage = null;
-        for (const note of notes) {
-            const dx = Math.abs(note.x - playerPos.x);
-            const dy = Math.abs(note.y - playerPos.y);
+        for (const sign of signs) {
+            const dx = Math.abs(sign.x - playerPos.x);
+            const dy = Math.abs(sign.y - playerPos.y);
             if ((dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0)) {
-                adjacentNoteMessage = note.message;
-                break; // Found an adjacent note
+                adjacentNoteMessage = sign.message;
+                break; // Found an adjacent sign
             }
         }
 
