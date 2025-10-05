@@ -1151,24 +1151,6 @@ class Game {
         });
     }
 
-    checkNoteInteraction() {
-        const playerPos = this.player.getPosition();
-        const messageBox = document.getElementById('messageBox');
-
-        const tile = this.grid[playerPos.y][playerPos.x];
-        if (tile && tile.type === TILE_TYPES.NOTE) {
-            // Show message if not already showing
-            if (!messageBox.classList.contains('show')) {
-                this.showMessage(tile.note.message);
-            }
-        } else {
-            // Hide message if player steps off the note
-            if (messageBox.classList.contains('show')) {
-                messageBox.classList.remove('show');
-            }
-        }
-    }
-
     checkLionInteraction() {
         const playerPos = this.player.getPosition();
         const messageOverlay = document.getElementById('messageOverlay');
@@ -1523,14 +1505,14 @@ class Game {
         });
         this.enemies = this.enemies.filter(enemy => enemy.deathAnimation === 0);
 
-        // Check if player is on a note tile (needs to be checked every frame for persistence)
-        this.checkNoteInteraction();
-
         // Check lion interaction for automatic message
         this.checkLionInteraction();
 
         // Check squig interaction for automatic message
         this.checkSquigInteraction();
+
+        // Check note interaction for automatic message
+        this.checkNoteInteraction();
 
         // Check sign interaction for automatic message
         this.checkSignInteraction();
@@ -1545,6 +1527,38 @@ class Game {
 
         this.render();
         requestAnimationFrame(() => this.gameLoop());
+    }
+
+    checkNoteInteraction() {
+        const playerPos = this.player.getPosition();
+        const messageOverlay = document.getElementById('messageOverlay');
+
+        // Find all note positions and their messages
+        const notes = [];
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                const tile = this.grid[y][x];
+                if (tile && tile.type === TILE_TYPES.NOTE) {
+                    notes.push({ x, y, message: tile.note.message });
+                }
+            }
+        }
+
+        let adjacentNoteMessage = null;
+        for (const note of notes) {
+            const dx = Math.abs(note.x - playerPos.x);
+            const dy = Math.abs(note.y - playerPos.y);
+            if ((dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0)) {
+                adjacentNoteMessage = note.message;
+                break; // Found an adjacent note
+            }
+        }
+
+        if (adjacentNoteMessage && !messageOverlay.classList.contains('show')) {
+            this.showMessage(adjacentNoteMessage, 'Images/sign.png', true);
+        } else if (!adjacentNoteMessage && messageOverlay.classList.contains('show')) {
+            // This might hide other messages, so be careful. Let's let them time out.
+        }
     }
 
     checkSignInteraction() {

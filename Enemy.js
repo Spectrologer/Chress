@@ -200,7 +200,7 @@ export class Enemy {
         }
 
         const tile = grid[y][x];
-        return tile === 0 || tile === 3 || tile === 6 || (tile && tile.type === 7) || (tile && tile.type === 10);  // FLOOR, EXIT, WATER, FOOD, NOTE
+        return tile === 0 || tile === 3 || tile === 6 || (tile && tile.type === 7);  // FLOOR, EXIT, WATER, FOOD
     }
 
     performRamFromDistance(player, playerX, playerY, grid) {

@@ -1127,27 +1127,22 @@ export class TextureManager {
     }
 
     renderNoteTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
-    // First draw the base tile
-    this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        // First draw the base tile
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        // Try to draw the note image if loaded, otherwise use fallback
-        if (this.isImageLoaded('note')) {
-            // Draw note at half size and centered
-            const halfSize = TILE_SIZE / 2;
-            const offset = (TILE_SIZE - halfSize) / 2;
-            ctx.drawImage(this.images.note, pixelX + offset, pixelY + offset, halfSize, halfSize);
+        // Try to draw the sign image if loaded, otherwise use fallback
+        if (this.isImageLoaded('sign')) {
+            ctx.drawImage(this.images.sign, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            // Fallback to colored square with emoji at half size
-            const halfPadding = 8 / 2; // Half the original padding
-            const halfAdjustedSize = (TILE_SIZE - 16) / 2;
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.NOTE];
-            ctx.fillRect(pixelX + halfPadding + halfAdjustedSize / 2, pixelY + halfPadding + halfAdjustedSize / 2, halfAdjustedSize, halfAdjustedSize);
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.SIGN];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
 
-            ctx.fillStyle = '#000000';
-            ctx.font = '16px Arial'; // Half the original font size
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '24px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('📝', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            ctx.fillText('S', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 
