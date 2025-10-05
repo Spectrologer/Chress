@@ -199,6 +199,7 @@ body {
 
 .player-inventory {
     flex: 1;
+    position: relative;
 }
 
 .inventory-list {
@@ -408,6 +409,33 @@ body {
     max-width: 80%;
     max-height: 80%;
     object-fit: contain;
+}
+
+.inventory-tooltip {
+    position: absolute;
+    background: #fffbe9;
+    border: 2px solid #e2cfa2;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.9em;
+    color: #7a5c2e;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    font-family: 'Cinzel', serif;
+    max-width: 200px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.inventory-tooltip.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .inventory-slot.item-water {

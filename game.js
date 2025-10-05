@@ -651,7 +651,7 @@ class Game {
                 return; // Don't process as movement
             case 'f':
                 // Add random food to inventory for testing
-                if (this.availableFoodAssets.length > 0) {
+                if (this.player.inventory.length < 6 && this.availableFoodAssets.length > 0) {
                     const randomFood = this.availableFoodAssets[Math.floor(Math.random() * this.availableFoodAssets.length)];
                     this.player.inventory.push({ type: 'food', foodType: randomFood });
                     this.updatePlayerStats(); // Refresh inventory display
@@ -892,6 +892,32 @@ class Game {
             }
         });
 
+        // Get tooltip element
+        const tooltip = document.getElementById('inventory-tooltip');
+        let longPressTimeout = null;
+        let isLongPress = false;
+
+        // Function to show tooltip
+        const showTooltip = (slot, text) => {
+            if (!tooltip) return;
+            tooltip.textContent = text;
+            const rect = slot.getBoundingClientRect();
+            const inventoryRect = slot.closest('.player-inventory').getBoundingClientRect();
+            const tooltipWidth = 200; // Approximate width
+
+            // Position tooltip above the slot, centered, relative to player-inventory
+            tooltip.style.left = `${rect.left - inventoryRect.left + (rect.width / 2) - (tooltipWidth / 2)}px`;
+            tooltip.style.top = `${rect.top - inventoryRect.top - 40}px`; // 40px above
+            tooltip.classList.add('show');
+        };
+
+        // Function to hide tooltip
+        const hideTooltip = () => {
+            if (tooltip) {
+                tooltip.classList.remove('show');
+            }
+        };
+
         // Render inventory items
         const inventoryGrid = document.querySelector('.inventory-list');
         if (inventoryGrid) {
@@ -900,6 +926,24 @@ class Game {
                 const slot = document.createElement('div');
                 slot.className = 'inventory-slot';
                 slot.style.cursor = this.player.isDead() ? 'not-allowed' : 'pointer';
+
+                // Determine tooltip text
+                let tooltipText = '';
+                if (item.type === 'food') {
+                    const foodName = item.foodType.split('/')[1] || item.foodType;
+                    tooltipText = `${foodName} - Restores 10 hunger`;
+                } else if (item.type === 'water') {
+                    tooltipText = 'Water - Restores 10 thirst';
+                } else if (item.type === 'axe') {
+                    tooltipText = 'Axe - Chops grass and shrubbery to create pathways';
+                } else if (item.type === 'hammer') {
+                    tooltipText = 'Hammer - Breaks rocks to create pathways';
+                } else if (item.type === 'spear') {
+                    tooltipText = 'Spear - Attacks enemies diagonally';
+                } else if (item.type === 'bomb') {
+                    tooltipText = 'Bomb - Blasts through walls to create exits';
+                }
+
                 if (item.type === 'food') {
                     // Add the actual food sprite image to inventory slot
                     const foodImg = document.createElement('img');
@@ -922,38 +966,75 @@ class Game {
                 } else if (item.type === 'tool') {
                     slot.classList.add('item-tool');
                 }
+
+                // Desktop hover events
+                slot.addEventListener('mouseover', () => {
+                    if (!isLongPress) {
+                        showTooltip(slot, tooltipText);
+                    }
+                });
+                slot.addEventListener('mouseout', () => {
+                    if (!isLongPress) {
+                        hideTooltip();
+                    }
+                });
+
+                // Mobile touch events for long press
+                slot.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // Prevent click
+                    isLongPress = false;
+                    longPressTimeout = setTimeout(() => {
+                        isLongPress = true;
+                        showTooltip(slot, tooltipText);
+                        // Auto-hide after 2 seconds
+                        setTimeout(hideTooltip, 2000);
+                    }, 500);
+                });
+                slot.addEventListener('touchmove', () => {
+                    if (longPressTimeout) {
+                        clearTimeout(longPressTimeout);
+                        longPressTimeout = null;
+                    }
+                });
+                slot.addEventListener('touchend', () => {
+                    if (longPressTimeout) {
+                        clearTimeout(longPressTimeout);
+                        longPressTimeout = null;
+                    }
+                });
+
                 slot.onclick = () => {
-                    if (this.player.isDead()) return;
+                    if (this.player.isDead() || isLongPress) return;
                     if (item.type === 'food') {
                         this.player.restoreHunger(10);
                         this.player.inventory.splice(idx, 1);
                     } else if (item.type === 'water') {
                         this.player.restoreThirst(10);
                         this.player.inventory.splice(idx, 1);
-                } else if (item.type === 'axe') {
-                    // Drop axe at player's current position
-                    if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                        this.grid[this.player.y][this.player.x] = TILE_TYPES.AXE;
+                    } else if (item.type === 'axe') {
+                        // Drop axe at player's current position
+                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
+                            this.grid[this.player.y][this.player.x] = TILE_TYPES.AXE;
+                            this.player.inventory.splice(idx, 1);
+                        }
+                    } else if (item.type === 'hammer') {
+                        // Drop hammer at player's current position
+                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
+                            this.grid[this.player.y][this.player.x] = TILE_TYPES.HAMMER;
+                            this.player.inventory.splice(idx, 1);
+                        }
+                    } else if (item.type === 'spear') {
+                        // Drop spear at player's current position
+                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
+                            this.grid[this.player.y][this.player.x] = TILE_TYPES.SPEAR;
+                            this.player.inventory.splice(idx, 1);
+                        }
+                    } else if (item.type === 'bomb') {
+                        // Drop bomb at player's current position on whatever tile it rests on
+                        this.grid[this.player.y][this.player.x] = TILE_TYPES.BOMB;
                         this.player.inventory.splice(idx, 1);
                     }
-                } else if (item.type === 'hammer') {
-                    // Drop hammer at player's current position
-                    if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                        this.grid[this.player.y][this.player.x] = TILE_TYPES.HAMMER;
-                        this.player.inventory.splice(idx, 1);
-                    }
-                } else if (item.type === 'spear') {
-                    // Drop spear at player's current position
-                    if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                        this.grid[this.player.y][this.player.x] = TILE_TYPES.SPEAR;
-                        this.player.inventory.splice(idx, 1);
-                    }
-                } else if (item.type === 'bomb') {
-                    // Drop bomb at player's current position on whatever tile it rests on
-                    this.grid[this.player.y][this.player.x] = TILE_TYPES.BOMB;
-                    this.player.inventory.splice(idx, 1);
-                }
-                this.updatePlayerStats();
+                    this.updatePlayerStats();
                 };
                 inventoryGrid.appendChild(slot);
             });
