@@ -773,6 +773,8 @@ class Game {
                 zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtTarget.id);
                 this.zones.set(zoneKey, zoneData);
             }
+            // Enemy movements happen after attacks to simulate turn-based combat
+            this.handleEnemyMovements();
             // Player does not move
         } else {
             // Normal movement
@@ -1478,6 +1480,8 @@ class Game {
             }
 
             this.updatePlayerStats(); // Refresh UI after attack
+            // Enemy movements happen after attacks to simulate turn-based combat
+            this.handleEnemyMovements();
         }
     }
 
