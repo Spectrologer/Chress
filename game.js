@@ -689,6 +689,38 @@ class Game {
                 this.updatePlayerStats();
                 console.log('Teleported to canyon zone. If canyon generated, it will be forced.');
                 break;
+            case 'j':
+                // Jump to food/water room, force spawn if not exists
+                if (ZoneGenerator.foodWaterRoomSpawned && ZoneGenerator.foodWaterRoomZone) {
+                    this.player.setCurrentZone(ZoneGenerator.foodWaterRoomZone.x, ZoneGenerator.foodWaterRoomZone.y);
+                    this.generateZone();
+                    // Position player in center of the zone
+                    const centerXj = Math.floor(GRID_SIZE / 2);
+                    const centerYj = Math.floor(GRID_SIZE / 2);
+                    this.player.setPosition(centerXj, centerYj);
+                    this.player.ensureValidPosition(this.grid);
+                    // Update UI
+                    this.updateZoneDisplay();
+                    this.updatePlayerPosition();
+                    this.updatePlayerStats();
+                    console.log(`Teleported to food/water room at (${ZoneGenerator.foodWaterRoomZone.x}, ${ZoneGenerator.foodWaterRoomZone.y})`);
+                } else {
+                    // Force spawn the room at a Wilds zone (e.g., (10, 10))
+                    console.log('Food/water room not spawned yet. Forcing spawn at zone (10, 10)...');
+                    ZoneGenerator.forceFoodWaterRoom = true;
+                    this.player.setCurrentZone(10, 10);
+                    this.generateZone();
+                    ZoneGenerator.forceFoodWaterRoom = false; // Reset after forcing
+                    const centerXj = Math.floor(GRID_SIZE / 2);
+                    const centerYj = Math.floor(GRID_SIZE / 2);
+                    this.player.setPosition(centerXj, centerYj);
+                    this.player.ensureValidPosition(this.grid);
+                    this.updateZoneDisplay();
+                    this.updatePlayerPosition();
+                    this.updatePlayerStats();
+                    console.log('Food/water room forced at (10, 10). You can now use "j" again to return.');
+                }
+                break;
             case 'l':
                 // Spawn a lizardy enemy for testing
                 const availableTiles = [];
@@ -847,6 +879,7 @@ class Game {
         this.zoneGenerator.constructor.spearSpawned = false; // Reset spear spawn
         this.zoneGenerator.constructor.lionSpawned = false; // Reset lion spawn
         this.zoneGenerator.constructor.squigSpawned = false; // Reset squig spawn
+        this.zoneGenerator.constructor.foodWaterRoomSpawned = false; // Reset food/water room spawn
         Note.spawnedMessages.clear(); // Reset spawned message tracking
         this.player.reset();
         this.enemies = [];
@@ -1142,7 +1175,6 @@ class Game {
     }
     
     drawGrid() {
-        console.log('Drawing grid with', this.grid ? 'valid grid' : 'null grid');
         if (!this.grid) {
             console.error('Grid is null, cannot render');
             return;

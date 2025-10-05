@@ -21,7 +21,6 @@ export class Note {
                 "I'd hate to get caught without a hammer in the wilds. - Crayn",
                 "If I could have any superpower, I'd be able to move diagonally. - Crayn",
                 "The trees here are thick. I need a good axe to get through.",
-                "Fighting is never worth it. Sometimes.",
                 "Beware Lizardo. - Crayn",
             ],
             wilds: [
@@ -45,10 +44,7 @@ export class Note {
                 "Footsteps echo endlessly here. Are they yours, or something else's?",
                 "The wind carries voices from another time. What are they saying?",
                 "Rocks shaped like faces. Are they smiling or warning?",
-                "Each turn reveals something new. Don't miss the signs.",
-                "The canyon has stories to tell. But do you have the patience to listen?",
-                "Shadows dance on the walls. Movement without sound.",
-                "This place remembers everything. What will it remember of you?"
+        
             ]
         };
 

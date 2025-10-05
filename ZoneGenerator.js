@@ -17,6 +17,9 @@ export class ZoneGenerator {
     static canyonSpawned = false; // Track if the whispering canyon has been spawned
     static canyonZone = null; // {x, y} coordinates of the canyon zone
     static forceCanyonSpawn = false; // Debug flag to force canyon generation
+    static forceFoodWaterRoom = false; // Debug flag to force food/water room generation
+    static foodWaterRoomSpawned = false; // Track if the food/water room has been spawned
+    static foodWaterRoomZone = null; // {x, y} coordinates of the food/water room zone
 
     // Pre-determined spawn locations for special items
     static axeSpawnZone = null;
@@ -353,6 +356,12 @@ export class ZoneGenerator {
         // Check for special zone types before general features
         if (this.shouldGenerateOrchard(zoneLevel)) {
             this.generateOrchard();
+            return; // Stop further feature generation
+        }
+
+        // Check for special food/water room generation
+        if (this.shouldGenerateFoodWaterRoom(zoneLevel)) {
+            this.generateFoodWaterRoom();
             return; // Stop further feature generation
         }
 
@@ -1139,6 +1148,27 @@ export class ZoneGenerator {
                 return false;
         }
         return Math.random() < probability;
+    }
+
+    shouldGenerateFoodWaterRoom(zoneLevel) {
+        // Only in Wilds zones (level 3), 8% chance (same as maze generation probability)
+        if (zoneLevel === 3 && (!ZoneGenerator.foodWaterRoomSpawned || ZoneGenerator.forceFoodWaterRoom)) {
+            return ZoneGenerator.forceFoodWaterRoom || Math.random() < 0.08;
+        }
+        return false;
+    }
+
+    generateFoodWaterRoom() {
+        // Create a special food and water room with 3-10 food/water items
+        const itemCount = Math.floor(Math.random() * 8) + 3; // 3-10 items
+
+        for (let i = 0; i < itemCount; i++) {
+            this.addRandomItem(this.foodAssets); // Use existing method to place food or water
+        }
+
+        ZoneGenerator.foodWaterRoomSpawned = true;
+        ZoneGenerator.foodWaterRoomZone = { x: this.currentZoneX, y: this.currentZoneY };
+        console.log(`Special food/water room spawned at (${this.currentZoneX}, ${this.currentZoneY}) with ${itemCount} items`);
     }
 
     generateOrchard() {
