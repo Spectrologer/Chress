@@ -13,6 +13,7 @@ export class ZoneGenerator {
     static wellSpawned = false;
     static deadTreeSpawned = false;
     static puzzleZoneSpawned = false; // Track if the puzzle zone has been spawned
+    static firstFrontierSignPlaced = false;
 
     // Pre-determined spawn locations for special items
     static axeSpawnZone = null;
@@ -180,7 +181,7 @@ export class ZoneGenerator {
         // Special handling for the starting zone (0,0) - add house
         if (zoneX === 0 && zoneY === 0) {
             this.addHouse();
-            this.addSign("Chalk, Woodcutting Services");
+            this.addSign("WOODCUTTERS<br>CLUB");
         }
 
         // Add a unique well to level 4 (Frontier) zones
@@ -195,7 +196,13 @@ export class ZoneGenerator {
 
         // Generate exits using pre-determined connections
         this.generateExits(zoneX, zoneY, zoneConnections);
-        
+
+        // Add TURN BACK sign to first discovered frontier zone per session
+        if (this.getZoneLevel() === 4 && !ZoneGenerator.firstFrontierSignPlaced) {
+            this.addSign("TURN BACK");
+            ZoneGenerator.firstFrontierSignPlaced = true;
+        }
+
         // Add random features (skip if this is the house zone to avoid cluttering)
         if (!(zoneX === 0 && zoneY === 0)) {
             ZoneGenerator.zoneCounter++;
@@ -606,7 +613,7 @@ export class ZoneGenerator {
             // Wilds: 1-3 lizards
             enemyCount = Math.floor(Math.random() * 3) + 1;
         } else if (zoneLevel === 4) {
-            // Frontier: 1-4 lizards
+            // Frontier: 1-4 lizards (including lizardeaux)
             enemyCount = Math.floor(Math.random() * 4) + 1;
         }
 
@@ -619,8 +626,14 @@ export class ZoneGenerator {
                 // Only place on floor tiles (not on walls, rocks, grass, etc.) and not already occupied by enemy
                 if (this.grid[y][x] === TILE_TYPES.FLOOR && !this.isTileOccupiedByEnemy(x, y)) {
                 ZoneGenerator.enemyCounter++;
-                // Determine enemy type - 'lizardo' appears in the Wilds (level 3)
-                const enemyType = (zoneLevel === 3 && Math.random() < 0.5) ? 'lizardo' : 'lizardy';
+                // Determine enemy type - 'lizardo' appears in the Wilds (level 3), 'lizardeaux' appears in Frontier (level 4)
+                let enemyType = 'lizardy';
+                if (zoneLevel === 3 && Math.random() < 0.5) {
+                    enemyType = 'lizardo';
+                } else if (zoneLevel === 4) {
+                    // In Frontier, mix lizardeaux and lizardy
+                    enemyType = Math.random() < 0.5 ? 'lizardeaux' : 'lizardy';
+                }
                 this.enemies.push({ x, y, enemyType: enemyType, id: ZoneGenerator.enemyCounter });
                 break; // Successfully placed enemy
                 }
@@ -777,6 +790,19 @@ export class ZoneGenerator {
     }
 
     addSign(message) {
+        // Special case for home zone (0,0) to place sign at a fixed location
+        if (this.currentZoneX === 0 && this.currentZoneY === 0) {
+            const houseStartX = 3;
+            const houseStartY = 3;
+            const signX = houseStartX + 3; // To the right of the house
+            const signY = houseStartY + 2; // At the bottom-right corner's y-level
+            if (this.grid[signY][signX] === TILE_TYPES.FLOOR) {
+                this.grid[signY][signX] = { type: TILE_TYPES.SIGN, message: message };
+                return; // Placed successfully
+            }
+            // Fallback to random placement if fixed spot is somehow occupied
+        }
+
         // Try to place the sign in a valid location (max 50 attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
             const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;

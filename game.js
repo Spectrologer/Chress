@@ -694,6 +694,29 @@ class Game {
                     console.log('No available tiles to spawn enemy');
                 }
                 break;
+            case 'x':
+                // Spawn a lizardeaux enemy for testing
+                const lizardeauxTiles = [];
+                for (let y = 0; y < GRID_SIZE; y++) {
+                    for (let x = 0; x < GRID_SIZE; x++) {
+                        const tile = this.grid[y][x];
+                        const playerPos = this.player.getPosition();
+                        const hasEnemy = this.enemies.some(e => e.x === x && e.y === y);
+                        if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
+                            lizardeauxTiles.push({x, y});
+                        }
+                    }
+                }
+                if (lizardeauxTiles.length > 0) {
+                    const spawnPos = lizardeauxTiles[Math.floor(Math.random() * lizardeauxTiles.length)];
+                    const enemyId = Date.now(); // Simple unique ID
+                    const newEnemy = new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardeaux', id: enemyId});
+                    this.enemies.push(newEnemy);
+                    console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
+                } else {
+                    console.log('No available tiles to spawn lizardeaux enemy');
+                }
+                break;
             case 'm':
                 // Spawn lion for testing (debug command)
                 const lionTiles = [];
@@ -1351,6 +1374,8 @@ class Game {
             let enemyKey;
             if (enemy.enemyType === 'lizardo') {
                 enemyKey = 'fauna/lizardo';
+            } else if (enemy.enemyType === 'lizardeaux') {
+                enemyKey = 'fauna/lizardeaux';
             } else {
                 enemyKey = 'fauna/lizardy';
             }

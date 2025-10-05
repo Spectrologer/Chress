@@ -90,6 +90,7 @@ export const IMAGE_ASSETS = [
     'SeparateAnim/dead.png',
     'fauna/lizardy.png',
     'fauna/lizardo.png',
+    'fauna/lizardeaux.png',
     'axe.png',
     'hammer.png',
     'spear.png',
