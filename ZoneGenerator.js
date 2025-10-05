@@ -202,9 +202,10 @@ export class ZoneGenerator {
             // Add level-based food and water spawning
             this.addLevelBasedFoodAndWater(foodAssets);
 
-            // Add enemy with similar frequency as food/water (~10% chance per zone)
+            // Add enemy with native level-based probability plus flat increase per zones discovered (1% per 10 zones)
             const zoneLevel = this.getZoneLevel();
-            const enemyProbability = zoneLevel === 2 ? 0.15 : zoneLevel === 3 ? 0.17 : zoneLevel === 4 ? 0.22 : 0.11;
+            const baseEnemyProbability = zoneLevel === 2 ? 0.15 : zoneLevel === 3 ? 0.17 : zoneLevel === 4 ? 0.22 : 0.11;
+            const enemyProbability = baseEnemyProbability + Math.floor(ZoneGenerator.zoneCounter / 10) * 0.01;
             if (Math.random() < enemyProbability) {
                 this.addRandomEnemy();
             }
@@ -330,6 +331,9 @@ export class ZoneGenerator {
         else if (zoneLevel === 3) {
             featureCount += 5;
         }
+
+        // Flat increase per zones discovered (1 per 10 zones)
+        featureCount += Math.floor(ZoneGenerator.zoneCounter / 10);
 
         for (let i = 0; i < featureCount; i++) {
             const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;

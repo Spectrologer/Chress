@@ -797,6 +797,7 @@ class Game {
         // Reset all game state
         this.zones.clear();
         this.connectionManager.clear();
+        this.zoneGenerator.constructor.zoneCounter = 0; // Reset zone counter for progressive difficulty
         this.zoneGenerator.constructor.axeSpawned = false; // Reset axe spawn
         this.zoneGenerator.constructor.hammerSpawned = false; // Reset hammer spawn
         this.zoneGenerator.constructor.noteSpawned = false; // Reset note spawn
@@ -832,6 +833,13 @@ class Game {
         const zone = this.player.getCurrentZone();
         // document.getElementById('current-zone').textContent = `${zone.x}, ${zone.y}`;
         this.renderZoneMap();
+
+        // Update map info below the minimap
+        const mapInfo = document.getElementById('map-info');
+        if (mapInfo) {
+            const zonesDiscovered = this.player.getVisitedZones().size;
+            mapInfo.innerHTML = `Zone: (${zone.x}, ${zone.y})<br>Zones Discovered: ${zonesDiscovered}`;
+        }
     }
     
     updateProgressBar(barId, currentValue, maxValue) {

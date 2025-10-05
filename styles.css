@@ -152,10 +152,11 @@ body {
     gap: 8px;
 }
 .bar-label {
-    width: 50px;
+    width: 70px;
     text-align: right;
     font-weight: 600;
     color: #7a5c2e;
+    font-size: 1.2em;
 }
 .bar-track {
     flex: 1;
@@ -225,6 +226,14 @@ body {
     border-radius: 8px;
     border: 1px solid #e2cfa2;
     background: #f5e6c0;
+}
+
+.map-info {
+    font-size: 1.5em;
+    text-align: center;
+    color: #7a5c2e;
+    font-family: 'Courier New', monospace;
+    margin-top: 4px;
 }
 
 .character-profile {
@@ -967,6 +976,10 @@ h1 {
         font-size: clamp(0.85em, 3.5vw, 1em);
         margin: 2px 0;
         text-shadow: none;
+    }
+
+    .map-info {
+        font-size: 1.2em;
     }
 
 
