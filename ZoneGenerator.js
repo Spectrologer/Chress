@@ -311,15 +311,23 @@ export class ZoneGenerator {
     }
 
     addRandomFeatures() {
+        const zoneLevel = this.getZoneLevel();
+
+        // Check for maze zone generation
+        if (this.shouldGenerateMaze(zoneLevel)) {
+            this.generateMaze();
+            return;
+        }
+
         // Add some random rocks, dirt, grass, and shrubbery patches
         let featureCount = Math.floor(Math.random() * 15) + 10;
 
         // Reduce feature density in home area (zone level 1)
-        if (this.getZoneLevel() === 1) {
+        if (zoneLevel === 1) {
             featureCount = Math.floor(featureCount * 0.7); // Reduce by 30%
         }
         // Increase feature density in Wilds (zone level 3)
-        else if (this.getZoneLevel() === 3) {
+        else if (zoneLevel === 3) {
             featureCount += 5;
         }
 
@@ -331,7 +339,6 @@ export class ZoneGenerator {
             if (x === 1 && y === 1) continue;
 
             const featureType = Math.random();
-            let zoneLevel = this.getZoneLevel();
             let rockThreshold = zoneLevel === 1 ? 0.25 : 0.35;
             if (featureType < rockThreshold) {
                 this.grid[y][x] = TILE_TYPES.ROCK; // Use rock instead of wall for interior obstacles
@@ -346,7 +353,7 @@ export class ZoneGenerator {
         }
 
         // Add chance tiles past the frontier (zone level 3)
-        if (this.getZoneLevel() === 3 && Math.random() < 0.15) { // 15% chance
+        if (zoneLevel === 3 && Math.random() < 0.15) { // 15% chance
             this.addChanceTile();
         }
     }
@@ -957,6 +964,96 @@ export class ZoneGenerator {
                 ZoneGenerator.squigSpawned = true;
                 console.log(`Squig spawned at zone (${this.currentZoneX}, ${this.currentZoneY}) at (${x}, ${y})`);
                 break; // Successfully placed squig
+            }
+        }
+    }
+
+    shouldGenerateMaze(zoneLevel) {
+        // Home = 0%, Woods = 5%, Wilds = 8%, Frontier = 10%
+        let probability = 0;
+        switch (zoneLevel) {
+            case 2: // Woods
+                probability = 0.05;
+                break;
+            case 3: // Wilds
+                probability = 0.08;
+                break;
+            case 4: // Frontier
+                probability = 0.10;
+                break;
+            default:
+                return false; // No mazes in home zones
+        }
+        return Math.random() < probability;
+    }
+
+    generateMaze() {
+        // Fill interior with walls first
+        for (let y = 1; y < GRID_SIZE - 1; y++) {
+            for (let x = 1; x < GRID_SIZE - 1; x++) {
+                this.grid[y][x] = TILE_TYPES.WALL;
+            }
+        }
+
+        // Generate maze using recursive backtracking
+        // Start from a random interior position
+        const startX = Math.floor(Math.random() * ((GRID_SIZE - 3) / 2)) * 2 + 1;
+        const startY = Math.floor(Math.random() * ((GRID_SIZE - 3) / 2)) * 2 + 1;
+
+        this.carveMaze(startX, startY);
+
+        // Add some random blockages with rocks or shrubbery to make it more challenging
+        this.addMazeBlockages();
+
+        // Ensure maze is solvable by clearing path to center if needed
+        this.clearPathToCenter(startX, startY);
+    }
+
+    carveMaze(x, y) {
+        this.grid[y][x] = TILE_TYPES.FLOOR;
+
+        // Directions: up, right, down, left
+        const directions = [
+            { dx: 0, dy: -2 }, // up
+            { dx: 2, dy: 0 },  // right
+            { dx: 0, dy: 2 },  // down
+            { dx: -2, dy: 0 }  // left
+        ];
+
+        // Shuffle directions for random maze generation
+        for (let i = directions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [directions[i], directions[j]] = [directions[j], directions[i]];
+        }
+
+        // Try each direction
+        for (const dir of directions) {
+            const nx = x + dir.dx;
+            const ny = y + dir.dy;
+
+            if (nx > 0 && nx < GRID_SIZE - 1 && ny > 0 && ny < GRID_SIZE - 1 &&
+                this.grid[ny][nx] === TILE_TYPES.WALL) {
+                // Carve the wall between current and neighbor
+                this.grid[y + dir.dy / 2][x + dir.dx / 2] = TILE_TYPES.FLOOR;
+                this.carveMaze(nx, ny);
+            }
+        }
+    }
+
+    addMazeBlockages() {
+        // Add some rocks and shrubbery to block alternative paths
+        const blockages = Math.floor(Math.random() * 5) + 3; // 3-7 blockages
+
+        for (let i = 0; i < blockages; i++) {
+            for (let attempts = 0; attempts < 20; attempts++) {
+                const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+                const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+                if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                    // Randomly choose rock or shrubbery
+                    this.grid[y][x] = Math.random() < 0.5 ? TILE_TYPES.ROCK : TILE_TYPES.SHRUBBERY;
+                    break;
+                }
             }
         }
     }
