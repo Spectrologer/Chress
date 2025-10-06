@@ -122,11 +122,13 @@ body {
     gap: 8px;
 }
 .bar-label {
-    width: 70px;
-    text-align: right;
-    font-weight: 600;
+    flex-basis: 90px; /* Give the label a consistent base width */
+    flex-shrink: 0; /* Prevent the label from shrinking */
+    text-align: left;
+    font-weight: bold;
     color: #7a5c2e;
-    font-size: 1.2em;
+    font-size: 1.5em; /* Increased font size */
+    font-variant: small-caps;
 }
 .bar-track {
     flex: 1;
@@ -213,7 +215,7 @@ body {
     text-align: center;
     color: #7a5c2e;
     font-family: 'Courier New', monospace;
-    margin-top: 4px;
+    margin-top: 12px;
 }
 
 .character-profile {
@@ -1260,7 +1262,7 @@ h1 {
     box-shadow: 0 2px 6px rgba(139, 69, 19, 0.4);
     padding: 6px 12px; /* Increased padding */
     font-family: 'Cinzel', serif;
-    font-size: 1.1em; /* Increased font size */
+    font-size: 1.3em; /* Increased font size */
     font-weight: bold;
     color: #8B4513;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
@@ -1294,7 +1296,7 @@ h1 {
     }
     .message-log-button {
         padding: 4px 8px;
-        font-size: 0.9em;
+        font-size: 1.1em;
         margin-bottom: 4px;
     }
 }
@@ -1347,7 +1349,7 @@ h1 {
     overflow-y: auto;
     text-align: left;
     color: #5a4223;
-    font-size: 1.1em;
+    font-size: 1.3em;
     padding: 10px;
     background: #f5e6c0;
     border-radius: 6px;
@@ -1358,6 +1360,28 @@ h1 {
     margin-bottom: 10px;
     border-bottom: 1px solid #e2cfa2;
     padding-bottom: 10px;
+}
+
+.message-log-box button {
+    background: linear-gradient(135deg, #CD853F, #B8860B);
+    border: 2px solid #8B4513;
+    color: #3A2418;
+    padding: 12px 24px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.2em;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+}
+
+.message-log-box button:hover {
+    background: linear-gradient(135deg, #B8860B, #CD853F);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5);
 }
 
 /* Scrolling Ticker */
