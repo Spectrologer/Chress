@@ -1,4 +1,4 @@
-// The project is a simple 2D tactical roguelike for mobile browsers. The premise is a world cursed by Ent, where all inhabitants are forced to move according to the rules of chess as punishment for the actions of the Woodcutters Club. The primary gameplay loop involves exploring a procedurally generated grid map to discover new zones, with the score based on the number of zones found. The ultimate, near-impossible goal is to locate and defeat the Ent in a special endgame zone where enemies break the established chess-movement rules. All design, narrative, and asset creation should align with this core concept of a rigid, ordered world clashing with its chaotic, natural origin, optimized for simple sprites and touch controls.//
+//
 import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, TILE_TYPES, FOOD_ASSETS } from './constants.js';
 import { TextureManager } from './TextureManager.js';
 import { ConnectionManager } from './ConnectionManager.js';
@@ -95,16 +95,12 @@ class Game {
     
     async loadAssets() {
         try {
-            console.log('Starting asset loading...');
             await this.textureManager.loadAssets();
-            console.log('All assets loaded successfully');
             // Filter food assets to only those that loaded successfully
             this.availableFoodAssets = FOOD_ASSETS.filter(foodAsset => {
                 const foodKey = foodAsset.replace('.png', '').replace('/', '_');
                 return this.textureManager.isImageLoaded(foodKey);
             });
-            console.log(`Found ${this.availableFoodAssets.length} available food assets out of ${FOOD_ASSETS.length}`);
-            console.log('Available images:', Object.keys(this.textureManager.images));
             this.startGame();
         } catch (error) {
             console.error('Error loading assets:', error);
@@ -159,7 +155,6 @@ class Game {
     
     generateZone() {
         const currentZone = this.player.getCurrentZone();
-        console.log('Generating zone for:', currentZone);
 
         // Generate chunk connections for current area
         this.connectionManager.generateChunkConnections(currentZone.x, currentZone.y);
@@ -175,9 +170,6 @@ class Game {
 
         this.grid = zoneData.grid;
         this.enemies = (zoneData.enemies || []).map(e => new Enemy(e));
-
-        console.log('Generated grid:', this.grid ? `${this.grid.length}x${this.grid[0]?.length}` : 'null');
-        console.log('Generated enemies:', this.enemies.length);
 
         // Save the generated zone
         const zoneKey = `${currentZone.x},${currentZone.y}`;
@@ -413,21 +405,11 @@ class Game {
     }
 
     checkCollisions() {
-        // Since attacks are now handled during movement attempts, this is mainly for safety
-        // in case of any unexpected overlaps (e.g., from zone loading)
         const playerPos = this.player.getPosition();
-
-        // Check for any remaining overlaps and handle them
         this.enemies = this.enemies.filter(enemy => {
             if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked) {
-                // If enemy and player are somehow on same tile, enemy attacks and dies
                 this.player.takeDamage(enemy.attack);
-                console.log(`Unexpected collision: Enemy hit player! Player health: ${this.player.getHealth()}`);
-                if (this.player.isDead()) {
-                    console.log('Player died!');
-                }
-                console.log('Enemy removed due to collision');
-                return false; // Remove enemy
+                return false;
             }
             return true;
         });
@@ -492,77 +474,25 @@ class Game {
         }
     }
 
-    // Check if player stepped on any items (notes, food, tools, etc.)
     checkItemPickup() {
-        const playerPos = this.player.getPosition();
-        const tile = this.grid[playerPos.y][playerPos.x];
+        const p = this.player.getPosition();
+        const tile = this.grid[p.y][p.x];
+        const inv = this.player.inventory;
+        const ui = this.uiManager;
+        const pick = (item) => { inv.push(item); this.grid[p.y][p.x] = TILE_TYPES.FLOOR; ui.updatePlayerStats(); };
 
-        // Check if stepped on a note
         if (tile === TILE_TYPES.NOTE) {
-            // Add note to inventory - notes can be picked up even when inventory is full
-            // since the player might want to use one for a different destination
-            this.player.inventory.push({ type: 'note' });
-            this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove the note from the map
-            this.uiManager.updatePlayerStats(); // Refresh inventory display
-            // Add to message log
-            this.uiManager.addMessageToLog('Found an ancient map note.');
-            return; // Don't check other item types if note was found
+            pick({ type: 'note' });
+            ui.addMessageToLog('Found an ancient map note.');
+            return;
         }
-
-        // Check if stepped on food
-        if (tile && tile.type === TILE_TYPES.FOOD) {
-            // Add food to inventory and remove from map (don't consume it yet)
-            if (this.player.inventory.length < 6) {
-                this.player.inventory.push({ type: 'food', foodType: tile.foodType });
-                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.uiManager.updatePlayerStats(); // Refresh inventory display
-            }
-        }
-
-        // Check if stepped on water
-        if (tile === TILE_TYPES.WATER) {
-            // Add water to inventory and remove from map (don't drink it yet)
-            if (this.player.inventory.length < 6) {
-                this.player.inventory.push({ type: 'water' });
-                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.uiManager.updatePlayerStats(); // Refresh inventory display
-            }
-        }
-
-        // Check for axe drops
-        if (tile === TILE_TYPES.AXE) {
-            if (this.player.inventory.length < 6) {
-                this.player.inventory.push({ type: 'axe' });
-                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.uiManager.updatePlayerStats();
-            }
-        }
-
-        // Check for hammer drops
-        if (tile === TILE_TYPES.HAMMER) {
-            if (this.player.inventory.length < 6) {
-                this.player.inventory.push({ type: 'hammer' });
-                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.uiManager.updatePlayerStats();
-            }
-        }
-
-        // Check for spear drops
-        if (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) {
-            if (this.player.inventory.length < 6) {
-                this.player.inventory.push({ type: 'bishop_spear', uses: tile.uses });
-                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.uiManager.updatePlayerStats();
-            }
-        }
-
-        // Check for bomb drops
-        if (tile === TILE_TYPES.BOMB) {
-            if (this.player.inventory.length < 6) {
-                this.player.inventory.push({ type: 'bomb' });
-                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.uiManager.updatePlayerStats();
-            }
+        if (inv.length < 6) {
+            if (tile?.type === TILE_TYPES.FOOD) pick({ type: 'food', foodType: tile.foodType });
+            else if (tile === TILE_TYPES.WATER) pick({ type: 'water' });
+            else if (tile === TILE_TYPES.AXE) pick({ type: 'axe' });
+            else if (tile === TILE_TYPES.HAMMER) pick({ type: 'hammer' });
+            else if (tile?.type === TILE_TYPES.BISHOP_SPEAR) pick({ type: 'bishop_spear', uses: tile.uses });
+            else if (tile === TILE_TYPES.BOMB) pick({ type: 'bomb' });
         }
     }
 
@@ -593,7 +523,6 @@ class Game {
         // Pick a random candidate
         const selected = candidates[Math.floor(Math.random() * candidates.length)];
         const zoneKey = `${selected.x},${selected.y}`;
-        console.log(`Map note used: marking zone (${selected.x}, ${selected.y}) as special treasure zone from ${Math.max(Math.abs(selected.x - currentZone.x), Math.abs(selected.y - currentZone.y))} zones away`);
 
         // Mark the zone as a special zone (with treasures)
         this.specialZones.set(zoneKey, [
@@ -607,36 +536,17 @@ class Game {
 
         // Add to message log
         this.uiManager.addMessageToLog(`A distant location has been revealed on your map: (${selected.x}, ${selected.y})`);
-        this.uiManager.updatePlayerStats(); // Refresh map display
-        this.uiManager.renderZoneMap(); // Immediately render the change
+        this.uiManager.updatePlayerStats();
+        this.uiManager.renderZoneMap();
     }
 
-    interactWithLion() {
-        // Check if player has meat in inventory
-        const meatIndex = this.player.inventory.findIndex(item => item.type === 'food' && item.foodType.includes('meat/'));
-        if (meatIndex >= 0) {
-            // Consume the meat
-            this.player.inventory.splice(meatIndex, 1);
-            // Add water to inventory
+    interactWithNPC(foodType) {
+        const index = this.player.inventory.findIndex(item => item.type === 'food' && item.foodType.includes(foodType));
+        if (index >= 0) {
+            this.player.inventory.splice(index, 1);
             this.player.inventory.push({ type: 'water' });
-            // Update stats to reflect the change
             this.uiManager.updatePlayerStats();
         }
-        // Else: no trade, message already shown automatically
-    }
-
-    interactWithSquig() {
-        // Check if player has seeds in inventory
-        const seedsIndex = this.player.inventory.findIndex(item => item.type === 'food' && item.foodType.includes('seeds/'));
-        if (seedsIndex >= 0) {
-            // Consume the seeds
-            this.player.inventory.splice(seedsIndex, 1);
-            // Add water to inventory
-            this.player.inventory.push({ type: 'water' });
-            // Update stats to reflect the change
-            this.uiManager.updatePlayerStats();
-        }
-        // Else: no trade, message already shown automatically
     }
 
     drawEnemies() {
@@ -764,48 +674,24 @@ class Game {
         this.uiManager.updatePlayerStats();
     }
 
-    // Perform bishop spear charge
     performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy) {
         const playerPos = this.player.getPosition();
-
-        // Check if diagonal path is unobstructed
         const steps = Math.abs(dx);
         for (let i = 1; i < steps; i++) {
             const px = playerPos.x + (dx > 0 ? i : -i);
             const py = playerPos.y + (dy > 0 ? i : -i);
-            if (!this.player.isWalkable(px, py, this.grid, px, py)) {
-                console.log('Bishop spear charge blocked by obstacle');
-                return;
-            }
+            if (!this.player.isWalkable(px, py, this.grid, px, py)) return;
         }
-
-        // Decrement uses
         item.uses--;
-        if (item.uses <= 0) {
-            // Remove item if no uses left
-            this.player.inventory = this.player.inventory.filter(invItem => invItem !== item);
-        }
-
-        // Move player directly to target position
+        if (item.uses <= 0) this.player.inventory = this.player.inventory.filter(invItem => invItem !== item);
         this.player.setPosition(targetX, targetY);
-        console.log('Bishop Spear charge to (' + targetX + ',' + targetY + ')');
-
-        // If there's an enemy at the target, attack it
         if (enemy) {
-            // Attack the enemy (simple bump animation)
-            this.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1); // Bump in the direction of charge
+            this.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
             enemy.startBump(this.player.x - enemy.x, this.player.y - enemy.y);
-            enemy.takeDamage(999); // Guaranteed kill
-            console.log('Bishop Spear charge attack! Enemy defeated.');
-
-            // Record defeat
+            enemy.takeDamage(999);
             const currentZone = this.player.getCurrentZone();
             this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
-
-            // Remove enemy
             this.enemies = this.enemies.filter(e => e !== enemy);
-
-            // Update zone data
             const zoneKey = `${currentZone.x},${currentZone.y}`;
             if (this.zones.has(zoneKey)) {
                 const zoneData = this.zones.get(zoneKey);
@@ -813,9 +699,7 @@ class Game {
                 this.zones.set(zoneKey, zoneData);
             }
         }
-
-        this.uiManager.updatePlayerStats(); // Refresh UI after attack
-        // Enemy movements happen after attacks
+        this.uiManager.updatePlayerStats();
         this.handleEnemyMovements();
     }
 

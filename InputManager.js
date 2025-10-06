@@ -176,7 +176,7 @@ export class InputManager {
             console.log(`Player at (${playerPos.x}, ${playerPos.y}), dx=${dx}, dy=${dy}, isAdjacent=${isAdjacent}`);
             if (isAdjacent) {
                 console.log("Player is adjacent, triggering lion interaction");
-                this.game.interactWithLion();
+                this.game.interactWithNPC('meat/');
             } else {
                 console.log(`Lion interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, lion at ${gridCoords.x},${gridCoords.y})`);
             }
@@ -195,7 +195,7 @@ export class InputManager {
             console.log(`Player at (${playerPos.x}, ${playerPos.y}), dx=${dx}, dy=${dy}, isAdjacent=${isAdjacent}`);
             if (isAdjacent) {
                 console.log("Player is adjacent, triggering squig interaction");
-                this.game.interactWithSquig();
+                this.game.interactWithNPC('seeds/');
             } else {
                 console.log(`Squig interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, squig at ${gridCoords.x},${gridCoords.y})`);
             }
