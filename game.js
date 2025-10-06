@@ -8,6 +8,7 @@ import { Enemy } from './Enemy.js';
 import { Sign } from './Sign.js';
 import { InputManager } from './InputManager.js';
 import { InventoryManager } from './InventoryManager.js';
+import { UIManager } from './UIManager.js';
 
 // Game state
 class Game {
@@ -31,6 +32,7 @@ class Game {
         this.player = new Player();
         this.inputManager = new InputManager(this);
         this.inventoryManager = new InventoryManager(this);
+        this.uiManager = new UIManager(this);
 
         // Zone management
         this.zones = new Map(); // Stores generated zones by coordinate key
@@ -45,20 +47,9 @@ class Game {
 
         // Message Log system
         this.messageLog = [];
-        this.messageLogOverlay = document.getElementById('messageLogOverlay');
-        this.messageLogContent = document.getElementById('messageLogContent');
-        this.closeMessageLogButton = document.getElementById('closeMessageLogButton');
-
+        
         // Special zones marked by notes (zoneKey: "x,y" -> items array)
         this.specialZones = new Map();
-
-        // Track last sign message to prevent duplicate log entries
-        this.lastSignMessage = null;
-
-        // Track currently displayed sign message for toggling
-        this.displayingMessageForSign = null;
-
-        this.setupMessageLogButton();
 
         // Load assets and start game
         this.loadAssets();
@@ -96,7 +87,7 @@ class Game {
         this.updateMapCanvasSize();
         // Re-render the zone map with new size
         if (this.gameStarted) {
-            this.renderZoneMap();
+            this.uiManager.renderZoneMap();
         }
         // Let CSS handle the display size for responsiveness
         // The main canvas internal size stays fixed for pixel-perfect rendering
@@ -140,23 +131,14 @@ class Game {
 
         // Set initial region (starting at 0,0 = "Home")
         const initialZone = this.player.getCurrentZone();
-        this.currentRegion = this.generateRegionName(initialZone.x, initialZone.y);
+        this.currentRegion = this.uiManager.generateRegionName(initialZone.x, initialZone.y);
 
         // Set up event listeners
         this.inputManager.setupControls();
+        this.uiManager.setupGameOverHandler();
+        this.uiManager.setupCloseMessageLogHandler();
+        this.uiManager.setupMessageLogButton();
 
-        // Game over screen
-        document.getElementById('restart-button').addEventListener('click', () => {
-            this.hideGameOverScreen();
-            this.resetGame();
-            // Restart the game loop since the player is no longer dead
-            this.gameLoop();
-        });
-
-        this.closeMessageLogButton.addEventListener('click', () => {
-            this.messageLogOverlay.classList.remove('show');
-            this.gameLoop();
-        });
 
         // Start game loop
         this.gameLoop();
@@ -165,9 +147,9 @@ class Game {
         window.game = this;
 
         // Update UI
-        this.updatePlayerPosition();
-        this.updateZoneDisplay();
-        this.updatePlayerStats();
+        this.uiManager.updatePlayerPosition();
+        this.uiManager.updateZoneDisplay();
+        this.uiManager.updatePlayerStats();
     }
     
     generateZone() {
@@ -206,7 +188,7 @@ class Game {
         const hasReachedSpecialZone = this.specialZones.has(zoneKey);
 
         // Check if this is entering a new region category
-        const newRegion = this.generateRegionName(newZoneX, newZoneY);
+        const newRegion = this.uiManager.generateRegionName(newZoneX, newZoneY);
         const isNewRegion = newRegion !== this.currentRegion;
 
         // Update player's current zone
@@ -214,7 +196,7 @@ class Game {
 
         // Show region notification only if entering a new region
         if (isNewRegion) {
-            this.showRegionNotification(newZoneX, newZoneY);
+            this.uiManager.showRegionNotification(newZoneX, newZoneY);
             this.currentRegion = newRegion; // Update current region
         }
 
@@ -246,9 +228,9 @@ class Game {
         }
 
         // Update UI
-        this.updateZoneDisplay();
-        this.updatePlayerPosition();
-        this.updatePlayerStats();
+        this.uiManager.updateZoneDisplay();
+        this.uiManager.updatePlayerPosition();
+        this.uiManager.updatePlayerStats();
     }
 
     positionPlayerAfterZoneTransition(exitSide, exitX, exitY) {
@@ -315,122 +297,12 @@ class Game {
 
         // Set initial region
         const initialZone = this.player.getCurrentZone();
-        this.currentRegion = this.generateRegionName(initialZone.x, initialZone.y);
+        this.currentRegion = this.uiManager.generateRegionName(initialZone.x, initialZone.y);
 
         // Update UI
-        this.updatePlayerPosition();
-        this.updateZoneDisplay();
-        this.updatePlayerStats();
-    }
-    
-    updatePlayerPosition() {
-        const pos = this.player.getPosition();
-        // document.getElementById('player-pos').textContent = `${pos.x}, ${pos.y}`;
-    }
-    
-    updateZoneDisplay() {
-        const zone = this.player.getCurrentZone();
-        // document.getElementById('current-zone').textContent = `${zone.x}, ${zone.y}`;
-        this.renderZoneMap();
-
-        // Update map info below the minimap
-        const mapInfo = document.getElementById('map-info');
-        if (mapInfo) {
-            const zonesDiscovered = this.player.getVisitedZones().size;
-            mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Zone: (${zone.x}, ${zone.y})<br>Zones Discovered: ${zonesDiscovered}</span>`;
-        }
-    }
-    
-    updateProgressBar(barId, currentValue, maxValue) {
-        const percentage = (currentValue / maxValue) * 100;
-        const barElement = document.getElementById(barId);
-        if (barElement) {
-            barElement.style.width = `${percentage}%`;
-        }
-    }
-
-    updatePlayerStats() {
-        // Update thirst and hunger bars
-        this.updateProgressBar('thirst-progress', this.player.getThirst(), 50);
-        this.updateProgressBar('hunger-progress', this.player.getHunger(), 50);
-
-        // Update heart display
-        const hearts = document.querySelectorAll('.heart-icon');
-        hearts.forEach((heart, index) => {
-            if (index < this.player.getHealth()) {
-                heart.style.opacity = '1';
-                heart.style.filter = 'none'; // Full visibility for full hearts
-            } else {
-                heart.style.opacity = '0.3';
-                heart.style.filter = 'grayscale(100%)'; // Dimmed for lost hearts
-            }
-        });
-
-        // Update inventory display
-        this.inventoryManager.updateInventoryDisplay();
-    }
-    
-    renderZoneMap() {
-        // Get actual canvas size from CSS (responsive)
-        const mapSize = Math.min(this.mapCanvas.width, this.mapCanvas.height);
-        // Calculate zone size for better visibility: aim for 8-9 zones visible with larger tiles
-        const zoneSize = Math.max(18, Math.min(28, Math.floor(mapSize / 8.5)));
-        const centerX = mapSize / 2;
-        const centerY = mapSize / 2;
-        
-        // Clear the map with a parchment-like background
-        this.mapCtx.fillStyle = '#E6D3A3';  // Warm parchment tone
-        this.mapCtx.fillRect(0, 0, mapSize, mapSize);
-        
-        // Calculate visible range around current zone
-        const range = 5; // Show 5 zones in each direction
-        const currentZone = this.player.getCurrentZone();
-        
-        for (let dy = -range; dy <= range; dy++) {
-            for (let dx = -range; dx <= range; dx++) {
-                const zoneX = currentZone.x + dx;
-                const zoneY = currentZone.y + dy;
-                
-                const mapX = centerX + dx * zoneSize - zoneSize / 2;
-                const mapY = centerY + dy * zoneSize - zoneSize / 2;
-                
-                // Determine zone color with parchment-friendly palette
-                let color = '#C8B99C'; // Unexplored - darker parchment tone
-                if (this.player.hasVisitedZone(zoneX, zoneY)) {
-                    color = '#B8860B'; // Visited - darker gold
-                }
-                if (zoneX === currentZone.x && zoneY === currentZone.y) {
-                    color = '#CD853F'; // Current - warm brown/gold
-                }
-                
-                // Draw zone square
-                this.mapCtx.fillStyle = color;
-                this.mapCtx.fillRect(mapX, mapY, zoneSize - 2, zoneSize - 2);
-                
-                // Draw border with aged ink color
-                this.mapCtx.strokeStyle = '#8B4513';  // Saddle brown for ink effect
-                this.mapCtx.lineWidth = 1;
-                this.mapCtx.strokeRect(mapX, mapY, zoneSize - 2, zoneSize - 2);
-                
-                // Draw coordinates for current zone
-                if (zoneX === currentZone.x && zoneY === currentZone.y) {
-                    this.mapCtx.fillStyle = '#2F1B14';  // Dark brown for text
-                    this.mapCtx.font = 'bold 9px serif';  // Slightly larger and serif font
-                    this.mapCtx.textAlign = 'center';
-                    this.mapCtx.fillText(`${zoneX},${zoneY}`, mapX + zoneSize / 2, mapY + zoneSize / 2 + 3);
-                }
-            }
-        }
-        
-        // Draw center crosshairs with aged ink color
-        this.mapCtx.strokeStyle = '#8B4513';  // Matching the border color
-        this.mapCtx.lineWidth = 2;  // Slightly thicker for visibility
-        this.mapCtx.beginPath();
-        this.mapCtx.moveTo(centerX - 6, centerY);
-        this.mapCtx.lineTo(centerX + 6, centerY);
-        this.mapCtx.moveTo(centerX, centerY - 6);
-        this.mapCtx.lineTo(centerX, centerY + 6);
-        this.mapCtx.stroke();
+        this.uiManager.updatePlayerPosition();
+        this.uiManager.updateZoneDisplay();
+        this.uiManager.updatePlayerStats();
     }
     
     render() {
@@ -557,7 +429,6 @@ class Game {
 
     checkLionInteraction() {
         const playerPos = this.player.getPosition();
-        const messageOverlay = document.getElementById('messageOverlay');
     
         // Find all lion positions
         const lions = [];
@@ -580,26 +451,14 @@ class Game {
         const hasMeat = this.player.inventory.some(item => item.type === 'food' && item.foodType.includes('meat/'));
     
         if (isAdjacentToLion && !hasMeat) {
-            // Do not show the lion message if a sign message is already displayed.
-            if (this.displayingMessageForSign) {
-                return;
-            }
-    
-            // Show message if not already showing
-            if (!messageOverlay.classList.contains('show')) {
-                this.showOverlayMessageSilent('<span class="character-name">Penne</span><br>TRADE FOR MEAT!', 'Images/lion.png');
-            }
+            this.uiManager.handleLionInteractionMessage();
         } else {
-            // Hide the overlay, but only if a sign message isn't the one being displayed.
-            if (messageOverlay.classList.contains('show') && !this.displayingMessageForSign) {
-                messageOverlay.classList.remove('show');
-            }
+            this.uiManager.hideLionInteractionMessage();
         }
     }
 
     checkSquigInteraction() {
         const playerPos = this.player.getPosition();
-        const messageOverlay = document.getElementById('messageOverlay');
 
         // Find all squig positions
         const squigs = [];
@@ -623,98 +482,7 @@ class Game {
 
         if (isAdjacentToSquig && !hasSeeds) {
             // Show message even if overlay is already showing (allow multiple messages)
-            this.showOverlayMessageSilent('<span class="character-name">Squig</span><br>Seeds please!', 'Images/fauna/squigface.png');
-        }
-    }
-
-    showOverlayMessageSilent(text, imageSrc) {
-        const messageElement = document.getElementById('messageOverlay');
-        if (messageElement) {
-            const displayText = text || '[No message found]';
-            const wasAlreadyShowing = messageElement.classList.contains('show');
-
-            if (wasAlreadyShowing) {
-                // Append to existing message content
-                if (imageSrc) {
-                    messageElement.innerHTML += `<br><img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 5px auto; image-rendering: pixelated;">${displayText}`;
-                } else {
-                    messageElement.innerHTML += `<br>${displayText}`;
-                }
-            } else {
-                // New message - replace content
-                if (imageSrc) {
-                    messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
-                } else {
-                    messageElement.textContent = displayText;
-                }
-            }
-
-            messageElement.classList.add('show');
-
-            // Set auto-hide timeout only if this is the first message
-            if (!wasAlreadyShowing) {
-                setTimeout(() => {
-                    if (messageElement.classList.contains('show')) {
-                        messageElement.classList.remove('show');
-                    }
-                }, 2000);
-            }
-        }
-    }
-
-    showMessage(text, imageSrc = null, useOverlay = false, persistent = false) {
-        const messageElementId = useOverlay ? 'messageOverlay' : 'messageBox';
-        const messageElement = document.getElementById(messageElementId);
-        console.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}, persistent: ${persistent}`);
-        let displayText = text;
-        if (!displayText || displayText.trim() === '') {
-            displayText = '[No message found for this note]';
-            console.warn('Note message is empty or undefined:', text);
-        }
-        if (messageElement) {
-            console.log(`${messageElementId} found, setting HTML content`);
-            // Use innerHTML to set content with image if provided
-            if (imageSrc) {
-                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
-            } else {
-                messageElement.textContent = displayText;
-            }
-            messageElement.classList.add('show');
-            console.log("Message set and show class added");
-
-            // Auto-hide overlay messages after 2 seconds if not persistent
-            if (useOverlay && !persistent) {
-                setTimeout(() => {
-                    if (messageElement.classList.contains('show')) {
-                        messageElement.classList.remove('show');
-                        console.log("Auto-hiding overlay message due to timeout.");
-                    }
-                }, 2000);
-            }
-        } else {
-            console.error(`${messageElementId} element not found`);
-        }
-    }
-
-    hideOverlayMessage() {
-        const messageOverlay = document.getElementById('messageOverlay');
-        if (messageOverlay && messageOverlay.classList.contains('show')) {
-            messageOverlay.classList.remove('show');
-            console.log("Hiding overlay message.");
-        }
-    }
-
-    showSignMessage(text, imageSrc) {
-        const messageElement = document.getElementById('messageOverlay');
-        if (messageElement) {
-            // Set content for sign message (persistent until clicked again)
-            if (imageSrc) {
-                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${text}`;
-            } else {
-                messageElement.textContent = text;
-            }
-            messageElement.classList.add('show');
-            console.log(`Sign message shown: ${text}`);
+            this.uiManager.showOverlayMessageSilent('<span class="character-name">Squig</span><br>Seeds please!', 'Images/fauna/squigface.png');
         }
     }
 
@@ -729,9 +497,9 @@ class Game {
             // since the player might want to use one for a different destination
             this.player.inventory.push({ type: 'note' });
             this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove the note from the map
-            this.updatePlayerStats(); // Refresh inventory display
+            this.uiManager.updatePlayerStats(); // Refresh inventory display
             // Add to message log
-            this.addMessageToLog('Found an ancient map note.');
+            this.uiManager.addMessageToLog('Found an ancient map note.');
             return; // Don't check other item types if note was found
         }
 
@@ -741,7 +509,7 @@ class Game {
             if (this.player.inventory.length < 6) {
                 this.player.inventory.push({ type: 'food', foodType: tile.foodType });
                 this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.updatePlayerStats(); // Refresh inventory display
+                this.uiManager.updatePlayerStats(); // Refresh inventory display
             }
         }
 
@@ -751,7 +519,7 @@ class Game {
             if (this.player.inventory.length < 6) {
                 this.player.inventory.push({ type: 'water' });
                 this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.updatePlayerStats(); // Refresh inventory display
+                this.uiManager.updatePlayerStats(); // Refresh inventory display
             }
         }
 
@@ -760,7 +528,7 @@ class Game {
             if (this.player.inventory.length < 6) {
                 this.player.inventory.push({ type: 'axe' });
                 this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.updatePlayerStats();
+                this.uiManager.updatePlayerStats();
             }
         }
 
@@ -769,7 +537,7 @@ class Game {
             if (this.player.inventory.length < 6) {
                 this.player.inventory.push({ type: 'hammer' });
                 this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.updatePlayerStats();
+                this.uiManager.updatePlayerStats();
             }
         }
 
@@ -778,7 +546,7 @@ class Game {
             if (this.player.inventory.length < 6) {
                 this.player.inventory.push({ type: 'bishop_spear', uses: tile.uses });
                 this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.updatePlayerStats();
+                this.uiManager.updatePlayerStats();
             }
         }
 
@@ -787,42 +555,9 @@ class Game {
             if (this.player.inventory.length < 6) {
                 this.player.inventory.push({ type: 'bomb' });
                 this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
-                this.updatePlayerStats();
+                this.uiManager.updatePlayerStats();
             }
         }
-    }
-
-    setupMessageLogButton() {
-        const messageLogButton = document.getElementById('message-log-button');
-        if (messageLogButton) {
-            // Desktop click
-            messageLogButton.addEventListener('click', () => {
-                this.handleMessageLogClick();
-            });
-
-            // Mobile touch
-            messageLogButton.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.handleMessageLogClick();
-            });
-        }
-    }
-
-    handleMessageLogClick() {
-        this.messageLogContent.innerHTML = '';
-        if (this.messageLog.length === 0) {
-            this.messageLogContent.innerHTML = '<p>No messages yet.</p>';
-        } else {
-            // Show newest messages first
-            [...this.messageLog].reverse().forEach(msg => {
-                const p = document.createElement('p');
-                p.style.fontVariant = 'small-caps';
-                p.style.fontWeight = 'bold';
-                p.innerHTML = msg; // Use innerHTML to support messages with HTML tags
-                this.messageLogContent.appendChild(p);
-            });
-        }
-        this.messageLogOverlay.classList.add('show');
     }
 
     useMapNote() {
@@ -865,9 +600,9 @@ class Game {
         this.player.markZoneVisited(selected.x, selected.y);
 
         // Add to message log
-        this.addMessageToLog(`A distant location has been revealed on your map: (${selected.x}, ${selected.y})`);
-        this.updatePlayerStats(); // Refresh map display
-        this.renderZoneMap(); // Immediately render the change
+        this.uiManager.addMessageToLog(`A distant location has been revealed on your map: (${selected.x}, ${selected.y})`);
+        this.uiManager.updatePlayerStats(); // Refresh map display
+        this.uiManager.renderZoneMap(); // Immediately render the change
     }
 
     interactWithLion() {
@@ -879,7 +614,7 @@ class Game {
             // Add water to inventory
             this.player.inventory.push({ type: 'water' });
             // Update stats to reflect the change
-            this.updatePlayerStats();
+            this.uiManager.updatePlayerStats();
         }
         // Else: no trade, message already shown automatically
     }
@@ -893,36 +628,9 @@ class Game {
             // Add water to inventory
             this.player.inventory.push({ type: 'water' });
             // Update stats to reflect the change
-            this.updatePlayerStats();
+            this.uiManager.updatePlayerStats();
         }
         // Else: no trade, message already shown automatically
-    }
-
-    showRegionNotification(zoneX, zoneY) {
-        const regionNotification = document.getElementById('regionNotification');
-        if (!regionNotification) return;
-
-        // Generate region name based on zone coordinates
-        const regionName = this.generateRegionName(zoneX, zoneY);
-
-        // Show the notification
-        regionNotification.textContent = regionName;
-        regionNotification.classList.add('show');
-
-        // Auto-hide after short duration (2 seconds)
-        setTimeout(() => {
-            regionNotification.classList.remove('show');
-        }, 2000);
-    }
-
-    generateRegionName(zoneX, zoneY) {
-        // Determine region category based on distance from origin
-        const distance = Math.max(Math.abs(zoneX), Math.abs(zoneY));
-
-        if (distance <= 2) return 'Home';
-        else if (distance <= 8) return 'Woods';
-        else if (distance <= 16) return 'Wilds';
-        else return 'Frontier';
     }
 
     drawEnemies() {
@@ -1003,14 +711,14 @@ class Game {
 
             if (randomType === 'bomb') {
                 this.player.inventory.push({ type: 'bomb' });
-                this.addMessageToLog('Treasure Found: Bomb added to inventory.');
+                this.uiManager.addMessageToLog('Treasure Found: Bomb added to inventory.');
             } else if (randomType === 'bishop_spear') {
                 this.player.inventory.push({ type: 'bishop_spear', uses: 3 });
-                this.addMessageToLog('Treasure Found: Bishop Spear added to inventory.');
+                this.uiManager.addMessageToLog('Treasure Found: Bishop Spear added to inventory.');
             } else if (randomType === 'food' && this.availableFoodAssets.length > 0) {
                 const randomFood = this.availableFoodAssets[Math.floor(Math.random() * this.availableFoodAssets.length)];
                 this.player.inventory.push({ type: 'food', foodType: randomFood });
-                this.addMessageToLog('Treasure Found: Food added to inventory.');
+                this.uiManager.addMessageToLog('Treasure Found: Food added to inventory.');
             }
         }
 
@@ -1018,18 +726,36 @@ class Game {
         if (this.player.inventory.length > 6) {
             const excessItems = this.player.inventory.length - 6;
             this.player.inventory.splice(0, excessItems); // Remove from the beginning
-            this.addMessageToLog(`Inventory overflow: ${excessItems} item(s) were lost.`);
+            this.uiManager.addMessageToLog(`Inventory overflow: ${excessItems} item(s) were lost.`);
         }
 
-        this.updatePlayerStats(); // Refresh UI
+        this.uiManager.updatePlayerStats(); // Refresh UI
     }
 
     // Console command to add bomb to inventory
     addBomb() {
         if (this.player.inventory.length < 6) {
             this.player.inventory.push({ type: 'bomb' });
-            this.updatePlayerStats();
+            this.uiManager.updatePlayerStats();
         }
+    }
+
+    // Proxy to UIManager
+    hideOverlayMessage() {
+        this.uiManager.hideOverlayMessage();
+    }
+
+    // Proxy to UIManager for sign messages
+    showSignMessage(message) {
+        this.uiManager.showSignMessage(message);
+    }
+
+    updatePlayerPosition() {
+        this.uiManager.updatePlayerPosition();
+    }
+
+    updatePlayerStats() {
+        this.uiManager.updatePlayerStats();
     }
 
     // Perform bishop spear charge
@@ -1082,7 +808,7 @@ class Game {
             }
         }
 
-        this.updatePlayerStats(); // Refresh UI after attack
+        this.uiManager.updatePlayerStats(); // Refresh UI after attack
         // Enemy movements happen after attacks
         this.handleEnemyMovements();
     }
@@ -1101,7 +827,7 @@ class Game {
         this.enemies = this.enemies.filter(enemy => !enemy.isDead() || enemy.deathAnimation > 0);
 
         if (this.player.isDead()) {
-            this.showGameOverScreen();
+            this.uiManager.showGameOverScreen();
             // Don't continue the game loop logic if dead, just wait for restart.
             // We still need to render to see the final state.
             this.render();
@@ -1116,31 +842,6 @@ class Game {
 
         this.render();
         requestAnimationFrame(() => this.gameLoop());
-    }
-
-
-
-    addMessageToLog(message) {
-        // Color coordinates in dark green
-        const coloredMessage = message.replace(/\((-?\d+),\s*(-?\d+)\)/g, (match, x, y) => {
-            return `<span style="color: darkgreen">${match}</span>`;
-        });
-        this.messageLog.push(coloredMessage);
-    }
-
-    showGameOverScreen() {
-        const overlay = document.getElementById('game-over-overlay');
-        const zonesDiscovered = document.getElementById('zones-discovered');
-        zonesDiscovered.textContent = this.player.getVisitedZones().size;
-        overlay.style.display = 'flex';
-    }
-
-    hideGameOverScreen() {
-        const overlay = document.getElementById('game-over-overlay');
-        if (overlay) {
-            overlay.style.display = 'none';
-
-        }
     }
 }
 

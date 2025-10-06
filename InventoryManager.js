@@ -279,8 +279,8 @@ export class InventoryManager {
         this.game.player.markZoneVisited(selected.x, selected.y);
 
         // Add to message log
-        this.game.addMessageToLog(`A distant location has been revealed on your map: (${selected.x}, ${selected.y})`);
+        this.game.uiManager.addMessageToLog(`A distant location has been revealed on your map: (${selected.x}, ${selected.y})`);
         this.game.updatePlayerStats(); // Refresh map display
-        this.game.renderZoneMap(); // Immediately render the change
+        this.game.uiManager.renderZoneMap(); // Immediately render the change
     }
 }

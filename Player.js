@@ -182,13 +182,13 @@ export class Player {
         }
 
         // Regular tiles
-        // Player can walk on floor, exit, water, food, axe, hammer, spear, note, and lion tiles
+        // Player can walk on floor, exit, water, food, axe, hammer, bishop spear, bomb, note, and lion tiles
         if (tile === TILE_TYPES.FLOOR ||
             tile === TILE_TYPES.EXIT ||
             tile === TILE_TYPES.WATER ||
             tile === TILE_TYPES.AXE ||
             tile === TILE_TYPES.HAMMER ||
-            tile === TILE_TYPES.SPEAR ||
+            (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) ||
             tile === TILE_TYPES.BOMB ||
             (tile && tile.type === TILE_TYPES.FOOD) ||
             (tile && tile.type === TILE_TYPES.NOTE && tile.note) || // Specifically check for a note object

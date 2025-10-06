@@ -223,7 +223,7 @@ export class InputManager {
 
             // Add to log only when first showing the message
             if (showingNewMessage && signTile.message !== this.game.lastSignMessage) {
-                this.game.addMessageToLog(`A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`);
+                this.game.uiManager.addMessageToLog(`A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`);
                 this.game.lastSignMessage = signTile.message;
             }
             }
@@ -232,13 +232,13 @@ export class InputManager {
 
         // Check if player has a bomb and tapped on a wall
         const hasBomb = this.game.player.inventory.some(item => item.type === 'bomb');
-        const wallAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === 'TILE_TYPES.WALL';
+        const wallAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.WALL;
         if (hasBomb && wallAtPosition) {
             // Consume bomb and create an exit
             const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
             if (bombIndex !== -1) {
                 this.game.player.inventory.splice(bombIndex, 1);
-                this.game.grid[gridCoords.y][gridCoords.x] = 'TILE_TYPES.EXIT';
+                this.game.grid[gridCoords.y][gridCoords.x] = TILE_TYPES.EXIT;
                 this.game.updatePlayerStats();
                 // Player turn is used, handle enemy moves
                 this.game.handleEnemyMovements();
@@ -264,7 +264,7 @@ export class InputManager {
         }
 
         // If player is on an exit tile, check for zone transition gestures
-        if (this.game.grid[playerPos.y][playerPos.x] === 'TILE_TYPES.EXIT') {
+        if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
             const transitionTriggered = this.checkForZoneTransitionGesture(gridCoords, playerPos);
             if (transitionTriggered) {
                 return;
@@ -273,7 +273,7 @@ export class InputManager {
 
         // Check if tapped tile is an exit and player is already on it - trigger zone transition
         if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y &&
-            this.game.grid[gridCoords.y][gridCoords.x] === 'TILE_TYPES.EXIT') {
+            this.game.grid[gridCoords.y][gridCoords.x] === TILE_TYPES.EXIT) {
             this.handleExitTap(gridCoords.x, gridCoords.y);
             return;
         }
@@ -292,7 +292,7 @@ export class InputManager {
     // Check if tap gesture should trigger zone transition when player is on exit
     checkForZoneTransitionGesture(tapCoords, playerPos) {
         // If player is on an exit tile and taps outside the grid or on the same edge, trigger transition
-        const isOnExit = this.game.grid[playerPos.y][playerPos.x] === 'TILE_TYPES.EXIT';
+        const isOnExit = this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT;
         if (!isOnExit) return false;
 
         // Check if tap is outside grid boundaries (attempting to go beyond current zone)
@@ -369,7 +369,7 @@ export class InputManager {
 
                 // Check if player ended up on an exit tile after path completion
                 const playerPos = this.game.player.getPosition();
-                if (this.game.grid[playerPos.y][playerPos.x] === 'TILE_TYPES.EXIT') {
+                if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
                     console.log('Player reached exit tile. Tap the exit again to transition zones.');
                 }
             }
@@ -469,8 +469,8 @@ export class InputManager {
                 this.game.player.setPosition(centerX2, centerY2);
                 this.game.player.ensureValidPosition(this.game.grid);
                 // Update UI
-                this.game.updateZoneDisplay();
-                this.game.updatePlayerPosition();
+                this.game.uiManager.updateZoneDisplay();
+                this.game.uiManager.updatePlayerPosition();
                 this.game.updatePlayerStats();
                 break;
             case 'y':
@@ -486,8 +486,8 @@ export class InputManager {
                 this.game.player.setPosition(centerXc, centerYc);
                 this.game.player.ensureValidPosition(this.game.grid);
                 // Update UI
-                this.game.updateZoneDisplay();
-                this.game.updatePlayerPosition();
+                this.game.uiManager.updateZoneDisplay();
+                this.game.uiManager.updatePlayerPosition();
                 this.game.updatePlayerStats();
                 console.log('Teleported to canyon zone. If canyon generated, it will be forced. If not, try again.');
                 break;
@@ -502,8 +502,8 @@ export class InputManager {
                     this.game.player.setPosition(centerXj, centerYj);
                     this.game.player.ensureValidPosition(this.game.grid);
                     // Update UI
-                    this.game.updateZoneDisplay();
-                    this.game.updatePlayerPosition();
+                    this.game.uiManager.updateZoneDisplay();
+                    this.game.uiManager.updatePlayerPosition();
                     this.game.updatePlayerStats();
                     console.log(`Teleported to food/water room at (${this.game.zoneGenerator.constructor.foodWaterRoomZone.x}, ${this.game.zoneGenerator.constructor.foodWaterRoomZone.y})`);
                 } else {
@@ -517,8 +517,8 @@ export class InputManager {
                     const centerYj = Math.floor(GRID_SIZE / 2);
                     this.game.player.setPosition(centerXj, centerYj);
                     this.game.player.ensureValidPosition(this.game.grid);
-                    this.game.updateZoneDisplay();
-                    this.game.updatePlayerPosition();
+                    this.game.uiManager.updateZoneDisplay();
+                    this.game.uiManager.updatePlayerPosition();
                     this.game.updatePlayerStats();
                     console.log('Food/water room forced at (10, 10). You can now use "j" again to return.');
                 }
@@ -531,7 +531,7 @@ export class InputManager {
                         const tile = this.game.grid[y][x];
                         const playerPos = this.game.player.getPosition();
                         const hasEnemy = this.game.enemies.some(e => e.x === x && e.y === y);
-                        if ((tile === 'TILE_TYPES.FLOOR' || tile === 'TILE_TYPES.EXIT') && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
+                        if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
                             availableTiles.push({x, y});
                         }
                     }
@@ -539,7 +539,7 @@ export class InputManager {
                 if (availableTiles.length > 0) {
                     const spawnPos = availableTiles[Math.floor(Math.random() * availableTiles.length)];
                     const enemyId = Date.now(); // Simple unique ID
-                    const newEnemy = new this.game.Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardy', id: enemyId});
+                    const newEnemy = new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardy', id: enemyId});
                     this.game.enemies.push(newEnemy);
                     console.log(`Spawned lizardy enemy at (${spawnPos.x}, ${spawnPos.y})`);
                 } else {
@@ -554,7 +554,7 @@ export class InputManager {
                         const tile = this.game.grid[y][x];
                         const playerPos = this.game.player.getPosition();
                         const hasEnemy = this.game.enemies.some(e => e.x === x && e.y === y);
-                        if ((tile === 'TILE_TYPES.FLOOR' || tile === 'TILE_TYPES.EXIT') && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
+                        if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
                             lizardeauxTiles.push({x, y});
                         }
                     }
@@ -562,7 +562,7 @@ export class InputManager {
                 if (lizardeauxTiles.length > 0) {
                     const spawnPos = lizardeauxTiles[Math.floor(Math.random() * lizardeauxTiles.length)];
                     const enemyId = Date.now(); // Simple unique ID
-                    const newEnemy = new this.game.Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardeaux', id: enemyId});
+                    const newEnemy = new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardeaux', id: enemyId});
                     this.game.enemies.push(newEnemy);
                     console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
                 } else {
@@ -574,14 +574,14 @@ export class InputManager {
                 const lionTiles = [];
                 for (let y = 0; y < GRID_SIZE; y++) {
                     for (let x = 0; x < GRID_SIZE; x++) {
-                        if (this.game.grid[y][x] === 'TILE_TYPES.FLOOR') {
+                        if (this.game.grid[y][x] === TILE_TYPES.FLOOR) {
                             lionTiles.push({x, y});
                         }
                     }
                 }
                 if (lionTiles.length > 0) {
                     const spawnPos = lionTiles[Math.floor(Math.random() * lionTiles.length)];
-                    this.game.grid[spawnPos.y][spawnPos.x] = 'TILE_TYPES.LION';
+                    this.game.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.LION;
                     console.log(`Debug: Lion spawned at (${spawnPos.x}, ${spawnPos.y})`);
                 } else {
                     console.log('No available tiles to spawn lion');
@@ -592,14 +592,14 @@ export class InputManager {
                 const squigTiles = [];
                 for (let y = 0; y < GRID_SIZE; y++) {
                     for (let x = 0; x < GRID_SIZE; x++) {
-                        if (this.game.grid[y][x] === 'TILE_TYPES.FLOOR') {
+                        if (this.game.grid[y][x] === TILE_TYPES.FLOOR) {
                             squigTiles.push({x, y});
                         }
                     }
                 }
                 if (squigTiles.length > 0) {
                     const spawnPos = squigTiles[Math.floor(Math.random() * squigTiles.length)];
-                    this.game.grid[spawnPos.y][spawnPos.x] = 'TILE_TYPES.SQUIG';
+                    this.game.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.SQUIG;
                     console.log(`Debug: Squig spawned at (${spawnPos.x}, ${spawnPos.y})`);
                 } else {
                     console.log('No available tiles to spawn squig');
@@ -610,7 +610,7 @@ export class InputManager {
                 const signTiles = [];
                 for (let y = 0; y < GRID_SIZE; y++) {
                     for (let x = 0; x < GRID_SIZE; x++) {
-                        if (this.game.grid[y][x] === 'TILE_TYPES.FLOOR') {
+                        if (this.game.grid[y][x] === TILE_TYPES.FLOOR) {
                             signTiles.push({x, y});
                         }
                     }
@@ -618,7 +618,7 @@ export class InputManager {
                 if (signTiles.length > 0) {
                     const spawnPos = signTiles[Math.floor(Math.random() * signTiles.length)];
                     this.game.grid[spawnPos.y][spawnPos.x] = {
-                        type: 'TILE_TYPES.SIGN',
+                        type: TILE_TYPES.SIGN,
                         message: "Test sign message - click again to close!"
                     };
                     console.log(`Debug: Sign spawned at (${spawnPos.x}, ${spawnPos.y})`);
