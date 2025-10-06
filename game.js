@@ -6,6 +6,7 @@ import { ZoneGenerator } from './ZoneGenerator.js';
 import { Player } from './Player.js';
 import { Enemy } from './Enemy.js';
 import { Sign } from './Sign.js';
+import { InputManager } from './InputManager.js';
 
 // Game state
 class Game {
@@ -27,7 +28,8 @@ class Game {
         this.connectionManager = new ConnectionManager();
         this.zoneGenerator = new ZoneGenerator();
         this.player = new Player();
-        
+        this.inputManager = new InputManager(this);
+
         // Zone management
         this.zones = new Map(); // Stores generated zones by coordinate key
         this.grid = null; // Current zone grid
@@ -38,9 +40,6 @@ class Game {
 
         // Enemy wait mechanism for zone entry
         this.justEnteredZone = false; // Flag to skip enemy movements on zone entry
-
-        // Path execution state
-        this.isExecutingPath = false;
 
         // Message Log system
         this.messageLog = [];
@@ -142,7 +141,7 @@ class Game {
         this.currentRegion = this.generateRegionName(initialZone.x, initialZone.y);
 
         // Set up event listeners
-        this.setupControls();
+        this.inputManager.setupControls();
 
         // Game over screen
         document.getElementById('restart-button').addEventListener('click', () => {
@@ -282,688 +281,11 @@ class Game {
                 break;
         }
     }
-    
-    setupControls() {
-        // Keyboard controls
-        document.addEventListener('keydown', (event) => {
-            this.handleKeyPress(event);
-        });
 
-        // Mouse controls for desktop (same as tap)
-        this.canvas.addEventListener('click', (e) => {
-            this.handleTap(e.clientX, e.clientY);
-        });
 
-        // Touch controls for mobile
-        this.setupTouchControls();
-    }
 
-    // Convert screen coordinates to grid coordinates
-    screenToGridCoordinates(screenX, screenY) {
-        const rect = this.canvas.getBoundingClientRect();
-        const canvasX = screenX - rect.left;
-        const canvasY = screenY - rect.top;
-        
-        // Account for canvas scaling
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
-        
-        const adjustedX = canvasX * scaleX;
-        const adjustedY = canvasY * scaleY;
-        
-        // Convert to grid coordinates
-        const gridX = Math.floor(adjustedX / TILE_SIZE);
-        const gridY = Math.floor(adjustedY / TILE_SIZE);
-        
-        return { x: gridX, y: gridY };
-    }
 
-    // Find path using BFS (Breadth-First Search)
-    findPath(startX, startY, targetX, targetY) {
-        // Check if target is within bounds and walkable
-        if (targetX < 0 || targetX >= GRID_SIZE || targetY < 0 || targetY >= GRID_SIZE) {
-            return null;
-        }
 
-        // Explicitly make signs unwalkable for pathfinding
-        const targetTile = this.grid[targetY]?.[targetX];
-        if ((targetTile && targetTile.type === TILE_TYPES.SIGN) || targetTile === TILE_TYPES.SIGN) {
-            return null;
-        }
-
-        if (!this.player.isWalkable(targetX, targetY, this.grid, startX, startY)) {
-            return null;
-        }
-
-        // If already at target, no movement needed
-        if (startX === targetX && startY === targetY) {
-            return [];
-        }
-
-        const queue = [{x: startX, y: startY, path: []}];
-        const visited = new Set([`${startX},${startY}`]);
-        const directions = [
-            {dx: 0, dy: -1, key: 'arrowup'},    // North
-            {dx: 0, dy: 1, key: 'arrowdown'},   // South
-            {dx: -1, dy: 0, key: 'arrowleft'},  // West
-            {dx: 1, dy: 0, key: 'arrowright'}   // East
-        ];
-
-        while (queue.length > 0) {
-            const current = queue.shift();
-
-            // Check all four directions
-            for (const dir of directions) {
-                const newX = current.x + dir.dx;
-                const newY = current.y + dir.dy;
-                const key = `${newX},${newY}`;
-
-                if (visited.has(key)) continue;
-                visited.add(key);
-
-                // Check if position is within bounds and walkable
-                if (newX >= 0 && newX < GRID_SIZE && newY >= 0 && newY < GRID_SIZE &&
-                    this.player.isWalkable(newX, newY, this.grid, current.x, current.y)) {
-
-                    const newPath = [...current.path, dir.key];
-
-                    // Check if we reached the target
-                    if (newX === targetX && newY === targetY) {
-                        return newPath;
-                    }
-
-                    queue.push({x: newX, y: newY, path: newPath});
-                }
-            }
-        }
-
-        // No path found
-        return null;
-    }
-
-    // Handle tap input for movement
-    handleTap(screenX, screenY) {
-        const gridCoords = this.screenToGridCoordinates(screenX, screenY);
-        const playerPos = this.player.getPosition();
-
-        console.log(`Tap at screen: (${screenX}, ${screenY}) -> grid: (${gridCoords.x}, ${gridCoords.y})`);
-
-        // Check if tapped on lion for interaction
-        const lionAtPosition = this.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.LION;
-        console.log(`Checking lion at position (${gridCoords.x}, ${gridCoords.y}):`, this.grid[gridCoords.y]?.[gridCoords.x], "TILE_TYPES.LION:", TILE_TYPES.LION, "Is lion:", lionAtPosition);
-        if (lionAtPosition) {
-            console.log("Lion found at tapped position!");
-            // Check if player is adjacent to the lion (including diagonal, but excluding self)
-            const dx = Math.abs(gridCoords.x - playerPos.x);
-            const dy = Math.abs(gridCoords.y - playerPos.y);
-            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-            console.log(`Player at (${playerPos.x}, ${playerPos.y}), dx=${dx}, dy=${dy}, isAdjacent=${isAdjacent}`);
-            if (isAdjacent) {
-                console.log("Player is adjacent, triggering lion interaction");
-                this.interactWithLion();
-            } else {
-                console.log(`Lion interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, lion at ${gridCoords.x},${gridCoords.y})`);
-            }
-            return; // Interaction attempted, completion status varies
-        }
-
-        // Check if tapped on squig for interaction
-        const squigAtPosition = this.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.SQUIG;
-        console.log(`Checking squig at position (${gridCoords.x}, ${gridCoords.y}):`, this.grid[gridCoords.y]?.[gridCoords.x], "TILE_TYPES.SQUIG:", TILE_TYPES.SQUIG, "Is squig:", squigAtPosition);
-        if (squigAtPosition) {
-            console.log("Squig found at tapped position!");
-            // Check if player is adjacent to the squig (including diagonal, but excluding self)
-            const dx = Math.abs(gridCoords.x - playerPos.x);
-            const dy = Math.abs(gridCoords.y - playerPos.y);
-            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-            console.log(`Player at (${playerPos.x}, ${playerPos.y}), dx=${dx}, dy=${dy}, isAdjacent=${isAdjacent}`);
-            if (isAdjacent) {
-                console.log("Player is adjacent, triggering squig interaction");
-                this.interactWithSquig();
-            } else {
-                console.log(`Squig interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, squig at ${gridCoords.x},${gridCoords.y})`);
-            }
-            return; // Interaction attempted, completion status varies
-        }
-
-        // Check if tapped on sign for interaction
-        const signTile = this.grid[gridCoords.y]?.[gridCoords.x];
-        if (signTile && typeof signTile === 'object' && signTile.type === TILE_TYPES.SIGN) {
-            // Check if player is adjacent to this sign
-            const playerPos = this.player.getPosition();
-            const dx = Math.abs(gridCoords.x - playerPos.x);
-            const dy = Math.abs(gridCoords.y - playerPos.y);
-            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-
-            if (isAdjacent) {
-                // Check if this is a new message being displayed (not already showing)
-                const isAlreadyDisplayed = this.displayingMessageForSign &&
-                                          this.displayingMessageForSign.message === signTile.message;
-                const showingNewMessage = !isAlreadyDisplayed;
-
-            // Let Sign class handle the toggle logic
-            console.log('Calling Sign.handleClick for sign:', signTile.message);
-            Sign.handleClick(signTile, this, isAdjacent);
-
-            // Add to log only when first showing the message
-            if (showingNewMessage && signTile.message !== this.lastSignMessage) {
-                this.addMessageToLog(`A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`);
-                this.lastSignMessage = signTile.message;
-            }
-            }
-            return; // Interaction handled
-        }
-
-        // Check if player has a bomb and tapped on a wall
-        const hasBomb = this.player.inventory.some(item => item.type === 'bomb');
-        const wallAtPosition = this.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.WALL;
-        if (hasBomb && wallAtPosition) {
-            // Consume bomb and create an exit
-            const bombIndex = this.player.inventory.findIndex(item => item.type === 'bomb');
-            if (bombIndex !== -1) {
-                this.player.inventory.splice(bombIndex, 1);
-                this.grid[gridCoords.y][gridCoords.x] = TILE_TYPES.EXIT;
-                this.updatePlayerStats();
-                // Player turn is used, handle enemy moves
-                this.handleEnemyMovements();
-                return;
-            }
-        }
-        // Check if player has bishop spear and if tapped position is diagonal and valid for bishop spear charge
-        const bishopSpearItem = this.player.inventory.find(item => item.type === 'bishop_spear' && item.uses > 0);
-        const enemyAtCoords = this.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
-        const targetTile = this.grid[gridCoords.y][gridCoords.x];
-        const isEmptyTile = !enemyAtCoords && this.player.isWalkable(gridCoords.x, gridCoords.y, this.grid, playerPos.x, playerPos.y);
-
-        if (bishopSpearItem && (enemyAtCoords || isEmptyTile)) {
-            // Calculate direction from player to target
-            const dx = gridCoords.x - playerPos.x;
-            const dy = gridCoords.y - playerPos.y;
-
-            // Check if diagonal and within range (<=5 tiles)
-            if (Math.abs(dx) === Math.abs(dy) && Math.abs(dx) > 0 && Math.abs(dx) <= 5) {
-                this.performBishopSpearCharge(bishopSpearItem, gridCoords.x, gridCoords.y, enemyAtCoords, dx, dy);
-                return; // Charge performed, don't move
-            }
-        }
-
-        // If player is on an exit tile, check for zone transition gestures
-        if (this.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
-            const transitionTriggered = this.checkForZoneTransitionGesture(gridCoords, playerPos);
-            if (transitionTriggered) {
-                return;
-            }
-        }
-
-        // Check if tapped tile is an exit and player is already on it - trigger zone transition
-        if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y &&
-            this.grid[gridCoords.y][gridCoords.x] === TILE_TYPES.EXIT) {
-            this.handleExitTap(gridCoords.x, gridCoords.y);
-            return;
-        }
-
-        // Find path to target
-        const path = this.findPath(playerPos.x, playerPos.y, gridCoords.x, gridCoords.y);
-
-        if (path && path.length > 0) {
-            console.log(`Found path with ${path.length} steps:`, path);
-            this.executePath(path);
-        } else {
-            console.log('No valid path found to target');
-        }
-    }
-    
-    // Check if tap gesture should trigger zone transition when player is on exit
-    checkForZoneTransitionGesture(tapCoords, playerPos) {
-        // If player is on an exit tile and taps outside the grid or on the same edge, trigger transition
-        const isOnExit = this.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT;
-        if (!isOnExit) return false;
-        
-        // Check if tap is outside grid boundaries (attempting to go beyond current zone)
-        if (tapCoords.x < 0 || tapCoords.x >= GRID_SIZE || tapCoords.y < 0 || tapCoords.y >= GRID_SIZE) {
-            this.handleExitTap(playerPos.x, playerPos.y);
-            return true;
-        }
-        
-        // Check if player is on edge exit and tapping towards that edge
-        if (playerPos.y === 0 && tapCoords.y <= playerPos.y) {
-            // On top edge, tapping up/same row
-            this.handleExitTap(playerPos.x, playerPos.y);
-            return true;
-        } else if (playerPos.y === GRID_SIZE - 1 && tapCoords.y >= playerPos.y) {
-            // On bottom edge, tapping down/same row
-            this.handleExitTap(playerPos.x, playerPos.y);
-            return true;
-        } else if (playerPos.x === 0 && tapCoords.x <= playerPos.x) {
-            // On left edge, tapping left/same column
-            this.handleExitTap(playerPos.x, playerPos.y);
-            return true;
-        } else if (playerPos.x === GRID_SIZE - 1 && tapCoords.x >= playerPos.x) {
-            // On right edge, tapping right/same column
-            this.handleExitTap(playerPos.x, playerPos.y);
-            return true;
-        }
-        
-        return false;
-    }
-    
-    // Handle tapping on exit tiles to trigger zone transitions
-    handleExitTap(exitX, exitY) {
-        // Determine which direction to move based on exit position
-        let direction = '';
-        
-        if (exitY === 0) {
-            // Top edge exit - move north
-            direction = 'arrowup';
-        } else if (exitY === GRID_SIZE - 1) {
-            // Bottom edge exit - move south  
-            direction = 'arrowdown';
-        } else if (exitX === 0) {
-            // Left edge exit - move west
-            direction = 'arrowleft';
-        } else if (exitX === GRID_SIZE - 1) {
-            // Right edge exit - move east
-            direction = 'arrowright';
-        }
-        
-        if (direction) {
-            console.log(`Triggering zone transition via exit at (${exitX}, ${exitY}) direction: ${direction}`);
-            // Simulate the key press to trigger zone transition
-            this.handleKeyPress({ key: direction, preventDefault: () => {} });
-        }
-    }
-
-    // Execute path by simulating key presses with timing
-    executePath(path) {
-        if (this.isExecutingPath) {
-            return; // Don't start new path if one is already executing
-        }
-        
-        this.isExecutingPath = true;
-        const stepDelay = 150; // Milliseconds between steps
-        
-        let stepIndex = 0;
-        const executeStep = () => {
-            if (stepIndex < path.length) {
-                this.handleKeyPress({ key: path[stepIndex], preventDefault: () => {} });
-                stepIndex++;
-                setTimeout(executeStep, stepDelay);
-            } else {
-                this.isExecutingPath = false;
-                
-                // Check if player ended up on an exit tile after path completion
-                const playerPos = this.player.getPosition();
-                if (this.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
-                    console.log('Player reached exit tile. Tap the exit again to transition zones.');
-                }
-            }
-        };
-        
-        executeStep();
-    }    setupTouchControls() {
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchStartTime = 0;
-        const minSwipeDistance = 30;
-        const maxTapTime = 300; // Maximum time for a tap (milliseconds)
-        
-        this.canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-            touchStartTime = Date.now();
-        });
-        
-        this.canvas.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            const touch = e.changedTouches[0];
-            const deltaX = touch.clientX - touchStartX;
-            const deltaY = touch.clientY - touchStartY;
-            const touchDuration = Date.now() - touchStartTime;
-            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            
-            // Check if this was a tap (short duration, small movement)
-            if (touchDuration < maxTapTime && distance < minSwipeDistance) {
-                // Handle tap - convert to grid coordinates and move
-                this.handleTap(touch.clientX, touch.clientY);
-            }
-            // Otherwise, check if it was a swipe gesture
-            else if (distance > minSwipeDistance) {
-                let direction = '';
-                
-                if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                    // Horizontal swipe
-                    direction = deltaX > 0 ? 'arrowright' : 'arrowleft';
-                } else {
-                    // Vertical swipe
-                    direction = deltaY > 0 ? 'arrowdown' : 'arrowup';
-                }
-                
-                // Simulate key press
-                this.handleKeyPress({ key: direction, preventDefault: () => {} });
-            }
-        });
-        
-        // Prevent default touch behaviors
-        this.canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-        });
-    }
-    
-    handleKeyPress(event) {
-        console.log('Key pressed: ' + event.key);
-        if (this.player.isDead()) {
-            console.log('Player is dead');
-            return;
-        }
-        // When the player acts, hide any open overlay message.
-        // This now includes sign messages, which will close upon movement.
-        if (this.displayingMessageForSign) {
-            Sign.hideMessageForSign(this);
-        } else {
-            this.hideOverlayMessage();
-        }
-
-        const currentPos = this.player.getPosition();
-        let newX = currentPos.x;
-        let newY = currentPos.y;
-        switch(event.key.toLowerCase()) {
-            case 'w':
-            case 'arrowup':
-                newY--;
-                break;
-            case 's':
-            case 'arrowdown':
-                newY++;
-                break;
-            case 'a':
-            case 'arrowleft':
-                newX--;
-                break;
-            case 'd':
-            case 'arrowright':
-                newX++;
-                break;
-            case 'k':
-                // Add axe to inventory for testing
-                if (this.player.inventory.length < 6) {
-                    this.player.inventory.push({ type: 'axe' });
-                    this.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't move, just add item
-            case 'h':
-                // Add hammer to inventory for testing
-                if (this.player.inventory.length < 6) {
-                    this.player.inventory.push({ type: 'hammer' });
-                    this.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't move, just add item
-            case 'r':
-                // Add bishop spear to inventory for testing
-                if (this.player.inventory.length < 6) {
-                    this.player.inventory.push({ type: 'bishop_spear', uses: 3 });
-                    this.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't move, just add item
-            case 'b':
-                // Add bomb to inventory for testing
-                if (this.player.inventory.length < 6) {
-                    this.player.inventory.push({ type: 'bomb' });
-                    this.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't move, just add item
-            case 'p':
-                // Debug command to find the puzzle zone if it has spawned
-                console.log("The puzzle zone is now a rare random encounter and cannot be teleported to directly.");
-                return; // Don't process as movement
-            case 'f':
-                // Add random food to inventory for testing
-                if (this.player.inventory.length < 6 && this.availableFoodAssets.length > 0) {
-                    const randomFood = this.availableFoodAssets[Math.floor(Math.random() * this.availableFoodAssets.length)];
-                    this.player.inventory.push({ type: 'food', foodType: randomFood });
-                    this.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't process as movement
-            case 'n':
-                // Add note to inventory for testing
-                if (this.player.inventory.length < 6) {
-                    this.player.inventory.push({ type: 'note' });
-                    this.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't process as movement
-            case 'o':
-                // Teleport to a frontier zone for testing
-                this.player.setCurrentZone(17, 0); // Frontier zone (distance 17+)
-                this.generateZone();
-                // Position player in center of the zone
-                const centerX2 = Math.floor(GRID_SIZE / 2);
-                const centerY2 = Math.floor(GRID_SIZE / 2);
-                this.player.setPosition(centerX2, centerY2);
-                this.player.ensureValidPosition(this.grid);
-                // Update UI
-                this.updateZoneDisplay();
-                this.updatePlayerPosition();
-                this.updatePlayerStats();
-                break;
-            case 'y':
-                // Force spawn of whispering canyon for testing
-                console.log('Forcing whispering canyon generation...');
-                ZoneGenerator.forceCanyonSpawn = true;
-                this.player.setCurrentZone(18, 0); // Far frontier zone
-                this.generateZone();
-                ZoneGenerator.forceCanyonSpawn = false; // Reset for normal gameplay
-                // Position player in center of the zone
-                const centerXc = Math.floor(GRID_SIZE / 2);
-                const centerYc = Math.floor(GRID_SIZE / 2);
-                this.player.setPosition(centerXc, centerYc);
-                this.player.ensureValidPosition(this.grid);
-                // Update UI
-                this.updateZoneDisplay();
-                this.updatePlayerPosition();
-                this.updatePlayerStats();
-                console.log('Teleported to canyon zone. If canyon generated, it will be forced.');
-                break;
-            case 'j':
-                // Jump to food/water room, force spawn if not exists
-                if (ZoneGenerator.foodWaterRoomSpawned && ZoneGenerator.foodWaterRoomZone) {
-                    this.player.setCurrentZone(ZoneGenerator.foodWaterRoomZone.x, ZoneGenerator.foodWaterRoomZone.y);
-                    this.generateZone();
-                    // Position player in center of the zone
-                    const centerXj = Math.floor(GRID_SIZE / 2);
-                    const centerYj = Math.floor(GRID_SIZE / 2);
-                    this.player.setPosition(centerXj, centerYj);
-                    this.player.ensureValidPosition(this.grid);
-                    // Update UI
-                    this.updateZoneDisplay();
-                    this.updatePlayerPosition();
-                    this.updatePlayerStats();
-                    console.log(`Teleported to food/water room at (${ZoneGenerator.foodWaterRoomZone.x}, ${ZoneGenerator.foodWaterRoomZone.y})`);
-                } else {
-                    // Force spawn the room at a Wilds zone (e.g., (10, 10))
-                    console.log('Food/water room not spawned yet. Forcing spawn at zone (10, 10)...');
-                    ZoneGenerator.forceFoodWaterRoom = true;
-                    this.player.setCurrentZone(10, 10);
-                    this.generateZone();
-                    ZoneGenerator.forceFoodWaterRoom = false; // Reset after forcing
-                    const centerXj = Math.floor(GRID_SIZE / 2);
-                    const centerYj = Math.floor(GRID_SIZE / 2);
-                    this.player.setPosition(centerXj, centerYj);
-                    this.player.ensureValidPosition(this.grid);
-                    this.updateZoneDisplay();
-                    this.updatePlayerPosition();
-                    this.updatePlayerStats();
-                    console.log('Food/water room forced at (10, 10). You can now use "j" again to return.');
-                }
-                break;
-            case 'l':
-                // Spawn a lizardy enemy for testing
-                const availableTiles = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        const tile = this.grid[y][x];
-                        const playerPos = this.player.getPosition();
-                        const hasEnemy = this.enemies.some(e => e.x === x && e.y === y);
-                        if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
-                            availableTiles.push({x, y});
-                        }
-                    }
-                }
-                if (availableTiles.length > 0) {
-                    const spawnPos = availableTiles[Math.floor(Math.random() * availableTiles.length)];
-                    const enemyId = Date.now(); // Simple unique ID
-                    const newEnemy = new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardy', id: enemyId});
-                    this.enemies.push(newEnemy);
-                    console.log(`Spawned lizardy enemy at (${spawnPos.x}, ${spawnPos.y})`);
-                } else {
-                    console.log('No available tiles to spawn enemy');
-                }
-                break;
-            case 'x':
-                // Spawn a lizardeaux enemy for testing
-                const lizardeauxTiles = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        const tile = this.grid[y][x];
-                        const playerPos = this.player.getPosition();
-                        const hasEnemy = this.enemies.some(e => e.x === x && e.y === y);
-                        if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
-                            lizardeauxTiles.push({x, y});
-                        }
-                    }
-                }
-                if (lizardeauxTiles.length > 0) {
-                    const spawnPos = lizardeauxTiles[Math.floor(Math.random() * lizardeauxTiles.length)];
-                    const enemyId = Date.now(); // Simple unique ID
-                    const newEnemy = new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardeaux', id: enemyId});
-                    this.enemies.push(newEnemy);
-                    console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
-                } else {
-                    console.log('No available tiles to spawn lizardeaux enemy');
-                }
-                break;
-            case 'm':
-                // Spawn lion for testing (debug command)
-                const lionTiles = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                            lionTiles.push({x, y});
-                        }
-                    }
-                }
-                if (lionTiles.length > 0) {
-                    const spawnPos = lionTiles[Math.floor(Math.random() * lionTiles.length)];
-                    this.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.LION;
-                    console.log(`Debug: Lion spawned at (${spawnPos.x}, ${spawnPos.y})`);
-                } else {
-                    console.log('No available tiles to spawn lion');
-                }
-                break;
-            case 'u':
-                // Spawn squig for testing (debug command)
-                const squigTiles = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                            squigTiles.push({x, y});
-                        }
-                    }
-                }
-                if (squigTiles.length > 0) {
-                    const spawnPos = squigTiles[Math.floor(Math.random() * squigTiles.length)];
-                    this.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.SQUIG;
-                    console.log(`Debug: Squig spawned at (${spawnPos.x}, ${spawnPos.y})`);
-                } else {
-                    console.log('No available tiles to spawn squig');
-                }
-                break;
-            case 't':
-                // Spawn sign for testing (debug command)
-                const signTiles = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                            signTiles.push({x, y});
-                        }
-                    }
-                }
-                if (signTiles.length > 0) {
-                    const spawnPos = signTiles[Math.floor(Math.random() * signTiles.length)];
-                    this.grid[spawnPos.y][spawnPos.x] = {
-                        type: TILE_TYPES.SIGN,
-                        message: "Test sign message - click again to close!"
-                    };
-                    console.log(`Debug: Sign spawned at (${spawnPos.x}, ${spawnPos.y})`);
-                } else {
-                    console.log('No available tiles to spawn sign');
-                }
-                break;
-            case 'q':
-                this.performSpearAttack('NE');
-                return;
-            case 'e':
-                this.performSpearAttack('NW');
-                return;
-            case 'z':
-                this.performSpearAttack('SW');
-                return;
-            case 'c':
-                this.performSpearAttack('SE');
-                return;
-            default:
-                return;
-        }
-        event.preventDefault();
-
-        // Check if player is trying to move onto an enemy tile
-        const enemyAtTarget = this.enemies.find(enemy => enemy.x === newX && enemy.y === newY);
-        let playerMoved = false;
-
-        if (enemyAtTarget) {
-            // Player attacks enemy - simple bump of attacked tile
-            this.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
-            console.log('Player attacks enemy!');
-            enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
-            enemyAtTarget.takeDamage(999); // Ensure enemy is dead
-            console.log('Player defeated enemy!');
-
-            // Record that this enemy position is defeated to prevent respawning
-            const currentZone = this.player.getCurrentZone();
-            this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemyAtTarget.x},${enemyAtTarget.y}`);
-
-            // Remove enemy immediately so it doesn't attack back this turn
-            this.enemies = this.enemies.filter(e => e !== enemyAtTarget);
-
-            // Also update the stored zone data to remove the dead enemy from persistence
-            const zoneKey = `${currentZone.x},${currentZone.y}`;
-            if (this.zones.has(zoneKey)) {
-                const zoneData = this.zones.get(zoneKey);
-                zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtTarget.id);
-                this.zones.set(zoneKey, zoneData);
-            }
-            // Enemy movements happen after attacks to simulate turn-based combat
-            this.handleEnemyMovements();
-            // Player does not move
-        } else {
-            // Normal movement
-            playerMoved = this.player.move(newX, newY, this.grid, (zoneX, zoneY, exitSide) => {
-                this.transitionToZone(zoneX, zoneY, exitSide, currentPos.x, currentPos.y);
-            });
-        }
-
-        // Handle enemy movements based on zone entry flag
-        if (this.justEnteredZone) {
-            this.justEnteredZone = false; // Reset flag after skipping enemy movement
-        } else if (playerMoved) {
-            this.handleEnemyMovements();
-        }
-
-        this.checkCollisions();
-        this.checkItemPickup(); // Check for item pickups after movement
-        this.updatePlayerPosition();
-        this.updatePlayerStats();
-    }
     
     resetGame() {
         // Reset all game state
@@ -1096,6 +418,61 @@ class Game {
                     tooltipText = 'Map Note - Marks an undiscovered location 20 zones away on the map';
                 }
 
+                // Use item function to avoid duplication
+                const useItem = () => {
+                    if (item.type === 'food') {
+                        this.player.restoreHunger(10);
+                        this.player.inventory.splice(idx, 1);
+                    } else if (item.type === 'water') {
+                        this.player.restoreThirst(10);
+                        this.player.inventory.splice(idx, 1);
+                    } else if (item.type === 'axe') {
+                        // Drop axe at player's current position
+                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
+                            this.grid[this.player.y][this.player.x] = TILE_TYPES.AXE;
+                            this.player.inventory.splice(idx, 1);
+                        }
+                    } else if (item.type === 'hammer') {
+                        // Drop hammer at player's current position
+                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
+                            this.grid[this.player.y][this.player.x] = TILE_TYPES.HAMMER;
+                            this.player.inventory.splice(idx, 1);
+                        }
+                    } else if (item.type === 'bishop_spear') {
+                        // Drop bishop spear at player's current position
+                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
+                            this.grid[this.player.y][this.player.x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: item.uses };
+                            this.player.inventory.splice(idx, 1);
+                        }
+                    } else if (item.type === 'bomb') {
+                        // Drop bomb at player's current position on whatever tile it rests on
+                        this.grid[this.player.y][this.player.x] = TILE_TYPES.BOMB;
+                        this.player.inventory.splice(idx, 1);
+                    } else if (item.type === 'note') {
+                        // Use note to mark an undiscovered location 20 tiles away
+                        this.useMapNote();
+                        this.hideOverlayMessage(); // Clear any existing overlay message
+
+                        const noteMessageText = 'Coordinates revealed! Added to message log.';
+
+                        // Use the sign message system to show a temporary, persistent message
+                        // This prevents the game loop (e.g., checkLionInteraction) from hiding it immediately.
+                        this.displayingMessageForSign = { message: noteMessageText }; // Set flag
+                        this.showSignMessage(noteMessageText, 'Images/note.png'); // Show message
+
+                        // Set a timeout to hide the message and clear the flag after 2 seconds
+                        setTimeout(() => {
+                            // Only hide if the current message is still the one we set
+                            if (this.displayingMessageForSign && this.displayingMessageForSign.message === noteMessageText) {
+                               Sign.hideMessageForSign(this);
+                            }
+                        }, 2000);
+
+                        this.player.inventory.splice(idx, 1); // Remove note from inventory
+                    }
+                    this.updatePlayerStats();
+                };
+
                 if (item.type === 'food') {
                     // Add the actual food sprite image to inventory slot
                     const foodImg = document.createElement('img');
@@ -1123,22 +500,24 @@ class Game {
 
                 // Desktop hover events
                 slot.addEventListener('mouseover', () => {
-                    if (!isLongPress) {
+                    if (!longPress) {
                         showTooltip(slot, tooltipText);
                     }
                 });
                 slot.addEventListener('mouseout', () => {
-                    if (!isLongPress) {
+                    if (!longPress) {
                         hideTooltip();
                     }
                 });
 
                 // Mobile touch events for long press
+                let longPress = false;
+                let longPressTimeout = null;
                 slot.addEventListener('touchstart', (e) => {
                     e.preventDefault(); // Prevent click
-                    isLongPress = false;
+                    longPress = false;
                     longPressTimeout = setTimeout(() => {
-                        isLongPress = true;
+                        longPress = true;
                         showTooltip(slot, tooltipText);
                         // Auto-hide after 2 seconds
                         setTimeout(hideTooltip, 2000);
@@ -1150,67 +529,22 @@ class Game {
                         longPressTimeout = null;
                     }
                 });
-                slot.addEventListener('touchend', () => {
+                slot.addEventListener('touchend', (e) => {
                     if (longPressTimeout) {
                         clearTimeout(longPressTimeout);
-                        longPressTimeout = null;
+                        // Short tap - use the item
+                        if (!longPress) {
+                            useItem();
+                        }
                     }
                 });
 
-                slot.onclick = () => {
-                    if (this.player.isDead() || isLongPress) return;
-                    if (item.type === 'food') {
-                        this.player.restoreHunger(10);
-                        this.player.inventory.splice(idx, 1);
-                    } else if (item.type === 'water') {
-                        this.player.restoreThirst(10);
-                        this.player.inventory.splice(idx, 1);
-                    } else if (item.type === 'axe') {
-                        // Drop axe at player's current position
-                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                            this.grid[this.player.y][this.player.x] = TILE_TYPES.AXE;
-                            this.player.inventory.splice(idx, 1);
-                        }
-                    } else if (item.type === 'hammer') {
-                        // Drop hammer at player's current position
-                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                            this.grid[this.player.y][this.player.x] = TILE_TYPES.HAMMER;
-                            this.player.inventory.splice(idx, 1);
-                        }
-                    } else if (item.type === 'bishop_spear') {
-                        // Drop bishop spear at player's current position
-                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                            this.grid[this.player.y][this.player.x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: item.uses };
-                            this.player.inventory.splice(idx, 1);
-                        }
-                } else if (item.type === 'bomb') {
-                    // Drop bomb at player's current position on whatever tile it rests on
-                    this.grid[this.player.y][this.player.x] = TILE_TYPES.BOMB;
-                    this.player.inventory.splice(idx, 1);
-                } else if (item.type === 'note') {
-                    // Use note to mark an undiscovered location 20 tiles away
-                    this.useMapNote();
-                    this.hideOverlayMessage(); // Clear any existing overlay message
-                    
-                    const noteMessageText = 'Coordinates revealed! Added to message log.';
-                    
-                    // Use the sign message system to show a temporary, persistent message
-                    // This prevents the game loop (e.g., checkLionInteraction) from hiding it immediately.
-                    this.displayingMessageForSign = { message: noteMessageText }; // Set flag
-                    this.showSignMessage(noteMessageText, 'Images/note.png'); // Show message
-                    
-                    // Set a timeout to hide the message and clear the flag after 2 seconds
-                    setTimeout(() => {
-                        // Only hide if the current message is still the one we set
-                        if (this.displayingMessageForSign && this.displayingMessageForSign.message === noteMessageText) {
-                           Sign.hideMessageForSign(this);
-                        }
-                    }, 2000);
+                // Desktop click - use item
+                slot.addEventListener('click', () => {
+                    if (this.player.isDead()) return; // No restrictions like longPress here
+                    useItem();
+                });
 
-                    this.player.inventory.splice(idx, 1); // Remove note from inventory
-                }
-                    this.updatePlayerStats();
-                };
                 inventoryGrid.appendChild(slot);
             });
             for (let i = this.player.inventory.length; i < 6; i++) {

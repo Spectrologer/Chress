@@ -6,11 +6,11 @@ export class Sign {
     // Area definitions for messages
     static messageSets = {
         home: [
-            "The curse demands a toll. Do not let the inner fire fade.",
-            "They march in prescribed lines. A game for a mad god-tree.",
-            "The Club sought order. The Ent gave it to us. Be careful what you wish for.",
-            "Even a woodcutter must eat. Do not forget the simple truths.",
-            "Try walking, and then, despair."
+            "Don't try to chop shrubs or enemies down without your axe.",
+            "Chop.",
+            "H.",
+            "Even a woodcutter has to eat eat.",
+            "Try walking."
         ],
         woods: [
             "The stumps weep. Or maybe that's just sap.",
