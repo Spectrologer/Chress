@@ -1191,8 +1191,23 @@ class Game {
                     // Use note to mark an undiscovered location 20 tiles away
                     this.useMapNote();
                     this.hideOverlayMessage(); // Clear any existing overlay message
-                    this.showOverlayMessageSilent('Coordinates revealed! Added to message log.', null);
-                    this.player.inventory.splice(idx, 1);
+                    
+                    const noteMessageText = 'Coordinates revealed! Added to message log.';
+                    
+                    // Use the sign message system to show a temporary, persistent message
+                    // This prevents the game loop (e.g., checkLionInteraction) from hiding it immediately.
+                    this.displayingMessageForSign = { message: noteMessageText }; // Set flag
+                    this.showSignMessage(noteMessageText, 'Images/note.png'); // Show message
+                    
+                    // Set a timeout to hide the message and clear the flag after 2 seconds
+                    setTimeout(() => {
+                        // Only hide if the current message is still the one we set
+                        if (this.displayingMessageForSign && this.displayingMessageForSign.message === noteMessageText) {
+                           Sign.hideMessageForSign(this);
+                        }
+                    }, 2000);
+
+                    this.player.inventory.splice(idx, 1); // Remove note from inventory
                 }
                     this.updatePlayerStats();
                 };
