@@ -41,7 +41,24 @@ class Game {
 
         // Path execution state
         this.isExecutingPath = false;
-        
+
+        // Message Log system
+        this.messageLog = [];
+        this.messageLogOverlay = document.getElementById('messageLogOverlay');
+        this.messageLogContent = document.getElementById('messageLogContent');
+        this.closeMessageLogButton = document.getElementById('closeMessageLogButton');
+
+        // Special zones marked by notes (zoneKey: "x,y" -> items array)
+        this.specialZones = new Map();
+
+        // Track last sign message to prevent duplicate log entries
+        this.lastSignMessage = null;
+
+        // Track currently displayed sign message for toggling
+        this.displayingMessageForSign = null;
+
+        this.setupMessageLogButton();
+
         // Load assets and start game
         this.loadAssets();
     }
@@ -135,6 +152,11 @@ class Game {
             this.gameLoop();
         });
 
+        this.closeMessageLogButton.addEventListener('click', () => {
+            this.messageLogOverlay.classList.remove('show');
+            this.gameLoop();
+        });
+
         // Start game loop
         this.gameLoop();
 
@@ -178,6 +200,10 @@ class Game {
         // Set flag to skip enemy movements this turn since player just entered zone
         this.justEnteredZone = true;
 
+        // Check if this is a special zone marked by a note
+        const zoneKey = `${newZoneX},${newZoneY}`;
+        const hasReachedSpecialZone = this.specialZones.has(zoneKey);
+
         // Check if this is entering a new region category
         const newRegion = this.generateRegionName(newZoneX, newZoneY);
         const isNewRegion = newRegion !== this.currentRegion;
@@ -208,6 +234,15 @@ class Game {
 
         // Ensure player is on a walkable tile
         this.player.ensureValidPosition(this.grid);
+
+        // Check for special zone items found message
+        if (hasReachedSpecialZone) {
+            // Add treasure items to inventory
+            this.addTreasureToInventory();
+
+            // Remove the special zone marker since it was used
+            this.specialZones.delete(zoneKey);
+        }
 
         // Update UI
         this.updateZoneDisplay();
@@ -389,6 +424,34 @@ class Game {
                 console.log(`Squig interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, squig at ${gridCoords.x},${gridCoords.y})`);
             }
             return; // Interaction attempted, completion status varies
+        }
+
+        // Check if tapped on sign for interaction
+        const signTile = this.grid[gridCoords.y]?.[gridCoords.x];
+        if (signTile && typeof signTile === 'object' && signTile.type === TILE_TYPES.SIGN) {
+            // Check if player is adjacent to this sign
+            const playerPos = this.player.getPosition();
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+
+            if (isAdjacent) {
+                // Check if this is a new message being displayed (not already showing)
+                const isAlreadyDisplayed = this.displayingMessageForSign &&
+                                          this.displayingMessageForSign.message === signTile.message;
+                const showingNewMessage = !isAlreadyDisplayed;
+
+            // Let Sign class handle the toggle logic
+            console.log('Calling Sign.handleClick for sign:', signTile.message);
+            Sign.handleClick(signTile, this, isAdjacent);
+
+            // Add to log only when first showing the message
+            if (showingNewMessage && signTile.message !== this.lastSignMessage) {
+                this.addMessageToLog(`A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`);
+                this.lastSignMessage = signTile.message;
+            }
+            }
+            return; // Interaction handled
         }
 
         // Check if player has a bomb and tapped on a wall
@@ -594,8 +657,13 @@ class Game {
             console.log('Player is dead');
             return;
         }
-      // Hide any persistent overlay messages when the player acts
-        this.hideOverlayMessage();
+        // When the player acts, hide any open overlay message.
+        // This now includes sign messages, which will close upon movement.
+        if (this.displayingMessageForSign) {
+            Sign.hideMessageForSign(this);
+        } else {
+            this.hideOverlayMessage();
+        }
 
         const currentPos = this.player.getPosition();
         let newX = currentPos.x;
@@ -654,6 +722,13 @@ class Game {
                 if (this.player.inventory.length < 6 && this.availableFoodAssets.length > 0) {
                     const randomFood = this.availableFoodAssets[Math.floor(Math.random() * this.availableFoodAssets.length)];
                     this.player.inventory.push({ type: 'food', foodType: randomFood });
+                    this.updatePlayerStats(); // Refresh inventory display
+                }
+                return; // Don't process as movement
+            case 'n':
+                // Add note to inventory for testing
+                if (this.player.inventory.length < 6) {
+                    this.player.inventory.push({ type: 'note' });
                     this.updatePlayerStats(); // Refresh inventory display
                 }
                 return; // Don't process as movement
@@ -803,6 +878,27 @@ class Game {
                     console.log('No available tiles to spawn squig');
                 }
                 break;
+            case 't':
+                // Spawn sign for testing (debug command)
+                const signTiles = [];
+                for (let y = 0; y < GRID_SIZE; y++) {
+                    for (let x = 0; x < GRID_SIZE; x++) {
+                        if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                            signTiles.push({x, y});
+                        }
+                    }
+                }
+                if (signTiles.length > 0) {
+                    const spawnPos = signTiles[Math.floor(Math.random() * signTiles.length)];
+                    this.grid[spawnPos.y][spawnPos.x] = {
+                        type: TILE_TYPES.SIGN,
+                        message: "Test sign message - click again to close!"
+                    };
+                    console.log(`Debug: Sign spawned at (${spawnPos.x}, ${spawnPos.y})`);
+                } else {
+                    console.log('No available tiles to spawn sign');
+                }
+                break;
             case 'q':
                 this.performSpearAttack('NE');
                 return;
@@ -864,6 +960,7 @@ class Game {
         }
 
         this.checkCollisions();
+        this.checkItemPickup(); // Check for item pickups after movement
         this.updatePlayerPosition();
         this.updatePlayerStats();
     }
@@ -885,6 +982,8 @@ class Game {
         this.enemies = [];
         this.defeatedEnemies = new Set();
         this.currentRegion = null; // Reset region tracking
+        this.lastSignMessage = null; // Reset sign message tracking
+        this.displayingMessageForSign = null; // Reset sign message display tracking
 
         // Generate starting zone
         this.generateZone();
@@ -993,6 +1092,8 @@ class Game {
                     tooltipText = 'Bishop Spear - Charge diagonally towards enemies, has ' + item.uses + ' charges';
                 } else if (item.type === 'bomb') {
                     tooltipText = 'Bomb - Blasts through walls to create exits';
+                } else if (item.type === 'note') {
+                    tooltipText = 'Map Note - Marks an undiscovered location 20 zones away on the map';
                 }
 
                 if (item.type === 'food') {
@@ -1014,6 +1115,8 @@ class Game {
                     slot.classList.add('item-spear'); // Reuse the class since same image
                 } else if (item.type === 'bomb') {
                     slot.classList.add('item-bomb');
+                } else if (item.type === 'note') {
+                    slot.classList.add('item-note');
                 } else if (item.type === 'tool') {
                     slot.classList.add('item-tool');
                 }
@@ -1080,11 +1183,15 @@ class Game {
                             this.grid[this.player.y][this.player.x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: item.uses };
                             this.player.inventory.splice(idx, 1);
                         }
-                    } else if (item.type === 'bomb') {
-                        // Drop bomb at player's current position on whatever tile it rests on
-                        this.grid[this.player.y][this.player.x] = TILE_TYPES.BOMB;
-                        this.player.inventory.splice(idx, 1);
-                    }
+                } else if (item.type === 'bomb') {
+                    // Drop bomb at player's current position on whatever tile it rests on
+                    this.grid[this.player.y][this.player.x] = TILE_TYPES.BOMB;
+                    this.player.inventory.splice(idx, 1);
+                } else if (item.type === 'note') {
+                    // Use note to mark an undiscovered location 20 tiles away
+                    this.useMapNote();
+                    this.player.inventory.splice(idx, 1);
+                }
                     this.updatePlayerStats();
                 };
                 inventoryGrid.appendChild(slot);
@@ -1285,7 +1392,7 @@ class Game {
     checkLionInteraction() {
         const playerPos = this.player.getPosition();
         const messageOverlay = document.getElementById('messageOverlay');
-
+    
         // Find all lion positions
         const lions = [];
         for (let y = 0; y < GRID_SIZE; y++) {
@@ -1295,26 +1402,30 @@ class Game {
                 }
             }
         }
-
+    
         // Check if player is adjacent to any lion
         const isAdjacentToLion = lions.some(lion => {
             const dx = Math.abs(lion.x - playerPos.x);
             const dy = Math.abs(lion.y - playerPos.y);
             return (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
         });
-
+    
         // Check if player has meat
         const hasMeat = this.player.inventory.some(item => item.type === 'food' && item.foodType.includes('meat/'));
-
+    
         if (isAdjacentToLion && !hasMeat) {
+            // Do not show the lion message if a sign message is already displayed.
+            if (this.displayingMessageForSign) {
+                return;
+            }
+    
             // Show message if not already showing
             if (!messageOverlay.classList.contains('show')) {
-                // Show lion's name and new message
                 this.showOverlayMessageSilent('<span class="character-name">Penne</span><br>TRADE FOR MEAT!', 'Images/lion.png');
             }
         } else {
-            // Hide message if not adjacent or has meat
-            if (messageOverlay.classList.contains('show')) {
+            // Hide the overlay, but only if a sign message isn't the one being displayed.
+            if (messageOverlay.classList.contains('show') && !this.displayingMessageForSign) {
                 messageOverlay.classList.remove('show');
             }
         }
@@ -1385,10 +1496,10 @@ class Game {
         }
     }
 
-    showMessage(text, imageSrc = null, useOverlay = false) {
+    showMessage(text, imageSrc = null, useOverlay = false, persistent = false) {
         const messageElementId = useOverlay ? 'messageOverlay' : 'messageBox';
         const messageElement = document.getElementById(messageElementId);
-        console.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}`);
+        console.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}, persistent: ${persistent}`);
         let displayText = text;
         if (!displayText || displayText.trim() === '') {
             displayText = '[No message found for this note]';
@@ -1405,8 +1516,8 @@ class Game {
             messageElement.classList.add('show');
             console.log("Message set and show class added");
 
-            // Auto-hide overlay messages after 2 seconds
-            if (useOverlay) {
+            // Auto-hide overlay messages after 2 seconds if not persistent
+            if (useOverlay && !persistent) {
                 setTimeout(() => {
                     if (messageElement.classList.contains('show')) {
                         messageElement.classList.remove('show');
@@ -1425,6 +1536,170 @@ class Game {
             messageOverlay.classList.remove('show');
             console.log("Hiding overlay message.");
         }
+    }
+
+    showSignMessage(text, imageSrc) {
+        const messageElement = document.getElementById('messageOverlay');
+        if (messageElement) {
+            // Set content for sign message (persistent until clicked again)
+            if (imageSrc) {
+                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${text}`;
+            } else {
+                messageElement.textContent = text;
+            }
+            messageElement.classList.add('show');
+            console.log(`Sign message shown: ${text}`);
+        }
+    }
+
+    // Check if player stepped on any items (notes, food, tools, etc.)
+    checkItemPickup() {
+        const playerPos = this.player.getPosition();
+        const tile = this.grid[playerPos.y][playerPos.x];
+
+        // Check if stepped on a note
+        if (tile === TILE_TYPES.NOTE) {
+            // Add note to inventory - notes can be picked up even when inventory is full
+            // since the player might want to use one for a different destination
+            this.player.inventory.push({ type: 'note' });
+            this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove the note from the map
+            this.updatePlayerStats(); // Refresh inventory display
+            // Add to message log
+            this.addMessageToLog('Found an ancient map note.');
+            return; // Don't check other item types if note was found
+        }
+
+        // Check if stepped on food
+        if (tile && tile.type === TILE_TYPES.FOOD) {
+            // Add food to inventory and remove from map (don't consume it yet)
+            if (this.player.inventory.length < 6) {
+                this.player.inventory.push({ type: 'food', foodType: tile.foodType });
+                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
+                this.updatePlayerStats(); // Refresh inventory display
+            }
+        }
+
+        // Check if stepped on water
+        if (tile === TILE_TYPES.WATER) {
+            // Add water to inventory and remove from map (don't drink it yet)
+            if (this.player.inventory.length < 6) {
+                this.player.inventory.push({ type: 'water' });
+                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
+                this.updatePlayerStats(); // Refresh inventory display
+            }
+        }
+
+        // Check for axe drops
+        if (tile === TILE_TYPES.AXE) {
+            if (this.player.inventory.length < 6) {
+                this.player.inventory.push({ type: 'axe' });
+                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
+                this.updatePlayerStats();
+            }
+        }
+
+        // Check for hammer drops
+        if (tile === TILE_TYPES.HAMMER) {
+            if (this.player.inventory.length < 6) {
+                this.player.inventory.push({ type: 'hammer' });
+                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
+                this.updatePlayerStats();
+            }
+        }
+
+        // Check for spear drops
+        if (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) {
+            if (this.player.inventory.length < 6) {
+                this.player.inventory.push({ type: 'bishop_spear', uses: tile.uses });
+                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
+                this.updatePlayerStats();
+            }
+        }
+
+        // Check for bomb drops
+        if (tile === TILE_TYPES.BOMB) {
+            if (this.player.inventory.length < 6) {
+                this.player.inventory.push({ type: 'bomb' });
+                this.grid[playerPos.y][playerPos.x] = TILE_TYPES.FLOOR; // Remove from map
+                this.updatePlayerStats();
+            }
+        }
+    }
+
+    setupMessageLogButton() {
+        const messageLogButton = document.getElementById('message-log-button');
+        if (messageLogButton) {
+            // Desktop click
+            messageLogButton.addEventListener('click', () => {
+                this.handleMessageLogClick();
+            });
+
+            // Mobile touch
+            messageLogButton.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.handleMessageLogClick();
+            });
+        }
+    }
+
+    handleMessageLogClick() {
+        this.messageLogContent.innerHTML = '';
+        if (this.messageLog.length === 0) {
+            this.messageLogContent.innerHTML = '<p>No messages yet.</p>';
+        } else {
+            // Show newest messages first
+            [...this.messageLog].reverse().forEach(msg => {
+                const p = document.createElement('p');
+                p.innerHTML = msg; // Use innerHTML to support messages with HTML tags
+                this.messageLogContent.appendChild(p);
+            });
+        }
+        this.messageLogOverlay.classList.add('show');
+    }
+
+    useMapNote() {
+        const currentZone = this.player.getCurrentZone();
+        const visited = this.player.getVisitedZones();
+
+        // Find all undiscovered zones within a reasonable range
+        const candidates = [];
+        for (let zoneX = currentZone.x - 50; zoneX <= currentZone.x + 50; zoneX++) {
+            for (let zoneY = currentZone.y - 50; zoneY <= currentZone.y + 50; zoneY++) {
+                const zoneKey = `${zoneX},${zoneY}`;
+                if (!visited.has(zoneKey) && !this.specialZones.has(zoneKey)) {
+                    // Calculate Manhattan distance (zones)
+                    const distance = Math.max(Math.abs(zoneX - currentZone.x), Math.abs(zoneY - currentZone.y));
+                    if (distance >= 20) {
+                        candidates.push({ x: zoneX, y: zoneY, distance });
+                    }
+                }
+            }
+        }
+
+        if (candidates.length === 0) {
+            console.log('No valid undiscovered zones found 20+ zones away');
+            return;
+        }
+
+        // Pick a random candidate
+        const selected = candidates[Math.floor(Math.random() * candidates.length)];
+        const zoneKey = `${selected.x},${selected.y}`;
+        console.log(`Map note used: marking zone (${selected.x}, ${selected.y}) as special treasure zone from ${Math.max(Math.abs(selected.x - currentZone.x), Math.abs(selected.y - currentZone.y))} zones away`);
+
+        // Mark the zone as a special zone (with treasures)
+        this.specialZones.set(zoneKey, [
+            'Treasure Found: Bombs Added',
+            'Treasure Found: Spears Added',
+            'Treasure Found: Food Added'
+        ]);
+
+        // Mark the zone as visited (this adds it to the map)
+        this.player.markZoneVisited(selected.x, selected.y);
+
+        // Add to message log
+        this.addMessageToLog(`A distant location has been revealed on your map: (${selected.x}, ${selected.y})`);
+        this.updatePlayerStats(); // Refresh map display
+        this.renderZoneMap(); // Immediately render the change
     }
 
     interactWithLion() {
@@ -1550,6 +1825,37 @@ class Game {
         }
     }
 
+    addTreasureToInventory() {
+        // Generate 3-5 random treasure items regardless of inventory space
+        const numItems = Math.floor(Math.random() * 3) + 3; // 3 to 5 items
+        const treasureTypes = ['bomb', 'bishop_spear', 'food'];
+
+        for (let i = 0; i < numItems; i++) {
+            const randomType = treasureTypes[Math.floor(Math.random() * treasureTypes.length)];
+
+            if (randomType === 'bomb') {
+                this.player.inventory.push({ type: 'bomb' });
+                this.addMessageToLog('Treasure Found: Bomb added to inventory.');
+            } else if (randomType === 'bishop_spear') {
+                this.player.inventory.push({ type: 'bishop_spear', uses: 3 });
+                this.addMessageToLog('Treasure Found: Bishop Spear added to inventory.');
+            } else if (randomType === 'food' && this.availableFoodAssets.length > 0) {
+                const randomFood = this.availableFoodAssets[Math.floor(Math.random() * this.availableFoodAssets.length)];
+                this.player.inventory.push({ type: 'food', foodType: randomFood });
+                this.addMessageToLog('Treasure Found: Food added to inventory.');
+            }
+        }
+
+        // Remove excess items beyond inventory limit (6), keeping the most recently added
+        if (this.player.inventory.length > 6) {
+            const excessItems = this.player.inventory.length - 6;
+            this.player.inventory.splice(0, excessItems); // Remove from the beginning
+            this.addMessageToLog(`Inventory overflow: ${excessItems} item(s) were lost.`);
+        }
+
+        this.updatePlayerStats(); // Refresh UI
+    }
+
     // Console command to add bomb to inventory
     addBomb() {
         if (this.player.inventory.length < 6) {
@@ -1624,16 +1930,7 @@ class Game {
                 enemy.startDeathAnimation();
             }
         });
-        this.enemies = this.enemies.filter(enemy => enemy.deathAnimation === 0);
-
-        // Check lion interaction for automatic message
-        this.checkLionInteraction();
-
-        // Check squig interaction for automatic message
-        this.checkSquigInteraction();
-
-        // Check sign interaction for automatic message
-        this.checkSignInteraction();
+        this.enemies = this.enemies.filter(enemy => !enemy.isDead() || enemy.deathAnimation > 0);
 
         if (this.player.isDead()) {
             this.showGameOverScreen();
@@ -1643,72 +1940,20 @@ class Game {
             return;
         }
 
+        // Check lion interaction for automatic message
+        this.checkLionInteraction();
+
+        // Check squig interaction for automatic message
+        this.checkSquigInteraction();
+
         this.render();
         requestAnimationFrame(() => this.gameLoop());
     }
 
-    checkNoteInteraction() {
-        const playerPos = this.player.getPosition();
-        const messageOverlay = document.getElementById('messageOverlay');
 
-        // Find all note/sign positions and their messages (now all are signs)
-        const signs = [];
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.grid[y][x];
-                if (tile && tile.type === TILE_TYPES.SIGN) {
-                    signs.push({ x, y, message: tile.message });
-                }
-            }
-        }
 
-        let adjacentNoteMessage = null;
-        for (const sign of signs) {
-            const dx = Math.abs(sign.x - playerPos.x);
-            const dy = Math.abs(sign.y - playerPos.y);
-            if ((dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0)) {
-                adjacentNoteMessage = sign.message;
-                break; // Found an adjacent sign
-            }
-        }
-
-        if (adjacentNoteMessage && !messageOverlay.classList.contains('show')) {
-            this.showMessage(adjacentNoteMessage, 'Images/sign.png', true);
-        } else if (!adjacentNoteMessage && messageOverlay.classList.contains('show')) {
-            // This might hide other messages, so be careful. Let's let them time out.
-        }
-    }
-
-    checkSignInteraction() {
-        const playerPos = this.player.getPosition();
-        const messageOverlay = document.getElementById('messageOverlay');
-
-        // Find all sign positions and their messages
-        const signs = [];
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.grid[y][x];
-                if (tile && tile.type === TILE_TYPES.SIGN) {
-                    signs.push({ x, y, message: tile.message });
-                }
-            }
-        }
-
-        let adjacentSignMessage = null;
-        for (const sign of signs) {
-            const dx = Math.abs(sign.x - playerPos.x);
-            const dy = Math.abs(sign.y - playerPos.y);
-            if ((dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0)) {
-                adjacentSignMessage = sign.message;
-                break; // Found an adjacent sign
-            }
-        }
-
-        if (adjacentSignMessage && !messageOverlay.classList.contains('show')) {
-            this.showMessage(adjacentSignMessage, 'Images/sign.png', true);
-        } else if (!adjacentSignMessage && messageOverlay.classList.contains('show')) {
-            // This might hide other messages, so be careful. Let's let them time out.
-        }
+    addMessageToLog(message) {
+        this.messageLog.push(message);
     }
 
     showGameOverScreen() {
@@ -1722,6 +1967,7 @@ class Game {
         const overlay = document.getElementById('game-over-overlay');
         if (overlay) {
             overlay.style.display = 'none';
+
         }
     }
 }

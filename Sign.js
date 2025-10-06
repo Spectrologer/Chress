@@ -1,62 +1,52 @@
+// Sign class, refactored to be a static utility class for message handling.
 export class Sign {
-    constructor(message, x, y) {
-        this.message = message;
-        this.x = x;
-        this.y = y;
-    }
-
-    // This should be managed by a central game state manager, not statically here.
+    // Static properties for message generation
     static spawnedMessages = new Set();
 
     // Area definitions for messages
-        static messageSets = {
-            home: [
-                "The curse demands a toll. Do not let the inner fire fade.",
-                "They march in prescribed lines. A game for a mad god-tree.",
-                "The Club sought order. The Ent gave it to us. Be careful what you wish for.",
-                "Even a woodcutter must eat. Do not forget the simple truths.",
-                "Try walking, and then, despair."
-            ],
-            woods: [
-                "The stumps weep. Or maybe that's just sap.",
-                "Axe ahead. Therefore, try chopping.",
-                "The leaping ones mock our steps. Show them the woodcutter's way.",
-                "To shatter stone, one needs more than a sharp edge. Seek the hammer.",
-                "Beware, the 'knight'. Its path is crooked."
-            ],
-            wilds: [
-                "The rules fray at the edges here. Chaos seeps in.",
-                "They say a long-reaching weapon lies amidst the chaos. A tool to strike from where you are not.",
-                "The 'bishop' slides through the world's cracks. Do not let it corner you.",
-                "To pass, you need the tools of the Club. The axe for the green, the hammer for the grey.",
-                "Liar ahead. Or, treasure?"
-            ],
-            frontier: [
-                "The world is undone. The Ent's heart is near.",
-                "The 'rook' sees only straight lines. Use this to your advantage.",
-                "Here, the rules are but a suggestion. And the Ent does not play fair.",
-                "Turn back. Or, don't. What do I care?",
-                "Need bomb."
-            ],
-            canyon: [
-                "Echoes of the past whisper through these walls. Listen carefully.",
-                "The canyon breathes with ancient secrets. Can you hear them?",
-                "Strange formations line the path. They seem to watch you.",
-                "Footsteps echo endlessly here. Are they yours, or something else's?",
-                "The wind carries voices from another time. What are they saying?",        
-            ]
-        };
+    static messageSets = {
+        home: [
+            "The curse demands a toll. Do not let the inner fire fade.",
+            "They march in prescribed lines. A game for a mad god-tree.",
+            "The Club sought order. The Ent gave it to us. Be careful what you wish for.",
+            "Even a woodcutter must eat. Do not forget the simple truths.",
+            "Try walking, and then, despair."
+        ],
+        woods: [
+            "The stumps weep. Or maybe that's just sap.",
+            "Axe ahead. Therefore, try chopping.",
+            "The leaping ones mock our steps. Show them the woodcutter's way.",
+            "To shatter stone, one needs more than a sharp edge. Seek the hammer.",
+            "Beware, the 'knight'. Its path is crooked."
+        ],
+        wilds: [
+            "The rules fray at the edges here. Chaos seeps in.",
+            "They say a long-reaching weapon lies amidst the chaos. A tool to strike from where you are not.",
+            "The 'bishop' slides through the world's cracks. Do not let it corner you.",
+            "To pass, you need the tools of the Club. The axe for the green, the hammer for the grey.",
+            "Liar ahead. Or, treasure?"
+        ],
+        frontier: [
+            "The world is undone. The Ent's heart is near.",
+            "The 'rook' sees only straight lines. Use this to your advantage.",
+            "Here, the rules are but a suggestion. And the Ent does not play fair.",
+            "Turn back. Or, don't. What do I care?",
+            "A little know woodcutter power is reading signs sideways and backwards."
+        ],
+        canyon: [
+            "Echoes of the past whisper through these walls. Listen carefully.",
+            "The canyon breathes with ancient secrets. Can you hear them?",
+            "Strange formations line the path. They seem to watch you.",
+            "Footsteps echo endlessly here. Are they yours, or something else's?",
+            "The wind carries voices from another time. What are they saying?"
+        ]
+    };
 
-    // This logic should be moved to a manager that can handle state.
-    // The Note class itself should be a simple data structure.
     static getProceduralMessage(zoneX, zoneY, usedMessagesSet) {
-        // This is a simplified example. The full logic from the original function
-        // for selecting an unused message would go here, using the passed 'usedMessagesSet'.
-        // Procedural notes only spawn in the "wilds" (Level 3), so we only need that case.
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
         let area = 'wilds'; // Default to wilds as it's the only level with procedural notes.
         // The logic could be expanded if other levels get procedural notes.
-        
+
         const messages = Sign.messageSets[area];
         // Find an unused message from 'messages' that is not in 'usedMessagesSet'
         const availableMessages = messages.filter(msg => !usedMessagesSet.has(msg));
@@ -75,5 +65,45 @@ export class Sign {
     static getCanyonMessage() {
         const messages = Sign.messageSets.canyon;
         return messages[Math.floor(Math.random() * messages.length)];
+    }
+
+    // Handle click interaction (toggle message display)
+    static handleClick(signData, gameInstance, playerAdjacent) {
+        if (!playerAdjacent) {
+            return; // Only respond to clicks when adjacent
+        }
+
+        // Check if this specific sign's message is currently displayed
+        const isDisplayed = gameInstance.displayingMessageForSign &&
+                           gameInstance.displayingMessageForSign.message === signData.message;
+
+        if (isDisplayed) {
+            // Message is showing, hide it
+            Sign.hideMessageForSign(gameInstance);
+        } else {
+            // If another sign message is showing, hide it first to avoid overlap
+            if (gameInstance.displayingMessageForSign) {
+                Sign.hideMessageForSign(gameInstance);
+            }
+            // Now, display the new one
+            Sign.displayMessageForSign(signData, gameInstance);
+        }
+    }
+
+    // Static method to display message for a sign object
+    static displayMessageForSign(signData, gameInstance) {
+        console.log('Sign.displayMessageForSign called', signData.message);
+        // Use the dedicated sign message method for persistent display
+        gameInstance.showSignMessage(signData.message, 'Images/sign.png');
+        gameInstance.displayingMessageForSign = signData;
+    }
+
+    // Static method to hide the currently displayed sign message
+    static hideMessageForSign(gameInstance) {
+        console.log('Sign.hideMessageForSign called');
+        if (gameInstance.displayingMessageForSign) {
+            gameInstance.hideOverlayMessage();
+            gameInstance.displayingMessageForSign = null;
+        }
     }
 }

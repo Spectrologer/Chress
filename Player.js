@@ -99,7 +99,12 @@ export class Player {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'bomb' });
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
-                    } // If inventory full, can't pick up spear and it remains on ground
+                    } // If inventory full, can't pick up bomb and it remains on ground
+                } else if (tile === TILE_TYPES.NOTE) {
+                    if (this.inventory.length < 6) {
+                        this.inventory.push({ type: 'note' });
+                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                    } // If inventory full, can't pick up note and it remains on ground
                 }
             this.x = newX;
             this.y = newY;

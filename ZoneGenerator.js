@@ -8,6 +8,7 @@ export class ZoneGenerator {
     static axeSpawned = false;
     static hammerSpawned = false;
     static spearSpawned = false;
+    static noteSpawned = false;
     static lionSpawned = false;
     static squigSpawned = false;
     static wellSpawned = false;
@@ -18,6 +19,7 @@ export class ZoneGenerator {
     // Pre-determined spawn locations for special items
     static axeSpawnZone = null;
     static hammerSpawnZone = null;
+    static noteSpawnZone = null;
     static spearSpawnZone = null;
 
     constructor() {
@@ -71,7 +73,7 @@ export class ZoneGenerator {
         if (this.enemies && this.enemies.some(e => e.x === x && e.y === y)) return false;
         // Check for items (axe, hammer, bishop spear, etc.)
         if (tile === TILE_TYPES.AXE || tile === TILE_TYPES.HAMMER ||
-            (tile && tile.type === TILE_TYPES.BISHOP_SPEAR)) return false;
+            (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) || tile === TILE_TYPES.NOTE) return false;
         return true;
     }
 
@@ -236,6 +238,11 @@ export class ZoneGenerator {
             // Add a rare squig with low chance to spawn per zone (not level, but per zone)
             if (!ZoneGenerator.squigSpawned && Math.random() < 0.02) { // 2% chance
                 this.addSquigItem();
+            }
+
+            // Add a rare note with low chance to spawn per zone (not level, but per zone)
+            if (!ZoneGenerator.noteSpawned && Math.random() < 0.05) { // 5% chance
+                this.addNoteItem();
             }
 
             // Add a bomb with a 3% chance in zones level 2-4
@@ -535,6 +542,23 @@ export class ZoneGenerator {
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = TILE_TYPES.BOMB;
                 break; // Successfully placed bomb
+            }
+        }
+    }
+
+    addNoteItem() {
+        // Add the rare note item
+
+        // Try to place the note in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.NOTE;
+                ZoneGenerator.noteSpawned = true;
+                break; // Successfully placed note
             }
         }
     }

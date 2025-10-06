@@ -39,6 +39,7 @@
                     <div class="player-details">
                         <div class="map-inventory-wrapper">
                             <div class="player-map">
+                                <div id="message-log-button" class="message-log-button">Message Log</div>
                                 <canvas id="zoneMap"></canvas>
                                 <div id="map-info" class="map-info"></div>
                             </div>
@@ -66,6 +67,13 @@
         <div id="messageBox" class="message-box message-overlay"></div>
         <div id="messageOverlay" class="message-overlay"></div>
         <div id="regionNotification" class="region-notification-overlay"></div>
+        <div id="messageLogOverlay" class="message-log-overlay">
+            <div class="message-log-box">
+                <h2>Message Log</h2>
+                <div id="messageLogContent" class="message-log-content"></div>
+                <button id="closeMessageLogButton">Close</button>
+            </div>
+        </div>
         <div id="game-over-overlay" class="game-over-overlay">
             <div class="game-over-box">
                 <h1>Game Over</h1>

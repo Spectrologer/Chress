@@ -527,6 +527,8 @@ export class TextureManager {
             this.renderSpearTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.BOMB) {
             this.renderBombTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        } else if (actualType === TILE_TYPES.NOTE) {
+            this.renderNoteTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.SIGN) {
             this.renderSignTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.SHRUBBERY) {
@@ -1180,6 +1182,26 @@ export class TextureManager {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🐸', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
+    renderNoteTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+        // First draw the base tile
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the note image if loaded, otherwise use fallback
+        if (this.isImageLoaded('note')) {
+            ctx.drawImage(this.images.note, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.NOTE];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#FFE4C4'; // Cream color for note
+            ctx.font = '24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('📄', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 
