@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- This is a mobile browser game meant to be played in portrait mode. All design considerations should adhere to this. -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,9 +10,6 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="page-header">
-        <img src="Images/bichress.png" alt="BiChress Logo" class="bichress-header-img">
-    </div>
     <div class="game-container">
         <div class="header-area">
             <div class="character-card-container"> <!-- New container -->
@@ -84,17 +80,5 @@
         <script type="module" src="ZoneGenerator.js"></script>
         <script type="module" src="Player.js"></script>
         <script type="module" src="game.js"></script>
-        <script>
-                            // Hide the BICHRESS header image after 3 seconds, with upward movement only
-                            window.addEventListener('DOMContentLoaded', function() {
-                                setTimeout(function() {
-                                    const header = document.querySelector('.page-header');
-                                    if (header) {
-                                        header.classList.add('hide-header');
-                                        setTimeout(() => header.style.display = 'none', 1800);
-                                    }
-                                }, 3000);
-                            });
-        </script>
 </body>
 </html>

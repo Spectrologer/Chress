@@ -523,7 +523,7 @@ export class TextureManager {
             this.renderAxeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.HAMMER) {
             this.renderHammerTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-        } else if (actualType === TILE_TYPES.SPEAR) {
+        } else if (actualType === TILE_TYPES.BISHOP_SPEAR) {
             this.renderSpearTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.BOMB) {
             this.renderBombTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
@@ -544,6 +544,21 @@ export class TextureManager {
         } else {
         this.renderFloorTile(ctx, pixelX, pixelY, actualType);
     }
+    
+        // Add a faint alternating tint to non-wall tiles for a chessboard effect
+        if (actualType !== TILE_TYPES.WALL) {
+            let darkTint = 'rgba(0, 0, 0, 0.05)';
+            let lightTint = 'rgba(255, 255, 255, 0.05)';
+
+            if (zoneLevel >= 4) { // Frontier
+                darkTint = 'rgba(0, 0, 0, 0.12)';
+                lightTint = 'rgba(255, 255, 255, 0.02)'; // Reduce white opacity on bright desert tiles
+            }
+            ctx.save();
+            ctx.fillStyle = (x + y) % 2 === 0 ? darkTint : lightTint;
+            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            ctx.restore();
+        }
     }
 
     renderExitTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {

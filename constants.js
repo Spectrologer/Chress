@@ -17,7 +17,7 @@ export const TILE_TYPES = {
     AXE: 9,
     HAMMER: 10,
     NOTE: 11,
-    SPEAR: 12,
+    BISHOP_SPEAR: 12,
     SHRUBBERY: 13,
     WELL: 14,
     DEADTREE: 15,
@@ -48,7 +48,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.ENEMY]: '#32CD32',   // Lime green for enemy
     [TILE_TYPES.NOTE]: '#FFFF00',    // Yellow for note
     [TILE_TYPES.HAMMER]: '#8B4513',  // Brown for hammer
-    [TILE_TYPES.SPEAR]: '#8B4513',   // Brown for spear
+    [TILE_TYPES.BISHOP_SPEAR]: '#8B4513',   // Brown for bishop spear
     [TILE_TYPES.SHRUBBERY]: '#228B22', // Green for shrubbery
     [TILE_TYPES.WELL]: '#D2691E',   // Brown/orange for well
     [TILE_TYPES.DEADTREE]: '#8B4513',   // Brown for deadtree

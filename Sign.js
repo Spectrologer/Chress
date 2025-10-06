@@ -11,31 +11,32 @@ export class Sign {
     // Area definitions for messages
         static messageSets = {
             home: [
-                "Borrowed your axe. I'll leave it where it is when I'm done. - Crayn",
-                "Chopping wood sure makes me hungry. -Crayn",
-                "Stay hydrated. - Crayn",
-                "Fighting is never worth it. Sometimes- Crayn",
-                "If you starve to death, you will die. - Crayn"
+                "The curse demands a toll. Do not let the inner fire fade.",
+                "They march in prescribed lines. A game for a mad god-tree.",
+                "The Club sought order. The Ent gave it to us. Be careful what you wish for.",
+                "Even a woodcutter must eat. Do not forget the simple truths.",
+                "Try walking, and then, despair."
             ],
             woods: [
-                "I'd hate to get caught without a hammer in the wilds. - Crayn",
-                "If I could have any superpower, I'd be able to move diagonally. - Crayn",
-                "The trees here are thick. I need a good axe to get through.",
-                "Beware Lizardo. - Crayn",
+                "The stumps weep. Or maybe that's just sap.",
+                "Axe ahead. Therefore, try chopping.",
+                "The leaping ones mock our steps. Show them the woodcutter's way.",
+                "To shatter stone, one needs more than a sharp edge. Seek the hammer.",
+                "Beware, the 'knight'. Its path is crooked."
             ],
             wilds: [
-                "I've heard tales of a powerful spear, lost somewhere in these wilds. It's said to be able to strike foes from a distance.",
-                "The 'Lizardos' are no joke.",
-                "Some exits are blocked by thick shrubbery or heavy rocks. An axe or hammer is essential out here.",
-                "Frontier hint.",
-                "I heard there was a place with rainbow dirt...'"
+                "The rules fray at the edges here. Chaos seeps in.",
+                "They say a long-reaching weapon lies amidst the chaos. A tool to strike from where you are not.",
+                "The 'bishop' slides through the world's cracks. Do not let it corner you.",
+                "To pass, you need the tools of the Club. The axe for the green, the hammer for the grey.",
+                "Liar ahead. Or, treasure?"
             ],
             frontier: [
-                "The ground here is scorching. It feels like a desert. The walls are just dried-out husks.",
-                "This is the Frontier. Few have returned from here. Every step is a risk.",
-                "The creatures here are relentless. A spear is my only hope for survival.",
-                "Water is almost impossible to find. I must conserve what I have.",
-                "Is that... a puzzle? In the middle of nowhere? The colors... they must mean something."
+                "The world is undone. The Ent's heart is near.",
+                "The 'rook' sees only straight lines. Use this to your advantage.",
+                "Here, the rules are but a suggestion. And the Ent does not play fair.",
+                "Turn back. Or, don't. What do I care?",
+                "Need bomb."
             ],
             canyon: [
                 "Echoes of the past whisper through these walls. Listen carefully.",

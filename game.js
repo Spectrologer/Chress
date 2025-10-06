@@ -1,3 +1,4 @@
+// The project is a simple 2D tactical roguelike for mobile browsers. The premise is a world cursed by Ent, where all inhabitants are forced to move according to the rules of chess as punishment for the actions of the Woodcutters Club. The primary gameplay loop involves exploring a procedurally generated grid map to discover new zones, with the score based on the number of zones found. The ultimate, near-impossible goal is to locate and defeat the Ent in a special endgame zone where enemies break the established chess-movement rules. All design, narrative, and asset creation should align with this core concept of a rigid, ordered world clashing with its chaotic, natural origin, optimized for simple sprites and touch controls.//
 import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, TILE_TYPES, FOOD_ASSETS } from './constants.js';
 import { TextureManager } from './TextureManager.js';
 import { ConnectionManager } from './ConnectionManager.js';
@@ -405,28 +406,21 @@ class Game {
                 return;
             }
         }
-        // Check if player has spear and if tapped on enemy for spear attack
-        const hasSpear = this.player.inventory.some(item => item.type === 'spear');
+        // Check if player has bishop spear and if tapped position is diagonal and valid for bishop spear charge
+        const bishopSpearItem = this.player.inventory.find(item => item.type === 'bishop_spear' && item.uses > 0);
         const enemyAtCoords = this.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
-        if (hasSpear && enemyAtCoords) {
-            // Calculate direction from player to enemy
+        const targetTile = this.grid[gridCoords.y][gridCoords.x];
+        const isEmptyTile = !enemyAtCoords && this.player.isWalkable(gridCoords.x, gridCoords.y, this.grid, playerPos.x, playerPos.y);
+
+        if (bishopSpearItem && (enemyAtCoords || isEmptyTile)) {
+            // Calculate direction from player to target
             const dx = gridCoords.x - playerPos.x;
             const dy = gridCoords.y - playerPos.y;
 
-            // Check if it's a valid diagonal direction and adjacent
-            if (Math.abs(dx) === 1 && Math.abs(dy) === 1) {
-                let direction = '';
-                if (dy === -1) {
-                    if (dx === 1) direction = 'NE';
-                    else if (dx === -1) direction = 'NW';
-                } else if (dy === 1) {
-                    if (dx === 1) direction = 'SE';
-                    else if (dx === -1) direction = 'SW';
-                }
-                if (direction) {
-                    this.performSpearAttack(direction);
-                    return; // Attack performed, don't move
-                }
+            // Check if diagonal and within range (<=5 tiles)
+            if (Math.abs(dx) === Math.abs(dy) && Math.abs(dx) > 0 && Math.abs(dx) <= 5) {
+                this.performBishopSpearCharge(bishopSpearItem, gridCoords.x, gridCoords.y, enemyAtCoords, dx, dy);
+                return; // Charge performed, don't move
             }
         }
 
@@ -638,9 +632,9 @@ class Game {
                 }
                 return; // Don't move, just add item
             case 'r':
-                // Add spear to inventory for testing
+                // Add bishop spear to inventory for testing
                 if (this.player.inventory.length < 6) {
-                    this.player.inventory.push({ type: 'spear' });
+                    this.player.inventory.push({ type: 'bishop_spear', uses: 3 });
                     this.updatePlayerStats(); // Refresh inventory display
                 }
                 return; // Don't move, just add item
@@ -995,8 +989,8 @@ class Game {
                     tooltipText = 'Axe - Chops grass and shrubbery to create pathways';
                 } else if (item.type === 'hammer') {
                     tooltipText = 'Hammer - Breaks rocks to create pathways';
-                } else if (item.type === 'spear') {
-                    tooltipText = 'Spear - Attacks enemies diagonally';
+                } else if (item.type === 'bishop_spear') {
+                    tooltipText = 'Bishop Spear - Charge diagonally towards enemies, has ' + item.uses + ' charges';
                 } else if (item.type === 'bomb') {
                     tooltipText = 'Bomb - Blasts through walls to create exits';
                 }
@@ -1016,8 +1010,8 @@ class Game {
                     slot.classList.add('item-axe');
                 } else if (item.type === 'hammer') {
                     slot.classList.add('item-hammer');
-                } else if (item.type === 'spear') {
-                    slot.classList.add('item-spear');
+                } else if (item.type === 'bishop_spear') {
+                    slot.classList.add('item-spear'); // Reuse the class since same image
                 } else if (item.type === 'bomb') {
                     slot.classList.add('item-bomb');
                 } else if (item.type === 'tool') {
@@ -1080,10 +1074,10 @@ class Game {
                             this.grid[this.player.y][this.player.x] = TILE_TYPES.HAMMER;
                             this.player.inventory.splice(idx, 1);
                         }
-                    } else if (item.type === 'spear') {
-                        // Drop spear at player's current position
+                    } else if (item.type === 'bishop_spear') {
+                        // Drop bishop spear at player's current position
                         if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                            this.grid[this.player.y][this.player.x] = TILE_TYPES.SPEAR;
+                            this.grid[this.player.y][this.player.x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: item.uses };
                             this.player.inventory.splice(idx, 1);
                         }
                     } else if (item.type === 'bomb') {
@@ -1564,69 +1558,59 @@ class Game {
         }
     }
 
-    // Perform spear attack in specified direction
-    performSpearAttack(direction) {
-        // Check if player has a spear
-        const hasSpear = this.player.inventory.some(item => item.type === 'spear');
-        if (!hasSpear) return;
-
+    // Perform bishop spear charge
+    performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy) {
         const playerPos = this.player.getPosition();
-        let targetX = playerPos.x;
-        let targetY = playerPos.y;
 
-        // Calculate target position based on direction
-        switch (direction) {
-            case 'NE':
-                targetX += 1;
-                targetY -= 1;
-                break;
-            case 'NW':
-                targetX -= 1;
-                targetY -= 1;
-                break;
-            case 'SW':
-                targetX -= 1;
-                targetY += 1;
-                break;
-            case 'SE':
-                targetX += 1;
-                targetY += 1;
-                break;
+        // Check if diagonal path is unobstructed
+        const steps = Math.abs(dx);
+        for (let i = 1; i < steps; i++) {
+            const px = playerPos.x + (dx > 0 ? i : -i);
+            const py = playerPos.y + (dy > 0 ? i : -i);
+            if (!this.player.isWalkable(px, py, this.grid, px, py)) {
+                console.log('Bishop spear charge blocked by obstacle');
+                return;
+            }
         }
 
-        // Check bounds
-        if (targetX < 0 || targetX >= GRID_SIZE || targetY < 0 || targetY >= GRID_SIZE) {
-            return; // Out of bounds, no attack
+        // Decrement uses
+        item.uses--;
+        if (item.uses <= 0) {
+            // Remove item if no uses left
+            this.player.inventory = this.player.inventory.filter(invItem => invItem !== item);
         }
 
-        // Check if there's an enemy at the target position
-        const enemyAtTarget = this.enemies.find(enemy => enemy.x === targetX && enemy.y === targetY);
-        if (enemyAtTarget) {
-            // Spear attack - simple bump of attacked tile
-            console.log(`Player attacks enemy with spear at (${targetX}, ${targetY})!`);
-            enemyAtTarget.startBump(playerPos.x - targetX, playerPos.y - targetY);
-            enemyAtTarget.takeDamage(999); // Ensure enemy is dead
-            console.log('Player defeated enemy!');
+        // Move player directly to target position
+        this.player.setPosition(targetX, targetY);
+        console.log('Bishop Spear charge to (' + targetX + ',' + targetY + ')');
 
-            // Record that this enemy position is defeated to prevent respawning
+        // If there's an enemy at the target, attack it
+        if (enemy) {
+            // Attack the enemy (simple bump animation)
+            this.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1); // Bump in the direction of charge
+            enemy.startBump(this.player.x - enemy.x, this.player.y - enemy.y);
+            enemy.takeDamage(999); // Guaranteed kill
+            console.log('Bishop Spear charge attack! Enemy defeated.');
+
+            // Record defeat
             const currentZone = this.player.getCurrentZone();
-            this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemyAtTarget.x},${enemyAtTarget.y}`);
+            this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
 
-            // Remove enemy immediately
-            this.enemies = this.enemies.filter(e => e !== enemyAtTarget);
+            // Remove enemy
+            this.enemies = this.enemies.filter(e => e !== enemy);
 
-            // Update stored zone data
+            // Update zone data
             const zoneKey = `${currentZone.x},${currentZone.y}`;
             if (this.zones.has(zoneKey)) {
                 const zoneData = this.zones.get(zoneKey);
-                zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtTarget.id);
+                zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
                 this.zones.set(zoneKey, zoneData);
             }
-
-            this.updatePlayerStats(); // Refresh UI after attack
-            // Enemy movements happen after attacks to simulate turn-based combat
-            this.handleEnemyMovements();
         }
+
+        this.updatePlayerStats(); // Refresh UI after attack
+        // Enemy movements happen after attacks
+        this.handleEnemyMovements();
     }
 
     gameLoop() {

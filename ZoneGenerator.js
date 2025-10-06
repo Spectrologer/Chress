@@ -69,8 +69,9 @@ export class ZoneGenerator {
         if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.DEADTREE || tile === TILE_TYPES.WELL || tile === TILE_TYPES.SIGN || (tile && tile.type === TILE_TYPES.SIGN)) return false;
         // Check for enemy
         if (this.enemies && this.enemies.some(e => e.x === x && e.y === y)) return false;
-        // Check for items (axe, hammer, spear, etc.)
-        if (tile === TILE_TYPES.AXE || tile === TILE_TYPES.HAMMER || tile === TILE_TYPES.SPEAR) return false;
+        // Check for items (axe, hammer, bishop spear, etc.)
+        if (tile === TILE_TYPES.AXE || tile === TILE_TYPES.HAMMER ||
+            (tile && tile.type === TILE_TYPES.BISHOP_SPEAR)) return false;
         return true;
     }
 
@@ -506,18 +507,18 @@ export class ZoneGenerator {
     }
 
     addSpearItem() {
-        // Add the rare spear item
+        // Add the rare bishop spear item
 
-        // Try to place the spear in a valid location (max 50 attempts)
+        // Try to place the bishop spear in a valid location (max 50 attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
             const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
             const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
 
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.SPEAR;
+                this.grid[y][x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 };
                 ZoneGenerator.spearSpawned = true;
-                break; // Successfully placed spear
+                break; // Successfully placed bishop spear
             }
         }
     }
