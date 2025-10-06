@@ -146,6 +146,11 @@ class Game {
         // Expose game instance to console for debugging/cheating
         window.game = this;
 
+        // Import and expose console commands
+        import('./consoleCommands.js').then(module => {
+            window.consoleCommands = module.default;
+        });
+
         // Update UI
         this.uiManager.updatePlayerPosition();
         this.uiManager.updateZoneDisplay();

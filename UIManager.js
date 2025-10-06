@@ -1,3 +1,5 @@
+import logger from './logger.js';
+
 export class UIManager {
     constructor(game) {
         this.game = game;
@@ -212,14 +214,14 @@ export class UIManager {
     showMessage(text, imageSrc = null, useOverlay = false, persistent = false) {
         const messageElementId = useOverlay ? 'messageOverlay' : 'messageBox';
         const messageElement = document.getElementById(messageElementId);
-        console.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}, persistent: ${persistent}`);
+        logger.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}, persistent: ${persistent}`);
         let displayText = text;
         if (!displayText || displayText.trim() === '') {
             displayText = '[No message found for this note]';
-            console.warn('Note message is empty or undefined:', text);
+            logger.warn('Note message is empty or undefined:', text);
         }
         if (messageElement) {
-            console.log(`${messageElementId} found, setting HTML content`);
+            logger.log(`${messageElementId} found, setting HTML content`);
             // Use innerHTML to set content with image if provided
             if (imageSrc) {
                 messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
@@ -227,19 +229,19 @@ export class UIManager {
                 messageElement.textContent = displayText;
             }
             messageElement.classList.add('show');
-            console.log("Message set and show class added");
+            logger.log("Message set and show class added");
 
             // Auto-hide overlay messages after 2 seconds if not persistent
             if (useOverlay && !persistent) {
                 setTimeout(() => {
                     if (messageElement.classList.contains('show')) {
                         messageElement.classList.remove('show');
-                        console.log("Auto-hiding overlay message due to timeout.");
+                        logger.log("Auto-hiding overlay message due to timeout.");
                     }
                 }, 2000);
             }
         } else {
-            console.error(`${messageElementId} element not found`);
+            logger.error(`${messageElementId} element not found`);
         }
     }
 
@@ -247,7 +249,7 @@ export class UIManager {
         const messageOverlay = document.getElementById('messageOverlay');
         if (messageOverlay && messageOverlay.classList.contains('show')) {
             messageOverlay.classList.remove('show');
-            console.log("Hiding overlay message.");
+            logger.log("Hiding overlay message.");
         }
     }
 
@@ -261,7 +263,7 @@ export class UIManager {
                 messageElement.textContent = text;
             }
             messageElement.classList.add('show');
-            console.log(`Sign message shown: ${text}`);
+            logger.log(`Sign message shown: ${text}`);
         }
     }
 

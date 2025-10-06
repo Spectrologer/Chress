@@ -626,18 +626,6 @@ export class InputManager {
                     console.log('No available tiles to spawn sign');
                 }
                 break;
-            case 'q':
-                this.game.performSpearAttack('NE');
-                return;
-            case 'e':
-                this.game.performSpearAttack('NW');
-                return;
-            case 'z':
-                this.game.performSpearAttack('SW');
-                return;
-            case 'c':
-                this.game.performSpearAttack('SE');
-                return;
             default:
                 return;
         }

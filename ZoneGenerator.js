@@ -1,6 +1,7 @@
 import { TILE_TYPES, GRID_SIZE } from './constants.js';
 import { Enemy } from './Enemy.js';
 import { Sign } from './Sign.js';
+import logger from './logger.js';
 
 export class ZoneGenerator {
     static zoneCounter = 0;
@@ -255,7 +256,7 @@ export class ZoneGenerator {
             if (this.getZoneLevel() === 3 && !ZoneGenerator.puzzleZoneSpawned && Math.random() < 0.01) { // 1% chance
                 this.addSpecialTintZone();
                 ZoneGenerator.puzzleZoneSpawned = true;
-                console.log(`Special puzzle zone spawned at (${this.currentZoneX}, ${this.currentZoneY})`);
+                logger.log(`Special puzzle zone spawned at (${this.currentZoneX}, ${this.currentZoneY})`);
             } else {
                 // Only add random features if it's not the puzzle zone
                 this.addRandomFeatures();
@@ -595,7 +596,7 @@ export class ZoneGenerator {
     else return;
 
     const message = Sign.getMessageByIndex(area, messageIndex);
-    console.log('[Note Debug] addSpecificNote:', { area, messageIndex, message });
+    logger.log('[Note Debug] addSpecificNote:', { area, messageIndex, message });
     if (Sign.spawnedMessages.has(message)) return;
 
     if (this.checkSignExists()) return;
@@ -900,7 +901,7 @@ export class ZoneGenerator {
                     }
                 }
                 ZoneGenerator.deadTreeSpawned = true;
-                console.log(`Dead tree spawned at zone (${this.currentZoneX}, ${this.currentZoneY})`);
+                logger.log(`Dead tree spawned at zone (${this.currentZoneX}, ${this.currentZoneY})`);
                 break; // Successfully placed dead tree
             }
         }
@@ -979,7 +980,7 @@ export class ZoneGenerator {
         // Level 3 (Wilds): dist 9-16
         this.spearSpawnZone = this.getRandomZoneForLevel(9, 16);
 
-        console.log('Special Item Locations:', {
+        logger.log('Special Item Locations:', {
             axe: this.axeSpawnZone,
             hammer: this.hammerSpawnZone,
             spear: this.spearSpawnZone
@@ -998,7 +999,7 @@ export class ZoneGenerator {
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = TILE_TYPES.LION;
                 ZoneGenerator.lionSpawned = true;
-                console.log(`Lion spawned at zone (${this.currentZoneX}, ${this.currentZoneY}) at (${x}, ${y})`);
+                logger.log(`Lion spawned at zone (${this.currentZoneX}, ${this.currentZoneY}) at (${x}, ${y})`);
                 break; // Successfully placed lion
             }
         }
@@ -1016,7 +1017,7 @@ export class ZoneGenerator {
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = TILE_TYPES.SQUIG;
                 ZoneGenerator.squigSpawned = true;
-                console.log(`Squig spawned at zone (${this.currentZoneX}, ${this.currentZoneY}) at (${x}, ${y})`);
+                logger.log(`Squig spawned at zone (${this.currentZoneX}, ${this.currentZoneY}) at (${x}, ${y})`);
                 break; // Successfully placed squig
             }
         }
