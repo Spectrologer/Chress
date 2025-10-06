@@ -7,6 +7,7 @@ import { Player } from './Player.js';
 import { Enemy } from './Enemy.js';
 import { Sign } from './Sign.js';
 import { InputManager } from './InputManager.js';
+import { InventoryManager } from './InventoryManager.js';
 
 // Game state
 class Game {
@@ -29,6 +30,7 @@ class Game {
         this.zoneGenerator = new ZoneGenerator();
         this.player = new Player();
         this.inputManager = new InputManager(this);
+        this.inventoryManager = new InventoryManager(this);
 
         // Zone management
         this.zones = new Map(); // Stores generated zones by coordinate key
@@ -335,7 +337,7 @@ class Game {
         const mapInfo = document.getElementById('map-info');
         if (mapInfo) {
             const zonesDiscovered = this.player.getVisitedZones().size;
-            mapInfo.innerHTML = `Zone: (${zone.x}, ${zone.y})<br>Zones Discovered: ${zonesDiscovered}`;
+            mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Zone: (${zone.x}, ${zone.y})<br>Zones Discovered: ${zonesDiscovered}</span>`;
         }
     }
     
@@ -364,195 +366,8 @@ class Game {
             }
         });
 
-        // Get tooltip element
-        const tooltip = document.getElementById('inventory-tooltip');
-        let longPressTimeout = null;
-        let isLongPress = false;
-
-        // Function to show tooltip
-        const showTooltip = (slot, text) => {
-            if (!tooltip) return;
-            tooltip.textContent = text;
-            const rect = slot.getBoundingClientRect();
-            const inventoryRect = slot.closest('.player-inventory').getBoundingClientRect();
-            const tooltipWidth = 200; // Approximate width
-
-            // Position tooltip above the slot, centered, relative to player-inventory
-            tooltip.style.left = `${rect.left - inventoryRect.left + (rect.width / 2) - (tooltipWidth / 2)}px`;
-            tooltip.style.top = `${rect.top - inventoryRect.top - 40}px`; // 40px above
-            tooltip.classList.add('show');
-        };
-
-        // Function to hide tooltip
-        const hideTooltip = () => {
-            if (tooltip) {
-                tooltip.classList.remove('show');
-            }
-        };
-
-        // Render inventory items
-        const inventoryGrid = document.querySelector('.inventory-list');
-        if (inventoryGrid) {
-            inventoryGrid.innerHTML = '';
-            this.player.inventory.forEach((item, idx) => {
-                const slot = document.createElement('div');
-                slot.className = 'inventory-slot';
-                slot.style.cursor = this.player.isDead() ? 'not-allowed' : 'pointer';
-
-                // Determine tooltip text
-                let tooltipText = '';
-                if (item.type === 'food') {
-                    const foodName = item.foodType.split('/')[1] || item.foodType;
-                    tooltipText = `${foodName} - Restores 10 hunger`;
-                } else if (item.type === 'water') {
-                    tooltipText = 'Water - Restores 10 thirst';
-                } else if (item.type === 'axe') {
-                    tooltipText = 'Axe - Chops grass and shrubbery to create pathways';
-                } else if (item.type === 'hammer') {
-                    tooltipText = 'Hammer - Breaks rocks to create pathways';
-                } else if (item.type === 'bishop_spear') {
-                    tooltipText = 'Bishop Spear - Charge diagonally towards enemies, has ' + item.uses + ' charges';
-                } else if (item.type === 'bomb') {
-                    tooltipText = 'Bomb - Blasts through walls to create exits';
-                } else if (item.type === 'note') {
-                    tooltipText = 'Map Note - Marks an undiscovered location 20 zones away on the map';
-                }
-
-                // Use item function to avoid duplication
-                const useItem = () => {
-                    if (item.type === 'food') {
-                        this.player.restoreHunger(10);
-                        this.player.inventory.splice(idx, 1);
-                    } else if (item.type === 'water') {
-                        this.player.restoreThirst(10);
-                        this.player.inventory.splice(idx, 1);
-                    } else if (item.type === 'axe') {
-                        // Drop axe at player's current position
-                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                            this.grid[this.player.y][this.player.x] = TILE_TYPES.AXE;
-                            this.player.inventory.splice(idx, 1);
-                        }
-                    } else if (item.type === 'hammer') {
-                        // Drop hammer at player's current position
-                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                            this.grid[this.player.y][this.player.x] = TILE_TYPES.HAMMER;
-                            this.player.inventory.splice(idx, 1);
-                        }
-                    } else if (item.type === 'bishop_spear') {
-                        // Drop bishop spear at player's current position
-                        if (this.grid[this.player.y][this.player.x] === TILE_TYPES.FLOOR) { // Only drop if on floor
-                            this.grid[this.player.y][this.player.x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: item.uses };
-                            this.player.inventory.splice(idx, 1);
-                        }
-                    } else if (item.type === 'bomb') {
-                        // Drop bomb at player's current position on whatever tile it rests on
-                        this.grid[this.player.y][this.player.x] = TILE_TYPES.BOMB;
-                        this.player.inventory.splice(idx, 1);
-                    } else if (item.type === 'note') {
-                        // Use note to mark an undiscovered location 20 tiles away
-                        this.useMapNote();
-                        this.hideOverlayMessage(); // Clear any existing overlay message
-
-                        const noteMessageText = 'Coordinates revealed! Added to message log.';
-
-                        // Use the sign message system to show a temporary, persistent message
-                        // This prevents the game loop (e.g., checkLionInteraction) from hiding it immediately.
-                        this.displayingMessageForSign = { message: noteMessageText }; // Set flag
-                        this.showSignMessage(noteMessageText, 'Images/note.png'); // Show message
-
-                        // Set a timeout to hide the message and clear the flag after 2 seconds
-                        setTimeout(() => {
-                            // Only hide if the current message is still the one we set
-                            if (this.displayingMessageForSign && this.displayingMessageForSign.message === noteMessageText) {
-                               Sign.hideMessageForSign(this);
-                            }
-                        }, 2000);
-
-                        this.player.inventory.splice(idx, 1); // Remove note from inventory
-                    }
-                    this.updatePlayerStats();
-                };
-
-                if (item.type === 'food') {
-                    // Add the actual food sprite image to inventory slot
-                    const foodImg = document.createElement('img');
-                    foodImg.src = `Images/${item.foodType}`;
-                    foodImg.style.width = '100%';
-                    foodImg.style.height = '100%';
-                    foodImg.style.objectFit = 'contain';
-                    foodImg.style.imageRendering = 'pixelated';
-                    slot.appendChild(foodImg);
-                } else if (item.type === 'water') {
-                    slot.classList.add('item-water');
-                } else if (item.type === 'axe') {
-                    slot.classList.add('item-axe');
-                } else if (item.type === 'hammer') {
-                    slot.classList.add('item-hammer');
-                } else if (item.type === 'bishop_spear') {
-                    slot.classList.add('item-spear'); // Reuse the class since same image
-                } else if (item.type === 'bomb') {
-                    slot.classList.add('item-bomb');
-                } else if (item.type === 'note') {
-                    slot.classList.add('item-note');
-                } else if (item.type === 'tool') {
-                    slot.classList.add('item-tool');
-                }
-
-                // Desktop hover events
-                slot.addEventListener('mouseover', () => {
-                    if (!longPress) {
-                        showTooltip(slot, tooltipText);
-                    }
-                });
-                slot.addEventListener('mouseout', () => {
-                    if (!longPress) {
-                        hideTooltip();
-                    }
-                });
-
-                // Mobile touch events for long press
-                let longPress = false;
-                let longPressTimeout = null;
-                slot.addEventListener('touchstart', (e) => {
-                    e.preventDefault(); // Prevent click
-                    longPress = false;
-                    longPressTimeout = setTimeout(() => {
-                        longPress = true;
-                        showTooltip(slot, tooltipText);
-                        // Auto-hide after 2 seconds
-                        setTimeout(hideTooltip, 2000);
-                    }, 500);
-                });
-                slot.addEventListener('touchmove', () => {
-                    if (longPressTimeout) {
-                        clearTimeout(longPressTimeout);
-                        longPressTimeout = null;
-                    }
-                });
-                slot.addEventListener('touchend', (e) => {
-                    if (longPressTimeout) {
-                        clearTimeout(longPressTimeout);
-                        // Short tap - use the item
-                        if (!longPress) {
-                            useItem();
-                        }
-                    }
-                });
-
-                // Desktop click - use item
-                slot.addEventListener('click', () => {
-                    if (this.player.isDead()) return; // No restrictions like longPress here
-                    useItem();
-                });
-
-                inventoryGrid.appendChild(slot);
-            });
-            for (let i = this.player.inventory.length; i < 6; i++) {
-                const slot = document.createElement('div');
-                slot.className = 'inventory-slot';
-                inventoryGrid.appendChild(slot);
-            }
-        }
+        // Update inventory display
+        this.inventoryManager.updateInventoryDisplay();
     }
     
     renderZoneMap() {
@@ -1001,6 +816,8 @@ class Game {
             // Show newest messages first
             [...this.messageLog].reverse().forEach(msg => {
                 const p = document.createElement('p');
+                p.style.fontVariant = 'small-caps';
+                p.style.fontWeight = 'bold';
                 p.innerHTML = msg; // Use innerHTML to support messages with HTML tags
                 this.messageLogContent.appendChild(p);
             });
@@ -1304,7 +1121,11 @@ class Game {
 
 
     addMessageToLog(message) {
-        this.messageLog.push(message);
+        // Color coordinates in dark green
+        const coloredMessage = message.replace(/\((-?\d+),\s*(-?\d+)\)/g, (match, x, y) => {
+            return `<span style="color: darkgreen">${match}</span>`;
+        });
+        this.messageLog.push(coloredMessage);
     }
 
     showGameOverScreen() {
