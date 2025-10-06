@@ -1077,11 +1077,11 @@ h1 {
 }
 
 .message-overlay, #messageOverlay {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1200; /* Above region notification and other overlays */
+    z-index: 10; /* Above other content in the player card */
     margin: 0;
     padding: 15px 25px;
     background: #fffbe9;

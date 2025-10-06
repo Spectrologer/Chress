@@ -1190,6 +1190,8 @@ class Game {
                 } else if (item.type === 'note') {
                     // Use note to mark an undiscovered location 20 tiles away
                     this.useMapNote();
+                    this.hideOverlayMessage(); // Clear any existing overlay message
+                    this.showOverlayMessageSilent('Coordinates revealed! Added to message log.', null);
                     this.player.inventory.splice(idx, 1);
                 }
                     this.updatePlayerStats();

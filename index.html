@@ -12,7 +12,8 @@
 <body>
     <div class="game-container">
         <div class="header-area">
-            <div class="character-card-container"> <!-- New container -->
+            <!-- AI INSTRUCTION: This is the Player Card. It contains the player's stats (health, hunger, thirst), inventory, and a minimap of the world. -->
+            <div class="character-card-container">
                 <div class="character-card modern-player-card">
                     <div class="player-header">
                         <div class="player-name">CHALK</div>
@@ -56,16 +57,17 @@
                             </div>
                         </div>
                     </div>
+                    <div id="messageOverlay" class="message-overlay"></div>
                 </div>
             </div>
         </div>
+        <!-- AI INSTRUCTION: This is the Board. It is the main game grid where the player moves and interacts with the world. -->
         <div class="game-area">
             <div class="game-parchment">
                 <canvas id="gameCanvas"></canvas>
             </div>
         </div>
         <div id="messageBox" class="message-box message-overlay"></div>
-        <div id="messageOverlay" class="message-overlay"></div>
         <div id="regionNotification" class="region-notification-overlay"></div>
         <div id="messageLogOverlay" class="message-log-overlay">
             <div class="message-log-box">
