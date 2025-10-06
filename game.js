@@ -371,7 +371,7 @@ class Game {
             this.ctx.drawImage(
                 playerImage,
                 pos.x * TILE_SIZE + this.player.bumpOffsetX,
-                pos.y * TILE_SIZE + this.player.bumpOffsetY,
+                pos.y * TILE_SIZE + this.player.bumpOffsetY + this.player.liftOffsetY,
                 TILE_SIZE,
                 TILE_SIZE
             );
@@ -408,6 +408,7 @@ class Game {
             const move = key.split(',').map(Number);
             enemy.x = move[0];
             enemy.y = move[1];
+            enemy.liftFrames = 15; // Start lift animation
         }
     }
 
@@ -675,7 +676,7 @@ class Game {
                     this.ctx.save();
                     // Center scaling on enemy
                     const cx = enemy.x * TILE_SIZE + enemy.bumpOffsetX + TILE_SIZE / 2 + shakeX;
-                    const cy = enemy.y * TILE_SIZE + enemy.bumpOffsetY + TILE_SIZE / 2 + shakeY;
+                    const cy = enemy.y * TILE_SIZE + enemy.bumpOffsetY + enemy.liftOffsetY + TILE_SIZE / 2 + shakeY;
                     this.ctx.translate(cx, cy);
                     this.ctx.scale(scale, scale);
                     this.ctx.translate(-TILE_SIZE / 2, -TILE_SIZE / 2);

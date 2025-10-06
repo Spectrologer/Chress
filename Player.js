@@ -19,6 +19,8 @@ export class Player {
         this.bumpOffsetX = 0;
         this.bumpOffsetY = 0;
         this.bumpFrames = 0;
+        this.liftOffsetY = 0;
+        this.liftFrames = 0;
         this.markZoneVisited(0, 0);
     }
 
@@ -108,6 +110,7 @@ export class Player {
                 }
             this.x = newX;
             this.y = newY;
+            this.liftFrames = 15; // Start lift animation
 
             // Set smells when stepping on scent tiles
             if (tile === TILE_TYPES.ORANGE_FLOOR) {
@@ -330,6 +333,8 @@ export class Player {
     this.bumpOffsetX = 0;
     this.bumpOffsetY = 0;
     this.bumpFrames = 0;
+    this.liftOffsetY = 0;
+    this.liftFrames = 0;
     this.markZoneVisited(0, 0);
     }
 
@@ -427,6 +432,13 @@ export class Player {
         }
         if (this.attackAnimation > 0) {
             this.attackAnimation--;
+        }
+        if (this.liftFrames > 0) {
+            this.liftFrames--;
+            // Lift animation: parabolic curve (lift up then land)
+            const progress = this.liftFrames / 15;
+            const maxLift = -12; // Lift 12 pixels up (half tile roughly)
+            this.liftOffsetY = maxLift * 4 * progress * (1 - progress); // Parabolic lift
         }
     }
 }

@@ -14,6 +14,8 @@ export class Enemy {
         this.bumpOffsetX = 0;
         this.bumpOffsetY = 0;
         this.bumpFrames = 0;
+        this.liftOffsetY = 0;
+        this.liftFrames = 0;
     }
 
     planMoveTowards(player, grid, enemies, playerPos) {
@@ -42,6 +44,7 @@ export class Enemy {
                     // Move to adjacent tile
                     this.x = chargeMove.x;
                     this.y = chargeMove.y;
+                    this.liftFrames = 15; // Start lift animation
                     // After moving, check if now adjacent and ram
                     const newDx = Math.abs(this.x - playerX);
                     const newDy = Math.abs(this.y - playerY);
@@ -364,9 +367,16 @@ export class Enemy {
             this.bumpOffsetX *= 0.85; // Adjusted decay for smoother return
             this.bumpOffsetY *= 0.85;
         }
-            if (this.attackAnimation > 0) {
-                this.attackAnimation--;
-            }
+        if (this.attackAnimation > 0) {
+            this.attackAnimation--;
+        }
+        if (this.liftFrames > 0) {
+            this.liftFrames--;
+            // Lift animation: parabolic curve (lift up then land)
+            const progress = this.liftFrames / 15;
+            const maxLift = -12; // Lift 12 pixels up (half tile roughly)
+            this.liftOffsetY = maxLift * 4 * progress * (1 - progress); // Parabolic lift
+        }
     }
 
     // Helper for lizardeaux: find adjacent tile next to player along line of sight and charge there
