@@ -164,51 +164,25 @@ export class UIManager {
         const messageOverlay = document.getElementById('messageOverlay');
         // Show message if not already showing
         if (messageOverlay && !messageOverlay.classList.contains('show')) {
-            this.showOverlayMessageSilent('<span class="character-name">Penne</span><br>TRADE FOR MEAT!', 'Images/lion.png');
+            this.showOverlayMessage('<span class="character-name">Penne</span><br>TRADE FOR MEAT!', 'Images/lion.png');
         }
     }
 
     hideLionInteractionMessage() {
         const messageOverlay = document.getElementById('messageOverlay');
         // Hide the overlay, but only if a sign message isn't the one being displayed.
-        if (messageOverlay && messageOverlay.classList.contains('show') && !this.game.displayingMessageForSign) {
+        // Also check if the message is the lion message before hiding, to avoid closing other messages.
+        if (messageOverlay && messageOverlay.classList.contains('show') && !this.game.displayingMessageForSign && messageOverlay.innerHTML.includes("Penne")) {
             messageOverlay.classList.remove('show');
         }
     }
 
     showOverlayMessageSilent(text, imageSrc) {
-        const messageElement = document.getElementById('messageOverlay');
-        if (messageElement) {
-            const displayText = text || '[No message found]';
-            const wasAlreadyShowing = messageElement.classList.contains('show');
+        this.showMessage(text, imageSrc, true, false);
+    }
 
-            if (wasAlreadyShowing) {
-                // Append to existing message content
-                if (imageSrc) {
-                    messageElement.innerHTML += `<br><img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 5px auto; image-rendering: pixelated;">${displayText}`;
-                } else {
-                    messageElement.innerHTML += `<br>${displayText}`;
-                }
-            } else {
-                // New message - replace content
-                if (imageSrc) {
-                    messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
-                } else {
-                    messageElement.textContent = displayText;
-                }
-            }
-
-            messageElement.classList.add('show');
-
-            // Set auto-hide timeout only if this is the first message
-            if (!wasAlreadyShowing) {
-                setTimeout(() => {
-                    if (messageElement.classList.contains('show')) {
-                        messageElement.classList.remove('show');
-                    }
-                }, 2000);
-            }
-        }
+    showOverlayMessage(text, imageSrc) {
+        this.showMessage(text, imageSrc, true, false);
     }
 
     showMessage(text, imageSrc = null, useOverlay = false, persistent = false) {
@@ -295,11 +269,20 @@ export class UIManager {
     }
 
     addMessageToLog(message) {
-        // Color coordinates in dark green
+        let coordinates = null;
+        // Color coordinates in dark green and extract them for the overlay message
         const coloredMessage = message.replace(/\((-?\d+),\s*(-?\d+)\)/g, (match, x, y) => {
+            if (!coordinates) { // Only capture the first set of coordinates for the message
+                coordinates = match;
+            }
             return `<span style="color: darkgreen">${match}</span>`;
         });
         this.game.messageLog.push(coloredMessage);
+
+        // If coordinates were found in the message, show a temporary overlay message
+        if (coordinates) {
+            this.showOverlayMessage(`Coordinates ${coordinates} added to log.`);
+        }
     }
 
     showGameOverScreen() {

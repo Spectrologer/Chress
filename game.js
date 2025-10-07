@@ -468,9 +468,14 @@ class Game {
         // Check if player has seeds
         const hasSeeds = this.player.inventory.some(item => item.type === 'food' && item.foodType.includes('seeds/'));
 
+        // Do not show the squig message if a sign message is already displayed.
+        if (this.displayingMessageForSign) {
+            return;
+        }
+
         if (isAdjacentToSquig && !hasSeeds) {
             // Show message even if overlay is already showing (allow multiple messages)
-            this.uiManager.showOverlayMessageSilent('<span class="character-name">Squig</span><br>Seeds please!', 'Images/fauna/squigface.png');
+            this.uiManager.showOverlayMessage('<span class="character-name">Squig</span><br>Seeds please!', 'Images/fauna/squigface.png');
         }
     }
 
