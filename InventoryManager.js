@@ -111,7 +111,7 @@ export class InventoryManager {
         } else if (item.type === 'horse_icon') {
             // Add the horse icon image to inventory slot
             const horseImg = document.createElement('img');
-            horseImg.src = 'Images/horse.png';
+            horseImg.src = 'Images/items/horse.png';
             horseImg.style.width = '100%';
             horseImg.style.height = '100%';
             horseImg.style.objectFit = 'contain';
@@ -256,7 +256,7 @@ export class InventoryManager {
                 // Use the sign message system to show a temporary, persistent message
                 // This prevents the game loop (e.g., checkLionInteraction) from hiding it immediately.
                 this.game.displayingMessageForSign = { message: noteMessageText }; // Set flag
-                this.game.showSignMessage(noteMessageText, 'Images/note.png'); // Show message
+                this.game.showSignMessage(noteMessageText, 'Images/items/note.png'); // Show message
 
                 // Set a timeout to hide the message and clear the flag after 2 seconds
                 setTimeout(() => {

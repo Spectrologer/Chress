@@ -127,26 +127,34 @@ export class Player {
 
             return true;
         } else {
-            // Check if can chop/smash the target tile
+            // Check if can chop/smash the target tile (only orthogonal adjacent positions)
             const tile = grid[newY][newX];
-            const hasAxe = this.inventory.some(item => item.type === 'axe');
-            if (hasAxe && (tile === TILE_TYPES.GRASS || tile === TILE_TYPES.SHRUBBERY)) {
-                // Chop at target position without moving
-                const isBorder = newX === 0 || newX === GRID_SIZE - 1 || newY === 0 || newY === GRID_SIZE - 1;
-                grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
-                this.decreaseHunger(); // Cutting costs hunger
-                this.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
-                return false; // Don't move, just attack
-            }
+            const deltaX = Math.abs(newX - this.x);
+            const deltaY = Math.abs(newY - this.y);
+            const isAdjacentOrthogonal = (deltaX === 1 && deltaY === 0) || (deltaX === 0 && deltaY === 1);
 
-            const hasHammer = this.inventory.some(item => item.type === 'hammer');
-            if (hasHammer && tile === TILE_TYPES.ROCK) {
-                // Break at target position without moving
-                const isBorder = newY === 0 || newY === GRID_SIZE - 1 || newX === 0 || newX === GRID_SIZE - 1;
-                grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
-                this.decreaseHunger(2); // Breaking costs 2 hunger
-                this.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
-                return false; // Don't move, just attack
+            if (isAdjacentOrthogonal) {
+                const hasAxe = this.inventory.some(item => item.type === 'axe');
+                if (hasAxe && (tile === TILE_TYPES.GRASS || tile === TILE_TYPES.SHRUBBERY)) {
+                    // Chop at target position without moving
+                    const isBorder = newX === 0 || newX === GRID_SIZE - 1 || newY === 0 || newY === GRID_SIZE - 1;
+                    grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
+                    this.decreaseHunger(); // Cutting costs hunger
+                    this.startActionAnimation(); // Start action animation
+                    this.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
+                    return false; // Don't move, just attack
+                }
+
+                const hasHammer = this.inventory.some(item => item.type === 'hammer');
+                if (hasHammer && tile === TILE_TYPES.ROCK) {
+                    // Break at target position without moving
+                    const isBorder = newY === 0 || newY === GRID_SIZE - 1 || newX === 0 || newX === GRID_SIZE - 1;
+                    grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
+                    this.decreaseHunger(2); // Breaking costs 2 hunger
+                    this.startActionAnimation(); // Start action animation
+                    this.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
+                    return false; // Don't move, just attack
+                }
             }
 
             return false; // Can't move

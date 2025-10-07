@@ -287,7 +287,7 @@ export class TileRenderer {
         this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Then render the house part
-        if (this.isImageLoaded('house')) {
+        if (this.isImageLoaded('doodads/house')) {
             // For a 3x3 house, we need to determine which part of the house image to draw
             // Find the house area bounds to determine the position within the house
             const houseInfo = this.findHousePosition(x, y, grid);
@@ -299,11 +299,12 @@ export class TileRenderer {
 
                 // Draw the corresponding part of the house image
                 // Divide the house image into 3x3 parts
-                const partWidth = this.images.house.width / 3;
-                const partHeight = this.images.house.height / 3;
+                const houseImage = this.images['doodads/house'];
+                const partWidth = houseImage.width / 3;
+                const partHeight = houseImage.height / 3;
 
                 ctx.drawImage(
-                    this.images.house,
+                    houseImage,
                     partX * partWidth, partY * partHeight, // Source position
                     partWidth, partHeight, // Source size
                     pixelX, pixelY, // Destination position
@@ -322,7 +323,7 @@ export class TileRenderer {
         this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Then render the well part
-        if (this.isImageLoaded('well')) {
+        if (this.isImageLoaded('doodads/well')) {
             // For a 2x2 well, we need to determine which part of the well image to draw
             // Find the well area bounds to determine the position within the well
             const wellInfo = this.findWellPosition(x, y, grid);
@@ -334,11 +335,12 @@ export class TileRenderer {
 
                 // Draw the corresponding part of the well image
                 // Divide the well image into 2x2 parts
-                const partWidth = this.images.well.width / 2;
-                const partHeight = this.images.well.height / 2;
+                const wellImage = this.images['doodads/well'];
+                const partWidth = wellImage.width / 2;
+                const partHeight = wellImage.height / 2;
 
                 ctx.drawImage(
-                    this.images.well,
+                    wellImage,
                     partX * partWidth, partY * partHeight, // Source position
                     partWidth, partHeight, // Source size
                     pixelX, pixelY, // Destination position
@@ -357,7 +359,7 @@ export class TileRenderer {
         this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Then render the dead tree part
-        if (this.isImageLoaded('deadtree')) {
+        if (this.isImageLoaded('doodads/deadtree')) {
             // For a 2x2 dead tree, we need to determine which part of the dead tree image to draw
             // Find the dead tree area bounds to determine the position within the dead tree
             const deadtreeInfo = this.findDeadTreePosition(x, y, grid);
@@ -369,11 +371,12 @@ export class TileRenderer {
 
                 // Draw the corresponding part of the dead tree image
                 // Divide the dead tree image into 2x2 parts
-                const partWidth = this.images.deadtree.width / 2;
-                const partHeight = this.images.deadtree.height / 2;
+                const deadtreeImage = this.images['doodads/deadtree'];
+                const partWidth = deadtreeImage.width / 2;
+                const partHeight = deadtreeImage.height / 2;
 
                 ctx.drawImage(
-                    this.images.deadtree,
+                    deadtreeImage,
                     partX * partWidth, partY * partHeight, // Source position
                     partWidth, partHeight, // Source size
                     pixelX, pixelY, // Destination position

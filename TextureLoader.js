@@ -25,6 +25,12 @@ export class TextureLoader {
                     imageKey = 'blocklily';
                 } else if (assetName.startsWith('floors/dirt/')) {
                     imageKey = assetName.replace('floors/dirt/', '').replace('.png', '');
+                } else if (assetName.startsWith('items/')) {
+                    imageKey = assetName.replace('items/', '').replace('.png', '');
+                } else if (assetName.startsWith('fauna/')) {
+                    imageKey = assetName.replace('fauna/', '').replace('.png', '');
+                } else if (assetName.startsWith('protag/')) {
+                    imageKey = assetName.replace('protag/', '').replace('.png', '');
                 } else {
                     imageKey = assetName.replace('.png', '');
                 }

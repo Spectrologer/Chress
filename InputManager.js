@@ -712,6 +712,7 @@ export class InputManager {
 
                 if (enemyAtTarget) {
                     // Player attacks enemy - simple bump of attacked tile
+                    this.game.player.startAttackAnimation();
                     this.game.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
                     console.log('Player attacks enemy!');
                     enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);

@@ -173,7 +173,7 @@ export class UIManager {
         const messageOverlay = document.getElementById('messageOverlay');
         // Show message even if another is showing, to allow it to take priority
         // when both lion and squig are present.
-        this.showOverlayMessage('<span class="character-name">Penne</span><br>Give me meat!', 'Images/lion.png');
+        this.showOverlayMessage('<span class="character-name">Penne</span><br>Give me meat!', 'Images/fauna/lion.png');
     }
 
     hideLionInteractionMessage() {
@@ -354,14 +354,14 @@ export class UIManager {
             message = 'Give me meat!';
             requiredItem = 'Food/meat';
             requiredItemImg = 'Images/Food/meat/meat.png';
-            receivedItemImg = 'Images/water.png';
+            receivedItemImg = 'Images/items/water.png';
         } else if (npcType === 'squig') {
             name = 'Squig';
             portrait = 'Images/fauna/squigface.png';
             message = 'I\'m nuts for nuts!';
             requiredItem = 'Food/nut';
             requiredItemImg = 'Images/Food/nut/nut.png';
-            receivedItemImg = 'Images/water.png';
+            receivedItemImg = 'Images/items/water.png';
         } else {
             return;
         }

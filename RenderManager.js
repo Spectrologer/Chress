@@ -58,13 +58,13 @@ export class RenderManager {
 
     drawPlayer() {
         const pos = this.game.player.getPosition();
-        let spriteKey = 'SeparateAnim/Special2'; // Default idle sprite
+        let spriteKey = 'default'; // Default idle sprite
         if (this.game.player.attackAnimation > 0) {
-            spriteKey = 'SeparateAnim/Attack';
+            spriteKey = 'whack';
         } else if (this.game.player.actionAnimation > 0) {
-            spriteKey = 'SeparateAnim/Attack';
+            spriteKey = 'whack';
         } else if (this.game.player.isDead()) {
-            spriteKey = 'SeparateAnim/dead';
+            spriteKey = 'dead';
         }
         const playerImage = this.game.textureManager.getImage(spriteKey);
         if (playerImage && playerImage.complete) {
@@ -90,16 +90,16 @@ export class RenderManager {
         for (let enemy of this.game.enemies) {
             let enemyKey;
             if (enemy.enemyType === 'lizardo') {
-                enemyKey = 'fauna/lizardo';
+                enemyKey = 'lizardo';
             } else if (enemy.enemyType === 'lizardeaux') {
-                enemyKey = 'fauna/lizardeaux';
+                enemyKey = 'lizardeaux';
             } else {
-                enemyKey = 'fauna/lizardy';
+                enemyKey = 'lizardy';
             }
 
             // Determine sprite based on animation state
             if (enemy.deathAnimation > 0) {
-                enemyKey = 'SeparateAnim/dead';
+                enemyKey = 'dead';
             }
 
             // Dramatic attack animation: scale, flash, shake

@@ -416,7 +416,7 @@ body {
 }
 
 .inventory-slot.item-water {
-    background-image: url('Images/water.png');
+    background-image: url('Images/items/water.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -591,39 +591,43 @@ body {
 }
 
 .inventory-slot.item-axe {
-    background-image: url('Images/axe.png');
+    background-image: url('Images/items/axe.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
 
 .inventory-slot.item-hammer {
-    background-image: url('Images/hammer.png');
+    background-image: url('Images/items/hammer.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
 
 .inventory-slot.item-spear {
-    background-image: url('Images/spear.png');
+    background-image: url('Images/items/spear.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
 
 .inventory-slot.item-bomb {
-    background-image: url('Images/bomb.png');
+    background-image: url('Images/items/bomb.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
 }
 
 .inventory-slot.item-heart {
-    background-image: url('Images/heart.png');
+    background-image: url('Images/items/heart.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
 
 .inventory-slot.item-note {
-    background-image: url('Images/note.png');
+    background-image: url('Images/items/note.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
