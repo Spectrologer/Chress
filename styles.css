@@ -179,11 +179,12 @@ body {
 .inventory-slot {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: #f5e6c0;
+    background: #f5e6c0 url('Images/cells/cell.png') no-repeat center / contain;
     border: 1px solid #e2cfa2;
     border-radius: 6px;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
     image-rendering: crisp-edges;
 }
 
@@ -261,20 +262,20 @@ body {
 
 /* Ornate, inset frame for the character image */
 .character-profile img {
-    width: 100px;
-    height: 100px;
-    
+    width: 90px;
+    height: 90px;
+
     /* Inset frame effect */
     border: 2px solid #7A4A3A;
     border-radius: 10px;
     padding: 4px; /* Space between image and frame */
-    background: linear-gradient(145deg, #D2B48C, #B8860B); /* Gold-ish backing */
-    
+    background: linear-gradient(145deg, #D2B48C, #B8860B) no-repeat center / contain url('Images/ui/facesetbox.png'); /* Gold-ish backing */
+
     /* Multi-layered shadow for depth */
     box-shadow:
         inset 0 0 8px rgba(0, 0, 0, 0.6), /* Inner shadow on frame */
         3px 3px 6px rgba(0, 0, 0, 0.4); /* Outer shadow */
-    
+
     display: block;
 }
 
@@ -422,173 +423,9 @@ body {
     background-position: center;
 }
 
-.inventory-slot.item-beaf {
-    background-image: url('Images/Food/Beaf.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
 
-.inventory-slot.item-calamari {
-    background-image: url('Images/Food/Calamari.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
 
-.inventory-slot.item-fish {
-    background-image: url('Images/Food/Fish.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
 
-.inventory-slot.item-fortunecookie {
-    background-image: url('Images/Food/FortuneCookie.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-honey {
-    background-image: url('Images/Food/Honey.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-meat {
-    background-image: url('Images/Food/Meat.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-noodle {
-    background-image: url('Images/Food/Noodle.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-nut {
-    background-image: url('Images/Food/Nut.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-nut2 {
-    background-image: url('Images/Food/Nut2.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-octopus {
-    background-image: url('Images/Food/Octopus.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-onigiri {
-    background-image: url('Images/Food/Onigiri.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-seed1 {
-    background-image: url('Images/Food/Seed1.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-seed2 {
-    background-image: url('Images/Food/Seed2.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-seed3 {
-    background-image: url('Images/Food/Seed3.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-seedbig1 {
-    background-image: url('Images/Food/SeedBig1.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-seedbig2 {
-    background-image: url('Images/Food/SeedBig2.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-seedbig3 {
-    background-image: url('Images/Food/SeedBig3.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-seedlarge {
-    background-image: url('Images/Food/SeedLarge.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-seedlargewhite {
-    background-image: url('Images/Food/SeedLargeWhite.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-shrimp {
-    background-image: url('Images/Food/Shrimp.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-sushi {
-    background-image: url('Images/Food/Sushi.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-sushi2 {
-    background-image: url('Images/Food/Sushi2.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-tealeaf {
-    background-image: url('Images/Food/TeaLeaf.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.inventory-slot.item-yakitori {
-    background-image: url('Images/Food/Yakitori.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
 
 .inventory-slot.item-axe {
     background-image: url('Images/items/axe.png');
@@ -616,7 +453,6 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-}
 }
 
 .inventory-slot.item-heart {
@@ -1441,7 +1277,7 @@ h1 {
     gap: 15px;
 }
 
-m.barter-info {
+.barter-info {
     display: flex;
     align-items: center;
     gap: 15px;
@@ -1462,7 +1298,10 @@ m.barter-info {
     border-radius: 8px;
     border: 2px solid #7A4A3A;
     padding: 2px;
-    background: linear-gradient(145deg, #D2B48C, #B8860B);
+    background: linear-gradient(145deg, #D2B48C, #B8860B), url('Images/ui/facesetbox.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     object-fit: cover;
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4), 0 3px 8px rgba(0, 0, 0, 0.15);
     image-rendering: pixelated;
@@ -1527,7 +1366,39 @@ m.barter-info {
 }
 
 #cancelBarterButton {
-    background: linear-gradient(135deg, #A0522D, #8B4513);
-    border: 2px solid #654321;
-    color: #F5DEB3;
+    background-image: url('Images/ui/no.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    border: none;
+    color: transparent;
+    box-shadow: none;
+    padding: 0;
+    width: 128px;
+    height: 128px;
+    cursor: pointer;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+#confirmBarterButton {
+    background-image: url('Images/ui/yes.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    border: none;
+    color: transparent;
+    box-shadow: none;
+    padding: 0;
+    width: 128px;
+    height: 128px;
+    cursor: pointer;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: crisp-edges;
 }
