@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_SIZE } from './constants.js';
+import { GRID_SIZE, TILE_SIZE, TILE_TYPES } from './constants.js';
 import { TextureManager } from './TextureManager.js';
 
 export class RenderManager {
@@ -37,6 +37,8 @@ export class RenderManager {
         else if (dist <= 16) zoneLevel = 3;
         else zoneLevel = 4;
 
+        const dangerousTiles = this.calculateDangerousTiles();
+
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
                 const tile = this.game.grid[y][x];
@@ -51,6 +53,11 @@ export class RenderManager {
                     // Fallback rendering
                     this.ctx.fillStyle = '#ffcb8d';
                     this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+
+                // Draw danger indicator if the tile is dangerous
+                if (dangerousTiles.has(`${x},${y}`)) {
+                    this.drawDangerIndicator(x, y);
                 }
             }
         }
@@ -158,5 +165,44 @@ export class RenderManager {
                 );
             }
         }
+    }
+
+    calculateDangerousTiles() {
+        const dangerousTiles = new Set();
+        if (!this.game.player || this.game.player.isDead() || !this.game.grid) {
+            return dangerousTiles;
+        }
+
+        const playerPos = this.game.player.getPosition();
+        const directions = [
+            { dx: 0, dy: -1 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }, { dx: 1, dy: 0 }, // Orthogonal
+            { dx: -1, dy: -1 }, { dx: 1, dy: -1 }, { dx: -1, dy: 1 }, { dx: 1, dy: 1 }  // Diagonal
+        ];
+
+        for (const dir of directions) {
+            const x = playerPos.x + dir.dx;
+            const y = playerPos.y + dir.dy;
+
+            // We only care about adjacent tiles the player can actually move to.
+            if (this.game.player.isWalkable(x, y, this.game.grid)) {
+                // Check if any enemy can attack this position.
+                for (const enemy of this.game.enemies) {
+                    if (enemy.canAttackPosition(this.game.player, x, y, this.game.grid, this.game.enemies)) {
+                        dangerousTiles.add(`${x},${y}`);
+                        break; // One enemy is enough to mark it as dangerous.
+                    }
+                }
+            }
+        }
+
+        return dangerousTiles;
+    }
+
+    drawDangerIndicator(x, y) {
+        this.ctx.save();
+        this.ctx.fillStyle = 'rgba(255, 0, 0, 0.25)'; // Semi-transparent red
+        this.ctx.globalCompositeOperation = 'source-atop';
+        this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        this.ctx.restore();
     }
 }

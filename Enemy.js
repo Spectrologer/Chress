@@ -18,7 +18,7 @@ export class Enemy {
         this.liftFrames = 0;
     }
 
-    planMoveTowards(player, grid, enemies, playerPos) {
+    planMoveTowards(player, grid, enemies, playerPos, isSimulation = false) {
         const playerX = playerPos.x;
         const playerY = playerPos.y;
 
@@ -35,21 +35,23 @@ export class Enemy {
 
             // If adjacent, perform ram attack
             if (isAdjacent) {
-                this.performRamFromDistance(player, playerX, playerY, grid);
+                this.performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation);
                 return null;
             } else {
                 // If not adjacent, but line of sight, charge to adjacent tile and ram
                 const chargeMove = this.getChargeAdjacentMove(playerX, playerY, grid, enemies);
                 if (chargeMove) {
                     // Move to adjacent tile
-                    this.x = chargeMove.x;
-                    this.y = chargeMove.y;
-                    this.liftFrames = 15; // Start lift animation
+                    if (!isSimulation) {
+                        this.x = chargeMove.x;
+                        this.y = chargeMove.y;
+                        this.liftFrames = 15; // Start lift animation
+                    }
                     // After moving, check if now adjacent and ram
-                    const newDx = Math.abs(this.x - playerX);
-                    const newDy = Math.abs(this.y - playerY);
+                    const newDx = Math.abs(chargeMove.x - playerX);
+                    const newDy = Math.abs(chargeMove.y - playerY);
                     if (newDx + newDy === 1) {
-                        this.performRamFromDistance(player, playerX, playerY, grid);
+                        this.performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation);
                     }
                     return null; // All in one turn
                 }
@@ -60,7 +62,7 @@ export class Enemy {
         if (this.enemyType === 'zard') {
             // Check if diagonal line of sight exists
             if (this.checkDiagonalLineOfSight(playerX, playerY, grid)) {
-                this.performBishopCharge(player, playerX, playerY, grid);
+                this.performBishopCharge(player, playerX, playerY, grid, isSimulation);
                 return null;
             }
         }
@@ -71,24 +73,29 @@ export class Enemy {
             const chargeMove = this.getQueenChargeAdjacentMove(playerX, playerY, grid, enemies);
             if (chargeMove) {
                 // Set charge position to adjacent of player
-                this.x = chargeMove.x;
-                this.y = chargeMove.y;
-                // Now adjacent, attack
-                player.takeDamage(this.attack);
-                player.startBump(this.x - playerX, this.y - playerY);
-                this.startBump(playerX - this.x, playerY - this.y);
-                this.justAttacked = true;
-                this.attackAnimation = 15;
-                console.log(`Lazerd queen charges and attacks player!`);
-                if (player.isDead()) console.log('Player died!');
-                // Knockback away
-                const dx = playerX - chargeMove.x; // Since chargeMove is adjacent, dx= +/-1 or 0
-                const dy = playerY - chargeMove.y;
-                let knockbackX = playerX;
-                let knockbackY = playerY;
-                if (dx !== 0) knockbackX += dx;
-                if (dy !== 0) knockbackY += dy;
-                player.setPosition(knockbackX, knockbackY);
+                if (!isSimulation) {
+                    this.x = chargeMove.x;
+                    this.y = chargeMove.y;
+                    // Now adjacent, attack
+                    player.takeDamage(this.attack);
+                    player.startBump(this.x - playerX, this.y - playerY);
+                    this.startBump(playerX - this.x, playerY - this.y);
+                    this.justAttacked = true;
+                    this.attackAnimation = 15;
+                    console.log(`Lazerd queen charges and attacks player!`);
+                    if (player.isDead()) console.log('Player died!');
+                    // Knockback away
+                    const dx = playerX - chargeMove.x; // Since chargeMove is adjacent, dx= +/-1 or 0
+                    const dy = playerY - chargeMove.y;
+                    let knockbackX = playerX;
+                    let knockbackY = playerY;
+                    if (dx !== 0) knockbackX += dx;
+                    if (dy !== 0) knockbackY += dy;
+                    // Only knockback if the position is walkable
+                    if (player.isWalkable(knockbackX, knockbackY, grid)) {
+                        player.setPosition(knockbackX, knockbackY);
+                    }
+                }
                 return null;
             }
         }
@@ -132,77 +139,85 @@ export class Enemy {
             if (this.isWalkable(newX, newY, grid)) {
                 // Check if the target position has the player
                 if (newX === playerX && newY === playerY) {
-                    if (this.enemyType === 'lizord') {
-                        // Lizord bump attack: displace player to nearest walkable tile and take the spot
-                        const possiblePositions = [
-                            { x: playerX, y: playerY - 1 },
-                            { x: playerX, y: playerY + 1 },
-                            { x: playerX - 1, y: playerY },
-                            { x: playerX + 1, y: playerY }
-                        ];
-                        let displaced = false;
-                        for (const pos of possiblePositions) {
-                            if (player.isWalkable(pos.x, pos.y, grid) && !enemies.find(e => e.x === pos.x && e.y === pos.y)) {
-                                player.setPosition(pos.x, pos.y);
-                                displaced = true;
-                                break;
+                    if (!isSimulation) {
+                        if (this.enemyType === 'lizord') {
+                            // Lizord bump attack: displace player to nearest walkable tile and take the spot
+                            const possiblePositions = [
+                                { x: playerX, y: playerY - 1 },
+                                { x: playerX, y: playerY + 1 },
+                                { x: playerX - 1, y: playerY },
+                                { x: playerX + 1, y: playerY }
+                            ];
+                            let displaced = false;
+                            for (const pos of possiblePositions) {
+                                if (player.isWalkable(pos.x, pos.y, grid) && !enemies.find(e => e.x === pos.x && e.y === pos.y)) {
+                                    player.setPosition(pos.x, pos.y);
+                                    displaced = true;
+                                    break;
+                                }
                             }
-                        }
-                        if (displaced) {
-                            // Damage player
+                            if (displaced) {
+                                // Damage player
+                                player.takeDamage(this.attack);
+                                player.startBump(this.x - newX, this.y - newY);
+                                this.startBump(newX - this.x, newY - this.y);
+                                this.justAttacked = true;
+                                this.attackAnimation = 15;
+                                console.log(`Lizord bumped you! Player health: ${player.getHealth()}`);
+                                if (player.isDead()) console.log('Player died!');
+                                // Move to where player was
+                                this.x = newX;
+                                this.y = newY;
+                            }
+                        } else {
+                            // Enemy tries to move onto player - register attack
+                            console.log('Enemy tries to move onto player - registering one attack!');
                             player.takeDamage(this.attack);
-                            player.startBump(this.x - newX, this.y - newY);
-                            this.startBump(newX - this.x, newY - this.y);
+                            player.startBump(this.x - playerX, this.y - playerY);
+                            this.startBump(playerX - this.x, playerY - this.y);
                             this.justAttacked = true;
-                            this.attackAnimation = 15;
-                            console.log(`Lizord bumped you! Player health: ${player.getHealth()}`);
-                            if (player.isDead()) console.log('Player died!');
-                            // Move to where player was
-                            this.x = newX;
-                            this.y = newY;
-                        }
-                    } else {
-                        // Enemy tries to move onto player - register attack
-                        console.log('Enemy tries to move onto player - registering one attack!');
-                        player.takeDamage(this.attack);
-                        player.startBump(this.x - playerX, this.y - playerY);
-                        this.startBump(playerX - this.x, playerY - this.y);
-                        this.justAttacked = true;
-                        this.attackAnimation = 15; // Dramatic attack animation frames
-                        console.log(`Enemy hit player! Player health: ${player.getHealth()}`);
-                        if (player.isDead()) {
-                            console.log('Player died!');
-                        }
-                    }
-
-                    // Special knockback for lizardeaux ram attack
-                    if (this.enemyType === 'lizardeaux') {
-                        // Calculate knockback direction (away from enemy)
-                        const attackDx = newX - this.x;
-                        const attackDy = newY - this.y;
-                        if (attackDx !== 0 || attackDy !== 0) {
-                            // Normalize direction and move player back 1 tile
-                            const absDx = Math.abs(attackDx);
-                            const absDy = Math.abs(attackDy);
-                            let knockbackX = playerX;
-                            let knockbackY = playerY;
-                            if (absDx > absDy) {
-                                // Horizontal dominant
-                                knockbackX += attackDx > 0 ? 1 : -1;
-                            } else if (absDy > absDx) {
-                                // Vertical dominant
-                                knockbackY += attackDy > 0 ? 1 : -1;
-                            } else {
-                                // Diagonal, knock back in both directions
-                                knockbackX += attackDx > 0 ? 1 : -1;
-                                knockbackY += attackDy > 0 ? 1 : -1;
+                            this.attackAnimation = 15; // Dramatic attack animation frames
+                            console.log(`Enemy hit player! Player health: ${player.getHealth()}`);
+                            if (player.isDead()) {
+                                console.log('Player died!');
                             }
-                            player.setPosition(knockbackX, knockbackY);
                         }
-                    }
 
-                    // For lizord, already moved; for others, does not move
-                    return null;
+                        // Special knockback for lizardeaux ram attack
+                        if (this.enemyType === 'lizardeaux') {
+                            // Calculate knockback direction (away from enemy)
+                            const attackDx = newX - this.x;
+                            const attackDy = newY - this.y;
+                            if (attackDx !== 0 || attackDy !== 0) {
+                                // Normalize direction and move player back 1 tile
+                                const absDx = Math.abs(attackDx);
+                                const absDy = Math.abs(attackDy);
+                                let knockbackX = playerX;
+                                let knockbackY = playerY;
+                                if (absDx > absDy) {
+                                    // Horizontal dominant
+                                    knockbackX += attackDx > 0 ? 1 : -1;
+                                } else if (absDy > absDx) {
+                                    // Vertical dominant
+                                    knockbackY += attackDy > 0 ? 1 : -1;
+                                } else {
+                                    // Diagonal, knock back in both directions
+                                    knockbackX += attackDx > 0 ? 1 : -1;
+                                    knockbackY += attackDy > 0 ? 1 : -1;
+                                }
+                                // Only knockback if the position is walkable
+                                if (player.isWalkable(knockbackX, knockbackY, grid)) {
+                                    player.setPosition(knockbackX, knockbackY);
+                                }
+                            }
+                        }
+
+                        // For lizord, already moved; for others, does not move
+                        return null;
+                    } else {
+                        // In simulation, if it would attack, return null
+                        return null;
+                    }
                 } else {
                     // Check if another enemy is already at the target position
                     const enemyAtTarget = enemies.find(enemy => enemy.x === newX && enemy.y === newY);
@@ -335,7 +350,7 @@ export class Enemy {
         return (tile === 0 || tile === 3 || tile === 6 || (tile && tile.type === 7)) && !((tile && tile.type === TILE_TYPES.SIGN) || tile === TILE_TYPES.SIGN);  // FLOOR, EXIT, WATER, FOOD, but not SIGN
     }
 
-    performRamFromDistance(player, playerX, playerY, grid) {
+    performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation = false) {
         // Lizardeaux ram attack from distance: check if player is in straight line with clear line of sight and distance > 1
         // Add enemies as obstacles for line of sight
         const sameRow = this.y === playerY;
@@ -376,35 +391,40 @@ export class Enemy {
         // Ram from any distance when line of sight is clear
         // distance >= 1 is already checked by calling this method only when line of sight exists
 
-        // Perform ram attack from distance
-        console.log('Lizardeaux rams player from distance!');
-        player.takeDamage(this.attack);
-        player.startBump(this.x - playerX, this.y - playerY);
-        this.startBump(playerX - this.x, playerY - this.y);
-        this.justAttacked = true;
-        this.attackAnimation = 15; // Dramatic attack animation frames
-        console.log(`Lizardeaux rammed player from distance! Player health: ${player.getHealth()}`);
-        if (player.isDead()) {
-            console.log('Player died from distance ram!');
-        }
-
-        // Calculate knockback direction (away from enemy)
-        const attackDx = playerX - this.x;
-        const attackDy = playerY - this.y;
-        if (attackDx !== 0 || attackDy !== 0) {
-            const absDx = Math.abs(attackDx);
-            const absDy = Math.abs(attackDy);
-            let knockbackX = playerX;
-            let knockbackY = playerY;
-            if (absDx > absDy) {
-                knockbackX += attackDx > 0 ? 1 : -1;
-            } else if (absDy > absDx) {
-                knockbackY += attackDy > 0 ? 1 : -1;
-            } else {
-                knockbackX += attackDx > 0 ? 1 : -1;
-                knockbackY += attackDy > 0 ? 1 : -1;
+        if (!isSimulation) {
+            // Perform ram attack from distance
+            console.log('Lizardeaux rams player from distance!');
+            player.takeDamage(this.attack);
+            player.startBump(this.x - playerX, this.y - playerY);
+            this.startBump(playerX - this.x, playerY - this.y);
+            this.justAttacked = true;
+            this.attackAnimation = 15; // Dramatic attack animation frames
+            console.log(`Lizardeaux rammed player from distance! Player health: ${player.getHealth()}`);
+            if (player.isDead()) {
+                console.log('Player died from distance ram!');
             }
-            player.setPosition(knockbackX, knockbackY);
+
+            // Calculate knockback direction (away from enemy)
+            const attackDx = playerX - this.x;
+            const attackDy = playerY - this.y;
+            if (attackDx !== 0 || attackDy !== 0) {
+                const absDx = Math.abs(attackDx);
+                const absDy = Math.abs(attackDy);
+                let knockbackX = playerX;
+                let knockbackY = playerY;
+                if (absDx > absDy) {
+                    knockbackX += attackDx > 0 ? 1 : -1;
+                } else if (absDy > absDx) {
+                    knockbackY += attackDy > 0 ? 1 : -1;
+                } else {
+                    knockbackX += attackDx > 0 ? 1 : -1;
+                    knockbackY += attackDy > 0 ? 1 : -1;
+                }
+                // Only knockback if the position is walkable
+                if (player.isWalkable(knockbackX, knockbackY, grid)) {
+                    player.setPosition(knockbackX, knockbackY);
+                }
+            }
         }
 
         return true; // Ram attack from distance performed
@@ -651,40 +671,49 @@ export class Enemy {
     }
 
     // Helper for Zard: perform bishop charge
-    performBishopCharge(player, playerX, playerY, grid) {
+    performBishopCharge(player, playerX, playerY, grid, isSimulation = false) {
         // Determine direction of charge
         const dx = playerX - this.x;
         const dy = playerY - this.y;
         const steps = Math.abs(dx); // Diagonal, dx === dy
 
         // Move directly to adjacent tile next to player
-        let chargeX = this.x;
-        let chargeY = this.y;
-        if (steps >= 1) {
-            chargeX += dx > 0 ? 1 : -1;
-            chargeY += dy > 0 ? 1 : -1;
-            if (chargeX !== playerX || chargeY !== playerY) {
-                this.x = chargeX;
-                this.y = chargeY;
+        if (!isSimulation) {
+            let chargeX = this.x;
+            let chargeY = this.y;
+            if (steps >= 1) {
+                chargeX += dx > 0 ? 1 : -1;
+                chargeY += dy > 0 ? 1 : -1;
+                if (chargeX !== playerX || chargeY !== playerY) {
+                    this.x = chargeX;
+                    this.y = chargeY;
+                }
             }
         }
 
         // If now adjacent (should be), attack
-        const newDx = Math.abs(this.x - playerX);
-        const newDy = Math.abs(this.y - playerY);
+        const chargeXSim = isSimulation ? (this.x + (dx > 0 ? 1 : -1)) : this.x;
+        const chargeYSim = isSimulation ? (this.y + (dy > 0 ? 1 : -1)) : this.y;
+        const newDx = Math.abs(chargeXSim - playerX);
+        const newDy = Math.abs(chargeYSim - playerY);
         if (newDx + newDy === 2 && newDx === 1 && newDy === 1) { // Adjacent diagonally
-            // Perform attack
-            console.log('Zard bishop charges and attacks player!');
-            player.takeDamage(this.attack);
-            player.startBump(this.x - playerX, this.y - playerY);
-            this.startBump(playerX - this.x, playerY - this.y);
-            this.justAttacked = true;
-            this.attackAnimation = 15;
+            if (!isSimulation) {
+                // Perform attack
+                console.log('Zard bishop charges and attacks player!');
+                player.takeDamage(this.attack);
+                player.startBump(chargeXSim - playerX, chargeYSim - playerY);
+                this.startBump(playerX - chargeXSim, playerY - chargeYSim);
+                this.justAttacked = true;
+                this.attackAnimation = 15;
 
-            // Knockback diagonally away
-            const knockbackX = playerX + (playerX - this.x);
-            const knockbackY = playerY + (playerY - this.y);
-            player.setPosition(knockbackX, knockbackY);
+                // Knockback diagonally away
+                const knockbackX = playerX + (playerX - chargeXSim);
+                const knockbackY = playerY + (playerY - chargeYSim);
+                // Only knockback if the position is walkable
+                if (player.isWalkable(knockbackX, knockbackY, grid)) {
+                    player.setPosition(knockbackX, knockbackY);
+                }
+            }
         }
     }
 
@@ -760,7 +789,14 @@ export class Enemy {
             let knockbackY = playerY;
             if (dx !== 0) knockbackX += dx > 0 ? 1 : -1;
             if (dy !== 0) knockbackY += dy > 0 ? 1 : -1;
-            player.setPosition(knockbackX, knockbackY);
+            // Only knockback if the position is walkable
+            if (player.isWalkable(knockbackX, knockbackY, grid)) {
+                player.setPosition(knockbackX, knockbackY);
+            }
         }
+    }
+
+    canAttackPosition(player, px, py, grid, enemies) {
+        return this.planMoveTowards(player, grid, enemies, {x: px, y: py}, true) === null;
     }
 }
