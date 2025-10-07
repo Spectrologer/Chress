@@ -10,6 +10,10 @@ export class ZoneManager {
         // Set flag to skip enemy movements this turn since player just entered zone
         this.game.justEnteredZone = true;
 
+        // Reset sign message tracking for the new zone
+        this.game.lastSignMessage = null;
+        this.game.displayingMessageForSign = null;
+
         // Check if this is a special zone marked by a note
         const zoneKey = `${newZoneX},${newZoneY}`;
         const hasReachedSpecialZone = this.game.specialZones.has(zoneKey);

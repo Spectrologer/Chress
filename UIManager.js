@@ -276,7 +276,10 @@ export class UIManager {
             }
             return `<span style="color: darkgreen">${match}</span>`;
         });
-        this.game.messageLog.push(coloredMessage);
+        // Only add if not already in the log
+        if (!this.game.messageLog.includes(coloredMessage)) {
+            this.game.messageLog.push(coloredMessage);
+        }
 
         // If coordinates were found in the message, show a temporary overlay message
         if (coordinates) {
