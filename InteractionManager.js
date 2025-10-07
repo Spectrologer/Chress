@@ -26,7 +26,7 @@ export class InteractionManager {
         });
 
         // Check if player has meat
-        const hasMeat = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.includes('meat/'));
+        const hasMeat = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.includes('Food/meat'));
 
         if (isAdjacentToLion && !hasMeat) {
             this.game.uiManager.handleLionInteractionMessage();
@@ -72,22 +72,22 @@ export class InteractionManager {
             return (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
         });
 
-        // Check if player has seeds
-        const hasSeeds = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.includes('seeds/'));
+        // Check if player has nuts
+        const hasNut = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.includes('Food/nut'));
 
         // Check if player has meat
-        const hasMeat = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.includes('meat/'));
+        const hasMeat = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.includes('Food/meat'));
 
         // Do not show the squig message if a sign message is already displayed.
         if (this.game.displayingMessageForSign) {
             return;
         }
 
-        if (isAdjacentToSquig && !hasSeeds) {
+        if (isAdjacentToSquig && !hasNut) {
             // Only show squig message if not adjacent to lion, or if adjacent to lion but has meat (lion takes priority when both lack their trade items)
             if (!isAdjacentToLion || hasMeat) {
                 // Show message even if overlay is already showing (allow multiple messages)
-                this.game.uiManager.showOverlayMessage('<span class="character-name">Squig</span><br>Seeds please!', 'Images/fauna/squigface.png');
+                this.game.uiManager.showOverlayMessage('<span class="character-name">Squig</span><br>I\'m nuts for nuts!', 'Images/fauna/squigface.png');
             }
         }
     }

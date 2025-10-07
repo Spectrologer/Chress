@@ -112,30 +112,8 @@ export const IMAGE_ASSETS = [
 
 // Food image assets
 export const FOOD_ASSETS = [
-    'Food/meat/Beaf.png',
-    'Food/meat/Calamari.png',
-    'Food/meat/Fish.png',
-    'Food/FortuneCookie.png',
-    'Food/Honey.png',
-    'Food/meat/Meat.png',
-    'Food/Noodle.png',
-    'Food/nut/Nut.png',
-    'Food/nut/Nut2.png',
-    'Food/meat/Octopus.png',
-    'Food/sushi/Onigiri.png',
-    'Food/seeds/Seed1.png',
-    'Food/seeds/Seed2.png',
-    'Food/seeds/Seed3.png',
-    'Food/seeds/SeedBig1.png',
-    'Food/seeds/SeedBig2.png',
-    'Food/seeds/SeedBig3.png',
-    'Food/seeds/SeedLarge.png',
-    'Food/seeds/SeedLargeWhite.png',
-    'Food/meat/Shrimp.png',
-    'Food/sushi/Sushi.png',
-    'Food/sushi/Sushi2.png',
-    'Food/TeaLeaf.png',
-    'Food/meat/Yakitori.png'
+    'Food/meat/meat.png',
+    'Food/nut/nut.png'
 ];
 
 export const TOTAL_IMAGES = IMAGE_ASSETS.length + FOOD_ASSETS.length;
