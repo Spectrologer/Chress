@@ -473,8 +473,28 @@ class Game {
             return (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
         });
 
+        // Find all lion positions
+        const lions = [];
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                if (this.grid[y][x] === TILE_TYPES.LION) {
+                    lions.push({ x, y });
+                }
+            }
+        }
+
+        // Check if player is adjacent to any lion
+        const isAdjacentToLion = lions.some(lion => {
+            const dx = Math.abs(lion.x - playerPos.x);
+            const dy = Math.abs(lion.y - playerPos.y);
+            return (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+        });
+
         // Check if player has seeds
         const hasSeeds = this.player.inventory.some(item => item.type === 'food' && item.foodType.includes('seeds/'));
+
+        // Check if player has meat
+        const hasMeat = this.player.inventory.some(item => item.type === 'food' && item.foodType.includes('meat/'));
 
         // Do not show the squig message if a sign message is already displayed.
         if (this.displayingMessageForSign) {
@@ -482,8 +502,11 @@ class Game {
         }
 
         if (isAdjacentToSquig && !hasSeeds) {
-            // Show message even if overlay is already showing (allow multiple messages)
-            this.uiManager.showOverlayMessage('<span class="character-name">Squig</span><br>Seeds please!', 'Images/fauna/squigface.png');
+            // Only show squig message if not adjacent to lion, or if adjacent to lion but has meat (lion takes priority when both lack their trade items)
+            if (!isAdjacentToLion || hasMeat) {
+                // Show message even if overlay is already showing (allow multiple messages)
+                this.uiManager.showOverlayMessage('<span class="character-name">Squig</span><br>Seeds please!', 'Images/fauna/squigface.png');
+            }
         }
     }
 
