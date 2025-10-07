@@ -145,6 +145,7 @@ class Game {
             window.consoleCommands = module.default;
             // Expose individual commands for easier access
             window.tp = (x, y) => module.default.tp(this, x, y);
+            window.spawnHorseIcon = () => module.default.spawnHorseIcon(this);
         });
 
         // Update UI
@@ -242,6 +243,28 @@ class Game {
             const py = playerPos.y + (dy > 0 ? i : -i);
             if (!this.player.isWalkable(px, py, this.grid, px, py)) return;
         }
+        item.uses--;
+        if (item.uses <= 0) this.player.inventory = this.player.inventory.filter(invItem => invItem !== item);
+        this.player.setPosition(targetX, targetY);
+        if (enemy) {
+            this.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
+            enemy.startBump(this.player.x - enemy.x, this.player.y - enemy.y);
+            enemy.takeDamage(999);
+            const currentZone = this.player.getCurrentZone();
+            this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
+            this.enemies = this.enemies.filter(e => e !== enemy);
+            const zoneKey = `${currentZone.x},${currentZone.y}`;
+            if (this.zones.has(zoneKey)) {
+                const zoneData = this.zones.get(zoneKey);
+                zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
+                this.zones.set(zoneKey, zoneData);
+            }
+        }
+        this.uiManager.updatePlayerStats();
+        this.handleEnemyMovements();
+    }
+
+    performHorseIconCharge(item, targetX, targetY, enemy, dx, dy) {
         item.uses--;
         if (item.uses <= 0) this.player.inventory = this.player.inventory.filter(invItem => invItem !== item);
         this.player.setPosition(targetX, targetY);

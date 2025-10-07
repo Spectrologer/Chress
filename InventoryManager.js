@@ -63,6 +63,8 @@ export class InventoryManager {
                 return 'Hammer - Breaks rocks to create pathways';
             case 'bishop_spear':
                 return 'Bishop Spear - Charge diagonally towards enemies, has ' + item.uses + ' charges';
+            case 'horse_icon':
+                return 'Horse Icon - Charge in L-shape (knight moves) towards enemies, has ' + item.uses + ' charges';
             case 'bomb':
                 return 'Bomb - Blasts through walls to create exits';
             case 'heart':
@@ -93,6 +95,41 @@ export class InventoryManager {
             slot.classList.add('item-hammer');
         } else if (item.type === 'bishop_spear') {
             slot.classList.add('item-spear'); // Reuse the class since same image
+            // Add uses indicators
+            slot.style.position = 'relative';
+            for (let i = 0; i < item.uses; i++) {
+                const dot = document.createElement('div');
+                dot.style.width = '4px';
+                dot.style.height = '4px';
+                dot.style.backgroundColor = '#000000';
+                dot.style.borderRadius = '50%';
+                dot.style.position = 'absolute';
+                dot.style.bottom = '2px';
+                dot.style.left = `${6 + i * 6}px`;
+                slot.appendChild(dot);
+            }
+        } else if (item.type === 'horse_icon') {
+            // Add the horse icon image to inventory slot
+            const horseImg = document.createElement('img');
+            horseImg.src = 'Images/horse.png';
+            horseImg.style.width = '100%';
+            horseImg.style.height = '100%';
+            horseImg.style.objectFit = 'contain';
+            horseImg.style.imageRendering = 'pixelated';
+            slot.appendChild(horseImg);
+            // Add uses indicators
+            slot.style.position = 'relative';
+            for (let i = 0; i < item.uses; i++) {
+                const dot = document.createElement('div');
+                dot.style.width = '4px';
+                dot.style.height = '4px';
+                dot.style.backgroundColor = '#000000';
+                dot.style.borderRadius = '50%';
+                dot.style.position = 'absolute';
+                dot.style.bottom = '2px';
+                dot.style.left = `${6 + i * 6}px`;
+                slot.appendChild(dot);
+            }
         } else if (item.type === 'bomb') {
             slot.classList.add('item-bomb');
         } else if (item.type === 'heart') {
@@ -197,6 +234,9 @@ export class InventoryManager {
                 break;
             case 'bishop_spear':
                 this.dropItem('bishop_spear', { type: TILE_TYPES.BISHOP_SPEAR, uses: item.uses });
+                break;
+            case 'horse_icon':
+                this.dropItem('horse_icon', { type: TILE_TYPES.HORSE_ICON, uses: item.uses });
                 break;
             case 'bomb':
                 // Drop bomb at player's current position on whatever tile it rests on

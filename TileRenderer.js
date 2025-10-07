@@ -48,6 +48,8 @@ export class TileRenderer {
             this.renderHammerTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.BISHOP_SPEAR) {
             this.renderSpearTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        } else if (actualType === TILE_TYPES.HORSE_ICON) {
+            this.renderHorseIconTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.BOMB) {
             this.renderBombTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.HEART) {
@@ -548,6 +550,51 @@ export class TileRenderer {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🔱', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
+    renderHorseIconTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+        // First draw the base tile
+        this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the horse image if loaded, otherwise use fallback
+        if (this.isImageLoaded('horse')) {
+            // Scale horse to fit within tile while maintaining aspect ratio
+            const horseImage = this.images.horse;
+            const aspectRatio = horseImage.width / horseImage.height;
+
+            let scaledWidth, scaledHeight;
+            if (aspectRatio > 1) {
+                // Image is wider than tall
+                scaledWidth = TILE_SIZE;
+                scaledHeight = TILE_SIZE / aspectRatio;
+            } else {
+                // Image is taller than wide (or square)
+                scaledHeight = TILE_SIZE;
+                scaledWidth = TILE_SIZE * aspectRatio;
+            }
+
+            // Center the image in the tile
+            const offsetX = (TILE_SIZE - scaledWidth) / 2;
+            const offsetY = (TILE_SIZE - scaledHeight) / 2;
+
+            ctx.drawImage(
+                horseImage,
+                pixelX + offsetX,
+                pixelY + offsetY,
+                scaledWidth,
+                scaledHeight
+            );
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.HORSE_ICON];
+            ctx.fillRect(pixelX + 2, pixelY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+
+            ctx.fillStyle = '#8B4513';
+            ctx.font = '24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🐎', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 

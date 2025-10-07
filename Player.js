@@ -97,6 +97,11 @@ export class Player {
                         this.inventory.push({ type: 'bishop_spear', uses: tile.uses });
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
                     } // If inventory full, can't pick up bishop spear and it remains on ground
+                } else if (tile && tile.type === TILE_TYPES.HORSE_ICON) {
+                    if (this.inventory.length < 6) {
+                        this.inventory.push({ type: 'horse_icon', uses: tile.uses });
+                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                    } // If inventory full, can't pick up horse icon and it remains on ground
                 } else if (tile === TILE_TYPES.BOMB) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'bomb' });
@@ -185,13 +190,14 @@ export class Player {
         }
 
         // Regular tiles
-        // Player can walk on floor, exit, water, food, axe, hammer, bishop spear, bomb, note, and heart tiles
+        // Player can walk on floor, exit, water, food, axe, hammer, bishop spear, horse icon, bomb, note, and heart tiles
         if (tile === TILE_TYPES.FLOOR ||
             tile === TILE_TYPES.EXIT ||
             tile === TILE_TYPES.WATER ||
             tile === TILE_TYPES.AXE ||
             tile === TILE_TYPES.HAMMER ||
             (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) ||
+            (tile && tile.type === TILE_TYPES.HORSE_ICON) ||
             tile === TILE_TYPES.BOMB ||
             (tile && tile.type === TILE_TYPES.FOOD) || // Note items are just the tile type number
             tile === TILE_TYPES.NOTE ||
@@ -440,5 +446,23 @@ export class Player {
             const maxLift = -12; // Lift 12 pixels up (half tile roughly)
             this.liftOffsetY = maxLift * 4 * progress * (1 - progress); // Parabolic lift
         }
+    }
+
+    getValidSpawnPosition(game) {
+        const availableTiles = [];
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                const tile = game.grid[y][x];
+                const playerPos = this.getPosition();
+                const hasEnemy = game.enemies.some(e => e.x === x && e.y === y);
+                if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
+                    availableTiles.push({x, y});
+                }
+            }
+        }
+        if (availableTiles.length > 0) {
+            return availableTiles[Math.floor(Math.random() * availableTiles.length)];
+        }
+        return null;
     }
 }

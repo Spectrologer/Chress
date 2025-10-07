@@ -263,6 +263,23 @@ export class InputManager {
             }
         }
 
+        // Check if player has horse icon and if tapped position is valid for horse icon charge (knight moves)
+        const horseIconItem = this.game.player.inventory.find(item => item.type === 'horse_icon' && item.uses > 0);
+
+        if (horseIconItem && (enemyAtCoords || isEmptyTile)) {
+            // Calculate direction from player to target
+            const dx = gridCoords.x - playerPos.x;
+            const dy = gridCoords.y - playerPos.y;
+
+            // Check if L-shape (knight move) and within range (<=5 tiles)
+            const absDx = Math.abs(dx);
+            const absDy = Math.abs(dy);
+            if (absDx + absDy === 3 && absDx >= 1 && absDy >= 1 && absDx !== absDy && Math.max(absDx, absDy) <= 5) {
+                this.game.performHorseIconCharge(horseIconItem, gridCoords.x, gridCoords.y, enemyAtCoords, dx, dy);
+                return; // Charge performed, don't move
+            }
+        }
+
         // If player is on an exit tile, check for zone transition gestures
         if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
             const transitionTriggered = this.checkForZoneTransitionGesture(gridCoords, playerPos);
@@ -452,6 +469,13 @@ export class InputManager {
                     this.game.updatePlayerStats(); // Refresh inventory display
                 }
                 return; // Don't process as movement
+            case 'i':
+                // Add horse icon to inventory for testing
+                if (this.game.player.inventory.length < 6) {
+                    this.game.player.inventory.push({ type: 'horse_icon', uses: 3 });
+                    this.game.updatePlayerStats(); // Refresh inventory display
+                }
+                return; // Don't move, just add item
             case 'n':
                 // Add note to inventory for testing
                 if (this.game.player.inventory.length < 6) {

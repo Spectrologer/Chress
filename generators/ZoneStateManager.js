@@ -7,6 +7,7 @@ export class ZoneStateManager {
     static axeSpawned = false;
     static hammerSpawned = false;
     static spearSpawned = false;
+    static horseIconSpawned = false;
     static noteSpawned = false;
     static lionSpawned = false;
     static squigSpawned = false;
@@ -20,9 +21,10 @@ export class ZoneStateManager {
     static hammerSpawnZone = null;
     static noteSpawnZone = null;
     static spearSpawnZone = null;
+    static horseIconSpawnZone = null;
 
     static initializeItemLocations() {
-        if (this.axeSpawnZone && this.hammerSpawnZone && this.spearSpawnZone) {
+        if (this.axeSpawnZone && this.hammerSpawnZone && this.spearSpawnZone && this.horseIconSpawnZone) {
             return; // Already initialized
         }
 
@@ -35,10 +37,14 @@ export class ZoneStateManager {
         // Level 3 (Wilds): dist 9-16
         this.spearSpawnZone = this.getRandomZoneForLevel(9, 16);
 
+        // Level 4 (Frontier): dist 17-24
+        this.horseIconSpawnZone = this.getRandomZoneForLevel(17, 24);
+
         logger.log('Special Item Locations:', {
             axe: this.axeSpawnZone,
             hammer: this.hammerSpawnZone,
-            spear: this.spearSpawnZone
+            spear: this.spearSpawnZone,
+            horseIcon: this.horseIconSpawnZone
         });
     }
 
@@ -88,5 +94,6 @@ export class ZoneStateManager {
         this.hammerSpawnZone = null;
         this.noteSpawnZone = null;
         this.spearSpawnZone = null;
+        this.horseIconSpawnZone = null;
     }
 }

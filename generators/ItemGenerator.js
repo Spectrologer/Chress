@@ -89,6 +89,9 @@ export class ItemGenerator {
         if (ZoneStateManager.spearSpawnZone && this.zoneX === ZoneStateManager.spearSpawnZone.x && this.zoneY === ZoneStateManager.spearSpawnZone.y && !ZoneStateManager.spearSpawned) {
             this.addSpearItem();
         }
+        if (ZoneStateManager.horseIconSpawnZone && this.zoneX === ZoneStateManager.horseIconSpawnZone.x && this.zoneY === ZoneStateManager.horseIconSpawnZone.y && !ZoneStateManager.horseIconSpawned) {
+            this.addHorseIconItem();
+        }
 
         // Add a rare lion with low chance to spawn per zone (not level, but per zone)
         if (!ZoneStateManager.lionSpawned && Math.random() < 0.02) { // 2% chance
@@ -166,6 +169,21 @@ export class ItemGenerator {
                 this.grid[y][x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 };
                 ZoneStateManager.spearSpawned = true;
                 break; // Successfully placed bishop spear
+            }
+        }
+    }
+
+    addHorseIconItem() {
+        // Try to place the horse icon in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = { type: TILE_TYPES.HORSE_ICON, uses: 3 };
+                ZoneStateManager.horseIconSpawned = true;
+                break; // Successfully placed horse icon
             }
         }
     }

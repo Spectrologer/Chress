@@ -18,6 +18,7 @@ export const TILE_TYPES = {
     HAMMER: 10,
     NOTE: 11,
     BISHOP_SPEAR: 12,
+    HORSE_ICON: 28,
     SHRUBBERY: 13,
     WELL: 14,
     DEADTREE: 15,
@@ -50,6 +51,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.NOTE]: '#FFFF00',    // Yellow for note
     [TILE_TYPES.HAMMER]: '#8B4513',  // Brown for hammer
     [TILE_TYPES.BISHOP_SPEAR]: '#8B4513',   // Brown for bishop spear
+    [TILE_TYPES.HORSE_ICON]: '#8B4513', // Brown for horse icon
     [TILE_TYPES.SHRUBBERY]: '#228B22', // Green for shrubbery
     [TILE_TYPES.WELL]: '#D2691E',   // Brown/orange for well
     [TILE_TYPES.DEADTREE]: '#8B4513',   // Brown for deadtree
@@ -107,7 +109,8 @@ export const IMAGE_ASSETS = [
     'flora/succulent.png',
     'flora/stump.png',
     'flora/blocklily.png',
-    'sign.png'
+    'sign.png',
+    'horse.png'
 ];
 
 // Food image assets

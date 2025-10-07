@@ -118,6 +118,20 @@ const consoleCommands = {
     }
   },
 
+  spawnHorseIcon: (game) => {
+    if (!game || !game.player) {
+      console.log('Game not initialized');
+      return;
+    }
+    const spawnPos = game.player.getValidSpawnPosition();
+    if (spawnPos) {
+      game.grid[spawnPos.y][spawnPos.x] = { type: TILE_TYPES.HORSE_ICON, uses: 3 };
+      console.log('Spawned horse icon at (' + spawnPos.x + ',' + spawnPos.y + ')');
+    } else {
+      console.log('No available tiles to spawn horse icon');
+    }
+  },
+
   spawnHeart: (game) => {
     if (!game || !game.player) {
       console.log('Game not initialized');
