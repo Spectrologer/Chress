@@ -347,16 +347,21 @@ export class UIManager {
     }
 
     showBarterWindow(npcType) {
-        let name, portrait, message, requiredItem;
+        let name, portrait, message, requiredItem, requiredItemImg, receivedItemImg;
         if (npcType === 'lion') {
             name = 'Penne';
             portrait = 'Images/fauna/lionface.png';
             message = 'Give me meat!';
             requiredItem = 'Food/meat';
+            requiredItemImg = 'Images/Food/meat/meat.png';
+            receivedItemImg = 'Images/water.png';
         } else if (npcType === 'squig') {
             name = 'Squig';
             portrait = 'Images/fauna/squigface.png';
             message = 'I\'m nuts for nuts!';
+            requiredItem = 'Food/nut';
+            requiredItemImg = 'Images/Food/nut/nut.png';
+            receivedItemImg = 'Images/water.png';
         } else {
             return;
         }
@@ -364,12 +369,22 @@ export class UIManager {
         this.barterNPCName.textContent = name;
         this.barterNPCPortrait.src = portrait;
         this.barterNPCMessage.textContent = message;
+
+        // Build the visual exchange UI
+        const barterExchange = document.getElementById('barterExchange');
+        if (barterExchange) {
+            barterExchange.innerHTML = `
+                <img src="${requiredItemImg}" alt="Required Item" class="barter-exchange-item">
+                <span class="barter-exchange-arrow">→</span>
+                <img src="${receivedItemImg}" alt="Received Item" class="barter-exchange-item">
+            `;
+        }
         this.currentNPCType = npcType;
         this.barterOverlay.classList.add('show');
 
         // Disable confirm button if player cannot trade
         const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
-        const canTrade = this.game.player.inventory.some(item => item.type === 'food' && item.foodType === foodType);
+        const canTrade = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.startsWith(foodType));
         this.confirmBarterButton.disabled = !canTrade;
     }
 
@@ -379,13 +394,17 @@ export class UIManager {
 
     confirmTrade() {
         const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
-        const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType === foodType);
+        const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(foodType));
         if (index >= 0) {
             this.game.player.inventory.splice(index, 1);
             this.game.player.inventory.push({ type: 'water' });
             this.game.updatePlayerStats();
             this.hideBarterWindow();
-            this.game.gameLoop();
+            // Do not call game.gameLoop() here to avoid interrupting game flow; let the existing loop continue
+        } else {
+            // No matching item found, perhaps show a message, but for now, just hide the window
+            this.hideBarterWindow();
+            // Still step forward to the next game tick
         }
     }
 }

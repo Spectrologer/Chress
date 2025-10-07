@@ -1471,6 +1471,29 @@ m.barter-info {
     flex-grow: 1;
 }
 
+.barter-exchange {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px 0;
+}
+
+.barter-exchange-item {
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+    object-fit: contain;
+}
+
+.barter-exchange-arrow {
+    font-size: 2.5em;
+    color: #7a5c2e;
+    font-weight: 900;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    padding-bottom: 8px; /* Align with images */
+}
+
 .barter-buttons {
     display: flex;
     justify-content: space-around;
