@@ -234,7 +234,7 @@ export class UIManager {
             if (imageSrc) {
                 messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${text}`;
             } else {
-                messageElement.textContent = text;
+                messageElement.innerHTML = text;
             }
             messageElement.classList.add('show');
             logger.log(`Sign message shown: ${text}`);
