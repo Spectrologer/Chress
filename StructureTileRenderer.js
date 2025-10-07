@@ -123,7 +123,7 @@ export class StructureTileRenderer {
     renderEnemyTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // Use the stored enemyType from the grid tile
         const tile = grid[y][x];
-        let enemyKey = 'fauna/lizardy';
+        let enemyKey = 'lizardy';
 
         // First draw the base tile
         if (zoneLevel >= 4 && this.isImageLoaded('desert')) {
@@ -173,8 +173,8 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the squig image if loaded, otherwise use fallback
-        if (this.isImageLoaded('fauna/squig')) {
-            ctx.drawImage(this.images['fauna/squig'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        if (this.isImageLoaded('squig')) {
+            ctx.drawImage(this.images['squig'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // Fallback to colored square with emoji
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.SQUIG];

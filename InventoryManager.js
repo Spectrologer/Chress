@@ -95,19 +95,18 @@ export class InventoryManager {
             slot.classList.add('item-hammer');
         } else if (item.type === 'bishop_spear') {
             slot.classList.add('item-spear'); // Reuse the class since same image
-            // Add uses indicators
+            // Add uses indicator
             slot.style.position = 'relative';
-            for (let i = 0; i < item.uses; i++) {
-                const dot = document.createElement('div');
-                dot.style.width = '4px';
-                dot.style.height = '4px';
-                dot.style.backgroundColor = '#000000';
-                dot.style.borderRadius = '50%';
-                dot.style.position = 'absolute';
-                dot.style.bottom = '2px';
-                dot.style.left = `${6 + i * 6}px`;
-                slot.appendChild(dot);
-            }
+            const usesText = document.createElement('div');
+            usesText.style.position = 'absolute';
+            usesText.style.bottom = '4px';
+            usesText.style.right = '5px';
+            usesText.style.fontSize = '1.8em';
+            usesText.style.fontWeight = 'bold';
+            usesText.style.color = '#000000';
+            usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
+            usesText.textContent = `x${item.uses}`;
+            slot.appendChild(usesText);
         } else if (item.type === 'horse_icon') {
             // Add the horse icon image to inventory slot
             const horseImg = document.createElement('img');
@@ -117,19 +116,18 @@ export class InventoryManager {
             horseImg.style.objectFit = 'contain';
             horseImg.style.imageRendering = 'pixelated';
             slot.appendChild(horseImg);
-            // Add uses indicators
+            // Add uses indicator
             slot.style.position = 'relative';
-            for (let i = 0; i < item.uses; i++) {
-                const dot = document.createElement('div');
-                dot.style.width = '4px';
-                dot.style.height = '4px';
-                dot.style.backgroundColor = '#000000';
-                dot.style.borderRadius = '50%';
-                dot.style.position = 'absolute';
-                dot.style.bottom = '2px';
-                dot.style.left = `${6 + i * 6}px`;
-                slot.appendChild(dot);
-            }
+            const usesText = document.createElement('div');
+            usesText.style.position = 'absolute';
+            usesText.style.bottom = '4px';
+            usesText.style.right = '5px';
+            usesText.style.fontSize = '1.8em';
+            usesText.style.fontWeight = 'bold';
+            usesText.style.color = '#000000';
+            usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
+            usesText.textContent = `x${item.uses}`;
+            slot.appendChild(usesText);
         } else if (item.type === 'bomb') {
             slot.classList.add('item-bomb');
         } else if (item.type === 'heart') {
