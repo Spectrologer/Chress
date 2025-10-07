@@ -193,8 +193,8 @@ export class Player {
             tile === TILE_TYPES.HAMMER ||
             (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) ||
             tile === TILE_TYPES.BOMB ||
-            (tile && tile.type === TILE_TYPES.FOOD) ||
-            (tile && tile.type === TILE_TYPES.NOTE && tile.note) || // Specifically check for a note object
+            (tile && tile.type === TILE_TYPES.FOOD) || // Note items are just the tile type number
+            tile === TILE_TYPES.NOTE ||
             tile === TILE_TYPES.LION) {
             return true;
         }
