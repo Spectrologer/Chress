@@ -14,6 +14,8 @@ export class ZoneStateManager {
     static wellSpawned = false;
     static deadTreeSpawned = false;
     static puzzleZoneSpawned = false;
+    static axeWarningSignPlaced = false;
+    static hammerWarningSignPlaced = false;
     static firstFrontierSignPlaced = false;
 
     // Pre-determined spawn locations for special items
@@ -89,6 +91,8 @@ export class ZoneStateManager {
         this.wellSpawned = false;
         this.deadTreeSpawned = false;
         this.puzzleZoneSpawned = false;
+        this.axeWarningSignPlaced = false;
+        this.hammerWarningSignPlaced = false;
         this.firstFrontierSignPlaced = false;
         this.axeSpawnZone = null;
         this.hammerSpawnZone = null;

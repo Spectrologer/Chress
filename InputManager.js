@@ -280,6 +280,29 @@ export class InputManager {
             }
         }
 
+        // Check if tapped on adjacent choppable tile
+        const tappedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        const isAdjacent = Math.abs(gridCoords.x - playerPos.x) <= 1 && Math.abs(gridCoords.y - playerPos.y) <= 1 &&
+                           !(gridCoords.x === playerPos.x && gridCoords.y === playerPos.y);
+        const hasAxe = this.game.player.inventory.some(item => item.type === 'axe');
+        const hasHammer = this.game.player.inventory.some(item => item.type === 'hammer');
+
+        if (isAdjacent && (tappedTile === TILE_TYPES.GRASS || tappedTile === TILE_TYPES.SHRUBBERY || tappedTile === TILE_TYPES.ROCK)) {
+            if ((hasAxe && (tappedTile === TILE_TYPES.GRASS || tappedTile === TILE_TYPES.SHRUBBERY)) ||
+                (hasHammer && tappedTile === TILE_TYPES.ROCK)) {
+                // Perform chopping action
+                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
+                    this.game.transitionToZone(zoneX, zoneY, exitSide, playerPos.x, playerPos.y);
+                });
+                this.game.handleEnemyMovements();
+                this.game.checkCollisions();
+                this.game.checkItemPickup();
+                this.game.updatePlayerPosition();
+                this.game.updatePlayerStats();
+                return; // Action performed, don't navigate
+            }
+        }
+
         // If player is on an exit tile, check for zone transition gestures
         if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
             const transitionTriggered = this.checkForZoneTransitionGesture(gridCoords, playerPos);

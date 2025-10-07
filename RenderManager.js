@@ -61,6 +61,8 @@ export class RenderManager {
         let spriteKey = 'SeparateAnim/Special2'; // Default idle sprite
         if (this.game.player.attackAnimation > 0) {
             spriteKey = 'SeparateAnim/Attack';
+        } else if (this.game.player.actionAnimation > 0) {
+            spriteKey = 'SeparateAnim/Attack';
         } else if (this.game.player.isDead()) {
             spriteKey = 'SeparateAnim/dead';
         }

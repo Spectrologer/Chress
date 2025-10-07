@@ -105,7 +105,11 @@ export class InteractionManager {
             return;
         }
         if (inv.length < 6) {
-            if (tile?.type === TILE_TYPES.FOOD) pick({ type: 'food', foodType: tile.foodType });
+            if (tile?.type === TILE_TYPES.FOOD) {
+                // Ensure foodType is passed correctly
+                pick({ type: 'food', foodType: tile.foodType });
+                ui.addMessageToLog('Found some food.');
+            }
             else if (tile === TILE_TYPES.WATER) pick({ type: 'water' });
             else if (tile === TILE_TYPES.AXE) pick({ type: 'axe' });
             else if (tile === TILE_TYPES.HAMMER) pick({ type: 'hammer' });

@@ -118,6 +118,18 @@ export class ZoneGenerator {
             // Add random features
             featureGenerator.addRandomFeatures(zoneLevel, zoneX, zoneY);
 
+            // Add axe warning sign in the 2nd discovered zone
+            if (ZoneStateManager.zoneCounter === 2 && !ZoneStateManager.axeWarningSignPlaced) {
+                structureGenerator.addSign("FIND YOUR AXE<br>IN HOME");
+                ZoneStateManager.axeWarningSignPlaced = true;
+            }
+
+            // Add hammer warning sign in the first level 2 zone encountered
+            if (zoneLevel === 2 && !ZoneStateManager.hammerWarningSignPlaced) {
+                structureGenerator.addSign("FIND THE HAMMER<br>IN THE WOODS");
+                ZoneStateManager.hammerWarningSignPlaced = true;
+            }
+
             // Add level-based items and enemies
             itemGenerator.addLevelBasedFoodAndWater();
 

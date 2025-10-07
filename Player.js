@@ -13,6 +13,7 @@ export class Player {
         this.sprite = 'SeparateAnim/Special2';
         this.health = 3;  // Player has 3 hearts
         this.attackAnimation = 0; // Frames remaining for attack animation
+        this.actionAnimation = 0; // Frames for actions like chopping/breaking
         // Special zone mechanics
         this.smellOranges = false;
         this.smellLemons = false;
@@ -124,28 +125,32 @@ export class Player {
                 this.smellLemons = true;
             }
 
-            // Check if moved onto grass or shrubbery with axe - cut it
+            return true;
+        } else {
+            // Check if can chop/smash the target tile
+            const tile = grid[newY][newX];
             const hasAxe = this.inventory.some(item => item.type === 'axe');
             if (hasAxe && (tile === TILE_TYPES.GRASS || tile === TILE_TYPES.SHRUBBERY)) {
-                // If cutting shrubbery on border, restore exit if it was blocking one
+                // Chop at target position without moving
                 const isBorder = newX === 0 || newX === GRID_SIZE - 1 || newY === 0 || newY === GRID_SIZE - 1;
                 grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
                 this.decreaseHunger(); // Cutting costs hunger
+                this.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
+                return false; // Don't move, just attack
             }
 
-            // Check if moved onto rock with hammer - break it
             const hasHammer = this.inventory.some(item => item.type === 'hammer');
             if (hasHammer && tile === TILE_TYPES.ROCK) {
-                // Check if this rock is on border and was a blocked exit - restore exit if so
+                // Break at target position without moving
                 const isBorder = newY === 0 || newY === GRID_SIZE - 1 || newX === 0 || newX === GRID_SIZE - 1;
-                grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR; // Restore blocked exit if on border
+                grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
                 this.decreaseHunger(2); // Breaking costs 2 hunger
+                this.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
+                return false; // Don't move, just attack
             }
 
-            return true;
+            return false; // Can't move
         }
-        
-        return false;
     }
 
     isWalkable(x, y, grid, fromX = this.x, fromY = this.y) {
@@ -202,18 +207,6 @@ export class Player {
             (tile && tile.type === TILE_TYPES.FOOD) || // Note items are just the tile type number
             tile === TILE_TYPES.NOTE ||
             tile === TILE_TYPES.HEART) {
-            return true;
-        }
-
-        // Check if there's an axe in inventory - allows walking on grass and shrubbery to cut it
-        const hasAxe = this.inventory.some(item => item.type === 'axe');
-        if (hasAxe && (tile === TILE_TYPES.GRASS || tile === TILE_TYPES.SHRUBBERY)) {
-            return true;
-        }
-
-        // Check if there's a hammer in inventory - allows walking on rocks to break them
-        const hasHammer = this.inventory.some(item => item.type === 'hammer');
-        if (hasHammer && tile === TILE_TYPES.ROCK) {
             return true;
         }
 
@@ -429,6 +422,10 @@ export class Player {
         this.attackAnimation = 20; // 20 frames of attack animation
     }
 
+    startActionAnimation() {
+        this.actionAnimation = 15; // 15 frames of action animation
+    }
+
     updateAnimations() {
         if (this.bumpFrames > 0) {
             this.bumpFrames--;
@@ -438,6 +435,9 @@ export class Player {
         }
         if (this.attackAnimation > 0) {
             this.attackAnimation--;
+        }
+        if (this.actionAnimation > 0) {
+            this.actionAnimation--;
         }
         if (this.liftFrames > 0) {
             this.liftFrames--;
