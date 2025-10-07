@@ -1,10 +1,10 @@
 {
-  "name": "Chress",
+  "name": "chress",
   "version": "1.0.0",
   "type": "module",
   "main": "ConnectionManager.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -12,5 +12,10 @@
   "description": "",
   "dependencies": {
     "rivescript": "^2.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "jest": "^30.2.0"
   }
 }

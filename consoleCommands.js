@@ -118,6 +118,28 @@ const consoleCommands = {
     }
   },
 
+  spawnHeart: (game) => {
+    if (!game || !game.player) {
+      console.log('Game not initialized');
+      return;
+    }
+    // Find a valid spawn position in the grid
+    let spawnPos = null;
+    for (let attempts = 0; attempts < 50 && !spawnPos; attempts++) {
+      const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+      const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+      if (game.grid[y][x] === TILE_TYPES.FLOOR) {
+        spawnPos = { x, y };
+      }
+    }
+    if (spawnPos) {
+      game.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.HEART;
+      console.log(`Debug: Heart spawned at (${spawnPos.x}, ${spawnPos.y})`);
+    } else {
+      console.log('No available tiles to spawn heart');
+    }
+  },
+
   forceCanyon: (game) => {
     if (!game || !game.zoneGenerator) {
       console.log('Game not initialized');

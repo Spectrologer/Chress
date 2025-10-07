@@ -65,6 +65,8 @@ export class InventoryManager {
                 return 'Bishop Spear - Charge diagonally towards enemies, has ' + item.uses + ' charges';
             case 'bomb':
                 return 'Bomb - Blasts through walls to create exits';
+            case 'heart':
+                return 'Heart - Restores 1 health';
             case 'note':
                 return 'Map Note - Marks an undiscovered location 15-20 zones away on the map';
             default:
@@ -93,6 +95,8 @@ export class InventoryManager {
             slot.classList.add('item-spear'); // Reuse the class since same image
         } else if (item.type === 'bomb') {
             slot.classList.add('item-bomb');
+        } else if (item.type === 'heart') {
+            slot.classList.add('item-heart');
         } else if (item.type === 'note') {
             slot.classList.add('item-note');
         }
@@ -197,6 +201,10 @@ export class InventoryManager {
             case 'bomb':
                 // Drop bomb at player's current position on whatever tile it rests on
                 this.game.grid[this.game.player.y][this.game.player.x] = TILE_TYPES.BOMB;
+                this.game.player.inventory.splice(idx, 1);
+                break;
+            case 'heart':
+                this.game.player.setHealth(this.game.player.getHealth() + 1);
                 this.game.player.inventory.splice(idx, 1);
                 break;
             case 'note':

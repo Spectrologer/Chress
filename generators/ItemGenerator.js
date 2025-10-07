@@ -109,6 +109,11 @@ export class ItemGenerator {
         if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.03) {
             this.addBombItem();
         }
+
+        // Add a heart with a 2.5% chance in zones level 2-4 (slightly rarer than bombs)
+        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.025) {
+            this.addHeartItem();
+        }
     }
 
     addAxeItem() {
@@ -222,6 +227,20 @@ export class ItemGenerator {
                 ZoneStateManager.squigSpawned = true;
                 logger.log(`Squig spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
                 break; // Successfully placed squig
+            }
+        }
+    }
+
+    addHeartItem() {
+        // Try to place the heart in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.HEART;
+                break; // Successfully placed heart
             }
         }
     }

@@ -613,6 +613,10 @@ body {
 
 .inventory-slot.item-bomb {
     background-image: url('Images/bomb.png');
+}
+
+.inventory-slot.item-heart {
+    background-image: url('Images/heart.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;

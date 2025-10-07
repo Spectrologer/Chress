@@ -32,6 +32,7 @@ export const TILE_TYPES = {
     GREEN_FLOOR: 22,
     YELLOW_FLOOR: 23,
     BOMB: 24,
+    HEART: 27,
     SIGN: 26
 };
 
@@ -62,6 +63,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.GREEN_FLOOR]: '#32CD32',  // Lime green
     [TILE_TYPES.YELLOW_FLOOR]: '#FFD700', // Gold
     [TILE_TYPES.BOMB]: '#FF0000',  // Red for bomb
+    [TILE_TYPES.HEART]: '#FF69B4', // Hot pink for heart
     [TILE_TYPES.SIGN]: '#8B4513' // Saddle brown for sign
 };
 
@@ -95,6 +97,7 @@ export const IMAGE_ASSETS = [
     'hammer.png',
     'spear.png',
     'bomb.png',
+    'heart.png',
     'note.png',
     'well.png',
     'deadtree.png',
