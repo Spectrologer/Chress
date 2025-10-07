@@ -162,10 +162,9 @@ export class UIManager {
         }
 
         const messageOverlay = document.getElementById('messageOverlay');
-        // Show message if not already showing
-        if (messageOverlay && !messageOverlay.classList.contains('show')) {
-            this.showOverlayMessage('<span class="character-name">Penne</span><br>TRADE FOR MEAT!', 'Images/lion.png');
-        }
+        // Show message even if another is showing, to allow it to take priority
+        // when both lion and squig are present.
+        this.showOverlayMessage('<span class="character-name">Penne</span><br>TRADE FOR MEAT!', 'Images/lion.png');
     }
 
     hideLionInteractionMessage() {
