@@ -56,11 +56,75 @@ export class Enemy {
             }
         }
 
+        // Zard: bishop-like movement, charge and attack in one turn if diagonal line of sight
+        if (this.enemyType === 'zard') {
+            // Check if diagonal line of sight exists
+            if (this.checkDiagonalLineOfSight(playerX, playerY, grid)) {
+                this.performBishopCharge(player, playerX, playerY, grid);
+                return null;
+            }
+        }
+
+        // Lazerd: queen-like movement with charge and attack in one turn if orthogonal/diagonal line of sight
+        if (this.enemyType === 'lazerd') {
+            // Check if orthogonal or diagonal line of sight exists
+            const chargeMove = this.getQueenChargeAdjacentMove(playerX, playerY, grid, enemies);
+            if (chargeMove) {
+                // Set charge position to adjacent of player
+                this.x = chargeMove.x;
+                this.y = chargeMove.y;
+                // Now adjacent, attack
+                player.takeDamage(this.attack);
+                player.startBump(this.x - playerX, this.y - playerY);
+                this.startBump(playerX - this.x, playerY - this.y);
+                this.justAttacked = true;
+                this.attackAnimation = 15;
+                console.log(`Lazerd queen charges and attacks player!`);
+                if (player.isDead()) console.log('Player died!');
+                // Knockback away
+                const dx = playerX - chargeMove.x; // Since chargeMove is adjacent, dx= +/-1 or 0
+                const dy = playerY - chargeMove.y;
+                let knockbackX = playerX;
+                let knockbackY = playerY;
+                if (dx !== 0) knockbackX += dx;
+                if (dy !== 0) knockbackY += dy;
+                player.setPosition(knockbackX, knockbackY);
+                return null;
+            }
+        }
+
         // Use BFS to find the shortest path to the player
         const path = this.findPath(this.x, this.y, playerX, playerY, grid);
 
         if (path && path.length > 1) {
-            const next = path[1];
+            let next = path[1];
+            // For lazerd, aggressively close distance by moving multiple tiles along straight lines
+            if (this.enemyType === 'lazerd' && path.length > 2) {
+                // Find the maximum distance along a straight orthogonal/diagonal line
+                const directions = [
+                    { x: 0, y: -1 }, // North
+                    { x: 0, y: 1 },  // South
+                    { x: -1, y: 0 }, // West
+                    { x: 1, y: 0 },  // East
+                    { x: -1, y: -1 }, // Northwest
+                    { x: 1, y: -1 },  // Northeast
+                    { x: -1, y: 1 },  // Southwest
+                    { x: 1, y: 1 }    // Southeast
+                ];
+                const dir = directions.find(d => d.x === next.x - this.x && d.y === next.y - this.y);
+                if (dir) {
+                    let maxMoveIndex = 1;
+                    for (let i = 2; i < path.length; i++) {
+                        const checkX = path[i].x - dir.x * (i - maxMoveIndex);
+                        const checkY = path[i].y - dir.y * (i - maxMoveIndex);
+                        if (checkX !== this.x || checkY !== this.y) break;
+                        if (!this.isWalkable(path[i].x, path[i].y, grid)) break;
+                        if (enemies.find(e => e.x === path[i].x && e.y === path[i].y)) break;
+                        maxMoveIndex = i;
+                    }
+                    next = path[maxMoveIndex];
+                }
+            }
             const newX = next.x;
             const newY = next.y;
 
@@ -68,16 +132,47 @@ export class Enemy {
             if (this.isWalkable(newX, newY, grid)) {
                 // Check if the target position has the player
                 if (newX === playerX && newY === playerY) {
-                    // Enemy tries to move onto player - register attack
-                    console.log('Enemy tries to move onto player - registering one attack!');
-                    player.takeDamage(this.attack);
-                    player.startBump(this.x - playerX, this.y - playerY);
-                    this.startBump(playerX - this.x, playerY - this.y);
+                    if (this.enemyType === 'lizord') {
+                        // Lizord bump attack: displace player to nearest walkable tile and take the spot
+                        const possiblePositions = [
+                            { x: playerX, y: playerY - 1 },
+                            { x: playerX, y: playerY + 1 },
+                            { x: playerX - 1, y: playerY },
+                            { x: playerX + 1, y: playerY }
+                        ];
+                        let displaced = false;
+                        for (const pos of possiblePositions) {
+                            if (player.isWalkable(pos.x, pos.y, grid) && !enemies.find(e => e.x === pos.x && e.y === pos.y)) {
+                                player.setPosition(pos.x, pos.y);
+                                displaced = true;
+                                break;
+                            }
+                        }
+                        if (displaced) {
+                            // Damage player
+                            player.takeDamage(this.attack);
+                            player.startBump(this.x - newX, this.y - newY);
+                            this.startBump(newX - this.x, newY - this.y);
+                            this.justAttacked = true;
+                            this.attackAnimation = 15;
+                            console.log(`Lizord bumped you! Player health: ${player.getHealth()}`);
+                            if (player.isDead()) console.log('Player died!');
+                            // Move to where player was
+                            this.x = newX;
+                            this.y = newY;
+                        }
+                    } else {
+                        // Enemy tries to move onto player - register attack
+                        console.log('Enemy tries to move onto player - registering one attack!');
+                        player.takeDamage(this.attack);
+                        player.startBump(this.x - playerX, this.y - playerY);
+                        this.startBump(playerX - this.x, playerY - this.y);
                         this.justAttacked = true;
                         this.attackAnimation = 15; // Dramatic attack animation frames
-                    console.log(`Enemy hit player! Player health: ${player.getHealth()}`);
-                    if (player.isDead()) {
-                        console.log('Player died!');
+                        console.log(`Enemy hit player! Player health: ${player.getHealth()}`);
+                        if (player.isDead()) {
+                            console.log('Player died!');
+                        }
                     }
 
                     // Special knockback for lizardeaux ram attack
@@ -106,7 +201,7 @@ export class Enemy {
                         }
                     }
 
-                    // Enemy does not move
+                    // For lizord, already moved; for others, does not move
                     return null;
                 } else {
                     // Check if another enemy is already at the target position
@@ -139,6 +234,38 @@ export class Enemy {
         let directions;
         if (this.enemyType === 'lizardo') {
             // Lizardo can move orthogonally AND diagonally (8 directions)
+            directions = [
+                { x: 0, y: -1 }, // North
+                { x: 0, y: 1 },  // South
+                { x: -1, y: 0 }, // West
+                { x: 1, y: 0 },  // East
+                { x: -1, y: -1 }, // Northwest
+                { x: 1, y: -1 },  // Northeast
+                { x: -1, y: 1 },  // Southwest
+                { x: 1, y: 1 }    // Southeast
+            ];
+        } else if (this.enemyType === 'zard') {
+            // Zard can only move diagonally (4 directions like a bishop)
+            directions = [
+                { x: -1, y: -1 }, // Northwest
+                { x: 1, y: -1 },  // Northeast
+                { x: -1, y: 1 },  // Southwest
+                { x: 1, y: 1 }    // Southeast
+            ];
+        } else if (this.enemyType === 'lizord') {
+            // Lizord: knight-like movement (L-shape: 1 in one direction, 2 in perpendicular)
+            directions = [
+                { x: 1, y: 2 },
+                { x: 1, y: -2 },
+                { x: -1, y: 2 },
+                { x: -1, y: -2 },
+                { x: 2, y: 1 },
+                { x: 2, y: -1 },
+                { x: -2, y: 1 },
+                { x: -2, y: -1 }
+            ];
+        } else if (this.enemyType === 'lazerd') {
+            // Lwzerd: queen-like movement (orthogonal and diagonal, any distance)
             directions = [
                 { x: 0, y: -1 }, // North
                 { x: 0, y: 1 },  // South
@@ -438,5 +565,202 @@ export class Enemy {
             }
         }
         return null;
+    }
+
+    // Helper for Lazerd: find adjacent tile next to player along ortho/diagonal line of sight and charge there
+    getQueenChargeAdjacentMove(playerX, playerY, grid, enemies) {
+        // Check if line of sight in row, column, or diagonal
+        const dx = Math.abs(this.x - playerX);
+        const dy = Math.abs(this.y - playerY);
+        const sameRow = this.y === playerY;
+        const sameCol = this.x === playerX;
+        const sameDiagonal = dx === dy;
+
+        if (!sameRow && !sameCol && !sameDiagonal) return null;
+
+        // Determine direction
+        let direction = { x: 0, y: 0 };
+        if (sameCol) {
+            // Vertical
+            direction.y = playerY > this.y ? 1 : -1;
+        } else if (sameRow) {
+            // Horizontal
+            direction.x = playerX > this.x ? 1 : -1;
+        } else {
+            // Diagonal
+            direction.x = playerX > this.x ? 1 : -1;
+            direction.y = playerY > this.y ? 1 : -1;
+        }
+
+        // Check clear line of sight (walls/obstacles AND other enemies)
+        const steps = Math.max(dx, dy);
+        for (let i = 1; i < steps; i++) {
+            const checkX = this.x + i * direction.x;
+            const checkY = this.y + i * direction.y;
+            if (!this.isWalkable(checkX, checkY, grid)) return null;
+            if (enemies.find(e => e.x === checkX && e.y === checkY)) return null;
+        }
+
+        // Find adjacent tile next to player in the direction of charge
+        const adjX = playerX - direction.x;
+        const adjY = playerY - direction.y;
+
+        // Check if that tile is walkable and not occupied by another enemy
+        if (this.isWalkable(adjX, adjY, grid) &&
+            !enemies.find(e => e.x === adjX && e.y === adjY)) {
+            return { x: adjX, y: adjY };
+        }
+
+        return null;
+    }
+
+    // Helper for Zard: check diagonal line of sight
+    checkDiagonalLineOfSight(playerX, playerY, grid) {
+        const dx = Math.abs(this.x - playerX);
+        const dy = Math.abs(this.y - playerY);
+
+        if (dx !== dy) return false; // Not on diagonal
+
+        const sameDiagonal1 = (playerX - this.x) === (playerY - this.y);
+        const sameDiagonal2 = (playerX - this.x) === -(playerY - this.y);
+
+        if (!sameDiagonal1 && !sameDiagonal2) return false;
+
+        // Determine step direction
+        const stepX = playerX > this.x ? 1 : -1;
+        const stepY = playerY > this.y ? 1 : -1;
+
+        if (sameDiagonal1) {
+            // Step diagonally
+            for (let i = 1; i < dx; i++) {
+                const x = this.x + i * stepX;
+                const y = this.y + i * stepY;
+                if (!this.isWalkable(x, y, grid)) return false;
+            }
+        } else {
+            // Other diagonal
+            const stepYAlt = playerY > this.y ? -1 : 1;
+            for (let i = 1; i < dx; i++) {
+                const x = this.x + i * stepX;
+                const y = this.y + i * stepYAlt;
+                if (!this.isWalkable(x, y, grid)) return false;
+            }
+        }
+
+        return true;
+    }
+
+    // Helper for Zard: perform bishop charge
+    performBishopCharge(player, playerX, playerY, grid) {
+        // Determine direction of charge
+        const dx = playerX - this.x;
+        const dy = playerY - this.y;
+        const steps = Math.abs(dx); // Diagonal, dx === dy
+
+        // Move directly to adjacent tile next to player
+        let chargeX = this.x;
+        let chargeY = this.y;
+        if (steps >= 1) {
+            chargeX += dx > 0 ? 1 : -1;
+            chargeY += dy > 0 ? 1 : -1;
+            if (chargeX !== playerX || chargeY !== playerY) {
+                this.x = chargeX;
+                this.y = chargeY;
+            }
+        }
+
+        // If now adjacent (should be), attack
+        const newDx = Math.abs(this.x - playerX);
+        const newDy = Math.abs(this.y - playerY);
+        if (newDx + newDy === 2 && newDx === 1 && newDy === 1) { // Adjacent diagonally
+            // Perform attack
+            console.log('Zard bishop charges and attacks player!');
+            player.takeDamage(this.attack);
+            player.startBump(this.x - playerX, this.y - playerY);
+            this.startBump(playerX - this.x, playerY - this.y);
+            this.justAttacked = true;
+            this.attackAnimation = 15;
+
+            // Knockback diagonally away
+            const knockbackX = playerX + (playerX - this.x);
+            const knockbackY = playerY + (playerY - this.y);
+            player.setPosition(knockbackX, knockbackY);
+        }
+    }
+
+    // Helper for Lazerd: check orthogonal/diagonal line of sight
+    checkQueenLineOfSight(playerX, playerY, grid) {
+        const dx = Math.abs(this.x - playerX);
+        const dy = Math.abs(this.y - playerY);
+
+        // Check if same row, column, or diagonal
+        const sameRow = this.y === playerY;
+        const sameCol = this.x === playerX;
+        const sameDiagonal = dx === dy;
+
+        if (!sameRow && !sameCol && !sameDiagonal) return false;
+
+        // Determine direction
+        let stepX = 0, stepY = 0;
+        if (sameCol) {
+            // Vertical
+            stepY = playerY > this.y ? 1 : -1;
+        } else if (sameRow) {
+            // Horizontal
+            stepX = playerX > this.x ? 1 : -1;
+        } else {
+            // Diagonal
+            stepX = playerX > this.x ? 1 : -1;
+            stepY = playerY > this.y ? 1 : -1;
+        }
+
+        // Check line of sight
+        const steps = Math.max(dx, dy);
+        for (let i = 1; i < steps; i++) {
+            const checkX = this.x + i * stepX;
+            const checkY = this.y + i * stepY;
+            if (!this.isWalkable(checkX, checkY, grid)) return false;
+        }
+
+        return true;
+    }
+
+    // Helper for Lazerd: perform queen charge
+    performQueenCharge(player, playerX, playerY, grid) {
+        // Determine direction of charge
+        const dx = playerX - this.x;
+        const dy = playerY - this.y;
+
+        // Move directly to adjacent tile next to player (or onto player if they are exactly 1 away)
+        let chargeX = this.x;
+        let chargeY = this.y;
+        if (dx !== 0) chargeX += dx > 0 ? 1 : -1;
+        if (dy !== 0) chargeY += dy > 0 ? 1 : -1;
+
+        // Set position (may move onto player)
+        this.x = chargeX;
+        this.y = chargeY;
+
+        // Check if now on player or adjacent - attack if so
+        const newDx = Math.abs(this.x - playerX);
+        const newDy = Math.abs(this.y - playerY);
+        const onPlayer = (newDx === 0 && newDy === 0);
+        const adjacent = (newDx === 1 && newDy === 0) || (newDx === 0 && newDy === 1) || (newDx === 1 && newDy === 1);
+        if (onPlayer || adjacent) {
+            // Perform attack
+            console.log('Lazerd queen charges and attacks player!');
+            player.takeDamage(this.attack);
+            player.startBump(this.x - playerX, this.y - playerY);
+            this.startBump(playerX - this.x, playerY - this.y);
+            this.justAttacked = true;
+            this.attackAnimation = 15;
+
+            // Knockback away in the attack direction
+            let knockbackX = playerX;
+            let knockbackY = playerY;
+            if (dx !== 0) knockbackX += dx > 0 ? 1 : -1;
+            if (dy !== 0) knockbackY += dy > 0 ? 1 : -1;
+            player.setPosition(knockbackX, knockbackY);
+        }
     }
 }

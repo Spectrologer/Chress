@@ -36,8 +36,17 @@ export class EnemyGenerator {
                     if (zoneLevel === 3 && Math.random() < 0.5) {
                         enemyType = 'lizardo';
                     } else if (zoneLevel === 4) {
-                        // In Frontier, mix lizardeaux and lizardy
-                        enemyType = Math.random() < 0.5 ? 'lizardeaux' : 'lizardy';
+                        // In Frontier, mix lizardeaux, lizardy, lizord, and lazerd
+                        const rand = Math.random();
+                        if (rand < 0.25) {
+                            enemyType = 'lizardeaux';
+                        } else if (rand < 0.5) {
+                            enemyType = 'lizardy';
+                        } else if (rand < 0.75) {
+                            enemyType = 'lizord';
+                        } else {
+                            enemyType = 'lazerd';
+                        }
                     }
                     this.enemies.push({ x, y, enemyType: enemyType, id: ZoneStateManager.enemyCounter });
                     break; // Successfully placed enemy

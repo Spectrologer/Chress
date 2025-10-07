@@ -11,9 +11,9 @@ const consoleCommands = {
       console.log('Game not initialized');
       return;
     }
-    const spawnPos = game.player.getValidSpawnPosition();
+    const spawnPos = game.player.getValidSpawnPosition(game);
     if (spawnPos) {
-      game.enemies.push(new Enemy(spawnPos.x, spawnPos.y, 'lizardy'));
+      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardy'}));
       console.log(`Spawned lizardy enemy at (${spawnPos.x}, ${spawnPos.y})`);
     } else {
       console.log('No available tiles to spawn enemy');
@@ -25,9 +25,9 @@ const consoleCommands = {
       console.log('Game not initialized');
       return;
     }
-    const spawnPos = game.player.getValidSpawnPosition();
+    const spawnPos = game.player.getValidSpawnPosition(game);
     if (spawnPos) {
-      game.enemies.push(new Enemy(spawnPos.x, spawnPos.y, 'lizardeaux', null, true));
+      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardeaux'}));
       console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
     } else {
       console.log('No available tiles to spawn lizardeaux enemy');
@@ -39,9 +39,9 @@ const consoleCommands = {
       console.log('Game not initialized');
       return;
     }
-    const spawnPos = game.player.getValidSpawnPosition();
+    const spawnPos = game.player.getValidSpawnPosition(game);
     if (spawnPos) {
-      game.enemies.push(new Enemy(spawnPos.x, spawnPos.y, 'lizardea'));
+      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardea'}));
       console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
     } else {
       console.log('No available tiles to spawn enemy');
@@ -53,9 +53,9 @@ const consoleCommands = {
       console.log('Game not initialized');
       return;
     }
-    const spawnPos = game.player.getValidSpawnPosition();
+    const spawnPos = game.player.getValidSpawnPosition(game);
     if (spawnPos) {
-      game.enemies.push(new Enemy(spawnPos.x, spawnPos.y, 'lizardo'));
+      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardo'}));
       console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
     } else {
       console.log('No available tiles to spawn enemy');
@@ -67,9 +67,9 @@ const consoleCommands = {
       console.log('Game not initialized');
       return;
     }
-    const spawnPos = game.player.getValidSpawnPosition();
+    const spawnPos = game.player.getValidSpawnPosition(game);
     if (spawnPos) {
-      game.enemies.push(new Enemy(spawnPos.x, spawnPos.y, 'lizalad'));
+      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizalad'}));
       console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
     } else {
       console.log('No available tiles to spawn enemy');
@@ -81,7 +81,7 @@ const consoleCommands = {
       console.log('Game not initialized');
       return;
     }
-    const spawnPos = game.player.getValidSpawnPosition();
+    const spawnPos = game.player.getValidSpawnPosition(game);
     if (spawnPos) {
       game.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.AXE;
       console.log(`Debug: Axe spawned at (${spawnPos.x}, ${spawnPos.y})`);
@@ -95,7 +95,7 @@ const consoleCommands = {
       console.log('Game not initialized');
       return;
     }
-    const spawnPos = game.player.getValidSpawnPosition();
+    const spawnPos = game.player.getValidSpawnPosition(game);
     if (spawnPos) {
       game.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.HAMMER;
       console.log(`Debug: Hammer spawned at (${spawnPos.x}, ${spawnPos.y})`);
@@ -109,7 +109,7 @@ const consoleCommands = {
       console.log('Game not initialized');
       return;
     }
-    const spawnPos = game.player.getValidSpawnPosition();
+    const spawnPos = game.player.getValidSpawnPosition(game);
     if (spawnPos) {
       game.grid[spawnPos.y][spawnPos.x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 };
       console.log('Spawned bishop spear at (' + spawnPos.x + ',' + spawnPos.y + ')');
@@ -123,7 +123,7 @@ const consoleCommands = {
       console.log('Game not initialized');
       return;
     }
-    const spawnPos = game.player.getValidSpawnPosition();
+    const spawnPos = game.player.getValidSpawnPosition(game);
     if (spawnPos) {
       game.grid[spawnPos.y][spawnPos.x] = { type: TILE_TYPES.HORSE_ICON, uses: 3 };
       console.log('Spawned horse icon at (' + spawnPos.x + ',' + spawnPos.y + ')');
@@ -255,6 +255,48 @@ const consoleCommands = {
     }
     game.enemies = [];
     console.log('Cleared all enemies');
+  },
+
+  spawnZard: (game) => {
+    if (!game || !game.player) {
+      console.log('Game not initialized');
+      return;
+    }
+    const spawnPos = game.player.getValidSpawnPosition(game);
+    if (spawnPos) {
+      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'zard'}));
+      console.log(`Spawned Zard enemy at (${spawnPos.x}, ${spawnPos.y})`);
+    } else {
+      console.log('No available tiles to spawn Zard enemy');
+    }
+  },
+
+  spawnLizord: (game) => {
+    if (!game || !game.player) {
+      console.log('Game not initialized');
+      return;
+    }
+    const spawnPos = game.player.getValidSpawnPosition(game);
+    if (spawnPos) {
+      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizord'}));
+      console.log(`Spawned Lizord enemy at (${spawnPos.x}, ${spawnPos.y})`);
+    } else {
+      console.log('No available tiles to spawn Lizord enemy');
+    }
+  },
+
+  spawnLazerd: (game) => {
+    if (!game || !game.player) {
+      console.log('Game not initialized');
+      return;
+    }
+    const spawnPos = game.player.getValidSpawnPosition(game);
+    if (spawnPos) {
+      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lazerd'}));
+      console.log(`Spawned Lazerd enemy at (${spawnPos.x}, ${spawnPos.y})`);
+    } else {
+      console.log('No available tiles to spawn Lazerd enemy');
+    }
   },
 
   tp: (game, x, y) => {

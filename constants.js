@@ -1,7 +1,7 @@
 // Game constants
-export const GRID_SIZE = 10;
+export const GRID_SIZE = 9;
 export const TILE_SIZE = 64;
-export const CANVAS_SIZE = GRID_SIZE * TILE_SIZE; // 640x640 pixels
+export const CANVAS_SIZE = GRID_SIZE * TILE_SIZE; // 576x576 pixels
 
 // Tile types
 export const TILE_TYPES = {
@@ -96,6 +96,8 @@ export const IMAGE_ASSETS = [
     'fauna/lizardy.png',
     'fauna/lizardo.png',
     'fauna/lizardeaux.png',
+    'fauna/lizord.png',
+    'fauna/lazerd.png',
     'items/axe.png',
     'items/hammer.png',
     'items/spear.png',
@@ -106,6 +108,7 @@ export const IMAGE_ASSETS = [
     'doodads/deadtree.png',
     'fauna/lion.png',
     'fauna/squig.png',
+    'fauna/zard.png',
     'floors/frontier/desert.png',
     'flora/succulent.png',
     'flora/stump.png',

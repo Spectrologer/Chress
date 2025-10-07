@@ -93,6 +93,12 @@ export class RenderManager {
                 enemyKey = 'lizardo';
             } else if (enemy.enemyType === 'lizardeaux') {
                 enemyKey = 'lizardeaux';
+            } else if (enemy.enemyType === 'zard') {
+                enemyKey = 'zard';
+            } else if (enemy.enemyType === 'lizord') {
+                enemyKey = 'lizord';
+            } else if (enemy.enemyType === 'lazerd') {
+                enemyKey = 'lazerd';
             } else {
                 enemyKey = 'lizardy';
             }
