@@ -36,6 +36,7 @@ export class CombatManager {
         this.game.enemies = this.game.enemies.filter(enemy => {
             if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked) {
                 this.game.player.takeDamage(enemy.attack);
+                this.game.soundManager.playSound('attack');
                 return false;
             }
             return true;

@@ -14,6 +14,7 @@ import { CombatManager } from './CombatManager.js';
 import { InteractionManager } from './InteractionManager.js';
 import { ZoneManager } from './ZoneManager.js';
 import { GameStateManager } from './GameStateManager.js';
+import { SoundManager } from './SoundManager.js';
 
 // Game state
 class Game {
@@ -45,6 +46,7 @@ class Game {
         this.interactionManager = new InteractionManager(this);
         this.zoneManager = new ZoneManager(this);
         this.gameStateManager = new GameStateManager(this);
+        this.soundManager = new SoundManager();
 
         // Add references to managers for easier access
         this.Enemy = Enemy;
@@ -134,6 +136,8 @@ class Game {
         this.uiManager.setupMessageLogButton();
         this.uiManager.setupBarterHandlers();
 
+        // Make soundManager global for easy access from other classes
+        window.soundManager = this.soundManager;
 
         // Start game loop
         this.gameLoop();
@@ -248,9 +252,10 @@ class Game {
         if (item.uses <= 0) this.player.inventory = this.player.inventory.filter(invItem => invItem !== item);
         this.player.setPosition(targetX, targetY);
         if (enemy) {
-            this.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
-            enemy.startBump(this.player.x - enemy.x, this.player.y - enemy.y);
+            this.game.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
+            enemy.startBump(this.game.player.x - enemy.x, this.game.player.y - enemy.y);
             enemy.takeDamage(999);
+            this.game.soundManager.playSound('attack');
             const currentZone = this.player.getCurrentZone();
             this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
             this.enemies = this.enemies.filter(e => e !== enemy);
@@ -273,6 +278,7 @@ class Game {
             this.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
             enemy.startBump(this.player.x - enemy.x, this.player.y - enemy.y);
             enemy.takeDamage(999);
+            this.soundManager.playSound('attack');
             const currentZone = this.player.getCurrentZone();
             this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
             this.enemies = this.enemies.filter(e => e !== enemy);

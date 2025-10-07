@@ -72,6 +72,7 @@ export class Player {
                 if (tile === TILE_TYPES.WATER) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'water' });
+                        window.soundManager?.playSound('pickup');
                     } else {
                         this.restoreThirst(10);
                     }
@@ -79,6 +80,7 @@ export class Player {
                 } else if (tile && tile.type === TILE_TYPES.FOOD) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'food', foodType: tile.foodType });
+                        window.soundManager?.playSound('pickup');
                     } else {
                         this.restoreHunger(10);
                     }
@@ -87,36 +89,43 @@ export class Player {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'axe' });
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                        window.soundManager?.playSound('pickup');
                     } // If inventory full, can't pick up axe and it remains on ground
                 } else if (tile === TILE_TYPES.HAMMER) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'hammer' });
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                        window.soundManager?.playSound('pickup');
                     } // If inventory full, can't pick up hammer and it remains on ground
                 } else if (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'bishop_spear', uses: tile.uses });
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                        window.soundManager?.playSound('pickup');
                     } // If inventory full, can't pick up bishop spear and it remains on ground
                 } else if (tile && tile.type === TILE_TYPES.HORSE_ICON) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'horse_icon', uses: tile.uses });
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                        window.soundManager?.playSound('pickup');
                     } // If inventory full, can't pick up horse icon and it remains on ground
                 } else if (tile === TILE_TYPES.BOMB) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'bomb' });
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                        window.soundManager?.playSound('pickup');
                     } // If inventory full, can't pick up bomb and it remains on ground
                 } else if (tile === TILE_TYPES.NOTE) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'note' });
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                        window.soundManager?.playSound('pickup');
                     } // If inventory full, can't pick up note and it remains on ground
                 }
             this.x = newX;
             this.y = newY;
             this.liftFrames = 15; // Start lift animation
+            window.soundManager?.playSound('move');
 
             // Set smells when stepping on scent tiles
             if (tile === TILE_TYPES.ORANGE_FLOOR) {
@@ -142,6 +151,7 @@ export class Player {
                     this.decreaseHunger(); // Cutting costs hunger
                     this.startActionAnimation(); // Start action animation
                     this.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
+                    window.soundManager?.playSound('chop');
                     return false; // Don't move, just attack
                 }
 
@@ -153,6 +163,7 @@ export class Player {
                     this.decreaseHunger(2); // Breaking costs 2 hunger
                     this.startActionAnimation(); // Start action animation
                     this.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
+                    window.soundManager?.playSound('smash');
                     return false; // Don't move, just attack
                 }
             }
@@ -428,6 +439,7 @@ export class Player {
 
     startAttackAnimation() {
         this.attackAnimation = 20; // 20 frames of attack animation
+        window.soundManager?.playSound('attack');
     }
 
     startActionAnimation() {

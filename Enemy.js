@@ -77,11 +77,13 @@ export class Enemy {
                     this.x = chargeMove.x;
                     this.y = chargeMove.y;
                     // Now adjacent, attack
-                    player.takeDamage(this.attack);
-                    player.startBump(this.x - playerX, this.y - playerY);
-                    this.startBump(playerX - this.x, playerY - this.y);
-                    this.justAttacked = true;
-                    this.attackAnimation = 15;
+            player.takeDamage(this.attack);
+            player.startBump(this.x - playerX, this.y - playerY);
+            this.startBump(playerX - this.x, playerY - this.y);
+            this.justAttacked = true;
+            this.attackAnimation = 15;
+            window.soundManager?.playSound('attack');
+                    window.soundManager?.playSound('attack');
                     console.log(`Lazerd queen charges and attacks player!`);
                     if (player.isDead()) console.log('Player died!');
                     // Knockback away
@@ -163,6 +165,7 @@ export class Enemy {
                                 this.startBump(newX - this.x, newY - this.y);
                                 this.justAttacked = true;
                                 this.attackAnimation = 15;
+                                window.soundManager?.playSound('attack');
                                 console.log(`Lizord bumped you! Player health: ${player.getHealth()}`);
                                 if (player.isDead()) console.log('Player died!');
                                 // Move to where player was
@@ -177,6 +180,7 @@ export class Enemy {
                             this.startBump(playerX - this.x, playerY - this.y);
                             this.justAttacked = true;
                             this.attackAnimation = 15; // Dramatic attack animation frames
+                            window.soundManager?.playSound('attack');
                             console.log(`Enemy hit player! Player health: ${player.getHealth()}`);
                             if (player.isDead()) {
                                 console.log('Player died!');
@@ -399,6 +403,7 @@ export class Enemy {
             this.startBump(playerX - this.x, playerY - this.y);
             this.justAttacked = true;
             this.attackAnimation = 15; // Dramatic attack animation frames
+            window.soundManager?.playSound('attack');
             console.log(`Lizardeaux rammed player from distance! Player health: ${player.getHealth()}`);
             if (player.isDead()) {
                 console.log('Player died from distance ram!');
@@ -705,6 +710,7 @@ export class Enemy {
                 this.startBump(playerX - chargeXSim, playerY - chargeYSim);
                 this.justAttacked = true;
                 this.attackAnimation = 15;
+                window.soundManager?.playSound('attack');
 
                 // Knockback diagonally away
                 const knockbackX = playerX + (playerX - chargeXSim);
@@ -783,6 +789,7 @@ export class Enemy {
             this.startBump(playerX - this.x, playerY - this.y);
             this.justAttacked = true;
             this.attackAnimation = 15;
+            window.soundManager?.playSound('attack');
 
             // Knockback away in the attack direction
             let knockbackX = playerX;
