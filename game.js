@@ -145,6 +145,8 @@ class Game {
         // Import and expose console commands
         import('./consoleCommands.js').then(module => {
             window.consoleCommands = module.default;
+            // Expose individual commands for easier access
+            window.tp = (x, y) => module.default.tp(this, x, y);
         });
 
         // Update UI
@@ -215,10 +217,10 @@ class Game {
         // Ensure player is on a walkable tile
         this.player.ensureValidPosition(this.grid);
 
-        // Check for special zone items found message
+        // Check for special zone treasures
         if (hasReachedSpecialZone) {
-            // Add treasure items to inventory
-            this.addTreasureToInventory();
+            const treasures = this.specialZones.get(zoneKey);
+            this.spawnTreasuresOnGrid(treasures);
 
             // Remove the special zone marker since it was used
             this.specialZones.delete(zoneKey);
@@ -256,6 +258,10 @@ class Game {
                 this.zoneGenerator.clearPathToExit(GRID_SIZE - 1, exitY);
                 this.player.setPosition(GRID_SIZE - 1, exitY);
                 break;
+            case 'teleport':
+                // Teleport: place in center
+                this.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
+                break;
             default:
                 // Fallback to center
                 this.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
@@ -281,6 +287,8 @@ class Game {
         this.zoneGenerator.constructor.squigSpawned = false; // Reset squig spawn
         this.zoneGenerator.constructor.foodWaterRoomSpawned = false; // Reset food/water room spawn
         Sign.spawnedMessages.clear(); // Reset spawned message tracking
+        this.specialZones.clear(); // Reset special zones
+        this.messageLog = []; // Reset message log
         this.player.reset();
         this.enemies = [];
         this.defeatedEnemies = new Set();
@@ -620,6 +628,32 @@ class Game {
                 );
             }
         }
+    }
+
+    spawnTreasuresOnGrid(treasures) {
+        // Spawn treasures on grid at valid floor positions
+        for (const treasure of treasures) {
+            // Try to place treasure in a valid location (max 50 attempts)
+            for (let attempts = 0; attempts < 50; attempts++) {
+                const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+                const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+                // Check if tile is floor and not occupied or blocked
+                const tile = this.grid[y][x];
+                const isFloor = tile === TILE_TYPES.FLOOR ||
+                    (tile && typeof tile === 'object' && tile.type === TILE_TYPES.FLOOR);
+                const isExit = tile === TILE_TYPES.EXIT;
+
+                if (isFloor && !isExit) {
+                    // Place the treasure
+                    this.grid[y][x] = treasure;
+                    break; // Successfully placed
+                }
+            }
+        }
+
+        // Add message to log
+        this.uiManager.addMessageToLog('Treasures found scattered throughout the zone!');
     }
 
     addTreasureToInventory() {

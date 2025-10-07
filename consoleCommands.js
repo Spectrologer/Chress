@@ -2,7 +2,7 @@
 // These functions can be called directly from the browser console
 // e.g., consoleCommands.spawnBishopSpear(game)
 
-import { TILE_TYPES } from './constants.js';
+import { TILE_TYPES, GRID_SIZE } from './constants.js';
 import { Enemy } from './Enemy.js';
 
 const consoleCommands = {
@@ -219,6 +219,24 @@ const consoleCommands = {
     }
     game.enemies = [];
     console.log('Cleared all enemies');
+  },
+
+  tp: (game, x, y) => {
+    if (!game || !game.player) {
+      console.log('Game not initialized');
+      return;
+    }
+    x = parseInt(x);
+    y = parseInt(y);
+    if (isNaN(x) || isNaN(y)) {
+      console.log('Usage: tp(x, y) - coordinates must be numbers');
+      return;
+    }
+    // Set player's zone and transition
+    game.player.setCurrentZone(x, y);
+    // Transition to zone without exit information (use defaults)
+    game.transitionToZone(x, y, 'teleport', Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
+    console.log(`Teleported to zone (${x}, ${y})`);
   }
 
 };

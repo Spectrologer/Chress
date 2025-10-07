@@ -66,7 +66,7 @@ export class InventoryManager {
             case 'bomb':
                 return 'Bomb - Blasts through walls to create exits';
             case 'note':
-                return 'Map Note - Marks an undiscovered location 20 zones away on the map';
+                return 'Map Note - Marks an undiscovered location 15-20 zones away on the map';
             default:
                 return '';
         }
@@ -251,7 +251,7 @@ export class InventoryManager {
                 if (!visited.has(zoneKey) && !this.game.specialZones.has(zoneKey)) {
                     // Calculate Manhattan distance (zones)
                     const distance = Math.max(Math.abs(zoneX - currentZone.x), Math.abs(zoneY - currentZone.y));
-                    if (distance >= 20) {
+                    if (distance >= 15 && distance <= 20) {
                         candidates.push({ x: zoneX, y: zoneY, distance });
                     }
                 }
@@ -269,10 +269,12 @@ export class InventoryManager {
         console.log(`Map note used: marking zone (${selected.x}, ${selected.y}) as special treasure zone from ${Math.max(Math.abs(selected.x - currentZone.x), Math.abs(selected.y - currentZone.y))} zones away`);
 
         // Mark the zone as a special zone (with treasures)
+        const availableFood = this.game.availableFoodAssets;
+        const randomFood = availableFood[Math.floor(Math.random() * availableFood.length)];
         this.game.specialZones.set(zoneKey, [
-            'Treasure Found: Bombs Added',
-            'Treasure Found: Spears Added',
-            'Treasure Found: Food Added'
+            TILE_TYPES.BOMB,
+            { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 },
+            { type: TILE_TYPES.FOOD, foodType: randomFood }
         ]);
 
         // Mark the zone as visited (this adds it to the map)
