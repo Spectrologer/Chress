@@ -8,6 +8,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Creepster&family=Nosifer&family=Griffy&family=MedievalSharp&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+yt    <style>
+        .barter-window button {
+            padding: 12px 24px;
+            font-size: 1.1em;
+        }
+        .barter-window button:disabled {
+            background-color: #888;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
     <div class="game-container">
@@ -81,6 +92,19 @@
                 <h1>Game Over</h1>
                 <p>You discovered <span id="zones-discovered">0</span> zones.</p>
                 <button id="restart-button">Restart</button>
+            </div>
+        </div>
+        <div id="barterOverlay" class="barter-overlay">
+            <div class="barter-window">
+                <h2 id="barterNPCName">NPC Name</h2>
+                <div class="barter-info">
+                    <img id="barterNPCPortrait" src="" alt="NPC Portrait" class="barter-portrait">
+                    <p id="barterNPCMessage">Message</p>
+                </div>
+                <div class="barter-buttons">
+                    <button id="confirmBarterButton">Confirm Trade</button>
+                    <button id="cancelBarterButton">Cancel</button>
+                </div>
             </div>
         </div>
     </div>

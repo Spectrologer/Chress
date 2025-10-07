@@ -9,7 +9,16 @@ export class UIManager {
         this.messageLogContent = document.getElementById('messageLogContent');
         this.closeMessageLogButton = document.getElementById('closeMessageLogButton');
 
+        // Barter UI elements
+        this.barterOverlay = document.getElementById('barterOverlay');
+        this.barterNPCName = document.getElementById('barterNPCName');
+        this.barterNPCPortrait = document.getElementById('barterNPCPortrait');
+        this.barterNPCMessage = document.getElementById('barterNPCMessage');
+        this.confirmBarterButton = document.getElementById('confirmBarterButton');
+        this.cancelBarterButton = document.getElementById('cancelBarterButton');
+
         // UI state
+        this.currentOverlayTimeout = null;
     }
 
     setupMessageLogButton() {
@@ -170,8 +179,7 @@ export class UIManager {
     hideLionInteractionMessage() {
         const messageOverlay = document.getElementById('messageOverlay');
         // Hide the overlay, but only if a sign message isn't the one being displayed.
-        // Also check if the message is the lion message before hiding, to avoid closing other messages.
-        if (messageOverlay && messageOverlay.classList.contains('show') && !this.game.displayingMessageForSign && messageOverlay.innerHTML.includes("Penne")) {
+        if (messageOverlay && messageOverlay.classList.contains('show') && !this.game.displayingMessageForSign) {
             messageOverlay.classList.remove('show');
         }
     }
@@ -195,6 +203,12 @@ export class UIManager {
         }
         if (messageElement) {
             logger.log(`${messageElementId} found, setting HTML content`);
+            // Clear any existing overlay timeout
+            if (this.currentOverlayTimeout) {
+                clearTimeout(this.currentOverlayTimeout);
+                this.currentOverlayTimeout = null;
+            }
+
             // Use innerHTML to set content with image if provided
             if (imageSrc) {
                 messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
@@ -206,9 +220,10 @@ export class UIManager {
 
             // Auto-hide overlay messages after 2 seconds if not persistent
             if (useOverlay && !persistent) {
-                setTimeout(() => {
+                this.currentOverlayTimeout = setTimeout(() => {
                     if (messageElement.classList.contains('show')) {
                         messageElement.classList.remove('show');
+                        this.currentOverlayTimeout = null;
                         logger.log("Auto-hiding overlay message due to timeout.");
                     }
                 }, 2000);
@@ -223,6 +238,10 @@ export class UIManager {
         if (messageOverlay && messageOverlay.classList.contains('show')) {
             messageOverlay.classList.remove('show');
             logger.log("Hiding overlay message.");
+        }
+        if (this.currentOverlayTimeout) {
+            clearTimeout(this.currentOverlayTimeout);
+            this.currentOverlayTimeout = null;
         }
     }
 
@@ -315,5 +334,58 @@ export class UIManager {
             this.messageLogOverlay.classList.remove('show');
             this.game.gameLoop();
         });
+    }
+
+    setupBarterHandlers() {
+        this.confirmBarterButton.addEventListener('click', () => {
+            this.confirmTrade();
+        });
+        this.cancelBarterButton.addEventListener('click', () => {
+            this.hideBarterWindow();
+            this.game.gameLoop();
+        });
+    }
+
+    showBarterWindow(npcType) {
+        let name, portrait, message, requiredItem;
+        if (npcType === 'lion') {
+            name = 'Penne';
+            portrait = 'Images/fauna/lionface.png';
+            message = 'Give me meat!';
+            requiredItem = 'Food/meat';
+        } else if (npcType === 'squig') {
+            name = 'Squig';
+            portrait = 'Images/fauna/squigface.png';
+            message = 'I\'m nuts for nuts!';
+        } else {
+            return;
+        }
+
+        this.barterNPCName.textContent = name;
+        this.barterNPCPortrait.src = portrait;
+        this.barterNPCMessage.textContent = message;
+        this.currentNPCType = npcType;
+        this.barterOverlay.classList.add('show');
+
+        // Disable confirm button if player cannot trade
+        const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
+        const canTrade = this.game.player.inventory.some(item => item.type === 'food' && item.foodType === foodType);
+        this.confirmBarterButton.disabled = !canTrade;
+    }
+
+    hideBarterWindow() {
+        this.barterOverlay.classList.remove('show');
+    }
+
+    confirmTrade() {
+        const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
+        const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType === foodType);
+        if (index >= 0) {
+            this.game.player.inventory.splice(index, 1);
+            this.game.player.inventory.push({ type: 'water' });
+            this.game.updatePlayerStats();
+            this.hideBarterWindow();
+            this.game.gameLoop();
+        }
     }
 }

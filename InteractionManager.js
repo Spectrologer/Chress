@@ -6,90 +6,11 @@ export class InteractionManager {
     }
 
     checkLionInteraction() {
-        const playerPos = this.game.player.getPosition();
-
-        // Find all lion positions
-        const lions = [];
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                if (this.game.grid[y][x] === TILE_TYPES.LION) {
-                    lions.push({ x, y });
-                }
-            }
-        }
-
-        // Check if player is adjacent to any lion
-        const isAdjacentToLion = lions.some(lion => {
-            const dx = Math.abs(lion.x - playerPos.x);
-            const dy = Math.abs(lion.y - playerPos.y);
-            return (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        });
-
-        // Check if player has meat
-        const hasMeat = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.includes('Food/meat'));
-
-        if (isAdjacentToLion && !hasMeat) {
-            this.game.uiManager.handleLionInteractionMessage();
-        } else {
-            this.game.uiManager.hideLionInteractionMessage();
-        }
+        // NPC interactions now handled via clicking - no automatic messages
     }
 
     checkSquigInteraction() {
-        const playerPos = this.game.player.getPosition();
-
-        // Find all squig positions
-        const squigs = [];
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                if (this.game.grid[y][x] === TILE_TYPES.SQUIG) {
-                    squigs.push({ x, y });
-                }
-            }
-        }
-
-        // Check if player is adjacent to any squig
-        const isAdjacentToSquig = squigs.some(squig => {
-            const dx = Math.abs(squig.x - playerPos.x);
-            const dy = Math.abs(squig.y - playerPos.y);
-            return (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        });
-
-        // Find all lion positions
-        const lions = [];
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                if (this.game.grid[y][x] === TILE_TYPES.LION) {
-                    lions.push({ x, y });
-                }
-            }
-        }
-
-        // Check if player is adjacent to any lion
-        const isAdjacentToLion = lions.some(lion => {
-            const dx = Math.abs(lion.x - playerPos.x);
-            const dy = Math.abs(lion.y - playerPos.y);
-            return (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        });
-
-        // Check if player has nuts
-        const hasNut = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.includes('Food/nut'));
-
-        // Check if player has meat
-        const hasMeat = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.includes('Food/meat'));
-
-        // Do not show the squig message if a sign message is already displayed.
-        if (this.game.displayingMessageForSign) {
-            return;
-        }
-
-        if (isAdjacentToSquig && !hasNut) {
-            // Only show squig message if not adjacent to lion, or if adjacent to lion but has meat (lion takes priority when both lack their trade items)
-            if (!isAdjacentToLion || hasMeat) {
-                // Show message even if overlay is already showing (allow multiple messages)
-                this.game.uiManager.showOverlayMessage('<span class="character-name">Squig</span><br>I\'m nuts for nuts!', 'Images/fauna/squigface.png');
-            }
-        }
+        // NPC interactions now handled via clicking - no automatic messages
     }
 
     checkItemPickup() {

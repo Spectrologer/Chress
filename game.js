@@ -132,6 +132,7 @@ class Game {
         this.uiManager.setupGameOverHandler();
         this.uiManager.setupCloseMessageLogHandler();
         this.uiManager.setupMessageLogButton();
+        this.uiManager.setupBarterHandlers();
 
 
         // Start game loop
@@ -307,11 +308,7 @@ class Game {
             return;
         }
 
-        // Check lion interaction for automatic message
-        this.checkLionInteraction();
 
-        // Check squig interaction for automatic message
-        this.checkSquigInteraction();
 
         this.render();
         requestAnimationFrame(() => this.gameLoop());

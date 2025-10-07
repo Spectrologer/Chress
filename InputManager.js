@@ -175,8 +175,8 @@ export class InputManager {
             const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
             console.log(`Player at (${playerPos.x}, ${playerPos.y}), dx=${dx}, dy=${dy}, isAdjacent=${isAdjacent}`);
             if (isAdjacent) {
-                console.log("Player is adjacent, triggering lion interaction");
-                this.game.interactWithNPC('Food/meat');
+                console.log("Player is adjacent, showing barter window for lion");
+                this.game.uiManager.showBarterWindow('lion');
             } else {
                 console.log(`Lion interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, lion at ${gridCoords.x},${gridCoords.y})`);
             }
@@ -194,8 +194,8 @@ export class InputManager {
             const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
             console.log(`Player at (${playerPos.x}, ${playerPos.y}), dx=${dx}, dy=${dy}, isAdjacent=${isAdjacent}`);
             if (isAdjacent) {
-                console.log("Player is adjacent, triggering squig interaction");
-                this.game.interactWithNPC('Food/nut');
+                console.log("Player is adjacent, showing barter window for squig");
+                this.game.uiManager.showBarterWindow('squig');
             } else {
                 console.log(`Squig interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, squig at ${gridCoords.x},${gridCoords.y})`);
             }
