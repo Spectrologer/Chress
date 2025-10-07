@@ -108,6 +108,16 @@ export class InventoryManager {
             usesText.textContent = `x${item.uses}`;
             slot.appendChild(usesText);
         } else if (item.type === 'horse_icon') {
+            // Create a container for the image and the uses text
+            const container = document.createElement('div');
+            container.style.position = 'relative';
+            container.style.width = '100%';
+            container.style.height = '100%';
+            container.style.display = 'flex';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            slot.appendChild(container);
+
             // Add the horse icon image to inventory slot
             const horseImg = document.createElement('img');
             horseImg.src = 'Images/items/horse.png';
@@ -115,9 +125,9 @@ export class InventoryManager {
             horseImg.style.height = '100%';
             horseImg.style.objectFit = 'contain';
             horseImg.style.imageRendering = 'pixelated';
-            slot.appendChild(horseImg);
+            container.appendChild(horseImg);
+
             // Add uses indicator
-            slot.style.position = 'relative';
             const usesText = document.createElement('div');
             usesText.style.position = 'absolute';
             usesText.style.bottom = '4px';
@@ -127,7 +137,7 @@ export class InventoryManager {
             usesText.style.color = '#000000';
             usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
             usesText.textContent = `x${item.uses}`;
-            slot.appendChild(usesText);
+            container.appendChild(usesText);
         } else if (item.type === 'bomb') {
             slot.classList.add('item-bomb');
         } else if (item.type === 'heart') {
