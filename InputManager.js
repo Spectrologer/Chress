@@ -6,6 +6,10 @@ export class InputManager {
     constructor(game) {
         this.game = game;
         this.isExecutingPath = false;
+        this.lastTapTime = null;
+        this.lastTapX = null;
+        this.lastTapY = null;
+        this.autoUseNextExitReach = false;
     }
 
     setupControls() {
@@ -163,6 +167,26 @@ export class InputManager {
         const playerPos = this.game.player.getPosition();
 
         console.log(`Tap at screen: (${screenX}, ${screenY}) -> grid: (${gridCoords.x}, ${gridCoords.y})`);
+
+        // Double tap detection
+        const now = Date.now();
+        const isDoubleTap = this.lastTapTime !== null && (now - this.lastTapTime) < 300 && this.lastTapX === gridCoords.x && this.lastTapY === gridCoords.y;
+        this.lastTapTime = now;
+        this.lastTapX = gridCoords.x;
+        this.lastTapY = gridCoords.y;
+
+        // Handle double tap on exit tiles
+        const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        if (isDoubleTap && tile === TILE_TYPES.EXIT) {
+            if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
+                // Double tap on current exit: immediately use
+                this.handleExitTap(gridCoords.x, gridCoords.y);
+                return;
+            } else {
+                // Double tap on distant exit: move there and auto-use upon reaching
+                this.autoUseNextExitReach = true;
+            }
+        }
 
         // Check if tapped on lion for interaction
         const lionAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.LION;
@@ -411,6 +435,10 @@ export class InputManager {
                 const playerPos = this.game.player.getPosition();
                 if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
                     console.log('Player reached exit tile. Tap the exit again to transition zones.');
+                    if (this.autoUseNextExitReach) {
+                        this.handleExitTap(playerPos.x, playerPos.y);
+                        this.autoUseNextExitReach = false;
+                    }
                 }
             }
         };
@@ -678,7 +706,7 @@ export class InputManager {
         }
         event.preventDefault();
 
-                // Check if player is trying to move onto an enemy tile
+        // Check if player is trying to move onto an enemy tile
                 const enemyAtTarget = this.game.enemies.find(enemy => enemy.x === newX && enemy.y === newY);
                 let playerMoved = false;
 
