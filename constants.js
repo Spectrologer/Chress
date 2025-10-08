@@ -116,7 +116,8 @@ export const IMAGE_ASSETS = [
     'sign.png',
     'items/horse.png',
     'protag/default.png',
-    'protag/faceset.png'
+    'protag/faceset.png',
+    'ui/arrow.png'
 ];
 
 // Food image assets
