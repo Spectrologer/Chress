@@ -156,8 +156,8 @@ export const IMAGE_ASSETS = [
 
 // Food image assets
 export const FOOD_ASSETS = [
-    'Food/meat/Meat.png',
-    'Food/nut/Nut.png'
+    'Food/meat/meat.png',
+    'Food/nut/nut.png'
 ];
 
 export const TOTAL_IMAGES = IMAGE_ASSETS.length + FOOD_ASSETS.length;

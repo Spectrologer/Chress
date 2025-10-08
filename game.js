@@ -122,18 +122,38 @@ class Game {
         this.bombPlacementMode = false;
         this.bombPlacementPositions = [];
 
-        // Generate initial zone
-        this.generateZone();
+        // Try to load saved game state, or generate initial zone if no save exists
+        const loaded = this.gameStateManager.loadGameState();
+        if (!loaded) {
+            // Generate initial zone if no saved state
+            this.generateZone();
 
-        // Ensure player starts on a valid tile, but do not overwrite signs
-        const startTile = this.grid[this.player.y][this.player.x];
-        if (!startTile || (typeof startTile === 'string' && startTile !== TILE_TYPES.SIGN) || (typeof startTile === 'object' && startTile.type !== TILE_TYPES.SIGN)) {
-            this.grid[this.player.y][this.player.x] = TILE_TYPES.FLOOR;
+            // Ensure player starts on a valid tile, but do not overwrite signs
+            const startTile = this.grid[this.player.y][this.player.x];
+            if (!startTile || (typeof startTile === 'string' && startTile !== TILE_TYPES.SIGN) || (typeof startTile === 'object' && startTile.type !== TILE_TYPES.SIGN)) {
+                this.grid[this.player.y][this.player.x] = TILE_TYPES.FLOOR;
+            }
+
+            // Set initial region (starting at 0,0 = "Home")
+            const initialZone = this.player.getCurrentZone();
+            this.currentRegion = this.uiManager.generateRegionName(initialZone.x, initialZone.y);
+        } else {
+            // If loaded from save, make sure we're on a valid tile
+            // But don't clear the grid since it was loaded from save
+            if (this.grid) {
+                this.player.ensureValidPosition(this.grid);
+                const currentZone = this.player.getCurrentZone();
+                this.currentRegion = this.uiManager.generateRegionName(currentZone.x, currentZone.y);
+                // Ensure zoneGenerator.grid points to the loaded grid
+                this.zoneGenerator.grid = this.grid;
+            } else {
+                // Fallback: generate zone if grid wasn't loaded properly
+                this.generateZone();
+                this.grid[this.player.y][this.player.x] = TILE_TYPES.FLOOR;
+                const initialZone = this.player.getCurrentZone();
+                this.currentRegion = this.uiManager.generateRegionName(initialZone.x, initialZone.y);
+            }
         }
-
-        // Set initial region (starting at 0,0 = "Home")
-        const initialZone = this.player.getCurrentZone();
-        this.currentRegion = this.uiManager.generateRegionName(initialZone.x, initialZone.y);
 
         // Set up event listeners
         this.inputManager.setupControls();
@@ -141,6 +161,18 @@ class Game {
         this.uiManager.setupCloseMessageLogHandler();
         this.uiManager.setupMessageLogButton();
         this.uiManager.setupBarterHandlers();
+
+        // Save game state before page unload
+        window.addEventListener('beforeunload', () => {
+            this.gameStateManager.saveGameState();
+        });
+
+        // Save game state when page becomes hidden (user switches tabs/switches apps)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.gameStateManager.saveGameState();
+            }
+        });
 
         // Make soundManager global for easy access from other classes
         window.soundManager = this.soundManager;
@@ -287,7 +319,7 @@ class Game {
             const currentZone = this.player.getCurrentZone();
             this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
             this.enemies = this.enemies.filter(e => e !== enemy);
-            const zoneKey = `${currentZone.x},${currentZone.y}`;
+            const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
             if (this.zones.has(zoneKey)) {
                 const zoneData = this.zones.get(zoneKey);
                 zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
@@ -296,6 +328,7 @@ class Game {
         }
         this.uiManager.updatePlayerStats();
         this.handleEnemyMovements();
+        this.gameStateManager.saveGameState();
     }
 
     performHorseIconCharge(item, targetX, targetY, enemy, dx, dy) {
@@ -335,7 +368,7 @@ class Game {
             const currentZone = this.player.getCurrentZone();
             this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
             this.enemies = this.enemies.filter(e => e !== enemy);
-            const zoneKey = `${currentZone.x},${currentZone.y}`;
+            const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
             if (this.zones.has(zoneKey)) {
                 const zoneData = this.zones.get(zoneKey);
                 zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
@@ -394,7 +427,7 @@ class Game {
                             enemyAtPos.startDeathAnimation();
                             this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemyAtPos.x},${enemyAtPos.y}`);
                             this.enemies = this.enemies.filter(e => e !== enemyAtPos);
-                            const zoneKey = `${currentZone.x},${currentZone.y}`;
+                            const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
                             if (this.zones.has(zoneKey)) {
                                 const zoneData = this.zones.get(zoneKey);
                                 zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtPos.id);
@@ -450,6 +483,9 @@ class Game {
         if (playerLaunched) {
             this.handleEnemyMovements();
         }
+
+        // Save state after bomb explosion changes the world
+        this.gameStateManager.saveGameState();
     }
 
     gameLoop() {

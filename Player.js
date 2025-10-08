@@ -349,7 +349,7 @@ export class Player {
     // House is at (3,3) to (5,5), so place player at (4,7) - centered in front
     this.x = 4;
     this.y = 7;
-    this.currentZone = { x: 0, y: 0 };
+    this.currentZone = { x: 0, y: 0, dimension: 0 };
     this.thirst = 50;
     this.hunger = 50;
     this.inventory = [];

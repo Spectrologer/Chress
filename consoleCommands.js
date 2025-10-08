@@ -99,7 +99,7 @@ const consoleCommands = {
   spawnFoodMeat: function(game) {
     const pos = findSpawnPosition(game);
     if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'Meat' };
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'Food/meat/meat.png' };
       console.log('Spawned meat at', pos);
     } else {
       console.log('No valid spawn position found');
@@ -109,7 +109,7 @@ const consoleCommands = {
   spawnFoodNut: function(game) {
     const pos = findSpawnPosition(game);
     if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'Nut' };
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'Food/nut/nut.png' };
       console.log('Spawned nut at', pos);
     } else {
       console.log('No valid spawn position found');
@@ -154,6 +154,12 @@ const consoleCommands = {
   },
 
   // Hotkey commands
+  restartGame: function(game) {
+    if (confirm('Are you sure you want to restart the game? All progress will be lost.')) {
+      game.resetGame();
+    }
+  },
+
   hotkeyB: function(game) { this.spawnBomb(game); },
   hotkeyH: function(game) { this.spawnHorseIcon(game); },
   hotkeyA: function(game) { this.spawnAxe(game); },
@@ -162,7 +168,14 @@ const consoleCommands = {
   hotkeyN: function(game) { this.spawnNote(game); },
   hotkeyR: function(game) { this.spawnHeart(game); },
   hotkeyW: function(game) { this.spawnWater(game); },
-  hotkeyF: function(game) { this.spawnFoodMeat(game); },
+
+  hotkeyF: function(game) {
+    if (Math.random() < 0.5) {
+      this.spawnFoodMeat(game);
+    } else {
+      this.spawnFoodNut(game);
+    }
+  },
   hotkeyU: function(game) { this.spawnFoodNut(game); }, // U for nut
   hotkeyL: function(game) { this.spawnLion(game); },
   hotkeyG: function(game) { this.spawnSquig(game); }, // G for green squig
@@ -178,6 +191,9 @@ const consoleCommands = {
   handleHotkey: function(game, key, shiftKey = false) {
     const lowerKey = key.toLowerCase();
     if (!shiftKey) {
+      // Restart game hotkey
+      if (lowerKey === 'escape') { this.restartGame(game); return true; }
+
       // Items
       if (lowerKey === 'b') { this.hotkeyB(game); return true; }
       if (lowerKey === 'h') { this.hotkeyH(game); return true; }

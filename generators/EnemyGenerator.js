@@ -22,6 +22,8 @@ export class EnemyGenerator {
             enemyCount = Math.floor(Math.random() * 4) + 1;
         }
 
+        let localId = 0; // Unique per zone
+
         for (let count = 0; count < enemyCount; count++) {
             // Try to place the enemy in a valid location (max 50 attempts per enemy)
             for (let attempts = 0; attempts < 50; attempts++) {
@@ -30,7 +32,6 @@ export class EnemyGenerator {
 
                 // Only place on floor tiles (not on walls, rocks, grass, etc.) and not already occupied by enemy
                 if (this.isFloorTileAvailable(x, y, zoneX, zoneY)) {
-                    ZoneStateManager.enemyCounter++;
                     // Determine enemy type - 'lizardo' appears in the Wilds (level 3), 'lizardeaux' appears in Frontier (level 4)
                     let enemyType = 'lizardy';
                     if (zoneLevel === 3 && Math.random() < 0.5) {
@@ -48,7 +49,7 @@ export class EnemyGenerator {
                             enemyType = 'lazerd';
                         }
                     }
-                    this.enemies.push({ x, y, enemyType: enemyType, id: ZoneStateManager.enemyCounter });
+                    this.enemies.push({ x, y, enemyType: enemyType, id: `${zoneX}_${zoneY}_${localId++}` });
                     break; // Successfully placed enemy
                 }
             }

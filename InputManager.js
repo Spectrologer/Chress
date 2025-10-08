@@ -565,14 +565,14 @@ export class InputManager {
                     enemyAtTarget.takeDamage(999); // Ensure enemy is dead
 
                     // Record that this enemy position is defeated to prevent respawning
-                    const currentZone = this.game.player.getCurrentZone();
-                    this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemyAtTarget.x},${enemyAtTarget.y}`);
+                    const currentZone = this.game.player.getCurrentZone();                    
+                    this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemyAtTarget.id}`);
 
                     // Remove enemy immediately so it doesn't attack back this turn
                     this.game.enemies = this.game.enemies.filter(e => e !== enemyAtTarget);
 
                     // Also update the stored zone data to remove the dead enemy from persistence
-                    const zoneKey = `${currentZone.x},${currentZone.y}`;
+                    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
                     if (this.game.zones.has(zoneKey)) {
                         const zoneData = this.game.zones.get(zoneKey);
                         zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtTarget.id);

@@ -1,6 +1,8 @@
 import { GRID_SIZE, TILE_TYPES } from './constants.js';
 import { Sign } from './Sign.js';
 
+const GAME_STATE_KEY = 'chress_game_state';
+
 export class GameStateManager {
     constructor(game) {
         this.game = game;
@@ -27,6 +29,9 @@ export class GameStateManager {
     }
 
     resetGame() {
+        // Clear saved state since game over should reset everything
+        this.clearSavedState();
+
         // Reset all game state
         this.game.zones.clear();
         this.game.connectionManager.clear();
@@ -100,5 +105,146 @@ export class GameStateManager {
             this.game.player.inventory.push({ type: 'bomb' });
             this.game.uiManager.updatePlayerStats();
         }
+    }
+
+    saveGameState() {
+        try {
+            const gameState = {
+                // Player state
+                player: {
+                    x: this.game.player.x,
+                    y: this.game.player.y,
+                    currentZone: this.game.player.currentZone,
+                    thirst: this.game.player.thirst,
+                    hunger: this.game.player.hunger,
+                    inventory: this.game.player.inventory,
+                    health: this.game.player.health,
+                    dead: this.game.player.dead,
+                    sprite: this.game.player.sprite,
+                    visitedZones: Array.from(this.game.player.visitedZones),
+                    smellOranges: this.game.player.smellOranges,
+                    smellLemons: this.game.player.smellLemons
+                },
+                // Game state
+                zones: Array.from(this.game.zones.entries()),
+                grid: this.game.grid,
+                enemies: this.game.enemies.map(enemy => ({
+                    x: enemy.x,
+                    y: enemy.y,
+                    health: enemy.health,
+                    type: enemy.type,
+                    sprite: enemy.sprite,
+                    id: enemy.id
+                })),
+                defeatedEnemies: Array.from(this.game.defeatedEnemies),
+                specialZones: Array.from(this.game.specialZones.entries()),
+                messageLog: this.game.messageLog,
+                currentRegion: this.game.currentRegion,
+                bombPlacementMode: this.game.bombPlacementMode,
+                bombPlacementPositions: this.game.bombPlacementPositions,
+                // Zone state manager counters and flags
+                zoneStateManager: {
+                    zoneCounter: this.game.zoneGenerator.constructor.zoneCounter,
+                    enemyCounter: this.game.zoneGenerator.constructor.enemyCounter,
+                    axeSpawned: this.game.zoneGenerator.constructor.axeSpawned,
+                    hammerSpawned: this.game.zoneGenerator.constructor.hammerSpawned,
+                    noteSpawned: this.game.zoneGenerator.constructor.noteSpawned,
+                    spearSpawned: this.game.zoneGenerator.constructor.spearSpawned,
+                    horseIconSpawned: this.game.zoneGenerator.constructor.horseIconSpawned,
+                    lionSpawned: this.game.zoneGenerator.constructor.lionSpawned,
+                    squigSpawned: this.game.zoneGenerator.constructor.squigSpawned,
+                    wellSpawned: this.game.zoneGenerator.constructor.wellSpawned,
+                    deadTreeSpawned: this.game.zoneGenerator.constructor.deadTreeSpawned,
+                    puzzleZoneSpawned: this.game.zoneGenerator.constructor.puzzleZoneSpawned,
+                    axeWarningSignPlaced: this.game.zoneGenerator.constructor.axeWarningSignPlaced,
+                    hammerWarningSignPlaced: this.game.zoneGenerator.constructor.hammerWarningSignPlaced,
+                    firstFrontierSignPlaced: this.game.zoneGenerator.constructor.firstFrontierSignPlaced,
+                    axeSpawnZone: this.game.zoneGenerator.constructor.axeSpawnZone,
+                    hammerSpawnZone: this.game.zoneGenerator.constructor.hammerSpawnZone,
+                    noteSpawnZone: this.game.zoneGenerator.constructor.noteSpawnZone,
+                    spearSpawnZone: this.game.zoneGenerator.constructor.spearSpawnZone,
+                    horseIconSpawnZone: this.game.zoneGenerator.constructor.horseIconSpawnZone
+                },
+                signSpawnedMessages: Array.from(Sign.spawnedMessages)
+            };
+
+            localStorage.setItem(GAME_STATE_KEY, JSON.stringify(gameState));
+        } catch (error) {
+            console.warn('Failed to save game state:', error);
+        }
+    }
+
+    loadGameState() {
+        try {
+            const savedState = localStorage.getItem(GAME_STATE_KEY);
+            if (!savedState) return false; // No saved state
+
+            const gameState = JSON.parse(savedState);
+
+            // Restore player state
+            if (gameState.player) {
+                this.game.player.x = gameState.player.x;
+                this.game.player.y = gameState.player.y;
+                this.game.player.currentZone = gameState.player.currentZone;
+                this.game.player.thirst = gameState.player.thirst;
+                this.game.player.hunger = gameState.player.hunger;
+                this.game.player.inventory = gameState.player.inventory;
+                this.game.player.health = gameState.player.health;
+                this.game.player.dead = gameState.player.dead;
+                this.game.player.sprite = gameState.player.sprite;
+                this.game.player.visitedZones = new Set(gameState.player.visitedZones);
+                this.game.player.smellOranges = gameState.player.smellOranges;
+                this.game.player.smellLemons = gameState.player.smellLemons;
+            }
+
+            // Restore game state
+            this.game.zones = new Map(gameState.zones || []);
+            this.game.grid = gameState.grid;
+            this.game.enemies = (gameState.enemies || []).map(e => new this.game.Enemy(e));
+            this.game.defeatedEnemies = new Set(gameState.defeatedEnemies || []);
+            this.game.specialZones = new Map(gameState.specialZones || []);
+            this.game.messageLog = gameState.messageLog || [];
+            this.game.currentRegion = gameState.currentRegion || null;
+            this.game.bombPlacementMode = gameState.bombPlacementMode || false;
+            this.game.bombPlacementPositions = gameState.bombPlacementPositions || [];
+
+            // Restore zone state manager statics
+            if (gameState.zoneStateManager) {
+                this.game.zoneGenerator.constructor.zoneCounter = gameState.zoneStateManager.zoneCounter || 0;
+                this.game.zoneGenerator.constructor.enemyCounter = gameState.zoneStateManager.enemyCounter || 0;
+                this.game.zoneGenerator.constructor.axeSpawned = gameState.zoneStateManager.axeSpawned || false;
+                this.game.zoneGenerator.constructor.hammerSpawned = gameState.zoneStateManager.hammerSpawned || false;
+                this.game.zoneGenerator.constructor.noteSpawned = gameState.zoneStateManager.noteSpawned || false;
+                this.game.zoneGenerator.constructor.spearSpawned = gameState.zoneStateManager.spearSpawned || false;
+                this.game.zoneGenerator.constructor.horseIconSpawned = gameState.zoneStateManager.horseIconSpawned || false;
+                this.game.zoneGenerator.constructor.lionSpawned = gameState.zoneStateManager.lionSpawned || false;
+                this.game.zoneGenerator.constructor.squigSpawned = gameState.zoneStateManager.squigSpawned || false;
+                this.game.zoneGenerator.constructor.wellSpawned = gameState.zoneStateManager.wellSpawned || false;
+                this.game.zoneGenerator.constructor.deadTreeSpawned = gameState.zoneStateManager.deadTreeSpawned || false;
+                this.game.zoneGenerator.constructor.puzzleZoneSpawned = gameState.zoneStateManager.puzzleZoneSpawned || false;
+                this.game.zoneGenerator.constructor.axeWarningSignPlaced = gameState.zoneStateManager.axeWarningSignPlaced || false;
+                this.game.zoneGenerator.constructor.hammerWarningSignPlaced = gameState.zoneStateManager.hammerWarningSignPlaced || false;
+                this.game.zoneGenerator.constructor.firstFrontierSignPlaced = gameState.zoneStateManager.firstFrontierSignPlaced || false;
+                this.game.zoneGenerator.constructor.axeSpawnZone = gameState.zoneStateManager.axeSpawnZone || null;
+                this.game.zoneGenerator.constructor.hammerSpawnZone = gameState.zoneStateManager.hammerSpawnZone || null;
+                this.game.zoneGenerator.constructor.noteSpawnZone = gameState.zoneStateManager.noteSpawnZone || null;
+                this.game.zoneGenerator.constructor.spearSpawnZone = gameState.zoneStateManager.spearSpawnZone || null;
+                this.game.zoneGenerator.constructor.horseIconSpawnZone = gameState.zoneStateManager.horseIconSpawnZone || null;
+            }
+
+            // Restore Sign spawned messages
+            Sign.spawnedMessages = new Set(gameState.signSpawnedMessages || []);
+
+            return true;
+        } catch (error) {
+            console.warn('Failed to load game state:', error);
+            // If loading fails, clear corrupted data
+            localStorage.removeItem(GAME_STATE_KEY);
+            return false;
+        }
+    }
+
+    clearSavedState() {
+        localStorage.removeItem(GAME_STATE_KEY);
     }
 }

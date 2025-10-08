@@ -37,6 +37,15 @@ export class CombatManager {
             if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked) {
                 this.game.player.takeDamage(enemy.attack);
                 this.game.soundManager.playSound('attack');
+
+                // Remove from zone data to prevent respawn
+                const currentZone = this.game.player.getCurrentZone();
+                const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+                if (this.game.zones.has(zoneKey)) {
+                    const zoneData = this.game.zones.get(zoneKey);
+                    zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
+                    this.game.zones.set(zoneKey, zoneData);
+                }
                 return false;
             }
             return true;
@@ -78,7 +87,7 @@ export class CombatManager {
             const currentZone = this.game.player.getCurrentZone();
             this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
             this.game.enemies = this.game.enemies.filter(e => e !== enemy);
-            const zoneKey = `${currentZone.x},${currentZone.y}`;
+            const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
             if (this.game.zones.has(zoneKey)) {
                 const zoneData = this.game.zones.get(zoneKey);
                 zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);

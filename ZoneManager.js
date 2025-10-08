@@ -18,12 +18,12 @@ export class ZoneManager {
         const zoneKey = `${newZoneX},${newZoneY}`;
         const hasReachedSpecialZone = this.game.specialZones.has(zoneKey);
 
+        // Update player's current zone (keep dimension)
+        this.game.player.setCurrentZone(newZoneX, newZoneY);
+
         // Check if this is entering a new region category
         const newRegion = this.game.uiManager.generateRegionName(newZoneX, newZoneY);
         const isNewRegion = newRegion !== this.game.currentRegion;
-
-        // Update player's current zone (keep dimension)
-        this.game.player.setCurrentZone(newZoneX, newZoneY);
 
         // Show region notification only if entering a new region
         if (isNewRegion) {
@@ -62,6 +62,9 @@ export class ZoneManager {
         this.game.uiManager.updateZoneDisplay();
         this.game.uiManager.updatePlayerPosition();
         this.game.uiManager.updatePlayerStats();
+
+        // Save game state after zone transition
+        this.game.gameStateManager.saveGameState();
     }
 
     positionPlayerAfterZoneTransition(exitSide, exitX, exitY) {
@@ -122,26 +125,41 @@ export class ZoneManager {
 
     generateZone() {
         const currentZone = this.game.player.getCurrentZone();
+        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
 
         // Generate chunk connections for current area
         this.game.connectionManager.generateChunkConnections(currentZone.x, currentZone.y);
 
-        // Generate or load the zone
-        let zoneData = this.game.zoneGenerator.generateZone(
-            currentZone.x,
-            currentZone.y,
-            currentZone.dimension,
-            this.game.zones,
-            this.game.connectionManager.zoneConnections,
-            this.game.availableFoodAssets
-        );
+        // Check if we already have this zone loaded from saved state
+        let zoneData;
+        if (this.game.zones.has(zoneKey)) {
+            // Use existing zone data (loaded from save or previously generated)
+            zoneData = this.game.zones.get(zoneKey);
+        } else {
+            // Generate new zone
+            zoneData = this.game.zoneGenerator.generateZone(
+                currentZone.x,
+                currentZone.y,
+                currentZone.dimension,
+                this.game.zones,
+                this.game.connectionManager.zoneConnections,
+                this.game.availableFoodAssets
+            );
+            // Save the generated zone
+            this.game.zones.set(zoneKey, zoneData);
+        }
 
         this.game.grid = zoneData.grid;
-        this.game.enemies = (zoneData.enemies || []).map(e => new this.game.Enemy(e));
+        // When loading enemies, filter out any that are in the defeatedEnemies set.
+        const allEnemies = (zoneData.enemies || []).map(e => new this.game.Enemy(e));
+        this.game.enemies = allEnemies.filter(enemy => {
+            const defeatedKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemy.id}`;
+            return !this.game.defeatedEnemies.has(defeatedKey);
+        });
 
-        // Save the generated zone (include dimension in key)
-        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
-        this.game.zones.set(zoneKey, zoneData);
+
+        // Ensure zoneGenerator.grid points to the game grid for methods that need it
+        this.game.zoneGenerator.grid = this.game.grid;
     }
 
     spawnTreasuresOnGrid(treasures) {
