@@ -14,6 +14,7 @@ export class Player {
         this.health = 3;  // Player has 3 hearts
         this.attackAnimation = 0; // Frames remaining for attack animation
         this.actionAnimation = 0; // Frames for actions like chopping/breaking
+        this.smokeAnimations = []; // Array of {x, y, frame} for smoke animations
         // Special zone mechanics
         this.smellOranges = false;
         this.smellLemons = false;
@@ -356,6 +357,7 @@ export class Player {
     this.bumpFrames = 0;
     this.liftOffsetY = 0;
     this.liftFrames = 0;
+    this.smokeAnimations = [];
     this.markZoneVisited(0, 0);
     }
 
@@ -449,6 +451,12 @@ export class Player {
         this.actionAnimation = 15; // 15 frames of action animation
     }
 
+    startSmokeAnimation() {
+        this.smokeX = this.x;
+        this.smokeY = this.y;
+        this.smokeAnimationFrame = 18; // 18 frames for slower animation (3 frames per smoke frame)
+    }
+
     updateAnimations() {
         if (this.bumpFrames > 0) {
             this.bumpFrames--;
@@ -469,6 +477,8 @@ export class Player {
             const maxLift = -12; // Lift 12 pixels up (half tile roughly)
             this.liftOffsetY = maxLift * 4 * progress * (1 - progress); // Parabolic lift
         }
+        this.smokeAnimations.forEach(anim => anim.frame--);
+        this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);
     }
 
     getValidSpawnPosition(game) {

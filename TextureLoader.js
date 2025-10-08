@@ -39,6 +39,8 @@ export class TextureLoader {
                     imageKey = assetName.replace('fauna/', '').replace('.png', '');
                 } else if (assetName.startsWith('protag/')) {
                     imageKey = assetName.replace('protag/', '').replace('.png', '');
+                } else if (assetName.startsWith('fx/smoke/')) {
+                    imageKey = assetName.replace('fx/smoke/', '').replace('.png', '');
                 } else {
                     imageKey = assetName.replace('.png', '');
                 }

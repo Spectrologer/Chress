@@ -255,19 +255,22 @@ class Game {
     performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy) {
         const playerPos = this.player.getPosition();
         const steps = Math.abs(dx);
+        const traveledTiles = [];
         for (let i = 1; i < steps; i++) {
             const px = playerPos.x + (dx > 0 ? i : -i);
             const py = playerPos.y + (dy > 0 ? i : -i);
             if (!this.player.isWalkable(px, py, this.grid, px, py)) return;
+            traveledTiles.push({x: px, y: py});
         }
+        this.player.smokeAnimations = traveledTiles.map(t => ({x: t.x, y: t.y, frame: 18})); // Smoke at every tile traveled
         item.uses--;
         if (item.uses <= 0) this.player.inventory = this.player.inventory.filter(invItem => invItem !== item);
         this.player.setPosition(targetX, targetY);
         if (enemy) {
-            this.game.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
-            enemy.startBump(this.game.player.x - enemy.x, this.game.player.y - enemy.y);
+            this.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
+            enemy.startBump(this.player.x - enemy.x, this.player.y - enemy.y);
             enemy.takeDamage(999);
-            this.game.soundManager.playSound('attack');
+            this.soundManager.playSound('attack');
             const currentZone = this.player.getCurrentZone();
             this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
             this.enemies = this.enemies.filter(e => e !== enemy);
@@ -283,6 +286,7 @@ class Game {
     }
 
     performHorseIconCharge(item, targetX, targetY, enemy, dx, dy) {
+        this.player.smokeAnimations = [{x: this.player.x, y: this.player.y, frame: 18}]; // Smoke at origin tile since no intermediates
         item.uses--;
         if (item.uses <= 0) this.player.inventory = this.player.inventory.filter(invItem => invItem !== item);
         this.player.setPosition(targetX, targetY);

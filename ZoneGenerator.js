@@ -98,6 +98,59 @@ export class ZoneGenerator {
                 this.grid[1][6] = TILE_TYPES.LIZORD_STATUE;
                 this.grid[1][7] = TILE_TYPES.LAZERD_STATUE;
 
+                // Helper to find a random valid spawn location in the interior
+                const findValidInteriorSpawn = () => {
+                    const validSpawns = [];
+                    // Only spawn in the lower part of the house, away from statues and the door
+                    for (let y = 3; y < GRID_SIZE - 2; y++) {
+                        for (let x = 1; x < GRID_SIZE - 1; x++) {
+                            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                                validSpawns.push({ x, y });
+                            }
+                        }
+                    }
+                    if (validSpawns.length > 0) {
+                        return validSpawns[Math.floor(Math.random() * validSpawns.length)];
+                    }
+                    return null;
+                };
+
+                // 1. NPCs have a chance to randomly spawn
+                if (Math.random() < 0.1) { // 10% chance for a Lion
+                    const pos = findValidInteriorSpawn();
+                    if (pos) this.grid[pos.y][pos.x] = TILE_TYPES.LION;
+                }
+                if (Math.random() < 0.1) { // 10% chance for a Squig
+                    const pos = findValidInteriorSpawn();
+                    if (pos) this.grid[pos.y][pos.x] = TILE_TYPES.SQUIG;
+                }
+
+                // 2. & 3. Spawn 1 to 2 random items
+                const itemPool = [
+                    { type: TILE_TYPES.FOOD, foodType: this.foodAssets[Math.floor(Math.random() * this.foodAssets.length)] },
+                    TILE_TYPES.BOMB,
+                    { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 },
+                    { type: TILE_TYPES.HORSE_ICON, uses: 3 },
+                    TILE_TYPES.WATER
+                ];
+
+                // Determine number of items to spawn (1 or 2)
+                const numItemsToSpawn = 1 + (Math.random() < 0.5 ? 1 : 0); // 1 item, plus a 50% chance for a 2nd
+
+                for (let i = 0; i < numItemsToSpawn; i++) {
+                    const pos = findValidInteriorSpawn();
+                    if (pos) {
+                        // Select a random item from the pool
+                        const itemToSpawn = itemPool[Math.floor(Math.random() * itemPool.length)];
+                        // Special handling for food if no food assets are loaded
+                        if (itemToSpawn.type === TILE_TYPES.FOOD && (!this.foodAssets || this.foodAssets.length === 0)) {
+                            this.grid[pos.y][pos.x] = TILE_TYPES.WATER; // Fallback to water
+                        } else {
+                            this.grid[pos.y][pos.x] = itemToSpawn;
+                        }
+                    }
+                }
+
                 // Set player spawn away from walls
                 return {
                     grid: JSON.parse(JSON.stringify(this.grid)),

@@ -98,6 +98,9 @@ export class RenderManager {
         // Draw player
         this.drawPlayerSprite();
 
+        // Draw smoke animation if active
+        this.drawSmokeAnimation();
+
         // Draw visual indicator if player is on an exit tile (drawn after player sprite)
         this.drawExitIndicator();
     }
@@ -277,6 +280,24 @@ export class RenderManager {
         allAttackableTiles.forEach(key => {
             const [x, y] = key.split(',').map(Number);
             this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        });
+    }
+
+    drawSmokeAnimation() {
+        this.game.player.smokeAnimations.forEach(anim => {
+            if (anim.frame > 0) {
+                const frameNumber = Math.floor((18 - anim.frame) / 3) + 1; // Map 18 frames to 6 smoke frames
+                const smokeImage = this.game.textureManager.getImage(`smoke_frame_${frameNumber}`);
+                if (smokeImage && smokeImage.complete) {
+                    this.ctx.drawImage(
+                        smokeImage,
+                        anim.x * TILE_SIZE,
+                        anim.y * TILE_SIZE,
+                        TILE_SIZE,
+                        TILE_SIZE
+                    );
+                }
+            }
         });
     }
 

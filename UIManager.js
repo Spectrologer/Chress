@@ -72,8 +72,8 @@ export class UIManager {
                 mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Woodcutter's Club</span>`;
             } else {
                 const zonesDiscovered = this.game.player.getVisitedZones().size;
-                const dimensionName = zone.dimension === 0 ? 'World' : 'Interior';
-                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">${zone.x}, ${zone.y} (${dimensionName})<br>DISCOVERED: ${zonesDiscovered}</span>`;
+                const dimensionText = zone.dimension === 1 ? ' (Interior)' : '';
+                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">${zone.x}, ${zone.y}${dimensionText}<br>DISCOVERED: ${zonesDiscovered}</span>`;
             }
         }
     }

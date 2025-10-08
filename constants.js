@@ -137,7 +137,13 @@ export const IMAGE_ASSETS = [
     'floors/interior/housetile.png',
     'floors/interior/house_wall_corner.png',
     'floors/interior/house_wall_side.png',
-    'floors/interior/house_wall_open.png'
+    'floors/interior/house_wall_open.png',
+    'fx/smoke/smoke_frame_1.png',
+    'fx/smoke/smoke_frame_2.png',
+    'fx/smoke/smoke_frame_3.png',
+    'fx/smoke/smoke_frame_4.png',
+    'fx/smoke/smoke_frame_5.png',
+    'fx/smoke/smoke_frame_6.png'
 ];
 
 // Food image assets
