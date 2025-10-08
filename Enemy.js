@@ -16,6 +16,7 @@ export class Enemy {
         this.bumpFrames = 0;
         this.liftOffsetY = 0;
         this.liftFrames = 0;
+        this.smokeAnimations = [];
     }
 
     planMoveTowards(player, grid, enemies, playerPos, isSimulation = false) {
@@ -488,6 +489,11 @@ export class Enemy {
         return this.health <= 0;
     }
 
+    setPosition(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
     getPosition() {
         return { x: this.x, y: this.y };
     }
@@ -529,6 +535,8 @@ export class Enemy {
             const maxLift = -12; // Lift 12 pixels up (half tile roughly)
             this.liftOffsetY = maxLift * 4 * progress * (1 - progress); // Parabolic lift
         }
+        this.smokeAnimations.forEach(anim => anim.frame--);
+        this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);
     }
 
     // Helper for lizardeaux: find adjacent tile next to player along line of sight and charge there

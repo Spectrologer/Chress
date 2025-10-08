@@ -118,6 +118,9 @@ class Game {
     init() {
         // Initialize visual effect animations
         this.horseChargeAnimations = [];
+        // Bomb placement mode
+        this.bombPlacementMode = false;
+        this.bombPlacementPositions = [];
 
         // Generate initial zone
         this.generateZone();
@@ -148,6 +151,7 @@ class Game {
 
         // Expose game instance to console for debugging/cheating
         window.game = this;
+        window.gameInstance = this;
 
         // Import and expose console commands
         import('./consoleCommands.js').then(module => {
@@ -255,6 +259,20 @@ class Game {
         this.uiManager.updatePlayerStats();
     }
 
+    incrementBombActions() {
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                const tile = this.grid[y][x];
+                if (tile && typeof tile === 'object' && tile.type === 'BOMB' && tile.actionTimer < 2) {
+                    tile.actionTimer++;
+                    if (tile.actionTimer >= 2) {
+                        this.explodeBomb(x, y);
+                    }
+                }
+            }
+        }
+    }
+
     performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy) {
         const playerPos = this.player.getPosition();
         const steps = Math.abs(dx);
@@ -334,6 +352,112 @@ class Game {
         }
         this.uiManager.updatePlayerStats();
         this.handleEnemyMovements();
+    }
+
+    explodeBomb(bx, by) {
+        // Blast walls 1 tile around the bomb (excluding center) to create exits
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                if (dx === 0 && dy === 0) continue; // Skip the bomb location itself
+                const nx = bx + dx, ny = by + dy;
+                if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9 && this.grid[ny][nx] === TILE_TYPES.WALL) {
+                    const isBorder = nx === 0 || nx === 8 || ny === 0 || ny === 8;
+                    this.grid[ny][nx] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
+                }
+            }
+        }
+
+        // Remove bomb
+        this.grid[by][bx] = TILE_TYPES.FLOOR;
+
+        // Start animation twice (loop twice)
+        this.player.startSplodeAnimation(bx, by);
+        this.player.startSplodeAnimation(bx, by);
+
+        // Launch player and enemies away from bomb if in radius
+        const px = this.player.x, py = this.player.y;
+        const distXPlayer = Math.abs(px - bx);
+        const distYPlayer = Math.abs(py - by);
+        let traveledTilesPlayer = [];
+        let curXPlayer = px, curYPlayer = py;
+        let playerLaunched = false;
+        if (distXPlayer <= 1 && distYPlayer <= 1) {
+            const vX = (bx > px) ? -1 : (bx < px) ? 1 : 0;
+            const vY = (by > py) ? -1 : (by < py) ? 1 : 0;
+            if (vX === 0 && vY === 0) {} else {
+                while (true) {
+                    const nextX = curXPlayer + vX, nextY = curYPlayer + vY;
+                    if (!this.player.isWalkable(nextX, nextY, this.grid, curXPlayer, curYPlayer)) {
+                        break;
+                    }
+                    // Check if there's an enemy at the next position
+                    const enemyAtPos = this.enemies.find(e => e.x === nextX && e.y === nextY);
+                    if (enemyAtPos) {
+                        // Damage the enemy
+                        enemyAtPos.takeDamage(1); // Assume 1 damage, can adjust
+                        enemyAtPos.startBump(curXPlayer - nextX, curYPlayer - nextY);
+                        this.player.startBump(nextX - curXPlayer, nextY - curYPlayer);
+                        const currentZone = this.player.getCurrentZone();
+                        if (enemyAtPos.isDead()) {
+                            enemyAtPos.startDeathAnimation();
+                            this.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemyAtPos.x},${enemyAtPos.y}`);
+                            this.enemies = this.enemies.filter(e => e !== enemyAtPos);
+                            const zoneKey = `${currentZone.x},${currentZone.y}`;
+                            if (this.zones.has(zoneKey)) {
+                                const zoneData = this.zones.get(zoneKey);
+                                zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtPos.id);
+                                this.zones.set(zoneKey, zoneData);
+                            }
+                        }
+                        this.soundManager.playSound('attack');
+                        // Stop at this position
+                        traveledTilesPlayer.push({x: nextX, y: nextY});
+                        curXPlayer = nextX;
+                        curYPlayer = nextY;
+                        break;
+                    }
+
+                    curXPlayer = nextX;
+                    curYPlayer = nextY;
+                    // Collect all tiles traveled (exclude starting position)
+                    traveledTilesPlayer.push({x: curXPlayer, y: curYPlayer});
+                }
+                this.player.smokeAnimations = traveledTilesPlayer.map(t => ({x: t.x, y: t.y, frame: 18})); // Smoke at every tile traveled
+                this.player.setPosition(curXPlayer, curYPlayer);
+                this.player.ensureValidPosition(this.grid);
+                playerLaunched = true;
+            }
+        }
+
+        // Launch enemies away from bomb
+        this.enemies.forEach(enemy => {
+            const distX = Math.abs(enemy.x - bx);
+            const distY = Math.abs(enemy.y - by);
+            if (distX <= 1 && distY <= 1 && distX + distY > 0) { // In radius but not at bomb center (which is now floor)
+                const vX = (bx > enemy.x) ? -1 : (bx < enemy.x) ? 1 : 0;
+                const vY = (by > enemy.y) ? -1 : (by < enemy.y) ? 1 : 0;
+                if (vX !== 0 || vY !== 0) {
+                    const traveledTiles = [];
+                    let curX = enemy.x, curY = enemy.y;
+                    while (true) {
+                        const nextX = curX + vX, nextY = curY + vY;
+                        if (!this.player.isWalkable(nextX, nextY, this.grid, curX, curY)) {
+                            break;
+                        }
+                        curX = nextX;
+                        curY = nextY;
+                        traveledTiles.push({x: curX, y: curY});
+                    }
+                    enemy.smokeAnimations = traveledTiles.map(t => ({x: t.x, y: t.y, frame: 18}));
+                    enemy.setPosition(curX, curY);
+                }
+            }
+        });
+
+        // Update enemy movements if player was launched (to prevent immediate attack)
+        if (playerLaunched) {
+            this.handleEnemyMovements();
+        }
     }
 
     gameLoop() {

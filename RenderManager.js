@@ -27,6 +27,9 @@ export class RenderManager {
         // Draw bomb placement indicator if active
         this.drawBombPlacementIndicator();
 
+        // Draw splode animation
+        this.drawSplodeAnimation();
+
         // Draw horse charge animation
         this.drawHorseChargeAnimation();
     }
@@ -54,7 +57,26 @@ export class RenderManager {
             for (let x = 0; x < GRID_SIZE; x++) {
                 const tile = this.game.grid[y][x];
                 try {
-                    if (tile && tile.type === 'food') {
+                    if (tile && typeof tile === 'object' && tile.type === 'BOMB') {
+                        // Render pulsating bomb
+                        // First draw the background (floor)
+                        this.textureManager.renderTile(this.ctx, x, y, TILE_TYPES.FLOOR, this.game.grid, zoneLevel);
+                        const bombImage = this.game.textureManager.getImage('bomb');
+                        if (bombImage && bombImage.complete) {
+                            this.ctx.save();
+                            const scale = 1 + Math.sin(Date.now() * 0.005) * 0.1; // Pulsate
+                            const cx = x * TILE_SIZE + TILE_SIZE / 2;
+                            const cy = y * TILE_SIZE + TILE_SIZE / 2;
+                            this.ctx.translate(cx, cy);
+                            this.ctx.scale(scale, scale);
+                            this.ctx.translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
+                            this.ctx.drawImage(bombImage, 0, 0, TILE_SIZE, TILE_SIZE);
+                            this.ctx.restore();
+                        } else {
+                            this.ctx.fillStyle = '#444444';
+                            this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                        }
+                    } else if (tile && tile.type === 'food') {
                         this.textureManager.renderTile(this.ctx, x, y, tile.type, this.game.grid, zoneLevel);
                     } else {
                         this.textureManager.renderTile(this.ctx, x, y, tile, this.game.grid, zoneLevel);
@@ -193,6 +215,29 @@ export class RenderManager {
         }
     }
 
+    drawSplodeAnimation() {
+        this.game.player.splodeAnimations.forEach(anim => {
+            if (anim.frame > 0) {
+                const frameNumber = Math.floor((16 - anim.frame) / 2) + 1; // Map 16 frames to 8 splode frames
+                const splodeImage = this.game.textureManager.getImage(`fx/splode/splode_${frameNumber}`);
+                if (splodeImage && splodeImage.complete) {
+                    // Draw explosion slightly larger than 3x3 tiles (200x200 instead of 192x192), centered on the bomb tile
+                    const size = 200;
+                    const offset = - (size - TILE_SIZE) / 2;
+                    const pixelX = anim.x * TILE_SIZE + offset;
+                    const pixelY = anim.y * TILE_SIZE + offset;
+                    this.ctx.drawImage(
+                        splodeImage,
+                        pixelX,
+                        pixelY,
+                        size,
+                        size
+                    );
+                }
+            }
+        });
+    }
+
     drawEnemies() {
         for (let enemy of this.game.enemies) {
             let enemyKey;
@@ -287,41 +332,53 @@ export class RenderManager {
     }
 
     drawSmokeAnimation() {
-        this.game.player.smokeAnimations.forEach(anim => {
-            if (anim.frame > 0) {
-                const frameNumber = Math.floor((18 - anim.frame) / 3) + 1; // Map 18 frames to 6 smoke frames
-                const smokeImage = this.game.textureManager.getImage(`smoke_frame_${frameNumber}`);
-                if (smokeImage && smokeImage.complete) {
-                    this.ctx.drawImage(
-                        smokeImage,
-                        anim.x * TILE_SIZE,
-                        anim.y * TILE_SIZE,
-                        TILE_SIZE,
-                        TILE_SIZE
-                    );
+        const drawSmokeForEntity = (smokeAnimations) => {
+            smokeAnimations.forEach(anim => {
+                if (anim.frame > 0) {
+                    const frameNumber = Math.floor((18 - anim.frame) / 3) + 1; // Map 18 frames to 6 smoke frames
+                    const smokeImage = this.game.textureManager.getImage(`smoke_frame_${frameNumber}`);
+                    if (smokeImage && smokeImage.complete) {
+                        this.ctx.drawImage(
+                            smokeImage,
+                            anim.x * TILE_SIZE,
+                            anim.y * TILE_SIZE,
+                            TILE_SIZE,
+                            TILE_SIZE
+                        );
+                    }
                 }
-            }
-        });
+            });
+        };
+
+        // Draw player smoke
+        drawSmokeForEntity(this.game.player.smokeAnimations);
+
+        // Draw enemy smoke
+        for (const enemy of this.game.enemies) {
+            drawSmokeForEntity(enemy.smokeAnimations);
+        }
     }
 
     drawBombPlacementIndicator() {
-        const confirmation = this.game.inputManager.bombPlacementConfirmation;
-        if (!confirmation) {
+        const positions = this.game.bombPlacementPositions;
+        if (!positions || positions.length === 0) {
             return;
         }
 
         const bombImage = this.game.textureManager.getImage('bomb');
         if (bombImage && bombImage.complete) {
             this.ctx.save();
-            // Make the bomb icon flash
+            // Make the bomb icons flash
             const alpha = 0.6 + Math.sin(Date.now() * 0.01) * 0.2; // Flashes between 0.4 and 0.8
             this.ctx.globalAlpha = alpha;
-            this.ctx.drawImage(
-                bombImage,
-                confirmation.x * TILE_SIZE,
-                confirmation.y * TILE_SIZE,
-                TILE_SIZE, TILE_SIZE
-            );
+            for (const pos of positions) {
+                this.ctx.drawImage(
+                    bombImage,
+                    pos.x * TILE_SIZE,
+                    pos.y * TILE_SIZE,
+                    TILE_SIZE, TILE_SIZE
+                );
+            }
             this.ctx.restore();
         }
     }

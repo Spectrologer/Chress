@@ -143,7 +143,15 @@ export const IMAGE_ASSETS = [
     'fx/smoke/smoke_frame_3.png',
     'fx/smoke/smoke_frame_4.png',
     'fx/smoke/smoke_frame_5.png',
-    'fx/smoke/smoke_frame_6.png'
+    'fx/smoke/smoke_frame_6.png',
+    'fx/splode/splode_1.png',
+    'fx/splode/splode_2.png',
+    'fx/splode/splode_3.png',
+    'fx/splode/splode_4.png',
+    'fx/splode/splode_5.png',
+    'fx/splode/splode_6.png',
+    'fx/splode/splode_7.png',
+    'fx/splode/splode_8.png'
 ];
 
 // Food image assets

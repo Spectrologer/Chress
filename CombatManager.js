@@ -1,4 +1,4 @@
-import { GRID_SIZE } from './constants.js';
+import { GRID_SIZE, TILE_TYPES } from './constants.js';
 
 export class CombatManager {
     constructor(game) {
@@ -41,6 +41,23 @@ export class CombatManager {
             }
             return true;
         });
+
+        // Check for adjacent bombs to explode (if actionTimer >=2)
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                if (dx === 0 && dy === 0) continue;
+                const bx = this.game.player.x + dx;
+                const by = this.game.player.y + dy;
+                if (bx >= 0 && bx < GRID_SIZE && by >= 0 && by < GRID_SIZE) {
+                    const tile = this.game.grid[by][bx];
+                    if (tile && typeof tile === 'object' && tile.type === 'BOMB') {
+                        if (tile.actionTimer >= 2) {
+                            this.game.explodeBomb(bx, by);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy) {

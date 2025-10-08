@@ -216,11 +216,44 @@ export class InventoryManager {
             }
         });
 
-        // Desktop click - use item
-        slot.addEventListener('click', () => {
-            if (this.game.player.isDead()) return; // No restrictions like longPress here
-            useItem();
-        });
+        // Special handling for bomb inventory item
+        if (item.type === 'bomb') {
+            let lastBombClickTime = 0;
+            const bombClick = () => {
+                const now = Date.now();
+                const isDouble = (now - lastBombClickTime) < 300;
+                lastBombClickTime = now;
+                if (isDouble) {
+                    // Double click: drop bomb where player is standing
+                    const px = this.game.player.x, py = this.game.player.y;
+                    this.game.grid[py][px] = { type: 'BOMB', actionTimer: 0 };
+                    const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
+                    if (bombIndex !== -1) this.game.player.inventory.splice(bombIndex, 1);
+                    this.game.uiManager.updatePlayerStats();
+                } else {
+                    // Single click: start bomb placement mode
+                    const px = this.game.player.x, py = this.game.player.y;
+                    this.game.bombPlacementPositions = [];
+                    const directions = [
+                        {dx: 1, dy: 0}, {dx: -1, dy: 0}, {dx: 0, dy: 1}, {dx: 0, dy: -1}
+                    ];
+                    for (const dir of directions) {
+                        const nx = px + dir.dx, ny = py + dir.dy;
+                        if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9 && (this.game.grid[ny][nx] === TILE_TYPES.FLOOR || this.game.grid[ny][nx] === TILE_TYPES.EXIT)) {
+                            this.game.bombPlacementPositions.push({x: nx, y: ny});
+                        }
+                    }
+                    this.game.bombPlacementMode = true;
+                }
+            };
+            slot.addEventListener('click', bombClick);
+        } else {
+            // Desktop click - use item
+            slot.addEventListener('click', () => {
+                if (this.game.player.isDead()) return; // No restrictions like longPress here
+                useItem();
+            });
+        }
     }
 
     // Handle using an inventory item
@@ -246,11 +279,7 @@ export class InventoryManager {
             case 'horse_icon':
                 this.dropItem('horse_icon', { type: TILE_TYPES.HORSE_ICON, uses: item.uses });
                 break;
-            case 'bomb':
-                // Drop bomb at player's current position on whatever tile it rests on
-                this.game.grid[this.game.player.y][this.game.player.x] = TILE_TYPES.BOMB;
-                this.game.player.inventory.splice(idx, 1);
-                break;
+
             case 'heart':
                 this.game.player.setHealth(this.game.player.getHealth() + 1);
                 this.game.player.inventory.splice(idx, 1);

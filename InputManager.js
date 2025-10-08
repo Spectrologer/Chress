@@ -12,7 +12,6 @@ export class InputManager {
         this.lastTapX = null;
         this.lastTapY = null;
         this.autoUseNextExitReach = false;
-        this.bombPlacementConfirmation = null; // {x, y} for pending bomb placement
     }
 
     setupControls() {
@@ -171,6 +170,23 @@ export class InputManager {
 
         console.log(`Tap at screen: (${screenX}, ${screenY}) -> grid: (${gridCoords.x}, ${gridCoords.y})`);
 
+        // Handle bomb placement mode
+        if (this.game.bombPlacementMode) {
+            const pos = this.game.bombPlacementPositions.find(p => p.x === gridCoords.x && p.y === gridCoords.y);
+            if (pos) {
+                // Place timed bomb here
+                this.game.grid[pos.y][pos.x] = { type: 'BOMB', actionTimer: 0 };
+                const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
+                if (bombIndex !== -1) this.game.player.inventory.splice(bombIndex, 1);
+                this.game.uiManager.updatePlayerStats();
+            }
+            // End mode regardless
+            this.game.bombPlacementMode = false;
+            this.game.bombPlacementPositions = [];
+            this.game.hideOverlayMessage();
+            return;
+        }
+
         // Double tap detection
         const now = Date.now();
         const isDoubleTap = this.lastTapTime !== null && (now - this.lastTapTime) < 300 && this.lastTapX === gridCoords.x && this.lastTapY === gridCoords.y;
@@ -289,35 +305,20 @@ export class InputManager {
             return; // Interaction handled
         }
 
-        // Handle bomb placement confirmation
-        if (this.bombPlacementConfirmation) {
-            if (gridCoords.x === this.bombPlacementConfirmation.x && gridCoords.y === this.bombPlacementConfirmation.y) {
-                // Second tap on the same wall tile: confirm bomb placement
-                const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
-                if (bombIndex !== -1) {
-                    this.game.player.inventory.splice(bombIndex, 1);
-                    this.game.grid[gridCoords.y][gridCoords.x] = TILE_TYPES.EXIT;
-                    this.game.updatePlayerStats();
-                    this.game.handleEnemyMovements();
-                    this.bombPlacementConfirmation = null; // Reset confirmation
-                    this.game.hideOverlayMessage();
-                    return;
-                }
+        // Check if tapped on bomb to explode it
+        const tapTile = this.game.grid[gridCoords.y][gridCoords.x];
+        if (tapTile && typeof tapTile === 'object' && tapTile.type === 'BOMB') {
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = dx <= 1 && dy <= 1;
+            if (isAdjacent) {
+                tapTile.actionTimer = 2;
+                this.game.explodeBomb(gridCoords.x, gridCoords.y);
             }
-            // Tapped somewhere else, cancel bomb placement
-            this.bombPlacementConfirmation = null;
-            this.game.hideOverlayMessage();
+            return;
         }
 
-        // Check if player has a bomb and tapped on a wall
-        const hasBomb = this.game.player.inventory.some(item => item.type === 'bomb');
-        const wallAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.WALL;
-        if (hasBomb && wallAtPosition) {
-            // First tap on a wall with a bomb: set up for confirmation
-            this.bombPlacementConfirmation = { x: gridCoords.x, y: gridCoords.y };
-            this.game.uiManager.showOverlayMessage('Tap again to place bomb.', null, false, true); // Persistent message
-            return; // Don't do anything else this tap
-        }
+        // Handle bomb placement confirmation (legacy, can be removed if not used)
 
         // Check if player has bishop spear and if tapped position is diagonal and valid for bishop spear charge
         const bishopSpearItem = this.game.player.inventory.find(item => item.type === 'bishop_spear' && item.uses > 0);
@@ -534,12 +535,11 @@ export class InputManager {
         // This now includes sign messages, which will close upon movement.
         if (this.game.displayingMessageForSign) {
             Sign.hideMessageForSign(this.game);
-        } else if (this.bombPlacementConfirmation) {
+        } else if (this.game.bombPlacementMode) {
             // If moving, cancel bomb placement
-            this.bombPlacementConfirmation = null;
+            this.game.bombPlacementMode = false;
+            this.game.bombPlacementPositions = [];
             this.game.hideOverlayMessage();
-        } else if (this.game.displayingMessageForSign) {
-            Sign.hideMessageForSign(this.game);
         } else {
             this.game.hideOverlayMessage();
         }

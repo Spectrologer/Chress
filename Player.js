@@ -15,6 +15,7 @@ export class Player {
         this.attackAnimation = 0; // Frames remaining for attack animation
         this.actionAnimation = 0; // Frames for actions like chopping/breaking
         this.smokeAnimations = []; // Array of {x, y, frame} for smoke animations
+        this.splodeAnimations = []; // Array of {x, y, frame} for splode animations
         // Special zone mechanics
         this.smellOranges = false;
         this.smellLemons = false;
@@ -68,8 +69,14 @@ export class Player {
         // Check if the new position is walkable
         console.log('Is walkable: ' + this.isWalkable(newX, newY, grid, this.x, this.y))
         if (this.isWalkable(newX, newY, grid, this.x, this.y)) {
-            // Check if there's an item to pick up at the new position
+            // Check if moving to active player-set bomb
             const tile = grid[newY][newX];
+            if (tile && typeof tile === 'object' && tile.type === 'BOMB') {
+                window.gameInstance.explodeBomb(newX, newY);
+                return false; // Explode and launch, don't move normally
+            }
+
+            // Check if there's an item to pick up at the new position
                 if (tile === TILE_TYPES.WATER) {
                     if (this.inventory.length < 6) {
                         this.inventory.push({ type: 'water' });
@@ -128,6 +135,7 @@ export class Player {
 
             this.liftFrames = 15; // Start lift animation
             window.soundManager?.playSound('move');
+            if (window.gameInstance) window.gameInstance.incrementBombActions();
 
             // Set smells when stepping on scent tiles
             if (tile === TILE_TYPES.ORANGE_FLOOR) {
@@ -154,6 +162,7 @@ export class Player {
                     this.startActionAnimation(); // Start action animation
                     this.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
                     window.soundManager?.playSound('chop');
+                    if (window.gameInstance) window.gameInstance.incrementBombActions();
                     return false; // Don't move, just attack
                 }
 
@@ -166,6 +175,7 @@ export class Player {
                     this.startActionAnimation(); // Start action animation
                     this.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
                     window.soundManager?.playSound('smash');
+                    if (window.gameInstance) window.gameInstance.incrementBombActions();
                     return false; // Don't move, just attack
                 }
             }
@@ -355,10 +365,11 @@ export class Player {
     this.bumpOffsetX = 0;
     this.bumpOffsetY = 0;
     this.bumpFrames = 0;
-    this.liftOffsetY = 0;
-    this.liftFrames = 0;
-    this.smokeAnimations = [];
-    this.markZoneVisited(0, 0);
+        this.liftOffsetY = 0;
+        this.liftFrames = 0;
+        this.smokeAnimations = [];
+        this.splodeAnimations = [];
+        this.markZoneVisited(0, 0);
     }
 
     // Thirst and Hunger management
@@ -457,6 +468,10 @@ export class Player {
         this.smokeAnimationFrame = 18; // 18 frames for slower animation (3 frames per smoke frame)
     }
 
+    startSplodeAnimation(x, y) {
+        this.splodeAnimations.push({ x, y, frame: 16 });
+    }
+
     updateAnimations() {
         if (this.bumpFrames > 0) {
             this.bumpFrames--;
@@ -479,6 +494,8 @@ export class Player {
         }
         this.smokeAnimations.forEach(anim => anim.frame--);
         this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);
+        this.splodeAnimations.forEach(anim => anim.frame--);
+        this.splodeAnimations = this.splodeAnimations.filter(anim => anim.frame > 0);
     }
 
     getValidSpawnPosition(game) {
