@@ -347,36 +347,41 @@ export class UIManager {
     }
 
     showBarterWindow(npcType) {
-        let name, portrait, message, requiredItem, requiredItemImg, receivedItemImg;
+        let name, portrait, message, requiredItem, requiredItemImg, receivedItemImg, requiredItemName, receivedItemName;
         if (npcType === 'lion') {
             name = 'Penne';
             portrait = 'Images/fauna/lionface.png';
             message = 'Give me meat!';
             requiredItem = 'Food/meat';
             requiredItemImg = 'Images/Food/meat/Meat.png';
+            requiredItemName = 'Meat';
             receivedItemImg = 'Images/items/water.png';
+            receivedItemName = 'Water';
         } else if (npcType === 'squig') {
             name = 'Squig';
             portrait = 'Images/fauna/squigface.png';
             message = 'I\'m nuts for nuts!';
             requiredItem = 'Food/nut';
             requiredItemImg = 'Images/Food/nut/Nut.png';
+            requiredItemName = 'Nut';
             receivedItemImg = 'Images/items/water.png';
+            receivedItemName = 'Water';
         } else {
             return;
         }
 
         this.barterNPCName.textContent = name;
         this.barterNPCPortrait.src = portrait;
+        this.barterNPCPortrait.alt = `Portrait of ${name}`;
         this.barterNPCMessage.textContent = message;
 
         // Build the visual exchange UI
         const barterExchange = document.getElementById('barterExchange');
         if (barterExchange) {
             barterExchange.innerHTML = `
-                <img src="${requiredItemImg}" alt="Required Item" class="barter-exchange-item">
+                <img src="${requiredItemImg}" alt="Trade ${requiredItemName} for..." class="barter-exchange-item">
                 <span class="barter-exchange-arrow">→</span>
-                <img src="${receivedItemImg}" alt="Received Item" class="barter-exchange-item">
+                <img src="${receivedItemImg}" alt="${receivedItemName}" class="barter-exchange-item">
             `;
         }
         this.currentNPCType = npcType;
