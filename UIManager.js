@@ -67,9 +67,14 @@ export class UIManager {
         // Update map info below the minimap
         const mapInfo = document.getElementById('map-info');
         if (mapInfo) {
-            const zonesDiscovered = this.game.player.getVisitedZones().size;
-            const dimensionName = zone.dimension === 0 ? 'World' : 'Interior';
-            mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">${zone.x}, ${zone.y} (${dimensionName})<br>DISCOVERED: ${zonesDiscovered}</span>`;
+            if (zone.x === 0 && zone.y === 0 && zone.dimension === 1) {
+                // Special case for the Woodcutter's Club
+                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Woodcutter's Club</span>`;
+            } else {
+                const zonesDiscovered = this.game.player.getVisitedZones().size;
+                const dimensionName = zone.dimension === 0 ? 'World' : 'Interior';
+                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">${zone.x}, ${zone.y} (${dimensionName})<br>DISCOVERED: ${zonesDiscovered}</span>`;
+            }
         }
     }
 
@@ -135,6 +140,24 @@ export class UIManager {
         // Calculate visible range around current zone
         const range = 5; // Show 5 zones in each direction
         const currentZone = this.game.player.getCurrentZone();
+
+        // Special case for Woodcutter's Club interior: show an axe icon instead of the map
+        if (currentZone.x === 0 && currentZone.y === 0 && currentZone.dimension === 1) {
+            const axeImage = this.game.textureManager.getImage('axe');
+            if (axeImage && axeImage.complete) {
+                // Draw the axe icon in the center of the map canvas
+                const iconSize = mapSize * 0.7; // Make it large
+                const iconX = (mapSize - iconSize) / 2;
+                const iconY = (mapSize - iconSize) / 2;
+                this.game.mapCtx.drawImage(axeImage, iconX, iconY, iconSize, iconSize);
+            } else {
+                // Fallback text if image isn't loaded
+                this.game.mapCtx.fillStyle = '#2F1B14';
+                this.game.mapCtx.font = 'bold 14px serif';
+                this.game.mapCtx.fillText("Woodcutter's Club", mapSize / 2, mapSize / 2);
+            }
+            return; // Skip drawing the regular zone grid
+        }
 
         for (let dy = -range; dy <= range; dy++) {
             for (let dx = -range; dx <= range; dx++) {
@@ -361,12 +384,19 @@ export class UIManager {
         });
         this.cancelBarterButton.addEventListener('click', () => {
             this.hideBarterWindow();
-            this.game.gameLoop();
+        });
+        // Add handler for statue info close button
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' || (this.isStatueInfoOpen && ['w','a','s','d'].includes(event.key.toLowerCase()))) {
+                this.hideBarterWindow();
+            }
         });
     }
 
     showBarterWindow(npcType) {
         let name, portrait, message, requiredItem, requiredItemImg, receivedItemImg, requiredItemName, receivedItemName;
+        let isStatueInfo = false;
+
         if (npcType === 'lion') {
             name = 'Penne';
             portrait = 'Images/fauna/lionface.png';
@@ -385,6 +415,35 @@ export class UIManager {
             requiredItemName = 'Nut';
             receivedItemImg = 'Images/items/water.png';
             receivedItemName = 'Water';
+        } else if (npcType.startsWith('statue_')) {
+            const enemyType = npcType.substring(7); // Remove 'statue_' prefix
+            isStatueInfo = true;
+            name = enemyType.charAt(0).toUpperCase() + enemyType.slice(1) + ' Statue';
+            portrait = `Images/fauna/${enemyType}.png`; // Use regular enemy sprites
+
+            // Set detailed descriptions based on enemy type
+            switch (enemyType) {
+                case 'lizardy':
+                    message = 'Moves <strong>orthogonally</strong> (4-way) and attacks adjacent tiles.<br><br><em>Represents the foundation of enemy behavior.</em>';
+                    break;
+                case 'lizardo':
+                    message = 'Moves <strong>orthogonally and diagonally</strong> (8-way).<br><br><em>Its complex movement indicates aggressive tendencies.</em>';
+                    break;
+                case 'lizardeaux':
+                    message = '<strong>Charges</strong> in straight lines to ram and attack players from any distance.<br><br><em>A powerful linear combatant.</em>';
+                    break;
+                case 'zard':
+                    message = 'Moves <strong>diagonally</strong> like a bishop and charges to attack from a distance.<br><br><em>Specializes in ranged diagonal assaults.</em>';
+                    break;
+                case 'lazerd':
+                    message = 'Moves <strong>orthogonally and diagonally</strong> like a queen and charges to attack.<br><br><em>A master of all directional movement.</em>';
+                    break;
+                case 'lizord':
+                    message = 'Moves in <strong>L-shapes</strong> like a knight and uses a unique bump attack to displace players.<br><br><em>Creates strategic positional advantages.</em>';
+                    break;
+                default:
+                    message = 'An ancient statue depicting a mysterious creature from the wilderness.';
+            }
         } else {
             return;
         }
@@ -392,28 +451,49 @@ export class UIManager {
         this.barterNPCName.textContent = name;
         this.barterNPCPortrait.src = portrait;
         this.barterNPCPortrait.alt = `Portrait of ${name}`;
-        this.barterNPCMessage.textContent = message;
+        this.barterNPCMessage.innerHTML = isStatueInfo ? `<span class="statue-description">${message}</span>` : message; // Use smaller text for statue descriptions
 
-        // Build the visual exchange UI
+        // Handle different UI for statues vs barter
         const barterExchange = document.getElementById('barterExchange');
-        if (barterExchange) {
-            barterExchange.innerHTML = `
-                <img src="${requiredItemImg}" alt="Trade ${requiredItemName} for..." class="barter-exchange-item">
-                <span class="barter-exchange-arrow">→</span>
-                <img src="${receivedItemImg}" alt="${receivedItemName}" class="barter-exchange-item">
-            `;
+        const confirmButton = this.confirmBarterButton;
+        const cancelButton = this.cancelBarterButton;
+
+        if (isStatueInfo) {
+            if (barterExchange) barterExchange.innerHTML = '';
+            confirmButton.style.display = 'none';
+            cancelButton.textContent = 'Close';
+            cancelButton.classList.add('text-button'); // Apply text button style
+            this.isStatueInfoOpen = true;
+        } else {
+            // Restore barter UI
+            confirmButton.style.display = 'inline-block';
+            cancelButton.textContent = 'Cancel';
+            // Ensure text-button class is removed for image-based buttons
+            cancelButton.classList.remove('text-button');
+            this.isStatueInfoOpen = false;
+
+            // Build the visual exchange UI
+            if (barterExchange) {
+                barterExchange.innerHTML = `
+                    <img src="${requiredItemImg}" alt="Trade ${requiredItemName} for..." class="barter-exchange-item">
+                    <span class="barter-exchange-arrow">→</span>
+                    <img src="${receivedItemImg}" alt="${receivedItemName}" class="barter-exchange-item">
+                `;
+            }
+
+            // Disable confirm button if player cannot trade
+            const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
+            const canTrade = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.startsWith(foodType));
+            confirmButton.disabled = !canTrade;
         }
+
         this.currentNPCType = npcType;
         this.barterOverlay.classList.add('show');
-
-        // Disable confirm button if player cannot trade
-        const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
-        const canTrade = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.startsWith(foodType));
-        this.confirmBarterButton.disabled = !canTrade;
     }
 
     hideBarterWindow() {
         this.barterOverlay.classList.remove('show');
+        this.isStatueInfoOpen = false;
     }
 
     confirmTrade() {

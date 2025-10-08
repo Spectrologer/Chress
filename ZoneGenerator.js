@@ -86,6 +86,24 @@ export class ZoneGenerator {
                 const portX = Math.floor(GRID_SIZE / 2);
                 const portY = GRID_SIZE - 1; // Bottom edge
                 this.grid[portY][portX] = TILE_TYPES.PORT;
+
+                // Place enemy statues on the back wall (y=1)
+                // Left side: 3 statues
+                this.grid[1][1] = TILE_TYPES.LIZARDY_STATUE;
+                this.grid[1][2] = TILE_TYPES.LIZARDO_STATUE;
+                this.grid[1][3] = TILE_TYPES.ZARD_STATUE;
+
+                // Right side: 3 statues
+                this.grid[1][5] = TILE_TYPES.LIZARDEAUX_STATUE;
+                this.grid[1][6] = TILE_TYPES.LIZORD_STATUE;
+                this.grid[1][7] = TILE_TYPES.LAZERD_STATUE;
+
+                // Set player spawn away from walls
+                return {
+                    grid: JSON.parse(JSON.stringify(this.grid)),
+                    enemies: [],
+                    playerSpawn: { x: Math.floor(GRID_SIZE / 2), y: Math.floor(GRID_SIZE / 2) + 2 }
+                };
             }
             // Interior zone: blank with placeholders
             return {

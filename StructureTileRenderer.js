@@ -1,4 +1,5 @@
 import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from './constants.js';
+import { RendererUtils } from './RendererUtils.js';
 
 export class StructureTileRenderer {
     constructor(images, multiTileHandler, tileSize) {
@@ -10,6 +11,50 @@ export class StructureTileRenderer {
     isImageLoaded(key) {
         const image = this.images[key];
         return image && image.complete && image.naturalWidth > 0;
+    }
+
+    renderStatueTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer, tileType) {
+        // First draw the base tile (housetile for interiors)
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Draw a pedestal
+        ctx.fillStyle = '#a0a0a0'; // Light grey for pedestal
+        ctx.fillRect(pixelX + 8, pixelY + TILE_SIZE - 16, TILE_SIZE - 16, 12);
+        ctx.fillStyle = '#808080'; // Darker grey for shadow
+        ctx.fillRect(pixelX + 8, pixelY + TILE_SIZE - 8, TILE_SIZE - 16, 4);
+
+        const enemySpriteMap = {
+            [TILE_TYPES.LIZARDY_STATUE]: 'lizardy',
+            [TILE_TYPES.LIZARDO_STATUE]: 'lizardo',
+            [TILE_TYPES.LIZARDEAUX_STATUE]: 'lizardeaux',
+            [TILE_TYPES.LIZORD_STATUE]: 'lizord',
+            [TILE_TYPES.ZARD_STATUE]: 'zard',
+            [TILE_TYPES.LAZERD_STATUE]: 'lazerd',
+        };
+
+        const spriteKey = enemySpriteMap[tileType];
+        if (spriteKey && this.isImageLoaded(spriteKey)) {
+            const enemyImage = this.images[spriteKey];
+            ctx.save();
+            ctx.filter = 'grayscale(100%) brightness(0.8)';
+            ctx.drawImage(
+                enemyImage,
+                pixelX,
+                pixelY - 10, // Draw slightly higher on the pedestal
+                TILE_SIZE,
+                TILE_SIZE
+            );
+            ctx.restore();
+        } else {
+            // Fallback if image not loaded
+            ctx.fillStyle = TILE_COLORS[tileType] || '#888888';
+            ctx.fillRect(pixelX + 12, pixelY + 12, TILE_SIZE - 24, TILE_SIZE - 24);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('?', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
     }
 
     renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {

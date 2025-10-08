@@ -257,6 +257,38 @@ export class InputManager {
             return; // Interaction handled
         }
 
+        // Check if tapped on enemy statue for behavior details
+        const statueTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        let statueNpcType = null;
+
+        if (statueTile === TILE_TYPES.LIZARDY_STATUE) {
+            statueNpcType = 'statue_lizardy';
+        } else if (statueTile === TILE_TYPES.LIZARDO_STATUE) {
+            statueNpcType = 'statue_lizardo';
+        } else if (statueTile === TILE_TYPES.LIZARDEAUX_STATUE) {
+            statueNpcType = 'statue_lizardeaux';
+        } else if (statueTile === TILE_TYPES.ZARD_STATUE) {
+            statueNpcType = 'statue_zard';
+        } else if (statueTile === TILE_TYPES.LAZERD_STATUE) {
+            statueNpcType = 'statue_lazerd';
+        } else if (statueTile === TILE_TYPES.LIZORD_STATUE) {
+            statueNpcType = 'statue_lizord';
+        }
+
+        if (statueNpcType) {
+            // Check if player is adjacent to the statue
+            const playerPos = this.game.player.getPosition();
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+
+            if (isAdjacent) {
+                console.log('Statue tapped:', statueNpcType);
+                this.game.uiManager.showBarterWindow(statueNpcType);
+            }
+            return; // Interaction handled
+        }
+
         // Handle bomb placement confirmation
         if (this.bombPlacementConfirmation) {
             if (gridCoords.x === this.bombPlacementConfirmation.x && gridCoords.y === this.bombPlacementConfirmation.y) {

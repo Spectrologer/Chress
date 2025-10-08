@@ -35,7 +35,14 @@ export const TILE_TYPES = {
     BOMB: 24,
     HEART: 27,
     SIGN: 26,
-    PORT: 29
+    PORT: 29,
+    // Enemy statues
+    LIZARDY_STATUE: 30,
+    LIZARDO_STATUE: 31,
+    LIZARDEAUX_STATUE: 32,
+    ZARD_STATUE: 33,
+    LAZERD_STATUE: 34,
+    LIZORD_STATUE: 35
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -68,7 +75,14 @@ export const TILE_COLORS = {
     [TILE_TYPES.BOMB]: '#FF0000',  // Red for bomb
     [TILE_TYPES.HEART]: '#FF69B4', // Hot pink for heart
     [TILE_TYPES.SIGN]: '#8B4513', // Saddle brown for sign
-    [TILE_TYPES.PORT]: '#ffcb8d' // Same as floor, transparent
+    [TILE_TYPES.PORT]: '#ffcb8d', // Same as floor, transparent
+    // Enemy statue colors (grey for stone statues)
+    [TILE_TYPES.LIZARDY_STATUE]: '#A0A0A0',
+    [TILE_TYPES.LIZARDO_STATUE]: '#A0A0A0',
+    [TILE_TYPES.LIZARDEAUX_STATUE]: '#A0A0A0',
+    [TILE_TYPES.ZARD_STATUE]: '#A0A0A0',
+    [TILE_TYPES.LAZERD_STATUE]: '#A0A0A0',
+    [TILE_TYPES.LIZORD_STATUE]: '#A0A0A0'
 };
 
 // Direction constants for exits and movements
