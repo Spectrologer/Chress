@@ -353,14 +353,14 @@ export class UIManager {
             portrait = 'Images/fauna/lionface.png';
             message = 'Give me meat!';
             requiredItem = 'Food/meat';
-            requiredItemImg = 'Images/Food/meat/meat.png';
+            requiredItemImg = 'Images/Food/meat/Meat.png';
             receivedItemImg = 'Images/items/water.png';
         } else if (npcType === 'squig') {
             name = 'Squig';
             portrait = 'Images/fauna/squigface.png';
             message = 'I\'m nuts for nuts!';
             requiredItem = 'Food/nut';
-            requiredItemImg = 'Images/Food/nut/nut.png';
+            requiredItemImg = 'Images/Food/nut/Nut.png';
             receivedItemImg = 'Images/items/water.png';
         } else {
             return;
