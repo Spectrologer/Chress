@@ -116,6 +116,9 @@ class Game {
     }
     
     init() {
+        // Initialize visual effect animations
+        this.horseChargeAnimations = [];
+
         // Generate initial zone
         this.generateZone();
 
@@ -286,7 +289,31 @@ class Game {
     }
 
     performHorseIconCharge(item, targetX, targetY, enemy, dx, dy) {
-        this.player.smokeAnimations = [{x: this.player.x, y: this.player.y, frame: 18}]; // Smoke at origin tile since no intermediates
+        const startPos = this.player.getPosition();
+
+        // Determine the corner of the "L" shape for the animation
+        let midPos;
+        if (Math.abs(dx) === 2) { // Moved 2 horizontally, 1 vertically
+            midPos = { x: startPos.x + dx, y: startPos.y };
+        } else { // Moved 1 horizontally, 2 vertically
+            midPos = { x: startPos.x, y: startPos.y + dy };
+        }
+
+        // Add a new animation object for the zip line effect
+        this.horseChargeAnimations.push({
+            startPos: startPos,
+            midPos: midPos,
+            endPos: { x: targetX, y: targetY },
+            frame: 20 // Animation duration in frames
+        });
+
+        // Play a whoosh sound for the charge
+        this.soundManager.playSound('whoosh');
+
+        // Keep the smoke effect at the origin as well
+        this.player.smokeAnimations.push({x: this.player.x, y: this.player.y, frame: 18});
+
+        // Use the item
         item.uses--;
         if (item.uses <= 0) this.player.inventory = this.player.inventory.filter(invItem => invItem !== item);
         this.player.setPosition(targetX, targetY);
@@ -313,6 +340,10 @@ class Game {
         // Update animations
         this.player.updateAnimations();
         this.enemies.forEach(enemy => enemy.updateAnimations());
+
+        // Update and filter horse charge animations
+        this.horseChargeAnimations.forEach(anim => anim.frame--);
+        this.horseChargeAnimations = this.horseChargeAnimations.filter(anim => anim.frame > 0);
 
         // Remove enemies whose death animation has finished
         this.enemies.forEach(enemy => {

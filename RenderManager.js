@@ -26,6 +26,9 @@ export class RenderManager {
 
         // Draw bomb placement indicator if active
         this.drawBombPlacementIndicator();
+
+        // Draw horse charge animation
+        this.drawHorseChargeAnimation();
     }
 
     drawGrid() {
@@ -321,5 +324,39 @@ export class RenderManager {
             );
             this.ctx.restore();
         }
+    }
+
+    drawHorseChargeAnimation() {
+        if (this.game.horseChargeAnimations.length === 0) {
+            return;
+        }
+
+        this.ctx.save();
+        this.ctx.lineWidth = 6; // A thick, impactful line
+
+        this.game.horseChargeAnimations.forEach(anim => {
+            const progress = anim.frame / 20; // Based on 20-frame duration
+            const alpha = progress; // Fade out as the animation progresses
+
+            this.ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.8})`; // White, slightly transparent
+            this.ctx.shadowColor = `rgba(75, 0, 130, ${alpha})`; // Indigo glow
+            this.ctx.shadowBlur = 15;
+
+            // Get pixel coordinates for the center of each tile
+            const startX = anim.startPos.x * TILE_SIZE + TILE_SIZE / 2;
+            const startY = anim.startPos.y * TILE_SIZE + TILE_SIZE / 2;
+            const midX = anim.midPos.x * TILE_SIZE + TILE_SIZE / 2;
+            const midY = anim.midPos.y * TILE_SIZE + TILE_SIZE / 2;
+            const endX = anim.endPos.x * TILE_SIZE + TILE_SIZE / 2;
+            const endY = anim.endPos.y * TILE_SIZE + TILE_SIZE / 2;
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(startX, startY);
+            this.ctx.lineTo(midX, midY);
+            this.ctx.lineTo(endX, endY);
+            this.ctx.stroke();
+        });
+
+        this.ctx.restore();
     }
 }
