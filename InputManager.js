@@ -354,10 +354,17 @@ export class InputManager {
         }
 
         // Check if tapped tile is an exit and player is already on it - trigger zone transition
-        if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y &&
-            this.game.grid[gridCoords.y][gridCoords.x] === TILE_TYPES.EXIT) {
-            this.handleExitTap(gridCoords.x, gridCoords.y);
-            return;
+        const tileUnderPlayer = this.game.grid[playerPos.y]?.[playerPos.x];
+        if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
+            if (tileUnderPlayer === TILE_TYPES.EXIT) {
+                this.handleExitTap(gridCoords.x, gridCoords.y);
+                return;
+            } else if (tileUnderPlayer === TILE_TYPES.PORT) {
+                // Player tapped on a PORT tile they are standing on
+                this.game.player.currentZone.dimension = this.game.player.currentZone.dimension === 0 ? 1 : 0;
+                this.game.transitionToZone(this.game.player.currentZone.x, this.game.player.currentZone.y, 'port', playerPos.x, playerPos.y);
+                return;
+            }
         }
 
         // Find path to target

@@ -124,6 +124,7 @@ export class Player {
                 }
             this.x = newX;
             this.y = newY;
+
             this.liftFrames = 15; // Start lift animation
             window.soundManager?.playSound('move');
 
@@ -214,7 +215,7 @@ export class Player {
         }
 
         // Regular tiles
-        // Player can walk on floor, exit, water, food, axe, hammer, bishop spear, horse icon, bomb, note, and heart tiles
+        // Player can walk on floor, exit, water, food, axe, hammer, bishop spear, horse icon, bomb, note, heart, and port tiles
         if (tile === TILE_TYPES.FLOOR ||
             tile === TILE_TYPES.EXIT ||
             tile === TILE_TYPES.WATER ||
@@ -225,7 +226,8 @@ export class Player {
             tile === TILE_TYPES.BOMB ||
             (tile && tile.type === TILE_TYPES.FOOD) || // Note items are just the tile type number
             tile === TILE_TYPES.NOTE ||
-            tile === TILE_TYPES.HEART) {
+            tile === TILE_TYPES.HEART ||
+            tile === TILE_TYPES.PORT) {
             return true;
         }
 
@@ -245,9 +247,10 @@ export class Player {
         return { ...this.currentZone };
     }
 
-    setCurrentZone(x, y) {
+    setCurrentZone(x, y, dimension = this.currentZone.dimension) {
         this.currentZone.x = x;
         this.currentZone.y = y;
+        this.currentZone.dimension = dimension;
         this.markZoneVisited(x, y);
     }
 

@@ -95,6 +95,25 @@ export class ZoneManager {
                 // Teleport: place in center
                 this.game.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
                 break;
+            case 'port':
+                // Universally find the PORT tile in the destination zone and place the player there.
+                let portFound = false;
+                for (let y = 0; y < GRID_SIZE; y++) {
+                    for (let x = 0; x < GRID_SIZE; x++) {
+                        if (this.game.grid[y][x] === TILE_TYPES.PORT) {
+                            this.game.player.setPosition(x, y);
+                            portFound = true;
+                            break;
+                        }
+                    }
+                    if (portFound) break;
+                }
+
+                // Fallback to center if no port is found in the destination zone (should not happen with correct setup)
+                if (!portFound) {
+                    this.game.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
+                }
+                break;
             default:
                 // Fallback to center
                 this.game.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));

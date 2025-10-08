@@ -9,8 +9,9 @@ export class MultiTileHandler {
                 let isHouse = true;
                 for (let y = startY; y < startY + 3 && isHouse; y++) {
                     for (let x = startX; x < startX + 3 && isHouse; x++) {
-                        if (y >= 0 && y < GRID_SIZE && x >= 0 && x < GRID_SIZE &&
-                            grid[y][x] !== TILE_TYPES.HOUSE) {
+                        const tile = grid[y]?.[x];
+                        // A house tile can be either HOUSE or a PORT (the door)
+                        if (!(tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.PORT)) {
                             isHouse = false;
                         }
                     }

@@ -80,6 +80,13 @@ export class ZoneGenerator {
 
         // Handle interior dimension specially
         if (dimension === 1) {
+            // Interior of the house at (0,0)
+            if (zoneX === 0 && zoneY === 0) {
+                // Place a PORT tile at the bottom-middle to exit
+                const portX = Math.floor(GRID_SIZE / 2);
+                const portY = GRID_SIZE - 1; // Bottom edge
+                this.grid[portY][portX] = TILE_TYPES.PORT;
+            }
             // Interior zone: blank with placeholders
             return {
                 grid: JSON.parse(JSON.stringify(this.grid)),

@@ -17,7 +17,12 @@ export class StructureGenerator {
         // Place the 3x3 house
         for (let y = houseStartY; y < houseStartY + 3; y++) {
             for (let x = houseStartX; x < houseStartX + 3; x++) {
-                if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1) {
+                // Place a PORT tile at the bottom-middle of the house as an entrance
+                if (x === houseStartX + 1 && y === houseStartY + 2) {
+                    this.grid[y][x] = TILE_TYPES.PORT;
+                }
+                // Check bounds for the rest of the house
+                else if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1) {
                     this.grid[y][x] = TILE_TYPES.HOUSE;
                 }
             }

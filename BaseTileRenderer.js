@@ -74,6 +74,9 @@ export class BaseTileRenderer {
             this.structureRenderer.renderLionTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.SQUIG) {
             this.structureRenderer.renderSquigTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.PORT) {
+            // PORT tiles are invisible overlays. Render the tile underneath them.
+            this.structureRenderer.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else {
             this.renderFloorTile(ctx, pixelX, pixelY, actualType);
         }
