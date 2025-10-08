@@ -68,7 +68,8 @@ export class UIManager {
         const mapInfo = document.getElementById('map-info');
         if (mapInfo) {
             const zonesDiscovered = this.game.player.getVisitedZones().size;
-            mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">${zone.x}, ${zone.y}<br>DISCOVERED: ${zonesDiscovered}</span>`;
+            const dimensionName = zone.dimension === 0 ? 'World' : 'Interior';
+            mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">${zone.x}, ${zone.y} (${dimensionName})<br>DISCOVERED: ${zonesDiscovered}</span>`;
         }
     }
 

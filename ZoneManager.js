@@ -22,8 +22,9 @@ export class ZoneManager {
         const newRegion = this.game.uiManager.generateRegionName(newZoneX, newZoneY);
         const isNewRegion = newRegion !== this.game.currentRegion;
 
-        // Update player's current zone
-        this.game.player.setCurrentZone(newZoneX, newZoneY);
+        // Update player's current zone (keep dimension)
+        this.game.player.currentZone.x = newZoneX;
+        this.game.player.currentZone.y = newZoneY;
 
         // Show region notification only if entering a new region
         if (isNewRegion) {
@@ -111,6 +112,7 @@ export class ZoneManager {
         let zoneData = this.game.zoneGenerator.generateZone(
             currentZone.x,
             currentZone.y,
+            currentZone.dimension,
             this.game.zones,
             this.game.connectionManager.zoneConnections,
             this.game.availableFoodAssets
@@ -119,8 +121,8 @@ export class ZoneManager {
         this.game.grid = zoneData.grid;
         this.game.enemies = (zoneData.enemies || []).map(e => new this.game.Enemy(e));
 
-        // Save the generated zone
-        const zoneKey = `${currentZone.x},${currentZone.y}`;
+        // Save the generated zone (include dimension in key)
+        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
         this.game.zones.set(zoneKey, zoneData);
     }
 

@@ -63,19 +63,30 @@ export class ZoneGenerator {
         return true;
     }
 
-    generateZone(zoneX, zoneY, existingZones, zoneConnections, foodAssets) {
+    generateZone(zoneX, zoneY, dimension, existingZones, zoneConnections, foodAssets) {
         this.foodAssets = foodAssets;
         this.currentZoneX = zoneX;
         this.currentZoneY = zoneY;
+        this.currentDimension = dimension;
 
-        // Check if this zone already exists
-        const zoneKey = `${zoneX},${zoneY}`;
+        // Check if this zone already exists (include dimension in key)
+        const zoneKey = `${zoneX},${zoneY}:${dimension}`;
         if (existingZones.has(zoneKey)) {
             return existingZones.get(zoneKey);
         }
 
         // Generate new zone structure
         this.initialize();
+
+        // Handle interior dimension specially
+        if (dimension === 1) {
+            // Interior zone: blank with placeholders
+            return {
+                grid: JSON.parse(JSON.stringify(this.grid)),
+                enemies: [],
+                playerSpawn: { x: Math.floor(GRID_SIZE / 2), y: Math.floor(GRID_SIZE / 2) }
+            };
+        }
 
         const zoneLevel = ZoneStateManager.getZoneLevel(zoneX, zoneY);
         const isHomeZone = (zoneX === 0 && zoneY === 0);

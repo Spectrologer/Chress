@@ -152,6 +152,8 @@ class Game {
             // Expose individual commands for easier access
             window.tp = (x, y) => module.default.tp(this, x, y);
             window.spawnHorseIcon = () => module.default.spawnHorseIcon(this);
+            window.gotoInterior = () => module.default.gotoInterior(this);
+            window.gotoWorld = () => module.default.gotoWorld(this);
         });
 
         // Update UI

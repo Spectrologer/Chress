@@ -4,7 +4,7 @@ export class Player {
     constructor() {
         this.x = 1;
         this.y = 1;
-        this.currentZone = { x: 0, y: 0 };
+        this.currentZone = { x: 0, y: 0, dimension: 0 }; // 0: world, 1: interior
         this.visitedZones = new Set();
         this.thirst = 50;
         this.hunger = 50;

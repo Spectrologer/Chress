@@ -315,6 +315,32 @@ const consoleCommands = {
     // Transition to zone without exit information (use defaults)
     game.transitionToZone(x, y, 'teleport', Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
     console.log(`Teleported to zone (${x}, ${y})`);
+  },
+
+  gotoInterior: (game) => {
+    if (!game || !game.player) {
+      console.log('Game not initialized');
+      return;
+    }
+    const currentZone = game.player.getCurrentZone();
+    // Switch to interior dimension
+    game.player.currentZone.dimension = 1;
+    // Transition to the same zone in interior dimension
+    game.transitionToZone(currentZone.x, currentZone.y, 'teleport', Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
+    console.log(`Entered interior dimension at zone (${currentZone.x}, ${currentZone.y})`);
+  },
+
+  gotoWorld: (game) => {
+    if (!game || !game.player) {
+      console.log('Game not initialized');
+      return;
+    }
+    const currentZone = game.player.getCurrentZone();
+    // Switch to world dimension
+    game.player.currentZone.dimension = 0;
+    // Transition to the same zone in world dimension
+    game.transitionToZone(currentZone.x, currentZone.y, 'teleport', Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
+    console.log(`Returned to world dimension at zone (${currentZone.x}, ${currentZone.y})`);
   }
 
 };
