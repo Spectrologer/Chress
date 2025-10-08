@@ -15,6 +15,12 @@ export class ItemTileRenderer {
         // Use the stored foodType from the grid tile
         const tile = grid[y][x];
         const foodAsset = tile.foodType;
+
+        // Safeguard against undefined foodAsset
+        if (!foodAsset) {
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.FOOD], '🥖');
+            return;
+        }
         const foodKey = foodAsset.replace('.png', '').replace('/', '_');
 
         // First draw the base tile
@@ -28,15 +34,7 @@ export class ItemTileRenderer {
         if (this.isImageLoaded(foodKey)) {
             ctx.drawImage(this.images[foodKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.FOOD];
-            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
-
-            ctx.fillStyle = '#8B4513';
-            ctx.font = '32px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🥖', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.FOOD], '🥖');
         }
     }
 
@@ -52,15 +50,7 @@ export class ItemTileRenderer {
         if (this.isImageLoaded('axe')) {
             ctx.drawImage(this.images.axe, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.ROCK]; // Use rock color for axe
-            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
-
-            ctx.fillStyle = '#666666';
-            ctx.font = '32px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🪓', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.ROCK], '🪓');
         }
     }
 
@@ -72,15 +62,7 @@ export class ItemTileRenderer {
         if (this.isImageLoaded('hammer')) {
             ctx.drawImage(this.images.hammer, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.HAMMER];
-            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
-
-            ctx.fillStyle = '#666666';
-            ctx.font = '32px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🔨', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.HAMMER], '🔨');
         }
     }
 
@@ -117,15 +99,7 @@ export class ItemTileRenderer {
                 scaledHeight
             );
         } else {
-            // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.SPEAR];
-            ctx.fillRect(pixelX + 2, pixelY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
-
-            ctx.fillStyle = '#666666';
-            ctx.font = '24px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🔱', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.SPEAR], '🔱', 24);
         }
     }
 
@@ -162,15 +136,7 @@ export class ItemTileRenderer {
                 scaledHeight
             );
         } else {
-            // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.HORSE_ICON];
-            ctx.fillRect(pixelX + 2, pixelY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
-
-            ctx.fillStyle = '#8B4513';
-            ctx.font = '24px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🐎', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.HORSE_ICON], '🐎', 24);
         }
     }
 
@@ -182,15 +148,7 @@ export class ItemTileRenderer {
         if (this.isImageLoaded('bomb')) {
             ctx.drawImage(this.images.bomb, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.BOMB];
-            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
-
-            ctx.fillStyle = '#333333';
-            ctx.font = '32px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('💣', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BOMB], '💣');
         }
     }
 
@@ -202,15 +160,7 @@ export class ItemTileRenderer {
         if (this.isImageLoaded('heart')) {
             ctx.drawImage(this.images.heart, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.HEART];
-            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
-
-            ctx.fillStyle = '#FF0000';
-            ctx.font = '32px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('💖', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.HEART], '💖');
         }
     }
 
@@ -222,15 +172,7 @@ export class ItemTileRenderer {
         if (this.isImageLoaded('note')) {
             ctx.drawImage(this.images.note, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.NOTE];
-            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
-
-            ctx.fillStyle = '#FFE4C4'; // Cream color for note
-            ctx.font = '24px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('📄', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.NOTE], '📄', 24);
         }
     }
 
@@ -242,15 +184,22 @@ export class ItemTileRenderer {
         if (this.isImageLoaded('sign')) {
             ctx.drawImage(this.images.sign, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.SIGN];
-            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.SIGN], 'S', 24);
+        }
+    }
 
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = '24px Arial';
+    renderFallback(ctx, pixelX, pixelY, color, emoji, fontSize = 32) {
+        // Fallback to colored square with emoji
+        ctx.fillStyle = color;
+        const padding = (fontSize === 32) ? 8 : 2;
+        ctx.fillRect(pixelX + padding, pixelY + padding, TILE_SIZE - padding * 2, TILE_SIZE - padding * 2);
+
+        if (emoji) {
+            ctx.fillStyle = '#000000'; // Fallback text color
+            ctx.font = `${fontSize}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('S', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            ctx.fillText(emoji, pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 }

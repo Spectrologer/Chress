@@ -44,6 +44,11 @@ export class ItemGenerator {
         if (isWater) {
             itemType = TILE_TYPES.WATER;
         } else {
+            // Ensure there are food assets available before trying to select one
+            if (!this.foodAssets || this.foodAssets.length === 0) {
+                // Fallback to water if no food is available
+                itemType = TILE_TYPES.WATER;
+            } else {
             // Use seeded random based on zone position to ensure consistency
             const zoneKey = `${this.zoneX},${this.zoneY}`;
             const seed = ZoneStateManager.hashCode(zoneKey) % this.foodAssets.length;
@@ -52,6 +57,7 @@ export class ItemGenerator {
                 type: TILE_TYPES.FOOD,
                 foodType: selectedFood
             };
+            }
         }
 
         // Try to place the item in a valid location (max 50 attempts)
