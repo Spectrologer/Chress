@@ -13,6 +13,12 @@ export class WallTileRenderer {
     }
 
     renderWallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+        // Interior zones use house wall textures based on position
+        if (zoneLevel === 5) {
+            this.renderInteriorWallTile(ctx, x, y, pixelX, pixelY, grid);
+            return;
+        }
+
         // Frontier zones (level >=4) use desert background and succulent on top
         if (zoneLevel >= 4) {
             if (this.isImageLoaded('desert')) {
@@ -105,6 +111,77 @@ export class WallTileRenderer {
         } else {
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.GRASS];
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        }
+    }
+
+    renderInteriorWallTile(ctx, x, y, pixelX, pixelY, grid) {
+        // Draw housetile background
+        if (this.isImageLoaded('housetile')) {
+            ctx.drawImage(this.images.housetile, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        }
+
+        const GRID_SIZE = 9;
+        const middleEnd = GRID_SIZE - 1; // 8
+
+        if (x === 0 && y === 0) {
+            // Top-left corner
+            if (this.isImageLoaded('house_wall_corner')) {
+                ctx.drawImage(this.images.house_wall_corner, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+        } else if (x === middleEnd && y === 0) {
+            // Top-right corner
+            if (this.isImageLoaded('house_wall_corner')) {
+                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_corner, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
+            }
+        } else if (x === middleEnd && y === middleEnd) {
+            // Bottom-right corner
+            if (this.isImageLoaded('house_wall_corner')) {
+                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_corner, pixelX, pixelY, Math.PI, TILE_SIZE);
+            }
+        } else if (x === 0 && y === middleEnd) {
+            // Bottom-left corner
+            if (this.isImageLoaded('house_wall_corner')) {
+                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_corner, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
+            }
+        } else if (x === 0 && y > 0 && y < middleEnd) {
+            // Left wall
+            if (this.isImageLoaded('house_wall_side')) {
+                ctx.drawImage(this.images.house_wall_side, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+        } else if (x === middleEnd && y > 0 && y < middleEnd) {
+            // Right wall, flipped horizontally
+            if (this.isImageLoaded('house_wall_side')) {
+                RendererUtils.drawFlippedImage(ctx, this.images.house_wall_side, pixelX, pixelY, true, false, TILE_SIZE);
+            }
+        } else if (y === 0 && x > 0 && x < middleEnd) {
+            // Top wall, rotated 90°
+            if (this.isImageLoaded('house_wall_side')) {
+                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_side, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
+            }
+        } else if (x === 3 && y === middleEnd) {
+            // Special case for the open wall next to the door
+            if (this.isImageLoaded('house_wall_open')) {
+                RendererUtils.drawFlippedImage(ctx, this.images.house_wall_open, pixelX, pixelY, false, true, TILE_SIZE);
+            } else if (this.isImageLoaded('house_wall_side')) {
+                // Fallback to the regular bottom wall if the special texture isn't loaded
+                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_side, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
+            }
+        } else if (x === 5 && y === middleEnd) {
+            // Special case for the open wall two tiles to the right of the door
+            if (this.isImageLoaded('house_wall_open')) {
+                RendererUtils.drawFlippedImage(ctx, this.images.house_wall_open, pixelX, pixelY, true, true, TILE_SIZE);
+            } else if (this.isImageLoaded('house_wall_side')) {
+                // Fallback to the regular bottom wall if the special texture isn't loaded
+                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_side, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
+            }
+        } else if (y === middleEnd && x > 0 && x < middleEnd) {
+            // Bottom wall, rotated 270°
+            if (this.isImageLoaded('house_wall_side')) {
+                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_side, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
+            }
         }
     }
 }

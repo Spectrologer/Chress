@@ -149,6 +149,17 @@ export class BaseTileRenderer {
     }
 
     renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+        // Interior zones use housetile for floors
+        if (zoneLevel === 5) {
+            if (this.isImageLoaded('housetile')) {
+                ctx.drawImage(this.images.housetile, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            return;
+        }
+
         // Frontier zones (level >=4) use desert texture for all passable tiles
         if (zoneLevel >= 4) {
             if (this.isImageLoaded('desert')) {

@@ -36,12 +36,16 @@ export class RenderManager {
 
         // Calculate zone level for texture rendering
         const zone = this.game.player.getCurrentZone();
-        const dist = Math.max(Math.abs(zone.x), Math.abs(zone.y));
-        let zoneLevel = 1;
-        if (dist <= 2) zoneLevel = 1;
-        else if (dist <= 8) zoneLevel = 2;
-        else if (dist <= 16) zoneLevel = 3;
-        else zoneLevel = 4;
+        let zoneLevel;
+        if (zone.dimension === 1) {
+            zoneLevel = 5; // Interior zones
+        } else {
+            const dist = Math.max(Math.abs(zone.x), Math.abs(zone.y));
+            if (dist <= 2) zoneLevel = 1;
+            else if (dist <= 8) zoneLevel = 2;
+            else if (dist <= 16) zoneLevel = 3;
+            else zoneLevel = 4;
+        }
 
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {

@@ -17,6 +17,14 @@ export class TextureLoader {
                 let imageKey;
                 if (assetName === 'floors/frontier/desert.png') {
                     imageKey = 'desert';
+                } else if (assetName === 'floors/interior/housetile.png') {
+                    imageKey = 'housetile';
+                } else if (assetName === 'floors/interior/house_wall_corner.png') {
+                    imageKey = 'house_wall_corner';
+                } else if (assetName === 'floors/interior/house_wall_open.png') {
+                    imageKey = 'house_wall_open';
+                } else if (assetName === 'floors/interior/house_wall_side.png') {
+                    imageKey = 'house_wall_side';
                 } else if (assetName === 'flora/succulent.png') {
                     imageKey = 'succulent';
                 } else if (assetName === 'flora/stump.png') {

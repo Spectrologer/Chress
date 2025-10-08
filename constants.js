@@ -119,7 +119,11 @@ export const IMAGE_ASSETS = [
     'items/horse.png',
     'protag/default.png',
     'protag/faceset.png',
-    'ui/arrow.png'
+    'ui/arrow.png',
+    'floors/interior/housetile.png',
+    'floors/interior/house_wall_corner.png',
+    'floors/interior/house_wall_side.png',
+    'floors/interior/house_wall_open.png'
 ];
 
 // Food image assets
