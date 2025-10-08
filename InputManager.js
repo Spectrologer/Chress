@@ -6,6 +6,8 @@ export class InputManager {
     constructor(game) {
         this.game = game;
         this.isExecutingPath = false;
+        this.pathExecutionTimer = null;
+        this.cancelPath = false;
         this.lastTapTime = null;
         this.lastTapX = null;
         this.lastTapY = null;
@@ -432,20 +434,30 @@ export class InputManager {
     // Execute path by simulating key presses with timing
     executePath(path) {
         if (this.isExecutingPath) {
-            return; // Don't start new path if one is already executing
+            // If already executing, cancel the current path to allow interruption
+            this.cancelPathExecution();
         }
 
         this.isExecutingPath = true;
+        this.cancelPath = false;
         const stepDelay = 150; // Milliseconds between steps
 
         let stepIndex = 0;
         const executeStep = () => {
+            if (this.cancelPath) {
+                console.log('Path execution cancelled');
+                this.cancelPath = false;
+                this.isExecutingPath = false;
+                this.pathExecutionTimer = null;
+                return;
+            }
             if (stepIndex < path.length) {
                 this.handleKeyPress({ key: path[stepIndex], preventDefault: () => {} });
                 stepIndex++;
-                setTimeout(executeStep, stepDelay);
+                this.pathExecutionTimer = setTimeout(executeStep, stepDelay);
             } else {
                 this.isExecutingPath = false;
+                this.pathExecutionTimer = null;
 
                 // Check if player ended up on an exit tile after path completion
                 const playerPos = this.game.player.getPosition();
@@ -460,6 +472,17 @@ export class InputManager {
         };
 
         executeStep();
+    }
+
+    // Cancel path execution
+    cancelPathExecution() {
+        if (this.pathExecutionTimer) {
+            clearTimeout(this.pathExecutionTimer);
+            this.pathExecutionTimer = null;
+        }
+        this.cancelPath = true;
+        this.isExecutingPath = false;
+        console.log("Path execution cancelled.");
     }
 
     handleKeyPress(event) {
@@ -723,7 +746,7 @@ export class InputManager {
                     console.log('No available tiles to spawn sign');
                 }
                 break;
-2            case '1':
+            case '1':
                 // Set health and thirst to 1 for testing
                 this.game.player.setHealth(1);
                 this.game.player.setThirst(1);
