@@ -104,7 +104,7 @@ export const IMAGE_ASSETS = [
     'shrubbery.png',
     'bush.png',
     'floors/dirt/dircle.png',
-    'doodads/house.png',
+    'doodads/club.png',
     'items/water.png',
     'protag/Special2.png',
     'protag/whack.png',

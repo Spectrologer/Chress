@@ -61,9 +61,9 @@ export class StructureTileRenderer {
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        // Then render the house part
-        if (this.isImageLoaded('doodads/house')) {
-            // For a 3x3 house, we need to determine which part of the house image to draw
+        // Then render the club part
+        if (this.isImageLoaded('doodads/club')) {
+            // For a 4x3 club, we need to determine which part of the club image to draw
             // Find the house area bounds to determine the position within the house
             const houseInfo = this.multiTileHandler.findHousePosition(x, y, grid);
 
@@ -72,10 +72,10 @@ export class StructureTileRenderer {
                 const partX = x - houseInfo.startX;
                 const partY = y - houseInfo.startY;
 
-                // Draw the corresponding part of the house image
-                // Divide the house image into 3x3 parts
-                const houseImage = this.images['doodads/house'];
-                const partWidth = houseImage.width / 3;
+                // Draw the corresponding part of the club image
+                // Divide the club image into 4x3 parts
+                const houseImage = this.images['doodads/club'];
+                const partWidth = houseImage.width / 4;
                 const partHeight = houseImage.height / 3;
 
                 ctx.drawImage(

@@ -26,8 +26,8 @@ export class ZoneGenerator {
         if (this.currentZoneX === 0 && this.currentZoneY === 0) {
             const houseStartX = 3;
             const houseStartY = 3;
-            const frontY = houseStartY + 3;
-            for (let x = houseStartX; x < houseStartX + 3; x++) {
+            const frontY = houseStartY + 3; // Row in front of the 3-tile high club
+            for (let x = houseStartX; x < houseStartX + 4; x++) { // Club is 4 tiles wide
                 if (this.isTileFree(x, frontY)) {
                     return { x, y: frontY };
                 }

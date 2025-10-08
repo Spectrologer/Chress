@@ -2,13 +2,13 @@ import { TILE_TYPES, GRID_SIZE } from './constants.js';
 
 export class MultiTileHandler {
     static findHousePosition(targetX, targetY, grid) {
-        // Find the top-left corner of the house that contains this tile
+        // Find the top-left corner of the 4x3 club that contains this tile
         for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
-            for (let startX = Math.max(0, targetX - 2); startX <= Math.min(GRID_SIZE - 3, targetX); startX++) {
-                // Check if there's a 3x3 house starting at this position
+            for (let startX = Math.max(0, targetX - 3); startX <= Math.min(GRID_SIZE - 4, targetX); startX++) {
+                // Check if there's a 4x3 club starting at this position
                 let isHouse = true;
-                for (let y = startY; y < startY + 3 && isHouse; y++) {
-                    for (let x = startX; x < startX + 3 && isHouse; x++) {
+                for (let y = startY; y < startY + 3 && isHouse; y++) { // 3 tiles high
+                    for (let x = startX; x < startX + 4 && isHouse; x++) { // 4 tiles wide
                         const tile = grid[y]?.[x];
                         // A house tile can be either HOUSE or a PORT (the door)
                         if (!(tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.PORT)) {
@@ -17,7 +17,7 @@ export class MultiTileHandler {
                     }
                 }
 
-                if (isHouse && targetX >= startX && targetX < startX + 3 &&
+                if (isHouse && targetX >= startX && targetX < startX + 4 &&
                     targetY >= startY && targetY < startY + 3) {
                     return { startX, startY };
                 }

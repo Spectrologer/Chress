@@ -23,8 +23,7 @@ export class ZoneManager {
         const isNewRegion = newRegion !== this.game.currentRegion;
 
         // Update player's current zone (keep dimension)
-        this.game.player.currentZone.x = newZoneX;
-        this.game.player.currentZone.y = newZoneY;
+        this.game.player.setCurrentZone(newZoneX, newZoneY);
 
         // Show region notification only if entering a new region
         if (isNewRegion) {
