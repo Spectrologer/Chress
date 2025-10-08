@@ -1,348 +1,242 @@
 // Console Commands for debugging and testing
-// These functions can be called directly from the browser console
-// e.g., consoleCommands.spawnBishopSpear(game)
 
 import { TILE_TYPES, GRID_SIZE } from './constants.js';
 import { Enemy } from './Enemy.js';
 
 const consoleCommands = {
-  spawnLizardy: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardy'}));
-      console.log(`Spawned lizardy enemy at (${spawnPos.x}, ${spawnPos.y})`);
+  // Spawn commands
+  spawnBomb: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.BOMB;
+      console.log('Spawned bomb at', pos);
     } else {
-      console.log('No available tiles to spawn enemy');
+      console.log('No valid spawn position found');
     }
   },
 
-  spawnLizardeaux: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardeaux'}));
-      console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
+  spawnHorseIcon: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.HORSE_ICON, uses: 3 };
+      console.log('Spawned horse icon at', pos);
     } else {
-      console.log('No available tiles to spawn lizardeaux enemy');
+      console.log('No valid spawn position found');
     }
   },
 
-  spawnLizardea: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardea'}));
-      console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
+  spawnEnemy: function(game, enemyType = 'lizardy') {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.enemies.push(new Enemy({ x: pos.x, y: pos.y, enemyType: enemyType, id: Date.now() }));
+      console.log('Spawned enemy', enemyType, 'at', pos);
     } else {
-      console.log('No available tiles to spawn enemy');
+      console.log('No valid spawn position found');
     }
   },
 
-  spawnLizardo: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardo'}));
-      console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
+  // Item spawn commands
+  spawnAxe: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.AXE;
+      console.log('Spawned axe at', pos);
     } else {
-      console.log('No available tiles to spawn enemy');
+      console.log('No valid spawn position found');
     }
   },
 
-  spawnLizalad: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizalad'}));
-      console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
+  spawnHammer: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.HAMMER;
+      console.log('Spawned hammer at', pos);
     } else {
-      console.log('No available tiles to spawn enemy');
+      console.log('No valid spawn position found');
     }
   },
 
-  spawnAxe: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.AXE;
-      console.log(`Debug: Axe spawned at (${spawnPos.x}, ${spawnPos.y})`);
+  spawnBishopSpear: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 };
+      console.log('Spawned bishop spear at', pos);
     } else {
-      console.log('No available tiles to spawn axe');
+      console.log('No valid spawn position found');
     }
   },
 
-  spawnHammer: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.HAMMER;
-      console.log(`Debug: Hammer spawned at (${spawnPos.x}, ${spawnPos.y})`);
+  spawnNote: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.NOTE;
+      console.log('Spawned note at', pos);
     } else {
-      console.log('No available tiles to spawn hammer');
+      console.log('No valid spawn position found');
     }
   },
 
-  spawnBishopSpear: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.grid[spawnPos.y][spawnPos.x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 };
-      console.log('Spawned bishop spear at (' + spawnPos.x + ',' + spawnPos.y + ')');
+  spawnHeart: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.HEART;
+      console.log('Spawned heart at', pos);
     } else {
-      console.log('No available tiles to spawn bishop spear');
+      console.log('No valid spawn position found');
     }
   },
 
-  spawnHorseIcon: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.grid[spawnPos.y][spawnPos.x] = { type: TILE_TYPES.HORSE_ICON, uses: 3 };
-      console.log('Spawned horse icon at (' + spawnPos.x + ',' + spawnPos.y + ')');
+  spawnWater: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.WATER;
+      console.log('Spawned water at', pos);
     } else {
-      console.log('No available tiles to spawn horse icon');
+      console.log('No valid spawn position found');
     }
   },
 
-  spawnHeart: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
+  spawnFoodMeat: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'Meat' };
+      console.log('Spawned meat at', pos);
+    } else {
+      console.log('No valid spawn position found');
     }
-    // Find a valid spawn position in the grid
-    let spawnPos = null;
-    for (let attempts = 0; attempts < 50 && !spawnPos; attempts++) {
-      const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-      const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-      if (game.grid[y][x] === TILE_TYPES.FLOOR) {
-        spawnPos = { x, y };
+  },
+
+  spawnFoodNut: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'Nut' };
+      console.log('Spawned nut at', pos);
+    } else {
+      console.log('No valid spawn position found');
+    }
+  },
+
+  spawnLion: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.LION;
+      console.log('Spawned lion at', pos);
+    } else {
+      console.log('No valid spawn position found');
+    }
+  },
+
+  spawnSquig: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.SQUIG;
+      console.log('Spawned squig at', pos);
+    } else {
+      console.log('No valid spawn position found');
+    }
+  },
+
+  // Enemy spawn commands (additional)
+  spawnLizardeaux: function(game) {
+    this.spawnEnemy(game, 'lizardeaux');
+  },
+
+  spawnLizord: function(game) {
+    this.spawnEnemy(game, 'lizord');
+  },
+
+  spawnLazerd: function(game) {
+    this.spawnEnemy(game, 'lazerd');
+  },
+
+  spawnZard: function(game) {
+    this.spawnEnemy(game, 'zard');
+  },
+
+  // Hotkey commands
+  hotkeyB: function(game) { this.spawnBomb(game); },
+  hotkeyH: function(game) { this.spawnHorseIcon(game); },
+  hotkeyA: function(game) { this.spawnAxe(game); },
+  hotkeyM: function(game) { this.spawnHammer(game); },
+  hotkeyS: function(game) { this.spawnBishopSpear(game); },
+  hotkeyN: function(game) { this.spawnNote(game); },
+  hotkeyR: function(game) { this.spawnHeart(game); },
+  hotkeyW: function(game) { this.spawnWater(game); },
+  hotkeyF: function(game) { this.spawnFoodMeat(game); },
+  hotkeyU: function(game) { this.spawnFoodNut(game); }, // U for nut
+  hotkeyL: function(game) { this.spawnLion(game); },
+  hotkeyG: function(game) { this.spawnSquig(game); }, // G for green squig
+
+  hotkeyShift1: function(game) { this.spawnEnemy(game, 'lizardy'); },
+  hotkeyShift2: function(game) { this.spawnEnemy(game, 'lizardo'); },
+  hotkeyShift3: function(game) { this.spawnEnemy(game, 'lizardeaux'); },
+  hotkeyShift4: function(game) { this.spawnEnemy(game, 'lizord'); },
+  hotkeyShift5: function(game) { this.spawnEnemy(game, 'lazerd'); },
+  hotkeyShift6: function(game) { this.spawnEnemy(game, 'zard'); },
+
+  // Handle hotkey events (for external calling from InputManager)
+  handleHotkey: function(game, key, shiftKey = false) {
+    const lowerKey = key.toLowerCase();
+    if (!shiftKey) {
+      // Items
+      if (lowerKey === 'b') { this.hotkeyB(game); return true; }
+      if (lowerKey === 'h') { this.hotkeyH(game); return true; }
+      if (lowerKey === 'a') { this.hotkeyA(game); return true; }
+      if (lowerKey === 'm') { this.hotkeyM(game); return true; }
+      if (lowerKey === 's') { this.hotkeyS(game); return true; }
+      if (lowerKey === 'n') { this.hotkeyN(game); return true; }
+      if (lowerKey === 'r') { this.hotkeyR(game); return true; }
+      if (lowerKey === 'w') { this.hotkeyW(game); return true; }
+      if (lowerKey === 'f') { this.hotkeyF(game); return true; }
+      if (lowerKey === 'u') { this.hotkeyU(game); return true; }
+      if (lowerKey === 'l') { this.hotkeyL(game); return true; }
+      if (lowerKey === 'g') { this.hotkeyG(game); return true; }
+      // Enemies (numbers without shift)
+      if (lowerKey === '1') { this.hotkeyShift1(game); return true; }
+      if (lowerKey === '2') { this.hotkeyShift2(game); return true; }
+      if (lowerKey === '3') { this.hotkeyShift3(game); return true; }
+      if (lowerKey === '4') { this.hotkeyShift4(game); return true; }
+      if (lowerKey === '5') { this.hotkeyShift5(game); return true; }
+      if (lowerKey === '6') { this.hotkeyShift6(game); return true; }
+    }
+    return false; // Not a hotkey
+  }
+};
+
+// Helper function to find spawn position - finds any random available passable tile
+function findSpawnPosition(game) {
+  const availablePositions = [];
+
+  // Scan the entire grid for available passable tiles
+  for (let y = 0; y < GRID_SIZE; y++) {
+    for (let x = 0; x < GRID_SIZE; x++) {
+      if (isValidSpawnPosition(game, x, y)) {
+        availablePositions.push({ x, y });
       }
     }
-    if (spawnPos) {
-      game.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.HEART;
-      console.log(`Debug: Heart spawned at (${spawnPos.x}, ${spawnPos.y})`);
-    } else {
-      console.log('No available tiles to spawn heart');
-    }
-  },
-
-  forceCanyon: (game) => {
-    if (!game || !game.zoneGenerator) {
-      console.log('Game not initialized');
-      return;
-    }
-    game.zoneGenerator.constructor.forceCanyonSpawn = true;
-    game.player.updateStats();
-    console.log('Forcing whispering canyon generation...');
-    console.log('Teleported to canyon zone. If canyon generated, it will be forced. If not, try again.');
-  },
-
-  puzzleZoneMessage: (game) => {
-    console.log("The puzzle zone is now a rare random encounter and cannot be teleported to directly.");
-  },
-
-  gotoFoodRoom: (game) => {
-    if (!game || !game.zoneGenerator) {
-      console.log('Game not initialized');
-      return;
-    }
-    const room = game.zoneGenerator.constructor.foodWaterRoomZone;
-    if (room) {
-      game.player.setPosition(room.x, room.y);
-      game.player.updateStats();
-      console.log(`Teleported to food/water room at (${room.x}, ${room.y})`);
-    } else {
-      game.zoneGenerator.constructor.forceFoodWaterRoom = true;
-      game.player.updateStats();
-      console.log('Food/water room not spawned yet. Forcing spawn at zone (10, 10)...');
-      console.log('Food/water room forced at (10, 10). You can now use "j" again to return.');
-    }
-  },
-
-  spawnTwoHandedSword: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const currentPos = game.player.getPosition();
-    const enemyAtTarget = game.getEnemyAt(currentPos.x, currentPos.y);
-    if (enemyAtTarget) {
-      game.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
-      console.log('Player attacks enemy!');
-      enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
-      enemyAtTarget.takeDamage(999); // Ensure enemy is dead
-      console.log('Player defeated enemy!');
-    } else {
-      console.log('No enemy at player position to attack');
-    }
-  },
-
-  spawnGiantAxe: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const targetX = game.player.x;
-    const targetY = game.player.y;
-    const playerPos = game.player.getPosition();
-
-    // Find Bishop Spear direction
-    const bishopSpear = game.player.inventory.find(item => item.type === 'bishop_spear');
-    const direction = bishopSpear ? game.player.getDirectionFromItem(bishopSpear) : null;
-
-    if (direction) {
-      switch (direction) {
-        case 'north':
-          targetY -= 1;
-          break;
-        case 'south':
-          targetY += 1;
-          break;
-        case 'west':
-          targetX -= 1;
-          break;
-        case 'east':
-          targetX += 1;
-          break;
-      }
-      game.player.setPosition(targetX, targetY);
-      console.log('Bishop Spear charge to (' + targetX + ',' + targetY + ')');
-
-      const enemyAtTarget = game.getEnemyAt(targetX, targetY);
-      if (enemyAtTarget) {
-        enemyAtTarget.takeDamage(999); // Guaranteed kill
-        console.log('Bishop Spear charge attack! Enemy defeated.');
-      } else {
-        console.log('No enemy at charge location');
-      }
-    } else {
-      console.log('No Bishop Spear in inventory for charge');
-    }
-  },
-
-  clearEnemies: (game) => {
-    if (!game) {
-      console.log('Game not initialized');
-      return;
-    }
-    game.enemies = [];
-    console.log('Cleared all enemies');
-  },
-
-  spawnZard: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'zard'}));
-      console.log(`Spawned Zard enemy at (${spawnPos.x}, ${spawnPos.y})`);
-    } else {
-      console.log('No available tiles to spawn Zard enemy');
-    }
-  },
-
-  spawnLizord: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizord'}));
-      console.log(`Spawned Lizord enemy at (${spawnPos.x}, ${spawnPos.y})`);
-    } else {
-      console.log('No available tiles to spawn Lizord enemy');
-    }
-  },
-
-  spawnLazerd: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const spawnPos = game.player.getValidSpawnPosition(game);
-    if (spawnPos) {
-      game.enemies.push(new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lazerd'}));
-      console.log(`Spawned Lazerd enemy at (${spawnPos.x}, ${spawnPos.y})`);
-    } else {
-      console.log('No available tiles to spawn Lazerd enemy');
-    }
-  },
-
-  tp: (game, x, y) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    x = parseInt(x);
-    y = parseInt(y);
-    if (isNaN(x) || isNaN(y)) {
-      console.log('Usage: tp(x, y) - coordinates must be numbers');
-      return;
-    }
-    // Set player's zone and transition
-    game.player.setCurrentZone(x, y);
-    // Transition to zone without exit information (use defaults)
-    game.transitionToZone(x, y, 'teleport', Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
-    console.log(`Teleported to zone (${x}, ${y})`);
-  },
-
-  gotoInterior: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const currentZone = game.player.getCurrentZone();
-    // Switch to interior dimension
-    game.player.currentZone.dimension = 1;
-    // Transition to the same zone in interior dimension
-    game.transitionToZone(currentZone.x, currentZone.y, 'teleport', Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
-    console.log(`Entered interior dimension at zone (${currentZone.x}, ${currentZone.y})`);
-  },
-
-  gotoWorld: (game) => {
-    if (!game || !game.player) {
-      console.log('Game not initialized');
-      return;
-    }
-    const currentZone = game.player.getCurrentZone();
-    // Switch to world dimension
-    game.player.currentZone.dimension = 0;
-    // Transition to the same zone in world dimension
-    game.transitionToZone(currentZone.x, currentZone.y, 'teleport', Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
-    console.log(`Returned to world dimension at zone (${currentZone.x}, ${currentZone.y})`);
   }
 
-};
+  if (availablePositions.length === 0) {
+    return undefined; // No available positions
+  }
+
+  // Pick a random available position
+  const randomIndex = Math.floor(Math.random() * availablePositions.length);
+  return availablePositions[randomIndex];
+}
+
+function isValidSpawnPosition(game, x, y) {
+  if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) {
+    return false;
+  }
+
+  const tile = game.grid[y][x];
+  const walkable = game.player.isWalkable(x, y, game.grid);
+
+  // Check if any enemy is at position
+  const enemyHere = game.enemies.some(enemy => enemy.x === x && enemy.y === y);
+
+  return walkable && !enemyHere;
+}
 
 export default consoleCommands;

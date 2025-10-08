@@ -28,7 +28,6 @@ export class Player {
     }
 
     move(newX, newY, grid, onZoneTransition) {
-        console.log('Attempting to move from ' + this.x + ',' + this.y + ' to ' + newX + ',' + newY)
         // Check if the new position is off-grid while player is on an exit tile
         if ((newX < 0 || newX >= GRID_SIZE || newY < 0 || newY >= GRID_SIZE)) {
             // Only allow off-grid movement if player is currently on an exit tile
@@ -62,12 +61,10 @@ export class Player {
                 }
                 return true;
             }
-            return false; // Can't move off-grid unless on exit
+        return false; // Can't move off-grid unless on exit
         }
-        
-        console.log('Tile at target: ' + grid[newY][newX])
+
         // Check if the new position is walkable
-        console.log('Is walkable: ' + this.isWalkable(newX, newY, grid, this.x, this.y))
         if (this.isWalkable(newX, newY, grid, this.x, this.y)) {
             // Check if moving to active player-set bomb
             const tile = grid[newY][newX];

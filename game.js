@@ -141,7 +141,6 @@ class Game {
         this.uiManager.setupCloseMessageLogHandler();
         this.uiManager.setupMessageLogButton();
         this.uiManager.setupBarterHandlers();
-        this.uiManager.setupAttackRangeToggle();
 
         // Make soundManager global for easy access from other classes
         window.soundManager = this.soundManager;
@@ -177,14 +176,7 @@ class Game {
         this.zoneManager.transitionToZone(newZoneX, newZoneY, exitSide, exitX, exitY);
     }
 
-    toggleEnemyAttackRanges() {
-        this.showEnemyAttackRanges = !this.showEnemyAttackRanges;
-        console.log(`Enemy attack ranges visibility: ${this.showEnemyAttackRanges}`);
-        
-        // Update button state
-        const button = document.getElementById('toggle-attack-range-button');
-        if (button) button.classList.toggle('active', this.showEnemyAttackRanges);
-    }
+
 
 
 

@@ -37,7 +37,7 @@ export class SoundManager {
             newAudio.volume = audio.volume;
             newAudio.volume = 0.3;
             newAudio.play().catch(error => {
-                console.warn(`Could not play ${soundName} sound:`, error);
+                // Could not play sound
             });
         } else {
             // Fallback procedural sounds
@@ -112,7 +112,7 @@ export class SoundManager {
                     oscillator.stop(audioContext.currentTime + 0.2);
             }
         } catch (error) {
-            console.warn('Could not play procedural sound for', soundName, ':', error);
+            // Could not play procedural sound
         }
     }
 }

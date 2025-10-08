@@ -344,14 +344,12 @@ export class InventoryManager {
         }
 
         if (candidates.length === 0) {
-            console.log('No valid undiscovered zones found 20+ zones away');
             return;
         }
 
         // Pick a random candidate
         const selected = candidates[Math.floor(Math.random() * candidates.length)];
         const zoneKey = `${selected.x},${selected.y}`;
-        console.log(`Map note used: marking zone (${selected.x}, ${selected.y}) as special treasure zone from ${Math.max(Math.abs(selected.x - currentZone.x), Math.abs(selected.y - currentZone.y))} zones away`);
 
         // Mark the zone as a special zone (with treasures)
         const availableFood = this.game.availableFoodAssets;

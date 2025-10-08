@@ -61,7 +61,6 @@ export class InteractionManager {
         }
 
         if (candidates.length === 0) {
-            console.log('No valid undiscovered zones found 20+ zones away');
             return;
         }
 

@@ -56,7 +56,6 @@ export class TextureLoader {
             // Fallback timeout in case images take too long
             setTimeout(() => {
                 if (this.imagesLoaded < this.totalImages) {
-                    console.log('Image loading timeout, starting with fallback colors');
                     this.imagesLoaded = this.totalImages;
                     resolve();
                 }
@@ -68,7 +67,6 @@ export class TextureLoader {
         this.images[key] = new Image();
 
         this.images[key].onload = () => {
-            console.log(`${filename} texture loaded successfully`);
             this.imagesLoaded++;
             if (this.imagesLoaded === this.totalImages && this.onAllImagesLoaded) {
                 this.onAllImagesLoaded();
@@ -76,7 +74,6 @@ export class TextureLoader {
         };
 
         this.images[key].onerror = () => {
-            console.log(`Could not load Images/${filename}, using fallback colors`);
             this.imagesLoaded++;
             if (this.imagesLoaded === this.totalImages && this.onAllImagesLoaded) {
                 this.onAllImagesLoaded();

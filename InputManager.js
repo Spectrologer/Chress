@@ -1,6 +1,7 @@
 import { GRID_SIZE, CANVAS_SIZE, TILE_SIZE, TILE_TYPES, FOOD_ASSETS } from './constants.js';
 import { Enemy } from './Enemy.js';
 import { Sign } from './Sign.js';
+import consoleCommands from './consoleCommands.js';
 
 export class InputManager {
     constructor(game) {
@@ -168,8 +169,6 @@ export class InputManager {
         const gridCoords = this.screenToGridCoordinates(screenX, screenY);
         const playerPos = this.game.player.getPosition();
 
-        console.log(`Tap at screen: (${screenX}, ${screenY}) -> grid: (${gridCoords.x}, ${gridCoords.y})`);
-
         // Handle bomb placement mode
         if (this.game.bombPlacementMode) {
             const pos = this.game.bombPlacementPositions.find(p => p.x === gridCoords.x && p.y === gridCoords.y);
@@ -209,38 +208,28 @@ export class InputManager {
 
         // Check if tapped on lion for interaction
         const lionAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.LION;
-        console.log(`Checking lion at position (${gridCoords.x}, ${gridCoords.y}):`, this.game.grid[gridCoords.y]?.[gridCoords.x], "TILE_TYPES.LION:", TILE_TYPES.LION, "Is lion:", lionAtPosition);
         if (lionAtPosition) {
-            console.log("Lion found at tapped position!");
             // Check if player is adjacent to the lion (including diagonal, but excluding self)
             const dx = Math.abs(gridCoords.x - playerPos.x);
             const dy = Math.abs(gridCoords.y - playerPos.y);
             const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-            console.log(`Player at (${playerPos.x}, ${playerPos.y}), dx=${dx}, dy=${dy}, isAdjacent=${isAdjacent}`);
             if (isAdjacent) {
-                console.log("Player is adjacent, showing barter window for lion");
                 this.game.uiManager.showBarterWindow('lion');
             } else {
-                console.log(`Lion interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, lion at ${gridCoords.x},${gridCoords.y})`);
             }
             return; // Interaction attempted, completion status varies
         }
 
         // Check if tapped on squig for interaction
         const squigAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.SQUIG;
-        console.log(`Checking squig at position (${gridCoords.x}, ${gridCoords.y}):`, this.game.grid[gridCoords.y]?.[gridCoords.x], "TILE_TYPES.SQUIG:", TILE_TYPES.SQUIG, "Is squig:", squigAtPosition);
         if (squigAtPosition) {
-            console.log("Squig found at tapped position!");
             // Check if player is adjacent to the squig (including diagonal, but excluding self)
             const dx = Math.abs(gridCoords.x - playerPos.x);
             const dy = Math.abs(gridCoords.y - playerPos.y);
             const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-            console.log(`Player at (${playerPos.x}, ${playerPos.y}), dx=${dx}, dy=${dy}, isAdjacent=${isAdjacent}`);
             if (isAdjacent) {
-                console.log("Player is adjacent, showing barter window for squig");
                 this.game.uiManager.showBarterWindow('squig');
             } else {
-                console.log(`Squig interaction attempted but player not adjacent (player at ${playerPos.x},${playerPos.y}, squig at ${gridCoords.x},${gridCoords.y})`);
             }
             return; // Interaction attempted, completion status varies
         }
@@ -261,7 +250,6 @@ export class InputManager {
                 const showingNewMessage = !isAlreadyDisplayed;
 
             // Let Sign class handle the toggle logic
-            console.log('Calling Sign.handleClick for sign:', signTile.message);
             Sign.handleClick(signTile, this.game, isAdjacent);
 
             // Add to log only when first showing the message
@@ -299,7 +287,6 @@ export class InputManager {
             const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
 
             if (isAdjacent) {
-                console.log('Statue tapped:', statueNpcType);
                 this.game.uiManager.showBarterWindow(statueNpcType);
             }
             return; // Interaction handled
@@ -404,10 +391,7 @@ export class InputManager {
         const path = this.findPath(playerPos.x, playerPos.y, gridCoords.x, gridCoords.y);
 
         if (path && path.length > 0) {
-            console.log(`Found path with ${path.length} steps:`, path);
             this.executePath(path);
-        } else {
-            console.log('No valid path found to target');
         }
     }
 
@@ -465,7 +449,6 @@ export class InputManager {
         }
 
         if (direction) {
-            console.log(`Triggering zone transition via exit at (${exitX}, ${exitY}) direction: ${direction}`);
             // Simulate the key press to trigger zone transition
             this.handleKeyPress({ key: direction, preventDefault: () => {} });
         }
@@ -485,7 +468,6 @@ export class InputManager {
         let stepIndex = 0;
         const executeStep = () => {
             if (this.cancelPath) {
-                console.log('Path execution cancelled');
                 this.cancelPath = false;
                 this.isExecutingPath = false;
                 this.pathExecutionTimer = null;
@@ -502,7 +484,6 @@ export class InputManager {
                 // Check if player ended up on an exit tile after path completion
                 const playerPos = this.game.player.getPosition();
                 if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
-                    console.log('Player reached exit tile. Tap the exit again to transition zones.');
                     if (this.autoUseNextExitReach) {
                         this.handleExitTap(playerPos.x, playerPos.y);
                         this.autoUseNextExitReach = false;
@@ -522,13 +503,10 @@ export class InputManager {
         }
         this.cancelPath = true;
         this.isExecutingPath = false;
-        console.log("Path execution cancelled.");
     }
 
     handleKeyPress(event) {
-        console.log('Key pressed: ' + event.key);
         if (this.game.player.isDead()) {
-            console.log('Player is dead');
             return;
         }
         // When the player acts, hide any open overlay message.
@@ -542,6 +520,12 @@ export class InputManager {
             this.game.hideOverlayMessage();
         } else {
             this.game.hideOverlayMessage();
+        }
+
+        // Handle hotkey spawning
+        if (consoleCommands.handleHotkey(this.game, event.key, event.shiftKey)) {
+            event.preventDefault();
+            return;
         }
 
         const currentPos = this.game.player.getPosition();
@@ -564,234 +548,6 @@ export class InputManager {
             case 'arrowright':
                 newX++;
                 break;
-            case 'k':
-                // Add axe to inventory for testing
-                if (this.game.player.inventory.length < 6) {
-                    this.game.player.inventory.push({ type: 'axe' });
-                    this.game.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't move, just add item
-            case 'h':
-                // Add hammer to inventory for testing
-                if (this.game.player.inventory.length < 6) {
-                    this.game.player.inventory.push({ type: 'hammer' });
-                    this.game.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't move, just add item
-            case 'r':
-                // Add bishop spear to inventory for testing
-                if (this.game.player.inventory.length < 6) {
-                    this.game.player.inventory.push({ type: 'bishop_spear', uses: 3 });
-                    this.game.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't move, just add item
-            case 'b':
-                // Add bomb to inventory for testing
-                if (this.game.player.inventory.length < 6) {
-                    this.game.player.inventory.push({ type: 'bomb' });
-                    this.game.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't move, just add item
-            case 'p':
-                // Debug command to find the puzzle zone if it has spawned
-                console.log("The puzzle zone is now a rare random encounter and cannot be teleported to directly.");
-                return; // Don't process as movement
-            case 'f':
-                // Add random food to inventory for testing
-                if (this.game.player.inventory.length < 6 && this.game.availableFoodAssets.length > 0) {
-                    const randomFood = this.game.availableFoodAssets[Math.floor(Math.random() * this.game.availableFoodAssets.length)];
-                    this.game.player.inventory.push({ type: 'food', foodType: randomFood });
-                    this.game.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't process as movement
-            case 'i':
-                // Add horse icon to inventory for testing
-                if (this.game.player.inventory.length < 6) {
-                    this.game.player.inventory.push({ type: 'horse_icon', uses: 3 });
-                    this.game.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't move, just add item
-            case 'n':
-                // Add note to inventory for testing
-                if (this.game.player.inventory.length < 6) {
-                    this.game.player.inventory.push({ type: 'note' });
-                    this.game.updatePlayerStats(); // Refresh inventory display
-                }
-                return; // Don't process as movement
-            case 'o':
-                // Teleport to a frontier zone for testing
-                this.game.player.setCurrentZone(17, 0); // Frontier zone (distance 17+)
-                this.game.generateZone();
-                // Position player in center of the zone
-                const centerX2 = Math.floor(GRID_SIZE / 2);
-                const centerY2 = Math.floor(GRID_SIZE / 2);
-                this.game.player.setPosition(centerX2, centerY2);
-                this.game.player.ensureValidPosition(this.game.grid);
-                // Update UI
-                this.game.uiManager.updateZoneDisplay();
-                this.game.uiManager.updatePlayerPosition();
-                this.game.updatePlayerStats();
-                break;
-            case 'y':
-                // Force spawn of whispering canyon for testing
-                console.log('Forcing whispering canyon generation...');
-                this.game.zoneGenerator.constructor.forceCanyonSpawn = true;
-                this.game.player.setCurrentZone(18, 0); // Far frontier zone
-                this.game.generateZone();
-                this.game.zoneGenerator.constructor.forceCanyonSpawn = false; // Reset for normal gameplay
-                // Position player in center of the zone
-                const centerXc = Math.floor(GRID_SIZE / 2);
-                const centerYc = Math.floor(GRID_SIZE / 2);
-                this.game.player.setPosition(centerXc, centerYc);
-                this.game.player.ensureValidPosition(this.game.grid);
-                // Update UI
-                this.game.uiManager.updateZoneDisplay();
-                this.game.uiManager.updatePlayerPosition();
-                this.game.updatePlayerStats();
-                console.log('Teleported to canyon zone. If canyon generated, it will be forced. If not, try again.');
-                break;
-            case 'j':
-                // Jump to food/water room, force spawn if not exists
-                if (this.game.zoneGenerator.constructor.foodWaterRoomSpawned && this.game.zoneGenerator.constructor.foodWaterRoomZone) {
-                    this.game.player.setCurrentZone(this.game.zoneGenerator.constructor.foodWaterRoomZone.x, this.game.zoneGenerator.constructor.foodWaterRoomZone.y);
-                    this.game.generateZone();
-                    // Position player in center of the zone
-                    const centerXj = Math.floor(GRID_SIZE / 2);
-                    const centerYj = Math.floor(GRID_SIZE / 2);
-                    this.game.player.setPosition(centerXj, centerYj);
-                    this.game.player.ensureValidPosition(this.game.grid);
-                    // Update UI
-                    this.game.uiManager.updateZoneDisplay();
-                    this.game.uiManager.updatePlayerPosition();
-                    this.game.updatePlayerStats();
-                    console.log(`Teleported to food/water room at (${this.game.zoneGenerator.constructor.foodWaterRoomZone.x}, ${this.game.zoneGenerator.constructor.foodWaterRoomZone.y})`);
-                } else {
-                    // Force spawn the room at a Wilds zone (e.g., (10, 10))
-                    console.log('Food/water room not spawned yet. Forcing spawn at zone (10, 10)...');
-                    this.game.zoneGenerator.constructor.forceFoodWaterRoom = true;
-                    this.game.player.setCurrentZone(10, 10);
-                    this.game.generateZone();
-                    this.game.zoneGenerator.constructor.forceFoodWaterRoom = false; // Reset after forcing
-                    const centerXj = Math.floor(GRID_SIZE / 2);
-                    const centerYj = Math.floor(GRID_SIZE / 2);
-                    this.game.player.setPosition(centerXj, centerYj);
-                    this.game.player.ensureValidPosition(this.game.grid);
-                    this.game.uiManager.updateZoneDisplay();
-                    this.game.uiManager.updatePlayerPosition();
-                    this.game.updatePlayerStats();
-                    console.log('Food/water room forced at (10, 10). You can now use "j" again to return.');
-                }
-                break;
-            case 'l':
-                // Spawn a lizardy enemy for testing
-                const availableTiles = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        const tile = this.game.grid[y][x];
-                        const playerPos = this.game.player.getPosition();
-                        const hasEnemy = this.game.enemies.some(e => e.x === x && e.y === y);
-                        if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
-                            availableTiles.push({x, y});
-                        }
-                    }
-                }
-                if (availableTiles.length > 0) {
-                    const spawnPos = availableTiles[Math.floor(Math.random() * availableTiles.length)];
-                    const enemyId = Date.now(); // Simple unique ID
-                    const newEnemy = new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardy', id: enemyId});
-                    this.game.enemies.push(newEnemy);
-                    console.log(`Spawned lizardy enemy at (${spawnPos.x}, ${spawnPos.y})`);
-                } else {
-                    console.log('No available tiles to spawn enemy');
-                }
-                break;
-            case 'x':
-                // Spawn a lizardeaux enemy for testing
-                const lizardeauxTiles = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        const tile = this.game.grid[y][x];
-                        const playerPos = this.game.player.getPosition();
-                        const hasEnemy = this.game.enemies.some(e => e.x === x && e.y === y);
-                        if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
-                            lizardeauxTiles.push({x, y});
-                        }
-                    }
-                }
-                if (lizardeauxTiles.length > 0) {
-                    const spawnPos = lizardeauxTiles[Math.floor(Math.random() * lizardeauxTiles.length)];
-                    const enemyId = Date.now(); // Simple unique ID
-                    const newEnemy = new Enemy({x: spawnPos.x, y: spawnPos.y, enemyType: 'lizardeaux', id: enemyId});
-                    this.game.enemies.push(newEnemy);
-                    console.log(`Spawned lizardeaux enemy at (${spawnPos.x}, ${spawnPos.y})`);
-                } else {
-                    console.log('No available tiles to spawn lizardeaux enemy');
-                }
-                break;
-            case 'm':
-                // Spawn lion for testing (debug command)
-                const lionTiles = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        if (this.game.grid[y][x] === TILE_TYPES.FLOOR) {
-                            lionTiles.push({x, y});
-                        }
-                    }
-                }
-                if (lionTiles.length > 0) {
-                    const spawnPos = lionTiles[Math.floor(Math.random() * lionTiles.length)];
-                    this.game.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.LION;
-                    console.log(`Debug: Lion spawned at (${spawnPos.x}, ${spawnPos.y})`);
-                } else {
-                    console.log('No available tiles to spawn lion');
-                }
-                break;
-            case 'u':
-                // Spawn squig for testing (debug command)
-                const squigTiles = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        if (this.game.grid[y][x] === TILE_TYPES.FLOOR) {
-                            squigTiles.push({x, y});
-                        }
-                    }
-                }
-                if (squigTiles.length > 0) {
-                    const spawnPos = squigTiles[Math.floor(Math.random() * squigTiles.length)];
-                    this.game.grid[spawnPos.y][spawnPos.x] = TILE_TYPES.SQUIG;
-                    console.log(`Debug: Squig spawned at (${spawnPos.x}, ${spawnPos.y})`);
-                } else {
-                    console.log('No available tiles to spawn squig');
-                }
-                break;
-            case 't':
-                // Spawn sign for testing (debug command)
-                const signTiles = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        if (this.game.grid[y][x] === TILE_TYPES.FLOOR) {
-                            signTiles.push({x, y});
-                        }
-                    }
-                }
-                if (signTiles.length > 0) {
-                    const spawnPos = signTiles[Math.floor(Math.random() * signTiles.length)];
-                    this.game.grid[spawnPos.y][spawnPos.x] = {
-                        type: TILE_TYPES.SIGN,
-                        message: "Test sign message - click again to close!"
-                    };
-                    console.log(`Debug: Sign spawned at (${spawnPos.x}, ${spawnPos.y})`);
-                } else {
-                    console.log('No available tiles to spawn sign');
-                }
-                break;
-            case '1':
-                // Set health and thirst to 1 for testing
-                this.game.player.setHealth(1);
-                this.game.player.setThirst(1);
-                this.game.updatePlayerStats();
-                console.log('Debug: Player health and thirst set to 1.');
-                return; // Don't process as a move
             default:
                 return;
         }
@@ -805,10 +561,8 @@ export class InputManager {
                     // Player attacks enemy - simple bump of attacked tile
                     this.game.player.startAttackAnimation();
                     this.game.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
-                    console.log('Player attacks enemy!');
                     enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
                     enemyAtTarget.takeDamage(999); // Ensure enemy is dead
-                    console.log('Player defeated enemy!');
 
                     // Record that this enemy position is defeated to prevent respawning
                     const currentZone = this.game.player.getCurrentZone();
@@ -846,4 +600,6 @@ export class InputManager {
                 this.game.updatePlayerPosition();
                 this.game.updatePlayerStats();
     }
+
+
 }

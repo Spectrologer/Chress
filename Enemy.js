@@ -56,6 +56,10 @@ export class Enemy {
                     }
                     return null; // All in one turn
                 }
+                // If no charge move is possible, the Lizardeaux cannot attack this turn from a distance.
+                // We return a non-null value to indicate no attack, so it doesn't fall through to generic pathfinding.
+                // An empty object is a valid "no move" signal.
+                return {};
             }
         }
 
@@ -84,9 +88,7 @@ export class Enemy {
             this.justAttacked = true;
             this.attackAnimation = 15;
             window.soundManager?.playSound('attack');
-                    window.soundManager?.playSound('attack');
-                    console.log(`Lazerd queen charges and attacks player!`);
-                    if (player.isDead()) console.log('Player died!');
+                                window.soundManager?.playSound('attack');
                     // Knockback away
                     const dx = playerX - chargeMove.x; // Since chargeMove is adjacent, dx= +/-1 or 0
                     const dy = playerY - chargeMove.y;
@@ -167,24 +169,19 @@ export class Enemy {
                                 this.justAttacked = true;
                                 this.attackAnimation = 15;
                                 window.soundManager?.playSound('attack');
-                                console.log(`Lizord bumped you! Player health: ${player.getHealth()}`);
-                                if (player.isDead()) console.log('Player died!');
                                 // Move to where player was
                                 this.x = newX;
                                 this.y = newY;
                             }
                         } else {
                             // Enemy tries to move onto player - register attack
-                            console.log('Enemy tries to move onto player - registering one attack!');
                             player.takeDamage(this.attack);
                             player.startBump(this.x - playerX, this.y - playerY);
                             this.startBump(playerX - this.x, playerY - this.y);
                             this.justAttacked = true;
                             this.attackAnimation = 15; // Dramatic attack animation frames
                             window.soundManager?.playSound('attack');
-                            console.log(`Enemy hit player! Player health: ${player.getHealth()}`);
                             if (player.isDead()) {
-                                console.log('Player died!');
                             }
                         }
 
@@ -345,14 +342,32 @@ export class Enemy {
     }
 
     isWalkable(x, y, grid) {
-        // Same logic as Player.isWalkable but enemies can also walk on water/food
-        // Enemies avoid walls, rocks, grass, house, but can walk on floor, exit, water, food, notes
+        // Enemies should respect the same general walkability rules as the player.
+        // This check is modeled after the player's isWalkable method for consistency.
         if (x < 0 || x >= grid.length || y < 0 || y >= grid.length) {
             return false;
         }
 
         const tile = grid[y][x];
-        return (tile === 0 || tile === 3 || tile === 6 || (tile && tile.type === 7)) && !((tile && tile.type === TILE_TYPES.SIGN) || tile === TILE_TYPES.SIGN);  // FLOOR, EXIT, WATER, FOOD, but not SIGN
+        const tileType = tile && tile.type ? tile.type : tile;
+
+        // List of generally walkable tile types for any character
+        const walkableTypes = [
+            TILE_TYPES.FLOOR,
+            TILE_TYPES.EXIT,
+            TILE_TYPES.WATER,
+            TILE_TYPES.FOOD,
+            TILE_TYPES.AXE,
+            TILE_TYPES.HAMMER,
+            TILE_TYPES.BISHOP_SPEAR,
+            TILE_TYPES.HORSE_ICON,
+            TILE_TYPES.BOMB,
+            TILE_TYPES.NOTE,
+            TILE_TYPES.HEART,
+            TILE_TYPES.PORT
+        ];
+
+        return walkableTypes.includes(tileType);
     }
 
     performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation = false) {
@@ -398,16 +413,13 @@ export class Enemy {
 
         if (!isSimulation) {
             // Perform ram attack from distance
-            console.log('Lizardeaux rams player from distance!');
             player.takeDamage(this.attack);
             player.startBump(this.x - playerX, this.y - playerY);
             this.startBump(playerX - this.x, playerY - this.y);
             this.justAttacked = true;
             this.attackAnimation = 15; // Dramatic attack animation frames
             window.soundManager?.playSound('attack');
-            console.log(`Lizardeaux rammed player from distance! Player health: ${player.getHealth()}`);
             if (player.isDead()) {
-                console.log('Player died from distance ram!');
             }
 
             // Calculate knockback direction (away from enemy)
@@ -712,7 +724,6 @@ export class Enemy {
         if (newDx + newDy === 2 && newDx === 1 && newDy === 1) { // Adjacent diagonally
             if (!isSimulation) {
                 // Perform attack
-                console.log('Zard bishop charges and attacks player!');
                 player.takeDamage(this.attack);
                 player.startBump(chargeXSim - playerX, chargeYSim - playerY);
                 this.startBump(playerX - chargeXSim, playerY - chargeYSim);
@@ -791,7 +802,6 @@ export class Enemy {
         const adjacent = (newDx === 1 && newDy === 0) || (newDx === 0 && newDy === 1) || (newDx === 1 && newDy === 1);
         if (onPlayer || adjacent) {
             // Perform attack
-            console.log('Lazerd queen charges and attacks player!');
             player.takeDamage(this.attack);
             player.startBump(this.x - playerX, this.y - playerY);
             this.startBump(playerX - this.x, playerY - this.y);
@@ -811,25 +821,64 @@ export class Enemy {
         }
     }
 
-    canAttackPosition(player, px, py, grid, enemies) {
-        return this.planMoveTowards(player, grid, enemies, {x: px, y: py}, true) === null;
+    // Get movement directions for rendering arrows
+    getMovementDirections() {
+        if (this.enemyType === 'lizardo' || this.enemyType === 'lazord') {
+            // Lizardo and Lazord can move orthogonally AND diagonally (8 directions)
+            return [
+                { x: 0, y: -1 }, // North
+                { x: 0, y: 1 },  // South
+                { x: -1, y: 0 }, // West
+                { x: 1, y: 0 },  // East
+                { x: -1, y: -1 }, // Northwest
+                { x: 1, y: -1 },  // Northeast
+                { x: -1, y: 1 },  // Southwest
+                { x: 1, y: 1 }    // Southeast
+            ];
+        } else if (this.enemyType === 'zard') {
+            // Zard can only move diagonally (4 directions like a bishop)
+            return [
+                { x: -1, y: -1 }, // Northwest
+                { x: 1, y: -1 },  // Northeast
+                { x: -1, y: 1 },  // Southwest
+                { x: 1, y: 1 }    // Southeast
+            ];
+        } else if (this.enemyType === 'lizord') {
+            // Lizord: knight-like movement (L-shape: 1 in one direction, 2 in perpendicular)
+            return [
+                { x: 1, y: 2 },
+                { x: 1, y: -2 },
+                { x: -1, y: 2 },
+                { x: -1, y: -2 },
+                { x: 2, y: 1 },
+                { x: 2, y: -1 },
+                { x: -2, y: 1 },
+                { x: -2, y: -1 }
+            ];
+        } else if (this.enemyType === 'lazerd') {
+            // Lazerd: queen-like movement (orthogonal and diagonal, any distance)
+            return [
+                { x: 0, y: -1 }, // North
+                { x: 0, y: 1 },  // South
+                { x: -1, y: 0 }, // West
+                { x: 1, y: 0 },  // East
+                { x: -1, y: -1 }, // Northwest
+                { x: 1, y: -1 },  // Northeast
+                { x: -1, y: 1 },  // Southwest
+                { x: 1, y: 1 }    // Southeast
+            ];
+        } else {
+            // Regular lizardy or lizardeaux: only orthogonal movement (4 directions)
+            return [
+                { x: 0, y: -1 }, // North
+                { x: 0, y: 1 },  // South
+                { x: -1, y: 0 }, // West
+                { x: 1, y: 0 }   // East
+            ];
+        }
     }
 
-    getAttackableTiles(player, grid, enemies) {
-        const attackableTiles = [];
-        const gridSize = grid.length;
-
-        for (let y = 0; y < gridSize; y++) {
-            for (let x = 0; x < gridSize; x++) {
-                // We only need to check tiles that are generally walkable for the player,
-                // as that's where an attack would matter.
-                if (player.isWalkable(x, y, grid)) {
-                    if (this.canAttackPosition(player, x, y, grid, enemies)) {
-                        attackableTiles.push({ x, y });
-                    }
-                }
-            }
-        }
-        return attackableTiles;
+    canAttackPosition(player, px, py, grid, enemies) {
+        return this.planMoveTowards(player, grid, enemies, {x: px, y: py}, true) === null;
     }
 }

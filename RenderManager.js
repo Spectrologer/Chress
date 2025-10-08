@@ -21,9 +21,6 @@ export class RenderManager {
         // Draw player
         this.drawPlayer();
 
-        // Draw enemy attack ranges if toggled
-        this.drawEnemyAttackRanges();
-
         // Draw bomb placement indicator if active
         this.drawBombPlacementIndicator();
 
@@ -36,7 +33,6 @@ export class RenderManager {
 
     drawGrid() {
         if (!this.game.grid) {
-            console.error('Grid is null, cannot render');
             return;
         }
 
@@ -82,7 +78,6 @@ export class RenderManager {
                         this.textureManager.renderTile(this.ctx, x, y, tile, this.game.grid, zoneLevel);
                     }
                 } catch (error) {
-                    console.error(`Error rendering tile at ${x},${y}:`, error);
                     // Fallback rendering
                     this.ctx.fillStyle = '#ffcb8d';
                     this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -312,24 +307,77 @@ export class RenderManager {
         }
     }
 
-    drawEnemyAttackRanges() {
-        if (!this.game.showEnemyAttackRanges) {
-            return;
-        }
+    // drawEnemyMovementArrows() {
+    //     // Temporarily bypass toggle for debugging - always show arrows
+    //     // if (!this.game.showEnemyAttackRanges) {
+    //     //     return;
+    //     // }
 
-        const allAttackableTiles = new Set();
+    //     const indicatorImage = this.game.textureManager.getImage('ui/indicator');
+    //     if (!indicatorImage || !indicatorImage.complete) {
+    //         return; // Skip drawing if image not loaded
+    //     }
 
-        for (const enemy of this.game.enemies) {
-            const attackable = enemy.getAttackableTiles(this.game.player, this.game.grid, this.game.enemies);
-            attackable.forEach(tile => allAttackableTiles.add(`${tile.x},${tile.y}`));
-        }
+    //     this.ctx.save();
+    //     this.ctx.globalAlpha = 0.8;
 
-        this.ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
-        allAttackableTiles.forEach(key => {
-            const [x, y] = key.split(',').map(Number);
-            this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-        });
-    }
+    //     const enemy = this.game.selectedEnemy;
+    //     const directions = enemy.getMovementDirections();
+    //     const enemyPixelX = enemy.x * TILE_SIZE;
+    //     const enemyPixelY = enemy.y * TILE_SIZE;
+
+    //     for (const dir of directions) {
+    //         const targetX = enemy.x + dir.x;
+    //         const targetY = enemy.y + dir.y;
+
+    //         // Check if target position is walkable (basic check)
+    //         if (targetX >= 0 && targetX < GRID_SIZE && targetY >= 0 && targetY < GRID_SIZE &&
+    //             enemy.isWalkable(targetX, targetY, this.game.grid)) {
+
+    //             // Calculate rotation based on direction (indicator.png points down by default)
+    //             let rotation = 0;
+    //             if (dir.x === 0 && dir.y === -1) rotation = Math.PI; // Up (180 deg)
+    //             else if (dir.x === 0 && dir.y === 1) rotation = 0; // Down (0 deg)
+    //             else if (dir.x === -1 && dir.y === 0) rotation = Math.PI / 2; // Left (90 deg)
+    //             else if (dir.x === 1 && dir.y === 0) rotation = -Math.PI / 2; // Right (270 deg)
+    //             else if (dir.x === -1 && dir.y === -1) rotation = 3 * Math.PI / 4; // Northwest (135 deg)
+    //             else if (dir.x === 1 && dir.y === -1) rotation = 5 * Math.PI / 4; // Northeast (225 deg)
+    //             else if (dir.x === -1 && dir.y === 1) rotation = Math.PI / 4; // Southwest (45 deg)
+    //             else if (dir.x === 1 && dir.y === 1) rotation = -Math.PI / 4; // Southeast (315 deg)
+
+    //             // Draw arrows more prominently for debugging - closer to enemy center and larger
+    //             let drawX = enemyPixelX + TILE_SIZE / 2;
+    //             let drawY = enemyPixelY + TILE_SIZE / 2;
+
+    //             if (enemy.enemyType === 'zard') {
+    //                 // Animate zard arrows moving distance along diagonals
+    //                 const time = Date.now() * 0.003; // Animation time
+    //                 const distance = Math.sin(time + enemy.id) * 8 + 12; // Oscillate distance
+    //                 drawX += dir.x * distance;
+    //                 drawY += dir.y * distance;
+    //             } else {
+    //                 // Static arrows for other enemies, right at the edge of the enemy tile
+    //                 drawX += dir.x * 24;  // Increased from 16 to 24 for better visibility
+    //                 drawY += dir.y * 24;  // Increased from 16 to 24 for better visibility
+    //             }
+
+    //             this.ctx.save();
+    //             this.ctx.translate(drawX, drawY);
+    //             this.ctx.rotate(rotation);
+
+    //             // Draw the arrow larger for better visibility
+    //             this.ctx.drawImage(
+    //                 indicatorImage,
+    //                 -10, -10, // Center the larger 20x20 image
+    //                 20, 20
+    //             );
+
+    //             this.ctx.restore();
+    //         }
+    //     }
+
+    //     this.ctx.restore();
+    // }
 
     drawSmokeAnimation() {
         const drawSmokeForEntity = (smokeAnimations) => {

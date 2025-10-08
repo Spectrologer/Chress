@@ -475,9 +475,9 @@ export class UIManager {
             // Build the visual exchange UI
             if (barterExchange) {
                 barterExchange.innerHTML = `
-                    <img src="${requiredItemImg}" alt="Trade ${requiredItemName} for..." class="barter-exchange-item">
+                    <img src="${requiredItemImg}" alt="Trade ${requiredItemName}..." class="barter-exchange-item">
                     <span class="barter-exchange-arrow">→</span>
-                    <img src="${receivedItemImg}" alt="${receivedItemName}" class="barter-exchange-item">
+                    <img src="${receivedItemImg}" alt="to receive ${receivedItemName}" class="barter-exchange-item">
                 `;
             }
 
@@ -512,12 +512,5 @@ export class UIManager {
         }
     }
 
-    setupAttackRangeToggle() {
-        const button = document.getElementById('toggle-attack-range-button');
-        if (button) {
-            button.addEventListener('click', () => {
-                this.game.toggleEnemyAttackRanges();
-            });
-        }
-    }
+
 }

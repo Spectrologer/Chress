@@ -92,7 +92,6 @@ export class Sign {
 
     // Static method to display message for a sign object
     static displayMessageForSign(signData, gameInstance) {
-        console.log('Sign.displayMessageForSign called', signData.message);
         // Use the dedicated sign message method for persistent display
         gameInstance.showSignMessage(signData.message, 'Images/sign.png');
         gameInstance.displayingMessageForSign = signData;
@@ -100,7 +99,6 @@ export class Sign {
 
     // Static method to hide the currently displayed sign message
     static hideMessageForSign(gameInstance) {
-        console.log('Sign.hideMessageForSign called');
         if (gameInstance.displayingMessageForSign) {
             gameInstance.hideOverlayMessage();
             gameInstance.displayingMessageForSign = null;
