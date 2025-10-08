@@ -806,4 +806,22 @@ export class Enemy {
     canAttackPosition(player, px, py, grid, enemies) {
         return this.planMoveTowards(player, grid, enemies, {x: px, y: py}, true) === null;
     }
+
+    getAttackableTiles(player, grid, enemies) {
+        const attackableTiles = [];
+        const gridSize = grid.length;
+
+        for (let y = 0; y < gridSize; y++) {
+            for (let x = 0; x < gridSize; x++) {
+                // We only need to check tiles that are generally walkable for the player,
+                // as that's where an attack would matter.
+                if (player.isWalkable(x, y, grid)) {
+                    if (this.canAttackPosition(player, x, y, grid, enemies)) {
+                        attackableTiles.push({ x, y });
+                    }
+                }
+            }
+        }
+        return attackableTiles;
+    }
 }

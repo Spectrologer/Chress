@@ -66,10 +66,41 @@ body {
     border: 2px solid #e2cfa2;
 }
 
+.player-card-menu {
+    display: flex;
+    gap: 6px;
+    align-items: center; /* Vertically align items in the menu */
+}
+
+.menu-button {
+    width: 36px;
+    height: 36px;
+    background-color: rgba(245, 222, 179, 0.7);
+    border: 1px solid #B8860B;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.menu-button:hover {
+    background-color: rgba(245, 222, 179, 1);
+}
+
+#toggle-attack-range-button {
+    background-image: url('Images/ui/target-icon.png');
+}
+
+#toggle-attack-range-button.active {
+    background-color: #a56a43;
+    border-color: #fff;
+}
 .player-header {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px; /* Slightly reduce gap to accommodate the new button */
     justify-content: space-between;
 }
 .player-portrait {
@@ -168,11 +199,30 @@ body {
 .player-inventory {
     flex: 1;
     position: relative;
+    display: flex;
+    flex-direction: column; /* Arrange children vertically */
+    align-items: flex-end; /* Align children to the right */
+}
+
+.attack-range-control { /* New wrapper for label and button */
+    display: flex;
+    align-items: center; /* Vertically align text and button */
+    gap: 8px; /* Space between text and button */
+    margin-top: 6px; /* Space between inventory grid and this control */
+}
+
+.toggle-label { /* New style for the text label */
+    font-family: 'Cinzel', serif;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #7a5c2e;
+    white-space: nowrap; /* Prevent text from wrapping */
 }
 
 .inventory-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    width: 100%; /* Ensure the grid takes up the full width */
     gap: 6px;
 }
 

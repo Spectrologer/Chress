@@ -407,4 +407,13 @@ export class UIManager {
             // Still step forward to the next game tick
         }
     }
+
+    setupAttackRangeToggle() {
+        const button = document.getElementById('toggle-attack-range-button');
+        if (button) {
+            button.addEventListener('click', () => {
+                this.game.toggleEnemyAttackRanges();
+            });
+        }
+    }
 }

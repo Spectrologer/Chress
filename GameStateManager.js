@@ -21,6 +21,7 @@ export class GameStateManager {
 
         // Message Log system
         this.game.messageLog = [];
+        this.game.showEnemyAttackRanges = false;
 
         // Special zones marked by notes (zoneKey: "x,y" -> items array)
         this.game.specialZones = new Map();
@@ -47,6 +48,7 @@ export class GameStateManager {
         this.game.currentRegion = null; // Reset region tracking
         this.game.lastSignMessage = null; // Reset sign message tracking
         this.game.displayingMessageForSign = null; // Reset sign message display tracking
+        this.game.showEnemyAttackRanges = false;
 
         // Generate starting zone
         this.game.zoneManager.generateZone();
