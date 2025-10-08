@@ -25,6 +25,23 @@ body {
     -ms-user-select: none;
 }
 
+@keyframes pulsate {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulsating {
+    animation: pulsate 0.8s infinite;
+}
+
+
 .game-container {
     text-align: center;
     padding: 0;

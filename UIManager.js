@@ -81,20 +81,38 @@ export class UIManager {
     }
 
     updatePlayerStats() {
+        const lowStatThreshold = 10; // Pulsate when hunger/thirst is 10 or less
+
         // Update thirst and hunger bars
-        this.updateProgressBar('thirst-progress', this.game.player.getThirst(), 50);
-        this.updateProgressBar('hunger-progress', this.game.player.getHunger(), 50);
+        const thirst = this.game.player.getThirst();
+        const hunger = this.game.player.getHunger();
+        this.updateProgressBar('thirst-progress', thirst, 50);
+        this.updateProgressBar('hunger-progress', hunger, 50);
+
+        // Add pulsation for low hunger/thirst
+        const hungerLabel = document.querySelector('.hunger-bar .bar-label');
+        const thirstLabel = document.querySelector('.thirst-bar .bar-label');
+        if (hungerLabel) {
+            hungerLabel.classList.toggle('pulsating', hunger <= lowStatThreshold);
+        }
+        if (thirstLabel) {
+            thirstLabel.classList.toggle('pulsating', thirst <= lowStatThreshold);
+        }
 
         // Update heart display
+        const health = this.game.player.getHealth();
         const hearts = document.querySelectorAll('.heart-icon');
         hearts.forEach((heart, index) => {
-            if (index < this.game.player.getHealth()) {
+            if (index < health) {
                 heart.style.opacity = '1';
                 heart.style.filter = 'none'; // Full visibility for full hearts
             } else {
                 heart.style.opacity = '0.3';
                 heart.style.filter = 'grayscale(100%)'; // Dimmed for lost hearts
             }
+            // Add pulsation for the last heart
+            const isLastHeart = (index === 0 && health === 1);
+            heart.classList.toggle('pulsating', isLastHeart);
         });
 
         // Update inventory display

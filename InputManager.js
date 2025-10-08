@@ -723,6 +723,13 @@ export class InputManager {
                     console.log('No available tiles to spawn sign');
                 }
                 break;
+2            case '1':
+                // Set health and thirst to 1 for testing
+                this.game.player.setHealth(1);
+                this.game.player.setThirst(1);
+                this.game.updatePlayerStats();
+                console.log('Debug: Player health and thirst set to 1.');
+                return; // Don't process as a move
             default:
                 return;
         }
