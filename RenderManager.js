@@ -23,6 +23,9 @@ export class RenderManager {
 
         // Draw enemy attack ranges if toggled
         this.drawEnemyAttackRanges();
+
+        // Draw bomb placement indicator if active
+        this.drawBombPlacementIndicator();
     }
 
     drawGrid() {
@@ -264,4 +267,25 @@ export class RenderManager {
         });
     }
 
+    drawBombPlacementIndicator() {
+        const confirmation = this.game.inputManager.bombPlacementConfirmation;
+        if (!confirmation) {
+            return;
+        }
+
+        const bombImage = this.game.textureManager.getImage('bomb');
+        if (bombImage && bombImage.complete) {
+            this.ctx.save();
+            // Make the bomb icon flash
+            const alpha = 0.6 + Math.sin(Date.now() * 0.01) * 0.2; // Flashes between 0.4 and 0.8
+            this.ctx.globalAlpha = alpha;
+            this.ctx.drawImage(
+                bombImage,
+                confirmation.x * TILE_SIZE,
+                confirmation.y * TILE_SIZE,
+                TILE_SIZE, TILE_SIZE
+            );
+            this.ctx.restore();
+        }
+    }
 }
