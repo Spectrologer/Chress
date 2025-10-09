@@ -93,6 +93,7 @@ export class GameInitializer {
         // Bomb placement mode
         this.game.bombPlacementMode = false;
         this.game.bombPlacementPositions = [];
+        this.game.pendingCharge = null;
 
         // Try to load saved game state, or generate initial zone if no save exists
         const loaded = this.game.gameStateManager.loadGameState();

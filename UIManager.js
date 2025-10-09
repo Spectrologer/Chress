@@ -1,5 +1,6 @@
 import logger from './logger.js';
 import { BarterWindow } from './BarterWindow.js';
+import { StatueInfoWindow } from './StatueInfoWindow.js';
 import { PlayerStatsUI } from './PlayerStatsUI.js';
 import { MiniMap } from './MiniMap.js';
 
@@ -17,6 +18,7 @@ export class UIManager {
 
         // Sub-managers
         this.barterWindow = new BarterWindow(game);
+        this.statueInfoWindow = new StatueInfoWindow(game);
         this.playerStatsUI = new PlayerStatsUI(game);
         this.miniMap = new MiniMap(game);
     }
@@ -72,10 +74,14 @@ export class UIManager {
                 mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Woodcutter's Club</span>`;
             } else {
                 const zonesDiscovered = this.game.player.getVisitedZones().size;
-                const dimensionText = zone.dimension === 1 ? ' (Interior)' : '';
+                const dimensionText = zone.dimension === 1 ? 'Interior' : '';
                 mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">${zone.x}, ${zone.y}${dimensionText}<br>DISCOVERED: ${zonesDiscovered}</span>`;
             }
         }
+    }
+
+    renderZoneMap() {
+        this.miniMap.renderZoneMap();
     }
 
     updatePlayerStats() {
@@ -112,10 +118,10 @@ export class UIManager {
         this.showMessage(text, imageSrc, true, false);
     }
 
-    showMessage(text, imageSrc = null, useOverlay = false, persistent = false) {
+    showMessage(text, imageSrc = null, useOverlay = false, isPersistent = false) {
         const messageElementId = useOverlay ? 'messageOverlay' : 'messageBox';
         const messageElement = document.getElementById(messageElementId);
-        logger.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}, persistent: ${persistent}`);
+        logger.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}, isPersistent: ${isPersistent}`);
         let displayText = text;
         if (!displayText || displayText.trim() === '') {
             displayText = '[No message found for this note]';
@@ -139,7 +145,7 @@ export class UIManager {
             logger.log("Message set and show class added");
 
             // Auto-hide overlay messages after 2 seconds if not persistent
-            if (useOverlay && !persistent) {
+            if (useOverlay && !isPersistent) {
                 this.currentOverlayTimeout = setTimeout(() => {
                     if (messageElement.classList.contains('show')) {
                         messageElement.classList.remove('show');
@@ -154,6 +160,11 @@ export class UIManager {
     }
 
     hideOverlayMessage() {
+        // If it's a persistent charge confirmation message, don't hide it automatically
+        if (this.game.pendingCharge) {
+            return;
+        }
+
         const messageOverlay = document.getElementById('messageOverlay');
         if (messageOverlay && messageOverlay.classList.contains('show')) {
             messageOverlay.classList.remove('show');
@@ -258,6 +269,7 @@ export class UIManager {
 
     setupBarterHandlers() {
         this.barterWindow.setupBarterHandlers();
+        this.statueInfoWindow.setupStatueInfoHandlers();
     }
 
     showBarterWindow(npcType) {
@@ -270,6 +282,14 @@ export class UIManager {
 
     confirmTrade() {
         this.barterWindow.confirmTrade();
+    }
+
+    showStatueInfo(statueType) {
+        this.statueInfoWindow.showStatueInfo(statueType);
+    }
+
+    hideStatueInfoWindow() {
+        this.statueInfoWindow.hideStatueInfoWindow();
     }
 
 

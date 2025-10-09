@@ -1,5 +1,14 @@
 /* This is a mobile browser game meant to be played in portrait mode. All design considerations should adhere to this. */
 
+/* Local Fonts */
+@font-face {
+    font-family: 'MedievalSharp';
+    font-style: normal;
+    font-weight: 400;
+    src: url('fonts/MedievalSharp-Regular.ttf') format('truetype');
+    font-display: swap;
+}
+
 /* Global Styles */
 * {
     margin: 0;
@@ -1327,12 +1336,11 @@ h1 {
 }
 
 .barter-window {
-    background: #fffbe9;
+    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
     border: 3px solid #e2cfa2;
     border-radius: 12px;
     padding: 20px;
-    text-align: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
     font-family: 'Cinzel', serif;
     max-width: 90vw;
     width: 400px;
@@ -1340,6 +1348,16 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+.barter-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid rgba(139, 69, 19, 0.2);
+    background: rgba(0,0,0,0.05);
+    padding: 15px;
+    border-radius: 6px;
 }
 
 .barter-info {
@@ -1350,21 +1368,22 @@ h1 {
 
 .barter-window h2 {
     color: #7a5c2e;
-    font-size: 1.8em;
+    font-size: 2.2em;
+    font-weight: 900;
     margin: 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     text-align: center;
 }
 
 .barter-portrait-container {
-    align-self: center;
-    width: 80px;
-    height: 80px;
+    width: 120px; /* Adjusted for better balance */
+    height: 120px;
     background: url('Images/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .barter-portrait {
@@ -1375,25 +1394,47 @@ h1 {
 }
 
 .barter-window p {
-    color: #5a4223;
-    font-size: 1.6em;
+    color: #3A2418;
+    font-size: 1.4em;
     margin: 5px 0 0 0;
     flex-grow: 1;
+    text-align: left;
 }
 
 /* Smaller text for statue descriptions */
 .barter-window .statue-description {
-    font-size: 0.9em;
+    font-size: 1.1em;
+    font-family: 'Courier New', monospace;
     text-align: left;
-    line-height: 1.3;
+    line-height: 1.4;
+    color: #5a4223;
 }
 
 .barter-exchange {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     gap: 15px;
-    padding: 10px 0;
+    padding: 10px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(139, 69, 19, 0.2);
+}
+
+.barter-offer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.barter-offer-label {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1.2em;
+    color: #7a5c2e;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .barter-exchange-item {
@@ -1404,7 +1445,7 @@ h1 {
 }
 
 .barter-exchange-arrow {
-    font-size: 2.5em;
+    font-size: 3em;
     color: #7a5c2e;
     font-weight: 900;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
@@ -1413,7 +1454,7 @@ h1 {
 
 .barter-buttons {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     width: 100%;
 }
 
@@ -1492,4 +1533,120 @@ h1 {
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: crisp-edges;
+}
+
+/* Statue Info Overlay */
+.statue-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1250; /* Above barter */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.statue-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+.statue-window {
+    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
+    border: 3px solid #e2cfa2;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
+    font-family: 'Cinzel', serif;
+    max-width: 90vw;
+    width: 400px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.statue-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid rgba(139, 69, 19, 0.2);
+    background: rgba(0,0,0,0.05);
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.statue-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.statue-window h2 {
+    color: #7a5c2e;
+    font-size: 2.2em;
+    font-weight: 900;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.statue-portrait-container {
+    width: 120px;
+    height: 120px;
+    background: url('Images/ui/facesetbox.png') no-repeat center/contain;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.statue-portrait {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.statue-window p {
+    color: #3A2418;
+    font-size: 1.4em;
+    margin: 5px 0 0 0;
+    flex-grow: 1;
+    text-align: left;
+    line-height: 1.4;
+}
+
+.statue-buttons {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.statue-window button {
+    background: linear-gradient(135deg, #CD853F, #B8860B);
+    border: 2px solid #8B4513;
+    color: #3A2418;
+    padding: 12px 24px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1em;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+}
+
+.statue-window button:hover {
+    background: linear-gradient(135deg, #B8860B, #CD853F);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5);
 }

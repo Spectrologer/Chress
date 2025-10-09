@@ -282,6 +282,11 @@ export class InputManager {
         if (this.game.player.isDead()) {
             return;
         }
+        // If moving, cancel any pending charge
+        if (this.game.pendingCharge) {
+            this.game.pendingCharge = null;
+            this.game.hideOverlayMessage();
+        }
         // When the player acts, hide any open overlay message.
         // This now includes sign messages, which will close upon movement.
         if (this.game.displayingMessageForSign) {

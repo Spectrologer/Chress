@@ -51,6 +51,7 @@ class Game {
         this.specialZones = new Map();
         this.defeatedEnemies = new Set();
         this.availableFoodAssets = [];
+        this.pendingCharge = null;
 
         // Load assets and start game
         this.gameInitializer.loadAssets();

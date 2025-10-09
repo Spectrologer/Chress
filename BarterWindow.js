@@ -10,7 +10,6 @@ export class BarterWindow {
         this.confirmBarterButton = document.getElementById('confirmBarterButton');
         this.cancelBarterButton = document.getElementById('cancelBarterButton');
 
-        this.isStatueInfoOpen = false;
         this.currentNPCType = null;
     }
 
@@ -21,9 +20,8 @@ export class BarterWindow {
         this.cancelBarterButton.addEventListener('click', () => {
             this.hideBarterWindow();
         });
-        // Add handler for statue info close button
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' || (this.isStatueInfoOpen && ['w','a','s','d'].includes(event.key.toLowerCase()))) {
+            if (event.key === 'Escape') {
                 this.hideBarterWindow();
             }
         });
@@ -31,7 +29,6 @@ export class BarterWindow {
 
     showBarterWindow(npcType) {
         let name, portrait, message, requiredItem, requiredItemImg, receivedItemImg, requiredItemName, receivedItemName;
-        let isStatueInfo = false;
 
         if (npcType === 'lion') {
             name = 'Penne';
@@ -51,35 +48,6 @@ export class BarterWindow {
             requiredItemName = 'Nut';
             receivedItemImg = 'Images/items/water.png';
             receivedItemName = 'Water';
-        } else if (npcType.startsWith('statue_')) {
-            const enemyType = npcType.substring(7); // Remove 'statue_' prefix
-            isStatueInfo = true;
-            name = enemyType.charAt(0).toUpperCase() + enemyType.slice(1) + ' Statue';
-            portrait = `Images/fauna/${enemyType}.png`; // Use regular enemy sprites
-
-            // Set detailed descriptions based on enemy type
-            switch (enemyType) {
-                case 'lizardy':
-                    message = 'Moves <strong>orthogonally</strong> (4-way) and attacks adjacent tiles.<br><br><em>Represents the foundation of enemy behavior.</em>';
-                    break;
-                case 'lizardo':
-                    message = 'Moves <strong>orthogonally and diagonally</strong> (8-way).<br><br><em>Its complex movement indicates aggressive tendencies.</em>';
-                    break;
-                case 'lizardeaux':
-                    message = '<strong>Charges</strong> in straight lines to ram and attack players from any distance.<br><br><em>A powerful linear combatant.</em>';
-                    break;
-                case 'zard':
-                    message = 'Moves <strong>diagonally</strong> like a bishop and charges to attack from a distance.<br><br><em>Specializes in ranged diagonal assaults.</em>';
-                    break;
-                case 'lazerd':
-                    message = 'Moves <strong>orthogonally and diagonally</strong> like a queen and charges to attack.<br><br><em>A master of all directional movement.</em>';
-                    break;
-                case 'lizord':
-                    message = 'Moves in <strong>L-shapes</strong> like a knight and uses a unique bump attack to displace players.<br><br><em>Creates strategic positional advantages.</em>';
-                    break;
-                default:
-                    message = 'An ancient statue depicting a mysterious creature from the wilderness.';
-            }
         } else {
             return;
         }
@@ -87,41 +55,22 @@ export class BarterWindow {
         this.barterNPCName.textContent = name;
         this.barterNPCPortrait.src = portrait;
         this.barterNPCPortrait.alt = `Portrait of ${name}`;
-        this.barterNPCMessage.innerHTML = isStatueInfo ? `<span class="statue-description">${message}</span>` : message; // Use smaller text for statue descriptions
+        this.barterNPCMessage.innerHTML = message;
 
-        // Handle different UI for statues vs barter
+        // Build the visual exchange UI
         const barterExchange = document.getElementById('barterExchange');
-        const confirmButton = this.confirmBarterButton;
-        const cancelButton = this.cancelBarterButton;
-
-        if (isStatueInfo) {
-            if (barterExchange) barterExchange.innerHTML = '';
-            confirmButton.style.display = 'none';
-            cancelButton.textContent = 'Close';
-            cancelButton.classList.add('text-button'); // Apply text button style
-            this.isStatueInfoOpen = true;
-        } else {
-            // Restore barter UI
-            confirmButton.style.display = 'inline-block';
-            cancelButton.textContent = 'Cancel';
-            // Ensure text-button class is removed for image-based buttons
-            cancelButton.classList.remove('text-button');
-            this.isStatueInfoOpen = false;
-
-            // Build the visual exchange UI
-            if (barterExchange) {
-                barterExchange.innerHTML = `
-                    <img src="${requiredItemImg}" alt="Trade ${requiredItemName}..." class="barter-exchange-item">
-                    <span class="barter-exchange-arrow">→</span>
-                    <img src="${receivedItemImg}" alt="to receive ${receivedItemName}" class="barter-exchange-item">
-                `;
-            }
-
-            // Disable confirm button if player cannot trade
-            const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
-            const canTrade = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.startsWith(foodType));
-            confirmButton.disabled = !canTrade;
+        if (barterExchange) {
+            barterExchange.innerHTML = `
+                <img src="${requiredItemImg}" alt="Trade ${requiredItemName}..." class="barter-exchange-item">
+                <span class="barter-exchange-arrow">→</span>
+                <img src="${receivedItemImg}" alt="to receive ${receivedItemName}" class="barter-exchange-item">
+            `;
         }
+
+        // Disable confirm button if player cannot trade
+        const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
+        const canTrade = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.startsWith(foodType));
+        this.confirmBarterButton.disabled = !canTrade;
 
         this.currentNPCType = npcType;
         this.barterOverlay.classList.add('show');
@@ -129,7 +78,6 @@ export class BarterWindow {
 
     hideBarterWindow() {
         this.barterOverlay.classList.remove('show');
-        this.isStatueInfoOpen = false;
     }
 
     confirmTrade() {

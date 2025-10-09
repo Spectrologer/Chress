@@ -97,6 +97,31 @@ export class InteractionManager {
     }
 
     handleTap(gridCoords) {
+        // If a charge is pending, check for confirmation or cancellation
+        if (this.game.pendingCharge) {
+            const { type, item, targetX, targetY, enemy, dx, dy } = this.game.pendingCharge;
+            
+            // If tapped tile is the confirmation tile, perform the charge
+            if (gridCoords.x === targetX && gridCoords.y === targetY) {
+                if (type === 'bishop_spear') {
+                    this.game.performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy);
+                } else if (type === 'horse_icon') {
+                    this.game.performHorseIconCharge(item, targetX, targetY, enemy, dx, dy);
+                }
+            }
+
+            // Clear pending charge and message regardless of confirmation or cancellation
+            this.game.pendingCharge = null;
+            this.game.hideOverlayMessage();
+            return true; // Absorb the tap
+        }
+
+        // If any other interaction is happening, cancel pending charge
+        if (this.game.pendingCharge) {
+            this.game.pendingCharge = null;
+            this.game.hideOverlayMessage();
+        }
+
         const playerPos = this.game.player.getPosition();
 
         // Handle bomb placement mode
@@ -197,7 +222,7 @@ export class InteractionManager {
             const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
 
             if (isAdjacent) {
-                this.game.uiManager.showBarterWindow(statueNpcType);
+                this.game.uiManager.showStatueInfo(statueNpcType);
             }
             return true; // Interaction handled
         }
@@ -230,8 +255,16 @@ export class InteractionManager {
 
             // Check if diagonal and within range (<=5 tiles)
             if (Math.abs(dx) === Math.abs(dy) && Math.abs(dx) > 0 && Math.abs(dx) <= 5) {
-                this.game.performBishopSpearCharge(bishopSpearItem, gridCoords.x, gridCoords.y, enemyAtCoords, dx, dy);
-                return true; // Charge performed, don't move
+                // Set pending charge instead of performing it immediately
+                this.game.pendingCharge = {
+                    type: 'bishop_spear',
+                    item: bishopSpearItem,
+                    targetX: gridCoords.x,
+                    targetY: gridCoords.y,
+                    enemy: enemyAtCoords, dx, dy
+                };
+                this.game.uiManager.showOverlayMessage('Tap again to confirm Bishop Charge', null, true);
+                return true; // Interaction started, don't pathfind
             }
         }
 
@@ -247,8 +280,16 @@ export class InteractionManager {
             const absDx = Math.abs(dx);
             const absDy = Math.abs(dy);
             if (absDx + absDy === 3 && absDx >= 1 && absDy >= 1 && absDx !== absDy && Math.max(absDx, absDy) <= 5) {
-                this.game.performHorseIconCharge(horseIconItem, gridCoords.x, gridCoords.y, enemyAtCoords, dx, dy);
-                return true; // Charge performed, don't move
+                // Set pending charge instead of performing it immediately
+                this.game.pendingCharge = {
+                    type: 'horse_icon',
+                    item: horseIconItem,
+                    targetX: gridCoords.x,
+                    targetY: gridCoords.y,
+                    enemy: enemyAtCoords, dx, dy
+                };
+                this.game.uiManager.showOverlayMessage('Tap again to confirm Knight Charge', null, true);
+                return true; // Interaction started, don't pathfind
             }
         }
 

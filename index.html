@@ -7,9 +7,7 @@
     <script type="module" src="game.js"></script>
     <title>CHRESS</title>
     <link rel="icon" href="Images/fauna/zard.png" type="image/png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Creepster&family=Nosifer&family=Griffy&family=MedievalSharp&display=swap" rel="stylesheet">
+
     <script>
         if (window.location.hostname.includes('github.io')) {
             var base = document.createElement('base');
@@ -17,6 +15,9 @@
             document.head.appendChild(base);
         }
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Creepster&family=Nosifer&family=Griffy&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
         .barter-window button {
@@ -27,6 +28,14 @@
             background-color: #888;
             color: #ccc;
             cursor: not-allowed;
+        }
+        .large-portrait {
+            width: 160px; /* Increased from 128px */
+            height: 160px; /* Increased from 128px */
+        }
+        .large-portrait .player-portrait {
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
@@ -107,18 +116,38 @@
             </div>
         </div>
         <div id="barterOverlay" class="barter-overlay">
-            <div class="barter-window">
+            <div class="barter-window game-parchment">
                 <h2 id="barterNPCName">NPC Name</h2>
-                <div class="barter-info">
-                    <div class="barter-portrait-container">
-                        <img id="barterNPCPortrait" src="" alt="NPC Portrait" class="barter-portrait">
+                <div class="barter-main-content">
+                    <div class="barter-info">
+                        <div class="barter-portrait-container large-portrait">
+                            <img id="barterNPCPortrait" src="" alt="NPC Portrait" class="barter-portrait">
+                        </div>
+                        <p id="barterNPCMessage">Message</p>
                     </div>
-                    <p id="barterNPCMessage">Message</p>
+                    <div id="barterExchange" class="barter-exchange">
+                        <!-- Content will be dynamically inserted here by game.js -->
+                    </div>
                 </div>
-                <div id="barterExchange" class="barter-exchange"></div>
                 <div class="barter-buttons">
                     <button id="confirmBarterButton">Confirm Trade</button>
                     <button id="cancelBarterButton">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div id="statueOverlay" class="statue-overlay">
+            <div class="statue-window game-parchment">
+                <h2 id="statueName">Statue Name</h2>
+                <div class="statue-main-content">
+                    <div class="statue-info">
+                        <div class="statue-portrait-container large-portrait">
+                            <img id="statuePortrait" src="" alt="Statue Portrait" class="statue-portrait">
+                        </div>
+                        <p id="statueMessage">Message</p>
+                    </div>
+                </div>
+                <div class="statue-buttons">
+                    <button id="okayStatueButton">Okay</button>
                 </div>
             </div>
         </div>

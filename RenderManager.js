@@ -29,6 +29,9 @@ export class RenderManager {
 
         // Draw horse charge animation
         this.drawHorseChargeAnimation();
+
+        // Draw charge confirmation indicator if active
+        this.drawChargeConfirmationIndicator();
     }
 
     drawGrid() {
@@ -462,6 +465,23 @@ export class RenderManager {
             this.ctx.stroke();
         });
 
+        this.ctx.restore();
+    }
+
+    drawChargeConfirmationIndicator() {
+        if (!this.game.pendingCharge) {
+            return;
+        }
+
+        const { targetX, targetY } = this.game.pendingCharge;
+
+        // Draw a flashing yellow indicator at the target position
+        const alpha = 0.5 + Math.sin(Date.now() * 0.01) * 0.3; // Flashes between 0.2 and 0.8
+
+        this.ctx.save();
+        this.ctx.globalAlpha = alpha;
+        this.ctx.fillStyle = '#ffff00'; // Yellow
+        this.ctx.fillRect(targetX * TILE_SIZE, targetY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         this.ctx.restore();
     }
 }
