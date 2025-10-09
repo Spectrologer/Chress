@@ -24,6 +24,7 @@ export class Player {
         this.bumpFrames = 0;
         this.liftOffsetY = 0;
         this.liftFrames = 0;
+        this.interactOnReach = null; // {x, y} - interact with this tile when reaching adjacent
         this.markZoneVisited(0, 0);
     }
 
@@ -366,6 +367,7 @@ export class Player {
         this.liftFrames = 0;
         this.smokeAnimations = [];
         this.splodeAnimations = [];
+        this.interactOnReach = null;
         this.markZoneVisited(0, 0);
     }
 
@@ -511,5 +513,13 @@ export class Player {
             return availableTiles[Math.floor(Math.random() * availableTiles.length)];
         }
         return null;
+    }
+
+    setInteractOnReach(x, y) {
+        this.interactOnReach = { x, y };
+    }
+
+    clearInteractOnReach() {
+        this.interactOnReach = null;
     }
 }

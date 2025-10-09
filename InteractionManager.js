@@ -401,4 +401,97 @@ export class InteractionManager {
             this.inputManager.handleKeyPress({ key: direction, preventDefault: () => {} });
         }
     }
+
+    // Force trigger interaction at a given position (used when player arrives adjacent via auto-pathing)
+    triggerInteractAt(gridCoords) {
+        // Skip if player is not adjacent to the target
+        const playerPos = this.game.player.getPosition();
+        const dx = Math.abs(gridCoords.x - playerPos.x);
+        const dy = Math.abs(gridCoords.y - playerPos.y);
+        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+        if (!isAdjacent) return;
+
+        // Now trigger the same logic as handleTap
+        // Check if tapped on sign
+        const signTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        if (signTile && typeof signTile === 'object' && signTile.type === TILE_TYPES.SIGN) {
+            Sign.handleClick(signTile, this.game, isAdjacent);
+            const isAlreadyDisplayed = this.game.displayingMessageForSign &&
+                                      this.game.displayingMessageForSign.message === signTile.message;
+            const showingNewMessage = !isAlreadyDisplayed;
+            if (showingNewMessage && signTile.message !== this.game.lastSignMessage) {
+                this.game.uiManager.addMessageToLog(`A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`);
+                this.game.lastSignMessage = signTile.message;
+            }
+            return;
+        }
+
+        // Check if tapped on lion
+        const lionAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.LION;
+        if (lionAtPosition) {
+            this.game.uiManager.showBarterWindow('lion');
+            return;
+        }
+
+        // Check if tapped on squig
+        const squigAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.SQUIG;
+        if (squigAtPosition) {
+            this.game.uiManager.showBarterWindow('squig');
+            return;
+        }
+
+        // Check enemy statue
+        const statueTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        let statueNpcType = null;
+        if (statueTile === TILE_TYPES.LIZARDY_STATUE) statueNpcType = 'statue_lizardy';
+        else if (statueTile === TILE_TYPES.LIZARDO_STATUE) statueNpcType = 'statue_lizardo';
+        else if (statueTile === TILE_TYPES.LIZARDEAUX_STATUE) statueNpcType = 'statue_lizardeaux';
+        else if (statueTile === TILE_TYPES.ZARD_STATUE) statueNpcType = 'statue_zard';
+        else if (statueTile === TILE_TYPES.LAZERD_STATUE) statueNpcType = 'statue_lazerd';
+        else if (statueTile === TILE_TYPES.LIZORD_STATUE) statueNpcType = 'statue_lizord';
+
+        if (statueNpcType) {
+            this.game.uiManager.showStatueInfo(statueNpcType);
+            return;
+        }
+
+        // Check if bomb
+        const tapTile = this.game.grid[gridCoords.y][gridCoords.x];
+        if (tapTile && typeof tapTile === 'object' && tapTile.type === 'BOMB') {
+            tapTile.actionTimer = 2;
+            this.game.explodeBomb(gridCoords.x, gridCoords.y);
+            return;
+        }
+
+        // Check choppables - since we're adjacent, perform action directly
+        const tappedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        const hasAxe = this.game.player.inventory.some(item => item.type === 'axe');
+        const hasHammer = this.game.player.inventory.some(item => item.type === 'hammer');
+
+        if ((tappedTile === TILE_TYPES.GRASS || tappedTile === TILE_TYPES.SHRUBBERY)) {
+            if (hasAxe) {
+                // Perform chopping action - since player is adjacent, move to it and chop
+                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
+                    this.game.transitionToZone(zoneX, zoneY, exitSide, playerPos.x, playerPos.y);
+                });
+                this.game.handleEnemyMovements();
+                this.game.checkCollisions();
+                this.game.checkItemPickup();
+                this.game.updatePlayerPosition();
+                this.game.updatePlayerStats();
+            }
+        } else if (tappedTile === TILE_TYPES.ROCK) {
+            if (hasHammer) {
+                // Perform breaking action
+                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
+                    this.game.transitionToZone(zoneX, zoneY, exitSide, playerPos.x, playerPos.y);
+                });
+                this.game.handleEnemyMovements();
+                this.game.checkCollisions();
+                this.game.checkItemPickup();
+                this.game.updatePlayerPosition();
+                this.game.updatePlayerStats();
+            }
+        }
+    }
 }

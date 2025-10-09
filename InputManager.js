@@ -192,10 +192,33 @@ export class InputManager {
         // Handle grid interaction
         const handled = this.game.interactionManager.handleTap(gridCoords);
         if (!handled) {
-            // Find path to target
-            const path = this.findPath(playerPos.x, playerPos.y, gridCoords.x, gridCoords.y);
-            if (path && path.length > 0) {
-                this.executePath(path);
+            // Check if the tile is interactive but not adjacent
+            const isInteractive = this.isTileInteractive(gridCoords.x, gridCoords.y);
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+
+            if (isInteractive && !isAdjacent) {
+                // Find nearest walkable adjacent tile to the target
+                const adjacentTile = this.findNearestWalkableAdjacent(gridCoords.x, gridCoords.y);
+                if (adjacentTile) {
+                    // For double tap, set flag to interact on reach (walk and interact)
+                    // For single tap, just walk (don't interact)
+                    if (isDoubleTap) {
+                        this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
+                    }
+                    // Path to the adjacent tile
+                    const path = this.findPath(playerPos.x, playerPos.y, adjacentTile.x, adjacentTile.y);
+                    if (path && path.length > 0) {
+                        this.executePath(path);
+                    }
+                }
+            } else {
+                // Normal pathfinding for walkable or adjacent interactive tiles
+                const path = this.findPath(playerPos.x, playerPos.y, gridCoords.x, gridCoords.y);
+                if (path && path.length > 0) {
+                    this.executePath(path);
+                }
             }
         }
     }
@@ -262,6 +285,13 @@ export class InputManager {
                         this.autoUseNextExitReach = false;
                     }
                 }
+
+                // Trigger interaction if set (for double tap on interactive tiles)
+                if (this.game.player.interactOnReach) {
+                    const target = this.game.player.interactOnReach;
+                    this.game.player.clearInteractOnReach();
+                    this.game.interactionManager.triggerInteractAt(target);
+                }
             }
         };
 
@@ -276,6 +306,78 @@ export class InputManager {
         }
         this.cancelPath = true;
         this.isExecutingPath = false;
+    }
+
+    // Check if a tile at (x,y) is interactive (has interaction logic but may not be walkable)
+    isTileInteractive(x, y) {
+        const tile = this.game.grid[y]?.[x];
+        if (!tile) return false;
+
+        // Signs
+        if ((typeof tile === 'object' && tile.type === TILE_TYPES.SIGN) || tile === TILE_TYPES.SIGN) {
+            return true;
+        }
+
+        // Lions (barter)
+        if (tile === TILE_TYPES.LION) {
+            return true;
+        }
+
+        // Squigs (barter)
+        if (tile === TILE_TYPES.SQUIG) {
+            return true;
+        }
+
+        // Enemy statues (info display)
+        const statueTypes = [
+            TILE_TYPES.LIZARDY_STATUE,
+            TILE_TYPES.LIZARDO_STATUE,
+            TILE_TYPES.LIZARDEAUX_STATUE,
+            TILE_TYPES.ZARD_STATUE,
+            TILE_TYPES.LAZERD_STATUE,
+            TILE_TYPES.LIZORD_STATUE
+        ];
+        if (statueTypes.includes(tile)) {
+            return true;
+        }
+
+        // Bombs (explode on interaction)
+        if (typeof tile === 'object' && tile.type === 'BOMB') {
+            return true;
+        }
+
+        // Choppable tiles (grass, shrubbery, rock)
+        const choppableTypes = [TILE_TYPES.GRASS, TILE_TYPES.SHRUBBERY, TILE_TYPES.ROCK];
+        if (choppableTypes.includes(tile)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Find the nearest walkable tile adjacent to (targetX, targetY)
+    findNearestWalkableAdjacent(targetX, targetY) {
+        const directions = [
+            {dx: 0, dy: -1}, // North
+            {dx: 1, dy: 0},  // East
+            {dx: 0, dy: 1},  // South
+            {dx: -1, dy: 0}  // West
+        ];
+
+        // Check adjacent tiles in order (try north first, then east, etc.)
+        for (const dir of directions) {
+            const checkX = targetX + dir.dx;
+            const checkY = targetY + dir.dy;
+
+            // Check bounds
+            if (checkX >= 0 && checkX < GRID_SIZE && checkY >= 0 && checkY < GRID_SIZE) {
+                if (this.game.player.isWalkable(checkX, checkY, this.game.grid, -1, -1)) {
+                    return { x: checkX, y: checkY };
+                }
+            }
+        }
+
+        return null; // No adjacent walkable tile found
     }
 
     handleKeyPress(event) {
