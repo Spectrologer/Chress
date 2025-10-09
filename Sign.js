@@ -204,6 +204,12 @@ export class Sign {
                 "There was so much food in here earlier. Yumm!",
                 "Did you get a chance to play with the horse icons in here a minute ago?",
                 "I always file my taxes as married. It's foolish not to.",
+                "If you stand still for long enough, enemies can't hurt you.",
+                "The walls are edible. You just need to be hungry enough.",
+                "Water actually makes you thirstier the more you drink it.",
+                "I taught Crayn everything he knows.",
+                "The further you go, the easier it gets.",
+                "I invented moving in an L-shape."
             ]
         }
     };

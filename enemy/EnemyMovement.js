@@ -81,6 +81,15 @@ export const EnemyMovementMixin = {
                     return null; // Do not move onto the player's tile
                 }
             }
+
+            // Check if player is orthogonally adjacent (left/right), which is not an attack for lizardy.
+            // This prevents falling through to the default attack logic.
+            if (Math.abs(this.x - playerX) === 1 && this.y === playerY) {
+                // Treat as a blocked path, which will cause it to reverse or stay put.
+            } else {
+                // If we reach here, a valid N/S move was found after potentially reversing direction.
+                return { x: nextX, y: nextY };
+            }
             // If we reach here, a valid N/S move was found after potentially reversing direction.
 
             return { x: nextX, y: nextY };
