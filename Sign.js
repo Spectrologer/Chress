@@ -93,7 +93,7 @@ export class Sign {
     // Static method to display message for a sign object
     static displayMessageForSign(signData, gameInstance) {
         // Use the dedicated sign message method for persistent display
-        gameInstance.showSignMessage(signData.message, 'Images/sign.png');
+        gameInstance.showSignMessage(signData.message, 'images/sign.png');
         gameInstance.displayingMessageForSign = signData;
     }
 

@@ -14,6 +14,67 @@ export const EnemyMovementMixin = {
             return null; // Can't move onto player
         }
 
+        // Lizardy: pawn-like movement (north/south) and forward diagonal attack
+        if (this.enemyType === 'lizardy') {
+            // Initialize direction if it doesn't exist, default to South
+            if (this.movementDirection === undefined) {
+                this.movementDirection = 1; // 1 for South, -1 for North
+            }
+
+            const attackDirections = this.movementDirection === -1
+                ? [{ x: -1, y: -1 }, { x: 1, y: -1 }] // NW, NE when moving North
+                : [{ x: -1, y: 1 }, { x: 1, y: 1 }];   // SW, SE when moving South
+
+            // Check for diagonal attack
+            for (const dir of attackDirections) {
+                const attackX = this.x + dir.x;
+                const attackY = this.y + dir.y;
+                if (attackX === playerX && attackY === playerY) {
+                    // This is a valid diagonal attack. Perform the attack and don't move.
+                    if (!isSimulation) {
+                        player.takeDamage(this.attack);
+                        player.startBump(this.x - playerX, this.y - playerY);
+                        this.startBump(playerX - this.x, playerY - this.y);
+                        this.justAttacked = true;
+                        this.attackAnimation = 15;
+                        window.soundManager?.playSound('attack');
+                    }
+                    // Return null because the attack is the entire move; the lizardy does not change position.
+                    return null;
+                }
+            }
+
+            // If no attack, plan forward movement
+            let nextY = this.y + this.movementDirection;
+            let nextX = this.x;
+
+            // Check if moving into the player
+            if (nextX === playerX && nextY === playerY) {
+                if (!isSimulation) {
+                    // Bump player and self, but deal no damage and don't move.
+                    player.startBump(this.x - playerX, this.y - playerY);
+                    this.startBump(playerX - this.x, playerY - this.y);
+                    window.soundManager?.playSound('attack');
+                }
+                return null; // Do not move onto the player's tile
+            }
+
+            // Check if forward move is blocked
+            if (!this.isWalkable(nextX, nextY, grid) || enemies.some(e => e.x === nextX && e.y === nextY)) {
+                // Blocked, so reverse direction
+                this.movementDirection *= -1;
+                nextY = this.y + this.movementDirection;
+
+                // If still blocked after reversing, stay put
+                if (!this.isWalkable(nextX, nextY, grid) || enemies.some(e => e.x === nextX && e.y === nextY)) {
+                    return null; // Stay put
+                }
+            }
+            // If we reach here, a valid N/S move was found after potentially reversing direction.
+
+            return { x: nextX, y: nextY };
+        }
+
         // Zard: charge adjacent diagonally and ram if diagonal line of sight
         if (this.enemyType === 'zard') {
             const result = EnemySpecialActions.executeZardCharge(this, player, playerX, playerY, grid, enemies, isSimulation);

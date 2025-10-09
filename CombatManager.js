@@ -68,7 +68,12 @@ export class CombatManager {
     checkCollisions() {
         const playerPos = this.game.player.getPosition();
         this.game.enemies = this.game.enemies.filter(enemy => {
-            if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked) {
+            // Check for collision if an enemy ends up on the player's tile.
+            // Exclude 'lizardy' because its attack/bump logic is handled entirely in its planMoveTowards method.
+            if (enemy.x === playerPos.x && enemy.y === playerPos.y && 
+                !enemy.justAttacked && 
+                enemy.enemyType !== 'lizardy') {
+
                 this.game.player.takeDamage(enemy.attack);
                 this.game.soundManager.playSound('attack');
 

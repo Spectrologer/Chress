@@ -58,7 +58,7 @@ export class StatueInfoWindow {
         const enemyType = statueNpcType.substring(7); // Remove 'statue_' prefix
         const statueDetails = STATUE_DATA[enemyType] || STATUE_DATA.default;
         const name = enemyType.charAt(0).toUpperCase() + enemyType.slice(1) + ' Statue';
-        const portrait = `Images/fauna/${enemyType}.png`; // Use regular enemy sprites
+        const portrait = `images/fauna/${enemyType}.png`; // Use regular enemy sprites
         const message = statueDetails.message;
 
         // Set statue info content

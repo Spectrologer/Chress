@@ -12,7 +12,7 @@ describe('ItemGenerator', () => {
   beforeEach(() => {
     // Create a 10x10 grid filled with FLOOR tiles
     grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR));
-    foodAssets = ['Food/meat/Beaf.png'];
+    foodAssets = ['food/meat/Beaf.png'];
 
     // Mock ZoneStateManager
     ZoneStateManager.getZoneLevel.mockReturnValue(1);
@@ -59,7 +59,7 @@ describe('ItemGenerator', () => {
     const placedItem = grid.flat().find(cell => cell !== TILE_TYPES.FLOOR);
     expect(placedItem).toEqual({
       type: TILE_TYPES.FOOD,
-      foodType: 'Food/meat/Beaf.png'
+      foodType: 'food/meat/Beaf.png'
     });
   });
 });

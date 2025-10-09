@@ -116,7 +116,7 @@ body {
 }
 
 #toggle-attack-range-button {
-    background-image: url('Images/ui/target-icon.png');
+    background-image: url('images/ui/target-icon.png');
 }
 
 #toggle-attack-range-button.active {
@@ -133,7 +133,7 @@ body {
 .player-portrait-container {
     width: 92px;
     height: 92px;
-    background: url('Images/ui/facesetbox.png') no-repeat center/contain;
+    background: url('images/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
     align-items: center;
@@ -260,7 +260,7 @@ body {
 .inventory-slot {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: #f5e6c0 url('Images/ui/cell.png') no-repeat center / contain;
+    background: #f5e6c0 url('images/ui/cell.png') no-repeat center / contain;
     border: 1px solid #e2cfa2;
     border-radius: 6px;
     image-rendering: pixelated;
@@ -491,21 +491,21 @@ body {
 }
 
 .inventory-slot.item-water {
-    background-image: url('Images/items/water.png'), url('Images/ui/cell.png');
+    background-image: url('images/items/water.png'), url('images/ui/cell.png');
     background-size: 70%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-note {
-    background-image: url('Images/items/note.png'), url('Images/ui/cell.png');
+    background-image: url('images/items/note.png'), url('images/ui/cell.png');
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-heart {
-    background-image: url('Images/items/heart.png'), url('Images/ui/cell.png');
+    background-image: url('images/items/heart.png'), url('images/ui/cell.png');
     background-size: 70%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
@@ -516,42 +516,42 @@ body {
 
 
 .inventory-slot.item-axe {
-    background-image: url('Images/items/axe.png'), url('Images/ui/cell.png');
+    background-image: url('images/items/axe.png'), url('images/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-hammer {
-    background-image: url('Images/items/hammer.png'), url('Images/ui/cell.png');
+    background-image: url('images/items/hammer.png'), url('images/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-spear {
-    background-image: url('Images/items/spear.png'), url('Images/ui/cell.png');
+    background-image: url('images/items/spear.png'), url('images/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-bomb {
-    background-image: url('Images/items/bomb.png'), url('Images/ui/cell.png');
+    background-image: url('images/items/bomb.png'), url('images/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-heart {
-    background-image: url('Images/items/heart.png'), url('Images/ui/cell.png');
+    background-image: url('images/items/heart.png'), url('images/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-note {
-    background-image: url('Images/items/note.png'), url('Images/ui/cell.png');
+    background-image: url('images/items/note.png'), url('images/ui/cell.png');
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
@@ -1397,7 +1397,7 @@ h1 {
 .barter-portrait-container {
     width: 120px; /* Adjusted for better balance */
     height: 120px;
-    background: url('Images/ui/facesetbox.png') no-repeat center/contain;
+    background: url('images/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
     align-items: center;
@@ -1500,7 +1500,7 @@ h1 {
 }
 
 #cancelBarterButton {
-    background-image: url('Images/ui/no.png');
+    background-image: url('images/ui/no.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -1536,7 +1536,7 @@ h1 {
 }
 
 #confirmBarterButton {
-    background-image: url('Images/ui/yes.png');
+    background-image: url('images/ui/yes.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -1618,7 +1618,7 @@ h1 {
 .statue-portrait-container {
     width: 120px;
     height: 120px;
-    background: url('Images/ui/facesetbox.png') no-repeat center/contain;
+    background: url('images/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px;
     display: flex;
     align-items: center;

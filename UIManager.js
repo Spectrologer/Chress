@@ -99,7 +99,7 @@ export class UIManager {
         const messageOverlay = document.getElementById('messageOverlay');
         // Show message even if another is showing, to allow it to take priority
         // when both lion and squig are present.
-        this.showOverlayMessage('<span class="character-name">Penne</span><br>Give me meat!', 'Images/fauna/lion.png');
+        this.showOverlayMessage('<span class="character-name">Penne</span><br>Give me meat!', 'images/fauna/lion.png');
     }
 
     hideLionInteractionMessage() {

@@ -80,7 +80,7 @@ export class TextureLoader {
             }
         };
 
-        this.images[key].src = `Images/${filename}`;
+        this.images[key].src = `images/${filename}`;
     }
 
     getImage(key) {

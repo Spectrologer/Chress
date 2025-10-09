@@ -11,11 +11,11 @@ export class SoundManager {
         /*
         try {
             // Load attack sounds
-            this.addSound('attack', 'Sounds/attack.wav'); // General combat attack
-            this.addSound('chop', 'Sounds/chop.wav'); // Tree chopping sound
-            this.addSound('smash', 'Sounds/smash.wav'); // Rock smashing sound
-            this.addSound('move', 'Sounds/move.wav'); // Player movement
-            this.addSound('pickup', 'Sounds/pickup.wav'); // Item pickup
+            this.addSound('attack', 'sounds/attack.wav'); // General combat attack
+            this.addSound('chop', 'sounds/chop.wav'); // Tree chopping sound
+            this.addSound('smash', 'sounds/smash.wav'); // Rock smashing sound
+            this.addSound('move', 'sounds/move.wav'); // Player movement
+            this.addSound('pickup', 'sounds/pickup.wav'); // Item pickup
         } catch (error) {
             console.warn('Could not load sound files, using procedural generation:', error);
         }
