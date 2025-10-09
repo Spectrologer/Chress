@@ -96,6 +96,12 @@ export class GameInitializer {
         this.game.pendingCharge = null;
 
         // Try to load saved game state, or generate initial zone if no save exists
+        // Ensure food assets are available before generating any zones
+        this.game.availableFoodAssets = FOOD_ASSETS.filter(foodAsset => {
+            const foodKey = foodAsset.replace('.png', '').replace('/', '_');
+            return this.game.textureManager.isImageLoaded(foodKey);
+        });
+
         const loaded = this.game.gameStateManager.loadGameState();
         if (!loaded) {
             // Generate initial zone if no saved state

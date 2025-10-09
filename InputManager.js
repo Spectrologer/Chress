@@ -83,13 +83,14 @@ export class InputManager {
 
     // Convert screen coordinates to grid coordinates
     screenToGridCoordinates(screenX, screenY) {
+        const dpr = window.devicePixelRatio || 1;
         const rect = this.game.canvas.getBoundingClientRect();
-        const canvasX = screenX - rect.left;
-        const canvasY = screenY - rect.top;
+        const canvasX = (screenX - rect.left) * dpr;
+        const canvasY = (screenY - rect.top) * dpr;
 
         // Account for canvas scaling
-        const scaleX = this.game.canvas.width / rect.width;
-        const scaleY = this.game.canvas.height / rect.height;
+        const scaleX = this.game.canvas.width / (rect.width * dpr);
+        const scaleY = this.game.canvas.height / (rect.height * dpr);
 
         const adjustedX = canvasX * scaleX;
         const adjustedY = canvasY * scaleY;
