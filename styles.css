@@ -120,18 +120,23 @@ body {
     gap: 12px; /* Slightly reduce gap to accommodate the new button */
     justify-content: space-between;
 }
-.player-portrait {
-    width: 72px;
-    height: 72px;
-    border-radius: 8px;
-    border: 3px solid #7A4A3A;
-    padding: 2px;
-    background: linear-gradient(145deg, #D2B48C, #B8860B);
-    object-fit: cover;
-    box-shadow:
-        inset 0 0 6px rgba(0, 0, 0, 0.4),
-        0 3px 8px rgba(0, 0, 0, 0.15);
+
+.player-portrait-container {
+    width: 92px;
+    height: 92px;
+    background: url('Images/ui/facesetbox.png') no-repeat center/contain;
+    padding: 8px; /* Creates space for the frame around the image */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+.player-portrait {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 .player-info {
     flex: 1;
     display: flex;
@@ -246,13 +251,16 @@ body {
 .inventory-slot {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: #f5e6c0 url('Images/cells/cell.png') no-repeat center / contain;
+    background: #f5e6c0 url('Images/ui/cell.png') no-repeat center / contain;
     border: 1px solid #e2cfa2;
     border-radius: 6px;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: crisp-edges;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .player-map-area {
@@ -329,20 +337,10 @@ body {
 
 /* Ornate, inset frame for the character image */
 .character-profile img {
-    width: 90px;
-    height: 90px;
-
-    /* Inset frame effect */
-    border: 2px solid #7A4A3A;
-    border-radius: 10px;
-    padding: 4px; /* Space between image and frame */
-    background: linear-gradient(145deg, #D2B48C, #B8860B) no-repeat center / contain url('Images/ui/facesetbox.png'); /* Gold-ish backing */
-
-    /* Multi-layered shadow for depth */
-    box-shadow:
-        inset 0 0 8px rgba(0, 0, 0, 0.6), /* Inner shadow on frame */
-        3px 3px 6px rgba(0, 0, 0, 0.4); /* Outer shadow */
-
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px; /* Creates space for the frame around the image */
     display: block;
 }
 
@@ -495,31 +493,31 @@ body {
 
 
 .inventory-slot.item-axe {
-    background-image: url('Images/items/axe.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url('Images/items/axe.png'), url('Images/ui/cell.png');
+    background-size: contain, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
 }
 
 .inventory-slot.item-hammer {
-    background-image: url('Images/items/hammer.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url('Images/items/hammer.png'), url('Images/ui/cell.png');
+    background-size: contain, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
 }
 
 .inventory-slot.item-spear {
-    background-image: url('Images/items/spear.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url('Images/items/spear.png'), url('Images/ui/cell.png');
+    background-size: contain, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
 }
 
 .inventory-slot.item-bomb {
-    background-image: url('Images/items/bomb.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url('Images/items/bomb.png'), url('Images/ui/cell.png');
+    background-size: contain, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
 }
 
 .inventory-slot.item-heart {
@@ -1358,19 +1356,21 @@ h1 {
     text-align: center;
 }
 
-.barter-portrait {
+.barter-portrait-container {
     align-self: center;
     width: 80px;
     height: 80px;
-    border-radius: 8px;
-    border: 2px solid #7A4A3A;
-    padding: 2px;
-    background: linear-gradient(145deg, #D2B48C, #B8860B), url('Images/ui/facesetbox.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    object-fit: cover;
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4), 0 3px 8px rgba(0, 0, 0, 0.15);
+    background: url('Images/ui/facesetbox.png') no-repeat center/contain;
+    padding: 8px; /* Creates space for the frame around the image */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.barter-portrait {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     image-rendering: pixelated;
 }
 

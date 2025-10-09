@@ -1,8 +1,11 @@
 import { GRID_SIZE, TILE_TYPES } from './constants.js';
+import { Sign } from './Sign.js';
+import consoleCommands from './consoleCommands.js';
 
 export class InteractionManager {
-    constructor(game) {
+    constructor(game, inputManager) {
         this.game = game;
+        this.inputManager = inputManager;
     }
 
     checkLionInteraction() {
@@ -90,6 +93,269 @@ export class InteractionManager {
             this.game.player.inventory.splice(index, 1);
             this.game.player.inventory.push({ type: 'water' });
             this.game.uiManager.updatePlayerStats();
+        }
+    }
+
+    handleTap(gridCoords) {
+        const playerPos = this.game.player.getPosition();
+
+        // Handle bomb placement mode
+        if (this.game.bombPlacementMode) {
+            const pos = this.game.bombPlacementPositions.find(p => p.x === gridCoords.x && p.y === gridCoords.y);
+            if (pos) {
+                // Place timed bomb here
+                this.game.grid[pos.y][pos.x] = { type: 'BOMB', actionTimer: 0 };
+                const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
+                if (bombIndex !== -1) this.game.player.inventory.splice(bombIndex, 1);
+                this.game.uiManager.updatePlayerStats();
+            }
+            // End mode regardless
+            this.game.bombPlacementMode = false;
+            this.game.bombPlacementPositions = [];
+            this.game.hideOverlayMessage();
+            return true;
+        }
+
+        // Check if tapped on lion for interaction
+        const lionAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.LION;
+        if (lionAtPosition) {
+            // Check if player is adjacent to the lion (including diagonal, but excluding self)
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+            if (isAdjacent) {
+                this.game.uiManager.showBarterWindow('lion');
+            } else {
+            }
+            return true; // Interaction attempted, completion status varies
+        }
+
+        // Check if tapped on squig for interaction
+        const squigAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.SQUIG;
+        if (squigAtPosition) {
+            // Check if player is adjacent to the squig (including diagonal, but excluding self)
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+            if (isAdjacent) {
+                this.game.uiManager.showBarterWindow('squig');
+            } else {
+            }
+            return true; // Interaction attempted, completion status varies
+        }
+
+        // Check if tapped on sign for interaction
+        const signTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        if (signTile && typeof signTile === 'object' && signTile.type === TILE_TYPES.SIGN) {
+            // Check if player is adjacent to this sign
+            const playerPos = this.game.player.getPosition();
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+
+            if (isAdjacent) {
+                // Check if this is a new message being displayed (not already showing)
+                const isAlreadyDisplayed = this.game.displayingMessageForSign &&
+                                          this.game.displayingMessageForSign.message === signTile.message;
+                const showingNewMessage = !isAlreadyDisplayed;
+
+            // Let Sign class handle the toggle logic
+            Sign.handleClick(signTile, this.game, isAdjacent);
+
+            // Add to log only when first showing the message
+            if (showingNewMessage && signTile.message !== this.game.lastSignMessage) {
+                this.game.uiManager.addMessageToLog(`A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`);
+                this.game.lastSignMessage = signTile.message;
+            }
+            }
+            return true; // Interaction handled
+        }
+
+        // Check if tapped on enemy statue for behavior details
+        const statueTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        let statueNpcType = null;
+
+        if (statueTile === TILE_TYPES.LIZARDY_STATUE) {
+            statueNpcType = 'statue_lizardy';
+        } else if (statueTile === TILE_TYPES.LIZARDO_STATUE) {
+            statueNpcType = 'statue_lizardo';
+        } else if (statueTile === TILE_TYPES.LIZARDEAUX_STATUE) {
+            statueNpcType = 'statue_lizardeaux';
+        } else if (statueTile === TILE_TYPES.ZARD_STATUE) {
+            statueNpcType = 'statue_zard';
+        } else if (statueTile === TILE_TYPES.LAZERD_STATUE) {
+            statueNpcType = 'statue_lazerd';
+        } else if (statueTile === TILE_TYPES.LIZORD_STATUE) {
+            statueNpcType = 'statue_lizord';
+        }
+
+        if (statueNpcType) {
+            // Check if player is adjacent to the statue
+            const playerPos = this.game.player.getPosition();
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+
+            if (isAdjacent) {
+                this.game.uiManager.showBarterWindow(statueNpcType);
+            }
+            return true; // Interaction handled
+        }
+
+        // Check if tapped on bomb to explode it
+        const tapTile = this.game.grid[gridCoords.y][gridCoords.x];
+        if (tapTile && typeof tapTile === 'object' && tapTile.type === 'BOMB') {
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = dx <= 1 && dy <= 1;
+            if (isAdjacent) {
+                tapTile.actionTimer = 2;
+                this.game.explodeBomb(gridCoords.x, gridCoords.y);
+            }
+            return true;
+        }
+
+        // Handle bomb placement confirmation (legacy, can be removed if not used)
+
+        // Check if player has bishop spear and if tapped position is diagonal and valid for bishop spear charge
+        const bishopSpearItem = this.game.player.inventory.find(item => item.type === 'bishop_spear' && item.uses > 0);
+        const enemyAtCoords = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
+        const targetTile = this.game.grid[gridCoords.y][gridCoords.x];
+        const isEmptyTile = !enemyAtCoords && this.game.player.isWalkable(gridCoords.x, gridCoords.y, this.game.grid, playerPos.x, playerPos.y);
+
+        if (bishopSpearItem && (enemyAtCoords || isEmptyTile)) {
+            // Calculate direction from player to target
+            const dx = gridCoords.x - playerPos.x;
+            const dy = gridCoords.y - playerPos.y;
+
+            // Check if diagonal and within range (<=5 tiles)
+            if (Math.abs(dx) === Math.abs(dy) && Math.abs(dx) > 0 && Math.abs(dx) <= 5) {
+                this.game.performBishopSpearCharge(bishopSpearItem, gridCoords.x, gridCoords.y, enemyAtCoords, dx, dy);
+                return true; // Charge performed, don't move
+            }
+        }
+
+        // Check if player has horse icon and if tapped position is valid for horse icon charge (knight moves)
+        const horseIconItem = this.game.player.inventory.find(item => item.type === 'horse_icon' && item.uses > 0);
+
+        if (horseIconItem && (enemyAtCoords || isEmptyTile)) {
+            // Calculate direction from player to target
+            const dx = gridCoords.x - playerPos.x;
+            const dy = gridCoords.y - playerPos.y;
+
+            // Check if L-shape (knight move) and within range (<=5 tiles)
+            const absDx = Math.abs(dx);
+            const absDy = Math.abs(dy);
+            if (absDx + absDy === 3 && absDx >= 1 && absDy >= 1 && absDx !== absDy && Math.max(absDx, absDy) <= 5) {
+                this.game.performHorseIconCharge(horseIconItem, gridCoords.x, gridCoords.y, enemyAtCoords, dx, dy);
+                return true; // Charge performed, don't move
+            }
+        }
+
+        // Check if tapped on adjacent choppable tile
+        const tappedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        const isAdjacent = Math.abs(gridCoords.x - playerPos.x) <= 1 && Math.abs(gridCoords.y - playerPos.y) <= 1 &&
+                           !(gridCoords.x === playerPos.x && gridCoords.y === playerPos.y);
+        const hasAxe = this.game.player.inventory.some(item => item.type === 'axe');
+        const hasHammer = this.game.player.inventory.some(item => item.type === 'hammer');
+
+        if (isAdjacent && (tappedTile === TILE_TYPES.GRASS || tappedTile === TILE_TYPES.SHRUBBERY || tappedTile === TILE_TYPES.ROCK)) {
+            if ((hasAxe && (tappedTile === TILE_TYPES.GRASS || tappedTile === TILE_TYPES.SHRUBBERY)) ||
+                (hasHammer && tappedTile === TILE_TYPES.ROCK)) {
+                // Perform chopping action
+                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
+                    this.game.transitionToZone(zoneX, zoneY, exitSide, playerPos.x, playerPos.y);
+                });
+                this.game.handleEnemyMovements();
+                this.game.checkCollisions();
+                this.game.checkItemPickup();
+                this.game.updatePlayerPosition();
+                this.game.updatePlayerStats();
+                return true; // Action performed, don't navigate
+            }
+        }
+
+        // If player is on an exit tile, check for zone transition gestures
+        if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
+            const transitionTriggered = this.checkForZoneTransitionGesture(gridCoords, playerPos);
+            if (transitionTriggered) {
+                return true;
+            }
+        }
+
+        // Check if tapped tile is an exit and player is already on it - trigger zone transition
+        const tileUnderPlayer = this.game.grid[playerPos.y]?.[playerPos.x];
+        if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
+            if (tileUnderPlayer === TILE_TYPES.EXIT) {
+                this.handleExitTap(gridCoords.x, gridCoords.y);
+                return true;
+            } else if (tileUnderPlayer === TILE_TYPES.PORT) {
+                // Player tapped on a PORT tile they are standing on
+                this.game.player.currentZone.dimension = this.game.player.currentZone.dimension === 0 ? 1 : 0;
+                this.game.transitionToZone(this.game.player.currentZone.x, this.game.player.currentZone.y, 'port', playerPos.x, playerPos.y);
+                return true;
+            }
+        }
+
+        return false; // No interaction, allow path finding
+    }
+
+    // Check if tap gesture should trigger zone transition when player is on exit
+    checkForZoneTransitionGesture(tapCoords, playerPos) {
+        // If player is on an exit tile and taps outside the grid or on the same edge, trigger transition
+        const isOnExit = this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT;
+        if (!isOnExit) return false;
+
+        // Check if tap is outside grid boundaries (attempting to go beyond current zone)
+        if (tapCoords.x < 0 || tapCoords.x >= GRID_SIZE || tapCoords.y < 0 || tapCoords.y >= GRID_SIZE) {
+            this.handleExitTap(playerPos.x, playerPos.y);
+            return true;
+        }
+
+        // Check if player is on edge exit and tapping towards that edge
+        if (playerPos.y === 0 && tapCoords.y <= playerPos.y) {
+            // On top edge, tapping up/same row
+            this.handleExitTap(playerPos.x, playerPos.y);
+            return true;
+        } else if (playerPos.y === GRID_SIZE - 1 && tapCoords.y >= playerPos.y) {
+            // On bottom edge, tapping down/same row
+            this.handleExitTap(playerPos.x, playerPos.y);
+            return true;
+        } else if (playerPos.x === 0 && tapCoords.x <= playerPos.x) {
+            // On left edge, tapping left/same column
+            this.handleExitTap(playerPos.x, playerPos.y);
+            return true;
+        } else if (playerPos.x === GRID_SIZE - 1 && tapCoords.x >= playerPos.x) {
+            // On right edge, tapping right/same column
+            this.handleExitTap(playerPos.x, playerPos.y);
+            return true;
+        }
+
+        return false;
+    }
+
+    // Handle tapping on exit tiles to trigger zone transitions
+    handleExitTap(exitX, exitY) {
+        // Determine which direction to move based on exit position
+        let direction = '';
+
+        if (exitY === 0) {
+            // Top edge exit - move north
+            direction = 'arrowup';
+        } else if (exitY === GRID_SIZE - 1) {
+            // Bottom edge exit - move south
+            direction = 'arrowdown';
+        } else if (exitX === 0) {
+            // Left edge exit - move west
+            direction = 'arrowleft';
+        } else if (exitX === GRID_SIZE - 1) {
+            // Right edge exit - move east
+            direction = 'arrowright';
+        }
+
+        if (direction) {
+            // Simulate the key press to trigger zone transition
+            this.inputManager.handleKeyPress({ key: direction, preventDefault: () => {} });
         }
     }
 }
