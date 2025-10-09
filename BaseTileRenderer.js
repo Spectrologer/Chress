@@ -85,6 +85,8 @@ export class BaseTileRenderer {
             this.structureRenderer.renderCraynTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.FELT) {
             this.structureRenderer.renderFeltTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.FORGE) {
+            this.structureRenderer.renderForgeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.PORT) {
             // PORT tiles are invisible overlays. Render the tile underneath them.
             this.structureRenderer.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);

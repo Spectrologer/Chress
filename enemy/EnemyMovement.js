@@ -88,6 +88,22 @@ export const EnemyMovementMixin = {
 
         // Zard: charge adjacent diagonally and ram if diagonal line of sight
         if (this.enemyType === 'zard') {
+            // First, check for a simple adjacent diagonal attack.
+            const dx_adj = Math.abs(this.x - playerX);
+            const dy_adj = Math.abs(this.y - playerY);
+            if (dx_adj === 1 && dy_adj === 1) { // Diagonally adjacent
+                if (!isSimulation) {
+                    player.takeDamage(this.attack);
+                    player.startBump(this.x - playerX, this.y - playerY);
+                    this.startBump(playerX - this.x, playerY - this.y);
+                    this.justAttacked = true;
+                    this.attackAnimation = 15;
+                    window.soundManager?.playSound('attack');
+                }
+                return null; // Attack is the move
+            }
+
+            // If not adjacent, then consider a charge.
             const result = EnemySpecialActions.executeZardCharge(this, player, playerX, playerY, grid, enemies, isSimulation);
             if (result !== false) return result;
             // If can't charge, emergency defensive retreat when already vulnerable
@@ -132,6 +148,24 @@ export const EnemyMovementMixin = {
         if (this.enemyType === 'lazerd') {
             const result = EnemySpecialActions.executeLazerdCharge(this, player, playerX, playerY, grid, enemies, isSimulation);
             if (result !== false) return result;
+        }
+
+2        // Lizardo: Aggressively close distance. If adjacent, it will fall through to default attack logic.
+        if (this.enemyType === 'lizardo') {
+            const dx = Math.abs(this.x - playerX);
+            const dy = Math.abs(this.y - playerY);
+            const distance = Math.max(dx, dy); // Use Chebyshev distance for 8-way adjacency
+
+            // If not adjacent, try to move closer.
+            if (distance > 1) {
+                const possibleMoves = this.getMovementDirections().map(dir => ({ x: this.x + dir.x, y: this.y + dir.y }));
+                const closerMoves = possibleMoves.filter(move => this.isWalkable(move.x, move.y, grid) && !enemies.some(e => e.x === move.x && e.y === move.y));
+                if (closerMoves.length > 0) {
+                    closerMoves.sort((a, b) => (Math.abs(a.x - playerX) + Math.abs(a.y - playerY)) - (Math.abs(b.x - playerX) + Math.abs(b.y - playerY)));
+                    return closerMoves[0];
+                }
+            }
+            // If no safe move is found or it's already adjacent, it will fall through to the default pathfinding.
         }
 
         // Leader-Follower Pattern: when 3+ enemies, designate leader pursues player, others follow leader
@@ -253,8 +287,8 @@ export const EnemyMovementMixin = {
             const dy = Math.abs(newY - playerY);
             const newDistance = dx + dy;
 
-            // If moving closer to player but would be vulnerable (adjacent), unless it's an attack move
-            if (newDistance <= 2 && !(newX === playerX && newY === playerY)) {
+            // If moving closer to player but would be vulnerable (adjacent), unless it's an attack move. Lizardo is aggressive and will not retreat.
+            if (this.enemyType !== 'lizardo' && newDistance <= 2 && !(newX === playerX && newY === playerY)) {
                 // Check alternative moves that increase distance
                 const currentDistance = Math.abs(this.x - playerX) + Math.abs(this.y - playerY);
                 const alternatives = this.getDefensiveMoves(playerX, playerY, newX, newY, grid, enemies);

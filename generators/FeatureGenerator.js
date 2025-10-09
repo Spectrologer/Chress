@@ -80,6 +80,7 @@ export class FeatureGenerator {
                     // 5% chance for a sign
                     if (!this.checkSignExists()) {
                         const message = Sign.getProceduralMessage(zoneX, zoneY);
+                        Sign.spawnedMessages.add(message);
                         this.grid[y][x] = {
                             type: TILE_TYPES.SIGN,
                             message: message

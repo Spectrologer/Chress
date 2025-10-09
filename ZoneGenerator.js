@@ -93,6 +93,10 @@ export class ZoneGenerator {
                 // Place Felt near Crayn
                 this.grid[4][6] = TILE_TYPES.FELT;
 
+                // Place Forge in an open area
+                const forgePos = this.findOpenNpcSpawn(6);
+                if (forgePos) this.grid[forgePos.y][forgePos.x] = TILE_TYPES.FORGE;
+
                 // Place enemy statues on the back wall (y=1)
                 // Left side: 3 statues
                 this.grid[1][1] = TILE_TYPES.LIZARDY_STATUE;
@@ -434,5 +438,35 @@ export class ZoneGenerator {
                 break;
             }
         }
+    }
+
+    /**
+     * Finds a walkable tile with a minimum number of adjacent walkable tiles.
+     * @param {number} requiredNeighbors - The minimum number of walkable neighbors.
+     * @returns {{x, y}|null}
+     */
+    findOpenNpcSpawn(requiredNeighbors) {
+        const candidates = [];
+        for (let y = 1; y < GRID_SIZE - 1; y++) {
+            for (let x = 1; x < GRID_SIZE - 1; x++) {
+                if (this.isTileFree(x, y)) {
+                    let walkableNeighbors = 0;
+                    for (let dy = -1; dy <= 1; dy++) {
+                        for (let dx = -1; dx <= 1; dx++) {
+                            if (dx === 0 && dy === 0) continue;
+                            const nx = x + dx;
+                            const ny = y + dy;
+                            if (this.isTileFree(nx, ny)) {
+                                walkableNeighbors++;
+                            }
+                        }
+                    }
+                    if (walkableNeighbors >= requiredNeighbors) {
+                        candidates.push({ x, y });
+                    }
+                }
+            }
+        }
+        return candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : null;
     }
 }

@@ -44,7 +44,8 @@ export const TILE_TYPES = {
     LAZERD_STATUE: 34,
     LIZORD_STATUE: 35,
     CRAYN: 36,
-    FELT: 37
+    FELT: 37,
+    FORGE: 38
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -86,7 +87,8 @@ export const TILE_COLORS = {
     [TILE_TYPES.LAZERD_STATUE]: '#A0A0A0',
     [TILE_TYPES.LIZORD_STATUE]: '#A0A0A0',
     [TILE_TYPES.CRAYN]: '#FFD700', // Gold for Crayn
-    [TILE_TYPES.FELT]: '#FFD700' // Gold for Felt
+    [TILE_TYPES.FELT]: '#FFD700', // Gold for Felt
+    [TILE_TYPES.FORGE]: '#A0A0A0' // Grey for Forge
 };
 
 // Direction constants for exits and movements
@@ -130,6 +132,8 @@ export const IMAGE_ASSETS = [
     'fauna/squig.png',
     'fauna/crayn.png',
     'fauna/felt.png',
+    'fauna/forge.png',
+    'fauna/forgeface.png',
     'fauna/zard.png',
     'floors/frontier/desert.png',
     'flora/succulent.png',

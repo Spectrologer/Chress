@@ -219,6 +219,29 @@ export class InteractionManager {
             return true; // Interaction attempted
         }
 
+        // Check if tapped on forge for interaction
+        const forgeAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FORGE;
+        if (forgeAtPosition) {
+            // Check if player is adjacent to forge (including diagonal, but excluding self)
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+            if (isAdjacent) {
+                const npcData = Sign.getDialogueNpcData('forge');
+                if (npcData) {
+                    const message = npcData.messages[npcData.currentMessageIndex];
+                    const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
+                    // Use the sign message system for a persistent message that clears on movement
+                    this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
+                    this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                    // Cycle to the next message
+                    npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+                }
+            } else {
+            }
+            return true; // Interaction attempted
+        }
+
         // Check if tapped on sign for interaction
         const signTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
         if (signTile && typeof signTile === 'object' && signTile.type === TILE_TYPES.SIGN) {
@@ -508,6 +531,22 @@ export class InteractionManager {
         const feltAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FELT;
         if (feltAtPosition) {
             const npcData = Sign.getDialogueNpcData('felt');
+            if (npcData) {
+                const message = npcData.messages[npcData.currentMessageIndex];
+                const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
+                // Use the sign message system for a persistent message that clears on movement
+                this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
+                this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                // Cycle to the next message
+                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+            }
+            return;
+        }
+
+        // Check if forge
+        const forgeAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FORGE;
+        if (forgeAtPosition) {
+            const npcData = Sign.getDialogueNpcData('forge');
             if (npcData) {
                 const message = npcData.messages[npcData.currentMessageIndex];
                 const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;

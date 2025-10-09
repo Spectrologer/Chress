@@ -91,7 +91,7 @@ export class Sign {
         }
     };
 
-    static getProceduralMessage(zoneX, zoneY, usedMessagesSet) {
+    static getProceduralMessage(zoneX, zoneY, usedMessagesSet = Sign.spawnedMessages) {
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
         let area = 'wilds'; // Default to wilds as it's the only level with procedural notes.
         // The logic could be expanded if other levels get procedural notes.
@@ -188,7 +188,20 @@ export class Sign {
             messages: [
                 "Crayn is like, so smart.",
                 "I want to be like Crayn.",
-                "I wonder if Crayn likes standing too"
+                "Word around town is Crayn has 4 hearts.",
+                "I wonder if Crayn likes standing too.",
+                "I hear Crayn can put down food after he picks it up! Couldn't be me.",
+                "Forge is a LIAR.",
+            ]
+        },
+        forge: {
+            name: 'Forge',
+            portrait: 'Images/fauna/forgeface.png',
+            currentMessageIndex: 0,
+            messages: [
+                "I can move between tiles.",
+                "A good hammer can break more than just rocks.",
+                "They say the spear is a key... or maybe it's just a spear."
             ]
         }
     };
