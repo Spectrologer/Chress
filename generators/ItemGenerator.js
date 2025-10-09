@@ -92,30 +92,34 @@ export class ItemGenerator {
         if (ZoneStateManager.hammerSpawnZone && this.zoneX === ZoneStateManager.hammerSpawnZone.x && this.zoneY === ZoneStateManager.hammerSpawnZone.y && !ZoneStateManager.hammerSpawned) {
             this.addHammerItem();
         }
-        if (ZoneStateManager.spearSpawnZone && this.zoneX === ZoneStateManager.spearSpawnZone.x && this.zoneY === ZoneStateManager.spearSpawnZone.y && !ZoneStateManager.spearSpawned) {
-            this.addSpearItem();
-        }
-        if (ZoneStateManager.horseIconSpawnZone && this.zoneX === ZoneStateManager.horseIconSpawnZone.x && this.zoneY === ZoneStateManager.horseIconSpawnZone.y && !ZoneStateManager.horseIconSpawned) {
-            this.addHorseIconItem();
-        }
 
-        // Add a rare lion with low chance to spawn per zone (not level, but per zone)
-        if (!ZoneStateManager.lionSpawned && Math.random() < 0.02) { // 2% chance
+        // Add a rare lion with 2% chance per zone
+        if (Math.random() < 0.02) { // 2% chance
             this.addLionItem();
         }
 
-        // Add a rare squig with low chance to spawn per zone (not level, but per zone)
-        if (!ZoneStateManager.squigSpawned && Math.random() < 0.02) { // 2% chance
+        // Add a rare squig with 2% chance per zone
+        if (Math.random() < 0.02) { // 2% chance
             this.addSquigItem();
         }
 
-        // Add a rare note with low chance to spawn per zone (not level, but per zone)
-        if (!ZoneStateManager.noteSpawned && Math.random() < 0.05) { // 5% chance
+        // Add a rare note with 4% chance per zone
+        if (Math.random() < 0.04) { // 4% chance (reduced slightly)
             this.addNoteItem();
         }
 
-        // Add a bomb with a 3% chance in zones level 2-4
-        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.03) {
+        // Add a bishop spear with a 4% chance in zones level 2-4
+        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04) {
+            this.addSpearItem();
+        }
+
+        // Add a horse icon with a 4% chance in zones level 2-4
+        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04) {
+            this.addHorseIconItem();
+        }
+
+        // Add a bomb with a 4% chance in zones level 2-4
+        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04) {
             this.addBombItem();
         }
 
@@ -173,7 +177,6 @@ export class ItemGenerator {
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 };
-                ZoneStateManager.spearSpawned = true;
                 break; // Successfully placed bishop spear
             }
         }
@@ -188,7 +191,6 @@ export class ItemGenerator {
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = { type: TILE_TYPES.HORSE_ICON, uses: 3 };
-                ZoneStateManager.horseIconSpawned = true;
                 break; // Successfully placed horse icon
             }
         }
@@ -217,7 +219,6 @@ export class ItemGenerator {
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = TILE_TYPES.NOTE;
-                ZoneStateManager.noteSpawned = true;
                 break; // Successfully placed note
             }
         }
@@ -232,7 +233,6 @@ export class ItemGenerator {
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = TILE_TYPES.LION;
-                ZoneStateManager.lionSpawned = true;
                 logger.log(`Lion spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
                 break; // Successfully placed lion
             }
@@ -248,7 +248,6 @@ export class ItemGenerator {
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = TILE_TYPES.SQUIG;
-                ZoneStateManager.squigSpawned = true;
                 logger.log(`Squig spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
                 break; // Successfully placed squig
             }

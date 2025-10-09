@@ -2,13 +2,65 @@ import { Enemy } from '../Enemy.js';
 import { TILE_TYPES, GRID_SIZE } from '../constants.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 
+const ENEMY_WEIGHTS = {
+    lizardy: 1,
+    lizardo: 2,
+    lizardeaux: 3,
+    lizord: 3,
+    lazerd: 4
+};
+
+const MAX_WEIGHT_PER_LEVEL = {
+    1: 3,
+    2: 6,
+    3: 9,
+    4: 12
+};
+
+const ENEMY_SPAWN_PROBS = {
+    1: [
+        { type: 'lizardy', prob: 0.8 },
+        { type: 'lizardo', prob: 0.15 },
+        { type: 'lizardeaux', prob: 0.05 }
+    ],
+    2: [
+        { type: 'lizardy', prob: 0.6 },
+        { type: 'lizardo', prob: 0.3 },
+        { type: 'lizardeaux', prob: 0.1 }
+    ],
+    3: [
+        { type: 'lizardy', prob: 0.4 },
+        { type: 'lizardo', prob: 0.3 },
+        { type: 'lizardeaux', prob: 0.2 },
+        { type: 'lazerd', prob: 0.1 }
+    ],
+    4: [
+        { type: 'lizardeaux', prob: 0.25 },
+        { type: 'lizardy', prob: 0.25 },
+        { type: 'lizord', prob: 0.25 },
+        { type: 'lazerd', prob: 0.25 }
+    ]
+};
+
 export class EnemyGenerator {
     constructor(enemies) {
         this.enemies = enemies;
     }
 
+    selectEnemyType(zoneLevel) {
+        const list = ENEMY_SPAWN_PROBS[zoneLevel] || ENEMY_SPAWN_PROBS[1];
+        let rand = Math.random();
+        let cum = 0;
+        for (let item of list) {
+            cum += item.prob;
+            if (rand < cum) return item.type;
+        }
+        return list[list.length - 1].type; // fallback
+    }
+
     addRandomEnemy(zoneLevel, zoneX, zoneY) {
-        // Add multiple lizards based on zone level
+        const maxWeight = MAX_WEIGHT_PER_LEVEL[zoneLevel] || 12;
+        let currentWeight = 0;
         let enemyCount = 1; // Default for home
 
         if (zoneLevel === 2) {
@@ -24,34 +76,31 @@ export class EnemyGenerator {
 
         let localId = 0; // Unique per zone
 
-        for (let count = 0; count < enemyCount; count++) {
-            // Try to place the enemy in a valid location (max 50 attempts per enemy)
+        let spawnAttempts = 0;
+        while (spawnAttempts < enemyCount && currentWeight < maxWeight) { // Attempt to place up to enemyCount enemies, respecting weight limit
+            let enemyPlaced = false;
+            // Try to place the enemy in a valid location (max 50 attempts per enemy type selection)
             for (let attempts = 0; attempts < 50; attempts++) {
                 const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
                 const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
 
                 // Only place on floor tiles (not on walls, rocks, grass, etc.) and not already occupied by enemy
                 if (this.isFloorTileAvailable(x, y, zoneX, zoneY)) {
-                    // Determine enemy type - 'lizardo' appears in the Wilds (level 3), 'lizardeaux' appears in Frontier (level 4)
-                    let enemyType = 'lizardy';
-                    if (zoneLevel === 3 && Math.random() < 0.5) {
-                        enemyType = 'lizardo';
-                    } else if (zoneLevel === 4) {
-                        // In Frontier, mix lizardeaux, lizardy, lizord, and lazerd
-                        const rand = Math.random();
-                        if (rand < 0.25) {
-                            enemyType = 'lizardeaux';
-                        } else if (rand < 0.5) {
-                            enemyType = 'lizardy';
-                        } else if (rand < 0.75) {
-                            enemyType = 'lizord';
-                        } else {
-                            enemyType = 'lazerd';
-                        }
+                    let enemyType = this.selectEnemyType(zoneLevel);
+                    let weight = ENEMY_WEIGHTS[enemyType];
+                    if (currentWeight + weight <= maxWeight) {
+                        this.enemies.push({ x, y, enemyType: enemyType, id: `${zoneX}_${zoneY}_${localId++}` });
+                        currentWeight += weight;
+                        enemyPlaced = true;
+                        break; // Successfully placed enemy
                     }
-                    this.enemies.push({ x, y, enemyType: enemyType, id: `${zoneX}_${zoneY}_${localId++}` });
-                    break; // Successfully placed enemy
                 }
+            }
+            if (enemyPlaced) {
+                spawnAttempts++;
+            } else {
+                // Could not place an enemy after 50 attempts, give up for zone
+                break;
             }
         }
     }
