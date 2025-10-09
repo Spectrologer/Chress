@@ -90,8 +90,8 @@ export class ZoneGenerator {
                 // Place Crayn in the center
                 this.grid[4][4] = TILE_TYPES.CRAYN;
 
-                // Place Fan near Crayn
-                this.grid[4][6] = TILE_TYPES.FAN;
+                // Place Felt near Crayn
+                this.grid[4][6] = TILE_TYPES.FELT;
 
                 // Place enemy statues on the back wall (y=1)
                 // Left side: 3 statues

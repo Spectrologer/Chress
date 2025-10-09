@@ -31,8 +31,10 @@ export class ZoneManager {
             this.game.currentRegion = newRegion; // Update current region
         }
 
-        // Decrease thirst and hunger when moving to a new zone
-        this.game.player.onZoneTransition();
+        // Decrease thirst and hunger when moving to a new zone, unless using a port
+        if (exitSide !== 'port') {
+            this.game.player.onZoneTransition();
+        }
 
         // Generate or load the new zone
         this.game.generateZone();

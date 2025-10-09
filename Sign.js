@@ -6,61 +6,61 @@ export class Sign {
     // Area definitions for messages
     static messageSets = {
         home: [
-            "Don't try to chop shrubs or enemies down without your axe.",
-            "Chop.",
-            "H.",
-            "Even a woodcutter has to eat eat.",
-            "Try walking."
+            "Tap to move.",
+            "Tap adjacent objects to interact.",
+            "Find food to survive.",
+            "The Club has lots of good info.",
+            "Double tap to exit quickly."
         ],
         woods: [
-            "The stumps weep. Or maybe that's just sap.",
-            "Axe ahead. Therefore, try chopping.",
-            "The leaping ones mock our steps. Show them the woodcutter's way.",
-            "To shatter stone, one needs more than a sharp edge. Seek the hammer.",
-            "Beware, the 'knight'. Its path is crooked."
+            "Hammer for grey.",
+            "Beware the Knight. It moves in L-shapes.",
+            "Some foes leap.",
+            "The woods are deep.",
+            "Axe is for wood, not stone."
         ],
         wilds: [
-            "The rules fray at the edges here. Chaos seeps in.",
-            "They say a long-reaching weapon lies amidst the chaos. A tool to strike from where you are not.",
-            "The 'bishop' slides through the world's cracks. Do not let it corner you.",
-            "To pass, you need the tools of the Club. The axe for the green, the hammer for the grey.",
-            "Liar ahead. Or, treasure?"
+            "Seek the Spear. It strikes from afar.",
+            "Hold down items in the inventory to disable them.",
+            "Bombs can clear paths... or send you flying.",
+            "Trade with the locals. They have their needs.",
+            "The rules are different out here."
         ],
         frontier: [
-            "The world is undone. The Ent's heart is near.",
-            "The 'rook' sees only straight lines. Use this to your advantage.",
-            "Here, the rules are but a suggestion. And the Ent does not play fair.",
-            "Turn back. Or, don't. What do I care?",
-            "A little know woodcutter power is reading signs sideways and backwards."
+            "Beware the Rook. It charges in straight lines.",
+            "The world frays at the edges.",
+            "Turn back.",
+            "The end is not the end.",
+            "Read between the lines."
         ],
         canyon: [
-            "Echoes of the past whisper through these walls. Listen carefully.",
-            "The canyon breathes with ancient secrets. Can you hear them?",
-            "Strange formations line the path. They seem to watch you.",
-            "Footsteps echo endlessly here. Are they yours, or something else's?",
-            "The wind carries voices from another time. What are they saying?"
+            "Echoes of the past.",
+            "Ancient secrets.",
+            "The walls are watching.",
+            "Whose footsteps?",
+            "The wind whispers."
         ]
     };
 
     // Statue dialogue content
     static statueData = {
         lizardy: {
-            message: 'Moves <strong>orthogonally</strong> (4-way) and attacks adjacent tiles.<br><br><em>Represents the foundation of enemy behavior.</em>'
+            message: 'Moves <strong>north and south</strong> one tile at a time and can only attack diagonally in the direction it is traveling.<br><br><em>If it could only be so simple.</em>'
         },
         lizardo: {
-            message: 'Moves <strong>orthogonally and diagonally</strong> (8-way).<br><br><em>Its complex movement indicates aggressive tendencies.</em>'
+            message: 'Moves <strong>orthogonally and diagonally</strong> (8-way).<br><br><em>Wants to be like the lazerd.</em>'
         },
         lizardeaux: {
-            message: '<strong>Charges</strong> in straight lines to ram and attack players from any distance.<br><br><em>A powerful linear combatant.</em>'
+            message: '<strong>Charges</strong> in straight lines to ram players from any distance.<br><br><em>A powerful linear combatant.</em>'
         },
         zard: {
-            message: 'Moves <strong>diagonally</strong> like a bishop and charges to attack from a distance.<br><br><em>Specializes in ranged diagonal assaults.</em>'
+            message: 'Moves and <strong>charges diagonally</strong> to attack from a distance.<br><br><em>Hard to catch, too.</em>'
         },
         lazerd: {
-            message: 'Moves <strong>orthogonally and diagonally</strong> like a queen and charges to attack.<br><br><em>A master of all directional movement.</em>'
+            message: 'Moves and <strong>charges in any direction</strong>.<br><br><em>A master of all directional movement.</em>'
         },
         lizord: {
-            message: 'Moves in <strong>L-shapes</strong> like a knight and uses a unique bump attack to displace players.<br><br><em>Creates strategic positional advantages.</em>'
+            message: 'Moves in <strong>L-shapes</strong>.<br><br><em>A real fork in the road.</em>'
         },
         default: {
             message: 'An ancient statue depicting a mysterious creature from the wilderness.'
@@ -167,26 +167,28 @@ export class Sign {
         crayn: {
             name: 'Crayn',
             portrait: 'Images/fauna/craynface.png',
+            currentMessageIndex: 0,
             messages: [
-                "Placeholder message 1 for Crayn.",
-                "Placeholder message 2 for Crayn.",
-                "Placeholder message 3 for Crayn.",
-                "Placeholder message 4 for Crayn.",
+                "There is no end to the frontier.",
+                "Trees must be chopped.",
+                "They say you are descended from a King.",
+                "The Woodcutter's Club is members only.",
                 "Spears can be used to get past obstacles.",
-                "Placeholder message 6 for Crayn.",
-                "Placeholder message 7 for Crayn.",
-                "Placeholder message 8 for Crayn.",
-                "Placeholder message 9 for Crayn.",
-                "Placeholder message 10 for Crayn."
+                "Bombs can send you flying.",
+                "You can only hold six items, but you can use as many as you like.",
+                "The path gets harder the farther you go.",
+                "Beyond the frontier is the adjudicator",
+                "Sometimes enemies are simply in a better position.",
             ]
         },
-        fan: {
-            name: 'Fan',
-            portrait: 'Images/fauna/fanface.png',
+        felt: {
+            name: 'Felt',
+            portrait: 'Images/fauna/feltface.png',
+            currentMessageIndex: 0,
             messages: [
-                "Placeholder message 1 for Fan.",
-                "Placeholder message 2 for Fan.",
-                "Placeholder message 3 for Fan."
+                "Crayn is like, so smart.",
+                "I want to be like Crayn.",
+                "I wonder if Crayn likes standing too"
             ]
         }
     };

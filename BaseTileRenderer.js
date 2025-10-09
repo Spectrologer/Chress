@@ -83,8 +83,8 @@ export class BaseTileRenderer {
             this.structureRenderer.renderStatueTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this, actualType);
         } else if (actualType === TILE_TYPES.CRAYN) {
             this.structureRenderer.renderCraynTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.FAN) {
-            this.structureRenderer.renderFanTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.FELT) {
+            this.structureRenderer.renderFeltTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.PORT) {
             // PORT tiles are invisible overlays. Render the tile underneath them.
             this.structureRenderer.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);

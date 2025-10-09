@@ -253,23 +253,23 @@ export class StructureTileRenderer {
         }
     }
 
-    renderFanTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+    renderFeltTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        // Try to draw the fan image if loaded, otherwise use fallback
-        if (this.isImageLoaded('fan')) {
-            ctx.drawImage(this.images['fan'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        // Try to draw the felt image if loaded, otherwise use fallback
+        if (this.isImageLoaded('felt')) {
+            ctx.drawImage(this.images['felt'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.FAN];
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.FELT];
             ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
 
             ctx.fillStyle = '#FFD700';
             ctx.font = '20px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('🙋', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2); // Placeholder emoji for Fan
+            ctx.fillText('🙋', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2); // Placeholder emoji for Felt
         }
     }
 }

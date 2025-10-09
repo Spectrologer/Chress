@@ -181,8 +181,13 @@ export class InteractionManager {
             if (isAdjacent) {
                 const npcData = Sign.getDialogueNpcData('crayn');
                 if (npcData) {
-                    const randomMessage = npcData.messages[Math.floor(Math.random() * npcData.messages.length)];
-                    this.game.uiManager.showOverlayMessage(`<span class="character-name">${npcData.name}</span><br>${randomMessage}`, npcData.portrait);
+                    const message = npcData.messages[npcData.currentMessageIndex];
+                    const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
+                    // Use the sign message system for a persistent message that clears on movement
+                    this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
+                    this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                    // Cycle to the next message
+                    npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
                 }
             } else {
                 // Not adjacent, perhaps show message?
@@ -190,18 +195,23 @@ export class InteractionManager {
             return true; // Interaction attempted
         }
 
-        // Check if tapped on fan for interaction
-        const fanAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FAN;
-        if (fanAtPosition) {
-            // Check if player is adjacent to fan (including diagonal, but excluding self)
+        // Check if tapped on felt for interaction
+        const feltAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FELT;
+        if (feltAtPosition) {
+            // Check if player is adjacent to felt (including diagonal, but excluding self)
             const dx = Math.abs(gridCoords.x - playerPos.x);
             const dy = Math.abs(gridCoords.y - playerPos.y);
             const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
             if (isAdjacent) {
-                const npcData = Sign.getDialogueNpcData('fan');
+                const npcData = Sign.getDialogueNpcData('felt');
                 if (npcData) {
-                    const randomMessage = npcData.messages[Math.floor(Math.random() * npcData.messages.length)];
-                    this.game.uiManager.showOverlayMessage(`<span class="character-name">${npcData.name}</span><br>${randomMessage}`, npcData.portrait);
+                    const message = npcData.messages[npcData.currentMessageIndex];
+                    const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
+                    // Use the sign message system for a persistent message that clears on movement
+                    this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
+                    this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                    // Cycle to the next message
+                    npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
                 }
             } else {
                 // Not adjacent, perhaps show message?
@@ -483,19 +493,29 @@ export class InteractionManager {
         if (craynAtPosition) {
             const npcData = Sign.getDialogueNpcData('crayn');
             if (npcData) {
-                const randomMessage = npcData.messages[Math.floor(Math.random() * npcData.messages.length)];
-                this.game.uiManager.showOverlayMessage(`<span class="character-name">${npcData.name}</span><br>${randomMessage}`, npcData.portrait);
+                const message = npcData.messages[npcData.currentMessageIndex];
+                const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
+                // Use the sign message system for a persistent message that clears on movement
+                this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
+                this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                // Cycle to the next message
+                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
             }
             return;
         }
 
-        // Check if fan
-        const fanAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FAN;
-        if (fanAtPosition) {
-            const npcData = Sign.getDialogueNpcData('fan');
+        // Check if felt
+        const feltAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FELT;
+        if (feltAtPosition) {
+            const npcData = Sign.getDialogueNpcData('felt');
             if (npcData) {
-                const randomMessage = npcData.messages[Math.floor(Math.random() * npcData.messages.length)];
-                this.game.uiManager.showOverlayMessage(`<span class="character-name">${npcData.name}</span><br>${randomMessage}`, npcData.portrait);
+                const message = npcData.messages[npcData.currentMessageIndex];
+                const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
+                // Use the sign message system for a persistent message that clears on movement
+                this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
+                this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                // Cycle to the next message
+                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
             }
             return;
         }

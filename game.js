@@ -35,9 +35,14 @@ class Game {
         this.inventoryManager = new InventoryManager(this);
         this.uiManager = new UIManager(this);
 
+        // Turn-based system state
+        this.isPlayerTurn = true;
+        this.turnQueue = [];
+        this.occupiedTilesThisTurn = new Set();
+
         // Initialize additional managers
         this.renderManager = new RenderManager(this);
-        this.combatManager = new CombatManager(this);
+        this.combatManager = new CombatManager(this, this.occupiedTilesThisTurn);
         this.interactionManager = new InteractionManager(this, this.inputManager);
         this.zoneManager = new ZoneManager(this);
         this.gameStateManager = new GameStateManager(this);
@@ -57,6 +62,36 @@ class Game {
         this.gameInitializer.loadAssets();
     }
 
+    startEnemyTurns() {
+        this.isPlayerTurn = false;
+        this.occupiedTilesThisTurn.clear();
+        // Add player's position to occupied tiles to prevent enemies from moving there
+        const playerPos = this.player.getPosition();
+        this.occupiedTilesThisTurn.add(`${playerPos.x},${playerPos.y}`);
+
+        this.turnQueue = [...this.enemies]; // Get a fresh copy of enemies for the turn
+        this.processTurnQueue();
+    }
+
+    processTurnQueue() {
+        if (this.turnQueue.length > 0) {
+            const enemy = this.turnQueue.shift();
+            if (enemy && !enemy.isDead()) {
+                this.combatManager.handleSingleEnemyMovement(enemy);
+            }
+
+            // Wait for a short duration before processing the next enemy
+            // This gives time for the animation to play out
+            setTimeout(() => {
+                this.processTurnQueue();
+            }, 150); // 150ms delay between enemy moves
+        } else {
+            // All enemies have moved, it's the player's turn again
+            this.isPlayerTurn = true;
+            this.checkCollisions(); // Check for collisions after all moves are done
+            this.checkItemPickup();
+        }
+    }
     
     render() {
         this.renderManager.render();
@@ -159,6 +194,11 @@ class Game {
         // Update and filter horse charge animations
         this.horseChargeAnimations.forEach(anim => anim.frame--);
         this.horseChargeAnimations = this.horseChargeAnimations.filter(anim => anim.frame > 0);
+
+        // Only process next turn if it's the player's turn.
+        if (!this.isPlayerTurn && this.turnQueue.length === 0) {
+             this.isPlayerTurn = true;
+        }
 
         // Remove enemies whose death animation has finished
         this.enemies.forEach(enemy => {

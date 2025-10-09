@@ -69,6 +69,17 @@ export const EnemyMovementMixin = {
                 if (!this.isWalkable(nextX, nextY, grid) || enemies.some(e => e.x === nextX && e.y === nextY)) {
                     return null; // Stay put
                 }
+
+                // After reversing, re-check if the new path moves into the player
+                if (nextX === playerX && nextY === playerY) {
+                    if (!isSimulation) {
+                        // Bump player and self, but deal no damage and don't move.
+                        player.startBump(this.x - playerX, this.y - playerY);
+                        this.startBump(playerX - this.x, playerY - this.y);
+                        window.soundManager?.playSound('attack');
+                    }
+                    return null; // Do not move onto the player's tile
+                }
             }
             // If we reach here, a valid N/S move was found after potentially reversing direction.
 

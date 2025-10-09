@@ -1,35 +1,28 @@
 import { GRID_SIZE, TILE_TYPES } from './constants.js';
 
 export class CombatManager {
-    constructor(game) {
+    constructor(game, occupiedTiles) {
         this.game = game;
+        this.occupiedTiles = occupiedTiles;
     }
 
-    handleEnemyMovements() {
-        const plannedMoves = new Map(); // enemy -> intended position
+    handleSingleEnemyMovement(enemy) {
         const playerPos = this.game.player.getPosition();
 
-        // Phase 1: Plan moves
-        for (let enemy of this.game.enemies) {
-            const move = enemy.planMoveTowards(this.game.player, this.game.grid, this.game.enemies, playerPos, false, this.game);
-            if (move) {
-                const key = `${move.x},${move.y}`;
-                // Only add if no other enemy is planning this tile
-                if (!plannedMoves.has(key)) {
-                    plannedMoves.set(key, enemy);
-                }
-                // If multiple enemies want the same tile, only the first one gets it
+        const move = enemy.planMoveTowards(this.game.player, this.game.grid, this.game.enemies, playerPos, false, this.game);
+        if (move) {
+            const key = `${move.x},${move.y}`;
+            if (this.occupiedTiles.has(key)) {
+                return; // Tile is already claimed for this turn sequence
             }
-        }
-
-        // Phase 2: Apply valid moves
-        for (let [key, enemy] of plannedMoves) {
-            const move = key.split(',').map(Number);
+            this.occupiedTiles.add(key);
+            
             enemy.lastX = enemy.x;
             enemy.lastY = enemy.y;
-            enemy.x = move[0];
-            enemy.y = move[1];
+            enemy.x = move.x;
+            enemy.y = move.y;
             enemy.liftFrames = 15; // Start lift animation
+
             // Add horse charge animation for lizord when it moves
             if (enemy.enemyType === 'lizord' && (enemy.lastX !== enemy.x || enemy.lastY !== enemy.y)) {
                 const dx = enemy.x - enemy.lastX;
@@ -65,14 +58,16 @@ export class CombatManager {
         }
     }
 
+    handleEnemyMovements() {
+        this.game.startEnemyTurns();
+    }
+
     checkCollisions() {
         const playerPos = this.game.player.getPosition();
         this.game.enemies = this.game.enemies.filter(enemy => {
             // Check for collision if an enemy ends up on the player's tile.
-            // Exclude 'lizardy' because its attack/bump logic is handled entirely in its planMoveTowards method.
-            if (enemy.x === playerPos.x && enemy.y === playerPos.y && 
-                !enemy.justAttacked && 
-                enemy.enemyType !== 'lizardy') {
+            // Exclude 'lizardy' because its attack/bump logic is handled entirely in its planMoveTowards method, which prevents it from moving onto the player.
+            if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked && enemy.enemyType !== 'lizardy') {
 
                 this.game.player.takeDamage(enemy.attack);
                 this.game.soundManager.playSound('attack');

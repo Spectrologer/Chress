@@ -382,6 +382,11 @@ export class InputManager {
     }
 
     handleKeyPress(event) {
+        if (this.game.isPlayerTurn === false) {
+            this.cancelPathExecution();
+            return;
+        }
+
         if (this.game.player.isDead()) {
             return;
         }
@@ -472,12 +477,14 @@ export class InputManager {
                 // Handle enemy movements based on zone entry flag
                 if (this.game.justEnteredZone) {
                     this.game.justEnteredZone = false; // Reset flag after skipping enemy movement
-                } else if (playerMoved) {
+                } else {
                     this.game.handleEnemyMovements();
                 }
 
-                this.game.checkCollisions();
-                this.game.checkItemPickup(); // Check for item pickups after movement
+                // Collision and pickup checks are now handled after the enemy turn sequence finishes
+                // this.game.checkCollisions();
+                // this.game.checkItemPickup(); 
+
                 this.game.updatePlayerPosition();
                 this.game.updatePlayerStats();
     }

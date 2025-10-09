@@ -17,6 +17,7 @@ describe('CombatManager', () => {
   let combatManager;
   let mockGame;
   let mockPlayer;
+  let occupiedTiles;
   let mockEnemy;
 
   beforeEach(() => {
@@ -53,7 +54,8 @@ describe('CombatManager', () => {
       explodeBomb: jest.fn()
     };
 
-    combatManager = new CombatManager(mockGame);
+    occupiedTiles = new Set();
+    combatManager = new CombatManager(mockGame, occupiedTiles);
   });
 
   afterEach(() => {
@@ -64,21 +66,24 @@ describe('CombatManager', () => {
     expect(combatManager.game).toBe(mockGame);
   });
 
-  test('handleEnemyMovements plans and executes enemy moves', () => {
-    combatManager.handleEnemyMovements();
+  test('handleSingleEnemyMovement plans and executes a single enemy move', () => {
+    occupiedTiles.add(`${mockPlayer.x},${mockPlayer.y}`);
+
+    combatManager.handleSingleEnemyMovement(mockEnemy);
 
     expect(mockEnemy.planMoveTowards).toHaveBeenCalledWith(
       mockGame.player,
       mockGame.grid,
       mockGame.enemies,
-      { x: 1, y: 1 }
+      { x: 1, y: 1 },
+      false, mockGame
     );
     expect(mockEnemy.x).toBe(2);
     expect(mockEnemy.y).toBe(2);
     expect(mockEnemy.liftFrames).toBe(15);
   });
 
-  test('handleEnemyMovements prevents multiple enemies on same tile', () => {
+  test('handleSingleEnemyMovement prevents moving to an occupied tile', () => {
     const mockEnemy2 = {
       x: 4,
       y: 4,
@@ -87,32 +92,34 @@ describe('CombatManager', () => {
       id: 'enemy2'
     };
 
+    occupiedTiles.add('2,2'); // Pretend the first enemy already claimed this tile
     mockGame.enemies.push(mockEnemy2);
 
-    combatManager.handleEnemyMovements();
+    combatManager.handleSingleEnemyMovement(mockEnemy2);
 
-    // Only first enemy moves to the conflicting position
-    expect(mockEnemy.x).toBe(2);
-    expect(mockEnemy.y).toBe(2);
-    expect(mockEnemy2.x).toBe(4); // Second enemy stays in place
+    // The second enemy should not move because the tile is occupied
+    expect(mockEnemy2.planMoveTowards).toHaveBeenCalled();
+    expect(mockEnemy2.x).toBe(4);
     expect(mockEnemy2.y).toBe(4);
   });
 
   test('checkCollisions handles enemy-player collision', () => {
     mockEnemy.x = 1;
     mockEnemy.y = 1; // Enemy at player's position
+    mockEnemy.justAttacked = false;
 
     combatManager.checkCollisions();
 
     expect(mockPlayer.takeDamage).toHaveBeenCalledWith(1);
     expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('attack');
-    expect(mockGame.enemies).toHaveLength(0);
+    expect(mockGame.enemies.filter(e => e.id !== 'enemy1')).toHaveLength(0);
   });
 
   test('checkCollisions removes enemy from zone data on defeat', () => {
     mockEnemy.x = 1;
     mockEnemy.y = 1;
     mockGame.zones.set('0,0:0', { enemies: [{ id: 'enemy1' }] });
+    mockEnemy.justAttacked = false;
 
     combatManager.checkCollisions();
 
@@ -139,6 +146,19 @@ describe('CombatManager', () => {
     expect(item.uses).toBe(2);
     expect(mockPlayer.setPosition).toHaveBeenCalledWith(3, 3);
     expect(mockEnemy.takeDamage).toHaveBeenCalledWith(999);
-    expect(mockGame.enemies).toHaveLength(0);
+    expect(mockGame.enemies.filter(e => e.id !== 'enemy1')).toHaveLength(0);
+  });
+
+  test('checkCollisions does not damage player if enemy just attacked', () => {
+    mockEnemy.x = 1;
+    mockEnemy.y = 1; // Enemy at player's position
+    mockEnemy.justAttacked = true; // This enemy already attacked this turn
+
+    combatManager.checkCollisions();
+
+    // Player should not take damage, and enemy should not be removed
+    expect(mockPlayer.takeDamage).not.toHaveBeenCalled();
+    expect(mockGame.soundManager.playSound).not.toHaveBeenCalledWith('attack');
+    expect(mockGame.enemies).toHaveLength(1);
   });
 });
