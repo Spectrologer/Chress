@@ -491,10 +491,10 @@ body {
 }
 
 .inventory-slot.item-water {
-    background-image: url('Images/items/water.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url('Images/items/water.png'), url('Images/ui/cell.png');
+    background-size: contain, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
 }
 
 
@@ -530,17 +530,17 @@ body {
 }
 
 .inventory-slot.item-heart {
-    background-image: url('Images/items/heart.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url('Images/items/heart.png'), url('Images/ui/cell.png');
+    background-size: contain, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
 }
 
 .inventory-slot.item-note {
-    background-image: url('Images/items/note.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url('Images/items/note.png'), url('Images/ui/cell.png');
+    background-size: contain, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
 }
 
 /* Redesigned Stat Bars */

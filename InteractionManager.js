@@ -23,7 +23,7 @@ export class InteractionManager {
         const ui = this.game.uiManager;
         const pick = (item) => { inv.push(item); this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR; ui.updatePlayerStats(); };
 
-        if (tile === TILE_TYPES.NOTE) {
+        if (tile === TILE_TYPES.NOTE && inv.length < 6) {
             pick({ type: 'note' });
             ui.addMessageToLog('Found an ancient map note.');
             return;
@@ -89,10 +89,12 @@ export class InteractionManager {
 
     interactWithNPC(foodType) {
         const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.includes(foodType));
-        if (index >= 0) {
+        if (index >= 0 && this.game.player.inventory.length < 6) {
             this.game.player.inventory.splice(index, 1);
             this.game.player.inventory.push({ type: 'water' });
             this.game.uiManager.updatePlayerStats();
+        } else if (index >= 0 && this.game.player.inventory.length >= 6) {
+            this.game.uiManager.addMessageToLog('Inventory is full! Cannot complete trade.');
         }
     }
 

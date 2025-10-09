@@ -102,14 +102,26 @@ export class ActionManager {
     }
 
     explodeBomb(bx, by) {
-        // Blast walls 1 tile around the bomb (excluding center) to create exits
+        // Blast walls, rocks, shrubs, grass, and signs 1 tile around the bomb (excluding center)
         for (let dx = -1; dx <= 1; dx++) {
             for (let dy = -1; dy <= 1; dy++) {
                 if (dx === 0 && dy === 0) continue; // Skip the bomb location itself
                 const nx = bx + dx, ny = by + dy;
-                if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE && this.game.grid[ny][nx] === TILE_TYPES.WALL) {
-                    const isBorder = nx === 0 || nx === GRID_SIZE - 1 || ny === 0 || ny === GRID_SIZE - 1;
-                    this.game.grid[ny][nx] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
+                if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
+                    const tile = this.game.grid[ny][nx];
+                    // Blast walls to create exits
+                    if (tile === TILE_TYPES.WALL) {
+                        const isBorder = nx === 0 || nx === GRID_SIZE - 1 || ny === 0 || ny === GRID_SIZE - 1;
+                        this.game.grid[ny][nx] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
+                    }
+                    // Destroy rocks, shrubs, and grass
+                    else if (tile === TILE_TYPES.ROCK || tile === TILE_TYPES.GRASS || tile === TILE_TYPES.SHRUBBERY) {
+                        this.game.grid[ny][nx] = TILE_TYPES.FLOOR;
+                    }
+                    // Destroy signs
+                    else if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.SIGN) {
+                        this.game.grid[ny][nx] = TILE_TYPES.FLOOR;
+                    }
                 }
             }
         }

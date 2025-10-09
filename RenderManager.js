@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_SIZE, TILE_TYPES } from './constants.js';
+import { GRID_SIZE, TILE_SIZE, TILE_TYPES, CANVAS_SIZE } from './constants.js';
 import { TextureManager } from './TextureManager.js';
 
 export class RenderManager {
@@ -277,9 +277,13 @@ export class RenderManager {
             const enemyImage = this.game.textureManager.getImage(enemyKey);
             if (enemyImage && enemyImage.complete) {
                 this.ctx.save();
-                // Center scaling on enemy
-                const cx = enemy.x * TILE_SIZE + enemy.bumpOffsetX + TILE_SIZE / 2 + shakeX;
-                const cy = enemy.y * TILE_SIZE + enemy.bumpOffsetY + enemy.liftOffsetY + TILE_SIZE / 2 + shakeY;
+                // Center scaling on enemy, clamp to prevent flying off screen
+                let pixelXBase = enemy.x * TILE_SIZE + enemy.bumpOffsetX;
+                let pixelYBase = enemy.y * TILE_SIZE + enemy.bumpOffsetY + enemy.liftOffsetY;
+                pixelXBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelXBase));
+                pixelYBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelYBase));
+                const cx = pixelXBase + TILE_SIZE / 2 + shakeX;
+                const cy = pixelYBase + TILE_SIZE / 2 + shakeY;
                 this.ctx.translate(cx, cy);
                 this.ctx.scale(scale, scale);
                 this.ctx.translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
@@ -299,10 +303,14 @@ export class RenderManager {
                 this.ctx.restore();
             } else {
                 // Fallback
+                let pixelXBase = enemy.x * TILE_SIZE + enemy.bumpOffsetX;
+                let pixelYBase = enemy.y * TILE_SIZE + enemy.bumpOffsetY;
+                pixelXBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelXBase));
+                pixelYBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelYBase));
                 this.ctx.fillStyle = '#32CD32';
                 this.ctx.fillRect(
-                    enemy.x * TILE_SIZE + enemy.bumpOffsetX + 2,
-                    enemy.y * TILE_SIZE + enemy.bumpOffsetY + 2,
+                    pixelXBase + 2,
+                    pixelYBase + 2,
                     TILE_SIZE - 4,
                     TILE_SIZE - 4
                 );

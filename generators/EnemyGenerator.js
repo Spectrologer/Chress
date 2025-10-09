@@ -131,14 +131,11 @@ export class EnemyGenerator {
 
     isFloorTileAvailable(x, y, zoneX, zoneY) {
         const tile = this.grid[y][x];
-        // Check for impassable tiles
-        if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.DEADTREE || tile === TILE_TYPES.WELL || tile === TILE_TYPES.SIGN || (tile && tile.type === TILE_TYPES.SIGN)) {
-            return false;
-        }
+        const tileValue = tile && tile.type ? tile.type : tile;
+        // Only place on normal floor tiles
+        if (tileValue !== TILE_TYPES.FLOOR) return false;
         // Check for enemy
         if (this.isTileOccupiedByEnemy(x, y)) return false;
-        // Check for items (axe, hammer, bishop spear, etc.)
-        if (tile === TILE_TYPES.AXE || tile === TILE_TYPES.HAMMER || (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) || tile === TILE_TYPES.NOTE) return false;
         // Check for other items
         for (let item of this.items) {
             if (item.x === x && item.y === y) return false;

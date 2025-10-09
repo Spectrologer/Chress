@@ -69,11 +69,13 @@ export class GameStateManager {
     }
 
     addTreasureToInventory() {
-        // Generate 3-5 random treasure items regardless of inventory space
+        // Generate 3-5 random treasure items, respecting inventory limit
         const numItems = Math.floor(Math.random() * 3) + 3; // 3 to 5 items
         const treasureTypes = ['bomb', 'bishop_spear', 'food'];
 
         for (let i = 0; i < numItems; i++) {
+            if (this.game.player.inventory.length >= 6) break; // Stop if inventory is full
+
             const randomType = treasureTypes[Math.floor(Math.random() * treasureTypes.length)];
 
             if (randomType === 'bomb') {
@@ -87,13 +89,6 @@ export class GameStateManager {
                 this.game.player.inventory.push({ type: 'food', foodType: randomFood });
                 this.game.uiManager.addMessageToLog('Treasure Found: Food added to inventory.');
             }
-        }
-
-        // Remove excess items beyond inventory limit (6), keeping the most recently added
-        if (this.game.player.inventory.length > 6) {
-            const excessItems = this.game.player.inventory.length - 6;
-            this.game.player.inventory.splice(0, excessItems); // Remove from the beginning
-            this.game.uiManager.addMessageToLog(`Inventory overflow: ${excessItems} item(s) were lost.`);
         }
 
         this.game.uiManager.updatePlayerStats(); // Refresh UI

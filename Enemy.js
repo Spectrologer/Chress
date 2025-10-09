@@ -1,4 +1,4 @@
-import { TILE_TYPES } from './constants.js';
+import { TILE_TYPES, GRID_SIZE } from './constants.js';
 
 export class Enemy {
     constructor(data) {
@@ -28,18 +28,18 @@ export class Enemy {
             return null; // Can't move onto player
         }
 
-        // Lizardeaux: charge adjacent and ram in one turn if line of sight
-        if (this.enemyType === 'lizardeaux') {
-            const dx = Math.abs(this.x - playerX);
-            const dy = Math.abs(this.y - playerY);
-            const isAdjacent = (dx + dy === 1);
-
-            // If adjacent, perform ram attack
-            if (isAdjacent) {
-                this.performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation);
+        // Zard: bishop-like movement, charge and attack in one turn if diagonal line of sight
+        if (this.enemyType === 'zard') {
+            // Check if diagonal line of sight exists
+            if (this.checkDiagonalLineOfSight(playerX, playerY, grid)) {
+                this.performBishopCharge(player, playerX, playerY, grid, isSimulation);
                 return null;
-            } else {
-                // If not adjacent, but line of sight, charge to adjacent tile and ram
+            }
+        }
+
+        // Lizardeaux: charge adjacent and ram if orthogonal line of sight
+        if (this.enemyType === 'lizardeaux') {
+            if (this.checkOrthogonalLineOfSight(playerX, playerY, grid, enemies)) {
                 const chargeMove = this.getChargeAdjacentMove(playerX, playerY, grid, enemies);
                 if (chargeMove) {
                     // Move to adjacent tile
@@ -56,18 +56,7 @@ export class Enemy {
                     }
                     return null; // All in one turn
                 }
-                // If no charge move is possible, the Lizardeaux cannot attack this turn from a distance.
-                // We return a non-null value to indicate no attack, so it doesn't fall through to generic pathfinding.
-                // An empty object is a valid "no move" signal.
-                return {};
-            }
-        }
-
-        // Zard: bishop-like movement, charge and attack in one turn if diagonal line of sight
-        if (this.enemyType === 'zard') {
-            // Check if diagonal line of sight exists
-            if (this.checkDiagonalLineOfSight(playerX, playerY, grid)) {
-                this.performBishopCharge(player, playerX, playerY, grid, isSimulation);
+                // If no charge move is possible, stay put
                 return null;
             }
         }
@@ -137,6 +126,29 @@ export class Enemy {
                     next = path[maxMoveIndex];
                 }
             }
+            // For lizardeaux, aggressively close distance by moving multiple tiles along straight orthogonal lines
+            if (this.enemyType === 'lizardeaux' && path.length > 2) {
+                // Find the maximum distance along a straight orthogonal line
+                const directions = [
+                    { x: 0, y: -1 }, // North
+                    { x: 0, y: 1 },  // South
+                    { x: -1, y: 0 }, // West
+                    { x: 1, y: 0 }   // East
+                ];
+                const dir = directions.find(d => d.x === next.x - this.x && d.y === next.y - this.y);
+                if (dir) {
+                    let maxMoveIndex = 1;
+                    for (let i = 2; i < path.length; i++) {
+                        const checkX = path[i].x - dir.x * (i - maxMoveIndex);
+                        const checkY = path[i].y - dir.y * (i - maxMoveIndex);
+                        if (checkX !== this.x || checkY !== this.y) break;
+                        if (!this.isWalkable(path[i].x, path[i].y, grid)) break;
+                        if (enemies.find(e => e.x === path[i].x && e.y === path[i].y)) break;
+                        maxMoveIndex = i;
+                    }
+                    next = path[maxMoveIndex];
+                }
+            }
             const newX = next.x;
             const newY = next.y;
 
@@ -185,13 +197,12 @@ export class Enemy {
                             }
                         }
 
-                        // Special knockback for lizardeaux ram attack
+                        // Special ram knockback for lizardeaux
                         if (this.enemyType === 'lizardeaux') {
                             // Calculate knockback direction (away from enemy)
                             const attackDx = newX - this.x;
                             const attackDy = newY - this.y;
                             if (attackDx !== 0 || attackDy !== 0) {
-                                // Normalize direction and move player back 1 tile
                                 const absDx = Math.abs(attackDx);
                                 const absDy = Math.abs(attackDy);
                                 let knockbackX = playerX;
@@ -292,6 +303,14 @@ export class Enemy {
                 { x: 1, y: -1 },  // Northeast
                 { x: -1, y: 1 },  // Southwest
                 { x: 1, y: 1 }    // Southeast
+            ];
+        } else if (this.enemyType === 'lizardeaux') {
+            // Lizardeaux: rook-like movement (orthogonal, any distance)
+            directions = [
+                { x: 0, y: -1 }, // North
+                { x: 0, y: 1 },  // South
+                { x: -1, y: 0 }, // West
+                { x: 1, y: 0 }   // East
             ];
         } else {
             // Regular lizard: only orthogonal movement (4 directions)
@@ -584,8 +603,8 @@ export class Enemy {
         }
 
         // Find adjacent tile next to player in the direction of charge
-        const adjX = playerX - direction.x;
-        const adjY = playerY - direction.y;
+        const adjX = Math.max(0, Math.min(GRID_SIZE - 1, playerX - direction.x));
+        const adjY = Math.max(0, Math.min(GRID_SIZE - 1, playerY - direction.y));
 
         // Check if that tile is walkable and not occupied by another enemy
         if (this.isWalkable(adjX, adjY, grid) &&
@@ -601,6 +620,7 @@ export class Enemy {
             { x: playerX, y: playerY - 1 }
         ];
         for (const pos of adjacents) {
+            if (pos.x < 0 || pos.x >= GRID_SIZE || pos.y < 0 || pos.y >= GRID_SIZE) continue;
             if (this.isWalkable(pos.x, pos.y, grid) &&
                 !enemies.find(e => e.x === pos.x && e.y === pos.y)) {
                 // Only allow if line of sight from current position to that tile
@@ -690,6 +710,35 @@ export class Enemy {
                 const y = this.y + i * stepYAlt;
                 if (!this.isWalkable(x, y, grid)) return false;
             }
+        }
+
+        return true;
+    }
+
+    // Helper for Lizardeaux: check orthogonal line of sight
+    checkOrthogonalLineOfSight(playerX, playerY, grid, enemies) {
+        const sameRow = this.y === playerY;
+        const sameCol = this.x === playerX;
+
+        if (!sameRow && !sameCol) return false; // Not in straight line
+
+        // Determine direction
+        let stepX = 0, stepY = 0;
+        if (sameRow) {
+            // Horizontal
+            stepX = playerX > this.x ? 1 : -1;
+        } else {
+            // Vertical
+            stepY = playerY > this.y ? 1 : -1;
+        }
+
+        // Check line of sight, including blocking by other enemies
+        const steps = sameRow ? Math.abs(playerX - this.x) : Math.abs(playerY - this.y);
+        for (let i = 1; i < steps; i++) {
+            const checkX = this.x + i * stepX;
+            const checkY = this.y + i * stepY;
+            if (!this.isWalkable(checkX, checkY, grid)) return false;
+            if (enemies.find(e => e.x === checkX && e.y === checkY)) return false;
         }
 
         return true;

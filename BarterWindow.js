@@ -84,6 +84,12 @@ export class BarterWindow {
         const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
         const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(foodType));
         if (index >= 0) {
+            // Check if inventory has space for water
+            if (this.game.player.inventory.length >= 6) {
+                this.game.uiManager.addMessageToLog('Inventory is full! Cannot complete trade.');
+                this.hideBarterWindow();
+                return;
+            }
             this.game.player.inventory.splice(index, 1);
             this.game.player.inventory.push({ type: 'water' });
             this.game.updatePlayerStats();
