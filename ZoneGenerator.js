@@ -93,9 +93,34 @@ export class ZoneGenerator {
                 // Place Felt near Crayn
                 this.grid[4][6] = TILE_TYPES.FELT;
 
-                // Place Forge in an open area
-                const forgePos = this.findOpenNpcSpawn(6);
-                if (forgePos) this.grid[forgePos.y][forgePos.x] = TILE_TYPES.FORGE;
+                // Helper to find a spawn location for Forge, 2 tiles away from Felt
+                const findForgeSpawn = () => {
+                    const feltX = 6;
+                    const feltY = 4;
+                    const distance = 2;
+                    const candidates = [];
+
+                    // Iterate over a square perimeter 2 tiles away from Felt
+                    for (let x = feltX - distance; x <= feltX + distance; x++) {
+                        for (let y = feltY - distance; y <= feltY + distance; y++) {
+                            // Check if it's on the perimeter of the 5x5 square
+                            if (Math.max(Math.abs(x - feltX), Math.abs(y - feltY)) === distance) {
+                                if (this.isTileFree(x, y)) {
+                                    candidates.push({ x, y });
+                                }
+                            }
+                        }
+                    }
+
+                    if (candidates.length > 0) {
+                        return candidates[Math.floor(Math.random() * candidates.length)];
+                    }
+                    return null; // Fallback if no valid spot is found
+                };
+                const forgePos = findForgeSpawn() || this.findOpenNpcSpawn(4); // Fallback to old method if needed
+                if (forgePos) {
+                    this.grid[forgePos.y][forgePos.x] = TILE_TYPES.FORGE;
+                }
 
                 // Place enemy statues on the back wall (y=1)
                 // Left side: 3 statues

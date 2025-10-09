@@ -200,8 +200,10 @@ export class Sign {
             currentMessageIndex: 0,
             messages: [
                 "I can move between tiles.",
-                "A good hammer can break more than just rocks.",
-                "They say the spear is a key... or maybe it's just a spear."
+                "I'm not in your way, am I?",
+                "There was so much food in here earlier. Yumm!",
+                "Did you get a chance to play with the horse icons in here a minute ago?",
+                "I always file my taxes as married. It's foolish not to.",
             ]
         }
     };

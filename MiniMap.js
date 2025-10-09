@@ -1,22 +1,131 @@
 export class MiniMap {
     constructor(game) {
         this.game = game;
+        this.isExpanded = false;
+        this.expandedCanvas = null;
+        this.expandedCtx = null;
+        this.panX = 0;
+        this.panY = 0;
+        this.lastX = 0;
+        this.lastY = 0;
+        this.isDragging = false;
     }
 
-    renderZoneMap() {
-        // Get actual canvas size from CSS (responsive)
-        const mapSize = Math.min(this.game.mapCanvas.width, this.game.mapCanvas.height);
-        // Calculate zone size for better visibility: aim for 8-9 zones visible with larger tiles
-        const zoneSize = Math.max(18, Math.min(28, Math.floor(mapSize / 8.5)));
+    setupEvents() {
+        const smallCanvas = document.getElementById('zoneMap');
+        const overlay = document.getElementById('expandedMapOverlay');
+        this.expandedCanvas = document.getElementById('expandedMapCanvas');
+        this.expandedCtx = this.expandedCanvas.getContext('2d');
+
+        // Expand on click/tap inside minimap
+        smallCanvas.addEventListener('click', () => this.expand());
+        smallCanvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.expand();
+        });
+
+        // Retract on click/tap outside expanded minimap
+        overlay.addEventListener('click', () => this.retract());
+        overlay.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.retract();
+        });
+
+        // Prevent retraction when clicking/tapping on the expanded minimap itself
+        this.expandedCanvas.addEventListener('click', (e) => e.stopPropagation());
+        this.expandedCanvas.addEventListener('touchstart', (e) => e.stopPropagation());
+
+        // Panning for expanded map
+        this.expandedCanvas.addEventListener('mousedown', (e) => {
+            this.isDragging = true;
+            this.lastX = e.clientX;
+            this.lastY = e.clientY;
+        });
+        this.expandedCanvas.addEventListener('mousemove', (e) => {
+            if (this.isDragging) {
+                // Invert pan direction for intuitive map movement
+                this.panX -= (this.lastX - e.clientX) / 90;
+                this.panY -= (this.lastY - e.clientY) / 90;
+                this.lastX = e.clientX;
+                this.lastY = e.clientY;
+                this.renderExpanded();
+            }
+        });
+        this.expandedCanvas.addEventListener('mouseup', () => {
+            this.isDragging = false;
+        });
+        this.expandedCanvas.addEventListener('mouseleave', () => {
+            this.isDragging = false;
+        });
+
+        // Touch panning
+        this.expandedCanvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                this.isDragging = true;
+                this.lastX = e.touches[0].clientX;
+                this.lastY = e.touches[0].clientY;
+            }
+            e.stopPropagation();
+        });
+        this.expandedCanvas.addEventListener('touchmove', (e) => {
+            if (this.isDragging && e.touches.length === 1) {
+                // Invert pan direction for intuitive map movement (match mouse)
+                this.panX -= (this.lastX - e.touches[0].clientX) / 90;
+                this.panY -= (this.lastY - e.touches[0].clientY) / 90;
+                this.lastX = e.touches[0].clientX;
+                this.lastY = e.touches[0].clientY;
+                this.renderExpanded();
+                e.preventDefault();
+            }
+        });
+        this.expandedCanvas.addEventListener('touchend', () => {
+            this.isDragging = false;
+        });
+    }
+
+    expand() {
+        if (this.isExpanded) return; // Already expanded
+        this.isExpanded = true;
+        this.panX = 0;
+        this.panY = 0;
+        const overlay = document.getElementById('expandedMapOverlay');
+        overlay.classList.add('show');
+        this.renderExpanded();
+    }
+
+    renderExpanded() {
+        // Ensure the canvas is a square and matches CSS size
+        const rect = this.expandedCanvas.getBoundingClientRect();
+        const size = Math.floor(Math.min(rect.width, rect.height));
+        this.expandedCanvas.width = size;
+        this.expandedCanvas.height = size;
+        this.renderZoneMap({ctx: this.expandedCtx, offsetX: this.panX, offsetY: this.panY, isExpanded: true, canvasSize: size});
+    }
+
+    retract() {
+        if (!this.isExpanded) return; // Not expanded
+        this.isExpanded = false;
+        const overlay = document.getElementById('expandedMapOverlay');
+        overlay.classList.remove('show');
+    }
+
+    renderZoneMap(params = {}) {
+        const { ctx = this.game.mapCtx, offsetX = 0, offsetY = 0, isExpanded = false, canvasSize = null } = params;
+
+        // Responsive square size
+        const mapSize = canvasSize || Math.min(ctx.canvas.width, ctx.canvas.height);
+        // More tiles visible in expanded mode
+        const visibleZoneCount = isExpanded ? 15 : 5.5;
+        const zoneSize = Math.max(isExpanded ? 30 : 20, Math.min(isExpanded ? 64 : 36, Math.floor(mapSize / visibleZoneCount)));
         const centerX = mapSize / 2;
         const centerY = mapSize / 2;
 
         // Clear the map with a parchment-like background
-        this.game.mapCtx.fillStyle = '#E6D3A3';  // Warm parchment tone
-        this.game.mapCtx.fillRect(0, 0, mapSize, mapSize);
+        ctx.fillStyle = '#E6D3A3';  // Warm parchment tone
+        ctx.fillRect(0, 0, mapSize, mapSize);
 
         // Calculate visible range around current zone
-        const range = 5; // Show 5 zones in each direction
+        const range = Math.floor(mapSize / zoneSize / 2) + 1; // Dynamically calculate range
         const currentZone = this.game.player.getCurrentZone();
 
         // Special case for Woodcutter's Club interior: show an axe icon instead of the map
@@ -27,20 +136,21 @@ export class MiniMap {
                 const iconSize = mapSize * 0.7; // Make it large
                 const iconX = (mapSize - iconSize) / 2;
                 const iconY = (mapSize - iconSize) / 2;
-                this.game.mapCtx.drawImage(axeImage, iconX, iconY, iconSize, iconSize);
+                ctx.drawImage(axeImage, iconX, iconY, iconSize, iconSize);
             } else {
                 // Fallback text if image isn't loaded
-                this.game.mapCtx.fillStyle = '#2F1B14';
-                this.game.mapCtx.font = 'bold 14px serif';
-                this.game.mapCtx.fillText("Woodcutter's Club", mapSize / 2, mapSize / 2);
+                ctx.fillStyle = '#2F1B14';
+                ctx.font = 'bold 14px serif';
+                ctx.fillText("Woodcutter's Club", mapSize / 2, mapSize / 2);
             }
             return; // Skip drawing the regular zone grid
         }
 
         for (let dy = -range; dy <= range; dy++) {
             for (let dx = -range; dx <= range; dx++) {
-                const zoneX = currentZone.x + dx;
-                const zoneY = currentZone.y + dy;
+                // Panning: offsetX/offsetY are in tile units
+                const zoneX = currentZone.x + dx - Math.round(offsetX);
+                const zoneY = currentZone.y + dy - Math.round(offsetY);
 
                 const mapX = centerX + dx * zoneSize - zoneSize / 2;
                 const mapY = centerY + dy * zoneSize - zoneSize / 2;
@@ -55,32 +165,34 @@ export class MiniMap {
                 }
 
                 // Draw zone square
-                this.game.mapCtx.fillStyle = color;
-                this.game.mapCtx.fillRect(mapX, mapY, zoneSize - 2, zoneSize - 2);
+                ctx.fillStyle = color;
+                ctx.fillRect(mapX, mapY, zoneSize - 2, zoneSize - 2);
 
                 // Draw border with aged ink color
-                this.game.mapCtx.strokeStyle = '#8B4513';  // Saddle brown for ink effect
-                this.game.mapCtx.lineWidth = 1;
-                this.game.mapCtx.strokeRect(mapX, mapY, zoneSize - 2, zoneSize - 2);
+                ctx.strokeStyle = '#8B4513';  // Saddle brown for ink effect
+                ctx.lineWidth = 1;
+                ctx.strokeRect(mapX, mapY, zoneSize - 2, zoneSize - 2);
 
-                // Draw coordinates for current zone
+                // Draw marked tile indicator (X)
+                if (this.game.player.isTileMarked && this.game.player.isTileMarked(zoneX, zoneY)) {
+                    ctx.fillStyle = '#8B0000'; // Dark red for the mark
+                    ctx.font = `bold ${zoneSize * 0.9}px serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('X', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
+                }
+
+                // Draw player icon (king symbol) for the current zone
                 if (zoneX === currentZone.x && zoneY === currentZone.y) {
-                    this.game.mapCtx.fillStyle = '#2F1B14';  // Dark brown for text
-                    this.game.mapCtx.font = 'bold 9px serif';  // Slightly larger and serif font
-                    this.game.mapCtx.textAlign = 'center';
-                    this.game.mapCtx.fillText(`${zoneX},${zoneY}`, mapX + zoneSize / 2, mapY + zoneSize / 2 + 3);
+                    ctx.fillStyle = '#2F1B14'; // Dark brown for the symbol
+                    // Make the font size relative to the zone tile size for good scaling
+                    ctx.font = `bold ${zoneSize * 0.8}px serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    // Draw the king symbol in the center of the tile
+                    ctx.fillText('♔', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
                 }
             }
         }
-
-        // Draw center crosshairs with aged ink color
-        this.game.mapCtx.strokeStyle = '#8B4513';  // Matching the border color
-        this.game.mapCtx.lineWidth = 2;  // Slightly thicker for visibility
-        this.game.mapCtx.beginPath();
-        this.game.mapCtx.moveTo(centerX - 6, centerY);
-        this.game.mapCtx.lineTo(centerX + 6, centerY);
-        this.game.mapCtx.moveTo(centerX, centerY - 6);
-        this.game.mapCtx.lineTo(centerX, centerY + 6);
-        this.game.mapCtx.stroke();
     }
 }

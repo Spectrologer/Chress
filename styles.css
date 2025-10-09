@@ -1,3 +1,47 @@
+/* Expanded Minimap Overlay Styles */
+#expandedMapOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    transition: opacity 0.3s;
+    opacity: 0;
+}
+#expandedMapOverlay.show {
+    display: flex;
+    opacity: 1;
+}
+.expanded-map-container {
+    background: #fffbe9;
+    border: 4px solid #e2cfa2;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), 0 0 0 8px rgba(255,255,255,0.12) inset;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 95vw;
+    max-height: 85vh;
+}
+#expandedMapCanvas {
+    aspect-ratio: 1 / 1;
+    width: 80vw;
+    max-width: 700px;
+    min-width: 240px;
+    height: auto;
+    background: #e6d3a3;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(139, 69, 19, 0.18);
+    cursor: grab;
+    display: block;
+    touch-action: none;
+}
 /* This is a mobile browser game meant to be played in portrait mode. All design considerations should adhere to this. */
 
 /* Local Fonts */

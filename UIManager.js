@@ -21,6 +21,7 @@ export class UIManager {
         this.statueInfoWindow = new StatueInfoWindow(game);
         this.playerStatsUI = new PlayerStatsUI(game);
         this.miniMap = new MiniMap(game);
+        this.miniMap.setupEvents(); // Set up minimap expansion events
     }
 
     setupMessageLogButton() {
