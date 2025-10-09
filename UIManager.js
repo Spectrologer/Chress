@@ -12,9 +12,14 @@ export class UIManager {
         this.messageLogOverlay = document.getElementById('messageLogOverlay');
         this.messageLogContent = document.getElementById('messageLogContent');
         this.closeMessageLogButton = document.getElementById('closeMessageLogButton');
+        this.statsPanelOverlay = document.getElementById('statsPanelOverlay');
+
+        // Setup stats panel close on outside click
+        this.setupStatsPanelHandlers();
 
         // UI state
         this.currentOverlayTimeout = null;
+        this.statsPanelOpen = false;
 
         // Sub-managers
         this.barterWindow = new BarterWindow(game);
@@ -273,6 +278,27 @@ export class UIManager {
         this.statueInfoWindow.setupStatueInfoHandlers();
     }
 
+    setupStatsPanelHandlers() {
+        if (this.statsPanelOverlay) {
+            // Close panel when clicking outside (on overlay background)
+            this.statsPanelOverlay.addEventListener('click', () => this.hideStatsPanel());
+            this.statsPanelOverlay.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.hideStatsPanel();
+            });
+
+            // Prevent closing when clicking inside the panel
+            const statsPanel = this.statsPanelOverlay.querySelector('.stats-panel');
+            if (statsPanel) {
+                statsPanel.addEventListener('click', (e) => e.stopPropagation());
+                statsPanel.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            }
+        }
+    }
+
     showBarterWindow(npcType) {
         this.barterWindow.showBarterWindow(npcType);
     }
@@ -291,6 +317,30 @@ export class UIManager {
 
     hideStatueInfoWindow() {
         this.statueInfoWindow.hideStatueInfoWindow();
+    }
+
+    showStatsPanel() {
+        if (this.statsPanelOverlay) {
+            // Update stats content
+            const statsContent = document.querySelector('.stats-main-content .stats-info p');
+            const enemiesCaptured = this.game.defeatedEnemies ? this.game.defeatedEnemies.size : 0;
+            const playerPoints = this.game.player.getPoints();
+            statsContent.innerHTML = `Enemies Captured: ${enemiesCaptured}<br>Accumulated Points: ${playerPoints}`;
+
+            this.statsPanelOverlay.classList.add('show');
+            this.statsPanelOpen = true;
+        }
+    }
+
+    hideStatsPanel() {
+        if (this.statsPanelOverlay) {
+            this.statsPanelOverlay.classList.remove('show');
+            this.statsPanelOpen = false;
+        }
+    }
+
+    isStatsPanelOpen() {
+        return this.statsPanelOpen;
     }
 
 

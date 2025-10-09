@@ -40,7 +40,8 @@ describe('CombatManager', () => {
       startBump: jest.fn(),
       id: 'enemy1',
       attack: 1,
-      justAttacked: false
+      justAttacked: false,
+      getPoints: jest.fn().mockReturnValue(1)
     };
 
     mockGame = {
@@ -145,6 +146,7 @@ describe('CombatManager', () => {
 
     expect(item.uses).toBe(2);
     expect(mockPlayer.setPosition).toHaveBeenCalledWith(3, 3);
+    expect(mockPlayer.addPoints).toHaveBeenCalledWith(1);
     expect(mockEnemy.takeDamage).toHaveBeenCalledWith(999);
     expect(mockGame.enemies.filter(e => e.id !== 'enemy1')).toHaveLength(0);
   });

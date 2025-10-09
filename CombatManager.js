@@ -59,7 +59,8 @@ export class CombatManager {
     }
 
     handleEnemyMovements() {
-        this.game.startEnemyTurns();
+        // Handle enemy movements after player actions
+        // This is a placeholder for now as the main enemy movement logic might be in game.js
     }
 
     checkCollisions() {
@@ -70,6 +71,7 @@ export class CombatManager {
             if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked && enemy.enemyType !== 'lizardy') {
 
                 this.game.player.takeDamage(enemy.attack);
+                this.game.player.addPoints(enemy.getPoints()); // Award points for defeating enemy
                 this.game.soundManager.playSound('attack');
 
                 // Remove from zone data to prevent respawn

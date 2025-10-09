@@ -21,6 +21,23 @@ export class BaseEnemy {
         this.smokeAnimations = [];
     }
 
+    getPoints() {
+        switch (this.enemyType) {
+            case 'lizardy':
+            case 'lizardo':
+                return 1;
+            case 'lizord':
+            case 'zard':
+                return 3;
+            case 'lizardeaux':
+                return 5;
+            case 'lazerd':
+                return 9;
+            default:
+                return 0;
+        }
+    }
+
     takeDamage(damage) {
         this.health -= damage;
         return this.health <= 0;

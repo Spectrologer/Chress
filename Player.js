@@ -12,6 +12,7 @@ export class Player {
         this.dead = false;
         this.sprite = 'SeparateAnim/Special2';
         this.health = 3;  // Player has 3 hearts
+        this.points = 0; // Accumulated points from defeating enemies
         this.attackAnimation = 0; // Frames remaining for attack animation
         this.actionAnimation = 0; // Frames for actions like chopping/breaking
         this.smokeAnimations = []; // Array of {x, y, frame} for smoke animations
@@ -355,6 +356,7 @@ export class Player {
     this.hunger = 50;
     this.inventory = [];
     this.health = 3;
+    this.points = 0;
     this.dead = false;
     this.sprite = 'SeparateAnim/Special2';
     this.visitedZones.clear();
@@ -441,6 +443,14 @@ export class Player {
         // Called when player moves to a new zone
         this.decreaseThirst();
         this.decreaseHunger();
+    }
+
+    getPoints() {
+        return this.points;
+    }
+
+    addPoints(points) {
+        this.points += points;
     }
 
 

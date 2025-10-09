@@ -86,7 +86,7 @@ export class InventoryManager {
         if (item.type === 'food') {
             // Add the actual food sprite image to inventory slot
             const foodImg = document.createElement('img');
-            foodImg.src = `Images/${item.foodType}`;
+            foodImg.src = `images/${item.foodType}`;
             foodImg.style.width = '100%';
             foodImg.style.height = '100%';
             foodImg.style.objectFit = 'contain';

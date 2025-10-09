@@ -73,8 +73,8 @@ export class Sign {
             name: 'Penne',
             portrait: 'Images/fauna/lionface.png',
             message: 'Give me meat!',
-            requiredItem: 'Food/meat',
-            requiredItemImg: 'Images/Food/meat/Meat.png',
+            requiredItem: 'food/meat',
+            requiredItemImg: 'images/food/meat/beaf.png',
             requiredItemName: 'Meat',
             receivedItemImg: 'Images/items/water.png',
             receivedItemName: 'Water'
@@ -83,8 +83,8 @@ export class Sign {
             name: 'Squig',
             portrait: 'Images/fauna/squigface.png',
             message: 'I\'m nuts for nuts!',
-            requiredItem: 'Food/nut',
-            requiredItemImg: 'Images/Food/nut/Nut.png',
+            requiredItem: 'food/veg',
+            requiredItemImg: 'images/food/veg/nut.png',
             requiredItemName: 'Nut',
             receivedItemImg: 'Images/items/water.png',
             receivedItemName: 'Water'

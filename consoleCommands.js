@@ -99,7 +99,7 @@ const consoleCommands = {
   spawnFoodMeat: function(game) {
     const pos = findSpawnPosition(game);
     if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'Food/meat/meat.png' };
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'food/meat/beaf.png' };
       console.log('Spawned meat at', pos);
     } else {
       console.log('No valid spawn position found');
@@ -109,7 +109,7 @@ const consoleCommands = {
   spawnFoodNut: function(game) {
     const pos = findSpawnPosition(game);
     if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'Food/nut/nut.png' };
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'food/veg/nut.png' };
       console.log('Spawned nut at', pos);
     } else {
       console.log('No valid spawn position found');

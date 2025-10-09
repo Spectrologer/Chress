@@ -1598,6 +1598,87 @@ h1 {
     image-rendering: crisp-edges;
 }
 
+/* Stats Panel Overlay */
+.stats-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stats-panel-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+.stats-panel {
+    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
+    border: 3px solid #e2cfa2;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
+    font-family: 'Cinzel', serif;
+    max-width: 90vw;
+    width: 400px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.stats-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid rgba(139, 69, 19, 0.2);
+    background: rgba(0,0,0,0.05);
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.stats-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stats-panel h2 {
+    color: #7a5c2e;
+    font-size: 2.2em;
+    font-weight: 900;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.stats-portrait-container {
+    width: 120px;
+    height: 120px;
+    background: url('images/ui/facesetbox.png') no-repeat center/contain;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stats-panel p {
+    color: #3A2418;
+    font-size: 1.4em;
+    margin: 5px 0 0 0;
+    flex-grow: 1;
+    text-align: left;
+    line-height: 1.4;
+}
+
 /* Statue Info Overlay */
 .statue-overlay {
     position: fixed;

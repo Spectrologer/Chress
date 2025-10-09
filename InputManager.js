@@ -170,6 +170,20 @@ export class InputManager {
         const gridCoords = this.screenToGridCoordinates(screenX, screenY);
         const playerPos = this.game.player.getPosition();
 
+        // If stats panel is open, close it on any tap
+        if (this.game.uiManager.isStatsPanelOpen()) {
+            this.game.uiManager.hideStatsPanel();
+            return;
+        }
+
+        // Check if tapped on player to open stats panel
+        // Only allow stats panel if not standing on an exit tile
+        const playerTile = this.game.grid[playerPos.y]?.[playerPos.x];
+        if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y && playerTile !== TILE_TYPES.EXIT) {
+            this.game.uiManager.showStatsPanel();
+            return;
+        }
+
         // Double tap detection
         const now = Date.now();
         const isDoubleTap = this.lastTapTime !== null && (now - this.lastTapTime) < 300 && this.lastTapX === gridCoords.x && this.lastTapY === gridCoords.y;

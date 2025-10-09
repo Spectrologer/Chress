@@ -35,7 +35,7 @@ describe('InventoryManager', () => {
       player: mockPlayer,
       grid: Array(9).fill().map(() => Array(9).fill(TILE_TYPES.FLOOR)),
       uiManager: mockUIManager,
-      availableFoodAssets: ['food/meat/Beaf.png'],
+      availableFoodAssets: ['food/meat/beaf.png'],
       specialZones: new Map(),
       hideOverlayMessage: jest.fn(),
       displayingMessageForSign: null,
@@ -67,7 +67,7 @@ describe('InventoryManager', () => {
   });
 
   test('getItemTooltipText returns correct text for food', () => {
-    const foodItem = { type: 'food', foodType: 'food/meat/Beaf.png' };
+    const foodItem = { type: 'food', foodType: 'food/meat/beaf.png' };
     expect(inventoryManager.getItemTooltipText(foodItem)).toBe('meat - Restores 10 hunger');
   });
 
@@ -87,7 +87,7 @@ describe('InventoryManager', () => {
   });
 
   test('useInventoryItem handles food consumption', () => {
-    const foodItem = { type: 'food', foodType: 'food/meat/Beaf.png' };
+    const foodItem = { type: 'food', foodType: 'food/meat/beaf.png' };
     mockPlayer.inventory = [foodItem];
 
     inventoryManager.useInventoryItem(foodItem, 0);
