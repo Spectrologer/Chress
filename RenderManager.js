@@ -282,14 +282,40 @@ export class RenderManager {
 
             const enemyImage = this.game.textureManager.getImage(enemyKey);
             if (enemyImage && enemyImage.complete) {
+                let pixelXBase, pixelYBase;
+
+                // If the enemy is moving (lift animation is active), interpolate its position for a slide effect.
+                if (enemy.liftFrames > 0 && enemy.lastX !== undefined && enemy.lastY !== undefined) {
+                    const progress = 1 - (enemy.liftFrames / 15); // Animation progress from 0 to 1
+                    pixelXBase = (enemy.lastX + (enemy.x - enemy.lastX) * progress) * TILE_SIZE + enemy.bumpOffsetX;
+                    pixelYBase = (enemy.lastY + (enemy.y - enemy.lastY) * progress) * TILE_SIZE + enemy.bumpOffsetY + enemy.liftOffsetY;
+                } else {
+                    pixelXBase = enemy.x * TILE_SIZE + enemy.bumpOffsetX;
+                    pixelYBase = enemy.y * TILE_SIZE + enemy.bumpOffsetY + enemy.liftOffsetY;
+                }
+
+                // For lazerd, draw it directly without scaling to avoid blurriness,
+                // unless it's doing a special animation (attack/move).
+                if (enemy.enemyType === 'lazerd' && scale === 1 && !flash && enemy.liftFrames === 0) {
+                    this.ctx.drawImage(
+                        enemyImage,
+                        pixelXBase,
+                        pixelYBase,
+                        TILE_SIZE,
+                        TILE_SIZE
+                    );
+                    continue; // Skip the rest of the logic for this enemy
+                }
+
                 this.ctx.save();
-                // Center scaling on enemy, clamp to prevent flying off screen
-                let pixelXBase = enemy.x * TILE_SIZE + enemy.bumpOffsetX;
-                let pixelYBase = enemy.y * TILE_SIZE + enemy.bumpOffsetY + enemy.liftOffsetY;
+
+                // Clamp coordinates to prevent drawing outside the canvas during animations
                 pixelXBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelXBase));
                 pixelYBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelYBase));
+
                 const cx = pixelXBase + TILE_SIZE / 2 + shakeX;
                 const cy = pixelYBase + TILE_SIZE / 2 + shakeY;
+
                 this.ctx.translate(cx, cy);
                 this.ctx.scale(scale, scale);
                 this.ctx.translate(-TILE_SIZE / 2, -TILE_SIZE / 2);

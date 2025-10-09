@@ -62,8 +62,8 @@ export class EnemySpecialActions {
                 }
                 return null; // All in one turn
             }
-            // If no charge move is possible, stay put
-            return null;
+            // If no charge move is possible (e.g., already adjacent), return false to allow other actions.
+            return false;
         }
         return false; // No line of sight
     }

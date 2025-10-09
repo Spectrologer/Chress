@@ -109,6 +109,22 @@ export const EnemyMovementMixin = {
         // Lizardeaux: charge adjacent and ram if orthogonal line of sight
         if (this.enemyType === 'lizardeaux') {
             const result = EnemySpecialActions.executeLizardeauxCharge(this, player, playerX, playerY, grid, enemies, isSimulation);
+            if (result === false) { // executeLizardeauxCharge returns false if no LoS or not a charge situation
+                // If not charging, check for a simple adjacent attack.
+                const dx = Math.abs(this.x - playerX);
+                const dy = Math.abs(this.y - playerY);
+                if (dx + dy === 1) { // Orthogonally adjacent
+                    if (!isSimulation) {
+                        player.takeDamage(this.attack);
+                        player.startBump(this.x - playerX, this.y - playerY);
+                        this.startBump(playerX - this.x, playerY - this.y);
+                        this.justAttacked = true;
+                        this.attackAnimation = 15;
+                        window.soundManager?.playSound('attack');
+                    }
+                    return null; // Attack is the move
+                }
+            }
             if (result !== false) return result;
         }
 
