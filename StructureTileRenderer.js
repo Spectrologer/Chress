@@ -232,4 +232,44 @@ export class StructureTileRenderer {
             ctx.fillText('🐸', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
+
+    renderCraynTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First draw the base tile
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the crayn image if loaded, otherwise use fallback
+        if (this.isImageLoaded('crayn')) {
+            ctx.drawImage(this.images['crayn'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.CRAYN];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#FFD700';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🦎', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2); // Placeholder lizard emoji for Crayn
+        }
+    }
+
+    renderFanTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First draw the base tile
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the fan image if loaded, otherwise use fallback
+        if (this.isImageLoaded('fan')) {
+            ctx.drawImage(this.images['fan'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.FAN];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#FFD700';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🙋', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2); // Placeholder emoji for Fan
+        }
+    }
 }

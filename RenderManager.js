@@ -6,6 +6,12 @@ export class RenderManager {
         this.game = game;
         this.ctx = game.ctx;
         this.textureManager = game.textureManager;
+
+        // Disable image smoothing for crisp pixel art
+        this.ctx.imageSmoothingEnabled = false;
+        this.ctx.webkitImageSmoothingEnabled = false; // For Chrome, Safari
+        this.ctx.mozImageSmoothingEnabled = false;    // For Firefox
+        this.ctx.msImageSmoothingEnabled = false;     // For IE
     }
 
     render() {

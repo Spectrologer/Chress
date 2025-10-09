@@ -1,3 +1,5 @@
+import { Sign } from './Sign.js';
+
 export class BarterWindow {
     constructor(game) {
         this.game = game;
@@ -28,29 +30,12 @@ export class BarterWindow {
     }
 
     showBarterWindow(npcType) {
-        let name, portrait, message, requiredItem, requiredItemImg, receivedItemImg, requiredItemName, receivedItemName;
-
-        if (npcType === 'lion') {
-            name = 'Penne';
-            portrait = 'Images/fauna/lionface.png';
-            message = 'Give me meat!';
-            requiredItem = 'Food/meat';
-            requiredItemImg = 'Images/Food/meat/Meat.png';
-            requiredItemName = 'Meat';
-            receivedItemImg = 'Images/items/water.png';
-            receivedItemName = 'Water';
-        } else if (npcType === 'squig') {
-            name = 'Squig';
-            portrait = 'Images/fauna/squigface.png';
-            message = 'I\'m nuts for nuts!';
-            requiredItem = 'Food/nut';
-            requiredItemImg = 'Images/Food/nut/Nut.png';
-            requiredItemName = 'Nut';
-            receivedItemImg = 'Images/items/water.png';
-            receivedItemName = 'Water';
-        } else {
-            return;
+        const npcData = Sign.getBarterNpcData(npcType);
+        if (!npcData) {
+            return; // No data for this NPC type
         }
+
+        const { name, portrait, message, requiredItem, requiredItemImg, receivedItemImg, requiredItemName, receivedItemName } = npcData;
 
         this.barterNPCName.textContent = name;
         this.barterNPCPortrait.src = portrait;
@@ -68,8 +53,7 @@ export class BarterWindow {
         }
 
         // Disable confirm button if player cannot trade
-        const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
-        const canTrade = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.startsWith(foodType));
+        const canTrade = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.startsWith(requiredItem));
         this.confirmBarterButton.disabled = !canTrade;
 
         this.currentNPCType = npcType;
@@ -81,8 +65,13 @@ export class BarterWindow {
     }
 
     confirmTrade() {
-        const foodType = this.currentNPCType === 'lion' ? 'Food/meat' : 'Food/nut';
-        const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(foodType));
+        const npcData = Sign.getBarterNpcData(this.currentNPCType);
+        if (!npcData) {
+            this.hideBarterWindow();
+            return;
+        }
+        const requiredItem = npcData.requiredItem;
+        const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(requiredItem));
         if (index >= 0) {
             // Check if inventory has space for water
             if (this.game.player.inventory.length >= 6) {

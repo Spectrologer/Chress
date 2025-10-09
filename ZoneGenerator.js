@@ -87,6 +87,12 @@ export class ZoneGenerator {
                 const portY = GRID_SIZE - 1; // Bottom edge
                 this.grid[portY][portX] = TILE_TYPES.PORT;
 
+                // Place Crayn in the center
+                this.grid[4][4] = TILE_TYPES.CRAYN;
+
+                // Place Fan near Crayn
+                this.grid[4][6] = TILE_TYPES.FAN;
+
                 // Place enemy statues on the back wall (y=1)
                 // Left side: 3 statues
                 this.grid[1][1] = TILE_TYPES.LIZARDY_STATUE;

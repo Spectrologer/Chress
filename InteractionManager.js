@@ -171,6 +171,44 @@ export class InteractionManager {
             return true; // Interaction attempted, completion status varies
         }
 
+        // Check if tapped on crayn for interaction
+        const craynAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.CRAYN;
+        if (craynAtPosition) {
+            // Check if player is adjacent to crayn (including diagonal, but excluding self)
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+            if (isAdjacent) {
+                const npcData = Sign.getDialogueNpcData('crayn');
+                if (npcData) {
+                    const randomMessage = npcData.messages[Math.floor(Math.random() * npcData.messages.length)];
+                    this.game.uiManager.showOverlayMessage(`<span class="character-name">${npcData.name}</span><br>${randomMessage}`, npcData.portrait);
+                }
+            } else {
+                // Not adjacent, perhaps show message?
+            }
+            return true; // Interaction attempted
+        }
+
+        // Check if tapped on fan for interaction
+        const fanAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FAN;
+        if (fanAtPosition) {
+            // Check if player is adjacent to fan (including diagonal, but excluding self)
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+            if (isAdjacent) {
+                const npcData = Sign.getDialogueNpcData('fan');
+                if (npcData) {
+                    const randomMessage = npcData.messages[Math.floor(Math.random() * npcData.messages.length)];
+                    this.game.uiManager.showOverlayMessage(`<span class="character-name">${npcData.name}</span><br>${randomMessage}`, npcData.portrait);
+                }
+            } else {
+                // Not adjacent, perhaps show message?
+            }
+            return true; // Interaction attempted
+        }
+
         // Check if tapped on sign for interaction
         const signTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
         if (signTile && typeof signTile === 'object' && signTile.type === TILE_TYPES.SIGN) {
@@ -437,6 +475,28 @@ export class InteractionManager {
         const squigAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.SQUIG;
         if (squigAtPosition) {
             this.game.uiManager.showBarterWindow('squig');
+            return;
+        }
+
+        // Check if crayn
+        const craynAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.CRAYN;
+        if (craynAtPosition) {
+            const npcData = Sign.getDialogueNpcData('crayn');
+            if (npcData) {
+                const randomMessage = npcData.messages[Math.floor(Math.random() * npcData.messages.length)];
+                this.game.uiManager.showOverlayMessage(`<span class="character-name">${npcData.name}</span><br>${randomMessage}`, npcData.portrait);
+            }
+            return;
+        }
+
+        // Check if fan
+        const fanAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FAN;
+        if (fanAtPosition) {
+            const npcData = Sign.getDialogueNpcData('fan');
+            if (npcData) {
+                const randomMessage = npcData.messages[Math.floor(Math.random() * npcData.messages.length)];
+                this.game.uiManager.showOverlayMessage(`<span class="character-name">${npcData.name}</span><br>${randomMessage}`, npcData.portrait);
+            }
             return;
         }
 

@@ -42,6 +42,55 @@ export class Sign {
         ]
     };
 
+    // Statue dialogue content
+    static statueData = {
+        lizardy: {
+            message: 'Moves <strong>orthogonally</strong> (4-way) and attacks adjacent tiles.<br><br><em>Represents the foundation of enemy behavior.</em>'
+        },
+        lizardo: {
+            message: 'Moves <strong>orthogonally and diagonally</strong> (8-way).<br><br><em>Its complex movement indicates aggressive tendencies.</em>'
+        },
+        lizardeaux: {
+            message: '<strong>Charges</strong> in straight lines to ram and attack players from any distance.<br><br><em>A powerful linear combatant.</em>'
+        },
+        zard: {
+            message: 'Moves <strong>diagonally</strong> like a bishop and charges to attack from a distance.<br><br><em>Specializes in ranged diagonal assaults.</em>'
+        },
+        lazerd: {
+            message: 'Moves <strong>orthogonally and diagonally</strong> like a queen and charges to attack.<br><br><em>A master of all directional movement.</em>'
+        },
+        lizord: {
+            message: 'Moves in <strong>L-shapes</strong> like a knight and uses a unique bump attack to displace players.<br><br><em>Creates strategic positional advantages.</em>'
+        },
+        default: {
+            message: 'An ancient statue depicting a mysterious creature from the wilderness.'
+        }
+    };
+
+    // Barter dialogue content
+    static barterNpcData = {
+        lion: {
+            name: 'Penne',
+            portrait: 'Images/fauna/lionface.png',
+            message: 'Give me meat!',
+            requiredItem: 'Food/meat',
+            requiredItemImg: 'Images/Food/meat/Meat.png',
+            requiredItemName: 'Meat',
+            receivedItemImg: 'Images/items/water.png',
+            receivedItemName: 'Water'
+        },
+        squig: {
+            name: 'Squig',
+            portrait: 'Images/fauna/squigface.png',
+            message: 'I\'m nuts for nuts!',
+            requiredItem: 'Food/nut',
+            requiredItemImg: 'Images/Food/nut/Nut.png',
+            requiredItemName: 'Nut',
+            receivedItemImg: 'Images/items/water.png',
+            receivedItemName: 'Water'
+        }
+    };
+
     static getProceduralMessage(zoneX, zoneY, usedMessagesSet) {
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
         let area = 'wilds'; // Default to wilds as it's the only level with procedural notes.
@@ -65,6 +114,14 @@ export class Sign {
     static getCanyonMessage() {
         const messages = Sign.messageSets.canyon;
         return messages[Math.floor(Math.random() * messages.length)];
+    }
+
+    static getStatueData(statueType) {
+        return Sign.statueData[statueType] || Sign.statueData.default;
+    }
+
+    static getBarterNpcData(npcType) {
+        return Sign.barterNpcData[npcType];
     }
 
     // Handle click interaction (toggle message display)
@@ -103,5 +160,38 @@ export class Sign {
             gameInstance.hideOverlayMessage();
             gameInstance.displayingMessageForSign = null;
         }
+    }
+
+    // Dialogue NPC content
+    static dialogueNpcData = {
+        crayn: {
+            name: 'Crayn',
+            portrait: 'Images/fauna/craynface.png',
+            messages: [
+                "Placeholder message 1 for Crayn.",
+                "Placeholder message 2 for Crayn.",
+                "Placeholder message 3 for Crayn.",
+                "Placeholder message 4 for Crayn.",
+                "Spears can be used to get past obstacles.",
+                "Placeholder message 6 for Crayn.",
+                "Placeholder message 7 for Crayn.",
+                "Placeholder message 8 for Crayn.",
+                "Placeholder message 9 for Crayn.",
+                "Placeholder message 10 for Crayn."
+            ]
+        },
+        fan: {
+            name: 'Fan',
+            portrait: 'Images/fauna/fanface.png',
+            messages: [
+                "Placeholder message 1 for Fan.",
+                "Placeholder message 2 for Fan.",
+                "Placeholder message 3 for Fan."
+            ]
+        }
+    };
+
+    static getDialogueNpcData(npcType) {
+        return Sign.dialogueNpcData[npcType];
     }
 }

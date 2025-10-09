@@ -1,26 +1,4 @@
-const STATUE_DATA = {
-    lizardy: {
-        message: 'Moves <strong>orthogonally</strong> (4-way) and attacks adjacent tiles.<br><br><em>Represents the foundation of enemy behavior.</em>'
-    },
-    lizardo: {
-        message: 'Moves <strong>orthogonally and diagonally</strong> (8-way).<br><br><em>Its complex movement indicates aggressive tendencies.</em>'
-    },
-    lizardeaux: {
-        message: '<strong>Charges</strong> in straight lines to ram and attack players from any distance.<br><br><em>A powerful linear combatant.</em>'
-    },
-    zard: {
-        message: 'Moves <strong>diagonally</strong> like a bishop and charges to attack from a distance.<br><br><em>Specializes in ranged diagonal assaults.</em>'
-    },
-    lazerd: {
-        message: 'Moves <strong>orthogonally and diagonally</strong> like a queen and charges to attack.<br><br><em>A master of all directional movement.</em>'
-    },
-    lizord: {
-        message: 'Moves in <strong>L-shapes</strong> like a knight and uses a unique bump attack to displace players.<br><br><em>Creates strategic positional advantages.</em>'
-    },
-    default: {
-        message: 'An ancient statue depicting a mysterious creature from the wilderness.'
-    }
-};
+import { Sign } from './Sign.js';
 
 export class StatueInfoWindow {
     constructor(game) {
@@ -56,7 +34,7 @@ export class StatueInfoWindow {
         }
 
         const enemyType = statueNpcType.substring(7); // Remove 'statue_' prefix
-        const statueDetails = STATUE_DATA[enemyType] || STATUE_DATA.default;
+        const statueDetails = Sign.getStatueData(enemyType);
         const name = enemyType.charAt(0).toUpperCase() + enemyType.slice(1) + ' Statue';
         const portrait = `images/fauna/${enemyType}.png`; // Use regular enemy sprites
         const message = statueDetails.message;

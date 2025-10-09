@@ -42,7 +42,9 @@ export const TILE_TYPES = {
     LIZARDEAUX_STATUE: 32,
     ZARD_STATUE: 33,
     LAZERD_STATUE: 34,
-    LIZORD_STATUE: 35
+    LIZORD_STATUE: 35,
+    CRAYN: 36,
+    FAN: 37
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -82,7 +84,9 @@ export const TILE_COLORS = {
     [TILE_TYPES.LIZARDEAUX_STATUE]: '#A0A0A0',
     [TILE_TYPES.ZARD_STATUE]: '#A0A0A0',
     [TILE_TYPES.LAZERD_STATUE]: '#A0A0A0',
-    [TILE_TYPES.LIZORD_STATUE]: '#A0A0A0'
+    [TILE_TYPES.LIZORD_STATUE]: '#A0A0A0',
+    [TILE_TYPES.CRAYN]: '#FFD700', // Gold for Crayn
+    [TILE_TYPES.FAN]: '#FFD700' // Gold for Fan
 };
 
 // Direction constants for exits and movements
@@ -124,6 +128,8 @@ export const IMAGE_ASSETS = [
     'doodads/deadtree.png',
     'fauna/lion.png',
     'fauna/squig.png',
+    'fauna/crayn.png',
+    'fauna/fan.png',
     'fauna/zard.png',
     'floors/frontier/desert.png',
     'flora/succulent.png',
