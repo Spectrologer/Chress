@@ -61,23 +61,11 @@ export class EnemyGenerator {
     addRandomEnemy(zoneLevel, zoneX, zoneY) {
         const maxWeight = MAX_WEIGHT_PER_LEVEL[zoneLevel] || 12;
         let currentWeight = 0;
-        let enemyCount = 1; // Default for home
-
-        if (zoneLevel === 2) {
-            // Woods: 1-2 lizards
-            enemyCount = Math.floor(Math.random() * 2) + 1;
-        } else if (zoneLevel === 3) {
-            // Wilds: 1-3 lizards
-            enemyCount = Math.floor(Math.random() * 3) + 1;
-        } else if (zoneLevel === 4) {
-            // Frontier: 1-4 lizards (including lizardeaux)
-            enemyCount = Math.floor(Math.random() * 4) + 1;
-        }
 
         let localId = 0; // Unique per zone
 
         let spawnAttempts = 0;
-        while (spawnAttempts < enemyCount && currentWeight < maxWeight) { // Attempt to place up to enemyCount enemies, respecting weight limit
+        while (currentWeight < maxWeight) { // Continue spawning while under weight limit
             let enemyPlaced = false;
             // Try to place the enemy in a valid location (max 50 attempts per enemy type selection)
             for (let attempts = 0; attempts < 50; attempts++) {

@@ -49,19 +49,13 @@ export class StructureGenerator {
     }
 
     addSign(message, zoneX, zoneY) {
-        // Special case for home zone (0,0) to place sign at a fixed location
+        // Special case for home zone (0,0) to place sign at specific position
         if (zoneX === 0 && zoneY === 0) {
-            const houseStartX = 3;
-            const houseStartY = 3;
-            const portX = houseStartX + 1; // PORT center x = 4
-            const signX = portX - 1; // 1 tile to the left of the PORT
-            const signY = houseStartY + 3; // PORT at houseStartY + 2 = 5, so one tile bottom = 6
-            // Force placement by clearing the tile first if necessary
-            if (this.grid[signY][signX] !== TILE_TYPES.PORT && this.grid[signY][signX] !== TILE_TYPES.HOUSE) {
-                this.grid[signY][signX] = { type: TILE_TYPES.SIGN, message: message };
-                return; // Placed successfully
-            }
-            // Fallback to random placement if the preferred spot is occupied by house or port
+            const signX = 2;
+            const signY = 5;
+            this.grid[signY][signX] = { type: TILE_TYPES.SIGN, message: message };
+            logger.log(`WOODCUTTERS sign placed at tile ${signX},${signY} in zone (0,0)`);
+            return; // Placed successfully
         }
 
         // Try to place the sign in a valid location (max 50 attempts)
@@ -167,19 +161,26 @@ export class StructureGenerator {
         logger.log('[Note Debug] addSpecificNote:', { area, messageIndex, message });
         if (Sign.spawnedMessages.has(message)) return;
 
-        if (this.checkSignExists()) return;
-
         // Try to place the note in a valid location (max 50 attempts)
+        let x, y;
+        if (zoneX === 0 && zoneY === 0) {
+            // Fixed location for home zone, at tile 3,4
+            x = 3;
+            y = 4;
+            // Override any tile here to place the sign
+            this.grid[y][x] = {
+                type: TILE_TYPES.SIGN,
+                message: message
+            };
+            Sign.spawnedMessages.add(message);
+            logger.log(`Home note sign placed at tile 3,4 in zone (0,0)`);
+            return;
+        }
+
+        // For other zones, use random placement
         for (let attempts = 0; attempts < 50; attempts++) {
-            let x, y;
-            if (zoneX === 0 && zoneY === 0) {
-                // Fixed location for home zone second note
-                x = 1;
-                y = 8;
-            } else {
-                x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-                y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            }
+            x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
 
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {

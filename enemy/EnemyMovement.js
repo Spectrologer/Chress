@@ -5,7 +5,7 @@ import { EnemyLineOfSight } from './EnemyLineOfSight.js';
 import { EnemySpecialActions } from './EnemySpecialActions.js';
 
 export const EnemyMovementMixin = {
-    planMoveTowards(player, grid, enemies, playerPos, isSimulation = false) {
+    planMoveTowards(player, grid, enemies, playerPos, isSimulation = false, game = null) {
         const playerX = playerPos.x;
         const playerY = playerPos.y;
 
@@ -236,8 +236,43 @@ export const EnemyMovementMixin = {
                                 this.attackAnimation = 15;
                                 window.soundManager?.playSound('attack');
                                 // Move to where player was
+                                if (game) {
+                                    this.lastX = this.x;
+                                    this.lastY = this.y;
+                                }
                                 this.x = newX;
                                 this.y = newY;
+                                if (game && this.enemyType === 'lizord' && (this.lastX !== this.x || this.lastY !== this.y)) {
+                                    const dx = this.x - this.lastX;
+                                    const dy = this.y - this.lastY;
+                                    let midX, midY;
+                                    if (dx === 0 || dy === 0) {
+                                        // Straight move, midpoint
+                                        midX = (this.lastX + this.x) / 2;
+                                        midY = (this.lastY + this.y) / 2;
+                                    } else {
+                                        // Diagonal move, L shape
+                                        if (Math.abs(dx) > Math.abs(dy)) {
+                                            // Horizontal dominant: move horizontal first
+                                            midX = this.x;
+                                            midY = this.lastY;
+                                        } else if (Math.abs(dy) > Math.abs(dx)) {
+                                            // Vertical dominant: move vertical first
+                                            midX = this.lastX;
+                                            midY = this.y;
+                                        } else {
+                                            // Equal (45 degree), arbitrary choice
+                                            midX = this.x;
+                                            midY = this.lastY;
+                                        }
+                                    }
+                                    game.horseChargeAnimations.push({
+                                        startPos: { x: this.lastX, y: this.lastY },
+                                        midPos: { x: midX, y: midY },
+                                        endPos: { x: this.x, y: this.y },
+                                        frame: 20
+                                    });
+                                }
                             }
                         } else {
                             // Enemy tries to move onto player - register attack

@@ -4,6 +4,8 @@ export class BaseEnemy {
     constructor(data) {
         this.x = data.x;
         this.y = data.y;
+        this.lastX = this.x;
+        this.lastY = this.y;
         this.enemyType = data.enemyType || 'lizard';
         this.id = data.id;
         this.health = 1;

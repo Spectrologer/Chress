@@ -158,7 +158,7 @@ export class ConnectionManager {
             // Force an exit in the first available direction
             const direction = availableDirections[0];
             const validRange = GRID_SIZE - 6;
-            let basePosition = ((zoneX * 73 + zoneY * 97 + Math.random() * 31) % validRange) + 3;
+            let basePosition = ((zoneX * 73 + zoneY * 97 + Math.floor(Math.random() * 31)) % validRange) + 3;
 
             // Find a position not adjacent to existing exits on the same border (only if multiple exist)
             if (zoneLevel === 1 && availableDirections.length > 1) { // Only for level 1 to avoid crowding

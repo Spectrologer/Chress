@@ -182,7 +182,7 @@ export class ZoneGenerator {
         // Special handling for the starting zone (0,0)
         if (isHomeZone) {
             structureGenerator.addHouse(zoneX, zoneY);
-            structureGenerator.addSign("WOODCUTTERS<br>CLUB");
+            structureGenerator.addSign("WOODCUTTERS<br>CLUB", zoneX, zoneY);
         }
 
         // Add unique structures based on zone level
@@ -313,17 +313,26 @@ export class ZoneGenerator {
         const connections = zoneConnections.get(zoneKey);
 
         if (connections) {
-            // Apply exits based on pre-generated connections
-            if (connections.north !== null) {
+            // Ensure grid rows are initialized (safety check)
+            if (!Array.isArray(this.grid[0])) {
+                for (let y = 0; y < GRID_SIZE; y++) {
+                    if (!Array.isArray(this.grid[y])) {
+                        this.grid[y] = [];
+                    }
+                }
+            }
+
+            // Apply exits based on pre-generated connections with bounds checking
+            if (connections.north !== null && connections.north >= 0 && connections.north < GRID_SIZE) {
                 this.grid[0][connections.north] = TILE_TYPES.EXIT;
             }
-            if (connections.south !== null) {
+            if (connections.south !== null && connections.south >= 0 && connections.south < GRID_SIZE) {
                 this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.EXIT;
             }
-            if (connections.west !== null) {
+            if (connections.west !== null && connections.west >= 0 && connections.west < GRID_SIZE) {
                 this.grid[connections.west][0] = TILE_TYPES.EXIT;
             }
-            if (connections.east !== null) {
+            if (connections.east !== null && connections.east >= 0 && connections.east < GRID_SIZE) {
                 this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.EXIT;
             }
 

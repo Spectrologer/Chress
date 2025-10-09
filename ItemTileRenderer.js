@@ -116,12 +116,12 @@ export class ItemTileRenderer {
             let scaledWidth, scaledHeight;
             if (aspectRatio > 1) {
                 // Image is wider than tall
-                scaledWidth = TILE_SIZE;
-                scaledHeight = TILE_SIZE / aspectRatio;
+                scaledWidth = TILE_SIZE * 0.7;
+                scaledHeight = (TILE_SIZE * 0.7) / aspectRatio;
             } else {
                 // Image is taller than wide (or square)
-                scaledHeight = TILE_SIZE;
-                scaledWidth = TILE_SIZE * aspectRatio;
+                scaledHeight = TILE_SIZE * 0.7;
+                scaledWidth = (TILE_SIZE * 0.7) * aspectRatio;
             }
 
             // Center the image in the tile
@@ -158,7 +158,11 @@ export class ItemTileRenderer {
 
         // Try to draw the heart image if loaded, otherwise use fallback
         if (this.isImageLoaded('heart')) {
-            ctx.drawImage(this.images.heart, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            // Scale heart to 70% to make it slightly smaller
+            const scaledSize = TILE_SIZE * 0.7;
+            const offsetX = (TILE_SIZE - scaledSize) / 2;
+            const offsetY = (TILE_SIZE - scaledSize) / 2;
+            ctx.drawImage(this.images.heart, pixelX + offsetX, pixelY + offsetY, scaledSize, scaledSize);
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.HEART], '💖');
         }
@@ -170,7 +174,32 @@ export class ItemTileRenderer {
 
         // Try to draw the note image if loaded, otherwise use fallback
         if (this.isImageLoaded('note')) {
-            ctx.drawImage(this.images.note, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            // Scale note to fit within tile while maintaining aspect ratio, 70% size
+            const noteImage = this.images.note;
+            const aspectRatio = noteImage.width / noteImage.height;
+
+            let scaledWidth, scaledHeight;
+            if (aspectRatio > 1) {
+                // Image is wider than tall
+                scaledWidth = TILE_SIZE * 0.7;
+                scaledHeight = (TILE_SIZE * 0.7) / aspectRatio;
+            } else {
+                // Image is taller than wide (or square)
+                scaledHeight = TILE_SIZE * 0.7;
+                scaledWidth = (TILE_SIZE * 0.7) * aspectRatio;
+            }
+
+            // Center the image in the tile
+            const offsetX = (TILE_SIZE - scaledWidth) / 2;
+            const offsetY = (TILE_SIZE - scaledHeight) / 2;
+
+            ctx.drawImage(
+                noteImage,
+                pixelX + offsetX,
+                pixelY + offsetY,
+                scaledWidth,
+                scaledHeight
+            );
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.NOTE], '📄', 24);
         }

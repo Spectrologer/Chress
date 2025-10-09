@@ -11,7 +11,7 @@ export class CombatManager {
 
         // Phase 1: Plan moves
         for (let enemy of this.game.enemies) {
-            const move = enemy.planMoveTowards(this.game.player, this.game.grid, this.game.enemies, playerPos);
+            const move = enemy.planMoveTowards(this.game.player, this.game.grid, this.game.enemies, playerPos, false, this.game);
             if (move) {
                 const key = `${move.x},${move.y}`;
                 // Only add if no other enemy is planning this tile
@@ -25,9 +25,43 @@ export class CombatManager {
         // Phase 2: Apply valid moves
         for (let [key, enemy] of plannedMoves) {
             const move = key.split(',').map(Number);
+            enemy.lastX = enemy.x;
+            enemy.lastY = enemy.y;
             enemy.x = move[0];
             enemy.y = move[1];
             enemy.liftFrames = 15; // Start lift animation
+            // Add horse charge animation for lizord when it moves
+            if (enemy.enemyType === 'lizord' && (enemy.lastX !== enemy.x || enemy.lastY !== enemy.y)) {
+                const dx = enemy.x - enemy.lastX;
+                const dy = enemy.y - enemy.lastY;
+                let midX, midY;
+                if (dx === 0 || dy === 0) {
+                    // Straight move, midpoint
+                    midX = (enemy.lastX + enemy.x) / 2;
+                    midY = (enemy.lastY + enemy.y) / 2;
+                } else {
+                    // Diagonal move, L shape
+                    if (Math.abs(dx) > Math.abs(dy)) {
+                        // Horizontal dominant: move horizontal first
+                        midX = enemy.x;
+                        midY = enemy.lastY;
+                    } else if (Math.abs(dy) > Math.abs(dx)) {
+                        // Vertical dominant: move vertical first
+                        midX = enemy.lastX;
+                        midY = enemy.y;
+                    } else {
+                        // Equal (45 degree), arbitrary choice
+                        midX = enemy.x;
+                        midY = enemy.lastY;
+                    }
+                }
+                this.game.horseChargeAnimations.push({
+                    startPos: { x: enemy.lastX, y: enemy.lastY },
+                    midPos: { x: midX, y: midY },
+                    endPos: { x: enemy.x, y: enemy.y },
+                    frame: 20
+                });
+            }
         }
     }
 

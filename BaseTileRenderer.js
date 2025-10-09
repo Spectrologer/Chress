@@ -217,7 +217,11 @@ export class BaseTileRenderer {
 
         // Try to draw the water image if loaded, otherwise use fallback
         if (this.isImageLoaded('water')) {
-            ctx.drawImage(this.images.water, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            // Scale water to 70% to make it slightly smaller
+            const scaledSize = TILE_SIZE * 0.7;
+            const offsetX = (TILE_SIZE - scaledSize) / 2;
+            const offsetY = (TILE_SIZE - scaledSize) / 2;
+            ctx.drawImage(this.images.water, pixelX + offsetX, pixelY + offsetY, scaledSize, scaledSize);
         } else {
             // Fallback to colored square with emoji
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.WATER];

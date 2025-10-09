@@ -153,7 +153,7 @@ body {
     gap: 2px;
 }
 .player-name {
-    font-family: 'Cinzel', serif;
+    font-family: 'MedievalSharp', serif;
     font-size: 2em;
     font-weight: 700;
     color: #7a5c2e;
@@ -243,7 +243,7 @@ body {
 }
 
 .toggle-label { /* New style for the text label */
-    font-family: 'Cinzel', serif;
+    font-family: 'MedievalSharp', serif;
     font-size: 1.1em;
     font-weight: bold;
     color: #7a5c2e;
@@ -320,7 +320,7 @@ body {
 }
 
 .character-name {
-    font-family: 'Cinzel', serif;
+    font-family: 'MedievalSharp', serif;
     font-weight: 900; /* Bolder */
     font-size: 1em;
     color: #3A2418; /* Darker, richer brown */
@@ -492,7 +492,21 @@ body {
 
 .inventory-slot.item-water {
     background-image: url('Images/items/water.png'), url('Images/ui/cell.png');
-    background-size: contain, contain;
+    background-size: 70%, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
+}
+
+.inventory-slot.item-note {
+    background-image: url('Images/items/note.png'), url('Images/ui/cell.png');
+    background-size: 50%, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
+}
+
+.inventory-slot.item-heart {
+    background-image: url('Images/items/heart.png'), url('Images/ui/cell.png');
+    background-size: 70%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
@@ -538,7 +552,7 @@ body {
 
 .inventory-slot.item-note {
     background-image: url('Images/items/note.png'), url('Images/ui/cell.png');
-    background-size: contain, contain;
+    background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
@@ -562,7 +576,7 @@ body {
     width: 24px;
     text-align: center;
     font-size: 1.5em;
-    font-family: 'Cinzel', serif;
+    font-family: 'MedievalSharp', serif;
     font-weight: 700;
 }
 
