@@ -11,8 +11,8 @@ const ENEMY_WEIGHTS = {
 };
 
 const MAX_WEIGHT_PER_LEVEL = {
-    1: 3,
-    2: 6,
+    1: 7,
+    2: 7,
     3: 9,
     4: 12
 };

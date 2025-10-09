@@ -543,6 +543,11 @@ body {
     background-position: center, center;
 }
 
+.inventory-slot.item-disabled {
+    opacity: 0.5;
+    filter: grayscale(50%);
+}
+
 /* Redesigned Stat Bars */
 .stat-bar {
     display: flex;

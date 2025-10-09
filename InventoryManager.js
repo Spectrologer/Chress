@@ -51,6 +51,7 @@ export class InventoryManager {
 
     // Get tooltip text for an item
     getItemTooltipText(item) {
+        let disabledText = item.disabled ? ' (DISABLED)' : '';
         switch (item.type) {
             case 'food':
                 const foodName = item.foodType.split('/')[1] || item.foodType;
@@ -62,9 +63,9 @@ export class InventoryManager {
             case 'hammer':
                 return 'Hammer - Breaks rocks to create pathways';
             case 'bishop_spear':
-                return 'Bishop Spear - Charge diagonally towards enemies, has ' + item.uses + ' charges';
+                return `Bishop Spear${disabledText} - Charge diagonally towards enemies, has ${item.uses} charges`;
             case 'horse_icon':
-                return 'Horse Icon - Charge in L-shape (knight moves) towards enemies, has ' + item.uses + ' charges';
+                return `Horse Icon${disabledText} - Charge in L-shape (knight moves) towards enemies, has ${item.uses} charges`;
             case 'bomb':
                 return 'Bomb - Blasts through walls to create exits';
             case 'heart':
@@ -78,6 +79,10 @@ export class InventoryManager {
 
     // Add visual elements to inventory slot
     addItemVisuals(slot, item) {
+        if (item.disabled) {
+            slot.classList.add('item-disabled');
+        }
+
         if (item.type === 'food') {
             // Add the actual food sprite image to inventory slot
             const foodImg = document.createElement('img');
@@ -86,6 +91,7 @@ export class InventoryManager {
             foodImg.style.height = '100%';
             foodImg.style.objectFit = 'contain';
             foodImg.style.imageRendering = 'pixelated';
+            foodImg.style.opacity = item.disabled ? '0.5' : '1';
             slot.appendChild(foodImg);
         } else if (item.type === 'water') {
             slot.classList.add('item-water');
@@ -103,7 +109,7 @@ export class InventoryManager {
             usesText.style.right = '5px';
             usesText.style.fontSize = '1.8em';
             usesText.style.fontWeight = 'bold';
-            usesText.style.color = '#000000';
+            usesText.style.color = item.disabled ? '#666666' : '#000000';
             usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
             usesText.textContent = `x${item.uses}`;
             slot.appendChild(usesText);
@@ -125,6 +131,7 @@ export class InventoryManager {
             horseImg.style.height = '100%';
             horseImg.style.objectFit = 'contain';
             horseImg.style.imageRendering = 'pixelated';
+            horseImg.style.opacity = item.disabled ? '0.5' : '1';
             container.appendChild(horseImg);
 
             // Add uses indicator
@@ -134,7 +141,7 @@ export class InventoryManager {
             usesText.style.right = '5px';
             usesText.style.fontSize = '1.8em';
             usesText.style.fontWeight = 'bold';
-            usesText.style.color = '#000000';
+            usesText.style.color = item.disabled ? '#666666' : '#000000';
             usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
             usesText.textContent = `x${item.uses}`;
             container.appendChild(usesText);
@@ -178,43 +185,101 @@ export class InventoryManager {
         };
 
         // Desktop hover events
-        slot.addEventListener('mouseover', () => {
-            if (!longPress) {
-                showTooltip(slot, tooltipText);
-            }
-        });
-        slot.addEventListener('mouseout', () => {
-            if (!longPress) {
-                hideTooltip();
-            }
-        });
-
-        // Mobile touch events for long press
-        slot.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevent click
-            longPress = false;
-            longPressTimeout = setTimeout(() => {
-                longPress = true;
-                showTooltip();
-                // Auto-hide after 2 seconds
-                setTimeout(hideTooltip, 2000);
-            }, 500);
-        });
-        slot.addEventListener('touchmove', () => {
-            if (longPressTimeout) {
-                clearTimeout(longPressTimeout);
-                longPressTimeout = null;
-            }
-        });
-        slot.addEventListener('touchend', (e) => {
-            if (longPressTimeout) {
-                clearTimeout(longPressTimeout);
-                // Short tap - use the item
+        if (item.type === 'bishop_spear' || item.type === 'horse_icon') {
+            // For special items, hover shows tooltip
+            slot.addEventListener('mouseover', () => {
                 if (!longPress) {
-                    useItem();
+                    showTooltip();
                 }
-            }
-        });
+            });
+            slot.addEventListener('mouseout', () => {
+                if (!longPress) {
+                    hideTooltip();
+                }
+            });
+        } else {
+            slot.addEventListener('mouseover', () => {
+                if (!longPress) {
+                    showTooltip();
+                }
+            });
+            slot.addEventListener('mouseout', () => {
+                if (!longPress) {
+                    hideTooltip();
+                }
+            });
+        }
+
+        // Special handling for bishop_spear and horse_icon - long press to toggle disabled
+        if (item.type === 'bishop_spear' || item.type === 'horse_icon') {
+            // Desktop right-click or long press to toggle disabled
+            slot.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                this.toggleItemDisabled(item, idx);
+                this.game.uiManager.updatePlayerStats();
+            });
+
+            // Mobile touch events for long press to toggle disabled
+            slot.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Prevent click
+                longPress = false;
+                longPressTimeout = setTimeout(() => {
+                    longPress = true;
+                    this.toggleItemDisabled(item, idx);
+                    this.game.uiManager.updatePlayerStats();
+                    // Update tooltip if shown
+                    hideTooltip();
+                }, 500);
+            });
+            slot.addEventListener('touchmove', () => {
+                if (longPressTimeout) {
+                    clearTimeout(longPressTimeout);
+                    longPressTimeout = null;
+                }
+            });
+            slot.addEventListener('touchend', (e) => {
+                if (longPressTimeout) {
+                    clearTimeout(longPressTimeout);
+                    // Short tap - use the item if not disabled
+                    if (!longPress && !item.disabled) {
+                        useItem();
+                    }
+                }
+            });
+
+            // Desktop click - use item if not disabled
+            slot.addEventListener('click', () => {
+                if (this.game.player.isDead() || item.disabled) return;
+                useItem();
+            });
+        } else {
+            // Mobile touch events for long press (general items)
+            slot.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Prevent click
+                longPress = false;
+                longPressTimeout = setTimeout(() => {
+                    longPress = true;
+                    showTooltip();
+                    // Auto-hide after 2 seconds
+                    setTimeout(hideTooltip, 2000);
+                }, 500);
+            });
+            slot.addEventListener('touchmove', () => {
+                if (longPressTimeout) {
+                    clearTimeout(longPressTimeout);
+                    longPressTimeout = null;
+                }
+            });
+            slot.addEventListener('touchend', (e) => {
+                if (longPressTimeout) {
+                    clearTimeout(longPressTimeout);
+                    // Short tap - use the item
+                    if (!longPress) {
+                        useItem();
+                    }
+                }
+            });
+        }
 
         // Special handling for bomb inventory item
         if (item.type === 'bomb') {
@@ -250,10 +315,22 @@ export class InventoryManager {
         } else {
             // Desktop click - use item
             slot.addEventListener('click', () => {
-                if (this.game.player.isDead()) return; // No restrictions like longPress here
+                if (this.game.player.isDead()) return;
                 useItem();
             });
         }
+    }
+
+    // Toggle the disabled state of an item
+    toggleItemDisabled(item, idx) {
+        // Initialize disabled if not present
+        if (typeof item.disabled === 'undefined') {
+            item.disabled = false;
+        }
+        // Toggle the state
+        item.disabled = !item.disabled;
+        // Update the inventory display to reflect the change
+        this.updateInventoryDisplay();
     }
 
     // Handle using an inventory item

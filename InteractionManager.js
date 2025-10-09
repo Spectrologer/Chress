@@ -245,7 +245,7 @@ export class InteractionManager {
         // Handle bomb placement confirmation (legacy, can be removed if not used)
 
         // Check if player has bishop spear and if tapped position is diagonal and valid for bishop spear charge
-        const bishopSpearItem = this.game.player.inventory.find(item => item.type === 'bishop_spear' && item.uses > 0);
+        const bishopSpearItem = this.game.player.inventory.find(item => item.type === 'bishop_spear' && item.uses > 0 && !item.disabled);
         const enemyAtCoords = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
         const targetTile = this.game.grid[gridCoords.y][gridCoords.x];
         const isEmptyTile = !enemyAtCoords && this.game.player.isWalkable(gridCoords.x, gridCoords.y, this.game.grid, playerPos.x, playerPos.y);
@@ -271,7 +271,7 @@ export class InteractionManager {
         }
 
         // Check if player has horse icon and if tapped position is valid for horse icon charge (knight moves)
-        const horseIconItem = this.game.player.inventory.find(item => item.type === 'horse_icon' && item.uses > 0);
+        const horseIconItem = this.game.player.inventory.find(item => item.type === 'horse_icon' && item.uses > 0 && !item.disabled);
 
         if (horseIconItem && (enemyAtCoords || isEmptyTile)) {
             // Calculate direction from player to target

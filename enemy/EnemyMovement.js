@@ -14,15 +14,16 @@ export const EnemyMovementMixin = {
             return null; // Can't move onto player
         }
 
-        // For Zard: emergency defensive retreat when already vulnerable
+        // Zard: charge adjacent diagonally and ram if diagonal line of sight
         if (this.enemyType === 'zard') {
+            const result = EnemySpecialActions.executeZardCharge(this, player, playerX, playerY, grid, enemies, isSimulation);
+            if (result !== false) return result;
+            // If can't charge, emergency defensive retreat when already vulnerable
             const dx = Math.abs(this.x - playerX);
             const dy = Math.abs(this.y - playerY);
             const currentDistance = dx + dy;
-
-            // If Zard is currently vulnerable (adjacent to player), prioritize escape
             if (currentDistance <= 2) {
-                const defensiveMoves = this.getDefensiveDiagonalMoves(playerX, playerY, this.x, this.y, grid, enemies);
+                const defensiveMoves = this.getDefensiveMoves(playerX, playerY, this.x, this.y, grid, enemies);
                 if (defensiveMoves.length > 0) {
                     // Emergency retreat - add smoke for dramatic effect
                     if (Math.abs(defensiveMoves[0].x - this.x) + Math.abs(defensiveMoves[0].y - this.y) > 1) {
@@ -31,12 +32,6 @@ export const EnemyMovementMixin = {
                     return { x: defensiveMoves[0].x, y: defensiveMoves[0].y };
                 }
             }
-        }
-
-        // Zard: charge adjacent diagonally and ram if diagonal line of sight
-        if (this.enemyType === 'zard') {
-            const result = EnemySpecialActions.executeZardCharge(this, player, playerX, playerY, grid, enemies, isSimulation);
-            if (result !== false) return result;
         }
 
         // Lizardeaux: charge adjacent and ram if orthogonal line of sight
@@ -51,8 +46,16 @@ export const EnemyMovementMixin = {
             if (result !== false) return result;
         }
 
-        // Use BFS to find the shortest path to the player
-        const path = EnemyPathfinding.findPath(this.x, this.y, playerX, playerY, grid, this.enemyType, (x, y, g) => this.isWalkable(x, y, g));
+        // Leader-Follower Pattern: when 3+ enemies, designate leader pursues player, others follow leader
+        const totalEnemies = enemies.length;
+        const isLargeGroup = totalEnemies >= 3;
+        const leader = isLargeGroup ? enemies.find(e => e === enemies[0] || e) : null; // simple leader selection
+        const followLeader = isLargeGroup && this !== leader;
+        const targetX = followLeader ? leader.x : playerX;
+        const targetY = followLeader ? leader.y : playerY;
+
+        // Use BFS to find the shortest path to target (player or leader)
+        const path = EnemyPathfinding.findPath(this.x, this.y, targetX, targetY, grid, this.enemyType, (x, y, g) => this.isWalkable(x, y, g));
 
         if (path && path.length > 1) {
             let next = path[1];
@@ -129,28 +132,51 @@ export const EnemyMovementMixin = {
                     next = path[maxMoveIndex];
                 }
             }
+
+            // Cooperative clustering: adjust move to stay closer to allies and spread out from same areas
+            const currentDistToPlayer = Math.abs(next.x - playerX) + Math.abs(next.y - playerY);
+            const currentClustering = this.calculateAllyDistance(next.x, next.y, enemies);
+            const currentDiversity = this.calculateDirectionDiversity(next.x, next.y, playerX, playerY, enemies);
+            const moveDirs = this.getMovementDirections();
+            for (const dir of moveDirs) {
+                const altX = this.x + dir.x;
+                const altY = this.y + dir.y;
+                if (altX < 0 || altX >= GRID_SIZE || altY < 0 || altY >= GRID_SIZE) continue;
+                if (!this.isWalkable(altX, altY, grid)) continue;
+                if (enemies.find(e => e.x === altX && e.y === altY)) continue; // avoid moving onto other enemy
+                const altDistToPlayer = Math.abs(altX - playerX) + Math.abs(altY - playerY);
+                const altClustering = this.calculateAllyDistance(altX, altY, enemies);
+                const altDiversity = this.calculateDirectionDiversity(altX, altY, playerX, playerY, enemies);
+                // Prefer moves that improve clustering or diversity, don't significantly increase player distance, and avoid stacking
+                const clusteringGain = currentClustering - altClustering;
+                const diversityGain = altDiversity - currentDiversity; // higher diversity is better
+                if ((clusteringGain > 0.3 || diversityGain > 0) && altDistToPlayer <= currentDistToPlayer + 2 && !this.isStackedBehind(altX, altY, playerX, playerY, enemies)) {
+                    next.x = altX;
+                    next.y = altY;
+                    break; // take first valid improvement
+                }
+            }
+
             const newX = next.x;
             const newY = next.y;
 
-            // For Zard: check if this move would leave it vulnerable to diagonal attack next turn
-            if (this.enemyType === 'zard') {
-                const dx = Math.abs(newX - playerX);
-                const dy = Math.abs(newY - playerY);
-                const newDistance = dx + dy;
+            // Check if this move would leave the enemy vulnerable to attack next turn
+            const dx = Math.abs(newX - playerX);
+            const dy = Math.abs(newY - playerY);
+            const newDistance = dx + dy;
 
-                // If moving closer to player but would be vulnerable (adjacent diagonally or orthogonally)
-                if (newDistance <= 2) {
-                    // Check alternative diagonal moves that increase distance
-                    const currentDistance = Math.abs(this.x - playerX) + Math.abs(this.y - playerY);
-                    const alternatives = this.getDefensiveDiagonalMoves(playerX, playerY, newX, newY, grid, enemies);
+            // If moving closer to player but would be vulnerable (adjacent), unless it's an attack move
+            if (newDistance <= 2 && !(newX === playerX && newY === playerY)) {
+                // Check alternative moves that increase distance
+                const currentDistance = Math.abs(this.x - playerX) + Math.abs(this.y - playerY);
+                const alternatives = this.getDefensiveMoves(playerX, playerY, newX, newY, grid, enemies);
 
-                    if (alternatives.length > 0) {
-                        // Add smoke for defensive retreat
-                        if (Math.abs(alternatives[0].x - this.x) + Math.abs(alternatives[0].y - this.y) > 1) {
-                            this.smokeAnimations.push({ x: this.x + (alternatives[0].x - this.x) / 2, y: this.y + (alternatives[0].y - this.y) / 2, frame: 18 });
-                        }
-                        return { x: alternatives[0].x, y: alternatives[0].y };
+                if (alternatives.length > 0) {
+                    // Add smoke for defensive retreat
+                    if (Math.abs(alternatives[0].x - this.x) + Math.abs(alternatives[0].y - this.y) > 1) {
+                        this.smokeAnimations.push({ x: this.x + (alternatives[0].x - this.x) / 2, y: this.y + (alternatives[0].y - this.y) / 2, frame: 18 });
                     }
+                    return { x: alternatives[0].x, y: alternatives[0].y };
                 }
             }
 
@@ -291,21 +317,91 @@ export const EnemyMovementMixin = {
         return EnemyPathfinding.getMovementDirections(this.enemyType);
     },
 
-    // Helper for Zard: find defensive diagonal moves that increase distance from player
-    getDefensiveDiagonalMoves(playerX, playerY, proposedX, proposedY, grid, enemies) {
+    // Helper: calculate average distance to other enemies (lower is better clustering)
+    calculateAllyDistance(x, y, enemies) {
+        let totalDist = 0;
+        let count = 0;
+        for (const enemy of enemies) {
+            if (enemy === this) continue; // skip self
+            const dist = Math.abs(x - enemy.x) + Math.abs(y - enemy.y);
+            if (dist > 0) { // ensure not zero
+                totalDist += dist;
+                count++;
+            }
+        }
+        return count > 0 ? totalDist / count : 100; // return high value if no allies
+    },
+
+    // Helper: calculate direction diversity relative to player (higher is better, means less crowding in same direction)
+    calculateDirectionDiversity(x, y, px, py, enemies) {
+        const dx = x - px;
+        const dy = y - py;
+        let thisQuad = 0;
+        if (dx > 0 && dy > 0) thisQuad = 1; // NE
+        else if (dx > 0 && dy < 0) thisQuad = 2; // SE
+        else if (dx < 0 && dy > 0) thisQuad = 3; // NW
+        else if (dx < 0 && dy < 0) thisQuad = 4; // SW
+        else if (dx > 0 && dy === 0) thisQuad = 10; // East
+        else if (dx < 0 && dy === 0) thisQuad = 20; // West
+        else if (dy > 0 && dx === 0) thisQuad = 30; // North
+        else if (dy < 0 && dx === 0) thisQuad = 40; // South
+
+        let count = 0;
+        let total = 0;
+        for (const enemy of enemies) {
+            if (enemy === this) continue;
+            const ex = enemy.x - px;
+            const ey = enemy.y - py;
+            let enemyQuad = 0;
+            if (ex > 0 && ey > 0) enemyQuad = 1;
+            else if (ex > 0 && ey < 0) enemyQuad = 2;
+            else if (ex < 0 && ey > 0) enemyQuad = 3;
+            else if (ex < 0 && ey < 0) enemyQuad = 4;
+            else if (ex > 0 && ey === 0) enemyQuad = 10;
+            else if (ex < 0 && ey === 0) enemyQuad = 20;
+            else if (ey > 0 && ex === 0) enemyQuad = 30;
+            else if (ey < 0 && ex === 0) enemyQuad = 40;
+            total++;
+            if (enemyQuad === thisQuad) count++;
+        }
+        return total > 0 ? (total - count) / total : 1; // higher diversity when fewer in same quadrant
+    },
+
+    // Helper: check if position is stacked behind another enemy from player's perspective (for flanking)
+    isStackedBehind(x, y, px, py, enemies) {
+        for (const enemy of enemies) {
+            if (enemy === this) continue;
+            // Check if enemy is in the same line and closer to player
+            const ex = enemy.x - px;
+            const ey = enemy.y - py;
+            const tx = x - px;
+            const ty = y - py;
+
+            // Same direction (same row or col) and enemy is between player and x,y
+            if ((tx === 0 && ex === 0 && ((ty > 0 && ey > 0 && ey < ty) || (ty < 0 && ey < 0 && ey > ty))) ||
+                (ty === 0 && ey === 0 && ((tx > 0 && ex > 0 && ex < tx) || (tx < 0 && ex < 0 && ex > tx)))) {
+                return true;
+            }
+
+            // Diagonal check
+            if (Math.abs(tx) === Math.abs(ty) && Math.abs(ex) === Math.abs(ey) &&
+                Math.abs(tx) + Math.abs(ty) > Math.abs(ex) + Math.abs(ey) && tx * ex > 0 && ty * ey > 0) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    // Helper: find defensive moves that increase distance from player
+    getDefensiveMoves(playerX, playerY, proposedX, proposedY, grid, enemies) {
         const alternatives = [];
-        const diagonalDirs = [
-            { x: -1, y: -1 }, // Northwest
-            { x: 1, y: -1 },  // Northeast
-            { x: -1, y: 1 },  // Southwest
-            { x: 1, y: 1 }    // Southeast
-        ];
+        const dirs = this.getMovementDirections();
 
         const currentDist = Math.abs(this.x - playerX) + Math.abs(this.y - playerY);
         const proposedDist = Math.abs(proposedX - playerX) + Math.abs(proposedY - playerY);
 
-        // Find diagonal moves that would be safer than the proposed move
-        for (const dir of diagonalDirs) {
+        // Find defensive moves that would be safer than the proposed move
+        for (const dir of dirs) {
             let newX = this.x + dir.x;
             let newY = this.y + dir.y;
 

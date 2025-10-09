@@ -98,7 +98,7 @@ export class ConnectionManager {
 
     ensureMinimumConnectivity(zoneX, zoneY, connections) {
         // Count existing connections
-        const hasConnections = [
+        let hasConnections = [
             connections.north !== null,
             connections.south !== null,
             connections.west !== null,
@@ -138,13 +138,16 @@ export class ConnectionManager {
             }
         }
 
-        // For home zones (dist <= 2), ensure fully interconnected (4 connections mandatory)
+        // Ensure minimum connectivity based on zone level
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
-        const isHome = dist <= 2;
-        if (isHome && hasConnections < 4) {
-            // Force connections on all sides for home zones
+        let zoneLevel = dist <= 2 ? 1 : dist <= 8 ? 2 : dist <= 16 ? 3 : 4;
+        const minConnections = zoneLevel === 4 ? 1 : 2;
+
+        while (hasConnections < minConnections) {
             const directions = ['north', 'south', 'west', 'east'];
             const availableDirections = directions.filter(dir => connections[dir] === null);
+
+            if (availableDirections.length === 0) break; // No more directions available
 
             // Shuffle available directions for randomness
             for (let i = availableDirections.length - 1; i > 0; i--) {
@@ -152,19 +155,17 @@ export class ConnectionManager {
                 [availableDirections[i], availableDirections[j]] = [availableDirections[j], availableDirections[i]];
             }
 
-            // Add connections to ensure we have 4, avoiding adjacent exits on same border
-            for (let i = 0; i < availableDirections.length; i++) {
-                const direction = availableDirections[i];
-                const validRange = GRID_SIZE - 6;
-                let basePosition = ((zoneX * 73 + zoneY * 97 + i * 31) % validRange) + 3;
-                // Find a position not adjacent to existing exits on the same border
+            // Force an exit in the first available direction
+            const direction = availableDirections[0];
+            const validRange = GRID_SIZE - 6;
+            let basePosition = ((zoneX * 73 + zoneY * 97 + Math.random() * 31) % validRange) + 3;
+
+            // Find a position not adjacent to existing exits on the same border (only if multiple exist)
+            if (zoneLevel === 1 && availableDirections.length > 1) { // Only for level 1 to avoid crowding
                 for (let attempt = 0; attempt < 20; attempt++) {
-                    const candidate = ((basePosition + attempt) % validRange) + 3; // Properly wrap within valid range
+                    const candidate = ((basePosition + attempt) % validRange) + 3;
 
-                    // Check if this position is adjacent to any existing exit on the same border
                     let isAdjacent = false;
-
-                    // Check against existing connections for this direction
                     const existingExits = [];
                     if (direction === 'north' && connections.north !== null) existingExits.push(connections.north);
                     else if (direction === 'south' && connections.south !== null) existingExits.push(connections.south);
@@ -175,14 +176,21 @@ export class ConnectionManager {
 
                     if (!isAdjacent) {
                         connections[direction] = candidate;
-                        break; // Found valid position
+                        break;
                     }
                 }
-                if (connections[direction] === null) {
-                    // Fallback if no valid position found
-                    connections[direction] = Math.max(3, Math.min(GRID_SIZE - 4, basePosition));
-                }
             }
+
+            if (connections[direction] === null) {
+                connections[direction] = Math.max(3, Math.min(GRID_SIZE - 4, basePosition));
+            }
+
+            hasConnections = [
+                connections.north !== null,
+                connections.south !== null,
+                connections.west !== null,
+                connections.east !== null
+            ].filter(Boolean).length;
         }
     }
 
