@@ -28,11 +28,33 @@ export class Enemy {
             return null; // Can't move onto player
         }
 
-        // Zard: bishop-like movement, charge and attack in one turn if diagonal line of sight
-        if (this.enemyType === 'zard') {
-            // Check if diagonal line of sight exists
-            if (this.checkDiagonalLineOfSight(playerX, playerY, grid)) {
-                this.performBishopCharge(player, playerX, playerY, grid, isSimulation);
+                // Zard: charge adjacent diagonally and ram if diagonal line of sight
+                if (this.enemyType === 'zard') {
+                    if (this.checkDiagonalLineOfSight(playerX, playerY, grid)) {
+                        const chargeMove = this.getChargeAdjacentDiagonalMove(playerX, playerY, grid, enemies);
+                        if (chargeMove) {
+                            // Move to adjacent tile, leaving smoke trail
+                            if (!isSimulation) {
+                                // Add smoke on each tile traversed during charge
+                                const stepsDx = Math.abs(chargeMove.x - this.x);
+                                let stepX = chargeMove.x > this.x ? 1 : -1;
+                                let stepY = chargeMove.y > this.y ? 1 : -1;
+                                for (let i = 1; i < stepsDx; i++) {
+                                    this.smokeAnimations.push({ x: this.x + i * stepX, y: this.y + i * stepY, frame: 18 });
+                                }
+                                this.x = chargeMove.x;
+                                this.y = chargeMove.y;
+                                this.liftFrames = 15; // Start lift animation
+                            }
+                    // After moving, check if adjacent diagonally and ram
+                    const newDx = Math.abs(chargeMove.x - playerX);
+                    const newDy = Math.abs(chargeMove.y - playerY);
+                    if (newDx === 1 && newDy === 1) {
+                        this.performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation);
+                    }
+                    return null; // All in one turn
+                }
+                // If no charge move is possible, stay put
                 return null;
             }
         }
@@ -42,8 +64,17 @@ export class Enemy {
             if (this.checkOrthogonalLineOfSight(playerX, playerY, grid, enemies)) {
                 const chargeMove = this.getChargeAdjacentMove(playerX, playerY, grid, enemies);
                 if (chargeMove) {
-                    // Move to adjacent tile
+                    // Move to adjacent tile, leaving smoke trail
                     if (!isSimulation) {
+                        // Add smoke on each tile traversed during charge
+                        const stepsDx = Math.abs(chargeMove.x - this.x);
+                        const stepsDy = Math.abs(chargeMove.y - this.y);
+                        let stepX = stepsDx > 0 ? (chargeMove.x > this.x ? 1 : -1) : 0;
+                        let stepY = stepsDy > 0 ? (chargeMove.y > this.y ? 1 : -1) : 0;
+                        const steps = Math.max(stepsDx, stepsDy);
+                        for (let i = 1; i < steps; i++) {
+                            this.smokeAnimations.push({ x: this.x + i * stepX, y: this.y + i * stepY, frame: 18 });
+                        }
                         this.x = chargeMove.x;
                         this.y = chargeMove.y;
                         this.liftFrames = 15; // Start lift animation
@@ -68,6 +99,15 @@ export class Enemy {
             if (chargeMove) {
                 // Set charge position to adjacent of player
                 if (!isSimulation) {
+                    // Add smoke on each tile traversed during charge
+                    const stepsDx = Math.abs(chargeMove.x - this.x);
+                    const stepsDy = Math.abs(chargeMove.y - this.y);
+                    let stepX = stepsDx > 0 ? (chargeMove.x > this.x ? 1 : -1) : 0;
+                    let stepY = stepsDy > 0 ? (chargeMove.y > this.y ? 1 : -1) : 0;
+                    const steps = Math.max(stepsDx, stepsDy);
+                    for (let i = 1; i < steps; i++) {
+                        this.smokeAnimations.push({ x: this.x + i * stepX, y: this.y + i * stepY, frame: 18 });
+                    }
                     this.x = chargeMove.x;
                     this.y = chargeMove.y;
                     // Now adjacent, attack
@@ -76,7 +116,7 @@ export class Enemy {
             this.startBump(playerX - this.x, playerY - this.y);
             this.justAttacked = true;
             this.attackAnimation = 15;
-            window.soundManager?.playSound('attack');
+                                window.soundManager?.playSound('attack');
                                 window.soundManager?.playSound('attack');
                     // Knockback away
                     const dx = playerX - chargeMove.x; // Since chargeMove is adjacent, dx= +/-1 or 0
@@ -151,6 +191,32 @@ export class Enemy {
             }
             const newX = next.x;
             const newY = next.y;
+
+            // Add smoke animations for ram attack enemies when they perform long moves
+            if ( (this.enemyType === 'lizardeaux' || this.enemyType === 'zard') && (Math.abs(newX - this.x) + Math.abs(newY - this.y) > 1) ) {
+                // Add smoke on each tile along the path
+                const startX = this.x;
+                const startY = this.y;
+                const dx = newX - startX;
+                const dy = newY - startY;
+                const distX = Math.abs(dx);
+                const distY = Math.abs(dy);
+                if (distX >= distY) {
+                    // Horizontal dominant
+                    const stepX = dx > 0 ? 1 : -1;
+                    const stepY = dy === 0 ? 0 : (dy / distX) * stepX;
+                    for (let i = 1; i < distX; i++) {
+                        this.smokeAnimations.push({ x: startX + i * stepX, y: startY + Math.round((i * dy) / distX), frame: 18 });
+                    }
+                } else {
+                    // Vertical dominant
+                    const stepY = dy > 0 ? 1 : -1;
+                    const stepX = dx === 0 ? 0 : (dx / distY) * stepY;
+                    for (let i = 1; i < distY; i++) {
+                        this.smokeAnimations.push({ x: startX + Math.round((i * dx) / distY), y: startY + i * stepY, frame: 18 });
+                    }
+                }
+            }
 
             // Check if within bounds and walkable (should be, since path found)
             if (this.isWalkable(newX, newY, grid)) {
@@ -390,56 +456,67 @@ export class Enemy {
     }
 
     performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation = false) {
-        // Lizardeaux ram attack from distance: check if player is in straight line with clear line of sight and distance > 1
-        // Add enemies as obstacles for line of sight
+        // Ram attack from adjacent: check if in straight line (orthogonal or diagonal) with clear line of sight
         const sameRow = this.y === playerY;
         const sameCol = this.x === playerX;
+        const sameDiagonal = Math.abs(this.x - playerX) === Math.abs(this.y - playerY) && (playerX !== this.x) && (playerY !== this.y);
 
-        if (!sameRow && !sameCol) {
+        if (!sameRow && !sameCol && !sameDiagonal) {
             return false; // Not in straight line
         }
 
-        let distance = 0;
-
+        // Determine direction and steps
+        let stepX = 0, stepY = 0;
+        let steps = 0;
         if (sameRow) {
-            const minX = Math.min(this.x, playerX);
-            const maxX = Math.max(this.x, playerX);
-            for (let x = minX + 1; x < maxX; x++) {
-                if (!this.isWalkable(x, this.y, grid)) {
-                    return false;
-                }
-                if (player.x !== x || player.y !== this.y) {
-                    if (player.x !== x && enemies.find(e => e.x === x && e.y === this.y)) return false;
-                } else if (enemies.find(e => e.x === x && e.y === this.y)) return false;
-            }
-            distance = Math.abs(playerX - this.x);
-        } else {
-            const minY = Math.min(this.y, playerY);
-            const maxY = Math.max(this.y, playerY);
-            for (let y = minY + 1; y < maxY; y++) {
-                if (!this.isWalkable(this.x, y, grid)) {
-                    return false;
-                }
-                if (player.y !== y || player.x !== this.x) {
-                    if (player.y !== y && enemies.find(e => e.x === this.x && e.y === y)) return false;
-                } else if (enemies.find(e => e.x === this.x && e.y === y)) return false;
-            }
-            distance = Math.abs(playerY - this.y);
+            stepX = playerX > this.x ? 1 : -1;
+            stepY = 0;
+            steps = Math.abs(playerX - this.x);
+        } else if (sameCol) {
+            stepX = 0;
+            stepY = playerY > this.y ? 1 : -1;
+            steps = Math.abs(playerY - this.y);
+        } else { // sameDiagonal
+            stepX = playerX > this.x ? 1 : -1;
+            stepY = playerY > this.y ? 1 : -1;
+            steps = Math.abs(playerX - this.x);
         }
 
-        // Ram from any distance when line of sight is clear
-        // distance >= 1 is already checked by calling this method only when line of sight exists
+        // Check line of sight: no walls or enemies blocking
+        for (let i = 1; i < steps; i++) {
+            const checkX = this.x + i * stepX;
+            const checkY = this.y + i * stepY;
+            if (!this.isWalkable(checkX, checkY, grid)) {
+                return false;
+            }
+            if (enemies.find(e => e.x === checkX && e.y === checkY)) {
+                return false;
+            }
+        }
 
+        // Add smoke animation for ram attack
         if (!isSimulation) {
-            // Perform ram attack from distance
+            let traveledTiles = [];
+            for (let i = 1; i < steps; i++) {
+                const checkX = this.x + i * stepX;
+                const checkY = this.y + i * stepY;
+                traveledTiles.push({x: checkX, y: checkY});
+            }
+            if (traveledTiles.length > 0) {
+                this.smokeAnimations = traveledTiles.map(t => ({x: t.x, y: t.y, frame: 18}));
+            } else {
+                this.smokeAnimations.push({ x: this.x, y: this.y, frame: 18 });
+            }
+        }
+
+        // Perform ram attack
+        if (!isSimulation) {
             player.takeDamage(this.attack);
             player.startBump(this.x - playerX, this.y - playerY);
             this.startBump(playerX - this.x, playerY - this.y);
             this.justAttacked = true;
-            this.attackAnimation = 15; // Dramatic attack animation frames
+            this.attackAnimation = 15;
             window.soundManager?.playSound('attack');
-            if (player.isDead()) {
-            }
 
             // Calculate knockback direction (away from enemy)
             const attackDx = playerX - this.x;
@@ -464,7 +541,7 @@ export class Enemy {
             }
         }
 
-        return true; // Ram attack from distance performed
+        return true; // Ram attack performed
     }
 
     checkRamAttack(playerX, playerY, grid) {
@@ -568,6 +645,35 @@ export class Enemy {
         }
         this.smokeAnimations.forEach(anim => anim.frame--);
         this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);
+    }
+
+    // Helper for zard: find adjacent tile next to player along diagonal line of sight and charge there
+    getChargeAdjacentDiagonalMove(playerX, playerY, grid, enemies) {
+        // Assume diagonal line of sight already checked
+        const stepX = playerX > this.x ? 1 : -1;
+        const stepY = playerY > this.y ? 1 : -1;
+
+        // Check clear line of sight (walls/obstacles AND other enemies)
+        const dx = Math.abs(this.x - playerX);
+        for (let i = 1; i < dx; i++) {
+            const checkX = this.x + i * stepX;
+            const checkY = this.y + i * stepY;
+            if (!this.isWalkable(checkX, checkY, grid)) return null;
+            if (enemies.find(e => e.x === checkX && e.y === checkY)) return null;
+        }
+
+        // Find diagonal adjacent tile next to player
+        const adjX = playerX - stepX;
+        const adjY = playerY - stepY;
+
+        // Check if that tile is walkable and not occupied by another enemy
+        if (adjX >= 0 && adjX < GRID_SIZE && adjY >= 0 && adjY < GRID_SIZE &&
+            this.isWalkable(adjX, adjY, grid) &&
+            !enemies.find(e => e.x === adjX && e.y === adjY)) {
+            return { x: adjX, y: adjY };
+        }
+
+        return null;
     }
 
     // Helper for lizardeaux: find adjacent tile next to player along line of sight and charge there
@@ -744,52 +850,7 @@ export class Enemy {
         return true;
     }
 
-    // Helper for Zard: perform bishop charge
-    performBishopCharge(player, playerX, playerY, grid, isSimulation = false) {
-        // Determine direction of charge
-        const dx = playerX - this.x;
-        const dy = playerY - this.y;
-        const steps = Math.abs(dx); // Diagonal, dx === dy
 
-        // Move directly to adjacent tile next to player
-        if (!isSimulation) {
-            let chargeX = this.x;
-            let chargeY = this.y;
-            if (steps >= 1) {
-                chargeX += dx > 0 ? 1 : -1;
-                chargeY += dy > 0 ? 1 : -1;
-                if (chargeX !== playerX || chargeY !== playerY) {
-                    this.x = chargeX;
-                    this.y = chargeY;
-                }
-            }
-        }
-
-        // If now adjacent (should be), attack
-        const chargeXSim = isSimulation ? (this.x + (dx > 0 ? 1 : -1)) : this.x;
-        const chargeYSim = isSimulation ? (this.y + (dy > 0 ? 1 : -1)) : this.y;
-        const newDx = Math.abs(chargeXSim - playerX);
-        const newDy = Math.abs(chargeYSim - playerY);
-        if (newDx + newDy === 2 && newDx === 1 && newDy === 1) { // Adjacent diagonally
-            if (!isSimulation) {
-                // Perform attack
-                player.takeDamage(this.attack);
-                player.startBump(chargeXSim - playerX, chargeYSim - playerY);
-                this.startBump(playerX - chargeXSim, playerY - chargeYSim);
-                this.justAttacked = true;
-                this.attackAnimation = 15;
-                window.soundManager?.playSound('attack');
-
-                // Knockback diagonally away
-                const knockbackX = playerX + (playerX - chargeXSim);
-                const knockbackY = playerY + (playerY - chargeYSim);
-                // Only knockback if the position is walkable
-                if (player.isWalkable(knockbackX, knockbackY, grid)) {
-                    player.setPosition(knockbackX, knockbackY);
-                }
-            }
-        }
-    }
 
     // Helper for Lazerd: check orthogonal/diagonal line of sight
     checkQueenLineOfSight(playerX, playerY, grid) {
