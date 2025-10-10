@@ -124,21 +124,25 @@ export class BarterWindow {
             const randomFood = FOOD_ASSETS[Math.floor(Math.random() * FOOD_ASSETS.length)];
             this.game.player.inventory.push({ type: 'food', foodType: randomFood });
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for food.`);
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else if (tradeData.id === 'rune_item') {
             this.game.player.addPoints(-tradeData.requiredAmount);
             const items = [
                 TILE_TYPES.BOMB,
                 { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 },
-                { type: TILE_TYPES.HORSE_ICON, uses: 3 }
+                { type: TILE_TYPES.HORSE_ICON, uses: 3 },
+                TILE_TYPES.HEART
             ];
             const selectedItemType = items[Math.floor(Math.random() * items.length)];
             let inventoryItem;
             if (selectedItemType === TILE_TYPES.BOMB) inventoryItem = { type: 'bomb' };
             else if (selectedItemType.type === TILE_TYPES.BISHOP_SPEAR) inventoryItem = { type: 'bishop_spear', uses: 3 };
             else if (selectedItemType.type === TILE_TYPES.HORSE_ICON) inventoryItem = { type: 'horse_icon', uses: 3 };
+            else if (selectedItemType === TILE_TYPES.HEART) inventoryItem = { type: 'heart' };
             
             if(inventoryItem) this.game.player.inventory.push(inventoryItem);
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for an item.`);
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic
             const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));
@@ -151,9 +155,11 @@ export class BarterWindow {
                 }
                 this.game.player.inventory.splice(index, 1);
                 this.game.player.inventory.push({ type: 'water' });
+                this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
             }
         }
 
+        this.game.soundManager.playSound('ding');
         this.game.updatePlayerStats();
         this.hideBarterWindow();
     }

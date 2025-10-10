@@ -100,7 +100,7 @@ export class Sign {
                     requiredAmount: 5,
                     requiredItemImg: 'images/items/points.png',
                     receivedItemName: 'Random Food',
-                    receivedItemImg: 'images/items/note.png' // Placeholder '?'
+                    receivedItemImg: 'images/items/chest.png'
                 },
                 {
                     id: 'rune_item',
@@ -108,7 +108,7 @@ export class Sign {
                     requiredAmount: 5,
                     requiredItemImg: 'images/items/points.png',
                     receivedItemName: 'Random Item',
-                    receivedItemImg: 'images/items/note.png' // Placeholder '?'
+                    receivedItemImg: 'images/items/chest.png'
                 }
             ]
         },
