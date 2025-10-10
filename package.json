@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@sentry/browser": "^10.19.0",
     "rivescript": "^2.2.1"
   },
   "devDependencies": {

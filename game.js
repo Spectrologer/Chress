@@ -1,5 +1,11 @@
 import { GRID_SIZE, TILE_TYPES } from './constants.js';
-//
+import * as Sentry from '@sentry/browser';
+
+Sentry.init({
+  dsn: "https://2d2383cc5fdaf52165ff0b7c57dfa857@o4510166179774464.ingest.de.sentry.io/4510166184820816",
+  sendDefaultPii: true
+});
+
 import { GameInitializer } from './GameInitializer.js';
 import { ActionManager } from './ActionManager.js';
 import { TextureManager } from './TextureManager.js';
@@ -232,4 +238,7 @@ class Game {
 // Initialize game when the page loads
 window.addEventListener('load', () => {
     new Game();
+
+    // Sentry verification: This will cause an intentional error to test the integration.
+    // myUndefinedFunction();
 });
