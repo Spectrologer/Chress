@@ -159,6 +159,7 @@ export const IMAGE_ASSETS = [
     'floors/interior/house_wall_corner.png',
     'floors/interior/house_wall_side.png',
     'floors/interior/house_wall_open.png',
+    'ui/arrow.png',
     'fx/smoke/smoke_frame_1.png',
     'fx/smoke/smoke_frame_2.png',
     'fx/smoke/smoke_frame_3.png',

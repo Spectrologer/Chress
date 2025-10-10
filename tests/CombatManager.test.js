@@ -194,7 +194,7 @@ describe('CombatManager', () => {
     combatManager.checkCollisions();
 
     expect(mockPlayer.addPoints).toHaveBeenCalledWith(1);
-    expect(mockGame.defeatedEnemies.has('0,0,3,3')).toBeTruthy();
+    expect(mockGame.defeatedEnemies.has('enemy1')).toBeTruthy();
     expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('attack');
     expect(mockUIManager.updatePlayerStats).toHaveBeenCalled();
     expect(mockGame.enemies.filter(e => e.id === 'enemy1')).toHaveLength(0);

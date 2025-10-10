@@ -155,7 +155,7 @@ export class ZoneManager {
         // When loading enemies, filter out any that are in the defeatedEnemies set.
         const allEnemies = (zoneData.enemies || []).map(e => new this.game.Enemy(e));
         this.game.enemies = allEnemies.filter(enemy => {
-            const defeatedKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemy.id}`;
+            const defeatedKey = `${enemy.id}`;
             return !this.game.defeatedEnemies.has(defeatedKey);
         });
 

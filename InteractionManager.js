@@ -480,20 +480,20 @@ export class InteractionManager {
         }
 
         // Check if player is on edge exit and tapping towards that edge
-        if (playerPos.y === 0 && tapCoords.y <= playerPos.y) {
-            // On top edge, tapping up/same row
+        if (playerPos.y === 0 && tapCoords.y < playerPos.y) {
+            // On top edge, tapping up/beyond row
             this.handleExitTap(playerPos.x, playerPos.y);
             return true;
-        } else if (playerPos.y === GRID_SIZE - 1 && tapCoords.y >= playerPos.y) {
-            // On bottom edge, tapping down/same row
+        } else if (playerPos.y === GRID_SIZE - 1 && tapCoords.y > playerPos.y) {
+            // On bottom edge, tapping down/beyond row
             this.handleExitTap(playerPos.x, playerPos.y);
             return true;
-        } else if (playerPos.x === 0 && tapCoords.x <= playerPos.x) {
-            // On left edge, tapping left/same column
+        } else if (playerPos.x === 0 && tapCoords.x < playerPos.x) {
+            // On left edge, tapping left/beyond column
             this.handleExitTap(playerPos.x, playerPos.y);
             return true;
-        } else if (playerPos.x === GRID_SIZE - 1 && tapCoords.x >= playerPos.x) {
-            // On right edge, tapping right/same column
+        } else if (playerPos.x === GRID_SIZE - 1 && tapCoords.x > playerPos.x) {
+            // On right edge, tapping right/beyond column
             this.handleExitTap(playerPos.x, playerPos.y);
             return true;
         }

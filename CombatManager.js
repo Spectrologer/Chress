@@ -94,7 +94,7 @@ export class CombatManager {
                 const currentZone = this.game.player.getCurrentZone();
                 this.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
                 this.game.player.addPoints(enemy.getPoints()); // Award points for defeating enemy
-                this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
+                this.game.defeatedEnemies.add(`${enemy.id}`);
                 this.game.soundManager.playSound('attack');
 
                 // Remove from zone data to prevent respawn
@@ -121,14 +121,14 @@ export class CombatManager {
                 // Award points for defeating the enemy before killing it
                 this.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
                 this.game.player.addPoints(enemy.getPoints());
-                const currentZone = this.game.player.getCurrentZone();
-                this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemy.id}`);
+                this.game.defeatedEnemies.add(`${enemy.id}`);
 
                 this.game.player.takeDamage(enemy.attack);
                 enemy.takeDamage(enemy.health); // Ensure enemy dies from collision
                 this.game.soundManager.playSound('attack');
 
                 // Remove from zone data to prevent respawn
+                const currentZone = this.game.player.getCurrentZone();
                 const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
                 if (this.game.zones.has(zoneKey)) {
                     const zoneData = this.game.zones.get(zoneKey);
@@ -161,9 +161,9 @@ export class CombatManager {
             this.game.player.addPoints(enemy.getPoints()); // Award points for defeating enemy
             enemy.startBump(this.game.player.x - enemy.x, this.game.player.y - enemy.y);
             enemy.takeDamage(999);
-            const currentZone = this.game.player.getCurrentZone();
-            this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
+            this.game.defeatedEnemies.add(`${enemy.id}`);
             this.game.enemies = this.game.enemies.filter(e => e !== enemy);
+            const currentZone = this.game.player.getCurrentZone();
             const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
             if (this.game.zones.has(zoneKey)) {
                 const zoneData = this.game.zones.get(zoneKey);
