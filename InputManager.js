@@ -436,6 +436,12 @@ export class InputManager {
             return; // Stop further processing
         }
 
+        // Debug hotkey for forcing consent banner display
+        if (event.key === '0') {
+            this.game.consentManager.forceShowConsentBanner();
+            return; // Stop further processing
+        }
+
         const currentPos = this.game.player.getPosition();
         let newX = currentPos.x;
         let newY = currentPos.y;

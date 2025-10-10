@@ -16,14 +16,11 @@ import { InteractionManager } from './InteractionManager.js';
 import { ZoneManager } from './ZoneManager.js';
 import { GameStateManager } from './GameStateManager.js';
 import { SoundManager } from './SoundManager.js';
+import { ConsentManager } from './ConsentManager.js';
 
 // Game state
 class Game {
     constructor() {
-
-        // Initialize new managers
-        this.gameInitializer = new GameInitializer(this);
-        this.actionManager = new ActionManager(this);
 
         // Initialize modules
         this.textureManager = new TextureManager();
@@ -34,8 +31,16 @@ class Game {
         this.inventoryManager = new InventoryManager(this);
         this.uiManager = new UIManager(this);
 
+        // Initialize new managers
+        this.actionManager = new ActionManager(this);
+        this.consentManager = new ConsentManager(this);
+        this.gameInitializer = new GameInitializer(this);
+
         // Turn-based system state
         this.isPlayerTurn = true;
+
+        // Perform consent check immediately on game load
+        this.consentManager.initialize();
         this.turnQueue = [];
         this.occupiedTilesThisTurn = new Set();
 
@@ -229,8 +234,6 @@ class Game {
 }
     
 // Initialize game when the page loads
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
     new Game();
-    // Sentry verification: This will cause an intentional error to test the integration.
-    myUndefinedFunction();
 });

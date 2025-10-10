@@ -14,6 +14,7 @@ import { InteractionManager } from './InteractionManager.js';
 import { ZoneManager } from './ZoneManager.js';
 import { GameStateManager } from './GameStateManager.js';
 import { SoundManager } from './SoundManager.js';
+import { ConsentManager } from './ConsentManager.js';
 
 export class GameInitializer {
     constructor(game) {
@@ -84,6 +85,7 @@ export class GameInitializer {
     startGame() {
         if (this.game.gameStarted) return; // Prevent multiple initializations
         this.game.gameStarted = true;
+
         this.init();
     }
 

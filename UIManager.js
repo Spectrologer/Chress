@@ -151,7 +151,7 @@ export class UIManager {
             if (imageSrc) {
                 messageElement.innerHTML = `<img src="${imageSrc}" style="width: 128px; height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
             } else {
-                messageElement.textContent = displayText;
+                messageElement.innerHTML = displayText;
             }
 
             // Add or remove the large-text class
