@@ -36,6 +36,13 @@ export class BarterWindow {
         this.barterNPCName.textContent = name;
         this.barterNPCPortrait.src = portrait;
         this.barterNPCPortrait.alt = `Portrait of ${name}`;
+
+        // Add a specific class for squig to adjust its size
+        if (npcType === 'squig') {
+            this.barterNPCPortrait.classList.add('squig-portrait-adjust');
+        } else {
+            this.barterNPCPortrait.classList.remove('squig-portrait-adjust');
+        }
         this.barterNPCMessage.innerHTML = message;
 
         const barterOffersContainer = document.getElementById('barterOffers');

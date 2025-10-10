@@ -1117,7 +1117,7 @@ h1 {
 /* Smaller font for character names in message overlays */
 .message-overlay .character-name,
 #messageOverlay .character-name {
-    font-size: 0.7em;
+    font-size: 1.2em; /* Make NPC name larger than message text */
 }
 
 /* The message box for notes now just uses the overlay styles */

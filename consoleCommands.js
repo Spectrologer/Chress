@@ -198,11 +198,6 @@ const consoleCommands = {
   hotkeyShift5: function(game) { this.spawnEnemy(game, 'lazerd'); },
   hotkeyShift6: function(game) { this.spawnEnemy(game, 'zard'); },
 
-  hotkey9: function(game) {
-    game.player.points = 999;
-    console.log('Set player points to 999');
-  },
-
   // Handle hotkey events (for external calling from InputManager)
   handleHotkey: function(game, key, shiftKey = false) {
     const lowerKey = key.toLowerCase();
@@ -231,7 +226,6 @@ const consoleCommands = {
       if (lowerKey === '4') { this.hotkeyShift4(game); return true; }
       if (lowerKey === '5') { this.hotkeyShift5(game); return true; }
       if (lowerKey === '6') { this.hotkeyShift6(game); return true; }
-      if (lowerKey === '9') { this.hotkey9(game); return true; }
     }
     return false; // Not a hotkey
   }

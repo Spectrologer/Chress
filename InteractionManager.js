@@ -196,10 +196,9 @@ export class InteractionManager {
                 const npcData = Sign.getDialogueNpcData('crayn');
                 if (npcData) {
                     const message = npcData.messages[npcData.currentMessageIndex];
-                    const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
                     // Use the sign message system for a persistent message that clears on movement
-                    this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
-                    this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                    this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                    this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
                     // Cycle to the next message
                     npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
                 }
@@ -220,10 +219,9 @@ export class InteractionManager {
                 const npcData = Sign.getDialogueNpcData('felt');
                 if (npcData) {
                     const message = npcData.messages[npcData.currentMessageIndex];
-                    const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
                     // Use the sign message system for a persistent message that clears on movement
-                    this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
-                    this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                    this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                    this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
                     // Cycle to the next message
                     npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
                 }
@@ -244,10 +242,9 @@ export class InteractionManager {
                 const npcData = Sign.getDialogueNpcData('forge');
                 if (npcData) {
                     const message = npcData.messages[npcData.currentMessageIndex];
-                    const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
                     // Use the sign message system for a persistent message that clears on movement
-                    this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
-                    this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                    this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                    this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
                     // Cycle to the next message
                     npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
                 }
@@ -538,10 +535,9 @@ export class InteractionManager {
             const npcData = Sign.getDialogueNpcData('crayn');
             if (npcData) {
                 const message = npcData.messages[npcData.currentMessageIndex];
-                const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
                 // Use the sign message system for a persistent message that clears on movement
-                this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
-                this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
                 // Cycle to the next message
                 npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
             }
@@ -554,10 +550,9 @@ export class InteractionManager {
             const npcData = Sign.getDialogueNpcData('felt');
             if (npcData) {
                 const message = npcData.messages[npcData.currentMessageIndex];
-                const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
                 // Use the sign message system for a persistent message that clears on movement
-                this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
-                this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
                 // Cycle to the next message
                 npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
             }
@@ -570,10 +565,9 @@ export class InteractionManager {
             const npcData = Sign.getDialogueNpcData('forge');
             if (npcData) {
                 const message = npcData.messages[npcData.currentMessageIndex];
-                const messageText = `<span class="character-name">${npcData.name}</span><br>${message}`;
                 // Use the sign message system for a persistent message that clears on movement
-                this.game.displayingMessageForSign = { message: messageText, type: 'npc' };
-                this.game.uiManager.showSignMessage(messageText, npcData.portrait);
+                this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
                 // Cycle to the next message
                 npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
             }

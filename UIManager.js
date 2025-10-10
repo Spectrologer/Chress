@@ -149,7 +149,7 @@ export class UIManager {
 
             // Use innerHTML to set content with image if provided
             if (imageSrc) {
-                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
+                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 128px; height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
             } else {
                 messageElement.textContent = displayText;
             }
@@ -188,12 +188,20 @@ export class UIManager {
         }
     }
 
-    showSignMessage(text, imageSrc) {
+    showSignMessage(text, imageSrc, name = null) {
         const messageElement = document.getElementById('messageOverlay');
         if (messageElement) {
             // Set content for sign message (persistent until clicked again)
-            if (imageSrc) {
-                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 64px; height: 64px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${text}`;
+            if (name && imageSrc) {
+                // NPC dialogue with name and portrait
+                messageElement.innerHTML = `
+                    <span class="character-name" style="font-size: 1.5em; margin-bottom: 10px;">${name}</span>
+                    <div class="barter-portrait-container large-portrait" style="margin: 0 auto 10px auto;">
+                        <img src="${imageSrc}" class="barter-portrait">
+                    </div>
+                    ${text}`;
+            } else if (imageSrc) {
+                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 128px; height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${text}`;
             } else {
                 messageElement.innerHTML = text;
             }
