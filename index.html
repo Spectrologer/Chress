@@ -39,7 +39,7 @@
 <body>
     <div class="game-container">
         <div class="header-area">
-            <!-- AI INSTRUCTION: This is the Player Card. It contains the player's stats (health, hunger, thirst), inventory, and a minimap of the world. -->
+            <!-- AI INSTRUCTION: This is the Player Card. It contains the player's health, hunger, thirst), inventory, and a minimap of the world. -->
             <div class="character-card-container">
                 <div class="character-card modern-player-card">
                     <div class="player-header">
@@ -51,6 +51,10 @@
                             <img src="Images/items/heart.png" alt="Heart" class="heart-icon">
                             <img src="Images/items/heart.png" alt="Heart" class="heart-icon">
                             <img src="Images/items/heart.png" alt="Heart" class="heart-icon">
+                        </div>
+                        <div id="player-points" class="player-points">
+                            <img src="images/items/points.png" alt="Points" class="points-icon">
+                            <span class="points-value">0</span>
                         </div>
                     </div>
                     <div class="player-bars">
@@ -122,13 +126,10 @@
                         </div>
                         <p id="barterNPCMessage">Message</p>
                     </div>
-                    <div id="barterExchange" class="barter-exchange">
-                        <!-- Content will be dynamically inserted here by game.js -->
-                    </div>
+                    <div id="barterOffers" class="barter-offers-container"></div>
                 </div>
                 <div class="barter-buttons">
-                    <button id="confirmBarterButton">Confirm Trade</button>
-                    <button id="cancelBarterButton">Cancel</button>
+                    <button id="cancelBarterButton" class="text-button">Cancel</button>
                 </div>
             </div>
         </div>

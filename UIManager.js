@@ -92,6 +92,12 @@ export class UIManager {
 
     updatePlayerStats() {
         this.playerStatsUI.updatePlayerStats();
+
+        // Update points on the main player card
+        const pointsValueElement = document.querySelector('.player-points .points-value');
+        if (pointsValueElement) {
+            pointsValueElement.textContent = this.game.player.getPoints();
+        }
     }
 
 
@@ -325,7 +331,12 @@ export class UIManager {
             const statsContent = document.querySelector('.stats-main-content .stats-info p');
             const enemiesCaptured = this.game.defeatedEnemies ? this.game.defeatedEnemies.size : 0;
             const playerPoints = this.game.player.getPoints();
-            statsContent.innerHTML = `Enemies Captured: ${enemiesCaptured}<br>Accumulated Points: ${playerPoints}`;
+            statsContent.innerHTML = `
+                Enemies Captured: ${enemiesCaptured}<br>
+                <div style="display: flex; align-items: center; margin-top: 8px;">
+                    <img src="images/items/points.png" alt="Points" style="width: 24px; height: 24px; margin-right: 8px; image-rendering: pixelated;">
+                    Points: ${playerPoints}
+                </div>`;
 
             this.statsPanelOverlay.classList.add('show');
             this.statsPanelOpen = true;

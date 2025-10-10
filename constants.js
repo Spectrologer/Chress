@@ -24,6 +24,7 @@ export const TILE_TYPES = {
     DEADTREE: 15,
     LION: 16,
     SQUIG: 25,
+    RUNE: 39,
     // Tinted dirt tiles for special zone
     PINK_FLOOR: 17,
     RED_FLOOR: 18,
@@ -68,6 +69,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.DEADTREE]: '#8B4513',   // Brown for deadtree
     [TILE_TYPES.LION]: '#FFD700',    // Gold for lion
     [TILE_TYPES.SQUIG]: '#FFD700',   // Gold for squig
+    [TILE_TYPES.RUNE]: '#FFD700',    // Gold for rune
     [TILE_TYPES.PINK_FLOOR]: '#FFB6C1',    // Light pink
     [TILE_TYPES.RED_FLOOR]: '#DC143C',     // Crimson red
     [TILE_TYPES.ORANGE_FLOOR]: '#FFA500', // Orange
@@ -130,6 +132,7 @@ export const IMAGE_ASSETS = [
     'doodads/deadtree.png',
     'fauna/lion.png',
     'fauna/squig.png',
+    'fauna/rune.png',
     'fauna/crayn.png',
     'fauna/felt.png',
     'fauna/forge.png',

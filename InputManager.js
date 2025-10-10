@@ -179,7 +179,7 @@ export class InputManager {
         // Check if tapped on player to open stats panel
         // Only allow stats panel if not standing on an exit tile
         const playerTile = this.game.grid[playerPos.y]?.[playerPos.x];
-        if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y && playerTile !== TILE_TYPES.EXIT) {
+        if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y && playerTile !== TILE_TYPES.EXIT && playerTile !== TILE_TYPES.PORT) {
             this.game.uiManager.showStatsPanel();
             return;
         }
@@ -464,6 +464,9 @@ export class InputManager {
                     enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
                     enemyAtTarget.takeDamage(999); // Ensure enemy is dead
 
+                    // Award points for defeating the enemy
+                    this.game.player.addPoints(enemyAtTarget.getPoints());
+
                     // Record that this enemy position is defeated to prevent respawning
                     const currentZone = this.game.player.getCurrentZone();                    
                     this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemyAtTarget.id}`);
@@ -479,7 +482,7 @@ export class InputManager {
                         this.game.zones.set(zoneKey, zoneData);
                     }
                     // Enemy movements happen after attacks to simulate turn-based combat
-                    this.game.handleEnemyMovements();
+                    this.game.startEnemyTurns();
                     // Player does not move
                 } else {
                     // Normal movement
@@ -492,7 +495,7 @@ export class InputManager {
                 if (this.game.justEnteredZone) {
                     this.game.justEnteredZone = false; // Reset flag after skipping enemy movement
                 } else {
-                    this.game.handleEnemyMovements();
+                    this.game.startEnemyTurns();
                 }
 
                 // Collision and pickup checks are now handled after the enemy turn sequence finishes

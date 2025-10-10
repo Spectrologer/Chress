@@ -64,18 +64,45 @@ export class CombatManager {
     }
 
     checkCollisions() {
+        // First, remove any already dead enemies and award points for them
+        this.game.enemies = this.game.enemies.filter(enemy => {
+            if (enemy.health <= 0) {
+                const currentZone = this.game.player.getCurrentZone();
+                this.game.player.addPoints(enemy.getPoints()); // Award points for defeating enemy
+                this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
+                this.game.soundManager.playSound('attack');
+
+                // Remove from zone data to prevent respawn
+                const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+                if (this.game.zones.has(zoneKey)) {
+                    const zoneData = this.game.zones.get(zoneKey);
+                    zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
+                    this.game.zones.set(zoneKey, zoneData);
+                }
+                return false; // Remove dead enemy
+            }
+            return true; // Keep alive enemy
+        });
+
+        // Update UI after awarding points for dead enemies
+        this.game.uiManager.updatePlayerStats();
+
         const playerPos = this.game.player.getPosition();
         this.game.enemies = this.game.enemies.filter(enemy => {
             // Check for collision if an enemy ends up on the player's tile.
             // Exclude 'lizardy' because its attack/bump logic is handled entirely in its planMoveTowards method, which prevents it from moving onto the player.
             if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked && enemy.enemyType !== 'lizardy') {
 
+                // Award points for defeating the enemy before killing it
+                this.game.player.addPoints(enemy.getPoints());
+                const currentZone = this.game.player.getCurrentZone();
+                this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemy.id}`);
+
                 this.game.player.takeDamage(enemy.attack);
-                this.game.player.addPoints(enemy.getPoints()); // Award points for defeating enemy
+                enemy.takeDamage(enemy.health); // Ensure enemy dies from collision
                 this.game.soundManager.playSound('attack');
 
                 // Remove from zone data to prevent respawn
-                const currentZone = this.game.player.getCurrentZone();
                 const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
                 if (this.game.zones.has(zoneKey)) {
                     const zoneData = this.game.zones.get(zoneKey);
@@ -86,6 +113,9 @@ export class CombatManager {
             }
             return true;
         });
+
+        // Update UI after collision checks
+        this.game.uiManager.updatePlayerStats();
 
         // Check for adjacent bombs to explode (if actionTimer >=2)
         for (let dx = -1; dx <= 1; dx++) {
@@ -118,6 +148,7 @@ export class CombatManager {
         this.game.player.setPosition(targetX, targetY);
         if (enemy) {
             this.game.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
+            this.game.player.addPoints(enemy.getPoints()); // Award points for defeating enemy
             enemy.startBump(this.game.player.x - enemy.x, this.game.player.y - enemy.y);
             enemy.takeDamage(999);
             const currentZone = this.game.player.getCurrentZone();

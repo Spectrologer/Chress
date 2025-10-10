@@ -136,6 +136,16 @@ const consoleCommands = {
     }
   },
 
+  spawnRune: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.RUNE;
+      console.log('Spawned rune at', pos);
+    } else {
+      console.log('No valid spawn position found');
+    }
+  },
+
   // Enemy spawn commands (additional)
   spawnLizardeaux: function(game) {
     this.spawnEnemy(game, 'lizardeaux');
@@ -167,6 +177,7 @@ const consoleCommands = {
   hotkeyS: function(game) { this.spawnBishopSpear(game); },
   hotkeyN: function(game) { this.spawnNote(game); },
   hotkeyR: function(game) { this.spawnHeart(game); },
+  hotkeyE: function(game) { this.spawnRune(game); },
   hotkeyW: function(game) { this.spawnWater(game); },
 
   hotkeyF: function(game) {
@@ -187,6 +198,11 @@ const consoleCommands = {
   hotkeyShift5: function(game) { this.spawnEnemy(game, 'lazerd'); },
   hotkeyShift6: function(game) { this.spawnEnemy(game, 'zard'); },
 
+  hotkey9: function(game) {
+    game.player.points = 999;
+    console.log('Set player points to 999');
+  },
+
   // Handle hotkey events (for external calling from InputManager)
   handleHotkey: function(game, key, shiftKey = false) {
     const lowerKey = key.toLowerCase();
@@ -202,6 +218,7 @@ const consoleCommands = {
       if (lowerKey === 's') { this.hotkeyS(game); return true; }
       if (lowerKey === 'n') { this.hotkeyN(game); return true; }
       if (lowerKey === 'r') { this.hotkeyR(game); return true; }
+      if (lowerKey === 'e') { this.hotkeyE(game); return true; }
       if (lowerKey === 'w') { this.hotkeyW(game); return true; }
       if (lowerKey === 'f') { this.hotkeyF(game); return true; }
       if (lowerKey === 'u') { this.hotkeyU(game); return true; }
@@ -214,6 +231,7 @@ const consoleCommands = {
       if (lowerKey === '4') { this.hotkeyShift4(game); return true; }
       if (lowerKey === '5') { this.hotkeyShift5(game); return true; }
       if (lowerKey === '6') { this.hotkeyShift6(game); return true; }
+      if (lowerKey === '9') { this.hotkey9(game); return true; }
     }
     return false; // Not a hotkey
   }

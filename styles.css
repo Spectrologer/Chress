@@ -171,6 +171,7 @@ body {
     display: flex;
     align-items: center;
     gap: 12px; /* Slightly reduce gap to accommodate the new button */
+    flex-wrap: wrap; /* Allow items to wrap */
     justify-content: space-between;
 }
 
@@ -213,6 +214,30 @@ body {
     align-items: center;
     gap: 6px;
 }
+.player-points {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,0,0,0.05);
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #e2cfa2;
+    margin-left: auto; /* Push to the right side */
+}
+.points-icon {
+    width: 20px;
+    height: 20px;
+    image-rendering: pixelated;
+}
+.points-value {
+    font-family: 'Courier New', monospace;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #7a5c2e;
+    min-width: 2ch; /* Reserve space for at least 2 characters */
+    text-align: left;
+}
+
 .heart-icon {
     width: 24px;
     height: 24px;
@@ -1464,6 +1489,30 @@ h1 {
     text-align: left;
 }
 
+.barter-offers-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.barter-offer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(139, 69, 19, 0.2);
+}
+
+.barter-item-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
 /* Smaller text for statue descriptions */
 .barter-window .statue-description {
     font-size: 1.1em;
@@ -1477,11 +1526,6 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    gap: 15px;
-    padding: 10px;
-    background: rgba(0,0,0,0.05);
-    border-radius: 6px;
-    border: 1px solid rgba(139, 69, 19, 0.2);
 }
 
 .barter-offer-section {
@@ -1507,6 +1551,14 @@ h1 {
     object-fit: contain;
 }
 
+.barter-item-label {
+    font-size: 1em;
+    font-weight: bold;
+    color: #5a4223;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+}
+
 .barter-exchange-arrow {
     font-size: 3em;
     color: #7a5c2e;
@@ -1517,7 +1569,7 @@ h1 {
 
 .barter-buttons {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end; /* Align cancel button to the right */
     width: 100%;
 }
 
@@ -1543,25 +1595,6 @@ h1 {
     box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5);
 }
 
-#cancelBarterButton {
-    background-image: url('images/ui/no.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: transparent;
-    border: none;
-    color: transparent;
-    box-shadow: none;
-    padding: 0;
-    width: 128px;
-    height: 128px;
-    cursor: pointer;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: -webkit-crisp-edges;
-    image-rendering: crisp-edges;
-}
-
 .barter-window button.text-button {
     background-image: none !important;
     background: linear-gradient(135deg, #CD853F, #B8860B) !important;
@@ -1577,25 +1610,6 @@ h1 {
     background: linear-gradient(135deg, #B8860B, #CD853F) !important;
     transform: translateY(-2px) !important;
     box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5) !important;
-}
-
-#confirmBarterButton {
-    background-image: url('images/ui/yes.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: transparent;
-    border: none;
-    color: transparent;
-    box-shadow: none;
-    padding: 0;
-    width: 128px;
-    height: 128px;
-    cursor: pointer;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: -webkit-crisp-edges;
-    image-rendering: crisp-edges;
 }
 
 /* Stats Panel Overlay */

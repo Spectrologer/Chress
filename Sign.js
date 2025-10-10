@@ -88,7 +88,30 @@ export class Sign {
             requiredItemName: 'Nut',
             receivedItemImg: 'Images/items/water.png',
             receivedItemName: 'Water'
-        }
+        },
+        rune: {
+            name: 'Rune', // This is now a header for the NPC
+            portrait: 'Images/fauna/runeface.png', // Shared portrait
+            message: 'I smell it... Points. Feed it me.', // Shared message
+            trades: [
+                {
+                    id: 'rune_food',
+                    requiredItem: 'points',
+                    requiredAmount: 5,
+                    requiredItemImg: 'images/items/points.png',
+                    receivedItemName: 'Random Food',
+                    receivedItemImg: 'images/items/note.png' // Placeholder '?'
+                },
+                {
+                    id: 'rune_item',
+                    requiredItem: 'points',
+                    requiredAmount: 5,
+                    requiredItemImg: 'images/items/points.png',
+                    receivedItemName: 'Random Item',
+                    receivedItemImg: 'images/items/note.png' // Placeholder '?'
+                }
+            ]
+        },
     };
 
     static getProceduralMessage(zoneX, zoneY, usedMessagesSet = Sign.spawnedMessages) {

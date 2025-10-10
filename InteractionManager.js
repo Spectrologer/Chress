@@ -171,6 +171,20 @@ export class InteractionManager {
             return true; // Interaction attempted, completion status varies
         }
 
+        // Check if tapped on rune for interaction
+        const runeAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.RUNE;
+        if (runeAtPosition) {
+            // Check if player is adjacent to the rune (including diagonal, but excluding self)
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+            if (isAdjacent) {
+                this.game.uiManager.showBarterWindow('rune');
+            } else {
+            }
+            return true; // Interaction attempted, completion status varies
+        }
+
         // Check if tapped on crayn for interaction
         const craynAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.CRAYN;
         if (craynAtPosition) {
@@ -508,6 +522,13 @@ export class InteractionManager {
         const squigAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.SQUIG;
         if (squigAtPosition) {
             this.game.uiManager.showBarterWindow('squig');
+            return;
+        }
+
+        // Check if tapped on rune
+        const runeAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.RUNE;
+        if (runeAtPosition) {
+            this.game.uiManager.showBarterWindow('rune');
             return;
         }
 

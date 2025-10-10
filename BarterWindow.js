@@ -1,4 +1,5 @@
 import { Sign } from './Sign.js';
+import { FOOD_ASSETS, TILE_TYPES } from './constants.js';
 
 export class BarterWindow {
     constructor(game) {
@@ -9,19 +10,14 @@ export class BarterWindow {
         this.barterNPCName = document.getElementById('barterNPCName');
         this.barterNPCPortrait = document.getElementById('barterNPCPortrait');
         this.barterNPCMessage = document.getElementById('barterNPCMessage');
-        this.confirmBarterButton = document.getElementById('confirmBarterButton');
         this.cancelBarterButton = document.getElementById('cancelBarterButton');
 
         this.currentNPCType = null;
     }
 
     setupBarterHandlers() {
-        this.confirmBarterButton.addEventListener('click', () => {
-            this.confirmTrade();
-        });
-        this.cancelBarterButton.addEventListener('click', () => {
-            this.hideBarterWindow();
-        });
+        // Confirm buttons are now dynamically created, event listeners added in showBarterWindow
+        this.cancelBarterButton.addEventListener('click', () => this.hideBarterWindow());
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 this.hideBarterWindow();
@@ -35,59 +31,123 @@ export class BarterWindow {
             return; // No data for this NPC type
         }
 
-        const { name, portrait, message, requiredItem, requiredItemImg, receivedItemImg, requiredItemName, receivedItemName } = npcData;
+        const { name, portrait, message, trades } = npcData;
 
         this.barterNPCName.textContent = name;
         this.barterNPCPortrait.src = portrait;
         this.barterNPCPortrait.alt = `Portrait of ${name}`;
         this.barterNPCMessage.innerHTML = message;
 
-        // Build the visual exchange UI
-        const barterExchange = document.getElementById('barterExchange');
-        if (barterExchange) {
-            barterExchange.innerHTML = `
-                <img src="${requiredItemImg}" alt="Trade ${requiredItemName}..." class="barter-exchange-item">
-                <span class="barter-exchange-arrow">→</span>
-                <img src="${receivedItemImg}" alt="to receive ${receivedItemName}" class="barter-exchange-item">
-            `;
-        }
+        const barterOffersContainer = document.getElementById('barterOffers');
+        barterOffersContainer.innerHTML = ''; // Clear previous offers
 
-        // Disable confirm button if player cannot trade
-        const canTrade = this.game.player.inventory.some(item => item.type === 'food' && item.foodType.startsWith(requiredItem));
-        this.confirmBarterButton.disabled = !canTrade;
+        if (trades) {
+            // Multiple trade options
+            trades.forEach(trade => {
+                const offerDiv = this.createOfferElement(trade);
+                barterOffersContainer.appendChild(offerDiv);
+            });
+        } else {
+            // Single trade option (legacy support)
+            const offerDiv = this.createOfferElement(npcData);
+            barterOffersContainer.appendChild(offerDiv);
+        }
 
         this.currentNPCType = npcType;
         this.barterOverlay.classList.add('show');
+    }
+
+    createOfferElement(tradeData) {
+        const offerDiv = document.createElement('div');
+        offerDiv.className = 'barter-offer';
+
+        const requiredAmount = tradeData.requiredAmount || 1;
+        const requiredImgHtml = tradeData.requiredItemImg ? `<img src="${tradeData.requiredItemImg}" alt="Trade ${tradeData.requiredItemName}..." class="barter-exchange-item">` : '';
+
+        offerDiv.innerHTML = `
+            <div class="barter-exchange">
+                <div class="barter-item-wrapper">
+                    ${requiredImgHtml}
+                    <span class="barter-item-label">${requiredAmount} ${tradeData.requiredItemName || tradeData.requiredItem}</span>
+                </div>
+                <span class="barter-exchange-arrow">→</span>
+                <div class="barter-item-wrapper">
+                    <img src="${tradeData.receivedItemImg}" alt="to receive ${tradeData.receivedItemName}" class="barter-exchange-item">
+                    <span class="barter-item-label">${tradeData.receivedItemName}</span>
+                </div>
+            </div>
+            <button class="confirm-trade-btn text-button" data-trade-id="${tradeData.id || this.currentNPCType}">Confirm</button>
+        `;
+
+        const confirmButton = offerDiv.querySelector('.confirm-trade-btn');
+        let canTrade = this.checkTradeViability(tradeData);
+        confirmButton.disabled = !canTrade;
+
+        confirmButton.addEventListener('click', () => this.confirmTrade(tradeData));
+
+        return offerDiv;
+    }
+
+    checkTradeViability(tradeData) {
+        const player = this.game.player;
+        const requiredAmount = tradeData.requiredAmount || 1;
+
+        if (player.inventory.length >= 6) return false; // Inventory full
+
+        if (tradeData.requiredItem === 'points') {
+            return player.getPoints() >= requiredAmount;
+        } else {
+            const itemCount = player.inventory.filter(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem)).length;
+            return itemCount >= requiredAmount;
+        }
     }
 
     hideBarterWindow() {
         this.barterOverlay.classList.remove('show');
     }
 
-    confirmTrade() {
-        const npcData = Sign.getBarterNpcData(this.currentNPCType);
-        if (!npcData) {
+    confirmTrade(tradeData) {
+        if (!tradeData) {
             this.hideBarterWindow();
             return;
         }
-        const requiredItem = npcData.requiredItem;
-        const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(requiredItem));
-        if (index >= 0) {
-            // Check if inventory has space for water
-            if (this.game.player.inventory.length >= 6) {
-                this.game.uiManager.addMessageToLog('Inventory is full! Cannot complete trade.');
-                this.hideBarterWindow();
-                return;
-            }
-            this.game.player.inventory.splice(index, 1);
-            this.game.player.inventory.push({ type: 'water' });
-            this.game.updatePlayerStats();
-            this.hideBarterWindow();
-            // Do not call game.gameLoop() here to avoid interrupting game flow; let the existing loop continue
+
+        if (tradeData.id === 'rune_food') {
+            this.game.player.addPoints(-tradeData.requiredAmount);
+            const randomFood = FOOD_ASSETS[Math.floor(Math.random() * FOOD_ASSETS.length)];
+            this.game.player.inventory.push({ type: 'food', foodType: randomFood });
+            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for food.`);
+        } else if (tradeData.id === 'rune_item') {
+            this.game.player.addPoints(-tradeData.requiredAmount);
+            const items = [
+                TILE_TYPES.BOMB,
+                { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 },
+                { type: TILE_TYPES.HORSE_ICON, uses: 3 }
+            ];
+            const selectedItemType = items[Math.floor(Math.random() * items.length)];
+            let inventoryItem;
+            if (selectedItemType === TILE_TYPES.BOMB) inventoryItem = { type: 'bomb' };
+            else if (selectedItemType.type === TILE_TYPES.BISHOP_SPEAR) inventoryItem = { type: 'bishop_spear', uses: 3 };
+            else if (selectedItemType.type === TILE_TYPES.HORSE_ICON) inventoryItem = { type: 'horse_icon', uses: 3 };
+            
+            if(inventoryItem) this.game.player.inventory.push(inventoryItem);
+            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for an item.`);
         } else {
-            // No matching item found, perhaps show a message, but for now, just hide the window
-            this.hideBarterWindow();
-            // Still step forward to the next game tick
+            // Legacy/single trade logic
+            const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));
+            if (index >= 0) {
+                // Check if inventory has space for water
+                if (this.game.player.inventory.length >= 6) {
+                    this.game.uiManager.addMessageToLog('Inventory is full! Cannot complete trade.');
+                    this.hideBarterWindow();
+                    return;
+                }
+                this.game.player.inventory.splice(index, 1);
+                this.game.player.inventory.push({ type: 'water' });
+            }
         }
+
+        this.game.updatePlayerStats();
+        this.hideBarterWindow();
     }
 }

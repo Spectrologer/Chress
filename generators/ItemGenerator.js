@@ -103,6 +103,11 @@ export class ItemGenerator {
             this.addSquigItem();
         }
 
+        // Add a rare rune with 2% chance per zone
+        // if (Math.random() < 0.02) { // 2% chance
+        //     this.addRuneItem();
+        // }
+
         // Add a rare note with 4% chance per zone
         if (Math.random() < 0.04) { // 4% chance (reduced slightly)
             this.addNoteItem();
@@ -250,6 +255,21 @@ export class ItemGenerator {
                 this.grid[y][x] = TILE_TYPES.SQUIG;
                 logger.log(`Squig spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
                 break; // Successfully placed squig
+            }
+        }
+    }
+
+    addRuneItem() {
+        // Try to place the rune in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.RUNE;
+                logger.log(`Rune spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
+                break; // Successfully placed rune
             }
         }
     }

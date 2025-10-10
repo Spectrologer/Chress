@@ -29,7 +29,8 @@ describe('CombatManager', () => {
       startBump: jest.fn(),
       getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
       isWalkable: jest.fn().mockReturnValue(true),
-      setPosition: jest.fn()
+      setPosition: jest.fn(),
+      addPoints: jest.fn()
     };
 
     mockEnemy = {
@@ -40,6 +41,7 @@ describe('CombatManager', () => {
       startBump: jest.fn(),
       id: 'enemy1',
       attack: 1,
+      health: 1,
       justAttacked: false,
       getPoints: jest.fn().mockReturnValue(1)
     };
@@ -162,5 +164,17 @@ describe('CombatManager', () => {
     expect(mockPlayer.takeDamage).not.toHaveBeenCalled();
     expect(mockGame.soundManager.playSound).not.toHaveBeenCalledWith('attack');
     expect(mockGame.enemies).toHaveLength(1);
+  });
+
+  test('checkCollisions awards points and removes dead enemies', () => {
+    mockEnemy.health = 0; // Enemy is already dead
+
+    combatManager.checkCollisions();
+
+    expect(mockPlayer.addPoints).toHaveBeenCalledWith(1);
+    expect(mockGame.defeatedEnemies.has('0,0,3,3')).toBeTruthy();
+    expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('attack');
+    expect(mockUIManager.updatePlayerStats).toHaveBeenCalled();
+    expect(mockGame.enemies.filter(e => e.id === 'enemy1')).toHaveLength(0);
   });
 });
