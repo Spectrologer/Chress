@@ -397,15 +397,8 @@ export class ZoneGenerator {
             inwardX = GRID_SIZE - 2;
         }
 
-        // Check if this is the special tinted zone - only clear non-tinted tiles
-        const isSpecialZone = (this.currentZoneX === 8 && this.currentZoneY === 8);
-        const currentTile = this.grid[inwardY][inwardX];
-        const isTintedTile = currentTile >= TILE_TYPES.PINK_FLOOR && currentTile <= TILE_TYPES.YELLOW_FLOOR;
-
-        if (!isSpecialZone || !isTintedTile) {
-            // Clear the adjacent tile
-            this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
-        }
+        // Clear the adjacent tile
+        this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
 
         // Clear adjacent inward tiles to create wider entry area (3x3 around inward tile)
         for (let dy = -1; dy <= 1; dy++) {
@@ -415,8 +408,7 @@ export class ZoneGenerator {
                 const ny = inwardY + dy;
                 if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
                     const tile = this.grid[ny][nx];
-                    const isTinted = tile >= TILE_TYPES.PINK_FLOOR && tile <= TILE_TYPES.YELLOW_FLOOR;
-                    if ((!isSpecialZone || !isTinted) && (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY)) {
+                    if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY) {
                         this.grid[ny][nx] = TILE_TYPES.FLOOR;
                     }
                 }
@@ -435,9 +427,6 @@ export class ZoneGenerator {
         let currentX = startX;
         let currentY = startY;
 
-        // Check if this is the special tinted zone - don't clear tinted tiles
-        const isSpecialZone = (this.currentZoneX === 8 && this.currentZoneY === 8);
-
         // Clear tiles along a path toward center (simplified pathfinding)
         while (Math.abs(currentX - centerX) > 1 || Math.abs(currentY - centerY) > 1) {
             // Move toward center one step at a time
@@ -451,11 +440,8 @@ export class ZoneGenerator {
                 currentY--;
             }
 
-            // Clear this tile if it's not already floor or exit, and not a tinted tile in special zone
-            const currentTile = this.grid[currentY][currentX];
-            const isTintedTile = currentTile >= TILE_TYPES.PINK_FLOOR && currentTile <= TILE_TYPES.YELLOW_FLOOR;
-            if ((this.grid[currentY][currentX] === TILE_TYPES.WALL || this.grid[currentY][currentX] === TILE_TYPES.ROCK || this.grid[currentY][currentX] === TILE_TYPES.SHRUBBERY) &&
-                !(isSpecialZone && isTintedTile)) {
+            // Clear this tile if it's not already floor or exit
+            if (this.grid[currentY][currentX] === TILE_TYPES.WALL || this.grid[currentY][currentX] === TILE_TYPES.ROCK || this.grid[currentY][currentX] === TILE_TYPES.SHRUBBERY) {
                 this.grid[currentY][currentX] = TILE_TYPES.FLOOR;
             }
 

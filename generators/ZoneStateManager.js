@@ -13,7 +13,6 @@ export class ZoneStateManager {
     static squigSpawned = false;
     static wellSpawned = false;
     static deadTreeSpawned = false;
-    static puzzleZoneSpawned = false;
     static axeWarningSignPlaced = false;
     static hammerWarningSignPlaced = false;
     static firstFrontierSignPlaced = false;
@@ -90,7 +89,6 @@ export class ZoneStateManager {
         this.squigSpawned = false;
         this.wellSpawned = false;
         this.deadTreeSpawned = false;
-        this.puzzleZoneSpawned = false;
         this.axeWarningSignPlaced = false;
         this.hammerWarningSignPlaced = false;
         this.firstFrontierSignPlaced = false;

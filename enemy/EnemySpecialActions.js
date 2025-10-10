@@ -37,33 +37,60 @@ export class EnemySpecialActions {
     // Execute charge move for Lizardeaux enemy type
     static executeLizardeauxCharge(enemy, player, playerX, playerY, grid, enemies, isSimulation = false) {
         if (EnemyLineOfSight.checkOrthogonalLineOfSight(enemy, playerX, playerY, grid, enemies)) {
-            const chargeMove = EnemyChargeBehaviors.getChargeAdjacentMove(enemy, playerX, playerY, grid, enemies);
-            if (chargeMove) {
-                // Move to adjacent tile, leaving smoke trail
+            const dx = Math.abs(enemy.x - playerX);
+            const dy = Math.abs(enemy.y - playerY);
+            const distance = Math.max(dx, dy);
+            if (distance === 1) {
+                // Adjacent: normal attack without knockback
                 if (!isSimulation) {
-                    // Add smoke on each tile traversed during charge
-                    const stepsDx = Math.abs(chargeMove.x - enemy.x);
-                    const stepsDy = Math.abs(chargeMove.y - enemy.y);
-                    let stepX = stepsDx > 0 ? (chargeMove.x > enemy.x ? 1 : -1) : 0;
-                    let stepY = stepsDy > 0 ? (chargeMove.y > enemy.y ? 1 : -1) : 0;
-                    const steps = Math.max(stepsDx, stepsDy);
-                    for (let i = 1; i < steps; i++) {
+                    player.takeDamage(enemy.attack);
+                    player.startBump(enemy.x - playerX, enemy.y - playerY);
+                    enemy.startBump(playerX - enemy.x, playerY - enemy.y);
+                    enemy.justAttacked = true;
+                    enemy.attackAnimation = 15;
+                    window.soundManager?.playSound('attack');
+                }
+                return null; // All in one turn
+            } else {
+                // Charge directly to player
+                const chargeMove = { x: playerX, y: playerY };
+                // Move directly to player
+                if (!isSimulation) {
+                    // Add smoke on each tile traversed during charge (excluding player tile)
+                    const stepsDx = dx;
+                    const stepsDy = dy;
+                    let stepX = playerX > enemy.x ? 1 : -1;
+                    let stepY = playerY > enemy.y ? 1 : -1;
+                    if (dx > 0) stepY = 0; // if horizontal, no vertical step
+                    else if (dy > 0) stepX = 0;
+                    for (let i = 1; i < distance; i++) {
                         enemy.smokeAnimations.push({ x: enemy.x + i * stepX, y: enemy.y + i * stepY, frame: 18 });
                     }
                     enemy.x = chargeMove.x;
                     enemy.y = chargeMove.y;
                     enemy.liftFrames = 15; // Start lift animation
-                }
-                // After moving, check if now adjacent and ram
-                const newDx = Math.abs(chargeMove.x - playerX);
-                const newDy = Math.abs(chargeMove.y - playerY);
-                if (newDx + newDy === 1) {
-                    enemy.performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation);
+                    // Attack upon arriving
+                    player.takeDamage(enemy.attack);
+                    player.startBump(enemy.x - playerX, enemy.y - playerY);
+                    enemy.startBump(playerX - enemy.x, playerY - enemy.y);
+                    enemy.justAttacked = true;
+                    enemy.attackAnimation = 15;
+                    window.soundManager?.playSound('attack');
+                    // Knockback player backward
+                    let knockbackX = playerX;
+                    let knockbackY = playerY;
+                    if (stepX !== 0) {
+                        knockbackX += stepX;
+                    } else {
+                        knockbackY += stepY;
+                    }
+                    // Only knockback if walkable, else stay
+                    if (player.isWalkable(knockbackX, knockbackY, grid)) {
+                        player.setPosition(knockbackX, knockbackY);
+                    }
                 }
                 return null; // All in one turn
             }
-            // If no charge move is possible (e.g., already adjacent), return false to allow other actions.
-            return false;
         }
         return false; // No line of sight
     }

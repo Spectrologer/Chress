@@ -131,26 +131,11 @@ export const EnemyMovementMixin = {
             }
         }
 
-        // Lizardeaux: charge adjacent and ram if orthogonal line of sight
+        // Lizardeaux: rook charge behavior (handled in special actions)
         if (this.enemyType === 'lizardeaux') {
             const result = EnemySpecialActions.executeLizardeauxCharge(this, player, playerX, playerY, grid, enemies, isSimulation);
-            if (result === false) { // executeLizardeauxCharge returns false if no LoS or not a charge situation
-                // If not charging, check for a simple adjacent attack.
-                const dx = Math.abs(this.x - playerX);
-                const dy = Math.abs(this.y - playerY);
-                if (dx + dy === 1) { // Orthogonally adjacent
-                    if (!isSimulation) {
-                        player.takeDamage(this.attack);
-                        player.startBump(this.x - playerX, this.y - playerY);
-                        this.startBump(playerX - this.x, playerY - this.y);
-                        this.justAttacked = true;
-                        this.attackAnimation = 15;
-                        window.soundManager?.playSound('attack');
-                    }
-                    return null; // Attack is the move
-                }
-            }
             if (result !== false) return result;
+            // If not adjacent and no charge possible, fall through to normal movement
         }
 
         // Lazerd: queen-like movement with charge and attack in one turn if orthogonal/diagonal line of sight
@@ -417,33 +402,7 @@ export const EnemyMovementMixin = {
                             }
                         }
 
-                        // Special ram knockback for lizardeaux
-                        if (this.enemyType === 'lizardeaux') {
-                            // Calculate knockback direction (away from enemy)
-                            const attackDx = newX - this.x;
-                            const attackDy = newY - this.y;
-                            if (attackDx !== 0 || attackDy !== 0) {
-                                const absDx = Math.abs(attackDx);
-                                const absDy = Math.abs(attackDy);
-                                let knockbackX = playerX;
-                                let knockbackY = playerY;
-                                if (absDx > absDy) {
-                                    // Horizontal dominant
-                                    knockbackX += attackDx > 0 ? 1 : -1;
-                                } else if (absDy > absDx) {
-                                    // Vertical dominant
-                                    knockbackY += attackDy > 0 ? 1 : -1;
-                                } else {
-                                    // Diagonal, knock back in both directions
-                                    knockbackX += attackDx > 0 ? 1 : -1;
-                                    knockbackY += attackDy > 0 ? 1 : -1;
-                                }
-                                // Only knockback if the position is walkable
-                                if (player.isWalkable(knockbackX, knockbackY, grid)) {
-                                    player.setPosition(knockbackX, knockbackY);
-                                }
-                            }
-                        }
+
 
                         // For lizord, already moved; for others, does not move
                         return null;
