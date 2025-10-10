@@ -132,11 +132,33 @@ describe('CombatManager', () => {
 
   test('checkCollisions triggers bomb explosion when timer >= 2', () => {
     // Place bomb adjacent to player
-    mockGame.grid[1][2] = { type: 'BOMB', actionTimer: 2 };
+    mockGame.grid[1][2] = { type: 'BOMB', actionsSincePlaced: 2 };
 
     combatManager.checkCollisions();
 
     expect(mockGame.explodeBomb).toHaveBeenCalledWith(2, 1);
+  });
+
+  test('bomb explosion knocks back player when within one tile', () => {
+    mockGame.explodeBomb = jest.fn(() => {
+      // Mock the explosion logic for player at (2,2), bomb at (2,1), direction (0,1)
+      // Player should be launched to (2,8) since grid allows it
+      mockPlayer.isWalkable = jest.fn().mockReturnValue(true); // All positions walkable in this test
+      mockPlayer.setPosition(2, 8);
+      mockPlayer.startBump(0, 1);
+    });
+
+    // Place bomb at grid[1][2] (y=1,x=2), player at x=2,y=2 (adjacent below)
+    mockGame.grid[1][2] = { type: 'BOMB', actionsSincePlaced: 2 };
+    mockPlayer.x = 2;
+    mockPlayer.y = 2; // Player at (2,2)
+
+    combatManager.checkCollisions();
+
+    expect(mockGame.explodeBomb).toHaveBeenCalledWith(2, 1);
+    // With full launch, player moves as far as possible in direction (0,1) from (2,2) until grid edge
+    expect(mockPlayer.setPosition).toHaveBeenCalledWith(2, 8);
+    expect(mockPlayer.startBump).toHaveBeenCalledWith(0, 1);
   });
 
   test('performBishopSpearCharge damages enemy and moves player', () => {

@@ -52,6 +52,7 @@ describe('InputManager', () => {
       updatePlayerPosition: jest.fn(),
       updatePlayerStats: jest.fn(),
       startEnemyTurns: jest.fn(),
+      incrementBombActions: jest.fn(),
       combatManager: {
         addPointAnimation: jest.fn()
       },

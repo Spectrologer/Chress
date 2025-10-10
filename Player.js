@@ -146,7 +146,6 @@ export class Player {
 
             this.liftFrames = 15; // Start lift animation
             window.soundManager?.playSound('move');
-            if (window.gameInstance) window.gameInstance.incrementBombActions();
 
             // Set smells when stepping on scent tiles
             if (tile === TILE_TYPES.ORANGE_FLOOR) {
@@ -173,7 +172,6 @@ export class Player {
                     this.startActionAnimation(); // Start action animation
                     this.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
                     window.soundManager?.playSound('chop');
-                    if (window.gameInstance) window.gameInstance.incrementBombActions();
                     return false; // Don't move, just attack
                 }
 
@@ -186,7 +184,6 @@ export class Player {
                     this.startActionAnimation(); // Start action animation
                     this.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
                     window.soundManager?.playSound('smash');
-                    if (window.gameInstance) window.gameInstance.incrementBombActions();
                     return false; // Don't move, just attack
                 }
             }

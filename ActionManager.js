@@ -14,18 +14,19 @@ export class ActionManager {
     }
 
     incrementBombActions() {
-        this.bombActionCounter++;
-        if (this.bombActionCounter >= 5) {
-            this.bombActionCounter = 0;
-            // Find any bombs on the grid and increment their timer
-            for (let y = 0; y < 9; y++) {
-                for (let x = 0; x < 9; x++) {
-                    const tile = this.game.grid[y][x];
-                    if (tile && typeof tile === 'object' && tile.type === 'BOMB') {
-                        tile.actionTimer++;
-                        if (tile.actionTimer >= 2) {
-                            this.explodeBomb(x, y);
-                        }
+        // Find any bombs on the grid and increment their timer
+        for (let y = 0; y < 9; y++) {
+            for (let x = 0; x < 9; x++) {
+                const tile = this.game.grid[y][x];
+                if (tile && typeof tile === 'object' && tile.type === 'BOMB') {
+                    if (tile.justPlaced) {
+                        // This is the turn the bomb was placed, don't increment the timer yet.
+                        tile.justPlaced = false;
+                        continue;
+                    }
+                    tile.actionsSincePlaced = (tile.actionsSincePlaced || 0) + 1; // Increment on subsequent actions
+                    if (tile.actionsSincePlaced >= 2) {
+                        this.explodeBomb(x, y);
                     }
                 }
             }
@@ -141,6 +142,62 @@ export class ActionManager {
                 if (enemy) {
                     enemy.takeDamage(999);
                     this.game.enemies = this.game.enemies.filter(e => e !== enemy);
+                }
+
+                // Check for player knockback (within 1 tile, not center) - launch flying backward until hitting obstruction
+                if (nx === this.game.player.x && ny === this.game.player.y && !(dir.dx === 0 && dir.dy === 0)) {
+                    // Launch player away from bomb - direction away is continuing in the dir.dx, dir.dy direction from player position
+                    let launchX = nx;
+                    let launchY = ny;
+                    const maxSteps = 8; // Prevent infinite loop
+                    let steps = 0;
+                    let intermediatePositions = []; // To collect positions for smoke
+
+                    while (steps < maxSteps) {
+                        launchX += dir.dx;
+                        launchY += dir.dy;
+                        if (launchX >= 0 && launchX < 9 && launchY >= 0 && launchY < 9 &&
+                            this.game.player.isWalkable(launchX, launchY, this.game.grid, this.game.player.x, this.game.player.y)) {
+                            // Check if enemy at this position - if so, damage it and stop launch
+                            const enemy = this.game.enemies.find(e => e.x === launchX && e.y === launchY);
+                            if (enemy) {
+                                // Damage the enemy like in collision
+                                enemy.takeDamage(999); // Instant kill
+                                this.game.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
+                                this.game.player.addPoints(enemy.getPoints());
+                                this.game.enemies = this.game.enemies.filter(e => e !== enemy);
+                                // Remove from zone data
+                                const currentZone = this.game.player.getCurrentZone();
+                                const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+                                if (this.game.zones.has(zoneKey)) {
+                                    const zoneData = this.game.zones.get(zoneKey);
+                                    zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
+                                    this.game.zones.set(zoneKey, zoneData);
+                                }
+                                this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemy.id}`);
+                                this.game.soundManager.playSound('attack');
+                                this.game.uiManager.updatePlayerStats();
+                                // Stop launching here (don't go further)
+                                break;
+                            }
+                            steps++;
+                            intermediatePositions.push({ x: launchX, y: launchY }); // Add to middle positions
+                        } else {
+                            // Back up to last valid position
+                            launchX -= dir.dx;
+                            launchY -= dir.dy;
+                            break;
+                        }
+                    }
+                    // Move to the launch position if it's different from current
+                    if (launchX !== this.game.player.x || launchY !== this.game.player.y) {
+                        // Add smoke at each intermediate position (not at original or final for trail effect)
+                        intermediatePositions.forEach(pos => {
+                            this.game.player.smokeAnimations.push({ x: pos.x, y: pos.y, frame: 18 });
+                        });
+                        this.game.player.setPosition(launchX, launchY);
+                        this.game.player.startBump(dir.dx, dir.dy); // Bump in the launch direction
+                    }
                 }
             }
         }

@@ -134,10 +134,13 @@ export class InteractionManager {
             const pos = this.game.bombPlacementPositions.find(p => p.x === gridCoords.x && p.y === gridCoords.y);
             if (pos) {
                 // Place timed bomb here
-                this.game.grid[pos.y][pos.x] = { type: 'BOMB', actionTimer: 0 };
+                this.game.grid[pos.y][pos.x] = { type: 'BOMB', actionsSincePlaced: 0, justPlaced: true };
                 const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
                 if (bombIndex !== -1) this.game.player.inventory.splice(bombIndex, 1);
                 this.game.uiManager.updatePlayerStats();
+                // Placing bomb counts as an action - increment bomb timers and start enemy turns
+                this.game.incrementBombActions();
+                this.game.startEnemyTurns();
             }
             // End mode regardless
             this.game.bombPlacementMode = false;
@@ -321,8 +324,11 @@ export class InteractionManager {
             const dy = Math.abs(gridCoords.y - playerPos.y);
             const isAdjacent = dx <= 1 && dy <= 1;
             if (isAdjacent) {
-                tapTile.actionTimer = 2;
+                // Activating bomb counts as an action - increment bomb timers and start enemy turns
+                this.game.incrementBombActions();
                 this.game.explodeBomb(gridCoords.x, gridCoords.y);
+                this.game.startEnemyTurns();
+                return true;
             }
             return true;
         }
@@ -628,7 +634,7 @@ export class InteractionManager {
         // Check if bomb
         const tapTile = this.game.grid[gridCoords.y][gridCoords.x];
         if (tapTile && typeof tapTile === 'object' && tapTile.type === 'BOMB') {
-            tapTile.actionTimer = 2;
+            tapTile.actionsSincePlaced = 2;  // Trigger immediate explosion
             this.game.explodeBomb(gridCoords.x, gridCoords.y);
             return;
         }

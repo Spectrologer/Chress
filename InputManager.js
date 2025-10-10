@@ -514,6 +514,9 @@ export class InputManager {
                     this.game.startEnemyTurns();
                     // Player does not move
                 } else {
+                    // A move is an action, so increment bomb timers
+                    this.game.incrementBombActions();
+
                     // Normal movement
                     playerMoved = this.game.player.move(newX, newY, this.game.grid, (zoneX, zoneY, exitSide) => {
                         this.game.transitionToZone(zoneX, zoneY, exitSide, currentPos.x, currentPos.y);
