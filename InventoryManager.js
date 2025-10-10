@@ -126,7 +126,7 @@ export class InventoryManager {
 
             // Add the horse icon image to inventory slot
             const horseImg = document.createElement('img');
-            horseImg.src = 'Images/items/horse.png';
+            horseImg.src = 'images/items/horse.png';
             horseImg.style.width = '70%';
             horseImg.style.height = '70%';
             horseImg.style.objectFit = 'contain';

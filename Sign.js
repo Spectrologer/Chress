@@ -71,27 +71,27 @@ export class Sign {
     static barterNpcData = {
         lion: {
             name: 'Penne',
-            portrait: 'Images/fauna/lionface.png',
+            portrait: 'images/fauna/lionface.png',
             message: 'Give me meat!',
             requiredItem: 'food/meat',
             requiredItemImg: 'images/food/meat/beaf.png',
             requiredItemName: 'Meat',
-            receivedItemImg: 'Images/items/water.png',
+            receivedItemImg: 'images/items/water.png',
             receivedItemName: 'Water'
         },
         squig: {
             name: 'Squig',
-            portrait: 'Images/fauna/squigface.png',
+            portrait: 'images/fauna/squigface.png',
             message: 'I\'m nuts for nuts!',
             requiredItem: 'food/veg',
             requiredItemImg: 'images/food/veg/nut.png',
             requiredItemName: 'Nut',
-            receivedItemImg: 'Images/items/water.png',
+            receivedItemImg: 'images/items/water.png',
             receivedItemName: 'Water'
         },
         rune: {
             name: 'Rune', // This is now a header for the NPC
-            portrait: 'Images/fauna/runeface.png', // Shared portrait
+            portrait: 'images/fauna/runeface.png', // Shared portrait
             message: 'I smell it... Points. Feed it me.', // Shared message
             trades: [
                 {
@@ -189,7 +189,7 @@ export class Sign {
     static dialogueNpcData = {
         crayn: {
             name: 'Crayn',
-            portrait: 'Images/fauna/craynface.png',
+            portrait: 'images/fauna/craynface.png',
             currentMessageIndex: 0,
             messages: [
                 "There is no end to the frontier.",
@@ -206,7 +206,7 @@ export class Sign {
         },
         felt: {
             name: 'Felt',
-            portrait: 'Images/fauna/feltface.png',
+            portrait: 'images/fauna/feltface.png',
             currentMessageIndex: 0,
             messages: [
                 "Crayn is like, so smart.",
@@ -220,7 +220,7 @@ export class Sign {
         },
         forge: {
             name: 'Forge',
-            portrait: 'Images/fauna/forgeface.png',
+            portrait: 'images/fauna/forgeface.png',
             currentMessageIndex: 0,
             messages: [
                 "I can move between tiles.",
