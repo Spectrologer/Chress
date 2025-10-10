@@ -234,11 +234,10 @@ class Game {
         requestAnimationFrame(() => this.gameLoop());
     }
 }
+  
 
 // Initialize game when the page loads
 window.addEventListener('load', () => {
     new Game();
 
-    // Sentry verification: This will cause an intentional error to test the integration.
-    // myUndefinedFunction();
 });
