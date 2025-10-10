@@ -1,5 +1,5 @@
 import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES, TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from './constants.js';
-import { TextureLoader } from './TextureLoader.js';
+import { TextureLoader } from './TextureLoader.js'; // This seems to be a duplicate import in the original file.
 import { TextureDetector } from './TextureDetector.js';
 import { TileRenderer } from './TileRenderer.js';
 import { MultiTileHandler } from './MultiTileHandler.js';

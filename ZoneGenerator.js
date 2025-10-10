@@ -166,7 +166,8 @@ export class ZoneGenerator {
                     TILE_TYPES.BOMB,
                     { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 },
                     { type: TILE_TYPES.HORSE_ICON, uses: 3 },
-                    TILE_TYPES.WATER
+                    TILE_TYPES.WATER,
+                    { type: TILE_TYPES.BOOK_OF_TIME_TRAVEL, uses: 3 },
                 ];
 
                 // Determine number of items to spawn (1 or 2)

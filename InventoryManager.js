@@ -72,6 +72,8 @@ export class InventoryManager {
                 return 'Heart - Restores 1 health';
             case 'note':
                 return 'Map Note - Marks an undiscovered location 15-20 zones away on the map';
+            case 'book_of_time_travel':
+                return `Book of Time Travel - Passes one turn, allowing enemies to move. Has ${item.uses} charges.`;
             default:
                 return '';
         }
@@ -151,6 +153,20 @@ export class InventoryManager {
             slot.classList.add('item-heart');
         } else if (item.type === 'note') {
             slot.classList.add('item-note');
+        } else if (item.type === 'book_of_time_travel') {
+            slot.classList.add('item-book');
+            // Add uses indicator
+            slot.style.position = 'relative';
+            const usesText = document.createElement('div');
+            usesText.style.position = 'absolute';
+            usesText.style.bottom = '4px';
+            usesText.style.right = '5px';
+            usesText.style.fontSize = '1.8em';
+            usesText.style.fontWeight = 'bold';
+            usesText.style.color = item.disabled ? '#666666' : '#000000';
+            usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
+            usesText.textContent = `x${item.uses}`;
+            slot.appendChild(usesText);
         }
     }
 
@@ -382,6 +398,15 @@ export class InventoryManager {
 
                 this.game.player.inventory.splice(idx, 1); // Remove note from inventory
                 break;
+            case 'book_of_time_travel':
+                item.uses--;
+                if (item.uses <= 0) {
+                    this.game.player.inventory.splice(idx, 1);
+                }
+                this.game.startEnemyTurns();
+                this.game.updatePlayerStats(); // Update inventory display
+                // No need to update stats here, as startEnemyTurns will handle the flow
+                return; // Return early to avoid double-updating stats
         }
 
         this.game.updatePlayerStats(); // Refresh display after changes

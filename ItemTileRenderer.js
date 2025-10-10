@@ -217,6 +217,43 @@ export class ItemTileRenderer {
         }
     }
 
+    renderBookTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First draw the base tile
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the book image if loaded, otherwise use fallback
+        if (this.isImageLoaded('book')) {
+            // Scale book to fit within tile while maintaining aspect ratio, 70% size
+            const bookImage = this.images.book;
+            const aspectRatio = bookImage.width / bookImage.height;
+
+            let scaledWidth, scaledHeight;
+            if (aspectRatio > 1) {
+                // Image is wider than tall
+                scaledWidth = TILE_SIZE * 0.7;
+                scaledHeight = (TILE_SIZE * 0.7) / aspectRatio;
+            } else {
+                // Image is taller than wide (or square)
+                scaledHeight = TILE_SIZE * 0.7;
+                scaledWidth = (TILE_SIZE * 0.7) * aspectRatio;
+            }
+
+            // Center the image in the tile
+            const offsetX = (TILE_SIZE - scaledWidth) / 2;
+            const offsetY = (TILE_SIZE - scaledHeight) / 2;
+
+            ctx.drawImage(
+                bookImage,
+                pixelX + offsetX,
+                pixelY + offsetY,
+                scaledWidth,
+                scaledHeight
+            );
+        } else {
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BOOK_OF_TIME_TRAVEL], '📖');
+        }
+    }
+
     renderFallback(ctx, pixelX, pixelY, color, emoji, fontSize = 32) {
         // Fallback to colored square with emoji
         ctx.fillStyle = color;

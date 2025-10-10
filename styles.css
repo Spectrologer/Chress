@@ -654,6 +654,13 @@ body {
     background-position: center, center;
 }
 
+.inventory-slot.item-book {
+    background-image: url('images/items/book.png'), url('images/ui/cell.png');
+    background-size: 70%, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
+}
+
 .inventory-slot.item-disabled {
     opacity: 0.5;
     filter: grayscale(50%);

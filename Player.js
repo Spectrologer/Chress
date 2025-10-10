@@ -127,7 +127,13 @@ export class Player {
                         this.inventory.push({ type: 'note' });
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
                         window.soundManager?.playSound('pickup');
-                    } // If inventory full, can't pick up note and it remains on ground
+                    } // If inventory full, can't pick up and it remains on ground
+                } else if (tile && tile.type === TILE_TYPES.BOOK_OF_TIME_TRAVEL) {
+                    if (this.inventory.length < 6) {
+                        this.inventory.push({ type: 'book_of_time_travel', uses: tile.uses });
+                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                        window.soundManager?.playSound('pickup');
+                    } // If inventory full, can't pick up and it remains on ground
                 }
             this.x = newX;
             this.y = newY;
@@ -237,6 +243,7 @@ export class Player {
             (tile && tile.type === TILE_TYPES.FOOD) || // Note items are just the tile type number
             tile === TILE_TYPES.NOTE ||
             tile === TILE_TYPES.HEART ||
+            (tile && tile.type === TILE_TYPES.BOOK_OF_TIME_TRAVEL) ||
             tile === TILE_TYPES.PORT) {
             return true;
         }

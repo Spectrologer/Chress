@@ -46,7 +46,8 @@ export const TILE_TYPES = {
     LIZORD_STATUE: 35,
     CRAYN: 36,
     FELT: 37,
-    FORGE: 38
+    FORGE: 38,
+    BOOK_OF_TIME_TRAVEL: 40
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -90,7 +91,8 @@ export const TILE_COLORS = {
     [TILE_TYPES.LIZORD_STATUE]: '#A0A0A0',
     [TILE_TYPES.CRAYN]: '#FFD700', // Gold for Crayn
     [TILE_TYPES.FELT]: '#FFD700', // Gold for Felt
-    [TILE_TYPES.FORGE]: '#A0A0A0' // Grey for Forge
+    [TILE_TYPES.FORGE]: '#A0A0A0', // Grey for Forge
+    [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: '#D2691E' // Chocolate color for book
 };
 
 // Direction constants for exits and movements
@@ -128,6 +130,7 @@ export const IMAGE_ASSETS = [
     'items/bomb.png',
     'items/heart.png',
     'items/note.png',
+    'items/book.png',
     'items/points.png',
     'items/chest.png',
     'doodads/well.png',

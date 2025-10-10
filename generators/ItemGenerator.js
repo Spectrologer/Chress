@@ -49,14 +49,14 @@ export class ItemGenerator {
                 // Fallback to water if no food is available
                 itemType = TILE_TYPES.WATER;
             } else {
-            // Use seeded random based on zone position to ensure consistency
-            const zoneKey = `${this.zoneX},${this.zoneY}`;
-            const seed = ZoneStateManager.hashCode(zoneKey) % this.foodAssets.length;
-            const selectedFood = this.foodAssets[seed];
-            itemType = {
-                type: TILE_TYPES.FOOD,
-                foodType: selectedFood
-            };
+                // Use seeded random based on zone position to ensure consistency
+                const zoneKey = `${this.zoneX},${this.zoneY}`;
+                const seed = ZoneStateManager.hashCode(zoneKey);
+                const selectedFood = this.foodAssets[Math.abs(seed) % this.foodAssets.length];
+                itemType = {
+                    type: TILE_TYPES.FOOD,
+                    foodType: selectedFood
+                };
             }
         }
 

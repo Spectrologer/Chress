@@ -86,6 +86,16 @@ const consoleCommands = {
     }
   },
 
+  spawnBook: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.BOOK_OF_TIME_TRAVEL, uses: 3 };
+      console.log('Spawned Book of Time Travel at', pos);
+    } else {
+      console.log('No valid spawn position found');
+    }
+  },
+
   spawnWater: function(game) {
     const pos = findSpawnPosition(game);
     if (pos) {
@@ -177,6 +187,7 @@ const consoleCommands = {
   hotkeyS: function(game) { this.spawnBishopSpear(game); },
   hotkeyN: function(game) { this.spawnNote(game); },
   hotkeyR: function(game) { this.spawnHeart(game); },
+  hotkeyK: function(game) { this.spawnBook(game); },
   hotkeyE: function(game) { this.spawnRune(game); },
   hotkeyW: function(game) { this.spawnWater(game); },
 
@@ -213,6 +224,7 @@ const consoleCommands = {
       if (lowerKey === 's') { this.hotkeyS(game); return true; }
       if (lowerKey === 'n') { this.hotkeyN(game); return true; }
       if (lowerKey === 'r') { this.hotkeyR(game); return true; }
+      if (lowerKey === 'k') { this.hotkeyK(game); return true; }
       if (lowerKey === 'e') { this.hotkeyE(game); return true; }
       if (lowerKey === 'w') { this.hotkeyW(game); return true; }
       if (lowerKey === 'f') { this.hotkeyF(game); return true; }

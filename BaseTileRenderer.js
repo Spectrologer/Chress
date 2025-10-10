@@ -62,6 +62,8 @@ export class BaseTileRenderer {
             this.itemRenderer.renderNoteTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.SIGN) {
             this.itemRenderer.renderSignTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.BOOK_OF_TIME_TRAVEL) {
+            this.itemRenderer.renderBookTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.HOUSE) {
             this.structureRenderer.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.WELL) {
