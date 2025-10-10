@@ -254,7 +254,7 @@ export class Sign {
                 "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, and then become the king of the jungle.",
                 "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, and then rule with kindness and wisdom.",
                 "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, and then live happily ever after.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, live happily ever after, and then tell everyone about it."
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, live happily ever after, and then tell everyone about it.",
                 "I once saw squig eat a nut.",
             ]
         }
