@@ -2,71 +2,117 @@
 
 ## 1. Game Concept
 
-Chress is a 2D, grid-based, top-down survival roguelike game. The player controls a character named "CHALK" who explores a procedurally generated world. The core gameplay revolves around managing health, hunger, and thirst while navigating through different zones, gathering resources, crafting pathways, and engaging in turn-based combat with enemies. The game features a distinctive parchment-and-ink aesthetic.
+Chress is a mobile browser-based, 2D grid-based, top-down survival roguelike game designed for portrait orientation and touch-first interaction. Optimized primarily for smartphones and tablets, the game runs directly in web browsers without downloads. Players control a character named "CHALK" in a procedurally generated world, managing health, hunger, and thirst while navigating zones, gathering resources, and engaging in turn-based combat with chess-inspired enemies. Key design considerations include minimal UI for small screens, swipe/tap controls, and a distinctive parchment-and-ink aesthetic with sound effects and Sentry analytics integration.
 
 **Core Mechanics:**
 
 - **World:** The world is an infinite grid of "zones." Each zone is a 9x9 grid of tiles.
 - **Survival:** The player must manage Health, Hunger, and Thirst.
-- **Exploration:** The player moves from zone to zone by reaching the edge of the grid. A minimap helps track visited zones.
+- **Exploration:** The player moves from zone to zone by reaching the edge of the grid. A minimap helps track visited zones, with regions generated procedurally.
 - **Interaction:** The player can interact with the environment using items (e.g., an axe to chop shrubs, a hammer to break rocks, a bomb to destroy walls).
-- **Combat:** Combat is turn-based. The player attacks enemies by moving into their tile. Enemies have unique movement and attack patterns inspired by chess pieces (Rook, Bishop, Knight).
-- **Items & Inventory:** The player has a limited inventory to carry tools, weapons, consumables (food, water), and special items.
-- **NPCs:** Non-player characters exist for bartering items (e.g., trading meat for water).
-- **Progression:** The game state (player stats, inventory, visited zones) is saved automatically, allowing for persistent play sessions.
+- **Combat:** Combat is turn-based. The player attacks enemies by moving into their tile. Enemies have unique movement and attack patterns inspired by chess pieces (Rook, Bishop, Knight), with special actions and pathfinding.
+- **Items & Inventory:** The player has a limited inventory to carry tools, weapons, consumables (food, water), and special items like map notes.
+- **NPCs & Structures:** Non-player characters exist for bartering items (e.g., trading meat for water). Statues provide info on enemies, houses/wells add flavor.
+- **Progression:** The game state (player stats, inventory, visited zones) is saved automatically, allowing for persistent play sessions. Console commands for debugging.
+- **Audio & Tracking:** Basic sound management and user consent tracking for Sentry analytics.
 
 ## 2. File Structure & Responsibilities
 
-The project is structured into modules, each handling a specific domain of the game's logic. The `Game` class acts as the central orchestrator.
+The project is structured into modules, each handling a specific domain of the game's logic. The `Game` class acts as the central orchestrator. Key updates include modular rendering (split into specialized tile renderers), enhanced AI, sound integration, and connection management for consistent zone transitions.
 
 ### Core & Entrypoint
 
-- `index.html`: The main HTML file. It defines the structure of the UI, including the game canvas, the player stat card, inventory display, and various overlay elements for messages, game over, and bartering. It loads `game.js` as the main script.
-- `styles.css`: The main stylesheet. It defines the entire visual identity of the game, focusing on a mobile-first, portrait-mode layout with a "frayed parchment" and medieval theme.
-- `game.js`: The heart of the application.
-  - The `Game` class initializes all manager classes and holds the primary game state (player, enemies, zones, etc.).
-  - It contains the main `gameLoop`, which drives rendering and animations.
-  - It acts as a central hub, delegating tasks to the appropriate managers (e.g., `game.render()` calls `renderManager.render()`).
+- `index.html`: The main HTML file. Defines UI structure, game canvas, stat card, inventory, overlays (messages, game over, bartering, stats panel).
+- `styles.css`: Main stylesheet for "frayed parchment" medieval theme, mobile-first layout.
+- `game.js`: Central `Game` class (extends base). Manages game loop, state, delegates to managers. Handles primary game logic like zone transitions, enemy turns, interactions.
+- `consoleCommands.js`: Utility functions for debugging, e.g., finding spawn positions for testing.
 
 ### Initialization & State Management
 
-- `GameInitializer.js`: Manages the game's startup sequence. It sets up the canvas, loads all visual assets via `TextureManager`, and either loads a saved game state or initializes a new game world. It also sets up global event listeners for saving the game.
-- `GameStateManager.js`: Handles saving the game state to `localStorage` and loading it back. This includes the player's stats, inventory, position, and the state of all discovered zones.
+- `GameInitializer.js`: Startup sequence: canvas setup, asset loading via `TextureManager`, resize handling, initialization of game or loaded state.
+- `GameStateManager.js`: Persists game state in localStorage (player stats, inventory, zones).
+- `ConsentManager.js`: Manages user consent for tracking with Sentry. Shows banner, handles opt-in/out.
 
 ### Gameplay & Logic Managers
 
-- `InputManager.js`: Captures and interprets all player input from keyboard, mouse clicks, and touch gestures (taps and swipes). It translates these inputs into game actions, like single-tile movement or pathfinding to a tapped destination. It cancels other modes (like bomb placement) upon movement.
-- `ActionManager.js`: Manages the logic for specific player actions, such as using special weapon abilities (Bishop Spear, Horse Icon) or placing and exploding bombs.
-- `CombatManager.js`: Governs all combat-related logic. It handles enemy movement AI, processes player and enemy attacks, checks for collisions, and manages enemy death/removal.
-- `InteractionManager.js`: Handles player interactions with world objects that are not simple movement, such as picking up items, reading signs, or initiating dialogue with NPCs.
-- `InventoryManager.js`: Manages the player's inventory. It handles the logic for using, dropping, and organizing items. It is also responsible for rendering the inventory UI and handling its specific interactions (e.g., single-click to use, double-click to drop bomb).
-- `ZoneManager.js`: Responsible for the procedural generation and management of world zones. It generates the grid layout, populates it with tiles (walls, shrubs), enemies, and treasures, and handles the logic for transitioning the player between zones.
+- `InputManager.js`: Handles player input (keyboard, mouse, touch). Translates to movements, pathfinding via A\* algorithm.
+- `ActionManager.js`: Special actions: charging spears/horses, bombing, explosion logic.
+- `CombatManager.js`: Combat logic: enemy AI movements, attacks, collisions, point animations.
+- `InteractionManager.js`: Non-movement interactions: signs, NPCs, statues, item pickups, zone gestures.
+- `InventoryManager.js`: Inventory system: add/use/drop items, UI rendering (slots, tooltips).
+- `ZoneManager.js`: Zone generation, transitions, treasure spawning.
+- `ConnectionManager.js`: Manages deterministic connections between zones for consistent world traversal.
+- `MultiTileHandler.js`: Utilities for multi-tile structures like houses, wells.
 
 ### UI & Rendering
 
-- `RenderManager.js`: The primary rendering engine. In each frame of the `gameLoop`, it draws everything onto the main game canvas: the grid tiles, the player, enemies, and any visual effects like explosions or attack animations.
-- `UIManager.js`: Manages all UI elements outside of the main game canvas. This includes updating the player's health, hunger/thirst bars, inventory display, and coordinate information. It also controls the visibility and content of all overlays (messages, region notifications, game over screen).
-- `MiniMap.js`: Specifically handles the rendering of the zone minimap in the player card, showing visited, unvisited, and the current player zone.
-- `BarterWindow.js`: Controls the bartering UI. It displays the NPC, the required and offered items, and handles the trade confirmation or cancellation logic. It also re-uses the window to display informational text for statues.
+- `RenderManager.js`: Main rendering engine: grid, player, enemies, effects (explosions, smoke, charges, points).
+- `UIManager.js`: UI elements: stats bars, overlays (messages, regions, game over, barter, statue info, stats panel), minimap/inventory delegation.
+- `MiniMap.js`: Expands/retracts zone map display.
+- `BarterWindow.js`: Barter UI: offers, confirmations.
+- `StatueInfoWindow.js`: Info windows for statue interactions.
+- `PlayerStatsUI.js`: Detailed stats panel rendering.
+- `RendererUtils.js`: Utilities for rotated/flipped images on canvas.
+
+### Rendering Subsystem (Modular Tile Rendering)
+
+- `BaseTileRenderer.js`: Base renderer with common methods (image checks, exits, floors, water, dirt textures).
+- `ItemTileRenderer.js`: Renders items (food, axes, spears, bombs, etc.).
+- `StructureTileRenderer.js`: Structures (houses, wells, statues, dead trees, enemy tiles).
+- `WallTileRenderer.js`: Walls (rocks, grass, interior walls).
+- `TileRenderer.js`: Inherits from BaseTileRenderer, configures canvas.
+- `TextureDetector.js`: Determines appropriate textures based on grid neighbors.
+- `TextureLoader.js` & `TextureManager.js`: Asset loading and management for images.
 
 ### Game Entities & Data
 
-- `Player.js`: (Implicitly referenced) Represents the player character. It holds state for position, health, hunger, thirst, inventory, and visited zones. It contains methods for movement, taking damage, and managing stats.
-- `Enemy.js`: (Implicitly referenced) The base class for enemy entities. It defines common properties like position and health, and methods for movement AI, taking damage, and animations. Different enemy types extend this class.
-- `Sign.js`: A utility class for managing the text content of signs found in the world. It contains predefined sets of messages for different regions and provides methods to retrieve a message.
-- `constants.js`: (Implicitly referenced) A central file for defining game-wide constants, such as `GRID_SIZE`, `TILE_SIZE`, tile type enums (`TILE_TYPES`), and asset paths. This helps avoid "magic numbers" and makes configuration easier.
+- `Player.js`: Player entity: position, stats (health/hunger/thirst), inventory, movements, animations.
+- `Enemy.js`: Inherits from `BaseEnemy` in enemy/ folder. Defines enemy logic, attacks.
+- `Sign.js`: Manages sign/NPC dialogues, procedural messages, statue data.
+- `constants.js`: Game constants: grid size, tile types, asset paths.
+- `logger.js`: Logging utilities.
 
-## 3. Core Interaction Flow (Example: Player Moves)
+### AI & Movement (enemy/ folder)
 
-1.  **Input:** `InputManager` detects a keypress ('w') or a swipe-up gesture.
-2.  **Interruption:** `InputManager` checks if a message overlay is open and hides it.
-3.  **Action:** `InputManager` calls `player.move()` with the new target coordinates.
-4.  **Player Logic:** `Player.js` checks if the target tile is walkable.
-    - If it's a wall, movement fails.
-    - If it's an enemy, `InputManager` initiates an attack via `CombatManager`.
-    - If it's an open floor, the player's `x, y` coordinates are updated.
-    - If it's an exit tile, `player.move()` triggers a callback to `game.transitionToZone()`.
-5.  **Zone Transition:** `Game.js` calls `zoneManager.transitionToZone()`. `ZoneManager` generates or loads the new zone, updates the player's position to the corresponding entry point, and sets the new grid.
-6.  **Enemy Turn:** After a successful player move, `Game.js` calls `combatManager.handleEnemyMovements()`, giving each enemy a chance to act.
-7.  **State Update:** `Game.js` calls `uiManager.updatePlayerPosition()` and `uiManager.updatePlayerStats()` to refresh the UI with the new coordinates and any changes to hunger/thirst.
-8.  **Render:** The `gameLoop` continues, and on the next frame, `RenderManager` draws the player, enemies, and grid in their new positions.
+- `BaseEnemy.js`: Base enemy class with health, position, AI.
+- `EnemyMovement.js`: Shared movement algorithms.
+- `EnemyAttack.js`, `EnemyChargeBehaviors.js`, `EnemyLineOfSight.js`, `EnemyPathfinding.js`, `EnemySpecialActions.js`: Specialized enemy behaviors.
+
+### Generators (generators/ folder)
+
+- `ZoneGenerator.js`: Generates zone layouts, walls, exits, treasures.
+- `ItemGenerator.js`: Item generation.
+- `FeatureGenerator.js`, `PathGenerator.js`, `StructureGenerator.js`, `ZoneStateManager.js`: Procedural generators.
+
+### Utilities
+
+- `SoundManager.js`: Loads and plays sounds.
+- `TextureDetector.js` (also in main): Texture logic for tiles.
+
+### Tests (tests/ folder)
+
+- `CombatManager.test.js`, `InventoryManager.test.js`, etc.: Jest tests for key modules.
+- Babel and Jest config for testing.
+
+## 3. Folder Structure Quick Reference
+
+- **Root Files**: index.html, styles.css, game.js, constants.js, logger.js, package.json, babel.config.cjs, gitignore - Core setup and configs.
+- **Main Modules**: GameInitializer.js, GameStateManager.js, InputManager.js, ActionManager.js, CombatManager.js, InteractionManager.js, InventoryManager.js, ZoneManager.js, ConnectionManager.js, RenderManager.js, UIManager.js, Player.js, Enemy.js, Sign.js, etc. - Business logic categorized.
+- **Rendering**: BaseTileRenderer.js, ItemTileRenderer.js, StructureTileRenderer.js, WallTileRenderer.js, TileRenderer.js, RendererUtils.js, TextureLoader.js, TextureManager.js, TextureDetector.js - Modular rendering system.
+- **UI**: MiniMap.js, BarterWindow.js, StatueInfoWindow.js, PlayerStatsUI.js - Overlay windows.
+- **Enemy AI** (enemy/): BaseEnemy.js, EnemyMovement.js, EnemyAttack.js, EnemyChargeBehaviors.js, EnemyPathfinding.js, etc. - Enemy behaviors.
+- **Generators** (generators/): ZoneGenerator.js, ItemGenerator.js, FeatureGenerator.js, StructureGenerator.js, etc. - Procedural content.
+- **Tests** (tests/): \*.test.js files for Jest testing.
+- **Assets** (images/, Sounds/, fonts/): Subdivided into fauna, items, floors, fx (effects), etc. Image assets for all visuals.
+- **Config**: todo_example/ - Example todo, can be ignored.
+
+Total Files: ~90+ including assets. Entry: game.js. Dependencies: Sentry for tracking, Rivescript for dialogues.
+
+## 4. Core Interaction Flow (Example: Player Moves)
+
+1. **Input:** `InputManager` detects keypress/tap, handles pathfinding.
+2. **Action:** Calls `player.move()`; checks walkability/attacks.
+3. **Transition:** If exit, `Game.js` calls `zoneManager.transitionToZone()` with `ConnectionManager` for consistent exits.
+4. **Enemy Turn:** `combatManager.handleEnemyMovements()`; enemies use pathfinding/AI.
+5. **UI Update:** `uiManager.updatePlayerStats()` for bars, positions.
+6. **Render:** `RenderManager` draws grid/Player via specialized renderers.

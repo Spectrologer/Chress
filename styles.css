@@ -177,7 +177,7 @@ body {
     align-items: center;
     gap: 12px; /* Slightly reduce gap to accommodate the new button */
     flex-wrap: wrap; /* Allow items to wrap */
-    justify-content: space-between;
+    /* justify-content: space-between; */
 }
 
 .player-portrait-container {
@@ -203,11 +203,19 @@ body {
     gap: 2px;
 }
 .player-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    align-self: stretch;
     font-family: 'MedievalSharp', serif;
-    font-size: 2em;
+    font-size: 1.8em;
     font-weight: 700;
     color: #7a5c2e;
-    letter-spacing: 1px;
+    line-height: 1;
+    text-align: left;
+    padding-right: 8px;
+    border-right: 2px solid #e2cfa2;
 }
 .player-level {
     font-size: 1em;
@@ -219,15 +227,28 @@ body {
     align-items: center;
     gap: 6px;
 }
+.health-points-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1;
+    align-items: flex-start;
+}
+.player-stats-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1; /* Allow it to take up available horizontal space */
+}
 .player-points {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(0,0,0,0.05);
-    padding: 4px 8px;
-    border-radius: 6px;
-    border: 1px solid #e2cfa2;
-    margin-left: auto; /* Push to the right side */
+    /* background: rgba(0,0,0,0.05); */
+    /* padding: 4px 8px; */
+    /* border-radius: 6px; */
+    /* border: 1px solid #e2cfa2; */
 }
 .points-icon {
     width: 20px;
@@ -259,12 +280,14 @@ body {
 }
 .bar-label {
     flex-basis: 90px; /* Give the label a consistent base width */
+    flex-shrink: 1; /* Allow the label to shrink on narrow screens */
     flex-shrink: 0; /* Prevent the label from shrinking */
     text-align: left;
     font-weight: bold;
     color: #7a5c2e;
     font-size: 1.5em; /* Increased font size */
     font-variant: small-caps;
+    padding-bottom: 2px; /* Nudge text slightly higher */
 }
 .bar-track {
     flex: 1;
@@ -1096,28 +1119,35 @@ h1 {
 
 .message-overlay, #messageOverlay {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 100; /* Above other content in the player card */
-    margin: 0;
-    padding: 20px;
-    background: #fffbe9;
-    border: 2px solid #e2cfa2;
-    border-radius: 8px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    padding: 30px;
+    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
+    border: 3px solid #B8860B;
+    box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
     font-family: 'Cinzel', serif;
-    font-size: 1.4em;
-    color: #7a5c2e;
+    color: #3A2418;
     text-align: center;    
-    width: 90%;
-    max-width: 350px;
-    min-height: 150px;
     opacity: 0;
     display: block; /* Ensure it's displayed */
+    line-height: 1.6;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    font-size: 1.8em;
     pointer-events: none; /* Hidden by default */
     transition: opacity 0.3s ease-in-out;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    filter: sepia(20%) saturate(1.2) contrast(1.1);
+}
+
+.message-overlay::before, #messageOverlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255,255,255,0.2);
+    pointer-events: none;
 }
 .message-overlay.show, #messageOverlay.show {
     opacity: 1;
@@ -1136,7 +1166,7 @@ h1 {
 /* Smaller font for character names in message overlays */
 .message-overlay .character-name,
 #messageOverlay .character-name {
-    font-size: 1.2em; /* Make NPC name larger than message text */
+    font-size: 1.2em; /* Relative to the new base font size */
 }
 
 /* The message box for notes now just uses the overlay styles */
@@ -1301,6 +1331,7 @@ h1 {
     -moz-user-select: none;
     -ms-user-select: none;
     white-space: nowrap;
+    display: inline-block; /* Make the button only as wide as its content */
 }
 
 .message-log-button:hover, .message-log-button:active {
@@ -1423,38 +1454,41 @@ h1 {
 
 /* Barter Overlay */
 .barter-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 1200;
+    z-index: 101; /* Above player card content, below other modals */
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .barter-overlay.show {
     display: flex;
     opacity: 1;
+    pointer-events: auto;
 }
 
 .barter-window {
     background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
     border: 3px solid #e2cfa2;
-    border-radius: 12px;
+    border-radius: 0;
     padding: 20px;
-    box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
     font-family: 'Cinzel', serif;
-    max-width: 90vw;
-    width: 400px;
-    max-height: 80vh;
+    width: 100%;
+    height: 100%; /* Fill the overlay */
     display: flex;
     flex-direction: column;
     gap: 15px;
+    overflow: hidden; /* Prevent scrolling */
+    justify-content: space-between; /* Distribute space */
+    box-sizing: border-box; /* Ensure padding is included in height/width */
 }
 
 .barter-main-content {
@@ -1465,6 +1499,7 @@ h1 {
     background: rgba(0,0,0,0.05);
     padding: 15px;
     border-radius: 6px;
+    flex-grow: 1; /* Allow this section to take up available space */
 }
 
 .barter-info {
@@ -1518,12 +1553,20 @@ h1 {
 .barter-offer {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch; /* Stretch to fill width */
     gap: 10px;
     padding: 10px;
     background: rgba(0,0,0,0.05);
     border-radius: 6px;
     border: 1px solid rgba(139, 69, 19, 0.2);
+    flex-wrap: wrap; /* Allow wrapping */
+}
+
+.barter-offer-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
 }
 
 .barter-item-wrapper {
@@ -1544,7 +1587,9 @@ h1 {
 .barter-exchange {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly; /* Evenly space items */
+    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    gap: 10px; /* Add gap for wrapped items */
 }
 
 .barter-offer-section {
@@ -1584,12 +1629,6 @@ h1 {
     font-weight: 900;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     padding-bottom: 8px; /* Align with images */
-}
-
-.barter-buttons {
-    display: flex;
-    justify-content: flex-end; /* Align cancel button to the right */
-    width: 100%;
 }
 
 .barter-window button {
@@ -1633,7 +1672,7 @@ h1 {
 
 /* Stats Panel Overlay */
 .stats-panel-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -1642,7 +1681,7 @@ h1 {
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 1200;
+    z-index: 102;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -1654,14 +1693,14 @@ h1 {
 
 .stats-panel {
     background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
-    border: 3px solid #e2cfa2;
-    border-radius: 12px;
+    border: 2px solid #e2cfa2;
+    border-radius: 0;
     padding: 20px;
-    box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
     font-family: 'Cinzel', serif;
-    max-width: 90vw;
-    width: 400px;
-    max-height: 80vh;
+    width: 100%;
+    height: 100%;
+    max-height: none;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -1679,28 +1718,69 @@ h1 {
 
 .stats-info {
     display: flex;
-    align-items: center;
+    flex-direction: column; /* Stack portrait and text vertically */
+    align-items: stretch; /* Stretch items to fill width */
     gap: 15px;
+    text-align: left;
+}
+
+.stats-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #e2cfa2a8;
+    padding-bottom: 12px;
 }
 
 .stats-panel h2 {
-    color: #7a5c2e;
+    color: #7a5c2e;    
     font-size: 2.2em;
     font-weight: 900;
     margin: 0;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    text-align: center;
+    text-align: left;
+    flex-grow: 1;
 }
 
 .stats-portrait-container {
-    width: 120px;
-    height: 120px;
+    width: 92px; /* Make portrait smaller */
+    height: 92px;
     background: url('images/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+}
+
+.stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stats-list .stat-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 1.5em;
+    color: #5a4223;
+    gap: 8px; /* Add a small gap between label and value */
+}
+
+.stats-list .stat-label {
+    font-weight: bold;
+    color: #7a5c2e;
+    white-space: nowrap; /* Prevent the label from wrapping */
+}
+
+.stats-list .stat-value {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 1.1em;
+    flex-grow: 1; /* Allow value to take remaining space */
+    text-align: right; /* Align the value to the right */
 }
 
 .stats-panel p {
@@ -1714,38 +1794,40 @@ h1 {
 
 /* Statue Info Overlay */
 .statue-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 1250; /* Above barter */
+    z-index: 101; /* Above player card content */
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .statue-overlay.show {
     display: flex;
     opacity: 1;
+    pointer-events: auto;
 }
 
 .statue-window {
     background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
     border: 3px solid #e2cfa2;
-    border-radius: 12px;
+    border-radius: 0;
     padding: 20px;
-    box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
     font-family: 'Cinzel', serif;
-    max-width: 90vw;
-    width: 400px;
-    max-height: 80vh;
+    width: 100%;
+    height: 100%;
+    max-height: none;
     display: flex;
     flex-direction: column;
     gap: 15px;
+    overflow-y: auto; /* Add scroll for smaller screens */
 }
 
 .statue-main-content {

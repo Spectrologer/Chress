@@ -17,7 +17,11 @@ describe('InputManager', () => {
       startBump: jest.fn(),
       takeDamage: jest.fn(),
       setPosition: jest.fn(),
+      setInteractOnReach: jest.fn(),
+      clearInteractOnReach: jest.fn(),
+      interactOnReach: null,
       getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
+      addPoints: jest.fn(),
       x: 2,
       y: 1
     };
@@ -39,13 +43,27 @@ describe('InputManager', () => {
       zones: new Map(),
       displayingMessageForSign: null,
       justEnteredZone: false,
+      isPlayerTurn: true,
       hideOverlayMessage: jest.fn(),
       transitionToZone: jest.fn(),
       handleEnemyMovements: jest.fn(),
       checkCollisions: jest.fn(),
       checkItemPickup: jest.fn(),
       updatePlayerPosition: jest.fn(),
-      updatePlayerStats: jest.fn()
+      updatePlayerStats: jest.fn(),
+      startEnemyTurns: jest.fn(),
+      combatManager: {
+        addPointAnimation: jest.fn()
+      },
+      uiManager: {
+        isStatsPanelOpen: jest.fn().mockReturnValue(false),
+        hideStatsPanel: jest.fn(),
+        showStatsPanel: jest.fn(),
+        updatePlayerStats: jest.fn()
+      },
+      consentManager: {
+        forceShowConsentBanner: jest.fn()
+      }
     };
 
     inputManager = new InputManager(mockGame);
@@ -131,12 +149,18 @@ describe('InputManager', () => {
 
     test('handles exit double tap', () => {
       mockGame.grid[2][2] = TILE_TYPES.EXIT;
+      mockPlayer.getPosition = jest.fn().mockReturnValue({ x: 2, y: 2 });
+      mockGame.canvas.width = 576;
+      mockGame.canvas.height = 576;
+      mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
+        left: 0, top: 0, width: 576, height: 576
+      });
       const handleExitTapSpy = jest.spyOn(inputManager, 'handleExitTap');
 
-      // First tap
-      inputManager.handleTap(72, 72);
-      // Second tap (double tap)
-      inputManager.handleTap(72, 72);
+      // First tap (when player is at the exit) - center of tile 2: 160
+      inputManager.handleTap(160, 160);
+      // Second tap (double tap on same exit)
+      inputManager.handleTap(160, 160);
 
       expect(handleExitTapSpy).toHaveBeenCalledWith(2, 2);
     });
@@ -149,7 +173,7 @@ describe('InputManager', () => {
 
       inputManager.handleExitTap(0, 1);
 
-      expect(handleKeyPressSpy).toHaveBeenCalledWith({ key: 'arrowleft', preventDefault: () => {} });
+      expect(handleKeyPressSpy).toHaveBeenCalledWith({ key: 'arrowleft', preventDefault: expect.any(Function) });
     });
   });
 
@@ -158,7 +182,7 @@ describe('InputManager', () => {
       inputManager.handleKeyPress({ key: 'arrowright', preventDefault: jest.fn() });
 
       expect(mockPlayer.move).toHaveBeenCalledWith(2, 1, mockGame.grid, expect.any(Function));
-      expect(mockGame.handleEnemyMovements).toHaveBeenCalled();
+      expect(mockGame.startEnemyTurns).toHaveBeenCalled();
     });
 
     test('handles WASD movement', () => {
@@ -168,7 +192,7 @@ describe('InputManager', () => {
     });
 
     test('handles enemy attack on movement', () => {
-      const mockEnemy = { x: 2, y: 1, takeDamage: jest.fn(), startBump: jest.fn(), id: 'enemy1' };
+      const mockEnemy = { x: 2, y: 1, takeDamage: jest.fn(), startBump: jest.fn(), id: 'enemy1', getPoints: jest.fn().mockReturnValue(10) };
       mockGame.enemies.push(mockEnemy);
 
       inputManager.handleKeyPress({ key: 'arrowright', preventDefault: jest.fn() });
@@ -183,7 +207,7 @@ describe('InputManager', () => {
 
       inputManager.handleKeyPress({ key: 'arrowright', preventDefault: jest.fn() });
 
-      expect(mockGame.handleEnemyMovements).not.toHaveBeenCalled();
+      expect(mockGame.startEnemyTurns).not.toHaveBeenCalled();
       expect(mockGame.justEnteredZone).toBe(false);
     });
 

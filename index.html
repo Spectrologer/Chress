@@ -56,37 +56,76 @@
 
 
         <div class="header-area">
-            <!-- AI INSTRUCTION: This is the Player Card. It contains the player's health, hunger, thirst), inventory, and a minimap of the world. -->
+            <!-- AI INSTRUCTION: This is the Main Panel. It contains the player's portrait, health (hearts), points, hunger and thirst bars, inventory, and a minimap of the world showing discovered zones. -->
             <div class="character-card-container">
                 <div id="messageOverlay" class="message-overlay"></div>
-                <div class="character-card modern-player-card">
+                <div id="barterOverlay" class="barter-overlay">
+                    <div class="barter-window">
+                        <h2 id="barterNPCName">NPC Name</h2>
+                        <div class="barter-main-content">
+                            <div class="barter-info">
+                                <div class="barter-portrait-container large-portrait">
+                                    <img id="barterNPCPortrait" src="" alt="NPC Portrait" class="barter-portrait">
+                                </div>
+                                <p id="barterNPCMessage">Message</p>
+                            </div>
+                            <div id="barterOffers" class="barter-offers-container"></div>
+                        </div>
+                        <!-- Cancel button moved into individual trade offers -->
+                    </div>
+                </div>
+                <div id="statueOverlay" class="statue-overlay">
+                    <div class="statue-window">
+                        <!-- Content will be populated by JS -->
+                    </div>
+                </div>
+                <!-- AI INSTRUCTION: This is the Player Stats panel. It is revealed when the player character is clicked on the board. -->
+                <div id="statsPanelOverlay" class="stats-panel-overlay">
+                    <div class="stats-panel game-parchment">
+                        <div class="stats-main-content">
+                            <div class="stats-info"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="player-card-content" class="character-card modern-player-card">
                     <div class="player-header">
-                        <div class="player-name">CHALK</div>
+                        <div class="player-name">
+                            <span>C</span>
+                            <span>H</span>
+                            <span>A</span>
+                            <span>L</span>
+                            <span>K</span>
+                        </div>
                         <div class="player-portrait-container">
                             <img src="images/protag/faceset.png" alt="Player Portrait" class="player-portrait">
                         </div>
-                        <div class="player-health">
-                            <img src="images/items/heart.png" alt="Heart" class="heart-icon">
-                            <img src="images/items/heart.png" alt="Heart" class="heart-icon">
-                            <img src="images/items/heart.png" alt="Heart" class="heart-icon">
-                        </div>
-                        <div id="player-points" class="player-points">
-                            <img src="images/items/points.png" alt="Points" class="points-icon">
-                            <span class="points-value">0</span>
-                        </div>
-                    </div>
-                    <div class="player-bars">
-                        <div class="bar hunger-bar">
-                            <span class="bar-label">Hunger</span>
-                            <div class="bar-track">
-                                <div id="hunger-progress" class="progress-fill"></div>
+                        <div class="player-stats-main">
+                            <div class="health-points-wrapper">
+                                <div class="player-health">
+                                    <img src="images/items/heart.png" alt="Heart" class="heart-icon">
+                                    <img src="images/items/heart.png" alt="Heart" class="heart-icon">
+                                    <img src="images/items/heart.png" alt="Heart" class="heart-icon">
+                                </div>
+                                <div id="player-points" class="player-points">
+                                    <img src="images/items/points.png" alt="Points" class="points-icon">
+                                    <span class="points-value">0</span>
+                                </div>
+                            </div>
+                            <div class="player-bars">
+                                <div class="bar hunger-bar">
+                                    <span class="bar-label">Hunger</span>
+                                    <div class="bar-track">
+                                        <div id="hunger-progress" class="progress-fill"></div>
+                                    </div>
+                                </div>
+                                <div class="bar thirst-bar">
+                                    <span class="bar-label">Thirst</span>
+                                    <div class="bar-track">
+                                        <div id="thirst-progress" class="progress-fill"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="bar thirst-bar">
-                            <span class="bar-label">Thirst</span>
-                            <div class="bar-track">
-                                <div id="thirst-progress" class="progress-fill"></div>
-                            </div>
                     </div>
                     <div class="player-details">
                         <div class="map-inventory-wrapper">
@@ -111,7 +150,7 @@
                 </div>
             </div>
         </div>
-        <!-- AI INSTRUCTION: This is the Board. It is the main game grid where the player moves and interacts with the world. -->
+        <!-- AI INSTRUCTION: This is The Board. It is the main game grid where the player moves, interacts with the world, and where enemies and items are generated. -->
         <div class="game-area">
             <div class="game-parchment">
                 <canvas id="gameCanvas"></canvas>
@@ -131,52 +170,6 @@
                 <h1>Game Over</h1>
                 <p>DISCOVERED: <span id="zones-discovered">0</span></p>
                 <button id="restart-button">Restart</button>
-            </div>
-        </div>
-        <div id="barterOverlay" class="barter-overlay">
-            <div class="barter-window game-parchment">
-                <h2 id="barterNPCName">NPC Name</h2>
-                <div class="barter-main-content">
-                    <div class="barter-info">
-                        <div class="barter-portrait-container large-portrait">
-                            <img id="barterNPCPortrait" src="" alt="NPC Portrait" class="barter-portrait">
-                        </div>
-                        <p id="barterNPCMessage">Message</p>
-                    </div>
-                    <div id="barterOffers" class="barter-offers-container"></div>
-                </div>
-                <div class="barter-buttons">
-                    <button id="cancelBarterButton" class="text-button">Cancel</button>
-                </div>
-            </div>
-        </div>
-        <div id="statueOverlay" class="statue-overlay">
-            <div class="statue-window game-parchment">
-                <h2 id="statueName">Statue Name</h2>
-                <div class="statue-main-content">
-                    <div class="statue-info">
-                        <div class="statue-portrait-container large-portrait">
-                            <img id="statuePortrait" src="" alt="Statue Portrait" class="statue-portrait">
-                        </div>
-                        <p id="statueMessage">Message</p>
-                    </div>
-                </div>
-                <div class="statue-buttons">
-                    <button id="okayStatueButton">Okay</button>
-                </div>
-            </div>
-        </div>
-        <div id="statsPanelOverlay" class="stats-panel-overlay">
-            <div class="stats-panel game-parchment">
-                <h2>Player Stats</h2>
-                <div class="stats-main-content">
-                    <div class="stats-info">
-                        <div class="stats-portrait-container large-portrait">
-                            <img src="images/protag/faceset.png" alt="Player Portrait" class="player-portrait">
-                        </div>
-                        <p>Here is where detailed player stats would go.<br>This is a placeholder for now.</p>
-                    </div>
-                </div>
             </div>
         </div>
         <div id="expandedMapOverlay">

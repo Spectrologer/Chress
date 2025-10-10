@@ -10,14 +10,12 @@ export class BarterWindow {
         this.barterNPCName = document.getElementById('barterNPCName');
         this.barterNPCPortrait = document.getElementById('barterNPCPortrait');
         this.barterNPCMessage = document.getElementById('barterNPCMessage');
-        this.cancelBarterButton = document.getElementById('cancelBarterButton');
 
         this.currentNPCType = null;
     }
 
     setupBarterHandlers() {
         // Confirm buttons are now dynamically created, event listeners added in showBarterWindow
-        this.cancelBarterButton.addEventListener('click', () => this.hideBarterWindow());
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 this.hideBarterWindow();
@@ -37,8 +35,8 @@ export class BarterWindow {
         this.barterNPCPortrait.src = portrait;
         this.barterNPCPortrait.alt = `Portrait of ${name}`;
 
-        // Add a specific class for squig to adjust its size
-        if (npcType === 'squig') {
+        // Add a specific class for squig and lion to adjust their size
+        if (npcType === 'squig' || npcType === 'lion') {
             this.barterNPCPortrait.classList.add('squig-portrait-adjust');
         } else {
             this.barterNPCPortrait.classList.remove('squig-portrait-adjust');
@@ -83,7 +81,10 @@ export class BarterWindow {
                     <span class="barter-item-label">${tradeData.receivedItemName}</span>
                 </div>
             </div>
-            <button class="confirm-trade-btn text-button" data-trade-id="${tradeData.id || this.currentNPCType}">Confirm</button>
+            <div class="barter-offer-buttons">
+                <button class="confirm-trade-btn text-button" data-trade-id="${tradeData.id || this.currentNPCType}">Confirm</button>
+                <button class="cancel-trade-btn text-button">Cancel</button>
+            </div>
         `;
 
         const confirmButton = offerDiv.querySelector('.confirm-trade-btn');
@@ -91,6 +92,9 @@ export class BarterWindow {
         confirmButton.disabled = !canTrade;
 
         confirmButton.addEventListener('click', () => this.confirmTrade(tradeData));
+
+        const cancelButton = offerDiv.querySelector('.cancel-trade-btn');
+        cancelButton.addEventListener('click', () => this.hideBarterWindow());
 
         return offerDiv;
     }

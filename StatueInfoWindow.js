@@ -8,10 +8,7 @@ export class StatueInfoWindow {
 
         // Statue Info UI elements
         this.statueOverlay = document.getElementById('statueOverlay');
-        this.statueName = document.getElementById('statueName');
-        this.statuePortrait = document.getElementById('statuePortrait');
-        this.statueMessage = document.getElementById('statueMessage');
-        this.okayButton = document.getElementById('okayStatueButton');
+        this.statueWindow = this.statueOverlay.querySelector('.statue-window');
     }
 
     setupStatueInfoHandlers() {
@@ -39,14 +36,27 @@ export class StatueInfoWindow {
         const portrait = `images/fauna/${enemyType}.png`; // Use regular enemy sprites
         const message = statueDetails.message;
 
-        // Set statue info content
-        this.statueName.textContent = name;
-        this.statuePortrait.src = portrait;
-        this.statuePortrait.alt = `Portrait of ${name}`;
-        this.statueMessage.innerHTML = message;
+        // Dynamically create and set statue info content
+        this.statueWindow.innerHTML = `
+            <h2 id="statueName">${name}</h2>
+            <div class="statue-main-content">
+                <div class="statue-info">
+                    <div class="statue-portrait-container large-portrait">
+                        <img id="statuePortrait" src="${portrait}" alt="Portrait of ${name}" class="statue-portrait">
+                    </div>
+                    <p id="statueMessage">${message}</p>
+                </div>
+            </div>
+            <div class="statue-buttons">
+                <button id="okayStatueButton">Okay</button>
+            </div>
+        `;
 
         // Set up button click handler
-        this.okayButton.addEventListener('click', this.handleOkayClick);
+        const okayButton = this.statueWindow.querySelector('#okayStatueButton');
+        if (okayButton) {
+            okayButton.addEventListener('click', this.handleOkayClick);
+        }
 
         this.showStatueInfoWindow();
     }
@@ -61,8 +71,10 @@ export class StatueInfoWindow {
             this.statueOverlay.classList.remove('show');
             document.removeEventListener('keydown', this.handleKeyDown);
 
-            // Remove button event listener
-            this.okayButton.removeEventListener('click', this.handleOkayClick);
+            const okayButton = this.statueWindow.querySelector('#okayStatueButton');
+            if (okayButton) {
+                okayButton.removeEventListener('click', this.handleOkayClick);
+            }
         }
     }
 }

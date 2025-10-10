@@ -2,6 +2,7 @@ import logger from './logger.js';
 import { BarterWindow } from './BarterWindow.js';
 import { StatueInfoWindow } from './StatueInfoWindow.js';
 import { PlayerStatsUI } from './PlayerStatsUI.js';
+import { Sign } from './Sign.js';
 import { MiniMap } from './MiniMap.js';
 
 export class UIManager {
@@ -65,6 +66,11 @@ export class UIManager {
     updatePlayerPosition() {
         const pos = this.game.player.getPosition();
         // document.getElementById('player-pos').textContent = `${pos.x}, ${pos.y}`;
+
+        // When the player moves, close any open contextual windows.
+        this.hideBarterWindow();
+        this.hideStatueInfoWindow();
+        Sign.hideMessageForSign(this.game); // Also hide sign messages
     }
 
     updateZoneDisplay() {
@@ -160,6 +166,7 @@ export class UIManager {
             } else {
                 messageElement.classList.remove('large-text');
             }
+
             messageElement.classList.add('show');
             logger.log("Message set and show class added");
 
@@ -212,6 +219,7 @@ export class UIManager {
             } else {
                 messageElement.innerHTML = text;
             }
+
             messageElement.classList.add('show');
             logger.log(`Sign message shown: ${text}`);
         }
@@ -343,15 +351,25 @@ export class UIManager {
     showStatsPanel() {
         if (this.statsPanelOverlay) {
             // Update stats content
-            const statsContent = document.querySelector('.stats-main-content .stats-info p');
+            const statsInfoContainer = document.querySelector('.stats-main-content .stats-info');
             const enemiesCaptured = this.game.defeatedEnemies ? this.game.defeatedEnemies.size : 0;
             const playerPoints = this.game.player.getPoints();
-            statsContent.innerHTML = `
-                Enemies Captured: ${enemiesCaptured}<br>
-                <div style="display: flex; align-items: center; margin-top: 8px;">
-                    <img src="images/items/points.png" alt="Points" style="width: 24px; height: 24px; margin-right: 8px; image-rendering: pixelated;">
-                    Points: ${playerPoints}
-                </div>`;
+            const hunger = this.game.player.getHunger();
+            const thirst = this.game.player.getThirst();
+            statsInfoContainer.innerHTML = `
+                <div class="stats-header">
+                    <div class="stats-portrait-container">
+                        <img src="images/protag/faceset.png" alt="Player Portrait" class="player-portrait">
+                    </div>
+                    <h2>Player Stats</h2>
+                </div>
+                <div class="stats-list">
+                    <div class="stat-item"><span class="stat-label">Captures:</span> <span class="stat-value">${enemiesCaptured}</span></div>
+                    <div class="stat-item"><span class="stat-label">Hunger:</span> <span class="stat-value">${hunger}/50</span></div>
+                    <div class="stat-item"><span class="stat-label">Thirst:</span> <span class="stat-value">${thirst}/50</span></div>
+                    <div class="stat-item"><span class="stat-label">Points:</span> <span class="stat-value">${playerPoints}</span></div>
+                </div>
+            `;
 
             this.statsPanelOverlay.classList.add('show');
             this.statsPanelOpen = true;

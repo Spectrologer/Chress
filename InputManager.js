@@ -409,17 +409,21 @@ export class InputManager {
             this.game.pendingCharge = null;
             this.game.hideOverlayMessage();
         }
-        // When the player acts, hide any open overlay message.
-        // This now includes sign messages, which will close upon movement.
-        if (this.game.displayingMessageForSign) {
-            Sign.hideMessageForSign(this.game);
-        } else if (this.game.bombPlacementMode) {
-            // If moving, cancel bomb placement
-            this.game.bombPlacementMode = false;
-            this.game.bombPlacementPositions = [];
-            this.game.hideOverlayMessage();
-        } else {
-            this.game.hideOverlayMessage();
+
+        // Only hide messages if not auto-pathing, as path execution handles this.
+        if (!this.isExecutingPath) {
+            // When the player acts, hide any open overlay message.
+            // This now includes sign messages, which will close upon movement.
+            if (this.game.displayingMessageForSign) {
+                Sign.hideMessageForSign(this.game);
+            } else if (this.game.bombPlacementMode) {
+                // If moving, cancel bomb placement
+                this.game.bombPlacementMode = false;
+                this.game.bombPlacementPositions = [];
+                this.game.hideOverlayMessage();
+            } else {
+                this.game.hideOverlayMessage();
+            }
         }
 
         // Handle hotkey spawning
