@@ -50,6 +50,9 @@ export class ActionManager {
                 this.game.zones.set(zoneKey, zoneData);
             }
         }
+        // Check for item pickup after moving
+        this.game.checkItemPickup();
+
         this.game.uiManager.updatePlayerStats();
         this.game.handleEnemyMovements();
         this.game.gameStateManager.saveGameState();
@@ -101,6 +104,9 @@ export class ActionManager {
                 this.game.zones.set(zoneKey, zoneData);
             }
         }
+        // Check for item pickup after moving
+        this.game.checkItemPickup();
+
         this.game.uiManager.updatePlayerStats();
         this.game.handleEnemyMovements();
     }
