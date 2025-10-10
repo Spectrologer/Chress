@@ -132,6 +132,11 @@ export class ItemGenerator {
         if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.025) {
             this.addHeartItem();
         }
+
+        // Add a bow with a 4% chance in zones level 2-4
+        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04) {
+            this.addBowItem();
+        }
     }
 
     addAxeItem() {
@@ -284,6 +289,20 @@ export class ItemGenerator {
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 this.grid[y][x] = TILE_TYPES.HEART;
                 break; // Successfully placed heart
+            }
+        }
+    }
+
+    addBowItem() {
+        // Try to place the bow in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = { type: TILE_TYPES.BOW, uses: 3 };
+                break; // Successfully placed bow
             }
         }
     }

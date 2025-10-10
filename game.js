@@ -1,5 +1,5 @@
 import { GRID_SIZE, TILE_TYPES } from './constants.js';
-import { GameInitializer } from './GameInitializer.js';
+import { GameInitializer } from './GameInitializer.js'; // This is already here
 import { ActionManager } from './ActionManager.js';
 import { TextureManager } from './TextureManager.js';
 import { ConnectionManager } from './ConnectionManager.js';
@@ -61,6 +61,7 @@ class Game {
         this.defeatedEnemies = new Set();
         this.availableFoodAssets = [];
         this.pendingCharge = null;
+        this.arrowAnimations = [];
 
         // Load assets and start game
         this.gameInitializer.loadAssets();
@@ -168,6 +169,10 @@ class Game {
 
     performHorseIconCharge(item, targetX, targetY, enemy, dx, dy) {
         this.actionManager.performHorseIconCharge(item, targetX, targetY, enemy, dx, dy);
+    }
+
+    performBowShot(item, targetX, targetY) {
+        this.actionManager.performBowShot(item, targetX, targetY);
     }
 
     explodeBomb(bx, by) {

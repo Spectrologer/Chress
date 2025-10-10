@@ -254,6 +254,29 @@ export class ItemTileRenderer {
         }
     }
 
+    renderBowTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First draw the base tile
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Rotate counter clockwise, maintain proportions, scale to fit tile, pixel perfect
+        ctx.save();
+        ctx.translate(pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        ctx.rotate(-Math.PI / 2);
+        const bowImage = this.images.bow;
+        const maxDim = Math.max(bowImage.width, bowImage.height);
+        const scale = TILE_SIZE / maxDim;
+        const scaledWidth = bowImage.width * scale;
+        const scaledHeight = bowImage.height * scale;
+        ctx.drawImage(
+            bowImage,
+            -scaledWidth / 2,
+            -scaledHeight / 2,
+            scaledWidth,
+            scaledHeight
+        );
+        ctx.restore();
+    }
+
     renderFallback(ctx, pixelX, pixelY, color, emoji, fontSize = 32) {
         // Fallback to colored square with emoji
         ctx.fillStyle = color;

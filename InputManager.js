@@ -168,6 +168,16 @@ export class InputManager {
     // Handle tap input for movement
     handleTap(screenX, screenY) {
         const gridCoords = this.screenToGridCoordinates(screenX, screenY);
+
+        // Debug: Log comprehensive tile information on click
+        console.log(`Tile clicked at (${gridCoords.x}, ${gridCoords.y})`);
+        const clickedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        console.log("Tile data:", clickedTile);
+        const enemyAtTile = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
+        if (enemyAtTile) {
+            console.log("Enemy on tile:", enemyAtTile);
+        }
+
         const playerPos = this.game.player.getPosition();
 
         // If stats panel is open, close it on any tap

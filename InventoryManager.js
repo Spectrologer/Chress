@@ -74,6 +74,8 @@ export class InventoryManager {
                 return 'Map Note - Marks an undiscovered location 15-20 zones away on the map';
             case 'book_of_time_travel':
                 return `Book of Time Travel - Passes one turn, allowing enemies to move. Has ${item.uses} charges.`;
+            case 'bow':
+                return `Bow${disabledText} - Fires an arrow in an orthogonal direction. Has ${item.uses} charges.`;
             default:
                 return '';
         }
@@ -167,6 +169,39 @@ export class InventoryManager {
             usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
             usesText.textContent = `x${item.uses}`;
             slot.appendChild(usesText);
+        } else if (item.type === 'bow') {
+            // Create a container for the image and the uses text
+            const container = document.createElement('div');
+            container.style.position = 'relative';
+            container.style.width = '100%';
+            container.style.height = '100%';
+            container.style.display = 'flex';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            slot.appendChild(container);
+
+            // Add the bow image to inventory slot
+            const bowImg = document.createElement('img');
+            bowImg.src = 'images/items/bow.png';
+            bowImg.style.width = '70%';
+            bowImg.style.height = '70%';
+            bowImg.style.objectFit = 'contain';
+            bowImg.style.imageRendering = 'pixelated';
+            bowImg.style.transform = 'rotate(-90deg)';
+            bowImg.style.opacity = item.disabled ? '0.5' : '1';
+            container.appendChild(bowImg);
+
+            // Add uses indicator
+            const usesText = document.createElement('div');
+            usesText.style.position = 'absolute';
+            usesText.style.bottom = '4px';
+            usesText.style.right = '5px';
+            usesText.style.fontSize = '1.8em';
+            usesText.style.fontWeight = 'bold';
+            usesText.style.color = item.disabled ? '#666666' : '#000000';
+            usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
+            usesText.textContent = `x${item.uses}`;
+            container.appendChild(usesText);
         }
     }
 
@@ -201,7 +236,7 @@ export class InventoryManager {
         };
 
         // Desktop hover events
-        if (item.type === 'bishop_spear' || item.type === 'horse_icon') {
+        if (item.type === 'bishop_spear' || item.type === 'horse_icon' || item.type === 'bow') {
             // For special items, hover shows tooltip
             slot.addEventListener('mouseover', () => {
                 if (!longPress) {
@@ -227,7 +262,7 @@ export class InventoryManager {
         }
 
         // Special handling for bishop_spear and horse_icon - long press to toggle disabled
-        if (item.type === 'bishop_spear' || item.type === 'horse_icon') {
+        if (item.type === 'bishop_spear' || item.type === 'horse_icon' || item.type === 'bow') {
             // Desktop right-click or long press to toggle disabled
             slot.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
@@ -371,6 +406,9 @@ export class InventoryManager {
                 break;
             case 'horse_icon':
                 this.dropItem('horse_icon', { type: TILE_TYPES.HORSE_ICON, uses: item.uses });
+                break;
+            case 'bow':
+                this.dropItem('bow', { type: TILE_TYPES.BOW, uses: item.uses });
                 break;
 
             case 'heart':

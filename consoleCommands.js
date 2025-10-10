@@ -96,6 +96,16 @@ const consoleCommands = {
     }
   },
 
+  spawnBow: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.BOW, uses: 3 };
+      console.log('Spawned bow at', pos);
+    } else {
+      console.log('No valid spawn position found');
+    }
+  },
+
   spawnWater: function(game) {
     const pos = findSpawnPosition(game);
     if (pos) {
@@ -188,6 +198,7 @@ const consoleCommands = {
   hotkeyN: function(game) { this.spawnNote(game); },
   hotkeyR: function(game) { this.spawnHeart(game); },
   hotkeyK: function(game) { this.spawnBook(game); },
+  hotkeyY: function(game) { this.spawnBow(game); }, // Y for bow
   hotkeyE: function(game) { this.spawnRune(game); },
   hotkeyW: function(game) { this.spawnWater(game); },
 
@@ -225,6 +236,7 @@ const consoleCommands = {
       if (lowerKey === 'n') { this.hotkeyN(game); return true; }
       if (lowerKey === 'r') { this.hotkeyR(game); return true; }
       if (lowerKey === 'k') { this.hotkeyK(game); return true; }
+      if (lowerKey === 'y') { this.hotkeyY(game); return true; }
       if (lowerKey === 'e') { this.hotkeyE(game); return true; }
       if (lowerKey === 'w') { this.hotkeyW(game); return true; }
       if (lowerKey === 'f') { this.hotkeyF(game); return true; }

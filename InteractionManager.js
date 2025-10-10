@@ -41,6 +41,7 @@ export class InteractionManager {
             else if (tile?.type === TILE_TYPES.HORSE_ICON) pick({ type: 'horse_icon', uses: tile.uses });
             else if (tile === TILE_TYPES.BOMB) pick({ type: 'bomb' });
             else if (tile === TILE_TYPES.HEART) pick({ type: 'heart' });
+            else if (tile?.type === TILE_TYPES.BOW) pick({ type: 'bow', uses: tile.uses });
         }
     }
 
@@ -109,6 +110,8 @@ export class InteractionManager {
                     this.game.performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy);
                 } else if (type === 'horse_icon') {
                     this.game.performHorseIconCharge(item, targetX, targetY, enemy, dx, dy);
+                } else if (type === 'bow') {
+                    this.game.actionManager.performBowShot(item, targetX, targetY);
                 }
             }
 
@@ -376,6 +379,39 @@ export class InteractionManager {
                 return true; // Interaction started, don't pathfind
             }
         }
+
+        // Check if player has bow and if tapped position has an enemy in straight line with clear LOS, more than 1 tile away
+        const bowItem = this.game.player.inventory.find(item => item.type === 'bow' && item.uses > 0 && !item.disabled);
+        if (bowItem && enemyAtCoords) {
+            const dx = gridCoords.x - playerPos.x;
+            const dy = gridCoords.y - playerPos.y;
+
+            // Check if orthogonal, more than 1 tile away, and there's a clear path
+            const isOrthogonal = (dx === 0 && Math.abs(dy) > 1) || (dy === 0 && Math.abs(dx) > 1);
+            if (isOrthogonal) {
+                let isPathClear = true;
+                const stepX = Math.sign(dx);
+                const stepY = Math.sign(dy);
+                let checkX = playerPos.x + stepX;
+                let checkY = playerPos.y + stepY;
+
+                while (checkX !== gridCoords.x || checkY !== gridCoords.y) {
+                    if (!this.game.player.isWalkable(checkX, checkY, this.game.grid)) {
+                        isPathClear = false;
+                        break;
+                    }
+                    checkX += stepX;
+                    checkY += stepY;
+                }
+
+                if (isPathClear) {
+                    this.game.pendingCharge = { type: 'bow', item: bowItem, targetX: gridCoords.x, targetY: gridCoords.y, enemy: enemyAtCoords };
+                    this.game.uiManager.showOverlayMessage('Tap again to confirm Bow Shot', null, true, true);
+                    return true; // Interaction started
+                }
+            }
+        }
+
 
         // Check if tapped on adjacent choppable tile
         const tappedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];

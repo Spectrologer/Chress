@@ -40,6 +40,14 @@ export class BaseEnemy {
 
     takeDamage(damage) {
         this.health -= damage;
+        // Stop any ongoing movement animations if the enemy is killed
+        if (this.health <= 0) {
+            this.bumpFrames = 0;
+            this.bumpOffsetX = 0;
+            this.bumpOffsetY = 0;
+            this.liftFrames = 0;
+            this.liftOffsetY = 0;
+        }
         return this.health <= 0;
     }
 

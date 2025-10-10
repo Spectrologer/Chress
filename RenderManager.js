@@ -36,6 +36,9 @@ export class RenderManager {
         // Draw horse charge animation
         this.drawHorseChargeAnimation();
 
+        // Draw arrow animations
+        this.drawArrowAnimations();
+
         // Draw point animations
         this.drawPointAnimations();
 
@@ -507,6 +510,65 @@ export class RenderManager {
             this.ctx.lineTo(endX, endY);
             this.ctx.stroke();
         });
+
+        this.ctx.restore();
+    }
+
+    drawArrowAnimations() {
+        if (this.game.arrowAnimations.length === 0) {
+            return;
+        }
+
+        const arrowImage = this.game.textureManager.getImage('arrow');
+        if (!arrowImage || !arrowImage.complete) {
+            return;
+        }
+
+        this.ctx.save();
+
+        this.game.arrowAnimations.forEach(anim => {
+            const progress = 1 - (anim.frame / 20); // 0 to 1
+            const currentX = anim.startX + (anim.endX - anim.startX) * progress;
+            const currentY = anim.startY + (anim.endY - anim.startY) * progress;
+
+            const pixelX = currentX * TILE_SIZE + TILE_SIZE / 2;
+            const pixelY = currentY * TILE_SIZE + TILE_SIZE / 2;
+
+            const dx = anim.endX - anim.startX;
+            const dy = anim.endY - anim.startY;
+
+            let rotation = 0; // Right (default)
+            if (dx < 0) rotation = Math.PI; // Left
+            else if (dy > 0) rotation = Math.PI / 2; // Down
+            else if (dy < 0) rotation = -Math.PI / 2; // Up
+
+            this.ctx.save();
+            this.ctx.translate(pixelX, pixelY);
+            this.ctx.rotate(rotation);
+
+            // Scale arrow to fit while maintaining aspect ratio, 75% size
+            const aspectRatio = arrowImage.width / arrowImage.height;
+            let scaledWidth, scaledHeight;
+            if (aspectRatio > 1) {
+                // Image is wider than tall
+                scaledWidth = TILE_SIZE * 0.75;
+                scaledHeight = (TILE_SIZE * 0.75) / aspectRatio;
+            } else {
+                // Image is taller than wide (or square)
+                scaledHeight = TILE_SIZE * 0.75;
+                scaledWidth = (TILE_SIZE * 0.75) * aspectRatio;
+            }
+
+            // Center the image
+            const offsetX = -scaledWidth / 2;
+            const offsetY = -scaledHeight / 2;
+
+            this.ctx.drawImage(arrowImage, offsetX, offsetY, scaledWidth, scaledHeight);
+
+            this.ctx.restore();
+        });
+
+        this.game.arrowAnimations = this.game.arrowAnimations.filter(anim => anim.frame-- > 0);
 
         this.ctx.restore();
     }

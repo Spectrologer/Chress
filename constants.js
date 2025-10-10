@@ -47,7 +47,8 @@ export const TILE_TYPES = {
     CRAYN: 36,
     FELT: 37,
     FORGE: 38,
-    BOOK_OF_TIME_TRAVEL: 40
+    BOOK_OF_TIME_TRAVEL: 40,
+    BOW: 41
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -92,7 +93,8 @@ export const TILE_COLORS = {
     [TILE_TYPES.CRAYN]: '#FFD700', // Gold for Crayn
     [TILE_TYPES.FELT]: '#FFD700', // Gold for Felt
     [TILE_TYPES.FORGE]: '#A0A0A0', // Grey for Forge
-    [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: '#D2691E' // Chocolate color for book
+    [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: '#D2691E', // Chocolate color for book
+    [TILE_TYPES.BOW]: '#8B4513' // Brown for bow
 };
 
 // Direction constants for exits and movements
@@ -131,6 +133,7 @@ export const IMAGE_ASSETS = [
     'items/heart.png',
     'items/note.png',
     'items/book.png',
+    'items/bow.png',
     'items/points.png',
     'items/chest.png',
     'doodads/well.png',
@@ -151,7 +154,7 @@ export const IMAGE_ASSETS = [
     'items/horse.png',
     'protag/default.png',
     'protag/faceset.png',
-    'ui/arrow.png',
+    'items/arrow.png',
     'floors/interior/housetile.png',
     'floors/interior/house_wall_corner.png',
     'floors/interior/house_wall_side.png',

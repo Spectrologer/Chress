@@ -134,6 +134,12 @@ export class Player {
                         grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
                         window.soundManager?.playSound('pickup');
                     } // If inventory full, can't pick up and it remains on ground
+                } else if (tile && tile.type === TILE_TYPES.BOW) {
+                    if (this.inventory.length < 6) {
+                        this.inventory.push({ type: 'bow', uses: tile.uses });
+                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
+                        window.soundManager?.playSound('pickup');
+                    } // If inventory full, can't pick up and it remains on ground
                 }
             this.x = newX;
             this.y = newY;
@@ -244,6 +250,7 @@ export class Player {
             tile === TILE_TYPES.NOTE ||
             tile === TILE_TYPES.HEART ||
             (tile && tile.type === TILE_TYPES.BOOK_OF_TIME_TRAVEL) ||
+            (tile && tile.type === TILE_TYPES.BOW) ||
             tile === TILE_TYPES.PORT) {
             return true;
         }
