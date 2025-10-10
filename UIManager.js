@@ -126,14 +126,14 @@ export class UIManager {
         this.showMessage(text, imageSrc, true, false);
     }
 
-    showOverlayMessage(text, imageSrc) {
-        this.showMessage(text, imageSrc, true, false);
+    showOverlayMessage(text, imageSrc, isPersistent = false, isLargeText = false) {
+        this.showMessage(text, imageSrc, true, isPersistent, isLargeText);
     }
 
-    showMessage(text, imageSrc = null, useOverlay = false, isPersistent = false) {
+    showMessage(text, imageSrc = null, useOverlay = false, isPersistent = false, isLargeText = false) {
         const messageElementId = useOverlay ? 'messageOverlay' : 'messageBox';
         const messageElement = document.getElementById(messageElementId);
-        logger.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}, isPersistent: ${isPersistent}`);
+        logger.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}, isPersistent: ${isPersistent}, isLargeText: ${isLargeText}`);
         let displayText = text;
         if (!displayText || displayText.trim() === '') {
             displayText = '[No message found for this note]';
@@ -152,6 +152,13 @@ export class UIManager {
                 messageElement.innerHTML = `<img src="${imageSrc}" style="width: 128px; height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
             } else {
                 messageElement.textContent = displayText;
+            }
+
+            // Add or remove the large-text class
+            if (isLargeText) {
+                messageElement.classList.add('large-text');
+            } else {
+                messageElement.classList.remove('large-text');
             }
             messageElement.classList.add('show');
             logger.log("Message set and show class added");

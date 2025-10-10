@@ -89,6 +89,11 @@ export class BaseEnemy {
         }
         this.smokeAnimations.forEach(anim => anim.frame--);
         this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);
+
+        if (this.game && this.game.pointAnimations) {
+            this.game.pointAnimations.forEach(anim => anim.frame--);
+            this.game.pointAnimations = this.game.pointAnimations.filter(anim => anim.frame > 0);
+        }
     }
 
     isWalkable(x, y, grid) {

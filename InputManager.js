@@ -428,6 +428,14 @@ export class InputManager {
             return;
         }
 
+        // Debug hotkey for adding points
+        if (event.key === '9') {
+            this.game.player.addPoints(999);
+            this.game.combatManager.addPointAnimation(this.game.player.x, this.game.player.y, 999);
+            this.game.uiManager.updatePlayerStats();
+            return; // Stop further processing
+        }
+
         const currentPos = this.game.player.getPosition();
         let newX = currentPos.x;
         let newY = currentPos.y;
@@ -465,6 +473,7 @@ export class InputManager {
                     enemyAtTarget.takeDamage(999); // Ensure enemy is dead
 
                     // Award points for defeating the enemy
+                    this.game.combatManager.addPointAnimation(enemyAtTarget.x, enemyAtTarget.y, enemyAtTarget.getPoints());
                     this.game.player.addPoints(enemyAtTarget.getPoints());
 
                     // Record that this enemy position is defeated to prevent respawning

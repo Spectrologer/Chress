@@ -191,6 +191,12 @@ class Game {
         this.player.updateAnimations();
         this.enemies.forEach(enemy => enemy.updateAnimations());
 
+        // Update and filter point animations
+        if (this.pointAnimations) {
+            this.pointAnimations.forEach(anim => anim.frame--);
+            this.pointAnimations = this.pointAnimations.filter(anim => anim.frame > 0);
+        }
+
         // Update and filter horse charge animations
         this.horseChargeAnimations.forEach(anim => anim.frame--);
         this.horseChargeAnimations = this.horseChargeAnimations.filter(anim => anim.frame > 0);

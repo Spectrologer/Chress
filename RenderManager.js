@@ -36,6 +36,9 @@ export class RenderManager {
         // Draw horse charge animation
         this.drawHorseChargeAnimation();
 
+        // Draw point animations
+        this.drawPointAnimations();
+
         // Draw charge confirmation indicator if active
         this.drawChargeConfirmationIndicator();
     }
@@ -522,6 +525,46 @@ export class RenderManager {
         this.ctx.globalAlpha = alpha;
         this.ctx.fillStyle = '#ffff00'; // Yellow
         this.ctx.fillRect(targetX * TILE_SIZE, targetY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        this.ctx.restore();
+    }
+
+    drawPointAnimations() {
+        if (this.game.pointAnimations.length === 0) {
+            return;
+        }
+
+        const pointImage = this.game.textureManager.getImage('points');
+        if (!pointImage || !pointImage.complete) {
+            return;
+        }
+
+        this.ctx.save();
+        this.ctx.font = 'bold 20px "Courier New", monospace';
+        this.ctx.fillStyle = '#FFD700'; // Gold color for text
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.shadowColor = 'black';
+        this.ctx.shadowBlur = 4;
+
+        for (const anim of this.game.pointAnimations) {
+            const progress = 1 - (anim.frame / 30); // 0 to 1
+            const alpha = 1 - progress; // Fade out
+            const floatOffset = -progress * TILE_SIZE; // Float up by one tile height
+
+            this.ctx.globalAlpha = alpha;
+
+            const startPixelX = anim.x * TILE_SIZE;
+            const pixelY = anim.startY + floatOffset;
+            const iconSize = TILE_SIZE / 2;
+            const totalWidth = anim.amount * iconSize;
+            let currentX = startPixelX + (TILE_SIZE - totalWidth) / 2; // Center the group of icons
+
+            for (let i = 0; i < anim.amount; i++) {
+                this.ctx.drawImage(pointImage, currentX, pixelY, iconSize, iconSize);
+                currentX += iconSize;
+            }
+        }
+
         this.ctx.restore();
     }
 }

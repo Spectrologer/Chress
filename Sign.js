@@ -232,7 +232,8 @@ export class Sign {
                 "Water actually makes you thirstier the more you drink it.",
                 "I taught Crayn everything he knows.",
                 "The further you go, the easier it gets.",
-                "I invented moving in an L-shape."
+                "I invented moving in an L-shape.",
+                "Sometimes Crayn goes fishing.",
             ]
         }
     };

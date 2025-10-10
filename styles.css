@@ -107,6 +107,7 @@ body {
     justify-content: flex-start;
     gap: 24px; /* Add vertical gap between children */
     padding-bottom: 0; /* Remove extra bottom padding */
+    position: relative;
 }
 
 .header-area {
@@ -118,6 +119,10 @@ body {
     max-width: 800px;
     width: 100%;
     flex-shrink: 0;
+}
+
+.character-card-container {
+    position: relative;
 }
 
 /* Character Card Deluxe Parchment Theme */
@@ -1056,6 +1061,11 @@ h1 {
     #gameCanvas:active {
         opacity: 0.9;
     }
+
+    .message-overlay, #messageOverlay {
+        top: 50%;
+        left: 50%;
+    }
 }
 
 /* Message Box */
@@ -1089,9 +1099,9 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 10; /* Above other content in the player card */
+    z-index: 100; /* Above other content in the player card */
     margin: 0;
-    padding: 15px 25px;
+    padding: 20px;
     background: #fffbe9;
     border: 2px solid #e2cfa2;
     border-radius: 8px;
@@ -1099,19 +1109,28 @@ h1 {
     font-family: 'Cinzel', serif;
     font-size: 1.4em;
     color: #7a5c2e;
-    text-align: center;
-    max-width: 300px;
-    min-width: 200px;
-    width: auto; /* Let content define width */
+    text-align: center;    
+    width: 90%;
+    max-width: 350px;
+    min-height: 150px;
     opacity: 0;
     display: block; /* Ensure it's displayed */
     pointer-events: none; /* Hidden by default */
     transition: opacity 0.3s ease-in-out;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 .message-overlay.show, #messageOverlay.show {
     opacity: 1;
     pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* For larger text like charge confirmations */
+.message-overlay.large-text, #messageOverlay.large-text {
+    font-size: 2.8em;
 }
 
 /* Smaller font for character names in message overlays */

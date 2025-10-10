@@ -4,6 +4,18 @@ export class CombatManager {
     constructor(game, occupiedTiles) {
         this.game = game;
         this.occupiedTiles = occupiedTiles;
+        this.game.pointAnimations = this.game.pointAnimations || [];
+    }
+
+    addPointAnimation(x, y, amount) {
+        this.game.pointAnimations.push({
+            x: x,
+            y: y,
+            amount: amount,
+            frame: 30, // Animation duration in frames
+            startY: y * 64 - 16 // Start 16 pixels above the tile (above enemy head)
+        });
+        this.game.soundManager.playSound('ding'); // Play a sound for getting points
     }
 
     handleSingleEnemyMovement(enemy) {
@@ -68,6 +80,7 @@ export class CombatManager {
         this.game.enemies = this.game.enemies.filter(enemy => {
             if (enemy.health <= 0) {
                 const currentZone = this.game.player.getCurrentZone();
+                this.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
                 this.game.player.addPoints(enemy.getPoints()); // Award points for defeating enemy
                 this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y},${enemy.x},${enemy.y}`);
                 this.game.soundManager.playSound('attack');
@@ -94,6 +107,7 @@ export class CombatManager {
             if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked && enemy.enemyType !== 'lizardy') {
 
                 // Award points for defeating the enemy before killing it
+                this.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
                 this.game.player.addPoints(enemy.getPoints());
                 const currentZone = this.game.player.getCurrentZone();
                 this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemy.id}`);
@@ -148,6 +162,7 @@ export class CombatManager {
         this.game.player.setPosition(targetX, targetY);
         if (enemy) {
             this.game.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
+            this.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
             this.game.player.addPoints(enemy.getPoints()); // Award points for defeating enemy
             enemy.startBump(this.game.player.x - enemy.x, this.game.player.y - enemy.y);
             enemy.takeDamage(999);

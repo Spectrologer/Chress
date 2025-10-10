@@ -30,26 +30,6 @@
             width: 160px; /* Increased from 128px */
             height: 160px; /* Increased from 128px */
         }
-        #messageOverlay.message-overlay {
-            position: fixed; /* Use fixed to position relative to viewport */
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 400px; /* Match player card width */
-            min-height: 200px; /* Ensure it has some height */
-            display: none; /* Hidden by default */
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.2em; /* Much larger font for the larger panel */
-            line-height: 1.5;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        #messageOverlay.message-overlay.show {
-            display: flex; /* Show with flex properties */
-        }
         .large-portrait .player-portrait {
             width: 100%;
             height: 100%;
@@ -64,6 +44,7 @@
         <div class="header-area">
             <!-- AI INSTRUCTION: This is the Player Card. It contains the player's health, hunger, thirst), inventory, and a minimap of the world. -->
             <div class="character-card-container">
+                <div id="messageOverlay" class="message-overlay"></div>
                 <div class="character-card modern-player-card">
                     <div class="player-header">
                         <div class="player-name">CHALK</div>
@@ -118,7 +99,6 @@
         </div>
         <!-- AI INSTRUCTION: This is the Board. It is the main game grid where the player moves and interacts with the world. -->
         <div class="game-area">
-            <div id="messageOverlay" class="message-overlay"></div>
             <div class="game-parchment">
                 <canvas id="gameCanvas"></canvas>
             </div>

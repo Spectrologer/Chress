@@ -35,6 +35,8 @@ export class ActionManager {
         this.game.player.setPosition(targetX, targetY);
         if (enemy) {
             this.game.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
+            this.game.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
+            this.game.player.addPoints(enemy.getPoints()); // Award points for defeating enemy
             enemy.startBump(this.game.player.x - enemy.x, this.game.player.y - enemy.y);
             enemy.takeDamage(999);
             this.game.soundManager.playSound('attack');
@@ -84,6 +86,8 @@ export class ActionManager {
         this.game.player.setPosition(targetX, targetY);
         if (enemy) {
             this.game.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
+            this.game.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
+            this.game.player.addPoints(enemy.getPoints()); // Award points for defeating enemy
             enemy.startBump(this.game.player.x - enemy.x, this.game.player.y - enemy.y);
             enemy.takeDamage(999);
             this.game.soundManager.playSound('attack');

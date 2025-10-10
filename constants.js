@@ -128,6 +128,7 @@ export const IMAGE_ASSETS = [
     'items/bomb.png',
     'items/heart.png',
     'items/note.png',
+    'items/points.png',
     'doodads/well.png',
     'doodads/deadtree.png',
     'fauna/lion.png',

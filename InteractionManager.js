@@ -347,7 +347,7 @@ export class InteractionManager {
                     targetY: gridCoords.y,
                     enemy: enemyAtCoords, dx, dy
                 };
-                this.game.uiManager.showOverlayMessage('Tap again to confirm Bishop Charge', null, true);
+                this.game.uiManager.showOverlayMessage('Tap again to confirm Bishop Charge', null, true, true);
                 return true; // Interaction started, don't pathfind
             }
         }
@@ -372,7 +372,7 @@ export class InteractionManager {
                     targetY: gridCoords.y,
                     enemy: enemyAtCoords, dx, dy
                 };
-                this.game.uiManager.showOverlayMessage('Tap again to confirm Knight Charge', null, true);
+                this.game.uiManager.showOverlayMessage('Tap again to confirm Knight Charge', null, true, true);
                 return true; // Interaction started, don't pathfind
             }
         }
