@@ -215,6 +215,7 @@ export class Sign {
                 "I wonder if Crayn likes standing too.",
                 "I hear Crayn can put down food after he picks it up! Couldn't be me.",
                 "Forge is a LIAR.",
+
             ]
         },
         forge: {
@@ -234,6 +235,27 @@ export class Sign {
                 "The further you go, the easier it gets.",
                 "I invented moving in an L-shape.",
                 "Sometimes Crayn goes fishing.",
+                "If you drop food, it turns into gold.",
+                "Enemies are friendly if you're only holding water.",
+                "The world is a sphere. Go far enough east, you'll end up back at the start from the west.",
+                "If you don't score points for 100 boards, you might find a secret.",
+                "I once saw a lion eat a nut.",
+                "I once saw a lion eat a nut and then drink water.",
+                "I once saw a lion eat a nut, drink water, and then trade the water for a nut.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, and then eat the nut.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, and then ask for more water.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, and then leave.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, and then come back.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, and then do it all over again.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, and then take a nap.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, and then dream about nuts.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, and then wake up hungry.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, and then go find some food.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, and then become the king of the jungle.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, and then rule with kindness and wisdom.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, and then live happily ever after.",
+                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, live happily ever after, and then tell everyone about it."
+                "I once saw squig eat a nut.",
             ]
         }
     };
