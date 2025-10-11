@@ -14,6 +14,10 @@ export class InventoryManager {
     // Main method to update inventory display
     updateInventoryDisplay() {
         this.tooltip = document.getElementById('inventory-tooltip');
+        // Hide tooltip when inventory updates to prevent stuck tooltips
+        if (this.tooltip) {
+            this.tooltip.classList.remove('show');
+        }
 
         // Render inventory items
         const inventoryGrid = document.querySelector('.inventory-list');
