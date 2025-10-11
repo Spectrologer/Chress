@@ -69,6 +69,11 @@ class Game {
     }
 
     startEnemyTurns() {
+6        // If the player just attacked, and the attack has a delay (like a bow shot),
+        // the enemy turn will be started by the attack's resolution (in setTimeout).
+        // This prevents enemies from moving before the arrow hits.
+        if (this.playerJustAttacked) return;
+
         this.isPlayerTurn = false;
         this.occupiedTilesThisTurn.clear();
         // Add player's position to occupied tiles to prevent enemies from moving there

@@ -31,24 +31,27 @@ export class FeatureGenerator {
         // Flat increase per zones discovered (1 per 10 zones)
         featureCount += Math.floor(ZoneStateManager.zoneCounter / 10);
 
-        for (let i = 0; i < featureCount; i++) {
+        let placedCount = 0;
+        while (placedCount < featureCount) {
             const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
             const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
 
             // Skip if this would block the starting position
             if (x === 1 && y === 1) continue;
+            // Skip if a feature is already here to avoid overwriting
+            if (this.grid[y][x] !== TILE_TYPES.FLOOR) continue;
 
             const featureType = Math.random();
             let rockThreshold = zoneLevel === 1 ? 0.25 : 0.35;
             if (featureType < rockThreshold) {
                 this.grid[y][x] = TILE_TYPES.ROCK; // Use rock instead of wall for interior obstacles
-            } else if (featureType < (zoneLevel === 2 ? 0.55 : 0.4)) {
+                placedCount++;
+            } else if (featureType < (zoneLevel === 1 ? 0.4 : 0.55)) { // Adjusted logic for clarity
                 this.grid[y][x] = TILE_TYPES.SHRUBBERY; // More shrubbery in Wilds
-            } else if (featureType < 0.7) {
-                // Leave as dirt (TILE_TYPES.FLOOR) - this will use directional textures
-                continue;
-            } else {
+                placedCount++;
+            } else if (featureType >= 0.7) { // The gap between shrubbery and grass is intentionally left as FLOOR
                 this.grid[y][x] = TILE_TYPES.GRASS;
+                placedCount++;
             }
         }
 
@@ -71,29 +74,29 @@ export class FeatureGenerator {
             // Only place on floor tiles (not on walls, rocks, grass, etc.)
             if (this.grid[y][x] === TILE_TYPES.FLOOR) {
                 const chanceType = Math.random();
+                let tilePlaced = false;
                 if (chanceType < 0.05) {
                     // 5% chance for a sign
                     if (!this.checkSignExists()) {
                         const message = Sign.getProceduralMessage(zoneX, zoneY);
                         Sign.spawnedMessages.add(message);
-                        this.grid[y][x] = {
-                            type: TILE_TYPES.SIGN,
-                            message: message
-                        };
+                        this.grid[y][x] = { type: TILE_TYPES.SIGN, message: message };
+                        tilePlaced = true;
                     }
-                } else if (chanceType < 0.35) {
+                }
+                
+                if (!tilePlaced) { // If sign wasn't placed, try water or food
+                    if (chanceType < 0.35) { // This is now an "else if" effectively
                     // 30% chance for water
                     this.grid[y][x] = TILE_TYPES.WATER;
-                } else {
+                    } else {
                     // 65% chance for food
                     // Use seeded random for consistency
                     const zoneKey = `${zoneX},${zoneY}`;
                     const seed = ZoneStateManager.hashCode(zoneKey) % this.foodAssets.length;
                     const selectedFood = this.foodAssets[seed];
-                    this.grid[y][x] = {
-                        type: TILE_TYPES.FOOD,
-                        foodType: selectedFood
-                    };
+                    this.grid[y][x] = { type: TILE_TYPES.FOOD, foodType: selectedFood };
+                    }
                 }
                 break; // Successfully placed chance tile
             }

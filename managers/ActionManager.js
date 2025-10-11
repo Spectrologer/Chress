@@ -151,6 +151,9 @@ export class ActionManager {
             frame: 20 // 20 frames for the arrow to travel
         });
 
+        // Player has acted. Prevent enemies from moving until the action resolves.
+        this.game.playerJustAttacked = true;
+
         // After a delay for the arrow to travel, check for hit
         setTimeout(() => {
             if (enemy && this.game.enemies.includes(enemy)) { // Check if enemy still exists
@@ -168,12 +171,13 @@ export class ActionManager {
                     zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
                     this.game.zones.set(zoneKey, zoneData);
                 }
+                this.game.updatePlayerStats();
             }
+            // Now that the arrow has hit, enemies can take their turn.
+            this.game.startEnemyTurns();
         }, 300); // 300ms delay
 
         this.game.soundManager.playSound('whoosh');
-        this.game.startEnemyTurns();
-        this.game.updatePlayerStats();
     }
 
     explodeBomb(bx, by) {
