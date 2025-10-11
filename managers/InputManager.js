@@ -500,7 +500,7 @@ export class InputManager {
                     this.game.player.addPoints(enemyAtTarget.getPoints());
 
                     // Record that this enemy position is defeated to prevent respawning
-                    const currentZone = this.game.player.getCurrentZone();                    
+                    const currentZone = this.game.player.getCurrentZone();
                     this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemyAtTarget.id}`);
 
                     // Remove enemy immediately so it doesn't attack back this turn
@@ -513,8 +513,6 @@ export class InputManager {
                         zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtTarget.id);
                         this.game.zones.set(zoneKey, zoneData);
                     }
-                    // Set flag to prevent immediate enemy attacks on this turn
-                    this.game.playerJustAttacked = true;
                     // Enemy movements happen after attacks to simulate turn-based combat
                     this.game.startEnemyTurns();
                     // Player does not move

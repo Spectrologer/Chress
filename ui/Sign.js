@@ -231,6 +231,7 @@ export class Sign {
             subclass: 'dialogue',
             currentMessageIndex: 0,
             messages: [
+                "Press down on items to disable them.",
                 "There is no end to the frontier.",
                 "Trees must be chopped.",
                 "They say you are descended from a King.",

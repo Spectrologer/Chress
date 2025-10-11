@@ -87,7 +87,11 @@ class Game {
     processTurnQueue() {
         if (this.turnQueue.length > 0) {
             const enemy = this.turnQueue.shift();
-            if (enemy && !enemy.isDead()) {
+            // Re-check if the enemy is still alive and in the game's main enemy list.
+            // This is crucial because an enemy might have been defeated by a previous enemy's action
+            // (e.g., a bomb explosion) during the same turn sequence.
+            const isStillValid = enemy && !enemy.isDead() && this.enemies.includes(enemy);
+            if (isStillValid) {
                 this.combatManager.handleSingleEnemyMovement(enemy);
             }
 

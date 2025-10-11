@@ -34,6 +34,10 @@ export class CombatManager {
     }
 
     handleSingleEnemyMovement(enemy) {
+        // Ensure we are not trying to move a dead or non-existent enemy
+        if (!enemy || enemy.health <= 0 || !this.game.enemies.includes(enemy)) {
+            return;
+        }
         const playerPos = this.game.player.getPosition();
 
         const move = enemy.planMoveTowards(this.game.player, this.game.grid, this.game.enemies, playerPos, false, this.game);
@@ -103,34 +107,33 @@ export class CombatManager {
             }
         }
 
-        // First, remove any already dead enemies and award points for them
-        this.game.enemies = this.game.enemies.filter(enemy => {
-            if (enemy.health <= 0) {
-                const currentZone = this.game.player.getCurrentZone();
-                this.handleEnemyDefeated(enemy, currentZone);
-                return false; // Remove dead enemy
-            }
-            return true; // Keep alive enemy
-        });
-
-        // Update UI after awarding points for dead enemies
-        this.game.uiManager.updatePlayerStats();
-
         const playerPos = this.game.player.getPosition();
-        this.game.enemies = this.game.enemies.filter(enemy => {
-            // Check for collision if an enemy ends up on the player's tile.
-            // Exclude 'lizardy' because its attack/bump logic is handled entirely in its planMoveTowards method, which prevents it from moving onto the player.
-            if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked && enemy.enemyType !== 'lizardy') {
+        const remainingEnemies = [];
 
+        for (const enemy of this.game.enemies) {
+            let isDefeated = false;
+
+            // Check for collision with player
+            if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked && enemy.enemyType !== 'lizardy') {
                 this.game.player.takeDamage(enemy.attack);
                 enemy.takeDamage(enemy.health); // Ensure enemy dies from collision
+                isDefeated = true;
+            }
 
+            // Check if enemy was already dead (e.g., from player attack)
+            if (enemy.health <= 0) {
+                isDefeated = true;
+            }
+
+            if (isDefeated) {
                 const currentZone = this.game.player.getCurrentZone();
                 this.handleEnemyDefeated(enemy, currentZone);
-                return false;
+            } else {
+                remainingEnemies.push(enemy);
             }
-            return true;
-        });
+        }
+
+        this.game.enemies = remainingEnemies;
 
         // Update UI after collision checks
         this.game.uiManager.updatePlayerStats();

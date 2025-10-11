@@ -174,6 +174,7 @@ export class ActionManager {
                 this.game.updatePlayerStats();
             }
             // Now that the arrow has hit, enemies can take their turn.
+            this.game.playerJustAttacked = false;
             this.game.startEnemyTurns();
         }, 300); // 300ms delay
 
