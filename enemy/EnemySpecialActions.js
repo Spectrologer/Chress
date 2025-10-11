@@ -52,15 +52,20 @@ export class EnemySpecialActions {
                 }
                 return null; // All in one turn
             } else {
-                // Charge directly to player
-                const chargeMove = { x: playerX, y: playerY };
-                // Move directly to player
+                // Charge to the tile adjacent to the player
+                let stepX = playerX > enemy.x ? 1 : (playerX < enemy.x ? -1 : 0);
+                let stepY = playerY > enemy.y ? 1 : (playerY < enemy.y ? -1 : 0);
+
+                const chargeMove = { x: playerX - stepX, y: playerY - stepY };
+
+                // Move to adjacent tile
                 if (!isSimulation) {
                     // Add smoke on each tile traversed during charge (excluding player tile)
                     const stepsDx = dx;
                     const stepsDy = dy;
-                    let stepX = playerX > enemy.x ? 1 : -1;
-                    let stepY = playerY > enemy.y ? 1 : -1;
+                    // Re-calculate stepX/stepY for smoke trail, ensuring it's purely orthogonal
+                    stepX = playerX > enemy.x ? 1 : (playerX < enemy.x ? -1 : 0);
+                    stepY = playerY > enemy.y ? 1 : (playerY < enemy.y ? -1 : 0);
                     if (dx > 0) stepY = 0; // if horizontal, no vertical step
                     else if (dy > 0) stepX = 0;
                     for (let i = 1; i < distance; i++) {
@@ -71,20 +76,20 @@ export class EnemySpecialActions {
                     enemy.liftFrames = 15; // Start lift animation
                     // Attack upon arriving
                     if (!game || !game.playerJustAttacked) {
-                        player.takeDamage(enemy.attack);
-                        player.startBump(enemy.x - playerX, enemy.y - playerY);
-                        enemy.startBump(playerX - enemy.x, playerY - enemy.y);
-                        enemy.justAttacked = true;
-                        enemy.attackAnimation = 15;
-                        window.soundManager?.playSound('attack');
+                        // The enemy is now at chargeMove.x, chargeMove.y
+                        const attackDx = playerX - chargeMove.x;
+                        const attackDy = playerY - chargeMove.y;
+
+                        player.takeDamage(enemy.attack); // Damage player
+                        player.startBump(attackDx, attackDy); // Bump player away from enemy
+                        enemy.startBump(-attackDx, -attackDy); // Bump enemy away from player
+
                         // Knockback player backward
                         let knockbackX = playerX;
                         let knockbackY = playerY;
-                        if (stepX !== 0) {
-                            knockbackX += stepX;
-                        } else {
-                            knockbackY += stepY;
-                        }
+                        if (attackDx !== 0) knockbackX += attackDx;
+                        if (attackDy !== 0) knockbackY += attackDy;
+
                         // Only knockback if walkable, else stay
                         if (player.isWalkable(knockbackX, knockbackY, grid)) {
                             player.setPosition(knockbackX, knockbackY);
