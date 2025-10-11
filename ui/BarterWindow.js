@@ -133,19 +133,23 @@ export class BarterWindow {
             this.game.player.addPoints(-tradeData.requiredAmount);
             const items = [
                 TILE_TYPES.BOMB,
-                { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 },
-                { type: TILE_TYPES.HORSE_ICON, uses: 3 },
-                TILE_TYPES.HEART
+                TILE_TYPES.BOW,
+                TILE_TYPES.BISHOP_SPEAR
             ];
             const selectedItemType = items[Math.floor(Math.random() * items.length)];
             let inventoryItem;
             if (selectedItemType === TILE_TYPES.BOMB) inventoryItem = { type: 'bomb' };
-            else if (selectedItemType.type === TILE_TYPES.BISHOP_SPEAR) inventoryItem = { type: 'bishop_spear', uses: 3 };
-            else if (selectedItemType.type === TILE_TYPES.HORSE_ICON) inventoryItem = { type: 'horse_icon', uses: 3 };
-            else if (selectedItemType === TILE_TYPES.HEART) inventoryItem = { type: 'heart' };
-            
+            else if (selectedItemType === TILE_TYPES.BOW) inventoryItem = { type: 'bow', uses: 3 };
+            else if (selectedItemType === TILE_TYPES.BISHOP_SPEAR) inventoryItem = { type: 'bishop_spear', uses: 3 };
+
             if(inventoryItem) this.game.player.inventory.push(inventoryItem);
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for an item.`);
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+        } else if (tradeData.id === 'nib_item') {
+            this.game.player.addPoints(-tradeData.requiredAmount);
+            const randomItem = Math.random() < 0.5 ? { type: 'book' } : { type: 'horse_icon', uses: 3 };
+            this.game.player.inventory.push(randomItem);
+            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for a random trinket.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic

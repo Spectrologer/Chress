@@ -103,6 +103,11 @@ export class ItemGenerator {
             this.addSquigItem();
         }
 
+        // Add a rare nib with 2% chance per zone
+        if (Math.random() < 0.02) { // 2% chance
+            this.addNibItem();
+        }
+
         // Add a rare rune with 2% chance per zone
         // if (Math.random() < 0.02) { // 2% chance
         //     this.addRuneItem();
@@ -260,6 +265,21 @@ export class ItemGenerator {
                 this.grid[y][x] = TILE_TYPES.SQUIG;
                 logger.log(`Squig spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
                 break; // Successfully placed squig
+            }
+        }
+    }
+
+    addNibItem() {
+        // Try to place the nib in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Only place on floor tiles (not on walls, rocks, grass, etc.)
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.NIB;
+                logger.log(`Nib spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
+                break; // Successfully placed nib
             }
         }
     }

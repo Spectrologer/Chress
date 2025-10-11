@@ -80,6 +80,8 @@ export class BaseTileRenderer {
             this.structureRenderer.renderSquigTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.RUNE) {
             this.structureRenderer.renderRuneTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.NIB) {
+            this.structureRenderer.renderNibTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.LIZARDY_STATUE ||
                    actualType === TILE_TYPES.LIZARDO_STATUE ||
                    actualType === TILE_TYPES.LIZARDEAUX_STATUE ||

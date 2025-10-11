@@ -73,21 +73,31 @@ export class Sign {
             name: 'Penne',
             portrait: 'assets/fauna/lionface.png',
             message: 'Give me meat!',
-            requiredItem: 'food/meat',
-            requiredItemImg: 'assets/food/meat/beaf.png',
-            requiredItemName: 'Meat',
-            receivedItemImg: 'assets/items/water.png',
-            receivedItemName: 'Water'
+            trades: [
+                {
+                    requiredItem: 'food/meat',
+                    requiredAmount: 1,
+                    requiredItemImg: 'assets/food/meat/beaf.png',
+                    requiredItemName: 'Meat',
+                    receivedItemImg: 'assets/items/water.png',
+                    receivedItemName: 'Water'
+                }
+            ]
         },
         squig: {
             name: 'Squig',
             portrait: 'assets/fauna/squigface.png',
             message: 'I\'m nuts for nuts!',
-            requiredItem: 'food/veg',
-            requiredItemImg: 'assets/food/veg/nut.png',
-            requiredItemName: 'Nut',
-            receivedItemImg: 'assets/items/water.png',
-            receivedItemName: 'Water'
+            trades: [
+                {
+                    requiredItem: 'food/veg',
+                    requiredAmount: 1,
+                    requiredItemImg: 'assets/food/veg/nut.png',
+                    requiredItemName: 'Nut',
+                    receivedItemImg: 'assets/items/water.png',
+                    receivedItemName: 'Water'
+                }
+            ]
         },
         rune: {
             name: 'Rune', // This is now a header for the NPC
@@ -95,19 +105,26 @@ export class Sign {
             message: 'I smell it... Points. Feed it me.', // Shared message
             trades: [
                 {
-                    id: 'rune_food',
-                    requiredItem: 'points',
-                    requiredAmount: 5,
-                    requiredItemImg: 'assets/items/points.png',
-                    receivedItemName: 'Random Food',
-                    receivedItemImg: 'assets/items/chest.png'
-                },
-                {
                     id: 'rune_item',
                     requiredItem: 'points',
-                    requiredAmount: 5,
+                    requiredAmount: 10,
                     requiredItemImg: 'assets/items/points.png',
-                    receivedItemName: 'Random Item',
+                    receivedItemName: 'Random Weapon',
+                    receivedItemImg: 'assets/items/chest.png'
+                }
+            ]
+        },
+        nib: {
+            name: 'Nib',
+            portrait: 'assets/fauna/nibface.png',
+            message: 'I offer knowledge for your points.',
+            trades: [
+                {
+                    id: 'nib_item',
+                    requiredItem: 'points',
+                    requiredAmount: 10,
+                    requiredItemImg: 'assets/items/points.png',
+                    receivedItemName: 'Random Trinket',
                     receivedItemImg: 'assets/items/chest.png'
                 }
             ]

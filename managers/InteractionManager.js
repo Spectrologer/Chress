@@ -192,6 +192,20 @@ export class InteractionManager {
             return true; // Interaction attempted, completion status varies
         }
 
+        // Check if tapped on nib for interaction
+        const nibAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.NIB;
+        if (nibAtPosition) {
+            // Check if player is adjacent to the nib (including diagonal, but excluding self)
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+            if (isAdjacent) {
+                this.game.uiManager.showBarterWindow('nib');
+            } else {
+            }
+            return true; // Interaction attempted, completion status varies
+        }
+
         // Check if tapped on crayn for interaction
         const craynAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.CRAYN;
         if (craynAtPosition) {
@@ -569,6 +583,13 @@ export class InteractionManager {
         const runeAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.RUNE;
         if (runeAtPosition) {
             this.game.uiManager.showBarterWindow('rune');
+            return;
+        }
+
+        // Check if tapped on nib
+        const nibAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.NIB;
+        if (nibAtPosition) {
+            this.game.uiManager.showBarterWindow('nib');
             return;
         }
 

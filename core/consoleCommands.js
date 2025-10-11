@@ -166,6 +166,16 @@ const consoleCommands = {
     }
   },
 
+  spawnNib: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.NIB;
+      console.log('Spawned nib at', pos);
+    } else {
+      console.log('No valid spawn position found');
+    }
+  },
+
   // Enemy spawn commands (additional)
   spawnLizardeaux: function(game) {
     this.spawnEnemy(game, 'lizardeaux');
@@ -199,6 +209,7 @@ const consoleCommands = {
   hotkeyR: function(game) { this.spawnHeart(game); },
   hotkeyK: function(game) { this.spawnBook(game); },
   hotkeyY: function(game) { this.spawnBow(game); }, // Y for bow
+  hotkeyI: function(game) { this.spawnNib(game); },
   hotkeyE: function(game) { this.spawnRune(game); },
   hotkeyW: function(game) { this.spawnWater(game); },
 
@@ -237,6 +248,7 @@ const consoleCommands = {
       if (lowerKey === 'r') { this.hotkeyR(game); return true; }
       if (lowerKey === 'k') { this.hotkeyK(game); return true; }
       if (lowerKey === 'y') { this.hotkeyY(game); return true; }
+      if (lowerKey === 'i') { this.hotkeyI(game); return true; }
       if (lowerKey === 'e') { this.hotkeyE(game); return true; }
       if (lowerKey === 'w') { this.hotkeyW(game); return true; }
       if (lowerKey === 'f') { this.hotkeyF(game); return true; }

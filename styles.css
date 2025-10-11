@@ -1555,6 +1555,10 @@ h1 {
     flex-direction: column;
     gap: 15px;
     width: 100%;
+    max-height: 50vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y; /* Prevent page scroll when scrolling offers on mobile */
 }
 
 .barter-offer {
@@ -1594,9 +1598,8 @@ h1 {
 .barter-exchange {
     display: flex;
     align-items: center;
-    justify-content: space-evenly; /* Evenly space items */
-    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-    gap: 10px; /* Add gap for wrapped items */
+    justify-content: space-around;
+    gap: 20px;
 }
 
 .barter-offer-section {
@@ -1628,6 +1631,8 @@ h1 {
     color: #5a4223;
     text-align: center;
     font-family: 'Courier New', monospace;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
 .barter-exchange-arrow {
@@ -1835,6 +1840,7 @@ h1 {
     flex-direction: column;
     gap: 15px;
     overflow-y: auto; /* Add scroll for smaller screens */
+    overscroll-behavior: contain; /* Prevent parent scrolling */
 }
 
 .statue-main-content {
