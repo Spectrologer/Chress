@@ -26,21 +26,23 @@ export const EnemyMovementMixin = {
                 : [{ x: -1, y: 1 }, { x: 1, y: 1 }];   // SW, SE when moving South
 
             // Check for diagonal attack
-            for (const dir of attackDirections) {
-                const attackX = this.x + dir.x;
-                const attackY = this.y + dir.y;
-                if (attackX === playerX && attackY === playerY) {
-                    // This is a valid diagonal attack. Perform the attack and don't move.
-                    if (!isSimulation) {
-                        player.takeDamage(this.attack);
-                        player.startBump(this.x - playerX, this.y - playerY);
-                        this.startBump(playerX - this.x, playerY - this.y);
-                        this.justAttacked = true;
-                        this.attackAnimation = 15;
-                        window.soundManager?.playSound('attack');
+            if (!game || !game.playerJustAttacked) {
+                for (const dir of attackDirections) {
+                    const attackX = this.x + dir.x;
+                    const attackY = this.y + dir.y;
+                    if (attackX === playerX && attackY === playerY) {
+                        // This is a valid diagonal attack. Perform the attack and don't move.
+                        if (!isSimulation) {
+                            player.takeDamage(this.attack);
+                            player.startBump(this.x - playerX, this.y - playerY);
+                            this.startBump(playerX - this.x, playerY - this.y);
+                            this.justAttacked = true;
+                            this.attackAnimation = 15;
+                            window.soundManager?.playSound('attack');
+                        }
+                        // Return null because the attack is the entire move; the lizardy does not change position.
+                        return null;
                     }
-                    // Return null because the attack is the entire move; the lizardy does not change position.
-                    return null;
                 }
             }
 
@@ -98,22 +100,24 @@ export const EnemyMovementMixin = {
         // Zard: charge adjacent diagonally and ram if diagonal line of sight
         if (this.enemyType === 'zard') {
             // First, check for a simple adjacent diagonal attack.
-            const dx_adj = Math.abs(this.x - playerX);
-            const dy_adj = Math.abs(this.y - playerY);
-            if (dx_adj === 1 && dy_adj === 1) { // Diagonally adjacent
-                if (!isSimulation) {
-                    player.takeDamage(this.attack);
-                    player.startBump(this.x - playerX, this.y - playerY);
-                    this.startBump(playerX - this.x, playerY - this.y);
-                    this.justAttacked = true;
-                    this.attackAnimation = 15;
-                    window.soundManager?.playSound('attack');
+            if (!game || !game.playerJustAttacked) {
+                const dx_adj = Math.abs(this.x - playerX);
+                const dy_adj = Math.abs(this.y - playerY);
+                if (dx_adj === 1 && dy_adj === 1) { // Diagonally adjacent
+                    if (!isSimulation) {
+                        player.takeDamage(this.attack);
+                        player.startBump(this.x - playerX, this.y - playerY);
+                        this.startBump(playerX - this.x, playerY - this.y);
+                        this.justAttacked = true;
+                        this.attackAnimation = 15;
+                        window.soundManager?.playSound('attack');
+                    }
+                    return null; // Attack is the move
                 }
-                return null; // Attack is the move
             }
 
             // If not adjacent, then consider a charge.
-            const result = EnemySpecialActions.executeZardCharge(this, player, playerX, playerY, grid, enemies, isSimulation);
+            const result = EnemySpecialActions.executeZardCharge(this, player, playerX, playerY, grid, enemies, isSimulation, game);
             if (result !== false) return result;
             // If can't charge, emergency defensive retreat when already vulnerable
             const dx = Math.abs(this.x - playerX);
@@ -133,14 +137,14 @@ export const EnemyMovementMixin = {
 
         // Lizardeaux: rook charge behavior (handled in special actions)
         if (this.enemyType === 'lizardeaux') {
-            const result = EnemySpecialActions.executeLizardeauxCharge(this, player, playerX, playerY, grid, enemies, isSimulation);
+            const result = EnemySpecialActions.executeLizardeauxCharge(this, player, playerX, playerY, grid, enemies, isSimulation, game);
             if (result !== false) return result;
             // If not adjacent and no charge possible, fall through to normal movement
         }
 
         // Lazerd: queen-like movement with charge and attack in one turn if orthogonal/diagonal line of sight
         if (this.enemyType === 'lazerd') {
-            const result = EnemySpecialActions.executeLazerdCharge(this, player, playerX, playerY, grid, enemies, isSimulation);
+            const result = EnemySpecialActions.executeLazerdCharge(this, player, playerX, playerY, grid, enemies, isSimulation, game);
             if (result !== false) return result;
         }
 
@@ -392,13 +396,15 @@ export const EnemyMovementMixin = {
                             }
                         } else {
                             // Enemy tries to move onto player - register attack
-                            player.takeDamage(this.attack);
-                            player.startBump(this.x - playerX, this.y - playerY);
-                            this.startBump(playerX - this.x, playerY - this.y);
-                            this.justAttacked = true;
-                            this.attackAnimation = 15; // Dramatic attack animation frames
-                            window.soundManager?.playSound('attack');
-                            if (player.isDead()) {
+                            if (!game || !game.playerJustAttacked) {
+                                player.takeDamage(this.attack);
+                                player.startBump(this.x - playerX, this.y - playerY);
+                                this.startBump(playerX - this.x, playerY - this.y);
+                                this.justAttacked = true;
+                                this.attackAnimation = 15; // Dramatic attack animation frames
+                                window.soundManager?.playSound('attack');
+                                if (player.isDead()) {
+                                }
                             }
                         }
 

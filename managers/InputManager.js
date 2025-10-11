@@ -513,6 +513,8 @@ export class InputManager {
                         zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtTarget.id);
                         this.game.zones.set(zoneKey, zoneData);
                     }
+                    // Set flag to prevent immediate enemy attacks on this turn
+                    this.game.playerJustAttacked = true;
                     // Enemy movements happen after attacks to simulate turn-based combat
                     this.game.startEnemyTurns();
                     // Player does not move

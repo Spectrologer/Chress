@@ -38,6 +38,7 @@ class Game {
 
         // Turn-based system state
         this.isPlayerTurn = true;
+        this.playerJustAttacked = false;
 
         // Perform consent check immediately on game load
         this.consentManager.initialize();
@@ -93,6 +94,7 @@ class Game {
         } else {
             // All enemies have moved, it's the player's turn again
             this.isPlayerTurn = true;
+            this.playerJustAttacked = false; // Reset flag after enemy turns
             this.checkCollisions(); // Check for collisions after all moves are done
             this.checkItemPickup();
         }

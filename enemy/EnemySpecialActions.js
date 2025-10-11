@@ -3,7 +3,7 @@ import { EnemyLineOfSight } from './EnemyLineOfSight.js';
 
 export class EnemySpecialActions {
     // Execute charge move for Zard enemy type
-    static executeZardCharge(enemy, player, playerX, playerY, grid, enemies, isSimulation = false) {
+    static executeZardCharge(enemy, player, playerX, playerY, grid, enemies, isSimulation = false, game = null) {
         if (EnemyLineOfSight.checkDiagonalLineOfSight(enemy, playerX, playerY, grid)) {
             const chargeMove = EnemyChargeBehaviors.getChargeAdjacentDiagonalMove(enemy, playerX, playerY, grid, enemies);
             if (chargeMove) {
@@ -23,7 +23,7 @@ export class EnemySpecialActions {
                 // After moving, check if adjacent diagonally and ram
                 const newDx = Math.abs(chargeMove.x - playerX);
                 const newDy = Math.abs(chargeMove.y - playerY);
-                if (newDx === 1 && newDy === 1) {
+                if (newDx === 1 && newDy === 1 && (!game || !game.playerJustAttacked)) {
                     enemy.performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation);
                 }
                 return null; // All in one turn
@@ -35,14 +35,14 @@ export class EnemySpecialActions {
     }
 
     // Execute charge move for Lizardeaux enemy type
-    static executeLizardeauxCharge(enemy, player, playerX, playerY, grid, enemies, isSimulation = false) {
+    static executeLizardeauxCharge(enemy, player, playerX, playerY, grid, enemies, isSimulation = false, game = null) {
         if (EnemyLineOfSight.checkOrthogonalLineOfSight(enemy, playerX, playerY, grid, enemies)) {
             const dx = Math.abs(enemy.x - playerX);
             const dy = Math.abs(enemy.y - playerY);
             const distance = Math.max(dx, dy);
             if (distance === 1) {
                 // Adjacent: normal attack without knockback
-                if (!isSimulation) {
+                if (!isSimulation && (!game || !game.playerJustAttacked)) {
                     player.takeDamage(enemy.attack);
                     player.startBump(enemy.x - playerX, enemy.y - playerY);
                     enemy.startBump(playerX - enemy.x, playerY - enemy.y);
@@ -70,23 +70,25 @@ export class EnemySpecialActions {
                     enemy.y = chargeMove.y;
                     enemy.liftFrames = 15; // Start lift animation
                     // Attack upon arriving
-                    player.takeDamage(enemy.attack);
-                    player.startBump(enemy.x - playerX, enemy.y - playerY);
-                    enemy.startBump(playerX - enemy.x, playerY - enemy.y);
-                    enemy.justAttacked = true;
-                    enemy.attackAnimation = 15;
-                    window.soundManager?.playSound('attack');
-                    // Knockback player backward
-                    let knockbackX = playerX;
-                    let knockbackY = playerY;
-                    if (stepX !== 0) {
-                        knockbackX += stepX;
-                    } else {
-                        knockbackY += stepY;
-                    }
-                    // Only knockback if walkable, else stay
-                    if (player.isWalkable(knockbackX, knockbackY, grid)) {
-                        player.setPosition(knockbackX, knockbackY);
+                    if (!game || !game.playerJustAttacked) {
+                        player.takeDamage(enemy.attack);
+                        player.startBump(enemy.x - playerX, enemy.y - playerY);
+                        enemy.startBump(playerX - enemy.x, playerY - enemy.y);
+                        enemy.justAttacked = true;
+                        enemy.attackAnimation = 15;
+                        window.soundManager?.playSound('attack');
+                        // Knockback player backward
+                        let knockbackX = playerX;
+                        let knockbackY = playerY;
+                        if (stepX !== 0) {
+                            knockbackX += stepX;
+                        } else {
+                            knockbackY += stepY;
+                        }
+                        // Only knockback if walkable, else stay
+                        if (player.isWalkable(knockbackX, knockbackY, grid)) {
+                            player.setPosition(knockbackX, knockbackY);
+                        }
                     }
                 }
                 return null; // All in one turn
@@ -96,7 +98,7 @@ export class EnemySpecialActions {
     }
 
     // Execute charge move for Lazerd enemy type
-    static executeLazerdCharge(enemy, player, playerX, playerY, grid, enemies, isSimulation = false) {
+    static executeLazerdCharge(enemy, player, playerX, playerY, grid, enemies, isSimulation = false, game = null) {
         // Check if orthogonal or diagonal line of sight exists
         const chargeMove = EnemyChargeBehaviors.getQueenChargeAdjacentMove(enemy, playerX, playerY, grid, enemies);
         if (chargeMove) {
@@ -114,7 +116,7 @@ export class EnemySpecialActions {
                 enemy.x = chargeMove.x;
                 enemy.y = chargeMove.y;
                 // Now adjacent, attack
-                if (!isSimulation) {
+                if (!isSimulation && (!game || !game.playerJustAttacked)) {
                     player.takeDamage(enemy.attack);
                     player.startBump(enemy.x - playerX, enemy.y - playerY);
                     enemy.startBump(playerX - enemy.x, playerY - enemy.y);
