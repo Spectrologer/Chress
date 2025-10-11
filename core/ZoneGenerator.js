@@ -64,7 +64,7 @@ export class ZoneGenerator {
     }
 
     generateZone(zoneX, zoneY, dimension, existingZones, zoneConnections, foodAssets) {
-        this.foodAssets = foodAssets;
+        this.foodAssets = foodAssets || [];
         this.currentZoneX = zoneX;
         this.currentZoneY = zoneY;
         this.currentDimension = dimension;
@@ -277,6 +277,9 @@ export class ZoneGenerator {
         // Find a valid player spawn tile
         this.playerSpawn = this.findValidPlayerSpawn();
 
+        // Sanitize grid to fix any corrupted tiles
+        this.sanitizeGrid();
+
         return {
             grid: JSON.parse(JSON.stringify(this.grid)),
             enemies: [...this.enemies],
@@ -295,6 +298,9 @@ export class ZoneGenerator {
         }
         this.enemies = [];
         this.addWallBorders();
+
+        // Initial sanity check to prevent corruption from previous issues
+        this.sanitizeGrid();
     }
 
     addWallBorders() {
@@ -448,6 +454,21 @@ export class ZoneGenerator {
             // Prevent infinite loops
             if (currentX === centerX && currentY === centerY) {
                 break;
+            }
+        }
+    }
+
+    /**
+     * Sanitizes the grid by replacing any null or undefined tiles with FLOOR tiles.
+     * This fixes corrupted save data or generation bugs.
+     */
+    sanitizeGrid() {
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                if (this.grid[y][x] === null || this.grid[y][x] === undefined) {
+                    console.warn(`Fixed corrupted tile at (${x}, ${y}) by replacing with FLOOR`);
+                    this.grid[y][x] = TILE_TYPES.FLOOR;
+                }
             }
         }
     }

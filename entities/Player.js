@@ -18,9 +18,6 @@ export class Player {
         this.actionAnimation = 0; // Frames for actions like chopping/breaking
         this.smokeAnimations = []; // Array of {x, y, frame} for smoke animations
         this.splodeAnimations = []; // Array of {x, y, frame} for splode animations
-        // Special zone mechanics
-        this.smellOranges = false;
-        this.smellLemons = false;
         this.bumpOffsetX = 0;
         this.bumpOffsetY = 0;
         this.bumpFrames = 0;
@@ -148,13 +145,6 @@ export class Player {
             this.liftFrames = 15; // Start lift animation
             window.soundManager?.playSound('move');
 
-            // Set smells when stepping on scent tiles
-            if (tile === TILE_TYPES.ORANGE_FLOOR) {
-                this.smellOranges = true;
-            } else if (tile === TILE_TYPES.PURPLE_FLOOR) {
-                this.smellLemons = true;
-            }
-
             return true;
         } else {
             // Check if can chop/smash the target tile (only orthogonal adjacent positions)
@@ -203,34 +193,6 @@ export class Player {
 
         // Signs are not walkable
         if ((tile && tile.type === TILE_TYPES.SIGN) || tile === TILE_TYPES.SIGN) {
-            return false;
-        }
-
-        // Tinted floor tiles
-        if (tile === TILE_TYPES.PINK_FLOOR ||
-            tile === TILE_TYPES.ORANGE_FLOOR ||
-            tile === TILE_TYPES.PURPLE_FLOOR) {
-            return true; // Always walkable
-        }
-
-        if (tile === TILE_TYPES.RED_FLOOR) {
-            // Can walk if coming from purple or red tile
-            const fromTile = grid[fromY][fromX];
-            return fromTile === TILE_TYPES.PURPLE_FLOOR || fromTile === TILE_TYPES.RED_FLOOR;
-        }
-
-        if (tile === TILE_TYPES.BLUE_FLOOR) {
-            // Walkable unless smelling like oranges
-            return !this.smellOranges;
-        }
-
-        if (tile === TILE_TYPES.GREEN_FLOOR) {
-            // Walkable unless smelling like lemons
-            return !this.smellLemons;
-        }
-
-        if (tile === TILE_TYPES.YELLOW_FLOOR) {
-            // Never walkable
             return false;
         }
 
@@ -373,8 +335,6 @@ export class Player {
     this.spentDiscoveries = 0;
     this.sprite = 'SeparateAnim/Special2';
     this.visitedZones.clear();
-    this.smellOranges = false;
-    this.smellLemons = false;
     this.bumpOffsetX = 0;
     this.bumpOffsetY = 0;
     this.bumpFrames = 0;

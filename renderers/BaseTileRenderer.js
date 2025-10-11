@@ -24,10 +24,7 @@ export class BaseTileRenderer {
         // Handle object tiles (like notes, but defer to subRenderer for most)
         const actualType = tileType && tileType.type ? tileType.type : tileType;
 
-        if (actualType >= TILE_TYPES.PINK_FLOOR && actualType <= TILE_TYPES.YELLOW_FLOOR) {
-            // Tinted floors - render with color
-            this.renderFloorTile(ctx, pixelX, pixelY, actualType);
-        } else if (actualType === TILE_TYPES.FLOOR) {
+        if (actualType === TILE_TYPES.FLOOR) {
             this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         } else if (actualType === TILE_TYPES.EXIT) {
             this.renderExitTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);

@@ -26,14 +26,6 @@ export const TILE_TYPES = {
     SQUIG: 25,
     NIB: 42,
     RUNE: 39,
-    // Tinted dirt tiles for special zone
-    PINK_FLOOR: 17,
-    RED_FLOOR: 18,
-    ORANGE_FLOOR: 19,
-    PURPLE_FLOOR: 20,
-    BLUE_FLOOR: 21,
-    GREEN_FLOOR: 22,
-    YELLOW_FLOOR: 23,
     BOMB: 24,
     HEART: 27,
     SIGN: 26,
@@ -75,13 +67,6 @@ export const TILE_COLORS = {
     [TILE_TYPES.SQUIG]: '#8A2BE2',   // Blueviolet for squig
     [TILE_TYPES.NIB]: '#8A2BE2',     // Blueviolet for nib
     [TILE_TYPES.RUNE]: '#8A2BE2',    // Blueviolet for rune
-    [TILE_TYPES.PINK_FLOOR]: '#FFB6C1',    // Light pink
-    [TILE_TYPES.RED_FLOOR]: '#DC143C',     // Crimson red
-    [TILE_TYPES.ORANGE_FLOOR]: '#FFA500', // Orange
-    [TILE_TYPES.PURPLE_FLOOR]: '#9370DB',   // Medium purple
-    [TILE_TYPES.BLUE_FLOOR]: '#00BFFF',   // Deep sky blue
-    [TILE_TYPES.GREEN_FLOOR]: '#32CD32',  // Lime green
-    [TILE_TYPES.YELLOW_FLOOR]: '#FFD700', // Gold
     [TILE_TYPES.BOMB]: '#FF0000',  // Red for bomb
     [TILE_TYPES.HEART]: '#FF69B4', // Hot pink for heart
     [TILE_TYPES.SIGN]: '#8B4513', // Saddle brown for sign
