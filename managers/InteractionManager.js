@@ -150,15 +150,15 @@ export class InteractionManager {
             return true;
         }
 
-        // Check if tapped on lion for interaction
-        const lionAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.LION;
-        if (lionAtPosition) {
-            // Check if player is adjacent to the lion (including diagonal, but excluding self)
+        // Check if tapped on Penne for interaction
+        const penneAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.PENNE;
+        if (penneAtPosition) {
+            // Check if player is adjacent to Penne (including diagonal, but excluding self)
             const dx = Math.abs(gridCoords.x - playerPos.x);
             const dy = Math.abs(gridCoords.y - playerPos.y);
             const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
             if (isAdjacent) {
-                this.game.uiManager.showBarterWindow('lion');
+                this.game.uiManager.showBarterWindow('penne');
             } else {
             }
             return true; // Interaction attempted, completion status varies
@@ -201,6 +201,20 @@ export class InteractionManager {
             const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
             if (isAdjacent) {
                 this.game.uiManager.showBarterWindow('nib');
+            } else {
+            }
+            return true; // Interaction attempted, completion status varies
+        }
+
+        // Check if tapped on mark for interaction
+        const markAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.MARK;
+        if (markAtPosition) {
+            // Check if player is adjacent to the mark (including diagonal, but excluding self)
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+            if (isAdjacent) {
+                this.game.uiManager.showBarterWindow('mark');
             } else {
             }
             return true; // Interaction attempted, completion status varies
@@ -565,10 +579,10 @@ export class InteractionManager {
             return;
         }
 
-        // Check if tapped on lion
-        const lionAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.LION;
-        if (lionAtPosition) {
-            this.game.uiManager.showBarterWindow('lion');
+        // Check if tapped on Penne
+        const penneAtPosition = this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.PENNE;
+        if (penneAtPosition) {
+            this.game.uiManager.showBarterWindow('penne');
             return;
         }
 
@@ -669,12 +683,12 @@ export class InteractionManager {
         if ((tappedTile === TILE_TYPES.GRASS || tappedTile === TILE_TYPES.SHRUBBERY)) {
             if (hasAxe) {
                 // Perform chopping action - since player is adjacent, move to it and chop
+                this.game.handleEnemyMovements(); // Enemies move before player
                 this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
                     this.game.transitionToZone(zoneX, zoneY, exitSide, playerPos.x, playerPos.y);
                 });
-                this.game.handleEnemyMovements();
                 this.game.checkCollisions();
-                this.game.checkItemPickup();
+                this.game.checkItemPickup(); // Check for items after moving
                 this.game.updatePlayerPosition();
                 this.game.updatePlayerStats();
             }
@@ -682,11 +696,11 @@ export class InteractionManager {
             if (hasHammer) {
                 // Perform breaking action
                 this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
-                    this.game.transitionToZone(zoneX, zoneY, exitSide, playerPos.x, playerPos.y);
+                    this.game.transitionToZone(zoneX, zoneY, exitSide, this.game.player.getPosition().x, this.game.player.getPosition().y);
                 });
                 this.game.handleEnemyMovements();
                 this.game.checkCollisions();
-                this.game.checkItemPickup();
+                this.game.checkItemPickup(); // Check for items after moving
                 this.game.updatePlayerPosition();
                 this.game.updatePlayerStats();
             }

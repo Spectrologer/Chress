@@ -16,11 +16,6 @@ export class BaseTileRenderer {
         this.structureRenderer = new StructureTileRenderer(images, multiTileHandler, tileSize);
     }
 
-    isImageLoaded(key) {
-        const image = this.images[key];
-        return image && image.complete && image.naturalWidth > 0;
-    }
-
     // Main tile rendering dispatcher for basic tiles
     renderTile(ctx, x, y, tileType, grid, zoneLevel) {
         const pixelX = x * TILE_SIZE;
@@ -74,14 +69,16 @@ export class BaseTileRenderer {
             this.structureRenderer.renderDeadTreeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.ENEMY) {
             this.structureRenderer.renderEnemyTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.LION) {
-            this.structureRenderer.renderLionTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.PENNE) {
+            this.structureRenderer.renderPenneTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.SQUIG) {
             this.structureRenderer.renderSquigTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.RUNE) {
             this.structureRenderer.renderRuneTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.NIB) {
             this.structureRenderer.renderNibTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.MARK) {
+            this.structureRenderer.renderMarkTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.LIZARDY_STATUE ||
                    actualType === TILE_TYPES.LIZARDO_STATUE ||
                    actualType === TILE_TYPES.LIZARDEAUX_STATUE ||
@@ -120,38 +117,38 @@ export class BaseTileRenderer {
 
     renderExitTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
         // Frontier zones (level >=4) use desert background for exit tiles
-        if (zoneLevel >= 4 && this.isImageLoaded('desert')) {
+        if (zoneLevel >= 4 && RendererUtils.isImageLoaded(this.images, 'desert')) {
             ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             return;
         }
         // ...existing code...
-        if (this.shouldUseDirtTunnelHorizontal(x, y, grid) && this.isImageLoaded('dirt_tunnel')) {
+        if (this.shouldUseDirtTunnelHorizontal(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_tunnel')) {
             ctx.drawImage(this.images.dirt_tunnel, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else if (this.shouldUseDirtTunnelVertical(x, y, grid) && this.isImageLoaded('dirt_tunnel')) {
+        } else if (this.shouldUseDirtTunnelVertical(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_tunnel')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_tunnel, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtCorner2NorthSouth(x, y, grid) && this.isImageLoaded('dirt_corner2')) {
+        } else if (this.shouldUseDirtCorner2NorthSouth(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner2')) {
             ctx.drawImage(this.images.dirt_corner2, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else if (this.shouldUseDirtCorner2EastWest(x, y, grid) && this.isImageLoaded('dirt_corner2')) {
+        } else if (this.shouldUseDirtCorner2EastWest(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner2')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner2, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtCorner2SouthNorth(x, y, grid) && this.isImageLoaded('dirt_corner2')) {
+        } else if (this.shouldUseDirtCorner2SouthNorth(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner2')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner2, pixelX, pixelY, Math.PI, TILE_SIZE);
-        } else if (this.shouldUseDirtCorner2WestEast(x, y, grid) && this.isImageLoaded('dirt_corner2')) {
+        } else if (this.shouldUseDirtCorner2WestEast(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner2')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner2, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtNorth(x, y, grid) && this.isImageLoaded('dirt_north')) {
+        } else if (this.shouldUseDirtNorth(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_north')) {
             ctx.drawImage(this.images.dirt_north, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else if (this.shouldUseDirtSouth(x, y, grid) && this.isImageLoaded('dirt_north')) {
+        } else if (this.shouldUseDirtSouth(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_north')) {
             RendererUtils.drawFlippedImage(ctx, this.images.dirt_north, pixelX, pixelY, false, true, TILE_SIZE);
-        } else if (this.shouldUseDirtEast(x, y, grid) && this.isImageLoaded('dirt_north')) {
+        } else if (this.shouldUseDirtEast(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_north')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_north, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtWest(x, y, grid) && this.isImageLoaded('dirt_north')) {
+        } else if (this.shouldUseDirtWest(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_north')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_north, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtCornerNE(x, y, grid) && this.isImageLoaded('dirt_corner')) {
+        } else if (this.shouldUseDirtCornerNE(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner')) {
             ctx.drawImage(this.images.dirt_corner, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else if (this.shouldUseDirtCornerSE(x, y, grid) && this.isImageLoaded('dirt_corner')) {
+        } else if (this.shouldUseDirtCornerSE(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtCornerSW(x, y, grid) && this.isImageLoaded('dirt_corner')) {
+        } else if (this.shouldUseDirtCornerSW(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner, pixelX, pixelY, Math.PI, TILE_SIZE);
-        } else if (this.shouldUseDirtCornerNW(x, y, grid) && this.isImageLoaded('dirt_corner')) {
+        } else if (this.shouldUseDirtCornerNW(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
         } else {
             this.renderFloorTile(ctx, pixelX, pixelY, TILE_TYPES.FLOOR);
@@ -160,7 +157,7 @@ export class BaseTileRenderer {
 
     renderFloorTile(ctx, pixelX, pixelY, tileType) {
         // Use dirt image for normal floor, or fall back to colors for tinted floors
-        if (tileType === TILE_TYPES.FLOOR && this.isImageLoaded('dirt')) {
+        if (tileType === TILE_TYPES.FLOOR && RendererUtils.isImageLoaded(this.images, 'dirt')) {
             ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // For tinted floors or when dirt image is not loaded, use the tile color
@@ -172,7 +169,7 @@ export class BaseTileRenderer {
     renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
         // Interior zones use housetile for floors
         if (zoneLevel === 5) {
-            if (this.isImageLoaded('housetile')) {
+            if (RendererUtils.isImageLoaded(this.images, 'housetile')) {
                 ctx.drawImage(this.images.housetile, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
                 ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
@@ -183,7 +180,7 @@ export class BaseTileRenderer {
 
         // Frontier zones (level >=4) use desert texture for all passable tiles
         if (zoneLevel >= 4) {
-            if (this.isImageLoaded('desert')) {
+            if (RendererUtils.isImageLoaded(this.images, 'desert')) {
                 ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
                 ctx.fillStyle = '#C2B280'; // Tarnished gold for desert
@@ -193,31 +190,31 @@ export class BaseTileRenderer {
         }
 
         // Floor tiles use the same sophisticated directional logic as exits
-        if (this.shouldUseDirtCorner2NorthSouth(x, y, grid) && this.isImageLoaded('dirt_corner2')) {
+        if (this.shouldUseDirtCorner2NorthSouth(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner2')) {
             ctx.drawImage(this.images.dirt_corner2, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else if (this.shouldUseDirtCorner2EastWest(x, y, grid) && this.isImageLoaded('dirt_corner2')) {
+        } else if (this.shouldUseDirtCorner2EastWest(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner2')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner2, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtCorner2SouthNorth(x, y, grid) && this.isImageLoaded('dirt_corner2')) {
+        } else if (this.shouldUseDirtCorner2SouthNorth(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner2')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner2, pixelX, pixelY, Math.PI, TILE_SIZE);
-        } else if (this.shouldUseDirtCorner2WestEast(x, y, grid) && this.isImageLoaded('dirt_corner2')) {
+        } else if (this.shouldUseDirtCorner2WestEast(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner2')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner2, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtNorth(x, y, grid) && this.isImageLoaded('dirt_north')) {
+        } else if (this.shouldUseDirtNorth(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_north')) {
             ctx.drawImage(this.images.dirt_north, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else if (this.shouldUseDirtSouth(x, y, grid) && this.isImageLoaded('dirt_north')) {
+        } else if (this.shouldUseDirtSouth(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_north')) {
             RendererUtils.drawFlippedImage(ctx, this.images.dirt_north, pixelX, pixelY, false, true, TILE_SIZE);
-        } else if (this.shouldUseDirtEast(x, y, grid) && this.isImageLoaded('dirt_north')) {
+        } else if (this.shouldUseDirtEast(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_north')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_north, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtWest(x, y, grid) && this.isImageLoaded('dirt_north')) {
+        } else if (this.shouldUseDirtWest(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_north')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_north, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtCornerNE(x, y, grid) && this.isImageLoaded('dirt_corner')) {
+        } else if (this.shouldUseDirtCornerNE(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner')) {
             ctx.drawImage(this.images.dirt_corner, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else if (this.shouldUseDirtCornerSE(x, y, grid) && this.isImageLoaded('dirt_corner')) {
+        } else if (this.shouldUseDirtCornerSE(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
-        } else if (this.shouldUseDirtCornerSW(x, y, grid) && this.isImageLoaded('dirt_corner')) {
+        } else if (this.shouldUseDirtCornerSW(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner, pixelX, pixelY, Math.PI, TILE_SIZE);
-        } else if (this.shouldUseDirtCornerNW(x, y, grid) && this.isImageLoaded('dirt_corner')) {
+        } else if (this.shouldUseDirtCornerNW(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_corner')) {
             RendererUtils.drawRotatedImage(ctx, this.images.dirt_corner, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
-        } else if (this.isImageLoaded('dirt')) {
+        } else if (RendererUtils.isImageLoaded(this.images, 'dirt')) {
             ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
@@ -230,7 +227,7 @@ export class BaseTileRenderer {
         this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the water image if loaded, otherwise use fallback
-        if (this.isImageLoaded('water')) {
+        if (RendererUtils.isImageLoaded(this.images, 'water')) {
             // Scale water to 70% to make it slightly smaller
             const scaledSize = TILE_SIZE * 0.7;
             const offsetX = (TILE_SIZE - scaledSize) / 2;

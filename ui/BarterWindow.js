@@ -35,8 +35,8 @@ export class BarterWindow {
         this.barterNPCPortrait.src = portrait;
         this.barterNPCPortrait.alt = `Portrait of ${name}`;
 
-        // Add a specific class for squig and lion to adjust their size
-        if (npcType === 'squig' || npcType === 'lion') {
+        // Add a specific class for squig and penne to adjust their size
+        if (npcType === 'squig' || npcType === 'penne') {
             this.barterNPCPortrait.classList.add('squig-portrait-adjust');
         } else {
             this.barterNPCPortrait.classList.remove('squig-portrait-adjust');
@@ -107,6 +107,9 @@ export class BarterWindow {
 
         if (tradeData.requiredItem === 'points') {
             return player.getPoints() >= requiredAmount;
+        } else if (tradeData.requiredItem === 'DISCOVERED') {
+            const discoveries = player.getVisitedZones().size - player.spentDiscoveries;
+            return discoveries >= requiredAmount;
         } else {
             const itemCount = player.inventory.filter(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem)).length;
             return itemCount >= requiredAmount;
@@ -123,6 +126,12 @@ export class BarterWindow {
             return;
         }
 
+        // Re-check viability right before confirming the trade
+        if (!this.checkTradeViability(tradeData)) {
+            this.game.uiManager.addMessageToLog('Cannot complete trade. Conditions not met.');
+            this.hideBarterWindow();
+            return;
+        }
         if (tradeData.id === 'rune_food') {
             this.game.player.addPoints(-tradeData.requiredAmount);
             const randomFood = FOOD_ASSETS[Math.floor(Math.random() * FOOD_ASSETS.length)];
@@ -151,6 +160,13 @@ export class BarterWindow {
             this.game.player.inventory.push(randomItem);
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for a random trinket.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+
+        } else if (tradeData.id === 'mark_meat') { // Trade discoveries for meat
+            this.game.player.spentDiscoveries += tradeData.requiredAmount;
+            const randomFood = FOOD_ASSETS[Math.floor(Math.random() * FOOD_ASSETS.length)];
+            this.game.player.inventory.push({ type: 'food', foodType: randomFood });
+            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} Discoveries for meat.`);
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg); // This was missing a call to updatePlayerStats
         } else {
             // Legacy/single trade logic
             const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));
@@ -169,6 +185,7 @@ export class BarterWindow {
 
         this.game.soundManager.playSound('ding');
         this.game.updatePlayerStats();
+        this.game.uiManager.updateZoneDisplay(); // Refresh discoveries count
         this.hideBarterWindow();
     }
 }

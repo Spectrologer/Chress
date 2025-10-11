@@ -69,10 +69,11 @@ export class Sign {
 
     // Barter dialogue content
     static barterNpcData = {
-        lion: {
+        penne: {
             name: 'Penne',
             portrait: 'assets/fauna/lionface.png',
             message: 'Give me meat!',
+            subclass: 'merchant',
             trades: [
                 {
                     requiredItem: 'food/meat',
@@ -88,6 +89,7 @@ export class Sign {
             name: 'Squig',
             portrait: 'assets/fauna/squigface.png',
             message: 'I\'m nuts for nuts!',
+            subclass: 'merchant',
             trades: [
                 {
                     requiredItem: 'food/veg',
@@ -103,6 +105,7 @@ export class Sign {
             name: 'Rune', // This is now a header for the NPC
             portrait: 'assets/fauna/runeface.png', // Shared portrait
             message: 'I smell it... Points. Feed it me.', // Shared message
+            subclass: 'merchant',
             trades: [
                 {
                     id: 'rune_item',
@@ -118,6 +121,7 @@ export class Sign {
             name: 'Nib',
             portrait: 'assets/fauna/nibface.png',
             message: 'I offer knowledge for your points.',
+            subclass: 'merchant',
             trades: [
                 {
                     id: 'nib_item',
@@ -126,6 +130,23 @@ export class Sign {
                     requiredItemImg: 'assets/items/points.png',
                     receivedItemName: 'Random Trinket',
                     receivedItemImg: 'assets/items/chest.png'
+                }
+            ]
+        },
+        mark: {
+            name: 'Mark',
+            portrait: 'assets/fauna/markface.png',
+            message: 'Show me some new places.',
+            subclass: 'merchant',
+            trades: [
+                {
+                    id: 'mark_meat',
+                    requiredItem: 'DISCOVERED',
+                    requiredAmount: 10,
+                    requiredItemName: 'Discoveries',
+                    requiredItemImg: 'assets/ui/talk.png',
+                    receivedItemName: 'Meat',
+                    receivedItemImg: 'assets/food/meat/beaf.png'
                 }
             ]
         },
@@ -207,6 +228,7 @@ export class Sign {
         crayn: {
             name: 'Crayn',
             portrait: 'assets/fauna/craynface.png',
+            subclass: 'dialogue',
             currentMessageIndex: 0,
             messages: [
                 "There is no end to the frontier.",
@@ -224,6 +246,7 @@ export class Sign {
         felt: {
             name: 'Felt',
             portrait: 'assets/fauna/feltface.png',
+            subclass: 'dialogue',
             currentMessageIndex: 0,
             messages: [
                 "Crayn is like, so smart.",
@@ -238,6 +261,7 @@ export class Sign {
         forge: {
             name: 'Forge',
             portrait: 'assets/fauna/forgeface.png',
+            subclass: 'dialogue',
             currentMessageIndex: 0,
             messages: [
                 "I can move between tiles.",
@@ -256,22 +280,22 @@ export class Sign {
                 "Enemies are friendly if you're only holding water.",
                 "The world is a sphere. Go far enough east, you'll end up back at the start from the west.",
                 "If you don't score points for 100 boards, you might find a secret.",
-                "I once saw a lion eat a nut.",
-                "I once saw a lion eat a nut and then drink water.",
-                "I once saw a lion eat a nut, drink water, and then trade the water for a nut.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, and then eat the nut.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, and then ask for more water.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, and then leave.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, and then come back.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, and then do it all over again.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, and then take a nap.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, and then dream about nuts.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, and then wake up hungry.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, and then go find some food.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, and then become the king of the jungle.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, and then rule with kindness and wisdom.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, and then live happily ever after.",
-                "I once saw a lion eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, live happily ever after, and then tell everyone about it.",
+                "I once saw a Penne eat a nut.",
+                "I once saw a Penne eat a nut and then drink water.",
+                "I once saw a Penne eat a nut, drink water, and then trade the water for a nut.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, and then eat the nut.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, and then ask for more water.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, and then leave.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, and then come back.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, and then do it all over again.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, and then take a nap.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, and then dream about nuts.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, and then wake up hungry.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, and then go find some food.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, and then become the king of the jungle.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, and then rule with kindness and wisdom.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, and then live happily ever after.",
+                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, live happily ever after, and then tell everyone about it.",
                 "I once saw squig eat a nut.",
             ]
         }

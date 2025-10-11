@@ -148,22 +148,27 @@ export const EnemyMovementMixin = {
             if (result !== false) return result;
         }
 
-2        // Lizardo: Aggressively close distance. If adjacent, it will fall through to default attack logic.
+        // Lizardo: Aggressively close distance. If it can attack, it will.
         if (this.enemyType === 'lizardo') {
             const dx = Math.abs(this.x - playerX);
             const dy = Math.abs(this.y - playerY);
             const distance = Math.max(dx, dy); // Use Chebyshev distance for 8-way adjacency
 
-            // If not adjacent, try to move closer.
-            if (distance > 1) {
-                const possibleMoves = this.getMovementDirections().map(dir => ({ x: this.x + dir.x, y: this.y + dir.y }));
-                const closerMoves = possibleMoves.filter(move => this.isWalkable(move.x, move.y, grid) && !enemies.some(e => e.x === move.x && e.y === move.y));
-                if (closerMoves.length > 0) {
-                    closerMoves.sort((a, b) => (Math.abs(a.x - playerX) + Math.abs(a.y - playerY)) - (Math.abs(b.x - playerX) + Math.abs(b.y - playerY)));
-                    return closerMoves[0];
+            if (distance === 1) {
+                // If adjacent, attack immediately. This overrides any other logic.
+                if (!game || !game.playerJustAttacked) {
+                    if (!isSimulation) {
+                        player.takeDamage(this.attack);
+                        player.startBump(this.x - playerX, this.y - playerY);
+                        this.startBump(playerX - this.x, playerY - this.y);
+                        this.justAttacked = true;
+                        this.attackAnimation = 15;
+                        window.soundManager?.playSound('attack');
+                    }
+                    return null; // Attack is the move, no change in position.
                 }
+                return null; // Player just attacked, so lizardo can't retaliate this turn.
             }
-            // If no safe move is found or it's already adjacent, it will fall through to the default pathfinding.
         }
 
         // Leader-Follower Pattern: when 3+ enemies, designate leader pursues player, others follow leader

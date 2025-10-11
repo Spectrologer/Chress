@@ -26,4 +26,9 @@ export class RendererUtils {
         ctx.mozImageSmoothingEnabled = false;
         ctx.msImageSmoothingEnabled = false;
     }
+
+    static isImageLoaded(images, key) {
+        const image = images[key];
+        return image && image.complete && image.naturalWidth > 0;
+    }
 }

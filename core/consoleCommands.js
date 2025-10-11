@@ -136,11 +136,11 @@ const consoleCommands = {
     }
   },
 
-  spawnLion: function(game) {
+  spawnPenne: function(game) {
     const pos = findSpawnPosition(game);
     if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.LION;
-      console.log('Spawned lion at', pos);
+      game.grid[pos.y][pos.x] = TILE_TYPES.PENNE;
+      console.log('Spawned Penne at', pos);
     } else {
       console.log('No valid spawn position found');
     }
@@ -171,6 +171,16 @@ const consoleCommands = {
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.NIB;
       console.log('Spawned nib at', pos);
+    } else {
+      console.log('No valid spawn position found');
+    }
+  },
+
+  spawnMark: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.MARK;
+      console.log('Spawned Mark at', pos);
     } else {
       console.log('No valid spawn position found');
     }
@@ -221,8 +231,9 @@ const consoleCommands = {
     }
   },
   hotkeyU: function(game) { this.spawnFoodNut(game); }, // U for nut
-  hotkeyL: function(game) { this.spawnLion(game); },
+  hotkeyL: function(game) { this.spawnPenne(game); },
   hotkeyG: function(game) { this.spawnSquig(game); }, // G for green squig
+  hotkeyX: function(game) { this.spawnMark(game); }, // X for Mark
 
   hotkeyShift1: function(game) { this.spawnEnemy(game, 'lizardy'); },
   hotkeyShift2: function(game) { this.spawnEnemy(game, 'lizardo'); },
@@ -255,6 +266,7 @@ const consoleCommands = {
       if (lowerKey === 'u') { this.hotkeyU(game); return true; }
       if (lowerKey === 'l') { this.hotkeyL(game); return true; }
       if (lowerKey === 'g') { this.hotkeyG(game); return true; }
+      if (lowerKey === 'x') { this.hotkeyX(game); return true; }
       // Enemies (numbers without shift)
       if (lowerKey === '1') { this.hotkeyShift1(game); return true; }
       if (lowerKey === '2') { this.hotkeyShift2(game); return true; }

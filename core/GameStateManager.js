@@ -53,6 +53,7 @@ export class GameStateManager {
         this.game.lastSignMessage = null; // Reset sign message tracking
         this.game.displayingMessageForSign = null; // Reset sign message display tracking
         this.game.horseChargeAnimations = []; // Reset horse charge animations
+        this.game.player.spentDiscoveries = 0; // Reset spent discoveries
 
         // Generate starting zone
         this.game.zoneManager.generateZone();
@@ -116,9 +117,11 @@ export class GameStateManager {
                     health: this.game.player.health,
                     dead: this.game.player.dead,
                     sprite: this.game.player.sprite,
+                    points: this.game.player.points,
                     visitedZones: Array.from(this.game.player.visitedZones),
                     smellOranges: this.game.player.smellOranges,
-                    smellLemons: this.game.player.smellLemons
+                    smellLemons: this.game.player.smellLemons,
+                    spentDiscoveries: this.game.player.spentDiscoveries
                 },
                 // Game state
                 zones: Array.from(this.game.zones.entries()),
@@ -187,9 +190,11 @@ export class GameStateManager {
                 this.game.player.health = gameState.player.health;
                 this.game.player.dead = gameState.player.dead;
                 this.game.player.sprite = gameState.player.sprite;
+                this.game.player.points = gameState.player.points || 0;
                 this.game.player.visitedZones = new Set(gameState.player.visitedZones);
                 this.game.player.smellOranges = gameState.player.smellOranges;
                 this.game.player.smellLemons = gameState.player.smellLemons;
+                this.game.player.spentDiscoveries = gameState.player.spentDiscoveries || 0;
             }
 
             // Restore game state

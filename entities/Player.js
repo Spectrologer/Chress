@@ -14,6 +14,7 @@ export class Player {
         this.health = 3;  // Player has 3 hearts
         this.points = 0; // Accumulated points from defeating enemies
         this.attackAnimation = 0; // Frames remaining for attack animation
+        this.spentDiscoveries = 0; // Discoveries spent on trades
         this.actionAnimation = 0; // Frames for actions like chopping/breaking
         this.smokeAnimations = []; // Array of {x, y, frame} for smoke animations
         this.splodeAnimations = []; // Array of {x, y, frame} for splode animations
@@ -369,6 +370,7 @@ export class Player {
     this.health = 3;
     this.points = 0;
     this.dead = false;
+    this.spentDiscoveries = 0;
     this.sprite = 'SeparateAnim/Special2';
     this.visitedZones.clear();
     this.smellOranges = false;

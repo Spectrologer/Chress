@@ -22,7 +22,7 @@ export const TILE_TYPES = {
     SHRUBBERY: 13,
     WELL: 14,
     DEADTREE: 15,
-    LION: 16,
+    PENNE: 16,
     SQUIG: 25,
     NIB: 42,
     RUNE: 39,
@@ -49,7 +49,8 @@ export const TILE_TYPES = {
     FELT: 37,
     FORGE: 38,
     BOOK_OF_TIME_TRAVEL: 40,
-    BOW: 41
+    BOW: 41,
+    MARK: 43
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -70,10 +71,10 @@ export const TILE_COLORS = {
     [TILE_TYPES.SHRUBBERY]: '#228B22', // Green for shrubbery
     [TILE_TYPES.WELL]: '#D2691E',   // Brown/orange for well
     [TILE_TYPES.DEADTREE]: '#8B4513',   // Brown for deadtree
-    [TILE_TYPES.LION]: '#FFD700',    // Gold for lion
-    [TILE_TYPES.SQUIG]: '#FFD700',   // Gold for squig
-    [TILE_TYPES.NIB]: '#FFD700',     // Gold for nib
-    [TILE_TYPES.RUNE]: '#FFD700',    // Gold for rune
+    [TILE_TYPES.PENNE]: '#8A2BE2',    // Blueviolet for Penne
+    [TILE_TYPES.SQUIG]: '#8A2BE2',   // Blueviolet for squig
+    [TILE_TYPES.NIB]: '#8A2BE2',     // Blueviolet for nib
+    [TILE_TYPES.RUNE]: '#8A2BE2',    // Blueviolet for rune
     [TILE_TYPES.PINK_FLOOR]: '#FFB6C1',    // Light pink
     [TILE_TYPES.RED_FLOOR]: '#DC143C',     // Crimson red
     [TILE_TYPES.ORANGE_FLOOR]: '#FFA500', // Orange
@@ -92,11 +93,12 @@ export const TILE_COLORS = {
     [TILE_TYPES.ZARD_STATUE]: '#A0A0A0',
     [TILE_TYPES.LAZERD_STATUE]: '#A0A0A0',
     [TILE_TYPES.LIZORD_STATUE]: '#A0A0A0',
-    [TILE_TYPES.CRAYN]: '#FFD700', // Gold for Crayn
-    [TILE_TYPES.FELT]: '#FFD700', // Gold for Felt
-    [TILE_TYPES.FORGE]: '#A0A0A0', // Grey for Forge
+    [TILE_TYPES.CRAYN]: '#8A2BE2', // Blueviolet for Crayn
+    [TILE_TYPES.FELT]: '#8A2BE2', // Blueviolet for Felt
+    [TILE_TYPES.FORGE]: '#8A2BE2', // Blueviolet for Forge
     [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: '#D2691E', // Chocolate color for book
-    [TILE_TYPES.BOW]: '#8B4513' // Brown for bow
+    [TILE_TYPES.BOW]: '#8B4513', // Brown for bow
+    [TILE_TYPES.MARK]: '#FFD700' // Gold for Mark
 };
 
 // Direction constants for exits and movements
@@ -147,6 +149,7 @@ export const IMAGE_ASSETS = [
     'fauna/crayn.png',
     'fauna/felt.png',
     'fauna/forge.png',
+    'fauna/mark.png',
     'fauna/forgeface.png',
     'fauna/zard.png',
     'floors/frontier/desert.png',

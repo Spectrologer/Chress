@@ -1,4 +1,5 @@
 import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from '../core/constants.js';
+import { RendererUtils } from './RendererUtils.js';
 
 export class ItemTileRenderer {
     constructor(images, tileSize) {
@@ -6,10 +7,7 @@ export class ItemTileRenderer {
         this.tileSize = tileSize;
     }
 
-    isImageLoaded(key) {
-        const image = this.images[key];
-        return image && image.complete && image.naturalWidth > 0;
-    }
+
 
     renderFoodTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // Use the stored foodType from the grid tile
@@ -24,14 +22,14 @@ export class ItemTileRenderer {
         const foodKey = foodAsset.replace('.png', '').replace('/', '_');
 
         // First draw the base tile
-        if (zoneLevel >= 4 && this.isImageLoaded('desert')) {
+        if (zoneLevel >= 4 && RendererUtils.isImageLoaded(this.images, 'desert')) {
             ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         }
 
         // Try to draw the food image if loaded, otherwise use fallback
-        if (this.isImageLoaded(foodKey)) {
+        if (RendererUtils.isImageLoaded(this.images, foodKey)) {
             ctx.drawImage(this.images[foodKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.FOOD], '🥖');
@@ -40,14 +38,14 @@ export class ItemTileRenderer {
 
     renderAxeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        if (zoneLevel >= 4 && this.isImageLoaded('desert')) {
+        if (zoneLevel >= 4 && RendererUtils.isImageLoaded(this.images, 'desert')) {
             ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         }
 
         // Try to draw the axe image if loaded, otherwise use fallback
-        if (this.isImageLoaded('axe')) {
+        if (RendererUtils.isImageLoaded(this.images, 'axe')) {
             ctx.drawImage(this.images.axe, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.ROCK], '🪓');
@@ -59,7 +57,7 @@ export class ItemTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the hammer image if loaded, otherwise use fallback
-        if (this.isImageLoaded('hammer')) {
+        if (RendererUtils.isImageLoaded(this.images, 'hammer')) {
             ctx.drawImage(this.images.hammer, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.HAMMER], '🔨');
@@ -71,7 +69,7 @@ export class ItemTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the spear image if loaded, otherwise use fallback
-        if (this.isImageLoaded('spear')) {
+        if (RendererUtils.isImageLoaded(this.images, 'spear')) {
             // Scale spear to fit within tile while maintaining aspect ratio
             const spearImage = this.images.spear;
             const aspectRatio = spearImage.width / spearImage.height;
@@ -108,7 +106,7 @@ export class ItemTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the horse image if loaded, otherwise use fallback
-        if (this.isImageLoaded('horse')) {
+        if (RendererUtils.isImageLoaded(this.images, 'horse')) {
             // Scale horse to fit within tile while maintaining aspect ratio
             const horseImage = this.images.horse;
             const aspectRatio = horseImage.width / horseImage.height;
@@ -145,7 +143,7 @@ export class ItemTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the bomb image if loaded, otherwise use fallback
-        if (this.isImageLoaded('bomb')) {
+        if (RendererUtils.isImageLoaded(this.images, 'bomb')) {
             ctx.drawImage(this.images.bomb, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BOMB], '💣');
@@ -157,7 +155,7 @@ export class ItemTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the heart image if loaded, otherwise use fallback
-        if (this.isImageLoaded('heart')) {
+        if (RendererUtils.isImageLoaded(this.images, 'heart')) {
             // Scale heart to 70% to make it slightly smaller
             const scaledSize = TILE_SIZE * 0.7;
             const offsetX = (TILE_SIZE - scaledSize) / 2;
@@ -173,7 +171,7 @@ export class ItemTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the note image if loaded, otherwise use fallback
-        if (this.isImageLoaded('note')) {
+        if (RendererUtils.isImageLoaded(this.images, 'note')) {
             // Scale note to fit within tile while maintaining aspect ratio, 70% size
             const noteImage = this.images.note;
             const aspectRatio = noteImage.width / noteImage.height;
@@ -210,7 +208,7 @@ export class ItemTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the sign image if loaded, otherwise use fallback
-        if (this.isImageLoaded('sign')) {
+        if (RendererUtils.isImageLoaded(this.images, 'sign')) {
             ctx.drawImage(this.images.sign, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.SIGN], 'S', 24);
@@ -222,7 +220,7 @@ export class ItemTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the book image if loaded, otherwise use fallback
-        if (this.isImageLoaded('book')) {
+        if (RendererUtils.isImageLoaded(this.images, 'book')) {
             // Scale book to fit within tile while maintaining aspect ratio, 70% size
             const bookImage = this.images.book;
             const aspectRatio = bookImage.width / bookImage.height;

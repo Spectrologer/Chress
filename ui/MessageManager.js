@@ -46,19 +46,19 @@ export class MessageManager {
         this.messageLogOverlay.classList.add('show');
     }
 
-    handleLionInteractionMessage() {
-        // Do not show the lion message if a sign message is already displayed.
+    handlePenneInteractionMessage() {
+        // Do not show the Penne message if a sign message is already displayed.
         if (this.game.displayingMessageForSign) {
             return;
         }
 
         const messageOverlay = document.getElementById('messageOverlay');
         // Show message even if another is showing, to allow it to take priority
-        // when both lion and squig are present.
+        // when both Penne and squig are present.
         this.showOverlayMessage('<span class="character-name">Penne</span><br>Give me meat!', 'assets/fauna/lion.png');
     }
 
-    hideLionInteractionMessage() {
+    hidePenneInteractionMessage() {
         const messageOverlay = document.getElementById('messageOverlay');
         // Hide the overlay, but only if a sign message isn't the one being displayed.
         if (messageOverlay && messageOverlay.classList.contains('show') && !this.game.displayingMessageForSign) {

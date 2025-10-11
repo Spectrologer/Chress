@@ -8,10 +8,7 @@ export class StructureTileRenderer {
         this.tileSize = tileSize;
     }
 
-    isImageLoaded(key) {
-        const image = this.images[key];
-        return image && image.complete && image.naturalWidth > 0;
-    }
+
 
     renderStatueTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer, tileType) {
         // First draw the base tile (housetile for interiors)
@@ -33,7 +30,7 @@ export class StructureTileRenderer {
         };
 
         const spriteKey = enemySpriteMap[tileType];
-        if (spriteKey && this.isImageLoaded(spriteKey)) {
+        if (spriteKey && RendererUtils.isImageLoaded(this.images, spriteKey)) {
             const enemyImage = this.images[spriteKey];
             ctx.save();
             ctx.filter = 'grayscale(100%) brightness(0.8)';
@@ -62,7 +59,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Then render the club part
-        if (this.isImageLoaded('doodads/club')) {
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/club')) {
             // For a 4x3 club, we need to determine which part of the club image to draw
             // Find the house area bounds to determine the position within the house
             const houseInfo = this.multiTileHandler.findHousePosition(x, y, grid);
@@ -98,7 +95,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Then render the well part
-        if (this.isImageLoaded('doodads/well')) {
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/well')) {
             // For a 2x2 well, we need to determine which part of the well image to draw
             // Find the well area bounds to determine the position within the well
             const wellInfo = this.multiTileHandler.findWellPosition(x, y, grid);
@@ -134,7 +131,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Then render the dead tree part
-        if (this.isImageLoaded('doodads/deadtree')) {
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/deadtree')) {
             // For a 2x2 dead tree, we need to determine which part of the dead tree image to draw
             // Find the dead tree area bounds to determine the position within the dead tree
             const deadtreeInfo = this.multiTileHandler.findDeadTreePosition(x, y, grid);
@@ -171,14 +168,14 @@ export class StructureTileRenderer {
         let enemyKey = 'lizardy';
 
         // First draw the base tile
-        if (zoneLevel >= 4 && this.isImageLoaded('desert')) {
+        if (zoneLevel >= 4 && RendererUtils.isImageLoaded(this.images, 'desert')) {
             ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
         }
 
         // Try to draw the enemy image if loaded, otherwise use fallback
-        if (this.isImageLoaded(enemyKey)) {
+        if (RendererUtils.isImageLoaded(this.images, enemyKey)) {
             ctx.drawImage(this.images[enemyKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // Fallback to colored square with emoji
@@ -193,16 +190,16 @@ export class StructureTileRenderer {
         }
     }
 
-    renderLionTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+    renderPenneTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        // Try to draw the lion image if loaded, otherwise use fallback
-        if (this.isImageLoaded('lion')) {
+        // Try to draw the Penne image if loaded, otherwise use fallback
+        if (RendererUtils.isImageLoaded(this.images, 'lion')) {
             ctx.drawImage(this.images.lion, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.LION];
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.PENNE];
             ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
 
             ctx.fillStyle = '#FFD700';
@@ -218,7 +215,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the squig image if loaded, otherwise use fallback
-        if (this.isImageLoaded('squig')) {
+        if (RendererUtils.isImageLoaded(this.images, 'squig')) {
             ctx.drawImage(this.images['squig'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // Fallback to colored square with emoji
@@ -238,7 +235,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the rune image if loaded, otherwise use fallback
-        if (this.isImageLoaded('rune')) {
+        if (RendererUtils.isImageLoaded(this.images, 'rune')) {
             ctx.drawImage(this.images['rune'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // Fallback to colored square with emoji
@@ -258,7 +255,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the nib image if loaded, otherwise use fallback
-        if (this.isImageLoaded('nib')) {
+        if (RendererUtils.isImageLoaded(this.images, 'nib')) {
             ctx.drawImage(this.images['nib'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // Fallback to colored square with emoji
@@ -273,12 +270,52 @@ export class StructureTileRenderer {
         }
     }
 
+    renderMarkTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First draw the base tile
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the mark image if loaded, otherwise use fallback
+        if (RendererUtils.isImageLoaded(this.images, 'mark')) {
+            ctx.drawImage(this.images['mark'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.MARK];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#FFD700';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🗺️', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
+    renderMarkTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First draw the base tile
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the mark image if loaded, otherwise use fallback
+        if (RendererUtils.isImageLoaded(this.images, 'mark')) {
+            ctx.drawImage(this.images['mark'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.MARK];
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#FFD700';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🗺️', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
+
     renderCraynTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the crayn image if loaded, otherwise use fallback
-        if (this.isImageLoaded('crayn')) {
+        if (RendererUtils.isImageLoaded(this.images, 'crayn')) {
             ctx.drawImage(this.images['crayn'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // Fallback to colored square with emoji
@@ -298,7 +335,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the felt image if loaded, otherwise use fallback
-        if (this.isImageLoaded('felt')) {
+        if (RendererUtils.isImageLoaded(this.images, 'felt')) {
             ctx.drawImage(this.images['felt'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // Fallback to colored square with emoji
@@ -318,7 +355,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the forge image if loaded, otherwise use fallback
-        if (this.isImageLoaded('forge')) {
+        if (RendererUtils.isImageLoaded(this.images, 'forge')) {
             ctx.drawImage(this.images['forge'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // Fallback to colored square with emoji

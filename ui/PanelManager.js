@@ -52,6 +52,7 @@ export class PanelManager {
             const playerPoints = this.game.player.getPoints();
             const hunger = this.game.player.getHunger();
             const thirst = this.game.player.getThirst();
+            const totalDiscoveries = this.game.player.getVisitedZones().size;
             statsInfoContainer.innerHTML = `
                 <div class="stats-header">
                 <div class="stats-portrait-container">
@@ -64,6 +65,7 @@ export class PanelManager {
                     <div class="stat-item"><span class="stat-label">Hunger:</span> <span class="stat-value">${hunger}/50</span></div>
                     <div class="stat-item"><span class="stat-label">Thirst:</span> <span class="stat-value">${thirst}/50</span></div>
                     <div class="stat-item"><span class="stat-label">Points:</span> <span class="stat-value">${playerPoints}</span></div>
+                    <div class="stat-item"><span class="stat-label">Discoveries:</span> <span class="stat-value">${totalDiscoveries}</span></div>
                 </div>
             `;
 

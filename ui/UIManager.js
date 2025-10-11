@@ -46,9 +46,11 @@ export class UIManager {
                 // Special case for the Woodcutter's Club
                 mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Woodcutter's Club</span>`;
             } else {
-                const zonesDiscovered = this.game.player.getVisitedZones().size;
+                const totalDiscoveries = this.game.player.getVisitedZones().size;
+                const spentDiscoveries = this.game.player.spentDiscoveries || 0;
+                const availableDiscoveries = totalDiscoveries - spentDiscoveries;
                 const dimensionText = zone.dimension === 1 ? 'Interior' : '';
-                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">${zone.x}, ${zone.y}${dimensionText}<br>DISCOVERED: ${zonesDiscovered}</span>`;
+                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">${zone.x}, ${zone.y}${dimensionText}<br>DISCOVERIES: ${availableDiscoveries}</span>`;
             }
         }
     }
@@ -93,8 +95,8 @@ export class UIManager {
         this.messageManager.handleLionInteractionMessage();
     }
 
-    hideLionInteractionMessage() {
-        this.messageManager.hideLionInteractionMessage();
+    hidePenneInteractionMessage() {
+        this.messageManager.hidePenneInteractionMessage();
     }
 
     showOverlayMessageSilent(text, imageSrc) {
