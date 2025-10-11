@@ -34,10 +34,21 @@ export class ActionManager {
     }
 
     performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy) {
+        const playerPos = this.game.player.getPosition();
+        const startX = playerPos.x;
+        const startY = playerPos.y;
+
         item.uses--;
         if (item.uses <= 0) {
             const index = this.game.player.inventory.findIndex(i => i === item);
             if (index !== -1) this.game.player.inventory.splice(index, 1);
+        }
+
+        // Add smoke animations along the diagonal charge path
+        for (let i = 1; i < Math.abs(dx); i++) {
+            const px = startX + i * Math.sign(dx);
+            const py = startY + i * Math.sign(dy);
+            this.game.player.smokeAnimations.push({ x: px, y: py, frame: 18 });
         }
 
         if (enemy) {
@@ -47,7 +58,7 @@ export class ActionManager {
             this.game.enemies = this.game.enemies.filter(e => e !== enemy);
         }
 
-        this.game.player.setPosition(targetX - Math.sign(dx), targetY - Math.sign(dy));
+        this.game.player.setPosition(targetX, targetY);
         this.game.player.startSmokeAnimation();
         this.game.soundManager.playSound('whoosh');
         this.game.startEnemyTurns();
@@ -59,6 +70,52 @@ export class ActionManager {
         if (item.uses <= 0) {
             const index = this.game.player.inventory.findIndex(i => i === item);
             if (index !== -1) this.game.player.inventory.splice(index, 1);
+        }
+
+        // Get current player position
+        const playerPos = this.game.player.getPosition();
+        const startX = playerPos.x;
+        const startY = playerPos.y;
+        const endX = targetX;
+        const endY = targetY;
+
+        // Calculate the L-shape path: determine mid point
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+        let midX, midY;
+        if (absDx > absDy) {
+            // Horizontal dominant: move horizontal first
+            midX = startX + dx;
+            midY = startY;
+        } else {
+            // Vertical dominant: move vertical first
+            midX = startX;
+            midY = startY + dy;
+        }
+
+        // Add the L-shape charge animation
+        this.game.horseChargeAnimations.push({
+            startPos: { x: startX, y: startY },
+            midPos: { x: midX, y: midY },
+            endPos: { x: endX, y: endY },
+            frame: 20
+        });
+
+        // Add smoke animations along the path
+        const distX = Math.abs(endX - startX);
+        const distY = Math.abs(endY - startY);
+        if (distX >= distY) {
+            // Horizontal dominant
+            const stepX = dx > 0 ? 1 : -1;
+            for (let i = 1; i < distX; i++) {
+                this.game.player.smokeAnimations.push({ x: startX + i * stepX, y: startY + Math.round((i * dy) / distX), frame: 18 });
+            }
+        } else {
+            // Vertical dominant
+            const stepY = dy > 0 ? 1 : -1;
+            for (let i = 1; i < distY; i++) {
+                this.game.player.smokeAnimations.push({ x: startX + Math.round((i * dx) / distY), y: startY + i * stepY, frame: 18 });
+            }
         }
 
         if (enemy) {
