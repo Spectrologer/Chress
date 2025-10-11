@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { InventoryManager } from '../InventoryManager.js';
-import { TILE_TYPES } from '../constants.js';
+import { InventoryManager } from '../managers/InventoryManager.js';
+import { TILE_TYPES } from '../core/constants.js';
 
 describe('InventoryManager', () => {
   let inventoryManager;

@@ -1,5 +1,5 @@
-import { InputManager } from '../InputManager.js';
-import { TILE_TYPES, GRID_SIZE } from '../constants.js';
+import { InputManager } from '../managers/InputManager.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
 
 describe('InputManager', () => {
   let inputManager;

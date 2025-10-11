@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../constants.js';
+import { GRID_SIZE } from '../core/constants.js';
 
 export class EnemyChargeBehaviors {
     // Helper for zard: find adjacent tile next to player along diagonal line of sight and charge there

@@ -1,8 +1,8 @@
-import { Sign } from '../Sign.js';
-import { TILE_TYPES, GRID_SIZE } from '../constants.js';
+import { Sign } from '../ui/Sign.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import { PathGenerator } from './PathGenerator.js';
-import logger from '../logger.js';
+import logger from '../core/logger.js';
 
 export class ItemGenerator {
     constructor(grid, foodAssets, zoneX, zoneY) {

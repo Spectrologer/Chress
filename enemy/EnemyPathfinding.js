@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../constants.js';
+import { GRID_SIZE } from '../core/constants.js';
 
 export class EnemyPathfinding {
     // BFS-based pathfinding with different movement rules per enemy type

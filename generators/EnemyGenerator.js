@@ -1,5 +1,5 @@
-import { Enemy } from '../Enemy.js';
-import { TILE_TYPES, GRID_SIZE } from '../constants.js';
+import { Enemy } from '../entities/Enemy.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 
 const ENEMY_WEIGHTS = {

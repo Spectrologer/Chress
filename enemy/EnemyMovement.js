@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../constants.js';
+import { GRID_SIZE } from '../core/constants.js';
 import { EnemyPathfinding } from './EnemyPathfinding.js';
 import { EnemyChargeBehaviors } from './EnemyChargeBehaviors.js';
 import { EnemyLineOfSight } from './EnemyLineOfSight.js';

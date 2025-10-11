@@ -165,7 +165,7 @@ body {
 }
 
 #toggle-attack-range-button {
-    background-image: url('images/ui/target-icon.png');
+    background-image: url('assets/ui/target-icon.png');
 }
 
 #toggle-attack-range-button.active {
@@ -183,7 +183,7 @@ body {
 .player-portrait-container {
     width: 92px;
     height: 92px;
-    background: url('images/ui/facesetbox.png') no-repeat center/contain;
+    background: url('assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
     align-items: center;
@@ -357,7 +357,7 @@ body {
 .inventory-slot {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: #f5e6c0 url('images/ui/cell.png') no-repeat center / contain;
+    background: #f5e6c0 url('assets/ui/cell.png') no-repeat center / contain;
     border: 1px solid #e2cfa2;
     border-radius: 6px;
     image-rendering: pixelated;
@@ -588,21 +588,21 @@ body {
 }
 
 .inventory-slot.item-water {
-    background-image: url('images/items/water.png'), url('images/ui/cell.png');
+    background-image: url('assets/items/water.png'), url('assets/ui/cell.png');
     background-size: 70%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-note {
-    background-image: url('images/items/note.png'), url('images/ui/cell.png');
+    background-image: url('assets/items/note.png'), url('assets/ui/cell.png');
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-heart {
-    background-image: url('images/items/heart.png'), url('images/ui/cell.png');
+    background-image: url('assets/items/heart.png'), url('assets/ui/cell.png');
     background-size: 70%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
@@ -613,49 +613,49 @@ body {
 
 
 .inventory-slot.item-axe {
-    background-image: url('images/items/axe.png'), url('images/ui/cell.png');
+    background-image: url('assets/items/axe.png'), url('assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-hammer {
-    background-image: url('images/items/hammer.png'), url('images/ui/cell.png');
+    background-image: url('assets/items/hammer.png'), url('assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-spear {
-    background-image: url('images/items/spear.png'), url('images/ui/cell.png');
+    background-image: url('assets/items/spear.png'), url('assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-bomb {
-    background-image: url('images/items/bomb.png'), url('images/ui/cell.png');
+    background-image: url('assets/items/bomb.png'), url('assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-heart {
-    background-image: url('images/items/heart.png'), url('images/ui/cell.png');
+    background-image: url('assets/items/heart.png'), url('assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-note {
-    background-image: url('images/items/note.png'), url('images/ui/cell.png');
+    background-image: url('assets/items/note.png'), url('assets/ui/cell.png');
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-book {
-    background-image: url('images/items/book.png'), url('images/ui/cell.png');
+    background-image: url('assets/items/book.png'), url('assets/ui/cell.png');
     background-size: 70%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
@@ -1527,7 +1527,7 @@ h1 {
 .barter-portrait-container {
     width: 120px; /* Adjusted for better balance */
     height: 120px;
-    background: url('images/ui/facesetbox.png') no-repeat center/contain;
+    background: url('assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
     align-items: center;
@@ -1753,7 +1753,7 @@ h1 {
 .stats-portrait-container {
     width: 92px; /* Make portrait smaller */
     height: 92px;
-    background: url('images/ui/facesetbox.png') no-repeat center/contain;
+    background: url('assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px;
     display: flex;
     align-items: center;
@@ -1865,7 +1865,7 @@ h1 {
 .statue-portrait-container {
     width: 120px;
     height: 120px;
-    background: url('images/ui/facesetbox.png') no-repeat center/contain;
+    background: url('assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px;
     display: flex;
     align-items: center;

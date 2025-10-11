@@ -103,7 +103,7 @@ The project is structured into modules, each handling a specific domain of the g
 - **Enemy AI** (enemy/): BaseEnemy.js, EnemyMovement.js, EnemyAttack.js, EnemyChargeBehaviors.js, EnemyPathfinding.js, etc. - Enemy behaviors.
 - **Generators** (generators/): ZoneGenerator.js, ItemGenerator.js, FeatureGenerator.js, StructureGenerator.js, etc. - Procedural content.
 - **Tests** (tests/): \*.test.js files for Jest testing.
-- **Assets** (images/, Sounds/, fonts/): Subdivided into fauna, items, floors, fx (effects), etc. Image assets for all visuals.
+- **Assets** (assets/, Sounds/, fonts/): Subdivided into fauna, items, floors, fx (effects), etc. Image assets for all visuals.
 - **Config**: todo_example/ - Example todo, can be ignored.
 
 Total Files: ~90+ including assets. Entry: game.js. Dependencies: Sentry for tracking, Rivescript for dialogues.

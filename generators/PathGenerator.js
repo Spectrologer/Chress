@@ -1,4 +1,4 @@
-import { TILE_TYPES, GRID_SIZE } from '../constants.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
 
 export class PathGenerator {
     constructor(grid) {

@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_TYPES } from '../constants.js';
+import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 
 describe('Constants', () => {
   test('GRID_SIZE should be 9', () => {

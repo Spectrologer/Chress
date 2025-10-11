@@ -1,4 +1,4 @@
-import { TILE_TYPES } from '../constants.js';
+import { TILE_TYPES } from '../core/constants.js';
 
 export class BaseEnemy {
     constructor(data) {

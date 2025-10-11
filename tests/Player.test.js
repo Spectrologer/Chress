@@ -1,5 +1,5 @@
-import { Player } from '../Player.js';
-import { GRID_SIZE, TILE_TYPES } from '../constants.js';
+import { Player } from '../entities/Player.js';
+import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 
 // Mock window and game dependencies
 const mockGameInstance = {

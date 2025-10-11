@@ -1,5 +1,5 @@
-import logger from '../logger.js';
-import { TILE_TYPES, GRID_SIZE } from '../constants.js';
+import logger from '../core/logger.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
 
 export class ZoneStateManager {
     static zoneCounter = 0;

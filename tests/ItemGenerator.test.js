@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_TYPES } from '../constants.js';
+import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { ItemGenerator } from '../generators/ItemGenerator.js';
 
 // Mock dependencies

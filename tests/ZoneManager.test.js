@@ -1,5 +1,5 @@
-import { ZoneManager } from '../ZoneManager.js';
-import { TILE_TYPES, GRID_SIZE } from '../constants.js';
+import { ZoneManager } from '../managers/ZoneManager.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
 
 describe('ZoneManager', () => {
   let zoneManager;

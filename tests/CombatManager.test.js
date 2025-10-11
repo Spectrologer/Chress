@@ -1,9 +1,9 @@
-import { CombatManager } from '../CombatManager.js';
-import { GRID_SIZE, TILE_TYPES } from '../constants.js';
+import { CombatManager } from '../managers/CombatManager.js';
+import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 
 // Mock Game dependencies
-jest.mock('../SoundManager.js');
-jest.mock('../UIManager.js');
+jest.mock('../core/SoundManager.js');
+jest.mock('../ui/UIManager.js');
 
 const mockSoundManager = {
   playSound: jest.fn()
