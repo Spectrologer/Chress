@@ -16,7 +16,10 @@ export class InputManager {
     }
 
     setupControls() {
-        // Keyboard controls
+        // Keyboard controls - attach to both window and document for cross-browser coverage
+        window.addEventListener('keydown', (event) => {
+            this.handleKeyPress(event);
+        });
         document.addEventListener('keydown', (event) => {
             this.handleKeyPress(event);
         });
