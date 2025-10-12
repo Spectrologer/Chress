@@ -33,6 +33,26 @@ export class CombatManager {
         }
     }
 
+    defeatEnemy(enemy) {
+        if (enemy.health > 0) {
+            enemy.takeDamage(999);
+        }
+        const currentZone = this.game.player.getCurrentZone();
+        this.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
+        this.game.player.addPoints(enemy.getPoints());
+        this.game.defeatedEnemies.add(`${enemy.id}`);
+        this.game.soundManager.playSound('attack');
+        this.game.enemies = this.game.enemies.filter(e => e !== enemy);
+        // Remove from zone data
+        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+        if (this.game.zones.has(zoneKey)) {
+            const zoneData = this.game.zones.get(zoneKey);
+            zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
+            this.game.zones.set(zoneKey, zoneData);
+        }
+        this.game.uiManager.updatePlayerStats();
+    }
+
     handleSingleEnemyMovement(enemy) {
         // Ensure we are not trying to move a dead or non-existent enemy
         if (!enemy || enemy.health <= 0 || !this.game.enemies.includes(enemy)) {
@@ -126,8 +146,7 @@ export class CombatManager {
             }
 
             if (isDefeated) {
-                const currentZone = this.game.player.getCurrentZone();
-                this.handleEnemyDefeated(enemy, currentZone);
+                this.defeatEnemy(enemy);
             } else {
                 remainingEnemies.push(enemy);
             }
@@ -153,10 +172,7 @@ export class CombatManager {
         if (enemy) {
             this.game.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
             enemy.startBump(this.game.player.x - enemy.x, this.game.player.y - enemy.y);
-            enemy.takeDamage(999);
-            const currentZone = this.game.player.getCurrentZone();
-            this.handleEnemyDefeated(enemy, currentZone);
-            this.game.enemies = this.game.enemies.filter(e => e !== enemy);
+            this.defeatEnemy(enemy);
         }
         this.game.uiManager.updatePlayerStats();
         this.handleEnemyMovements();

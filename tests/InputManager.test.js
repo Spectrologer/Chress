@@ -54,7 +54,14 @@ describe('InputManager', () => {
       startEnemyTurns: jest.fn(),
       incrementBombActions: jest.fn(),
       combatManager: {
-        addPointAnimation: jest.fn()
+        addPointAnimation: jest.fn(),
+        defeatEnemy: jest.fn().mockImplementation((enemy) => {
+          enemy.takeDamage(999);
+          mockGame.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
+          mockPlayer.addPoints(enemy.getPoints());
+          mockGame.defeatedEnemies.add(enemy.id);
+          mockGame.enemies = [];
+        })
       },
       uiManager: {
         isStatsPanelOpen: jest.fn().mockReturnValue(false),

@@ -493,26 +493,7 @@ export class InputManager {
                     this.game.player.startAttackAnimation();
                     this.game.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
                     enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
-                    enemyAtTarget.takeDamage(999); // Ensure enemy is dead
-
-                    // Award points for defeating the enemy
-                    this.game.combatManager.addPointAnimation(enemyAtTarget.x, enemyAtTarget.y, enemyAtTarget.getPoints());
-                    this.game.player.addPoints(enemyAtTarget.getPoints());
-
-                    // Record that this enemy position is defeated to prevent respawning
-                    const currentZone = this.game.player.getCurrentZone();
-                    this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemyAtTarget.id}`);
-
-                    // Remove enemy immediately so it doesn't attack back this turn
-                    this.game.enemies = this.game.enemies.filter(e => e !== enemyAtTarget);
-
-                    // Also update the stored zone data to remove the dead enemy from persistence
-                    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
-                    if (this.game.zones.has(zoneKey)) {
-                        const zoneData = this.game.zones.get(zoneKey);
-                        zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemyAtTarget.id);
-                        this.game.zones.set(zoneKey, zoneData);
-                    }
+                    this.game.combatManager.defeatEnemy(enemyAtTarget);
                     // Enemy movements happen after attacks to simulate turn-based combat
                     this.game.startEnemyTurns();
                     // Player does not move

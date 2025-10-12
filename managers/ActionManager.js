@@ -52,10 +52,7 @@ export class ActionManager {
         }
 
         if (enemy) {
-            enemy.takeDamage(999);
-            this.game.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
-            this.game.player.addPoints(enemy.getPoints());
-            this.game.enemies = this.game.enemies.filter(e => e !== enemy);
+            this.game.combatManager.defeatEnemy(enemy);
         }
 
         this.game.player.setPosition(targetX, targetY);
@@ -119,10 +116,7 @@ export class ActionManager {
         }
 
         if (enemy) {
-            enemy.takeDamage(999);
-            this.game.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
-            this.game.player.addPoints(enemy.getPoints());
-            this.game.enemies = this.game.enemies.filter(e => e !== enemy);
+            this.game.combatManager.defeatEnemy(enemy);
         }
 
         this.game.player.setPosition(targetX, targetY);
@@ -157,21 +151,7 @@ export class ActionManager {
         // After a delay for the arrow to travel, check for hit
         setTimeout(() => {
             if (enemy && this.game.enemies.includes(enemy)) { // Check if enemy still exists
-                enemy.takeDamage(999);
-                this.game.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
-                this.game.player.addPoints(enemy.getPoints());
-                this.game.enemies = this.game.enemies.filter(e => e !== enemy);
-                const currentZone = this.game.player.getCurrentZone();
-                this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemy.id}`);
-
-                // Remove from zone data
-                const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
-                if (this.game.zones.has(zoneKey)) {
-                    const zoneData = this.game.zones.get(zoneKey);
-                    zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
-                    this.game.zones.set(zoneKey, zoneData);
-                }
-                this.game.updatePlayerStats();
+                this.game.combatManager.defeatEnemy(enemy);
             }
             // Now that the arrow has hit, enemies can take their turn.
             this.game.playerJustAttacked = false;
@@ -202,8 +182,7 @@ export class ActionManager {
 
                 const enemy = this.game.enemies.find(e => e.x === nx && e.y === ny);
                 if (enemy) {
-                    enemy.takeDamage(999);
-                    this.game.enemies = this.game.enemies.filter(e => e !== enemy);
+                    this.game.combatManager.defeatEnemy(enemy);
                 }
 
                 // Check for player knockback (within 1 tile, not center) - launch flying backward until hitting obstruction
@@ -223,22 +202,7 @@ export class ActionManager {
                             // Check if enemy at this position - if so, damage it and stop launch
                             const enemy = this.game.enemies.find(e => e.x === launchX && e.y === launchY);
                             if (enemy) {
-                                // Damage the enemy like in collision
-                                enemy.takeDamage(999); // Instant kill
-                                this.game.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
-                                this.game.player.addPoints(enemy.getPoints());
-                                this.game.enemies = this.game.enemies.filter(e => e !== enemy);
-                                // Remove from zone data
-                                const currentZone = this.game.player.getCurrentZone();
-                                const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
-                                if (this.game.zones.has(zoneKey)) {
-                                    const zoneData = this.game.zones.get(zoneKey);
-                                    zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
-                                    this.game.zones.set(zoneKey, zoneData);
-                                }
-                                this.game.defeatedEnemies.add(`${currentZone.x},${currentZone.y}:${currentZone.dimension}:${enemy.id}`);
-                                this.game.soundManager.playSound('attack');
-                                this.game.uiManager.updatePlayerStats();
+                                this.game.combatManager.defeatEnemy(enemy);
                                 // Stop launching here (don't go further)
                                 break;
                             }
