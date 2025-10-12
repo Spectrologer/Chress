@@ -17,6 +17,8 @@ export class BombInteractionManager {
         // Placing bomb counts as an action - increment bomb timers and start enemy turns
         this.game.incrementBombActions();
         this.game.startEnemyTurns();
+        // End bomb placement mode after placing
+        this.endBombPlacement();
         return true;
     }
 

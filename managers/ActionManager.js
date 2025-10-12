@@ -217,7 +217,7 @@ export class ActionManager {
                     if (launchX !== this.game.player.x || launchY !== this.game.player.y) {
                         // Add smoke at each intermediate position (not at original or final for trail effect)
                         intermediatePositions.forEach(pos => {
-                            this.game.player.smokeAnimations.push({ x: pos.x, y: pos.y, frame: 18 });
+                            this.game.player.animations.smokeAnimations.push({ x: pos.x, y: pos.y, frame: 18 });
                         });
                         this.game.player.setPosition(launchX, launchY);
                         this.game.player.startBump(dir.dx, dir.dy); // Bump in the launch direction
