@@ -1,5 +1,13 @@
 import { TILE_TYPES } from '../core/constants.js';
 
+// Type mapping for special object-based tiles
+const typeMap = {
+    [TILE_TYPES.BOW]: 'bow',
+    [TILE_TYPES.BISHOP_SPEAR]: 'bishop_spear',
+    [TILE_TYPES.HORSE_ICON]: 'horse_icon',
+    [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: 'book_of_time_travel'
+};
+
 export class ItemManager {
     constructor(game) {
         this.game = game;
@@ -56,7 +64,7 @@ export class ItemManager {
                         case TILE_TYPES.HORSE_ICON:
                         case TILE_TYPES.BOOK_OF_TIME_TRAVEL:
                         case TILE_TYPES.BOW:
-                            pickup({ type: TILE_TYPES[tile.type].toLowerCase(), uses: tile.uses });
+                            pickup({ type: typeMap[tile.type] || 'unknown', uses: tile.uses });
                             break;
                     }
                 }
