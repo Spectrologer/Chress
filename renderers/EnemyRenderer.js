@@ -26,7 +26,7 @@ export class EnemyRenderer {
 
             // Determine sprite based on animation state
             if (enemy.deathAnimation > 0) {
-                enemyKey = 'dead';
+                enemyKey = 'protag/dead';
             }
 
             // Dramatic attack animation: scale, flash, shake

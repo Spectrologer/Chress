@@ -170,6 +170,7 @@ export class InputManager {
 
     // Handle tap input for movement
     handleTap(screenX, screenY) {
+        // Calculate grid coordinates first
         const gridCoords = this.screenToGridCoordinates(screenX, screenY);
 
         // Debug: Log comprehensive tile information on click
@@ -208,13 +209,18 @@ export class InputManager {
         const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
         if (isDoubleTap && tile === TILE_TYPES.EXIT) {
             if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
-                // Double tap on current exit: immediately use
+                // Double tap on current exit: immediately use (allowed even during path execution)
                 this.handleExitTap(gridCoords.x, gridCoords.y);
                 return;
             } else {
                 // Double tap on distant exit: move there and auto-use upon reaching
                 this.autoUseNextExitReach = true;
             }
+        }
+
+        // Prevent new path execution while a path is currently being executed (but allow double-tap detection above)
+        if (this.isExecutingPath) {
+            return;
         }
 
         // Handle grid interaction

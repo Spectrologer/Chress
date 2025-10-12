@@ -4,6 +4,7 @@ import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 // Mock Game dependencies
 jest.mock('../core/SoundManager.js');
 jest.mock('../ui/UIManager.js');
+jest.mock('../core/DataContracts.js');
 
 const mockSoundManager = {
   playSound: jest.fn()
@@ -11,6 +12,10 @@ const mockSoundManager = {
 
 const mockUIManager = {
   updatePlayerStats: jest.fn()
+};
+
+const mockAnimationManager = {
+  addPointAnimation: jest.fn()
 };
 
 describe('CombatManager', () => {
@@ -52,6 +57,7 @@ describe('CombatManager', () => {
       grid: Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)),
       soundManager: mockSoundManager,
       uiManager: mockUIManager,
+      animationManager: mockAnimationManager,
       zones: new Map(),
       defeatedEnemies: new Set(),
       explodeBomb: jest.fn()

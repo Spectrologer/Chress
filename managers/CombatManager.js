@@ -8,13 +8,7 @@ export class CombatManager {
     }
 
     addPointAnimation(x, y, amount) {
-        this.game.pointAnimations.push({
-            x: x,
-            y: y,
-            amount: amount,
-            frame: 30, // Animation duration in frames
-            startY: y * 64 - 16 // Start 16 pixels above the tile (above enemy head)
-        });
+        this.game.animationManager.addPointAnimation(x, y, amount);
         this.game.soundManager.playSound('ding'); // Play a sound for getting points
     }
 
@@ -38,7 +32,10 @@ export class CombatManager {
             enemy.takeDamage(999);
         }
         const currentZone = this.game.player.getCurrentZone();
-        this.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
+        // Ensure enemy has valid coordinates
+        const enemyX = Number.isFinite(enemy.x) ? enemy.x : 0;
+        const enemyY = Number.isFinite(enemy.y) ? enemy.y : 0;
+        this.addPointAnimation(enemyX, enemyY, enemy.getPoints());
         this.game.player.addPoints(enemy.getPoints());
         this.game.defeatedEnemies.add(`${enemy.id}`);
         this.game.soundManager.playSound('attack');

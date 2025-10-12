@@ -23,7 +23,10 @@ describe('InputManager', () => {
       getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
       addPoints: jest.fn(),
       x: 2,
-      y: 1
+      y: 1,
+      stats: {
+        verbosePathAnimations: true
+      }
     };
 
     mockInteractionManager = {
@@ -147,6 +150,17 @@ describe('InputManager', () => {
   });
 
   describe('handleTap', () => {
+    test('ignores taps when path is executing', () => {
+      inputManager.isExecutingPath = true;
+      const executePathSpy = jest.spyOn(inputManager, 'executePath');
+      const screenToGridSpy = jest.spyOn(inputManager, 'screenToGridCoordinates');
+
+      inputManager.handleTap(160, 160);
+
+      expect(screenToGridSpy).not.toHaveBeenCalled();
+      expect(executePathSpy).not.toHaveBeenCalled();
+    });
+
     test('finds and executes path to valid target', () => {
       mockGame.canvas.width = 576;
       mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
