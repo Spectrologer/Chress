@@ -18,6 +18,7 @@ import { ZoneManager } from '../managers/ZoneManager.js';
 import { GameStateManager } from './GameStateManager.js';
 import { SoundManager } from './SoundManager.js';
 import { ConsentManager } from './ConsentManager.js';
+import { AnimationScheduler } from './AnimationScheduler.js';
 
 // Game state
 class Game {
@@ -44,6 +45,9 @@ class Game {
         // Turn-based system state
         this.isPlayerTurn = true;
         this.playerJustAttacked = false;
+
+        // Initialize animation scheduler
+        this.animationScheduler = new AnimationScheduler();
 
         // Perform consent check immediately on game load
         this.consentManager.initialize();
@@ -90,28 +94,35 @@ class Game {
     }
 
     processTurnQueue() {
-        if (this.turnQueue.length > 0) {
-            const enemy = this.turnQueue.shift();
-            // Re-check if the enemy is still alive and in the game's main enemy list.
-            // This is crucial because an enemy might have been defeated by a previous enemy's action
-            // (e.g., a bomb explosion) during the same turn sequence.
-            const isStillValid = enemy && !enemy.isDead() && this.enemies.includes(enemy);
-            if (isStillValid) {
-                this.combatManager.handleSingleEnemyMovement(enemy);
-            }
-
-            // Wait for a short duration before processing the next enemy
-            // This gives time for the animation to play out
-            setTimeout(() => {
-                this.processTurnQueue();
-            }, 150); // 150ms delay between enemy moves
-        } else {
+        if (this.turnQueue.length === 0) {
             // All enemies have moved, it's the player's turn again
             this.isPlayerTurn = true;
             this.playerJustAttacked = false; // Reset flag after enemy turns
             this.checkCollisions(); // Check for collisions after all moves are done
             this.checkItemPickup();
+            return;
         }
+
+        // Process next enemy in queue
+        const enemy = this.turnQueue.shift();
+        // Re-check if the enemy is still alive and in the game's main enemy list.
+        // This is crucial because an enemy might have been defeated by a previous enemy's action
+        // (e.g., a bomb explosion) during the same turn sequence.
+        const isStillValid = enemy && !enemy.isDead() && this.enemies.includes(enemy);
+
+        // Create animation sequence for enemy turn with 150ms delay
+        this.animationScheduler.createSequence()
+            .then(() => {
+                if (isStillValid) {
+                    this.combatManager.handleSingleEnemyMovement(enemy);
+                }
+            })
+            .wait(150) // 150ms delay between enemy moves for animation
+            .then(() => {
+                // Recursively process remaining enemies
+                this.processTurnQueue();
+            })
+            .start();
     }
     
     render() {

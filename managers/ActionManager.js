@@ -136,29 +136,33 @@ export class ActionManager {
         const playerPos = this.game.player.getPosition();
         const enemy = this.game.pendingCharge.enemy; // Use stored enemy reference
 
-        // Add arrow animation
-        this.game.arrowAnimations.push({
-            startX: playerPos.x,
-            startY: playerPos.y,
-            endX: targetX,
-            endY: targetY,
-            frame: 20 // 20 frames for the arrow to travel
-        });
+        // Create animation sequence for bow shot
+        this.game.animationScheduler.createSequence()
+            .then(() => {
+                // Add arrow animation
+                this.game.arrowAnimations.push({
+                    startX: playerPos.x,
+                    startY: playerPos.y,
+                    endX: targetX,
+                    endY: targetY,
+                    frame: 20 // 20 frames for the arrow to travel
+                });
 
-        // Player has acted. Prevent enemies from moving until the action resolves.
-        this.game.playerJustAttacked = true;
+                // Player has acted. Prevent enemies from moving until the action resolves.
+                this.game.playerJustAttacked = true;
 
-        // After a delay for the arrow to travel, check for hit
-        setTimeout(() => {
-            if (enemy && this.game.enemies.includes(enemy)) { // Check if enemy still exists
-                this.game.combatManager.defeatEnemy(enemy);
-            }
-            // Now that the arrow has hit, enemies can take their turn.
-            this.game.playerJustAttacked = false;
-            this.game.startEnemyTurns();
-        }, 300); // 300ms delay
-
-        this.game.soundManager.playSound('whoosh');
+                this.game.soundManager.playSound('whoosh');
+            })
+            .wait(300) // 300ms delay for arrow to travel
+            .then(() => {
+                if (enemy && this.game.enemies.includes(enemy)) { // Check if enemy still exists
+                    this.game.combatManager.defeatEnemy(enemy);
+                }
+                // Now that the arrow has hit, enemies can take their turn.
+                this.game.playerJustAttacked = false;
+                this.game.startEnemyTurns();
+            })
+            .start();
     }
 
     explodeBomb(bx, by) {

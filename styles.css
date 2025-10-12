@@ -1793,6 +1793,55 @@ h1 {
     font-size: 1.1em;
     flex-grow: 1; /* Allow value to take remaining space */
     text-align: right; /* Align the value to the right */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Setting Toggle Styles */
+.setting-toggle {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.setting-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 20px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: #8B4513;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
 }
 
 .stats-panel p {

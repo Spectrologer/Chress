@@ -53,7 +53,7 @@ export class TextureLoader {
                 this.loadImage(imageKey, assetName);
             });
 
-            // Fallback timeout in case images take too long
+            // Fallback timeout in case images take too long (using window.setTimeout since we don't have game instance here)
             setTimeout(() => {
                 if (this.imagesLoaded < this.totalImages) {
                     this.imagesLoaded = this.totalImages;

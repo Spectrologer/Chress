@@ -11,6 +11,7 @@ export class PlayerStats {
         this.points = 0;
         this.spentDiscoveries = 0;
         this.dead = false;
+        this.verbosePathAnimations = true; // Toggle for step-by-step movement animations
     }
 
     getThirst() {

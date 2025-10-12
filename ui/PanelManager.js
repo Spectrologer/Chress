@@ -66,8 +66,20 @@ export class PanelManager {
                     <div class="stat-item"><span class="stat-label">Thirst:</span> <span class="stat-value">${thirst}/50</span></div>
                     <div class="stat-item"><span class="stat-label">Points:</span> <span class="stat-value">${playerPoints}</span></div>
                     <div class="stat-item"><span class="stat-label">Discoveries:</span> <span class="stat-value">${totalDiscoveries}</span></div>
+                    <div class="stat-item">
+                        <span class="stat-label">Path Animations:</span>
+                        <span class="stat-value">
+                            <label class="setting-toggle">
+                                <input type="checkbox" id="verbose-path-toggle" ${this.game.player.stats.verbosePathAnimations ? 'checked' : ''}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </span>
+                    </div>
                 </div>
             `;
+
+            // Setup toggle handler after content is added
+            this.setupPathAnimationToggle();
 
             this.statsPanelOverlay.classList.add('show');
             this.statsPanelOpen = true;
@@ -103,6 +115,15 @@ export class PanelManager {
                     e.stopPropagation();
                 });
             }
+        }
+    }
+
+    setupPathAnimationToggle() {
+        const toggle = document.getElementById('verbose-path-toggle');
+        if (toggle) {
+            toggle.addEventListener('change', (e) => {
+                this.game.player.stats.verbosePathAnimations = e.target.checked;
+            });
         }
     }
 }

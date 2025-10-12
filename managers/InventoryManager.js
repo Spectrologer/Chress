@@ -316,8 +316,13 @@ export class InventoryManager {
                 longPressTimeout = setTimeout(() => {
                     longPress = true;
                     showTooltip();
-                    // Auto-hide after 2 seconds
-                    setTimeout(hideTooltip, 2000);
+                    // Auto-hide after 2 seconds using AnimationScheduler
+                    this.game.animationScheduler.createSequence()
+                        .wait(2000)
+                        .then(() => {
+                            hideTooltip();
+                        })
+                        .start();
                 }, 500);
             });
             slot.addEventListener('touchmove', () => {
@@ -431,13 +436,16 @@ export class InventoryManager {
                 this.game.displayingMessageForSign = { message: noteMessageText }; // Set flag
                 this.game.showSignMessage(noteMessageText, 'assets/items/note.png'); // Show message
 
-                // Set a timeout to hide the message and clear the flag after 2 seconds
-                setTimeout(() => {
-                    // Only hide if the current message is still the one we set
-                    if (this.game.displayingMessageForSign && this.game.displayingMessageForSign.message === noteMessageText) {
-                        Sign.hideMessageForSign(this.game);
-                    }
-                }, 2000);
+                // Set a timeout to hide the message and clear the flag after 2 seconds using AnimationScheduler
+                this.game.animationScheduler.createSequence()
+                    .wait(2000)
+                    .then(() => {
+                        // Only hide if the current message is still the one we set
+                        if (this.game.displayingMessageForSign && this.game.displayingMessageForSign.message === noteMessageText) {
+                            Sign.hideMessageForSign(this.game);
+                        }
+                    })
+                    .start();
 
                 this.game.player.inventory.splice(idx, 1); // Remove note from inventory
                 break;

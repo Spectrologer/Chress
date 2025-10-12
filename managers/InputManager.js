@@ -278,7 +278,7 @@ export class InputManager {
         }
     }
 
-    // Execute path by simulating key presses with timing
+    // Execute path by simulating key presses with timing using AnimationScheduler
     executePath(path) {
         if (this.isExecutingPath) {
             // If already executing, cancel the current path to allow interruption
@@ -287,53 +287,85 @@ export class InputManager {
 
         this.isExecutingPath = true;
         this.cancelPath = false;
-        const stepDelay = 150; // Milliseconds between steps
 
-        let stepIndex = 0;
-        const executeStep = () => {
-            if (this.cancelPath) {
-                this.cancelPath = false;
-                this.isExecutingPath = false;
-                this.pathExecutionTimer = null;
-                return;
-            }
-            if (stepIndex < path.length) {
+        // Check if verbose animations are enabled
+        if (this.game.player.stats.verbosePathAnimations) {
+            // Verbose mode: show step-by-step movement with delays that wait for lift animation
+            let stepIndex = 0;
+
+            const executeNextStep = () => {
+                if (stepIndex >= path.length || this.cancelPath) {
+                    if (this.cancelPath) {
+                        this.cancelPath = false;
+                        this.isExecutingPath = false;
+                        return;
+                    }
+
+                    this.isExecutingPath = false;
+
+                    // Check if player ended up on an exit tile after path completion
+                    const playerPos = this.game.player.getPosition();
+                    if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
+                        if (this.autoUseNextExitReach) {
+                            this.handleExitTap(playerPos.x, playerPos.y);
+                            this.autoUseNextExitReach = false;
+                        }
+                    }
+
+                    // Trigger interaction if set (for double tap on interactive tiles)
+                    if (this.game.player.interactOnReach) {
+                        const target = this.game.player.interactOnReach;
+                        this.game.player.clearInteractOnReach();
+                        this.game.interactionManager.triggerInteractAt(target);
+                    }
+                    return;
+                }
+
+                // Execute the next step
                 this.handleKeyPress({ key: path[stepIndex], preventDefault: () => {} });
                 stepIndex++;
-                this.pathExecutionTimer = setTimeout(executeStep, stepDelay);
-            } else {
-                this.isExecutingPath = false;
-                this.pathExecutionTimer = null;
 
-                // Check if player ended up on an exit tile after path completion
-                const playerPos = this.game.player.getPosition();
-                if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
-                    if (this.autoUseNextExitReach) {
-                        this.handleExitTap(playerPos.x, playerPos.y);
-                        this.autoUseNextExitReach = false;
-                    }
-                }
+                // Wait for the lift animation to complete (15 frames) plus a bit extra for visibility
+                this.game.animationScheduler.createSequence()
+                    .wait(250) // 15 frames * 16.67ms per frame ≈ 250ms total
+                    .then(() => {
+                        executeNextStep(); // Continue to next step
+                    })
+                    .start();
+            };
 
-                // Trigger interaction if set (for double tap on interactive tiles)
-                if (this.game.player.interactOnReach) {
-                    const target = this.game.player.interactOnReach;
-                    this.game.player.clearInteractOnReach();
-                    this.game.interactionManager.triggerInteractAt(target);
+            executeNextStep(); // Start the sequence
+        } else {
+            // Instant mode: execute all path steps immediately
+            for (let i = 0; i < path.length && !this.cancelPath; i++) {
+                this.handleKeyPress({ key: path[i], preventDefault: () => {} });
+            }
+
+            this.isExecutingPath = false;
+
+            // Check if player ended up on an exit tile after path completion
+            const playerPos = this.game.player.getPosition();
+            if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
+                if (this.autoUseNextExitReach) {
+                    this.handleExitTap(playerPos.x, playerPos.y);
+                    this.autoUseNextExitReach = false;
                 }
             }
-        };
 
-        executeStep();
+            // Trigger interaction if set (for double tap on interactive tiles)
+            if (this.game.player.interactOnReach) {
+                const target = this.game.player.interactOnReach;
+                this.game.player.clearInteractOnReach();
+                this.game.interactionManager.triggerInteractAt(target);
+            }
+        }
     }
 
     // Cancel path execution
     cancelPathExecution() {
-        if (this.pathExecutionTimer) {
-            clearTimeout(this.pathExecutionTimer);
-            this.pathExecutionTimer = null;
-        }
         this.cancelPath = true;
         this.isExecutingPath = false;
+        // The AnimationScheduler will handle cancelling the sequence
     }
 
     // Check if a tile at (x,y) is interactive (has interaction logic but may not be walkable)

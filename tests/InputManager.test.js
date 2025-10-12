@@ -71,6 +71,14 @@ describe('InputManager', () => {
       },
       consentManager: {
         forceShowConsentBanner: jest.fn()
+      },
+      animationScheduler: {
+        createSequence: jest.fn().mockReturnValue({
+          loop: jest.fn().mockReturnThis(),
+          then: jest.fn().mockReturnThis(),
+          wait: jest.fn().mockReturnThis(),
+          start: jest.fn()
+        })
       }
     };
 

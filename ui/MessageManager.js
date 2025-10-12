@@ -110,13 +110,17 @@ export class MessageManager {
 
             // Auto-hide overlay messages after 2 seconds if not persistent
             if (useOverlay && !isPersistent) {
-                this.currentOverlayTimeout = setTimeout(() => {
-                    if (messageElement.classList.contains('show')) {
-                        messageElement.classList.remove('show');
-                        this.currentOverlayTimeout = null;
-                        logger.log("Auto-hiding overlay message due to timeout.");
-                    }
-                }, 2000);
+                // Use AnimationScheduler for timeout management
+                this.game.animationScheduler.createSequence()
+                    .wait(2000)
+                    .then(() => {
+                        if (messageElement.classList.contains('show')) {
+                            messageElement.classList.remove('show');
+                            this.currentOverlayTimeout = null;
+                            logger.log("Auto-hiding overlay message due to timeout.");
+                        }
+                    })
+                    .start();
             }
         } else {
             logger.error(`${messageElementId} element not found`);
@@ -174,10 +178,13 @@ export class MessageManager {
         regionNotification.textContent = regionName;
         regionNotification.classList.add('show');
 
-        // Auto-hide after short duration (2 seconds)
-        setTimeout(() => {
-            regionNotification.classList.remove('show');
-        }, 2000);
+        // Auto-hide after short duration (2 seconds) using AnimationScheduler
+        this.game.animationScheduler.createSequence()
+            .wait(2000)
+            .then(() => {
+                regionNotification.classList.remove('show');
+            })
+            .start();
     }
 
     generateRegionName(zoneX, zoneY) {
