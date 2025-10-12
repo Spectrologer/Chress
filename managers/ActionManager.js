@@ -48,7 +48,7 @@ export class ActionManager {
         for (let i = 1; i < Math.abs(dx); i++) {
             const px = startX + i * Math.sign(dx);
             const py = startY + i * Math.sign(dy);
-            this.game.player.smokeAnimations.push({ x: px, y: py, frame: 18 });
+            this.game.player.animations.smokeAnimations.push({ x: px, y: py, frame: 18 });
         }
 
         if (enemy) {
@@ -105,13 +105,13 @@ export class ActionManager {
             // Horizontal dominant
             const stepX = dx > 0 ? 1 : -1;
             for (let i = 1; i < distX; i++) {
-                this.game.player.smokeAnimations.push({ x: startX + i * stepX, y: startY + Math.round((i * dy) / distX), frame: 18 });
+                this.game.player.animations.smokeAnimations.push({ x: startX + i * stepX, y: startY + Math.round((i * dy) / distX), frame: 18 });
             }
         } else {
             // Vertical dominant
             const stepY = dy > 0 ? 1 : -1;
             for (let i = 1; i < distY; i++) {
-                this.game.player.smokeAnimations.push({ x: startX + Math.round((i * dx) / distY), y: startY + i * stepY, frame: 18 });
+                this.game.player.animations.smokeAnimations.push({ x: startX + Math.round((i * dx) / distY), y: startY + i * stepY, frame: 18 });
             }
         }
 
