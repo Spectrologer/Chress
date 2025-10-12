@@ -90,13 +90,11 @@ export class ActionManager {
             midY = startY + dy;
         }
 
-        // Add the L-shape charge animation
-        this.game.horseChargeAnimations.push({
-            startPos: { x: startX, y: startY },
-            midPos: { x: midX, y: midY },
-            endPos: { x: endX, y: endY },
-            frame: 20
-        });
+        // Add the L-shape charge animation using centralized manager
+        this.game.animationManager.addHorseChargeAnimation(
+            { x: startX, y: startY },
+            { x: endX, y: endY }
+        );
 
         // Add smoke animations along the path
         const distX = Math.abs(endX - startX);
@@ -139,14 +137,10 @@ export class ActionManager {
         // Create animation sequence for bow shot
         this.game.animationScheduler.createSequence()
             .then(() => {
-                // Add arrow animation
-                this.game.arrowAnimations.push({
-                    startX: playerPos.x,
-                    startY: playerPos.y,
-                    endX: targetX,
-                    endY: targetY,
-                    frame: 20 // 20 frames for the arrow to travel
-                });
+                // Add arrow animation using centralized manager
+                this.game.animationManager.addArrowAnimation(
+                    playerPos.x, playerPos.y, targetX, targetY
+                );
 
                 // Player has acted. Prevent enemies from moving until the action resolves.
                 this.game.playerJustAttacked = true;

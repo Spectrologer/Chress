@@ -31,15 +31,16 @@ export class AnimationRenderer {
     }
 
     drawHorseChargeAnimation() {
-        if (this.game.horseChargeAnimations.length === 0) {
+        const anims = this.game.animationManager.getActiveAnimations().horseChargeAnimations;
+        if (anims.length === 0) {
             return;
         }
 
         this.ctx.save();
         this.ctx.lineWidth = 6; // A thick, impactful line
 
-        this.game.horseChargeAnimations.forEach(anim => {
-            const progress = anim.frame / 20; // Based on 20-frame duration
+        anims.forEach(anim => {
+            const progress = (20 - anim.frame) / 20; // Based on 20-frame duration, reverse for fade out
             const alpha = progress; // Fade out as the animation progresses
 
             this.ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.8})`; // White, slightly transparent
@@ -49,15 +50,27 @@ export class AnimationRenderer {
             // Get pixel coordinates for the center of each tile
             const startX = anim.startPos.x * TILE_SIZE + TILE_SIZE / 2;
             const startY = anim.startPos.y * TILE_SIZE + TILE_SIZE / 2;
-            const midX = anim.midPos.x * TILE_SIZE + TILE_SIZE / 2;
-            const midY = anim.midPos.y * TILE_SIZE + TILE_SIZE / 2;
             const endX = anim.endPos.x * TILE_SIZE + TILE_SIZE / 2;
             const endY = anim.endPos.y * TILE_SIZE + TILE_SIZE / 2;
+
+            // Calculate L-shape path for linear interpolation
+            const totalDistance = Math.abs(endX - startX) + Math.abs(endY - startY);
+            const currentDistance = progress * totalDistance;
+
+            let midX, midY;
+            if (Math.abs(endX - startX) >= Math.abs(endY - startY)) {
+                // Horizontal dominant
+                midX = startX + (endX > startX ? currentDistance : -currentDistance);
+                midY = startY;
+            } else {
+                // Vertical dominant
+                midX = startX;
+                midY = startY + (endY > startY ? currentDistance : -currentDistance);
+            }
 
             this.ctx.beginPath();
             this.ctx.moveTo(startX, startY);
             this.ctx.lineTo(midX, midY);
-            this.ctx.lineTo(endX, endY);
             this.ctx.stroke();
         });
 
@@ -65,7 +78,8 @@ export class AnimationRenderer {
     }
 
     drawArrowAnimations() {
-        if (this.game.arrowAnimations.length === 0) {
+        const anims = this.game.animationManager.getActiveAnimations().arrowAnimations;
+        if (anims.length === 0) {
             return;
         }
 
@@ -76,7 +90,7 @@ export class AnimationRenderer {
 
         this.ctx.save();
 
-        this.game.arrowAnimations.forEach(anim => {
+        anims.forEach(anim => {
             const progress = 1 - (anim.frame / 20); // 0 to 1
             const currentX = anim.startX + (anim.endX - anim.startX) * progress;
             const currentY = anim.startY + (anim.endY - anim.startY) * progress;
@@ -118,13 +132,12 @@ export class AnimationRenderer {
             this.ctx.restore();
         });
 
-        this.game.arrowAnimations = this.game.arrowAnimations.filter(anim => anim.frame-- > 0);
-
         this.ctx.restore();
     }
 
     drawPointAnimations() {
-        if (this.game.pointAnimations.length === 0) {
+        const anims = this.game.animationManager.getActiveAnimations().pointAnimations;
+        if (anims.length === 0) {
             return;
         }
 
@@ -141,7 +154,7 @@ export class AnimationRenderer {
         this.ctx.shadowColor = 'black';
         this.ctx.shadowBlur = 4;
 
-        for (const anim of this.game.pointAnimations) {
+        for (const anim of anims) {
             const progress = 1 - (anim.frame / 30); // 0 to 1
             const alpha = 1 - progress; // Fade out
             const floatOffset = -progress * TILE_SIZE; // Float up by one tile height
@@ -149,7 +162,8 @@ export class AnimationRenderer {
             this.ctx.globalAlpha = alpha;
 
             const startPixelX = anim.x * TILE_SIZE;
-            const pixelY = anim.startY + floatOffset;
+            const startPixelY = anim.y * TILE_SIZE; // Use y instead of startY
+            const pixelY = startPixelY + floatOffset;
             const iconSize = TILE_SIZE / 2;
             const totalWidth = anim.amount * iconSize;
             let currentX = startPixelX + (TILE_SIZE - totalWidth) / 2; // Center the group of icons

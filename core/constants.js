@@ -174,3 +174,84 @@ export const FOOD_ASSETS = [
 ];
 
 export const TOTAL_IMAGES = IMAGE_ASSETS.length + FOOD_ASSETS.length;
+
+// Data contracts for ECS system
+export const COMPONENT_TYPES = {
+    POSITION: 'position',
+    RENDER: 'render',
+    HEALTH: 'health',
+    ATTACK: 'attack',
+    MOVEMENT: 'movement',
+    ANIMATION: 'animation',
+    COLLISION: 'collision',
+    LIFECYCLE: 'lifecycle'
+};
+
+// Tile component schemas
+export const TILE_SCHEMAS = {
+    PRIMITIVE: {
+        type: 'primitive',
+        value: 'number' // TILE_TYPES enum value
+    },
+    OBJECT: {
+        type: 'object',
+        properties: {
+            type: 'number', // TILE_TYPES enum value
+            // Additional properties vary by tile type
+        }
+    }
+};
+
+// Animation component schema
+export const ANIMATION_SCHEMAS = {
+    POINT: {
+        x: 'number',
+        y: 'number',
+        amount: 'number',
+        frame: 'number'
+    },
+    ARROW: {
+        startX: 'number',
+        startY: 'number',
+        endX: 'number',
+        endY: 'number',
+        frame: 'number'
+    },
+    HORSE_CHARGE: {
+        startPos: 'object', // { x: number, y: number }
+        endPos: 'object',   // { x: number, y: number }
+        frame: 'number'
+    },
+    BUMP: {
+        offsetX: 'number',
+        offsetY: 'number',
+        frames: 'number'
+    },
+    LIFT: {
+        offsetY: 'number',
+        frames: 'number'
+    },
+    TIMER: {
+        duration: 'number',
+        elapsed: 'number'
+    },
+    SMOKE: {
+        frame: 'number'
+    }
+};
+
+// Entity state schema
+export const ENTITY_SCHEMAS = {
+    ENEMY: {
+        required: ['position', 'health', 'movement', 'render'],
+        optional: ['attack', 'animation', 'collision', 'lifecycle']
+    },
+    TILE: {
+        required: ['position', 'render'],
+        optional: ['collision', 'lifecycle']
+    },
+    ITEM: {
+        required: ['position', 'render'],
+        optional: ['collision', 'lifecycle']
+    }
+};

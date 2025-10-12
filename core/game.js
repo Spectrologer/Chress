@@ -19,6 +19,9 @@ import { GameStateManager } from './GameStateManager.js';
 import { SoundManager } from './SoundManager.js';
 import { ConsentManager } from './ConsentManager.js';
 import { AnimationScheduler } from './AnimationScheduler.js';
+import { ECS, TileSystem, EnemySystem } from './ECS.js';
+import { AnimationManager } from './DataContracts.js';
+import { COMPONENT_TYPES } from './constants.js';
 
 // Game state
 class Game {
@@ -46,6 +49,12 @@ class Game {
         this.isPlayerTurn = true;
         this.playerJustAttacked = false;
 
+        // Initialize ECS and systems
+        this.ecs = new ECS();
+        this.tileSystem = new TileSystem(this.ecs, GRID_SIZE, GRID_SIZE);
+        this.enemySystem = new EnemySystem(this.ecs, this.tileSystem);
+        this.animationManager = new AnimationManager();
+
         // Initialize animation scheduler
         this.animationScheduler = new AnimationScheduler();
 
@@ -65,13 +74,17 @@ class Game {
         // Add references to managers for easier access
         this.Enemy = Enemy;
 
-        // Initialize game state properties
+        // Initialize game state properties (legacy support)
         this.zones = new Map();
         this.specialZones = new Map();
         this.defeatedEnemies = new Set();
         this.availableFoodAssets = [];
         this.pendingCharge = null;
+
+        // Legacy animation arrays (deprecated - use animationManager)
         this.arrowAnimations = [];
+        this.pointAnimations = [];
+        this.horseChargeAnimations = [];
 
         // Load assets and start game
         this.gameInitializer.loadAssets();
@@ -227,15 +240,8 @@ class Game {
         this.player.updateAnimations();
         this.enemies.forEach(enemy => enemy.updateAnimations());
 
-        // Update and filter point animations
-        if (this.pointAnimations) {
-            this.pointAnimations.forEach(anim => anim.frame--);
-            this.pointAnimations = this.pointAnimations.filter(anim => anim.frame > 0);
-        }
-
-        // Update and filter horse charge animations
-        this.horseChargeAnimations.forEach(anim => anim.frame--);
-        this.horseChargeAnimations = this.horseChargeAnimations.filter(anim => anim.frame > 0);
+        // Update centralized animation manager
+        this.animationManager.updateAnimations();
 
         // Only process next turn if it's the player's turn.
         if (!this.isPlayerTurn && this.turnQueue.length === 0) {
