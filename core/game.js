@@ -13,6 +13,7 @@ import { UIManager } from '../ui/UIManager.js';
 import { RenderManager } from '../renderers/RenderManager.js';
 import { CombatManager } from '../managers/CombatManager.js';
 import { InteractionManager } from '../managers/InteractionManager.js';
+import { ItemManager } from '../managers/ItemManager.js';
 import { ZoneManager } from '../managers/ZoneManager.js';
 import { GameStateManager } from './GameStateManager.js';
 import { SoundManager } from './SoundManager.js';
@@ -27,6 +28,7 @@ class Game {
         this.connectionManager = new ConnectionManager();
         this.zoneGenerator = new ZoneGenerator();
         this.player = new Player();
+        this.itemManager = new ItemManager(this);
         this.inputManager = new InputManager(this);
         this.inventoryManager = new InventoryManager(this);
         this.uiManager = new UIManager(this);
@@ -35,6 +37,9 @@ class Game {
         this.actionManager = new ActionManager(this);
         this.consentManager = new ConsentManager(this);
         this.gameInitializer = new GameInitializer(this);
+
+        // Assign managers to player
+        this.player.itemManager = this.itemManager;
 
         // Turn-based system state
         this.isPlayerTurn = true;

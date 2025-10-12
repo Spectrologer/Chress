@@ -8,7 +8,7 @@ export class AnimationRenderer {
     }
 
     drawSplodeAnimation() {
-        this.game.player.splodeAnimations.forEach(anim => {
+        this.game.player.animations.splodeAnimations.forEach(anim => {
             if (anim.frame > 0) {
                 const frameNumber = Math.floor((16 - anim.frame) / 2) + 1; // Map 16 frames to 8 splode frames
                 const splodeImage = this.game.textureManager.getImage(`fx/splode/splode_${frameNumber}`);

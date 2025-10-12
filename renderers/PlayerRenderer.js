@@ -20,9 +20,9 @@ export class PlayerRenderer {
     drawPlayerSprite() {
         const pos = this.game.player.getPosition();
         let spriteKey = 'default'; // Default idle sprite
-        if (this.game.player.attackAnimation > 0) {
+        if (this.game.player.animations.attackAnimation > 0) {
             spriteKey = 'whack';
-        } else if (this.game.player.actionAnimation > 0) {
+        } else if (this.game.player.animations.actionAnimation > 0) {
             spriteKey = 'whack';
         } else if (this.game.player.isDead()) {
             spriteKey = 'dead';
@@ -31,16 +31,16 @@ export class PlayerRenderer {
         if (playerImage && playerImage.complete) {
             this.ctx.drawImage(
                 playerImage,
-                pos.x * TILE_SIZE + this.game.player.bumpOffsetX,
-                pos.y * TILE_SIZE + this.game.player.bumpOffsetY + this.game.player.liftOffsetY,
+                pos.x * TILE_SIZE + this.game.player.animations.bumpOffsetX,
+                pos.y * TILE_SIZE + this.game.player.animations.bumpOffsetY + this.game.player.animations.liftOffsetY,
                 TILE_SIZE,
                 TILE_SIZE
             );
         } else {
             this.ctx.fillStyle = '#ff4444';
             this.ctx.fillRect(
-                pos.x * TILE_SIZE + this.game.player.bumpOffsetX + 2,
-                pos.y * TILE_SIZE + this.game.player.bumpOffsetY + 2,
+                pos.x * TILE_SIZE + this.game.player.animations.bumpOffsetX + 2,
+                pos.y * TILE_SIZE + this.game.player.animations.bumpOffsetY + 2,
                 TILE_SIZE - 4,
                 TILE_SIZE - 4
             );
@@ -103,7 +103,7 @@ export class PlayerRenderer {
     }
 
     drawPlayerSmokeAnimation() {
-        this.game.player.smokeAnimations.forEach(anim => {
+        this.game.player.animations.smokeAnimations.forEach(anim => {
             if (anim.frame > 0) {
                 const frameNumber = Math.floor((18 - anim.frame) / 3) + 1; // Map 18 frames to 6 smoke frames
                 const smokeImage = this.game.textureManager.getImage(`smoke_frame_${frameNumber}`);

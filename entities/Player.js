@@ -1,28 +1,20 @@
 import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { PlayerStats } from './PlayerStats.js';
+import { PlayerAnimations } from './PlayerAnimations.js';
 
 export class Player {
     constructor() {
         this.x = 1;
         this.y = 1;
-        this.currentZone = { x: 0, y: 0, dimension: 0 }; // 0: world, 1: interior
+        this.currentZone = { x: 0, y: 0, dimension: 0 };
         this.visitedZones = new Set();
-        this.thirst = 50;
-        this.hunger = 50;
         this.inventory = [];
-        this.dead = false;
         this.sprite = 'SeparateAnim/Special2';
-        this.health = 3;  // Player has 3 hearts
-        this.points = 0; // Accumulated points from defeating enemies
-        this.attackAnimation = 0; // Frames remaining for attack animation
-        this.spentDiscoveries = 0; // Discoveries spent on trades
-        this.actionAnimation = 0; // Frames for actions like chopping/breaking
-        this.smokeAnimations = []; // Array of {x, y, frame} for smoke animations
-        this.splodeAnimations = []; // Array of {x, y, frame} for splode animations
-        this.bumpOffsetX = 0;
-        this.bumpOffsetY = 0;
-        this.bumpFrames = 0;
-        this.liftOffsetY = 0;
-        this.liftFrames = 0;
+
+        this.stats = new PlayerStats(this);
+        this.animations = new PlayerAnimations(this);
+        this.itemManager = null; // To be set by Game class
+
         this.interactOnReach = null; // {x, y} - interact with this tile when reaching adjacent
         this.markZoneVisited(0, 0);
     }
@@ -73,76 +65,13 @@ export class Player {
                 return false; // Explode and launch, don't move normally
             }
 
-            // Check if there's an item to pick up at the new position
-                if (tile === TILE_TYPES.WATER) {
-                    if (this.inventory.length < 6) {
-                        this.inventory.push({ type: 'water' });
-                        window.soundManager?.playSound('pickup');
-                    } else {
-                        this.restoreThirst(10);
-                    }
-                    grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
-                } else if (tile && tile.type === TILE_TYPES.FOOD) {
-                    if (this.inventory.length < 6) {
-                        this.inventory.push({ type: 'food', foodType: tile.foodType });
-                        window.soundManager?.playSound('pickup');
-                    } else {
-                        this.restoreHunger(10);
-                    }
-                    grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor
-                } else if (tile === TILE_TYPES.AXE) {
-                    if (this.inventory.length < 6) {
-                        this.inventory.push({ type: 'axe' });
-                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
-                        window.soundManager?.playSound('pickup');
-                    } // If inventory full, can't pick up axe and it remains on ground
-                } else if (tile === TILE_TYPES.HAMMER) {
-                    if (this.inventory.length < 6) {
-                        this.inventory.push({ type: 'hammer' });
-                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
-                        window.soundManager?.playSound('pickup');
-                    } // If inventory full, can't pick up hammer and it remains on ground
-                } else if (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) {
-                    if (this.inventory.length < 6) {
-                        this.inventory.push({ type: 'bishop_spear', uses: tile.uses });
-                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
-                        window.soundManager?.playSound('pickup');
-                    } // If inventory full, can't pick up bishop spear and it remains on ground
-                } else if (tile && tile.type === TILE_TYPES.HORSE_ICON) {
-                    if (this.inventory.length < 6) {
-                        this.inventory.push({ type: 'horse_icon', uses: tile.uses });
-                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
-                        window.soundManager?.playSound('pickup');
-                    } // If inventory full, can't pick up horse icon and it remains on ground
-                } else if (tile === TILE_TYPES.BOMB) {
-                    if (this.inventory.length < 6) {
-                        this.inventory.push({ type: 'bomb' });
-                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
-                        window.soundManager?.playSound('pickup');
-                    } // If inventory full, can't pick up bomb and it remains on ground
-                } else if (tile === TILE_TYPES.NOTE) {
-                    if (this.inventory.length < 6) {
-                        this.inventory.push({ type: 'note' });
-                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
-                        window.soundManager?.playSound('pickup');
-                    } // If inventory full, can't pick up and it remains on ground
-                } else if (tile && tile.type === TILE_TYPES.BOOK_OF_TIME_TRAVEL) {
-                    if (this.inventory.length < 6) {
-                        this.inventory.push({ type: 'book_of_time_travel', uses: tile.uses });
-                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
-                        window.soundManager?.playSound('pickup');
-                    } // If inventory full, can't pick up and it remains on ground
-                } else if (tile && tile.type === TILE_TYPES.BOW) {
-                    if (this.inventory.length < 6) {
-                        this.inventory.push({ type: 'bow', uses: tile.uses });
-                        grid[newY][newX] = TILE_TYPES.FLOOR; // Replace item with floor only if picked up
-                        window.soundManager?.playSound('pickup');
-                    } // If inventory full, can't pick up and it remains on ground
-                }
+            // Delegate item pickup logic to ItemManager
+            this.itemManager?.handleItemPickup(this, newX, newY, grid);
+
             this.x = newX;
             this.y = newY;
 
-            this.liftFrames = 15; // Start lift animation
+            this.animations.liftFrames = 15; // Start lift animation
             window.soundManager?.playSound('move');
 
             return true;
@@ -159,9 +88,9 @@ export class Player {
                     // Chop at target position without moving
                     const isBorder = newX === 0 || newX === GRID_SIZE - 1 || newY === 0 || newY === GRID_SIZE - 1;
                     grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
-                    this.decreaseHunger(); // Cutting costs hunger
-                    this.startActionAnimation(); // Start action animation
-                    this.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
+                    this.stats.decreaseHunger(); // Cutting costs hunger
+                    this.animations.startActionAnimation(); // Start action animation
+                    this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
                     window.soundManager?.playSound('chop');
                     return false; // Don't move, just attack
                 }
@@ -171,9 +100,9 @@ export class Player {
                     // Break at target position without moving
                     const isBorder = newY === 0 || newY === GRID_SIZE - 1 || newX === 0 || newX === GRID_SIZE - 1;
                     grid[newY][newX] = isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
-                    this.decreaseHunger(2); // Breaking costs 2 hunger
-                    this.startActionAnimation(); // Start action animation
-                    this.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
+                    this.stats.decreaseHunger(2); // Breaking costs 2 hunger
+                    this.animations.startActionAnimation(); // Start action animation
+                    this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
                     window.soundManager?.playSound('smash');
                     return false; // Don't move, just attack
                 }
@@ -250,56 +179,6 @@ export class Player {
         return new Set(this.visitedZones);
     }
 
-    positionAfterTransition(exitSide, connectionManager) {
-        // Position player based on which exit they used and where the corresponding entrance is
-        const connections = connectionManager.getConnections(this.currentZone.x, this.currentZone.y);
-
-        if (!connections) {
-            // Fallback to center if no connections found
-            this.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
-            return;
-        }
-
-        switch (exitSide) {
-            case 'top':
-                // Coming from bottom, enter at the bottom exit (on the exit tile itself)
-                if (connections.south !== null) {
-                    this.setPosition(connections.south, GRID_SIZE - 1);
-                } else {
-                    this.setPosition(Math.floor(GRID_SIZE / 2), GRID_SIZE - 1);
-                }
-                break;
-            case 'bottom':
-                // Coming from top, enter at the top exit (on the exit tile itself)
-                if (connections.north !== null) {
-                    this.setPosition(connections.north, 0);
-                } else {
-                    this.setPosition(Math.floor(GRID_SIZE / 2), 0);
-                }
-                break;
-            case 'left':
-                // Coming from right, enter at the right exit (on the exit tile itself)
-                if (connections.east !== null) {
-                    this.setPosition(GRID_SIZE - 1, connections.east);
-                } else {
-                    this.setPosition(GRID_SIZE - 1, Math.floor(GRID_SIZE / 2));
-                }
-                break;
-            case 'right':
-                // Coming from left, enter at the left exit (on the exit tile itself)
-                if (connections.west !== null) {
-                    this.setPosition(0, connections.west);
-                } else {
-                    this.setPosition(0, Math.floor(GRID_SIZE / 2));
-                }
-                break;
-            default:
-                // Fallback to center
-                this.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
-                break;
-        }
-    }
-
     ensureValidPosition(grid) {
         // Ensure player is on a walkable tile
         if (!this.isWalkable(this.x, this.y, grid)) {
@@ -326,158 +205,105 @@ export class Player {
     this.x = 4;
     this.y = 7;
     this.currentZone = { x: 0, y: 0, dimension: 0 };
-    this.thirst = 50;
-    this.hunger = 50;
     this.inventory = [];
-    this.health = 3;
-    this.points = 0;
-    this.dead = false;
-    this.spentDiscoveries = 0;
     this.sprite = 'SeparateAnim/Special2';
     this.visitedZones.clear();
-    this.bumpOffsetX = 0;
-    this.bumpOffsetY = 0;
-    this.bumpFrames = 0;
-        this.liftOffsetY = 0;
-        this.liftFrames = 0;
-        this.smokeAnimations = [];
-        this.splodeAnimations = [];
-        this.interactOnReach = null;
-        this.markZoneVisited(0, 0);
+    this.stats.reset();
+    this.animations.reset();
+    this.interactOnReach = null;
+    this.markZoneVisited(0, 0);
     }
 
     // Thirst and Hunger management
     getThirst() {
-        return this.thirst;
+        return this.stats.getThirst();
     }
 
     getHunger() {
-        return this.hunger;
+        return this.stats.getHunger();
     }
 
     setThirst(value) {
-        this.thirst = Math.max(0, Math.min(50, value));
-        if (this.thirst === 0) {
-            this.setDead();
-        }
+        this.stats.setThirst(value);
     }
 
     setHunger(value) {
-        this.hunger = Math.max(0, Math.min(50, value));
-        if (this.hunger === 0) {
-            this.setDead();
-        }
+        this.stats.setHunger(value);
     }
 
     // Health management (for enemy attacks)
     getHealth() {
-        return this.health;
+        return this.stats.getHealth();
     }
 
     setHealth(value) {
-        this.health = Math.max(0, value);
-        if (this.health <= 0) {
-            this.setDead();
-        }
+        this.stats.setHealth(value);
     }
 
     takeDamage(amount = 1) {
-        this.setHealth(this.health - amount);
+        this.stats.takeDamage(amount);
     }
 
     decreaseThirst(amount = 1) {
-        this.setThirst(this.thirst - amount);
+        this.stats.decreaseThirst(amount);
     }
 
     decreaseHunger(amount = 1) {
-        this.setHunger(this.hunger - amount);
+        this.stats.decreaseHunger(amount);
     }
 
     restoreThirst(amount = 10) {
-        this.setThirst(this.thirst + amount);
+        this.stats.restoreThirst(amount);
     }
 
     restoreHunger(amount = 10) {
-        this.setHunger(this.hunger + amount);
+        this.stats.restoreHunger(amount);
     }
 
     setDead() {
-        if (!this.dead) {
-            this.dead = true;
-            this.sprite = 'SeparateAnim/dead';
-        }
+        this.stats.setDead();
     }
 
     isDead() {
-        return this.dead;
+        return this.stats.isDead();
     }
 
     onZoneTransition() {
         // Called when player moves to a new zone
-        this.decreaseThirst();
-        this.decreaseHunger();
+        this.stats.decreaseThirst();
+        this.stats.decreaseHunger();
     }
 
     getPoints() {
-        return this.points;
+        return this.stats.points;
     }
 
     addPoints(points) {
-        this.points += points;
+        this.stats.points += points;
     }
 
-
-
     startBump(deltaX, deltaY) {
-        // Set initial bump offset (towards the other entity)
-        this.bumpOffsetX = deltaX * 24; // Increased from 16 for more impact
-        this.bumpOffsetY = deltaY * 24;
-        this.bumpFrames = 15; // Increased from 10 for longer animation
+        this.animations.startBump(deltaX, deltaY);
     }
 
     startAttackAnimation() {
-        this.attackAnimation = 20; // 20 frames of attack animation
-        window.soundManager?.playSound('attack');
+        this.animations.startAttackAnimation();
     }
 
     startActionAnimation() {
-        this.actionAnimation = 15; // 15 frames of action animation
+        this.animations.startActionAnimation();
     }
 
     startSmokeAnimation() {
-        this.smokeX = this.x;
-        this.smokeY = this.y;
-        this.smokeAnimationFrame = 18; // 18 frames for slower animation (3 frames per smoke frame)
+        this.animations.startSmokeAnimation();
     }
 
     startSplodeAnimation(x, y) {
-        this.splodeAnimations.push({ x, y, frame: 16 });
+        this.animations.startSplodeAnimation(x, y);
     }
 
     updateAnimations() {
-        if (this.bumpFrames > 0) {
-            this.bumpFrames--;
-            // Gradually reduce the offset
-            this.bumpOffsetX *= 0.85; // Adjusted decay for smoother return
-            this.bumpOffsetY *= 0.85;
-        }
-        if (this.attackAnimation > 0) {
-            this.attackAnimation--;
-        }
-        if (this.actionAnimation > 0) {
-            this.actionAnimation--;
-        }
-        if (this.liftFrames > 0) {
-            this.liftFrames--;
-            // Lift animation: parabolic curve (lift up then land)
-            const progress = this.liftFrames / 15;
-            const maxLift = -12; // Lift 12 pixels up (half tile roughly)
-            this.liftOffsetY = maxLift * 4 * progress * (1 - progress); // Parabolic lift
-        }
-        this.smokeAnimations.forEach(anim => anim.frame--);
-        this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);
-        this.splodeAnimations.forEach(anim => anim.frame--);
-        this.splodeAnimations = this.splodeAnimations.filter(anim => anim.frame > 0);
+        this.animations.update();
     }
 
     getValidSpawnPosition(game) {

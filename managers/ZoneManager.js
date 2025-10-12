@@ -40,7 +40,7 @@ export class ZoneManager {
         this.game.generateZone();
 
         // Position player based on which exit they used
-        this.positionPlayerAfterZoneTransition(exitSide, exitX, exitY);
+        this.positionPlayerAfterTransition(exitSide, exitX, exitY);
 
         // If player spawned on shrubbery, remove it (restore exit)
         const playerPos = this.game.player.getPosition();
@@ -69,7 +69,7 @@ export class ZoneManager {
         this.game.gameStateManager.saveGameState();
     }
 
-    positionPlayerAfterZoneTransition(exitSide, exitX, exitY) {
+    positionPlayerAfterTransition(exitSide, exitX, exitY) {
         switch (exitSide) {
             case 'bottom':
                 // Came from bottom, enter north side at corresponding x position
