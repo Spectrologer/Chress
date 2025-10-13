@@ -17,15 +17,10 @@ export class TerrainInteractionManager {
         // Handle chopping grass/shrubbery
         if ((tappedTile === TILE_TYPES.GRASS || tappedTile === TILE_TYPES.SHRUBBERY)) {
             if (hasAxe) {
-                // Perform chopping action
-                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
-                    this.game.transitionToZone(zoneX, zoneY, exitSide, playerPos.x, playerPos.y);
-                });
-                this.game.handleEnemyMovements();
-                this.game.checkCollisions();
-                this.game.checkItemPickup();
-                this.game.updatePlayerPosition();
-                this.game.updatePlayerStats();
+                // This will trigger the chop logic inside player.move, which now handles turn ending.
+                // The player won't actually move into the tile.
+                // We pass a dummy onZoneTransition callback.
+                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, () => {});
                 return true;
             }
         }
@@ -33,14 +28,8 @@ export class TerrainInteractionManager {
         else if (tappedTile === TILE_TYPES.ROCK) {
             if (hasHammer) {
                 // Perform breaking action
-                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
-                    this.game.transitionToZone(zoneX, zoneY, exitSide, playerPos.x, playerPos.y);
-                });
-                this.game.handleEnemyMovements();
-                this.game.checkCollisions();
-                this.game.checkItemPickup();
-                this.game.updatePlayerPosition();
-                this.game.updatePlayerStats();
+                // This will trigger the smash logic inside player.move, which now handles turn ending.
+                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, () => {});
                 return true;
             }
         }

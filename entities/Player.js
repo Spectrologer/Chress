@@ -92,6 +92,7 @@ export class Player {
                     this.animations.startActionAnimation(); // Start action animation
                     this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
                     window.soundManager?.playSound('chop');
+                    window.gameInstance.startEnemyTurns(); // Chopping takes a turn
                     return false; // Don't move, just attack
                 }
 
@@ -104,6 +105,7 @@ export class Player {
                     this.animations.startActionAnimation(); // Start action animation
                     this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
                     window.soundManager?.playSound('smash');
+                    window.gameInstance.startEnemyTurns(); // Smashing takes a turn
                     return false; // Don't move, just attack
                 }
             }
