@@ -1,4 +1,4 @@
-import { GRID_SIZE, CANVAS_SIZE, TILE_SIZE, TILE_TYPES, FOOD_ASSETS } from '../core/constants.js';
+import { GRID_SIZE, CANVAS_SIZE, TILE_SIZE, TILE_TYPES, FOOD_ASSETS, INPUT_CONSTANTS, ANIMATION_CONSTANTS, SIMULATION_CONSTANTS } from '../core/constants.js';
 import { Enemy } from '../entities/Enemy.js';
 import { Sign } from '../ui/Sign.js';
 import consoleCommands from '../core/consoleCommands.js';
@@ -13,6 +13,7 @@ export class InputManager {
         this.lastTapTime = null;
         this.lastTapX = null;
         this.lastTapY = null;
+        this.tapTimeout = null;
         this.autoUseNextExitReach = false;
     }
 
@@ -38,8 +39,6 @@ export class InputManager {
         let touchStartX = 0;
         let touchStartY = 0;
         let touchStartTime = 0;
-        const minSwipeDistance = 30;
-        const maxTapTime = 300; // Maximum time for a tap (milliseconds)
 
         this.game.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -58,12 +57,12 @@ export class InputManager {
             const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
             // Check if this was a tap (short duration, small movement)
-            if (touchDuration < maxTapTime && distance < minSwipeDistance) {
+            if (touchDuration < INPUT_CONSTANTS.MAX_TAP_TIME && distance < INPUT_CONSTANTS.MIN_SWIPE_DISTANCE) {
                 // Handle tap - convert to grid coordinates and move
                 this.handleTap(touch.clientX, touch.clientY);
             }
             // Otherwise, check if it was a swipe gesture
-            else if (distance > minSwipeDistance) {
+            else if (distance > INPUT_CONSTANTS.MIN_SWIPE_DISTANCE) {
                 let direction = '';
 
                 if (Math.abs(deltaX) > Math.abs(deltaY)) {
@@ -171,6 +170,12 @@ export class InputManager {
 
     // Handle tap input for movement
     handleTap(screenX, screenY) {
+        // Clear any pending single-tap action
+        if (this.tapTimeout) {
+            clearTimeout(this.tapTimeout);
+            this.tapTimeout = null;
+        }
+
         // Calculate grid coordinates first
         const gridCoords = this.screenToGridCoordinates(screenX, screenY);
 
@@ -201,7 +206,7 @@ export class InputManager {
 
         // Double tap detection
         const now = Date.now();
-        const isDoubleTap = this.lastTapTime !== null && (now - this.lastTapTime) < 300 && this.lastTapX === gridCoords.x && this.lastTapY === gridCoords.y;
+        const isDoubleTap = this.lastTapTime !== null && (now - this.lastTapTime) < INPUT_CONSTANTS.DOUBLE_TAP_TIME && this.lastTapX === gridCoords.x && this.lastTapY === gridCoords.y;
         this.lastTapTime = now;
         this.lastTapX = gridCoords.x;
         this.lastTapY = gridCoords.y;
@@ -219,19 +224,48 @@ export class InputManager {
             }
         }
 
-        // If verbose pathing is active and clicked elsewhere, interrupt current path and start new one
-        let interruptedPath = false;
-        if (this.isExecutingPath && this.game.player.stats.verbosePathAnimations) {
-            if (gridCoords.x !== playerPos.x || gridCoords.y !== playerPos.y) {
-                this.cancelPathExecution();
-                interruptedPath = true;
-            }
+        if (isDoubleTap) {
+            this.handleDoubleTap(gridCoords);
+        } else {
+            this.tapTimeout = setTimeout(() => this.handleSingleTap(gridCoords), INPUT_CONSTANTS.DOUBLE_TAP_TIME);
         }
 
-        // Prevent new path execution while a path is currently being executed (but allow double-tap detection and interruption above)
-        if (this.isExecutingPath && !this.game.player.stats.verbosePathAnimations && !interruptedPath) {
+        // Check if we should interrupt current path execution
+        const isClickingDifferentTile = gridCoords.x !== playerPos.x || gridCoords.y !== playerPos.y;
+        if (this.isExecutingPath && isClickingDifferentTile) {
+            // Always cancel path when clicking a different tile, regardless of verbose mode
+            this.cancelPathExecution();
+        }
+
+        // Prevent new path execution while a path is currently being executed
+        if (this.isExecutingPath && !isClickingDifferentTile) {
+            // Allow cancelling current path by re-clicking same tile during verbose mode
+            if (this.game.player.stats.verbosePathAnimations && isClickingDifferentTile) {
+                this.cancelPathExecution();
+            }
             return;
         }
+    }
+
+    handleDoubleTap(gridCoords) {
+        const playerPos = this.game.player.getPosition();
+        const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+
+        if (tile === TILE_TYPES.EXIT) {
+            if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
+                this.handleExitTap(gridCoords.x, gridCoords.y);
+            } else {
+                this.autoUseNextExitReach = true;
+                this.handleSingleTap(gridCoords); // Path to the exit
+            }
+        } else {
+            this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
+            this.handleSingleTap(gridCoords); // Path to the interactive tile
+        }
+    }
+
+    handleSingleTap(gridCoords) {
+        const playerPos = this.game.player.getPosition();
 
         // Handle grid interaction
         const handled = this.game.interactionManager.handleTap(gridCoords);
@@ -246,11 +280,6 @@ export class InputManager {
                 // Find nearest walkable adjacent tile to the target
                 const adjacentTile = this.findNearestWalkableAdjacent(gridCoords.x, gridCoords.y);
                 if (adjacentTile) {
-                    // For double tap, set flag to interact on reach (walk and interact)
-                    // For single tap, just walk (don't interact)
-                    if (isDoubleTap) {
-                        this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
-                    }
                     // Path to the adjacent tile
                     const path = this.findPath(playerPos.x, playerPos.y, adjacentTile.x, adjacentTile.y);
                     if (path && path.length > 0) {
@@ -266,8 +295,6 @@ export class InputManager {
             }
         }
     }
-
-
 
     // Handle tapping on exit tiles to trigger zone transitions
     handleExitTap(exitX, exitY) {
@@ -343,7 +370,7 @@ export class InputManager {
 
                 // Wait for the lift animation to complete (15 frames) plus a bit extra for visibility
                 this.game.animationScheduler.createSequence()
-                    .wait(150) // Reduced from 250ms for faster pathing
+                    .wait(INPUT_CONSTANTS.LEGACY_PATH_DELAY) // Reduced from 250ms for faster pathing
                     .then(() => {
                         executeNextStep(); // Continue to next step
                     })
@@ -495,8 +522,8 @@ export class InputManager {
 
         // Debug hotkey for adding points
         if (event.key === '9') {
-            this.game.player.addPoints(999);
-            this.game.combatManager.addPointAnimation(this.game.player.x, this.game.player.y, 999);
+            this.game.player.addPoints(SIMULATION_CONSTANTS.DEFEAT_DAMAGE);
+            this.game.combatManager.addPointAnimation(this.game.player.x, this.game.player.y, SIMULATION_CONSTANTS.DEFEAT_DAMAGE);
             this.game.uiManager.updatePlayerStats();
             return; // Stop further processing
         }

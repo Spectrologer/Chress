@@ -1,3 +1,59 @@
+// Animation constants
+export const ANIMATION_CONSTANTS = {
+    LIFT_FRAMES: 15, // Frames for player/enemy lift animations
+    ATTACK_ANIMATION_FRAMES: 15, // Frames for attack animations
+    BUMP_ANIMATION_FRAMES: 15, // Frames for bump animations
+    DEATH_ANIMATION_FRAMES: 15, // Frames for death animations
+    ARROW_ANIMATION_FRAMES: 20, // Frames for arrow animations
+    HORSE_CHARGE_FRAMES: 20, // Frames for horse charge animations
+    SMOKE_ANIMATION_FRAMES: 20, // Frames for smoke animations
+    TIMER_ANIMATION_FRAMES: 30 // Frames for timer animations
+};
+
+// UI Constants
+export const UI_CONSTANTS = {
+    AXE_ICON_SIZE_RELATIVE: 0.7, // Axe icon size relative to map
+    CHARACTER_NAME_FONT_SIZE: '1.5em', // Font size for character names
+
+    // Spacing and padding
+    PADDING_SMALL: '4px', // Small padding
+    PADDING_MEDIUM: '8px', // Medium padding
+    PADDING_LARGE: '10px', // Large padding
+    IMAGE_SIZE_LARGE: '128px', // Large image size
+
+    // Opacity values
+    OPACITY_DIM: 0.3, // Dimmed opacity (e.g. for lost hearts)
+    OPACITY_SEMI_TRANSPARENT: 0.7, // Semi-transparent opacity
+    OPACITY_INDICATOR_FLASH_BASE: 0.5, // Base opacity for flashing indicators
+    OPACITY_INDICATOR_FLASH_VARIANCE: 0.3 // Variance in flash opacity
+};
+
+// Simulation constants
+export const SIMULATION_CONSTANTS = {
+    DEFEAT_DAMAGE: 999, // Damage dealt when enemy is defeated
+    VICTORY_POINTS: 1 // Points awarded for defeating enemy
+};
+
+// Input constants (moved from INPUT_CONSTANTS)
+export const INPUT_CONSTANTS = {
+    // Touch detection
+    MIN_SWIPE_DISTANCE: 30,
+    MAX_TAP_TIME: 300, // Maximum time for a tap (milliseconds)
+    DOUBLE_TAP_TIME: 150,
+
+    // Animation timing
+    PATH_STEP_DELAY: 150, // ms between path steps
+    LEGACY_PATH_DELAY: 150, // ms for legacy pathing
+
+    // Debug points
+    DEBUG_POINT_AMOUNT: 999
+};
+
+// Zone positioning constants
+export const ZONE_CONSTANTS = {
+    PLAYER_SPAWN_POSITION: { x: 4, y: 7 } // Default player spawn position
+};
+
 // Game constants
 export const GRID_SIZE = 9;
 export const TILE_SIZE = 64;

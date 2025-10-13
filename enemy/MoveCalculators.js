@@ -72,9 +72,9 @@ class BaseMoveCalculator {
      */
     applyAggressiveMovement(enemy, path, next) {
         // Check enemy types that can move multiple tiles
-        const multiMoveTypes = ['lazerd', 'lizardeaux', 'zard'];
+        const multiMoveTypes = new Set(['lazerd', 'lizardeaux', 'zard']);
 
-        if (!multiMoveTypes.includes(enemy.enemyType)) {
+        if (!multiMoveTypes.has(enemy.enemyType)) {
             return next;
         }
 
@@ -188,8 +188,8 @@ class BaseMoveCalculator {
 
         // If moving closer to player but would be vulnerable (adjacent)
         // For certain enemy types, be more aggressive and don't retreat
-        const aggressiveTypes = ['lizardo'];
-        if (!aggressiveTypes.includes(enemy.enemyType) && newDistance <= 2) {
+        const aggressiveTypes = new Set(['lizardo']);
+        if (!aggressiveTypes.has(enemy.enemyType) && newDistance <= 2) {
             const alternatives = this.tacticalAI.getDefensiveMoves(enemy, playerX, playerY, next.x, next.y, grid, enemies);
             if (alternatives.length > 0) {
                 // Add smoke for defensive retreat if moving more than 1 tile
@@ -323,8 +323,8 @@ class BaseMoveCalculator {
      * Add smoke trail animation for multi-tile moves
      */
     addSmokeTrail(enemy, next) {
-        const chargeTypes = ['lizardeaux', 'zard'];
-        if (chargeTypes.includes(enemy.enemyType)) {
+        const chargeTypes = new Set(['lizardeaux', 'zard']);
+        if (chargeTypes.has(enemy.enemyType)) {
             // Add smoke on each tile along the path
             const startX = enemy.x;
             const startY = enemy.y;

@@ -169,6 +169,7 @@ export class ActionManager {
             { dx: 1, dy: 1 }, { dx: -1, dy: -1 }, { dx: 1, dy: -1 }, { dx: -1, dy: 1 }
         ];
 
+        const directionSet = new Set(directions.map(dir => `${dir.dx},${dir.dy}`));
         for (const dir of directions) {
             const nx = bx + dir.dx;
             const ny = by + dir.dy;

@@ -6,7 +6,7 @@ import logger from './logger.js';
 
 const consoleCommands = {
   // Spawn commands
-  spawnBomb: function(game) {
+  spawnBomb: (game) => {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.BOMB;

@@ -1,4 +1,4 @@
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANTS } from '../core/constants.js';
 import { PlayerStats } from './PlayerStats.js';
 import { PlayerAnimations } from './PlayerAnimations.js';
 
@@ -71,7 +71,7 @@ export class Player {
             this.x = newX;
             this.y = newY;
 
-            this.animations.liftFrames = 15; // Start lift animation
+            this.animations.liftFrames = ANIMATION_CONSTANTS.LIFT_FRAMES; // Start lift animation
             window.soundManager?.playSound('move');
 
             return true;
@@ -202,8 +202,8 @@ export class Player {
     reset() {
     // Place player in front of the house at zone (0,0)
     // House is at (3,3) to (5,5), so place player at (4,7) - centered in front
-    this.x = 4;
-    this.y = 7;
+    this.x = ZONE_CONSTANTS.PLAYER_SPAWN_POSITION.x;
+    this.y = ZONE_CONSTANTS.PLAYER_SPAWN_POSITION.y;
     this.currentZone = { x: 0, y: 0, dimension: 0 };
     this.inventory = [];
     this.sprite = 'SeparateAnim/Special2';
