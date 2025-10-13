@@ -1,4 +1,5 @@
 import { TILE_TYPES, GRID_SIZE } from './constants.js';
+import logger from './logger.js';
 import { ZoneStateManager } from '../generators/ZoneStateManager.js';
 import { FeatureGenerator } from '../generators/FeatureGenerator.js';
 import { ItemGenerator } from '../generators/ItemGenerator.js';
@@ -466,7 +467,7 @@ export class ZoneGenerator {
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
                 if (this.grid[y][x] === null || this.grid[y][x] === undefined) {
-                    console.warn(`Fixed corrupted tile at (${x}, ${y}) by replacing with FLOOR`);
+                    logger.warn(`Fixed corrupted tile at (${x}, ${y}) by replacing with FLOOR`);
                     this.grid[y][x] = TILE_TYPES.FLOOR;
                 }
             }

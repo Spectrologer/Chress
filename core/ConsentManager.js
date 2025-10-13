@@ -1,5 +1,7 @@
 // c:/Users/virgi/OneDrive/Desktop/Apps/Chress/ConsentManager.js
 
+import logger from './logger.js';
+
 export class ConsentManager {
     constructor(game) {
         this.game = game;
@@ -8,7 +10,7 @@ export class ConsentManager {
 
     initialize() {
         const consent = localStorage.getItem(this.consentKey);
-        console.log('Consent from localStorage:', consent);
+        logger.log('Consent from localStorage:', consent);
 
         if (consent === 'true') {
             this.enableTracking();
@@ -43,7 +45,7 @@ export class ConsentManager {
                 acceptButton.addEventListener('click', () => this.handleConsent(true));
                 declineButton.addEventListener('click', () => this.handleConsent(false));
             } else {
-                console.error('Consent buttons not found');
+                logger.error('Consent buttons not found');
             }
         }, 10);
     }
@@ -58,7 +60,7 @@ export class ConsentManager {
     }
 
     enableTracking() {
-        console.log("User has consented to tracking. Initializing tracking services...");
+        logger.log("User has consented to tracking. Initializing tracking services...");
         // Enable Sentry tracking if it exists
         if (typeof Sentry !== 'undefined' && Sentry.SDK_VERSION) {
             const client = Sentry.getCurrentHub().getClient();

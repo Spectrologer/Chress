@@ -2,6 +2,7 @@
 
 import { TILE_TYPES, GRID_SIZE } from './constants.js';
 import { Enemy } from '../entities/Enemy.js';
+import logger from './logger.js';
 
 const consoleCommands = {
   // Spawn commands
@@ -9,9 +10,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.BOMB;
-      console.log('Spawned bomb at', pos);
+      logger.log('Spawned bomb at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -19,9 +20,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = { type: TILE_TYPES.HORSE_ICON, uses: 3 };
-      console.log('Spawned horse icon at', pos);
+      logger.log('Spawned horse icon at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -29,9 +30,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.enemies.push(new Enemy({ x: pos.x, y: pos.y, enemyType: enemyType, id: Date.now() }));
-      console.log('Spawned enemy', enemyType, 'at', pos);
+      logger.log('Spawned enemy', enemyType, 'at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -40,9 +41,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.AXE;
-      console.log('Spawned axe at', pos);
+      logger.log('Spawned axe at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -50,9 +51,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.HAMMER;
-      console.log('Spawned hammer at', pos);
+      logger.log('Spawned hammer at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -60,9 +61,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 };
-      console.log('Spawned bishop spear at', pos);
+      logger.log('Spawned bishop spear at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -70,9 +71,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.NOTE;
-      console.log('Spawned note at', pos);
+      logger.log('Spawned note at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -80,9 +81,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.HEART;
-      console.log('Spawned heart at', pos);
+      logger.log('Spawned heart at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -90,9 +91,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = { type: TILE_TYPES.BOOK_OF_TIME_TRAVEL, uses: 3 };
-      console.log('Spawned Book of Time Travel at', pos);
+      logger.log('Spawned Book of Time Travel at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -100,9 +101,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = { type: TILE_TYPES.BOW, uses: 3 };
-      console.log('Spawned bow at', pos);
+      logger.log('Spawned bow at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -110,9 +111,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.WATER;
-      console.log('Spawned water at', pos);
+      logger.log('Spawned water at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -120,9 +121,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'food/meat/beaf.png' };
-      console.log('Spawned meat at', pos);
+      logger.log('Spawned meat at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -130,9 +131,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'food/veg/nut.png' };
-      console.log('Spawned nut at', pos);
+      logger.log('Spawned nut at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -140,9 +141,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.PENNE;
-      console.log('Spawned Penne at', pos);
+      logger.log('Spawned Penne at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -150,9 +151,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.SQUIG;
-      console.log('Spawned squig at', pos);
+      logger.log('Spawned squig at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -160,9 +161,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.RUNE;
-      console.log('Spawned rune at', pos);
+      logger.log('Spawned rune at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -170,9 +171,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.NIB;
-      console.log('Spawned nib at', pos);
+      logger.log('Spawned nib at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 
@@ -180,9 +181,9 @@ const consoleCommands = {
     const pos = findSpawnPosition(game);
     if (pos) {
       game.grid[pos.y][pos.x] = TILE_TYPES.MARK;
-      console.log('Spawned Mark at', pos);
+      logger.log('Spawned Mark at', pos);
     } else {
-      console.log('No valid spawn position found');
+      logger.log('No valid spawn position found');
     }
   },
 

@@ -1,4 +1,5 @@
 import { ComponentFactory, DataContractValidator } from './DataContracts.js';
+import logger from './logger.js';
 import { COMPONENT_TYPES, ENTITY_SCHEMAS } from './constants.js';
 
 /**
@@ -42,7 +43,7 @@ export class ECS {
      */
     destroyEntity(entityId) {
         if (!this.entities.has(entityId)) {
-            console.warn(`Attempted to destroy non-existent entity: ${entityId}`);
+            logger.warn(`Attempted to destroy non-existent entity: ${entityId}`);
             return;
         }
 

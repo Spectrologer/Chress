@@ -2,6 +2,7 @@ import { GRID_SIZE, CANVAS_SIZE, TILE_SIZE, TILE_TYPES, FOOD_ASSETS } from '../c
 import { Enemy } from '../entities/Enemy.js';
 import { Sign } from '../ui/Sign.js';
 import consoleCommands from '../core/consoleCommands.js';
+import logger from '../core/logger.js';
 
 export class InputManager {
     constructor(game) {
@@ -174,12 +175,12 @@ export class InputManager {
         const gridCoords = this.screenToGridCoordinates(screenX, screenY);
 
         // Debug: Log comprehensive tile information on click
-        console.log(`Tile clicked at (${gridCoords.x}, ${gridCoords.y})`);
+        logger.log(`Tile clicked at (${gridCoords.x}, ${gridCoords.y})`);
         const clickedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        console.log("Tile data:", clickedTile);
+        logger.log("Tile data:", clickedTile);
         const enemyAtTile = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
         if (enemyAtTile) {
-            console.log("Enemy on tile:", enemyAtTile);
+            logger.log("Enemy on tile:", enemyAtTile);
         }
 
         const playerPos = this.game.player.getPosition();
@@ -218,8 +219,17 @@ export class InputManager {
             }
         }
 
-        // Prevent new path execution while a path is currently being executed (but allow double-tap detection above)
-        if (this.isExecutingPath) {
+        // If verbose pathing is active and clicked elsewhere, interrupt current path and start new one
+        let interruptedPath = false;
+        if (this.isExecutingPath && this.game.player.stats.verbosePathAnimations) {
+            if (gridCoords.x !== playerPos.x || gridCoords.y !== playerPos.y) {
+                this.cancelPathExecution();
+                interruptedPath = true;
+            }
+        }
+
+        // Prevent new path execution while a path is currently being executed (but allow double-tap detection and interruption above)
+        if (this.isExecutingPath && !this.game.player.stats.verbosePathAnimations && !interruptedPath) {
             return;
         }
 

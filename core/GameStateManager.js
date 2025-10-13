@@ -1,4 +1,5 @@
 import { GRID_SIZE, TILE_TYPES } from './constants.js';
+import logger from './logger.js';
 import { Sign } from '../ui/Sign.js';
 
 const GAME_STATE_KEY = 'chress_game_state';
@@ -153,7 +154,6 @@ export class GameStateManager {
                     squigSpawned: this.game.zoneGenerator.constructor.squigSpawned,
                     wellSpawned: this.game.zoneGenerator.constructor.wellSpawned,
                     deadTreeSpawned: this.game.zoneGenerator.constructor.deadTreeSpawned,
-                    puzzleZoneSpawned: this.game.zoneGenerator.constructor.puzzleZoneSpawned,
                     axeWarningSignPlaced: this.game.zoneGenerator.constructor.axeWarningSignPlaced,
                     hammerWarningSignPlaced: this.game.zoneGenerator.constructor.hammerWarningSignPlaced,
                     firstFrontierSignPlaced: this.game.zoneGenerator.constructor.firstFrontierSignPlaced,
@@ -168,7 +168,7 @@ export class GameStateManager {
 
             localStorage.setItem(GAME_STATE_KEY, JSON.stringify(gameState));
         } catch (error) {
-            console.warn('Failed to save game state:', error);
+            logger.warn('Failed to save game state:', error);
         }
     }
 
@@ -221,7 +221,6 @@ export class GameStateManager {
                 this.game.zoneGenerator.constructor.squigSpawned = gameState.zoneStateManager.squigSpawned || false;
                 this.game.zoneGenerator.constructor.wellSpawned = gameState.zoneStateManager.wellSpawned || false;
                 this.game.zoneGenerator.constructor.deadTreeSpawned = gameState.zoneStateManager.deadTreeSpawned || false;
-                this.game.zoneGenerator.constructor.puzzleZoneSpawned = gameState.zoneStateManager.puzzleZoneSpawned || false;
                 this.game.zoneGenerator.constructor.axeWarningSignPlaced = gameState.zoneStateManager.axeWarningSignPlaced || false;
                 this.game.zoneGenerator.constructor.hammerWarningSignPlaced = gameState.zoneStateManager.hammerWarningSignPlaced || false;
                 this.game.zoneGenerator.constructor.firstFrontierSignPlaced = gameState.zoneStateManager.firstFrontierSignPlaced || false;
@@ -237,7 +236,7 @@ export class GameStateManager {
 
             return true;
         } catch (error) {
-            console.warn('Failed to load game state:', error);
+            logger.warn('Failed to load game state:', error);
             // If loading fails, clear corrupted data
             localStorage.removeItem(GAME_STATE_KEY);
             return false;

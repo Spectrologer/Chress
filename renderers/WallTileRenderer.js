@@ -1,4 +1,4 @@
-import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from '../core/constants.js';
+import { TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants.js';
 import { RendererUtils } from './RendererUtils.js';
 
 export class WallTileRenderer {
@@ -118,7 +118,6 @@ export class WallTileRenderer {
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
 
-        const GRID_SIZE = 9;
         const middleEnd = GRID_SIZE - 1; // 8
 
         if (x === 0 && y === 0) {

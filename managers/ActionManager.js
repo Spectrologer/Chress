@@ -1,4 +1,4 @@
-import { TILE_TYPES, TILE_SIZE } from '../core/constants.js';
+import { TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants.js';
 
 export class ActionManager {
     constructor(game) {
@@ -15,8 +15,8 @@ export class ActionManager {
 
     incrementBombActions() {
         // Find any bombs on the grid and increment their timer
-        for (let y = 0; y < 9; y++) {
-            for (let x = 0; x < 9; x++) {
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
                 const tile = this.game.grid[y][x];
                 if (tile && typeof tile === 'object' && tile.type === 'BOMB') {
                     if (tile.justPlaced) {
@@ -172,10 +172,10 @@ export class ActionManager {
         for (const dir of directions) {
             const nx = bx + dir.dx;
             const ny = by + dir.dy;
-            if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9) {
+            if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
                 const tile = this.game.grid[ny][nx];
                 if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.GRASS) {
-                    this.game.grid[ny][nx] = (nx === 0 || nx === 8 || ny === 0 || ny === 8) ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
+                    this.game.grid[ny][nx] = (nx === 0 || nx === GRID_SIZE - 1 || ny === 0 || ny === GRID_SIZE - 1) ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
                 }
 
                 const enemy = this.game.enemies.find(e => e.x === nx && e.y === ny);
@@ -195,7 +195,7 @@ export class ActionManager {
                     while (steps < maxSteps) {
                         launchX += dir.dx;
                         launchY += dir.dy;
-                        if (launchX >= 0 && launchX < 9 && launchY >= 0 && launchY < 9 &&
+                        if (launchX >= 0 && launchX < GRID_SIZE && launchY >= 0 && launchY < GRID_SIZE &&
                             this.game.player.isWalkable(launchX, launchY, this.game.grid, this.game.player.x, this.game.player.y)) {
                             // Check if enemy at this position - if so, damage it and stop launch
                             const enemy = this.game.enemies.find(e => e.x === launchX && e.y === launchY);

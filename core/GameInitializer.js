@@ -1,4 +1,5 @@
 import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, TILE_TYPES, FOOD_ASSETS } from './constants.js';
+import logger from './logger.js';
 import { TextureManager } from '../renderers/TextureManager.js';
 import { ConnectionManager } from '../managers/ConnectionManager.js';
 import { ZoneGenerator } from './ZoneGenerator.js';
@@ -76,7 +77,7 @@ export class GameInitializer {
             });
             this.startGame();
         } catch (error) {
-            console.error('Error loading assets:', error);
+            logger.error('Error loading assets:', error);
             this.game.availableFoodAssets = []; // No foods if loading failed
             this.startGame(); // Start anyway with fallback colors
         }

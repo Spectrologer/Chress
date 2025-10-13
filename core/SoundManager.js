@@ -1,3 +1,5 @@
+import logger from './logger.js';
+
 export class SoundManager {
     constructor() {
         this.sounds = {};
@@ -17,7 +19,7 @@ export class SoundManager {
             this.addSound('move', 'sounds/move.wav'); // Player movement
             this.addSound('pickup', 'sounds/pickup.wav'); // Item pickup
         } catch (error) {
-            console.warn('Could not load sound files, using procedural generation:', error);
+            logger.warn('Could not load sound files, using procedural generation:', error);
         }
         */
     }

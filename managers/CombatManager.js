@@ -113,8 +113,8 @@ export class CombatManager {
 
     checkCollisions() {
         // Check for bomb explosion timers
-        for (let y = 0; y < 9; y++) {
-            for (let x = 0; x < 9; x++) {
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
                 const tile = this.game.grid[y][x];
                 if (tile && typeof tile === 'object' && tile.type === 'BOMB') {
                     if (tile.actionsSincePlaced >= 2) {
