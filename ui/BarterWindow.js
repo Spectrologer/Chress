@@ -163,10 +163,9 @@ export class BarterWindow {
 
         } else if (tradeData.id === 'mark_meat') { // Trade discoveries for meat
             this.game.player.spentDiscoveries += tradeData.requiredAmount;
-            const randomFood = FOOD_ASSETS[Math.floor(Math.random() * FOOD_ASSETS.length)];
-            this.game.player.inventory.push({ type: 'food', foodType: randomFood });
+            this.game.player.inventory.push({ type: 'food', foodType: 'food/meat/beaf.png' });
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} Discoveries for meat.`);
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg); // This was missing a call to updatePlayerStats
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic
             const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));

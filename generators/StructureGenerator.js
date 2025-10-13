@@ -18,8 +18,8 @@ export class StructureGenerator {
         for (let y = houseStartY; y < houseStartY + 3; y++) {
             for (let x = houseStartX; x < houseStartX + 4; x++) {
                 // Place a PORT tile at the bottom-middle of the house as an entrance
-                // Centered for a 4-wide building, we can choose one of the two middle tiles.
-                if ((x === houseStartX + 1 || x === houseStartX + 2) && y === houseStartY + 2) {
+                // Centered for a 4-wide building, we place one door.
+                if (x === houseStartX + 1 && y === houseStartY + 2) {
                     if (!(this.grid[y][x] && typeof this.grid[y][x] === 'object' && this.grid[y][x].type === TILE_TYPES.SIGN)) {
                         this.grid[y][x] = TILE_TYPES.PORT;
                     }

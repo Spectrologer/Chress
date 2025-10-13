@@ -333,7 +333,7 @@ export class InputManager {
 
                 // Wait for the lift animation to complete (15 frames) plus a bit extra for visibility
                 this.game.animationScheduler.createSequence()
-                    .wait(250) // 15 frames * 16.67ms per frame ≈ 250ms total
+                    .wait(150) // Reduced from 250ms for faster pathing
                     .then(() => {
                         executeNextStep(); // Continue to next step
                     })
