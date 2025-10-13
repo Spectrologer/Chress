@@ -155,23 +155,5 @@ export class CombatManager {
         this.game.uiManager.updatePlayerStats();
     }
 
-    performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy) {
-        const playerPos = this.game.player.getPosition();
-        const steps = Math.abs(dx);
-        for (let i = 1; i < steps; i++) {
-            const px = playerPos.x + (dx > 0 ? i : -i);
-            const py = playerPos.y + (dy > 0 ? i : -i);
-            if (!this.game.player.isWalkable(px, py, this.game.grid, px, py)) return;
-        }
-        item.uses--;
-        if (item.uses <= 0) this.game.player.inventory = this.game.player.inventory.filter(invItem => invItem !== item);
-        this.game.player.setPosition(targetX, targetY);
-        if (enemy) {
-            this.game.player.startBump(dx < 0 ? -1 : 1, dy < 0 ? -1 : 1);
-            enemy.startBump(this.game.player.x - enemy.x, this.game.player.y - enemy.y);
-            this.defeatEnemy(enemy);
-        }
-        this.game.uiManager.updatePlayerStats();
-        this.handleEnemyMovements();
-    }
+
 }

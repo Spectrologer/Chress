@@ -167,19 +167,7 @@ describe('CombatManager', () => {
     expect(mockPlayer.startBump).toHaveBeenCalledWith(0, 1);
   });
 
-  test('performBishopSpearCharge damages enemy and moves player', () => {
-    const item = { uses: 3 };
-    const targetX = 3;
-    const targetY = 3;
 
-    combatManager.performBishopSpearCharge(item, targetX, targetY, mockEnemy, 1, 1);
-
-    expect(item.uses).toBe(2);
-    expect(mockPlayer.setPosition).toHaveBeenCalledWith(3, 3);
-    expect(mockPlayer.addPoints).toHaveBeenCalledWith(1);
-    expect(mockEnemy.takeDamage).toHaveBeenCalledWith(999);
-    expect(mockGame.enemies.filter(e => e.id !== 'enemy1')).toHaveLength(0);
-  });
 
   test('checkCollisions does not damage player if enemy just attacked', () => {
     mockEnemy.x = 1;

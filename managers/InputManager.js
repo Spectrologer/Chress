@@ -85,7 +85,7 @@ export class InputManager {
     }
 
     // Convert screen coordinates to grid coordinates
-    screenToGridCoordinates(screenX, screenY) {
+    convertScreenToGrid(screenX, screenY) {
         const dpr = window.devicePixelRatio || 1;
         const rect = this.game.canvas.getBoundingClientRect();
         const canvasX = (screenX - rect.left) * dpr;
@@ -168,6 +168,16 @@ export class InputManager {
         return null;
     }
 
+    // Extract double-tap detection logic
+    handleDoubleTapLogic(gridCoords) {
+        const now = Date.now();
+        const isDoubleTap = this.lastTapTime !== null && (now - this.lastTapTime) < INPUT_CONSTANTS.DOUBLE_TAP_TIME && this.lastTapX === gridCoords.x && this.lastTapY === gridCoords.y;
+        this.lastTapTime = now;
+        this.lastTapX = gridCoords.x;
+        this.lastTapY = gridCoords.y;
+        return isDoubleTap;
+    }
+
     // Handle tap input for movement
     handleTap(screenX, screenY) {
         // Clear any pending single-tap action
@@ -177,7 +187,7 @@ export class InputManager {
         }
 
         // Calculate grid coordinates first
-        const gridCoords = this.screenToGridCoordinates(screenX, screenY);
+        const gridCoords = this.convertScreenToGrid(screenX, screenY);
 
         // Debug: Log comprehensive tile information on click
         logger.log(`Tile clicked at (${gridCoords.x}, ${gridCoords.y})`);
@@ -204,15 +214,11 @@ export class InputManager {
             return;
         }
 
-        // Double tap detection
-        const now = Date.now();
-        const isDoubleTap = this.lastTapTime !== null && (now - this.lastTapTime) < INPUT_CONSTANTS.DOUBLE_TAP_TIME && this.lastTapX === gridCoords.x && this.lastTapY === gridCoords.y;
-        this.lastTapTime = now;
-        this.lastTapX = gridCoords.x;
-        this.lastTapY = gridCoords.y;
+        // Double tap detection and handling
+        const isDoubleTap = this.handleDoubleTapLogic(gridCoords);
+        const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
 
         // Handle double tap on exit tiles
-        const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
         if (isDoubleTap && tile === TILE_TYPES.EXIT) {
             if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
                 // Double tap on current exit: immediately use (allowed even during path execution)
@@ -227,7 +233,7 @@ export class InputManager {
         if (isDoubleTap) {
             this.handleDoubleTap(gridCoords);
         } else {
-            this.tapTimeout = setTimeout(() => this.handleSingleTap(gridCoords), INPUT_CONSTANTS.DOUBLE_TAP_TIME);
+            this.tapTimeout = setTimeout(() => this.executeMovementOrInteraction(gridCoords), INPUT_CONSTANTS.DOUBLE_TAP_TIME);
         }
 
         // Check if we should interrupt current path execution
@@ -256,15 +262,15 @@ export class InputManager {
                 this.handleExitTap(gridCoords.x, gridCoords.y);
             } else {
                 this.autoUseNextExitReach = true;
-                this.handleSingleTap(gridCoords); // Path to the exit
+                this.executeMovementOrInteraction(gridCoords); // Path to the exit
             }
         } else {
             this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
-            this.handleSingleTap(gridCoords); // Path to the interactive tile
+            this.executeMovementOrInteraction(gridCoords); // Path to the interactive tile
         }
     }
 
-    handleSingleTap(gridCoords) {
+    executeMovementOrInteraction(gridCoords) {
         const playerPos = this.game.player.getPosition();
 
         // Handle grid interaction

@@ -222,7 +222,7 @@ class BaseMoveCalculator {
             if (!isSimulation) {
                 if (enemy.enemyType === 'lizord') {
                     // Lizord bump attack: displace player to nearest walkable tile
-                    this.performLizordBumpAttack(enemy, player, playerX, playerY, grid, game);
+                    this.performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game);
                 } else {
                     // Regular attack
                     this.performAttack(enemy, player, playerX, playerY, grid, enemies, game);
@@ -240,7 +240,7 @@ class BaseMoveCalculator {
     /**
      * Perform Lizord's special bump attack
      */
-    performLizordBumpAttack(enemy, player, playerX, playerY, grid, game) {
+    performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game) {
         const possiblePositions = [
             { x: playerX, y: playerY - 1 },
             { x: playerX, y: playerY + 1 },
