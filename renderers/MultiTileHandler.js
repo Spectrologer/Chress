@@ -73,4 +73,29 @@ export class MultiTileHandler {
         }
         return null;
     }
+
+    static findShackPosition(targetX, targetY, grid) {
+        // Find the top-left corner of the shack that contains this tile
+        for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
+            for (let startX = Math.max(0, targetX - 2); startX <= Math.min(GRID_SIZE - 3, targetX); startX++) {
+                // Check if there's a 3x3 shack starting at this position
+                let isShack = true;
+                for (let y = startY; y < startY + 3 && isShack; y++) {
+                    for (let x = startX; x < startX + 3 && isShack; x++) {
+                        const tile = grid[y]?.[x];
+                        // A shack tile can be either SHACK or a PORT (the door)
+                        if (!(tile === TILE_TYPES.SHACK || tile === TILE_TYPES.PORT)) {
+                            isShack = false;
+                        }
+                    }
+                }
+
+                if (isShack && targetX >= startX && targetX < startX + 3 &&
+                    targetY >= startY && targetY < startY + 3) {
+                    return { startX, startY };
+                }
+            }
+        }
+        return null;
+    }
 }

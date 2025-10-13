@@ -55,7 +55,7 @@ export class ZoneGenerator {
     isTileFree(x, y) {
         const tile = this.grid[y][x];
         // Check for impassable tiles
-        if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.DEADTREE || tile === TILE_TYPES.WELL || tile === TILE_TYPES.SIGN || (tile && tile.type === TILE_TYPES.SIGN)) return false;
+        if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.DEADTREE || tile === TILE_TYPES.WELL || tile === TILE_TYPES.SHACK || tile === TILE_TYPES.SIGN || (tile && tile.type === TILE_TYPES.SIGN)) return false;
         // Check for enemy
         if (this.enemies && this.enemies.some(e => e.x === x && e.y === y)) return false;
         // Check for items (axe, hammer, bishop spear, etc.)
@@ -194,13 +194,19 @@ export class ZoneGenerator {
                     enemies: [],
                     playerSpawn: { x: Math.floor(GRID_SIZE / 2), y: Math.floor(GRID_SIZE / 2) + 2 }
                 };
+            } else {
+                // Ensure PORT tile exists at bottom-middle for exit
+                const portX = Math.floor(GRID_SIZE / 2);
+                const portY = GRID_SIZE - 1;
+                this.grid[portY][portX] = TILE_TYPES.PORT;
+
+                // Blank interior zones: place some basic content if needed
+                return {
+                    grid: JSON.parse(JSON.stringify(this.grid)),
+                    enemies: [],
+                    playerSpawn: { x: portX, y: Math.floor(GRID_SIZE / 2) }
+                };
             }
-            // Interior zone: blank with placeholders
-            return {
-                grid: JSON.parse(JSON.stringify(this.grid)),
-                enemies: [],
-                playerSpawn: { x: Math.floor(GRID_SIZE / 2), y: Math.floor(GRID_SIZE / 2) }
-            };
         }
 
         const zoneLevel = ZoneStateManager.getZoneLevel(zoneX, zoneY);
@@ -228,6 +234,11 @@ export class ZoneGenerator {
         }
         if (zoneLevel === 2 && !ZoneStateManager.deadTreeSpawned) {
             structureGenerator.addDeadTree(zoneX, zoneY);
+        }
+
+        // Add shack with ~4% chance in Woods and Wilds zones (2 & 3)
+        if ((zoneLevel === 2 || zoneLevel === 3) && Math.random() < 0.04) {
+            structureGenerator.addShack(zoneX, zoneY);
         }
 
         // Generate exits and add frontier sign if needed
@@ -415,7 +426,7 @@ export class ZoneGenerator {
                 const ny = inwardY + dy;
                 if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
                     const tile = this.grid[ny][nx];
-                    if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY) {
+                    if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.SHACK) {
                         this.grid[ny][nx] = TILE_TYPES.FLOOR;
                     }
                 }
@@ -448,7 +459,7 @@ export class ZoneGenerator {
             }
 
             // Clear this tile if it's not already floor or exit
-            if (this.grid[currentY][currentX] === TILE_TYPES.WALL || this.grid[currentY][currentX] === TILE_TYPES.ROCK || this.grid[currentY][currentX] === TILE_TYPES.SHRUBBERY) {
+            if (this.grid[currentY][currentX] === TILE_TYPES.WALL || this.grid[currentY][currentX] === TILE_TYPES.ROCK || this.grid[currentY][currentX] === TILE_TYPES.SHRUBBERY || this.grid[currentY][currentX] === TILE_TYPES.SHACK) {
                 this.grid[currentY][currentX] = TILE_TYPES.FLOOR;
             }
 

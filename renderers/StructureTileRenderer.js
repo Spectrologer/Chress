@@ -290,26 +290,6 @@ export class StructureTileRenderer {
         }
     }
 
-    renderMarkTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
-        // First draw the base tile
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-
-        // Try to draw the mark image if loaded, otherwise use fallback
-        if (RendererUtils.isImageLoaded(this.images, 'mark')) {
-            ctx.drawImage(this.images['mark'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else {
-            // Fallback to colored square with emoji
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.MARK];
-            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
-
-            ctx.fillStyle = '#FFD700';
-            ctx.font = '20px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🗺️', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
-        }
-    }
-
     renderCraynTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
@@ -367,6 +347,42 @@ export class StructureTileRenderer {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🛠️', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2); // Placeholder emoji for Forge
+        }
+    }
+
+    renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First render dirt background
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Then render the shack part
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/shack')) {
+            // For a 3x3 shack, we need to determine which part of the shack image to draw
+            // Find the shack area bounds to determine the position within the shack
+            const shackInfo = this.multiTileHandler.findShackPosition(x, y, grid);
+
+            if (shackInfo) {
+                // Calculate which part of the shack image to use
+                const partX = x - shackInfo.startX;
+                const partY = y - shackInfo.startY;
+
+                // Draw the corresponding part of the shack image
+                // Divide the shack image into 3x3 parts
+                const shackImage = this.images['doodads/shack'];
+                const partWidth = shackImage.width / 3;
+                const partHeight = shackImage.height / 3;
+
+                ctx.drawImage(
+                    shackImage,
+                    partX * partWidth, partY * partHeight, // Source position
+                    partWidth, partHeight, // Source size
+                    pixelX, pixelY, // Destination position
+                    TILE_SIZE, TILE_SIZE // Destination size
+                );
+            }
+        } else {
+            // Fallback color rendering
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.SHACK] || '#8B4513';
+            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
     }
 }

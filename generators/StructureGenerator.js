@@ -137,6 +137,46 @@ export class StructureGenerator {
         }
     }
 
+    addShack(zoneX, zoneY) {
+        // Place a 3x3 shack in Woods and Wilds zones (level 2 and 3) randomly, avoiding borders
+        // Try to place the shack in a valid location (max 50 attempts)
+        for (let attempts = 0; attempts < 50; attempts++) {
+            // Place away from borders, need 3x3 space + 1 space in front
+            const x = Math.floor(Math.random() * ((GRID_SIZE - 5) - 1)) + 1; // x from 1 to GRID_SIZE-5 (3 for shack + 1 front + 1 border)
+            const y = Math.floor(Math.random() * ((GRID_SIZE - 5) - 1)) + 1; // y from 1 to GRID_SIZE-5
+
+            // Check if all 3x3 tiles are free floor and space in front (south) is also free
+            let free = true;
+            // Check the 3x3 structure space
+            for (let dy = 0; dy < 3 && free; dy++) {
+                for (let dx = 0; dx < 3 && free; dx++) {
+                    if (this.grid[y + dy][x + dx] !== TILE_TYPES.FLOOR) {
+                        free = false;
+                    }
+                }
+            }
+            // Check space in front (south side, middle bottom)
+            if (y + 3 < GRID_SIZE && this.grid[y + 2][x + 1] !== TILE_TYPES.FLOOR) { // Middle bottom of 3x3 is (x+1,y+2)
+                free = false;
+            }
+
+            if (free) {
+                // Place the 3x3 shack with PORT at middle bottom
+                for (let dy = 0; dy < 3; dy++) {
+                    for (let dx = 0; dx < 3; dx++) {
+                        if (dy === 2 && dx === 1) { // Middle bottom tile
+                            this.grid[y + dy][x + dx] = TILE_TYPES.PORT; // Entrance
+                        } else {
+                            this.grid[y + dy][x + dx] = TILE_TYPES.SHACK;
+                        }
+                    }
+                }
+                logger.log(`Shack spawned at zone (${zoneX}, ${zoneY})`);
+                break; // Successfully placed shack
+            }
+        }
+    }
+
     checkSignExists() {
         for (let y = 0; y < this.grid.length; y++) {
             for (let x = 0; x < this.grid[y].length; x++) {

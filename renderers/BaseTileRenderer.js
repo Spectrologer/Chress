@@ -90,9 +90,17 @@ export class BaseTileRenderer {
             this.structureRenderer.renderFeltTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.FORGE) {
             this.structureRenderer.renderForgeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.SHACK) {
+            this.structureRenderer.renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.PORT) {
-            // PORT tiles are invisible overlays. Render the tile underneath them.
-            this.structureRenderer.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+            // PORT tiles are invisible overlays. Render the structure tile underneath them.
+            // Check if it's part of a house or a shack.
+            if (this.multiTileHandler.findShackPosition(x, y, grid)) {
+                this.structureRenderer.renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+            } else {
+                // Default to house if not a shack
+                this.structureRenderer.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+            }
         } else {
             this.renderFloorTile(ctx, pixelX, pixelY, actualType);
         }

@@ -187,6 +187,26 @@ const consoleCommands = {
     }
   },
 
+  spawnShack: function(game) {
+    // Find position and check if enough space for 3x3 shack + 1 front space
+    const pos = findShackSpawnPosition(game);
+    if (pos) {
+      // Place the 3x3 shack
+      for (let dy = 0; dy < 3; dy++) {
+        for (let dx = 0; dx < 3; dx++) {
+          if (dy === 2 && dx === 1) { // Middle bottom tile
+            game.grid[pos.y + dy][pos.x + dx] = TILE_TYPES.PORT; // Entrance
+          } else {
+            game.grid[pos.y + dy][pos.x + dx] = TILE_TYPES.SHACK;
+          }
+        }
+      }
+      logger.log('Spawned shack at', pos);
+    } else {
+      logger.log('No valid spawn position found for shack');
+    }
+  },
+
   // Enemy spawn commands (additional)
   spawnLizardeaux: function(game) {
     this.spawnEnemy(game, 'lizardeaux');
@@ -235,6 +255,7 @@ const consoleCommands = {
   hotkeyL: function(game) { this.spawnPenne(game); },
   hotkeyG: function(game) { this.spawnSquig(game); }, // G for green squig
   hotkeyX: function(game) { this.spawnMark(game); }, // X for Mark
+  hotkeyJ: function(game) { this.spawnShack(game); }, // J for shack
 
   hotkeyShift1: function(game) { this.spawnEnemy(game, 'lizardy'); },
   hotkeyShift2: function(game) { this.spawnEnemy(game, 'lizardo'); },
@@ -268,6 +289,7 @@ const consoleCommands = {
       if (lowerKey === 'l') { this.hotkeyL(game); return true; }
       if (lowerKey === 'g') { this.hotkeyG(game); return true; }
       if (lowerKey === 'x') { this.hotkeyX(game); return true; }
+      if (lowerKey === 'j') { this.hotkeyJ(game); return true; }
       // Enemies (numbers without shift)
       if (lowerKey === '1') { this.hotkeyShift1(game); return true; }
       if (lowerKey === '2') { this.hotkeyShift2(game); return true; }
@@ -314,6 +336,63 @@ function isValidSpawnPosition(game, x, y) {
   const enemyHere = game.enemies.some(enemy => enemy.x === x && enemy.y === y);
 
   return walkable && !enemyHere;
+}
+
+// Helper function to find shack spawn position - finds position for 3x3 shack + front space
+function findShackSpawnPosition(game) {
+  const availablePositions = [];
+
+  // Scan the entire grid for available 3x3 areas with front space
+  for (let y = 1; y < GRID_SIZE - 4; y++) { // Leave space for shack (3) + front (1) + border
+    for (let x = 1; x < GRID_SIZE - 3; x++) {
+      if (isValidShackPosition(game, x, y)) {
+        availablePositions.push({ x, y });
+      }
+    }
+  }
+
+  if (availablePositions.length === 0) {
+    return undefined; // No valid positions
+  }
+
+  // Pick a random available position
+  const randomIndex = Math.floor(Math.random() * availablePositions.length);
+  return availablePositions[randomIndex];
+}
+
+function isValidShackPosition(game, x, y) {
+  // Check 3x3 area
+  for (let dy = 0; dy < 3; dy++) {
+    for (let dx = 0; dx < 3; dx++) {
+      const tileX = x + dx;
+      const tileY = y + dy;
+      if (tileX < 0 || tileX >= GRID_SIZE || tileY < 0 || tileY >= GRID_SIZE) {
+        return false;
+      }
+      const tile = game.grid[tileY][tileX];
+      if (tile !== TILE_TYPES.FLOOR) {
+        return false;
+      }
+      // Check if any enemy is at this position
+      if (game.enemies.some(enemy => enemy.x === tileX && enemy.y === tileY)) {
+        return false;
+      }
+    }
+  }
+
+  // Check front space (south of shack, middle)
+  const frontX = x + 1;
+  const frontY = y + 3;
+  if (frontY >= GRID_SIZE) return false;
+  const frontTile = game.grid[frontY][frontX];
+  if (frontTile !== TILE_TYPES.FLOOR) {
+    return false;
+  }
+  if (game.enemies.some(enemy => enemy.x === frontX && enemy.y === frontY)) {
+    return false;
+  }
+
+  return true;
 }
 
 export default consoleCommands;

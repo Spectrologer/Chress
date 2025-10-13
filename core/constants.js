@@ -98,6 +98,7 @@ export const TILE_TYPES = {
     FORGE: 38,
     BOOK_OF_TIME_TRAVEL: 40,
     BOW: 41,
+    SHACK: 44,
     MARK: 43
 };
 
@@ -163,6 +164,7 @@ export const IMAGE_ASSETS = [
     'floors/dirt/dircle.png',
     'doodads/club.png',
     'items/water.png',
+    'doodads/shack.png',
     'protag/Special2.png',
     'protag/whack.png',
     'protag/dead.png',

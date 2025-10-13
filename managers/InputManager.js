@@ -489,6 +489,48 @@ export class InputManager {
         return null; // No adjacent walkable tile found
     }
 
+    addShackAtPlayerPosition() {
+        const playerPos = this.game.player.getPosition();
+        const x = playerPos.x - 1; // Center the shack relative to player
+        const y = playerPos.y - 1;
+
+        // Check if the area is clear (3x3 space needed, with space in front)
+        let canPlace = true;
+        for (let dy = 0; dy < 3 && canPlace; dy++) {
+            for (let dx = 0; dx < 3 && canPlace; dx++) {
+                const tileX = x + dx;
+                const tileY = y + dy;
+                if (tileX < 0 || tileX >= GRID_SIZE || tileY < 0 || tileY >= GRID_SIZE) {
+                    canPlace = false;
+                } else if (this.game.grid[tileY][tileX] !== TILE_TYPES.FLOOR) {
+                    canPlace = false;
+                }
+            }
+        }
+        // Check space in front (south side, middle bottom)
+        const frontX = x + 1;
+        const frontY = y + 3;
+        if (canPlace && (frontY >= GRID_SIZE || this.game.grid[frontY][frontX] !== TILE_TYPES.FLOOR)) {
+            canPlace = false;
+        }
+
+        if (canPlace) {
+            // Place the 3x3 shack with PORT at middle bottom
+            for (let dy = 0; dy < 3; dy++) {
+                for (let dx = 0; dx < 3; dx++) {
+                    if (dy === 2 && dx === 1) { // Middle bottom tile
+                        this.game.grid[y + dy][x + dx] = TILE_TYPES.PORT; // Entrance
+                    } else {
+                        this.game.grid[y + dy][x + dx] = TILE_TYPES.SHACK;
+                    }
+                }
+            }
+            logger.log(`Shack spawned at player position (${playerPos.x}, ${playerPos.y})`);
+        } else {
+            logger.log("Cannot place shack here - area not clear");
+        }
+    }
+
     handleKeyPress(event) {
         if (this.game.isPlayerTurn === false) {
             this.cancelPathExecution();
