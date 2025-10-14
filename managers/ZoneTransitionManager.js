@@ -1,4 +1,5 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
+import { MultiTileHandler } from '../renderers/MultiTileHandler.js';
 
 export class ZoneTransitionManager {
     constructor(game, inputManager) {
@@ -66,8 +67,26 @@ export class ZoneTransitionManager {
 
     handlePortTransition() {
         // Player tapped on a PORT tile they are standing on
-        this.game.player.currentZone.dimension = this.game.player.currentZone.dimension === 0 ? 1 : 0;
         const playerPos = this.game.player.getPosition();
+        const currentDim = this.game.player.currentZone.dimension;
+
+        let targetDim;
+        if (currentDim === 0) {
+            // Check if this is a cistern portal (has CISTERN below)
+            const cisternPos = MultiTileHandler.findCisternPosition(playerPos.x, playerPos.y, this.game.grid);
+            if (cisternPos) {
+                // Entering underground via cistern
+                targetDim = 2;
+            } else {
+                // Entering interior via house/shack door
+                targetDim = 1;
+            }
+        } else {
+            // Exiting to surface from interior/under
+            targetDim = 0;
+        }
+
+        this.game.player.currentZone.dimension = targetDim;
         this.game.transitionToZone(this.game.player.currentZone.x, this.game.player.currentZone.y, 'port', playerPos.x, playerPos.y);
     }
 

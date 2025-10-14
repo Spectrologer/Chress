@@ -45,6 +45,16 @@ export class UIManager {
             if (zone.x === 0 && zone.y === 0 && zone.dimension === 1) {
                 // Special case for the Woodcutter's Club
                 mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Woodcutter's Club</span>`;
+            } else if (zone.dimension === 2) {
+                // Underground dimension
+                const dist = Math.max(Math.abs(zone.x), Math.abs(zone.y));
+                let zoneLevel = 1;
+                if (dist <= 2) zoneLevel = 1;
+                else if (dist <= 8) zoneLevel = 2;
+                else if (dist <= 16) zoneLevel = 3;
+                else zoneLevel = 4;
+
+                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Z:${zoneLevel}, ${zone.x},${zone.y}<br>Level ${zoneLevel}</span>`;
             } else {
                 const totalDiscoveries = this.game.player.getVisitedZones().size;
                 const spentDiscoveries = this.game.player.spentDiscoveries || 0;

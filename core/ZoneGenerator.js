@@ -64,7 +64,7 @@ export class ZoneGenerator {
         return true;
     }
 
-    generateZone(zoneX, zoneY, dimension, existingZones, zoneConnections, foodAssets) {
+    generateZone(zoneX, zoneY, dimension, existingZones, zoneConnections, foodAssets, exitSide) {
         this.foodAssets = foodAssets || [];
         this.currentZoneX = zoneX;
         this.currentZoneY = zoneY;
@@ -209,6 +209,70 @@ export class ZoneGenerator {
             }
         }
 
+        // Handle underground dimension specially
+        if (dimension === 2) {
+            const zoneLevel = ZoneStateManager.getZoneLevel(zoneX, zoneY);
+            const isHomeZone = (zoneX === 0 && zoneY === 0);
+
+            // Initialize specialized generators
+            const structureGenerator = new StructureGenerator(this.grid);
+            const featureGenerator = new FeatureGenerator(this.grid, foodAssets);
+            const itemGenerator = new ItemGenerator(this.grid, foodAssets, zoneX, zoneY);
+            const enemyGenerator = new EnemyGenerator(this.enemies);
+            const pathGenerator = new PathGenerator(this.grid);
+
+            // Generate exits and add frontier sign if needed
+            this.generateExits(zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel);
+
+            // Generate underground zone content similar to surface
+            ZoneStateManager.zoneCounter++;
+
+            // Add random features but reduced since it's underground
+            if (!isHomeZone) {
+                featureGenerator.addRandomFeatures(zoneLevel, zoneX, zoneY, true); // Pass true for underground
+            }
+
+            // Add level-based items and enemies in underground
+            itemGenerator.addLevelBasedFoodAndWater();
+
+            // If entering from a port, guarantee a cistern. Otherwise, 4% chance.
+            const shouldForceCistern = exitSide === 'port';
+            if (shouldForceCistern) {
+                itemGenerator.addCisternItem(true); // Force spawn
+            } else {
+                itemGenerator.addCisternItem(); // 4% chance
+            }
+
+            // Higher enemy chance in underground for challenge
+            const baseProbabilities = { 1: 0.15, 2: 0.20, 3: 0.22, 4: 0.27 };
+            const baseEnemyProbability = baseProbabilities[zoneLevel] || 0.15;
+            const enemyProbability = baseEnemyProbability + Math.floor(ZoneStateManager.zoneCounter / 10) * 0.01;
+
+            if (Math.random() < enemyProbability) {
+                enemyGenerator.addRandomEnemyWithValidation(zoneLevel, zoneX, zoneY, this.grid, []);
+            }
+
+            // Add special zone items (less common in underground)
+            if (Math.random() < 0.3) { // 30% chance instead of always
+                itemGenerator.addSpecialZoneItems();
+            }
+
+            // Ensure exit accessibility
+            pathGenerator.ensureExitAccess();
+
+            // Find a valid player spawn tile
+            this.playerSpawn = this.findValidPlayerSpawn();
+
+            // Sanitize grid to fix any corrupted tiles
+            this.sanitizeGrid();
+
+            return {
+                grid: JSON.parse(JSON.stringify(this.grid)),
+                enemies: [...this.enemies],
+                playerSpawn: this.playerSpawn ? { ...this.playerSpawn } : null
+            };
+        }
+
         const zoneLevel = ZoneStateManager.getZoneLevel(zoneX, zoneY);
         const isHomeZone = (zoneX === 0 && zoneY === 0);
 
@@ -239,6 +303,14 @@ export class ZoneGenerator {
         // Add shack with ~4% chance in Woods and Wilds zones (2 & 3)
         if ((zoneLevel === 2 || zoneLevel === 3) && Math.random() < 0.04) {
             structureGenerator.addShack(zoneX, zoneY);
+        }
+
+        // Add cistern with 5% chance in non-home zones for dimension 0
+        const shouldForceCistern = exitSide === 'port';
+        if (shouldForceCistern) {
+            structureGenerator.addCistern(zoneX, zoneY, true); // Force spawn
+        } else if (dimension === 0 && !isHomeZone && Math.random() < 0.05) {
+            structureGenerator.addCistern(zoneX, zoneY, false); // 5% chance
         }
 
         // Generate exits and add frontier sign if needed

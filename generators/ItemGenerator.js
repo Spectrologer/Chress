@@ -147,11 +147,6 @@ export class ItemGenerator {
         if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04) {
             this.addBowItem();
         }
-
-        // Add a cistern with a 4% chance in zones level 2-3
-        if ((this.zoneLevel === 2 || this.zoneLevel === 3) && Math.random() < 0.04) {
-            this.addCisternItem();
-        }
     }
 
     addAxeItem() {
@@ -352,21 +347,23 @@ export class ItemGenerator {
         }
     }
 
-    addCisternItem() {
-        // Try to place the cistern in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            // Place away from borders, need 1x2 space
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1; // x from 1 to GRID_SIZE-2
-            const y = Math.floor(Math.random() * (GRID_SIZE - 3)) + 1; // y from 1 to GRID_SIZE-3
+    addCisternItem(force = false) {
+        // Add a cistern with a 4% chance, or if forced
+        if (force || Math.random() < 0.04) {
+            // Try to place the cistern in a valid location (max 50 attempts)
+            for (let attempts = 0; attempts < 50; attempts++) {
+                // Place away from borders, need 1x2 space
+                const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1; // x from 1 to GRID_SIZE-2
+                const y = Math.floor(Math.random() * (GRID_SIZE - 3)) + 1; // y from 1 to GRID_SIZE-3
 
-            // Check if the 1x2 vertical space is free floor
-            if (this.grid[y][x] === TILE_TYPES.FLOOR && this.grid[y + 1][x] === TILE_TYPES.FLOOR) {
-                // Place the 1x2 cistern
-                this.grid[y][x] = TILE_TYPES.PORT;   // Top part (entrance)
-                this.grid[y + 1][x] = TILE_TYPES.CISTERN; // Bottom part
-
-                logger.log(`Cistern spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
-                break; // Successfully placed cistern
+                // Check if the 1x2 vertical space is free floor
+                if (this.grid[y][x] === TILE_TYPES.FLOOR && this.grid[y + 1][x] === TILE_TYPES.FLOOR) {
+                    // Place the 1x2 cistern
+                    this.grid[y][x] = TILE_TYPES.PORT;   // Top part (entrance)
+                    this.grid[y + 1][x] = TILE_TYPES.CISTERN; // Bottom part
+                    logger.log(`Cistern spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
+                    break; // Successfully placed cistern
+                }
             }
         }
     }

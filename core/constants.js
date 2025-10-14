@@ -202,6 +202,7 @@ export const IMAGE_ASSETS = [
     'flora/succulent.png',
     'flora/stump.png',
     'flora/blocklily.png',
+    'flora/boulder.png',
     'sign.png',
     'items/horse.png',
     'protag/default.png',

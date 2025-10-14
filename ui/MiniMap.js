@@ -146,6 +146,8 @@ export class MiniMap {
             return; // Skip drawing the regular zone grid
         }
 
+
+
         for (let dy = -range; dy <= range; dy++) {
             for (let dx = -range; dx <= range; dx++) {
                 // Panning: offsetX/offsetY are in tile units
@@ -157,8 +159,11 @@ export class MiniMap {
 
                 // Determine zone color with parchment-friendly palette
                 let color = '#C8B99C'; // Unexplored - darker parchment tone
-                if (this.game.player.hasVisitedZone(zoneX, zoneY)) {
+                if (this.game.player.hasVisitedZone(zoneX, zoneY, currentZone.dimension)) {
                     color = '#B8860B'; // Visited - darker gold
+                    if (currentZone.dimension === 2) {
+                        color = '#4B0082'; // Indigo for visited underground
+                    }
                 }
                 if (zoneX === currentZone.x && zoneY === currentZone.y) {
                     color = '#CD853F'; // Current - warm brown/gold
@@ -192,6 +197,8 @@ export class MiniMap {
                     // Draw the king symbol in the center of the tile
                     ctx.fillText('♔', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
                 }
+
+
             }
         }
     }

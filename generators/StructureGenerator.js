@@ -145,7 +145,7 @@ export class StructureGenerator {
             const x = Math.floor(Math.random() * ((GRID_SIZE - 5) - 1)) + 1; // x from 1 to GRID_SIZE-5 (3 for shack + 1 front + 1 border)
             const y = Math.floor(Math.random() * ((GRID_SIZE - 5) - 1)) + 1; // y from 1 to GRID_SIZE-5
 
-            // Check if all 3x3 tiles are free floor and space in front (south) is also free
+            // Check if all 3x3 tiles are free floor and space in front (south side, middle bottom)
             let free = true;
             // Check the 3x3 structure space
             for (let dy = 0; dy < 3 && free; dy++) {
@@ -173,6 +173,28 @@ export class StructureGenerator {
                 }
                 logger.log(`Shack spawned at zone (${zoneX}, ${zoneY})`);
                 break; // Successfully placed shack
+            }
+        }
+    }
+
+    addCistern(zoneX, zoneY, force = false) {
+        // Place a 1x2 cistern: PORT on top, CISTERN on bottom
+        // Try to place in a valid location (max 50 attempts)
+
+        // If not forced, check the 5% random chance
+        if (!force && Math.random() >= 0.05) return;
+
+        // Try to place the cistern (up to 100 attempts if forced, to be safe)
+        for (let attempts = 0; attempts < (force ? 100 : 50); attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1; // x from 1 to GRID_SIZE-2
+            const y = Math.floor(Math.random() * (GRID_SIZE - 3)) + 1; // y from 1 to GRID_SIZE-3
+
+            // Check if both tiles are free floor
+            if (this.grid[y][x] === TILE_TYPES.FLOOR && this.grid[y + 1][x] === TILE_TYPES.FLOOR) {
+                this.grid[y][x] = TILE_TYPES.PORT;     // Top part (entrance/exit)
+                this.grid[y + 1][x] = TILE_TYPES.CISTERN; // Bottom part
+                logger.log(`Cistern spawned at zone (${zoneX}, ${zoneY})`);
+                break; // Successfully placed cistern
             }
         }
     }

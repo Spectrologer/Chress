@@ -8,6 +8,8 @@ export class ZoneManager {
 
     transitionToZone(newZoneX, newZoneY, exitSide, exitX, exitY) {
         // Set flag to skip enemy movements this turn since player just entered zone
+        this.game.lastExitSide = exitSide; // Store how we entered for generation logic
+
         this.game.justEnteredZone = true;
 
         // Reset sign message tracking for the new zone
@@ -134,7 +136,11 @@ export class ZoneManager {
 
         // Check if we already have this zone loaded from saved state
         let zoneData;
-        if (this.game.zones.has(zoneKey)) {
+        // If entering via a port, we must regenerate the zone to ensure the corresponding port exists.
+        // This handles cases where a zone was generated without a port, but now needs one.
+        const isPortTransition = this.game.lastExitSide === 'port';
+
+        if (this.game.zones.has(zoneKey) && !isPortTransition) {
             // Use existing zone data (loaded from save or previously generated)
             zoneData = this.game.zones.get(zoneKey);
         } else {
@@ -145,7 +151,8 @@ export class ZoneManager {
                 currentZone.dimension,
                 this.game.zones,
                 this.game.connectionManager.zoneConnections,
-                this.game.availableFoodAssets
+                this.game.availableFoodAssets,
+                this.game.lastExitSide // Pass how the player entered
             );
             // Save the generated zone
             this.game.zones.set(zoneKey, zoneData);

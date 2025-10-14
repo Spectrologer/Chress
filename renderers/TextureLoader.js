@@ -31,6 +31,8 @@ export class TextureLoader {
                     imageKey = 'stump';
                 } else if (assetName === 'flora/blocklily.png') {
                     imageKey = 'blocklily';
+                } else if (assetName === 'flora/boulder.png') {
+                    imageKey = 'boulder';
                 } else if (assetName.startsWith('floors/dirt/')) {
                     imageKey = assetName.replace('floors/dirt/', '').replace('.png', '');
                 } else if (assetName.startsWith('items/')) {

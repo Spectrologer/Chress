@@ -14,6 +14,25 @@ export class WallTileRenderer {
             return;
         }
 
+        // Underground zones use boulder.png for walls
+        if (zoneLevel === 6) {
+            // First draw dirt background
+            if (RendererUtils.isImageLoaded(this.images, 'dircle')) {
+                ctx.drawImage(this.images.dircle, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            // Then overlay boulder on top
+            if (RendererUtils.isImageLoaded(this.images, 'boulder')) {
+                ctx.drawImage(this.images.boulder, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = '#8B4513'; // Brown fallback
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            return;
+        }
+
         // Frontier zones (level >=4) use desert background and succulent on top
         if (zoneLevel >= 4) {
                 if (RendererUtils.isImageLoaded(this.images, 'desert')) {

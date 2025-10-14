@@ -15,8 +15,8 @@ export class Player {
         this.animations = new PlayerAnimations(this);
         this.itemManager = null; // To be set by Game class
 
-        this.interactOnReach = null; // {x, y} - interact with this tile when reaching adjacent
-        this.markZoneVisited(0, 0);
+        this.interactOnReach = null; // {x, y} - interact with this tile when reaching adjacent        
+        this.markZoneVisited(0, 0, 0); // Start in dimension 0
     }
 
     move(newX, newY, grid, onZoneTransition) {
@@ -167,15 +167,15 @@ export class Player {
         this.currentZone.x = x;
         this.currentZone.y = y;
         this.currentZone.dimension = dimension;
-        this.markZoneVisited(x, y);
+        this.markZoneVisited(x, y, dimension);
     }
 
-    markZoneVisited(x, y) {
-        this.visitedZones.add(`${x},${y}`);
+    markZoneVisited(x, y, dimension) {
+        this.visitedZones.add(`${x},${y}:${dimension}`);
     }
 
-    hasVisitedZone(x, y) {
-        return this.visitedZones.has(`${x},${y}`);
+    hasVisitedZone(x, y, dimension) {
+        return this.visitedZones.has(`${x},${y}:${dimension}`);
     }
 
     getVisitedZones() {
@@ -214,7 +214,7 @@ export class Player {
     this.stats.reset();
     this.animations.reset();
     this.interactOnReach = null;
-    this.markZoneVisited(0, 0);
+    this.markZoneVisited(0, 0, 0);
     }
 
     // Thirst and Hunger management

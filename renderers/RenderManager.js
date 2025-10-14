@@ -4,6 +4,7 @@ import { PlayerRenderer } from './PlayerRenderer.js';
 import { EnemyRenderer } from './EnemyRenderer.js';
 import { AnimationRenderer } from './AnimationRenderer.js';
 import { UIRenderer } from './UIRenderer.js';
+import { FogRenderer } from './FogRenderer.js';
 
 export class RenderManager {
     constructor(game) {
@@ -16,6 +17,7 @@ export class RenderManager {
         this.enemyRenderer = new EnemyRenderer(game);
         this.animationRenderer = new AnimationRenderer(game);
         this.uiRenderer = new UIRenderer(game);
+        this.fogRenderer = new FogRenderer(game);
 
         // Disable image smoothing for crisp pixel art
         this.ctx.imageSmoothingEnabled = false;
@@ -57,6 +59,19 @@ export class RenderManager {
 
         // Draw charge confirmation indicator if active
         this.uiRenderer.drawChargeConfirmationIndicator();
+
+        // --- Apply overlays and atmospheric effects last ---
+        const currentZone = this.game.player.getCurrentZone();
+        if (currentZone.dimension === 2) {
+            // 1. Draw the dark overlay on top of everything drawn so far
+            this.ctx.save();
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.65)'; // 65% black overlay
+            this.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+            this.ctx.restore();
+
+            // 2. Draw the fog on top of the dark overlay
+            this.fogRenderer.updateAndDrawFog();
+        }
     }
 
     drawGrid() {
@@ -67,7 +82,9 @@ export class RenderManager {
         // Calculate zone level for texture rendering
         const zone = this.game.player.getCurrentZone();
         let zoneLevel;
-        if (zone.dimension === 1) {
+        if (zone.dimension === 2) {
+            zoneLevel = 6; // Underground zones
+        } else if (zone.dimension === 1) {
             zoneLevel = 5; // Interior zones
         } else {
             const dist = Math.max(Math.abs(zone.x), Math.abs(zone.y));

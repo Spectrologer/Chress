@@ -9,7 +9,13 @@ export class FeatureGenerator {
         this.foodAssets = foodAssets;
     }
 
-    addRandomFeatures(zoneLevel, zoneX, zoneY) {
+    addRandomFeatures(zoneLevel, zoneX, zoneY, isUnderground = false) {
+        // Underground zones have fewer features and no mazes
+        if (isUnderground) {
+            this.addUndergroundFeatures(zoneLevel, zoneX, zoneY);
+            return;
+        }
+
         // Check for maze zone generation
         if (this.shouldGenerateMaze(zoneLevel)) {
             this.generateMaze();
@@ -224,6 +230,69 @@ export class FeatureGenerator {
                 this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.ROCK;
             } else if (Math.random() < 0.4) {
                 this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.SHRUBBERY;
+            }
+        }
+    }
+
+    addUndergroundFeatures(zoneLevel, zoneX, zoneY) {
+        // Underground zones have simpler features - mostly rocks and some walls
+        let featureCount = Math.floor(Math.random() * 10) + 8; // Fewer features than surface
+
+        let placedCount = 0;
+        while (placedCount < featureCount) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+
+            // Avoid central cistern area (5x5 area around center)
+            const centerX = Math.floor(GRID_SIZE / 2);
+            const centerY = Math.floor(GRID_SIZE / 2);
+            if (Math.abs(x - centerX) <= 2 && Math.abs(y - centerY) <= 2) continue;
+
+            // Skip if a feature is already here to avoid overwriting
+            if (this.grid[y][x] !== TILE_TYPES.FLOOR) continue;
+
+            const featureType = Math.random();
+            if (featureType < 0.4) {
+                this.grid[y][x] = TILE_TYPES.ROCK; // Rocks for obstacles
+                placedCount++;
+            } else if (featureType < 0.6) {
+                this.grid[y][x] = TILE_TYPES.WALL; // Some walls for structure
+                placedCount++;
+            } else {
+                // Leave as floor for open spaces
+                this.grid[y][x] = TILE_TYPES.FLOOR;
+                placedCount++;
+            }
+        }
+
+        // Add chance tiles underground (lower chance)
+        if (Math.random() < 0.08) { // 8% chance vs 15% surface
+            this.addUndergroundChanceTile(zoneX, zoneY);
+        }
+    }
+
+    addUndergroundChanceTile(zoneX, zoneY) {
+        // Underground chance tile: mostly water/food, rare special items
+        for (let attempts = 0; attempts < 20; attempts++) {
+            const x = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2; // Avoid edges
+            const y = Math.floor(Math.random() * (GRID_SIZE - 4)) + 2;
+
+            // Avoid central cistern area
+            const centerX = Math.floor(GRID_SIZE / 2);
+            const centerY = Math.floor(GRID_SIZE / 2);
+            if (Math.abs(x - centerX) <= 2 && Math.abs(y - centerY) <= 2) continue;
+
+            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                const chanceType = Math.random();
+                if (chanceType < 0.7) { // 70% chance for water
+                    this.grid[y][x] = TILE_TYPES.WATER;
+                } else { // 30% chance for food
+                    const zoneKey = `${zoneX},${zoneY}`;
+                    const seed = ZoneStateManager.hashCode(zoneKey) % this.foodAssets.length;
+                    const selectedFood = this.foodAssets[seed];
+                    this.grid[y][x] = { type: TILE_TYPES.FOOD, foodType: selectedFood };
+                }
+                break;
             }
         }
     }
