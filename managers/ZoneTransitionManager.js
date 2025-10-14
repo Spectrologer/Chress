@@ -70,23 +70,27 @@ export class ZoneTransitionManager {
         const playerPos = this.game.player.getPosition();
         const currentDim = this.game.player.currentZone.dimension;
 
-        let targetDim;
+        let targetDim, portType;
         if (currentDim === 0) {
             // Check if this is a cistern portal (has CISTERN below)
             const cisternPos = MultiTileHandler.findCisternPosition(playerPos.x, playerPos.y, this.game.grid);
             if (cisternPos) {
                 // Entering underground via cistern
                 targetDim = 2;
+                portType = 'underground';
             } else {
                 // Entering interior via house/shack door
                 targetDim = 1;
+                portType = 'interior';
             }
         } else {
             // Exiting to surface from interior/under
             targetDim = 0;
+            portType = this.game.player.currentZone.portType;
         }
 
         this.game.player.currentZone.dimension = targetDim;
+        this.game.player.currentZone.portType = portType;
         this.game.transitionToZone(this.game.player.currentZone.x, this.game.player.currentZone.y, 'port', playerPos.x, playerPos.y);
     }
 

@@ -98,25 +98,10 @@ export class RenderManager {
             for (let x = 0; x < GRID_SIZE; x++) {
                 const tile = this.game.grid[y][x];
                 try {
-                    if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
-                        // Render pulsating bomb
-                        // First draw the background (floor)
-                        this.textureManager.renderTile(this.ctx, x, y, TILE_TYPES.FLOOR, this.game.grid, zoneLevel);
-                        const bombImage = this.game.textureManager.getImage('bomb');
-                        if (bombImage && bombImage.complete) {
-                            this.ctx.save();
-                            const scale = 1 + Math.sin(Date.now() * 0.005) * 0.1; // Pulsate
-                            const cx = x * TILE_SIZE + TILE_SIZE / 2;
-                            const cy = y * TILE_SIZE + TILE_SIZE / 2;
-                            this.ctx.translate(cx, cy);
-                            this.ctx.scale(scale, scale);
-                            this.ctx.translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
-                            this.ctx.drawImage(bombImage, 0, 0, TILE_SIZE, TILE_SIZE);
-                            this.ctx.restore();
-                        } else {
-                            this.ctx.fillStyle = '#444444';
-                            this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                        }
+                    // Handle bomb tiles specially
+                    if (tile === TILE_TYPES.BOMB) {
+                        // Primitive bomb (randomly generated) - render normally
+                        this.textureManager.renderTile(this.ctx, x, y, tile, this.game.grid, zoneLevel);
                     } else if (tile && tile.type === 'food') {
                         this.textureManager.renderTile(this.ctx, x, y, tile.type, this.game.grid, zoneLevel);
                     } else {

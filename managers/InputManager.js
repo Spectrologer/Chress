@@ -448,7 +448,7 @@ export class InputManager {
         }
 
         // Bombs (explode on interaction)
-        if (typeof tile === 'object' && tile.type === 'BOMB') {
+        if (typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
             return true;
         }
 

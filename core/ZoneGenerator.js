@@ -195,16 +195,65 @@ export class ZoneGenerator {
                     playerSpawn: { x: Math.floor(GRID_SIZE / 2), y: Math.floor(GRID_SIZE / 2) + 2 }
                 };
             } else {
+                // Shack interior: generate food/water items
                 // Ensure PORT tile exists at bottom-middle for exit
                 const portX = Math.floor(GRID_SIZE / 2);
                 const portY = GRID_SIZE - 1;
                 this.grid[portY][portX] = TILE_TYPES.PORT;
 
-                // Blank interior zones: place some basic content if needed
+                // Helper to find a valid spawn location in shack interior
+                const findValidShackSpawn = () => {
+                    const validSpawns = [];
+                    // Only spawn in the lower part, away from door
+                    for (let y = 2; y < GRID_SIZE - 2; y++) {
+                        for (let x = 1; x < GRID_SIZE - 1; x++) {
+                            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
+                                validSpawns.push({ x, y });
+                            }
+                        }
+                    }
+                    if (validSpawns.length > 0) {
+                        return validSpawns[Math.floor(Math.random() * validSpawns.length)];
+                    }
+                    return null;
+                };
+
+                // Determine number of food/water items to spawn (at least 2, with diminishing additional chances)
+                let additionalItems = 0;
+                if (Math.random() < 0.25) additionalItems++; // 25% chance for 3rd item
+                if (additionalItems >= 1 && Math.random() < 0.20) additionalItems++; // 20% chance for 4th item
+                if (additionalItems >= 2 && Math.random() < 0.15) additionalItems++; // 15% chance for 5th item
+                if (additionalItems >= 3 && Math.random() < 0.10) additionalItems++; // 10% chance for 6th item
+                if (additionalItems >= 4 && Math.random() < 0.05) additionalItems++; // 5% chance for 7th item
+                const totalItems = 2 + additionalItems;
+
+                // Spawn the items
+                for (let i = 0; i < totalItems; i++) {
+                    const pos = findValidShackSpawn();
+                    if (pos) {
+                        const isWater = Math.random() < 0.5;
+                        if (isWater) {
+                            this.grid[pos.y][pos.x] = TILE_TYPES.WATER;
+                        } else {
+                            // Spawn food if available
+                            if (this.foodAssets && this.foodAssets.length > 0) {
+                                this.grid[pos.y][pos.x] = {
+                                    type: TILE_TYPES.FOOD,
+                                    foodType: this.foodAssets[Math.floor(Math.random() * this.foodAssets.length)]
+                                };
+                            } else {
+                                // Fallback to water if no food assets
+                                this.grid[pos.y][pos.x] = TILE_TYPES.WATER;
+                            }
+                        }
+                    }
+                }
+
+                // Set player spawn away from walls and door
                 return {
                     grid: JSON.parse(JSON.stringify(this.grid)),
                     enemies: [],
-                    playerSpawn: { x: portX, y: Math.floor(GRID_SIZE / 2) }
+                    playerSpawn: { x: portX, y: Math.floor(GRID_SIZE / 2) + 1 }
                 };
             }
         }

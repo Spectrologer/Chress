@@ -352,7 +352,7 @@ export class InventoryManager {
                 if (isDouble) {
                     // Double click: drop bomb where player is standing
                     const px = this.game.player.x, py = this.game.player.y;
-                    this.game.grid[py][px] = { type: 'BOMB', actionsSincePlaced: 0, justPlaced: true };
+                    this.game.grid[py][px] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true };
                     const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
                     if (bombIndex !== -1) this.game.player.inventory.splice(bombIndex, 1);
                     this.game.uiManager.updatePlayerStats();

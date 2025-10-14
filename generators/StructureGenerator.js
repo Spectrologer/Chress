@@ -49,8 +49,9 @@ export class StructureGenerator {
 
         // Always add a cistern behind the house in the home zone (0,0)
         if (zoneX === 0 && zoneY === 0) {
-            this.grid[1][4] = TILE_TYPES.PORT;     // Top part (entrance)
-            this.grid[2][4] = TILE_TYPES.CISTERN; // Bottom part
+            // Place PORT tile two tiles above the sign (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
+            this.grid[3][2] = TILE_TYPES.PORT;     // Top part (entrance) - two tiles above the sign
+            this.grid[4][2] = TILE_TYPES.CISTERN; // Bottom part
         }
     }
 

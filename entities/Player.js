@@ -61,7 +61,7 @@ export class Player {
         if (this.isWalkable(newX, newY, grid, this.x, this.y)) {
             // Check if moving to active player-set bomb
             const tile = grid[newY][newX];
-            if (tile && typeof tile === 'object' && tile.type === 'BOMB') {
+            if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
                 window.gameInstance.explodeBomb(newX, newY);
                 return false; // Explode and launch, don't move normally
             }

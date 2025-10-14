@@ -139,14 +139,41 @@ export class ItemTileRenderer {
     }
 
     renderBombTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        const tile = grid[y][x];
+
         // First draw the base tile
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        // Try to draw the bomb image if loaded, otherwise use fallback
-        if (RendererUtils.isImageLoaded(this.images, 'bomb')) {
-            ctx.drawImage(this.images.bomb, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        // Get the bomb image
+        const bombImage = this.images.bomb;
+
+        console.log('Bomb image loaded:', bombImage && bombImage.complete, 'naturalWidth:', bombImage?.naturalWidth);
+
+        // Check if it's an object bomb (player-placed with animation timer)
+        if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
+            if (bombImage && bombImage.complete) {
+                ctx.save();
+                // Only animate if bomb is not just placed
+                if (!tile.justPlaced) {
+                    const scale = 1 + Math.sin(Date.now() * 0.005) * 0.1; // Pulsate
+                    const cx = pixelX + TILE_SIZE / 2;
+                    const cy = pixelY + TILE_SIZE / 2;
+                    ctx.translate(cx, cy);
+                    ctx.scale(scale, scale);
+                    ctx.translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
+                }
+                ctx.drawImage(bombImage, 0, 0, TILE_SIZE, TILE_SIZE);
+                ctx.restore();
+            } else {
+                this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BOMB], '💣');
+                console.log('Using fallback for object bomb');
+            }
+        } else if (bombImage && bombImage.complete) {
+            // Primitive bomb (randomly generated) - render normally without animation
+            ctx.drawImage(bombImage, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BOMB], '💣');
+            console.log('Using fallback for primitive bomb');
         }
     }
 

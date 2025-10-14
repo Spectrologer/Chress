@@ -116,7 +116,7 @@ export class CombatManager {
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
                 const tile = this.game.grid[y][x];
-                if (tile && typeof tile === 'object' && tile.type === 'BOMB') {
+                if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
                     if (tile.actionsSincePlaced >= 2) {
                         this.game.explodeBomb(x, y);
                     }

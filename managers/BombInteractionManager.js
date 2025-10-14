@@ -1,3 +1,5 @@
+import { TILE_TYPES } from '../core/constants.js';
+
 export class BombInteractionManager {
     constructor(game) {
         this.game = game;
@@ -10,7 +12,7 @@ export class BombInteractionManager {
         if (!placed) return false;
 
         // Place timed bomb here
-        this.game.grid[placed.y][placed.x] = { type: 'BOMB', actionsSincePlaced: 0, justPlaced: true };
+        this.game.grid[placed.y][placed.x] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true };
         const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
         if (bombIndex !== -1) this.game.player.inventory.splice(bombIndex, 1);
         this.game.uiManager.updatePlayerStats();
@@ -24,7 +26,7 @@ export class BombInteractionManager {
 
     triggerBombExplosion(gridCoords, playerPos) {
         const tapTile = this.game.grid[gridCoords.y][gridCoords.x];
-        if (!(tapTile && typeof tapTile === 'object' && tapTile.type === 'BOMB')) return false;
+        if (!(tapTile && typeof tapTile === 'object' && tapTile.type === TILE_TYPES.BOMB)) return false;
 
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);
@@ -40,7 +42,7 @@ export class BombInteractionManager {
 
     forceBombTrigger(gridCoords) {
         const tapTile = this.game.grid[gridCoords.y][gridCoords.x];
-        if (!(tapTile && typeof tapTile === 'object' && tapTile.type === 'BOMB')) return;
+        if (!(tapTile && typeof tapTile === 'object' && tapTile.type === TILE_TYPES.BOMB)) return;
 
         // Force immediate explosion without action count
         tapTile.actionsSincePlaced = 2;  // Trigger immediate explosion
