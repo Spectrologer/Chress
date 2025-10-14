@@ -397,7 +397,7 @@ export class StructureTileRenderer {
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern') && this.images['doodads/cistern'].complete) {
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern') && this.images['doodads/cistern'].complete && this.images['doodads/cistern'].naturalWidth > 0) {
             const cisternImage = this.images['doodads/cistern'];
             const partWidth = cisternImage.width; // 16
             const partHeight = cisternImage.height / 2; // 9
