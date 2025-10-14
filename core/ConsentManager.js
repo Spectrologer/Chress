@@ -59,7 +59,9 @@ export class ConsentManager {
 
     handleConsent(didConsent) {
         localStorage.setItem(this.consentKey, didConsent);
-        this.game.uiManager.hideOverlayMessage(); // Hide the message overlay
+        if (this.game.uiManager && typeof this.game.uiManager.hideOverlayMessage === 'function') {
+            this.game.uiManager.hideOverlayMessage(); // Hide the message overlay
+        }
 
         if (didConsent) {
             this.enableTracking();
