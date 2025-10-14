@@ -54,7 +54,10 @@ export class UIManager {
                 else if (dist <= 16) zoneLevel = 3;
                 else zoneLevel = 4;
 
-                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Z:${zoneLevel}, ${zone.x},${zone.y}<br>Level ${zoneLevel}</span>`;
+                const totalDiscoveries = this.game.player.getVisitedZones().size;
+                const spentDiscoveries = this.game.player.spentDiscoveries || 0;
+                const availableDiscoveries = totalDiscoveries - spentDiscoveries;
+                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Z-${zoneLevel}, ${zone.x},${zone.y}<br>DISCOVERIES: ${availableDiscoveries}</span>`;
             } else {
                 const totalDiscoveries = this.game.player.getVisitedZones().size;
                 const spentDiscoveries = this.game.player.spentDiscoveries || 0;

@@ -9,6 +9,7 @@ export class Player {
         this.currentZone = { x: 0, y: 0, dimension: 0 };
         this.visitedZones = new Set();
         this.inventory = [];
+        this.abilities = new Set(); // Track player abilities
         this.sprite = 'SeparateAnim/Special2';
 
         this.stats = new PlayerStats(this);
@@ -83,7 +84,7 @@ export class Player {
             const isAdjacentOrthogonal = (deltaX === 1 && deltaY === 0) || (deltaX === 0 && deltaY === 1);
 
             if (isAdjacentOrthogonal) {
-                const hasAxe = this.inventory.some(item => item.type === 'axe');
+                const hasAxe = this.abilities.has('axe');
                 if (hasAxe && (tile === TILE_TYPES.GRASS || tile === TILE_TYPES.SHRUBBERY)) {
                     // Chop at target position without moving
                     const isBorder = newX === 0 || newX === GRID_SIZE - 1 || newY === 0 || newY === GRID_SIZE - 1;
@@ -209,6 +210,7 @@ export class Player {
     this.y = ZONE_CONSTANTS.PLAYER_SPAWN_POSITION.y;
     this.currentZone = { x: 0, y: 0, dimension: 0 };
     this.inventory = [];
+    this.abilities.clear();
     this.sprite = 'SeparateAnim/Special2';
     this.visitedZones.clear();
     this.stats.reset();

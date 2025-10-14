@@ -100,7 +100,8 @@ export const TILE_TYPES = {
     BOW: 41,
     MARK: 43,
     SHACK: 44,
-    CISTERN: 45
+    CISTERN: 45,
+    AXELOTL: 46
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -196,7 +197,9 @@ export const IMAGE_ASSETS = [
     'fauna/felt.png',
     'fauna/forge.png',
     'fauna/mark.png',
+    'fauna/axolotl.png',
     'fauna/forgeface.png',
+    'fauna/axolotlface.png',
     'fauna/zard.png',
     'floors/frontier/desert.png',
     'flora/succulent.png',

@@ -94,6 +94,21 @@ export class NPCInteractionManager {
         return false;
     }
 
+    interactWithAxelotl(gridCoords) {
+        const playerPos = this.game.player.getPosition();
+        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        if (targetTile !== TILE_TYPES.AXELOTL) return false;
+
+        const dx = Math.abs(gridCoords.x - playerPos.x);
+        const dy = Math.abs(gridCoords.y - playerPos.y);
+        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+        if (isAdjacent) {
+            this.game.uiManager.showBarterWindow('axelotl');
+            return true;
+        }
+        return false;
+    }
+
     interactWithCrayn(gridCoords) {
         const playerPos = this.game.player.getPosition();
         const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
@@ -210,6 +225,10 @@ export class NPCInteractionManager {
                 this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
                 npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
             }
+            return;
+        }
+        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.AXELOTL) {
+            this.game.uiManager.showBarterWindow('axelotl');
             return;
         }
     }

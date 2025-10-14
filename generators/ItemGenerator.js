@@ -86,13 +86,12 @@ export class ItemGenerator {
         const enemyProbability = baseEnemyProbability + Math.floor(ZoneStateManager.zoneCounter / 10) * 0.01;
         // This will be handled by the main generator
 
-        // Check if the current zone is the designated spawn zone for an item
-        if (ZoneStateManager.axeSpawnZone && this.zoneX === ZoneStateManager.axeSpawnZone.x && this.zoneY === ZoneStateManager.axeSpawnZone.y && !ZoneStateManager.axeSpawned) {
-            this.addAxeItem();
-        }
         if (ZoneStateManager.hammerSpawnZone && this.zoneX === ZoneStateManager.hammerSpawnZone.x && this.zoneY === ZoneStateManager.hammerSpawnZone.y && !ZoneStateManager.hammerSpawned) {
             this.addHammerItem();
         }
+
+        // Define a multiplier for item spawn rates in the underground dimension
+        const undergroundMultiplier = this.dimension === 2 ? 1.5 : 1.0;
 
         // Add a rare lion with 2% chance per zone, only on surface
         if (this.dimension === 0 && Math.random() < 0.02) { // 2% chance
@@ -100,32 +99,32 @@ export class ItemGenerator {
         }
 
         // Add a rare squig with 2% chance per zone, only on surface
-        if (this.dimension === 0 && Math.random() < 0.02) { // 2% chance
+        if (this.dimension === 0 && Math.random() < 0.02 * undergroundMultiplier) { // 2% chance
             this.addSquigItem();
         }
 
         // Add a rare nib with 2% chance per zone, only in underground
-        if (this.dimension === 2 && Math.random() < 0.02) { // 2% chance
+        if (this.dimension === 2 && Math.random() < 0.02 * undergroundMultiplier) { // 2% chance
             this.addNibItem();
         }
 
         // Add a rare Mark with 2% chance per zone, only on surface
-        if (this.dimension === 0 && Math.random() < 0.02) { // 2% chance
+        if (this.dimension === 0 && Math.random() < 0.02 * undergroundMultiplier) { // 2% chance
             this.addMarkItem();
         }
 
         // Add a rare rune with 2% chance per zone, only in underground
-        if (this.dimension === 2 && Math.random() < 0.02) { // 2% chance
+        if (this.dimension === 2 && Math.random() < 0.02 * undergroundMultiplier) { // 2% chance
             this.addRuneItem();
         }
 
         // Add a rare note with 4% chance per zone
-        if (Math.random() < 0.04) { // 4% chance (reduced slightly)
+        if (Math.random() < 0.04 * undergroundMultiplier) { // 4% chance (reduced slightly)
             this.addNoteItem();
         }
 
         // Add a bishop spear with a 4% chance in zones level 2-4
-        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04) {
+        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04 * undergroundMultiplier) {
             this.addSpearItem();
         }
 
@@ -135,42 +134,23 @@ export class ItemGenerator {
         }
 
         // Add a bomb with a 4% chance in zones level 2-4
-        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04) {
+        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04 * undergroundMultiplier) {
             this.addBombItem();
         }
 
         // Add a heart with a 2.5% chance in zones level 2-4 (slightly rarer than bombs)
-        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.025) {
+        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.025 * undergroundMultiplier) {
             this.addHeartItem();
         }
 
         // Add a bow with a 4% chance in zones level 2-4
-        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04) {
+        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04 * undergroundMultiplier) {
             this.addBowItem();
         }
-    }
 
-    addAxeItem() {
-        // Try to place the axe in a valid location (max 50 attempts)
-        let axeX = null;
-        let axeY = null;
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.AXE;
-                axeX = x;
-                axeY = y;
-                ZoneStateManager.axeSpawned = true;
-                break; // Successfully placed axe
-            }
-        }
-
-        // Ensure a clear path to the axe from the center
-        if (axeX !== null && axeY !== null) {
-            this.clearPathToCenter(axeX, axeY);
+        // Add Axe-O-Lot'l with 100% chance in underground 0,0
+        if (this.dimension === 2 && this.zoneX === 0 && this.zoneY === 0) {
+            this.addAxelotlItem();
         }
     }
 
@@ -364,6 +344,31 @@ export class ItemGenerator {
                     this.grid[y + 1][x] = TILE_TYPES.CISTERN; // Bottom part
                     logger.log(`Cistern spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
                     break; // Successfully placed cistern
+                }
+            }
+        }
+    }
+
+    addAxelotlItem() {
+        // Try to place the axelotl near the cistern (around center area)
+        const centerX = Math.floor(GRID_SIZE / 2);
+        const centerY = Math.floor(GRID_SIZE / 2);
+
+        // Try placing near the center first, then expand outward
+        for (let r = 0; r < 5; r++) { // Radius around center
+            for (let dx = -r; dx <= r; dx++) {
+                for (let dy = -r; dy <= r; dy++) {
+                    const x = centerX + dx;
+                    const y = centerY + dy;
+
+                    // Check bounds and only place on floor tiles
+                    if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1 &&
+                        this.grid[y][x] === TILE_TYPES.FLOOR &&
+                        !(Math.abs(dx) < 2 && Math.abs(dy) < 2)) { // Avoid central cistern area
+                        this.grid[y][x] = TILE_TYPES.AXELOTL;
+                        logger.log(`Axe-O-Lot'l spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
+                        return; // Successfully placed axelotl
+                    }
                 }
             }
         }

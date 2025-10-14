@@ -150,6 +150,22 @@ export class Sign {
                 }
             ]
         },
+        axelotl: {
+            name: 'Axe-O-Lot\'l',
+            portrait: 'assets/fauna/axolotlface.png',
+            message: 'Colors are my specialty. By something sharp?',
+            subclass: 'merchant',
+            trades: [
+                {
+                    id: 'axelotl_axe',
+                    requiredItem: 'points',
+                    requiredAmount: 10,
+                    requiredItemImg: 'assets/items/points.png',
+                    receivedItemName: 'Axe',
+                    receivedItemImg: 'assets/items/axe.png'
+                }
+            ]
+        },
     };
 
     static getProceduralMessage(zoneX, zoneY, usedMessagesSet = Sign.spawnedMessages) {

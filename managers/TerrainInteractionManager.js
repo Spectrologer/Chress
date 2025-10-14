@@ -9,7 +9,7 @@ export class TerrainInteractionManager {
         const tappedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
         const isAdjacent = Math.abs(gridCoords.x - playerPos.x) <= 1 && Math.abs(gridCoords.y - playerPos.y) <= 1 &&
                            !(gridCoords.x === playerPos.x && gridCoords.y === playerPos.y);
-        const hasAxe = this.game.player.inventory.some(item => item.type === 'axe');
+        const hasAxe = this.game.player.abilities.has('axe');
         const hasHammer = this.game.player.inventory.some(item => item.type === 'hammer');
 
         if (!isAdjacent) return false;
@@ -40,7 +40,7 @@ export class TerrainInteractionManager {
     forceChoppableAction(gridCoords, playerPos) {
         // For forced interactions when arriving adjacent via pathing
         const tappedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        const hasAxe = this.game.player.inventory.some(item => item.type === 'axe');
+        const hasAxe = this.game.player.abilities.has('axe');
         const hasHammer = this.game.player.inventory.some(item => item.type === 'hammer');
 
         if ((tappedTile === TILE_TYPES.GRASS || tappedTile === TILE_TYPES.SHRUBBERY)) {

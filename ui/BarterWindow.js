@@ -166,6 +166,11 @@ export class BarterWindow {
             this.game.player.inventory.push({ type: 'food', foodType: 'food/meat/beaf.png' });
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} Discoveries for meat.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+        } else if (tradeData.id === 'axelotl_axe') { // Trade points for axe ability
+            this.game.player.addPoints(-tradeData.requiredAmount);
+            this.game.player.abilities.add('axe');
+            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for axe ability.`);
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic
             const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));

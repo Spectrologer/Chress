@@ -232,9 +232,6 @@ export class ZoneGenerator {
                 featureGenerator.addRandomFeatures(zoneLevel, zoneX, zoneY, true); // Pass true for underground
             }
 
-            // Add level-based items and enemies in underground
-            itemGenerator.addLevelBasedFoodAndWater();
-
             // If entering from a port, guarantee a cistern. Otherwise, 4% chance.
             const shouldForceCistern = exitSide === 'port';
             if (shouldForceCistern) {
@@ -325,12 +322,6 @@ export class ZoneGenerator {
 
             // Add random features
             featureGenerator.addRandomFeatures(zoneLevel, zoneX, zoneY);
-
-            // Add axe warning sign in the 2nd discovered zone
-            if (ZoneStateManager.zoneCounter === 2 && !ZoneStateManager.axeWarningSignPlaced) {
-                structureGenerator.addSign("FIND YOUR AXE<br>IN HOME");
-                ZoneStateManager.axeWarningSignPlaced = true;
-            }
 
             // Add hammer warning sign in the first level 2 zone encountered
             if (zoneLevel === 2 && !ZoneStateManager.hammerWarningSignPlaced) {

@@ -37,16 +37,6 @@ const consoleCommands = {
   },
 
   // Item spawn commands
-  spawnAxe: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.AXE;
-      logger.log('Spawned axe at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
   spawnHammer: function(game) {
     const pos = findSpawnPosition(game);
     if (pos) {
@@ -247,7 +237,6 @@ const consoleCommands = {
 
   hotkeyB: function(game) { this.spawnBomb(game); },
   hotkeyH: function(game) { this.spawnHorseIcon(game); },
-  hotkeyA: function(game) { this.spawnAxe(game); },
   hotkeyM: function(game) { this.spawnHammer(game); },
   hotkeyS: function(game) { this.spawnBishopSpear(game); },
   hotkeyN: function(game) { this.spawnNote(game); },
@@ -289,7 +278,6 @@ const consoleCommands = {
       // Items
       if (lowerKey === 'b') { this.hotkeyB(game); return true; }
       if (lowerKey === 'h') { this.hotkeyH(game); return true; }
-      if (lowerKey === 'a') { this.hotkeyA(game); return true; }
       if (lowerKey === 'm') { this.hotkeyM(game); return true; }
       if (lowerKey === 's') { this.hotkeyS(game); return true; }
       if (lowerKey === 'n') { this.hotkeyN(game); return true; }

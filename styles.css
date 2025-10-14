@@ -268,6 +268,12 @@ body {
     width: 24px;
     height: 24px;
 }
+
+.axe-ability-icon {
+    width: 24px;
+    height: 24px;
+    display: none; /* Hidden by default, shown when player has ability */
+}
 .player-bars {
     display: flex;
     flex-direction: column;

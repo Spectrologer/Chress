@@ -252,10 +252,10 @@ export class FeatureGenerator {
             if (this.grid[y][x] !== TILE_TYPES.FLOOR) continue;
 
             const featureType = Math.random();
-            if (featureType < 0.4) {
+            if (featureType < 0.6) { // Increased rock chance
                 this.grid[y][x] = TILE_TYPES.ROCK; // Rocks for obstacles
                 placedCount++;
-            } else if (featureType < 0.6) {
+            } else if (featureType < 0.8) { // Reduced wall chance
                 this.grid[y][x] = TILE_TYPES.WALL; // Some walls for structure
                 placedCount++;
             } else {

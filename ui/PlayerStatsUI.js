@@ -46,6 +46,12 @@ export class PlayerStatsUI {
             heart.classList.toggle('pulsating', isLastHeart);
         });
 
+        // Update axe ability display
+        const axeIcon = document.querySelector('.axe-ability-icon');
+        if (axeIcon) {
+            axeIcon.style.display = this.game.player.abilities.has('axe') ? 'block' : 'none';
+        }
+
         // Update inventory display
         this.game.inventoryManager.updateInventoryDisplay();
     }
