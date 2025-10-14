@@ -217,7 +217,7 @@ export class ZoneGenerator {
             // Initialize specialized generators
             const structureGenerator = new StructureGenerator(this.grid);
             const featureGenerator = new FeatureGenerator(this.grid, foodAssets);
-            const itemGenerator = new ItemGenerator(this.grid, foodAssets, zoneX, zoneY);
+            const itemGenerator = new ItemGenerator(this.grid, foodAssets, zoneX, zoneY, dimension);
             const enemyGenerator = new EnemyGenerator(this.enemies);
             const pathGenerator = new PathGenerator(this.grid);
 
@@ -243,6 +243,9 @@ export class ZoneGenerator {
                 itemGenerator.addCisternItem(); // 4% chance
             }
 
+            // Add special zone items - this includes nib and rune spawning logic which are now restricted to underground
+            itemGenerator.addSpecialZoneItems();
+
             // Higher enemy chance in underground for challenge
             const baseProbabilities = { 1: 0.15, 2: 0.20, 3: 0.22, 4: 0.27 };
             const baseEnemyProbability = baseProbabilities[zoneLevel] || 0.15;
@@ -252,10 +255,6 @@ export class ZoneGenerator {
                 enemyGenerator.addRandomEnemyWithValidation(zoneLevel, zoneX, zoneY, this.grid, []);
             }
 
-            // Add special zone items (less common in underground)
-            if (Math.random() < 0.3) { // 30% chance instead of always
-                itemGenerator.addSpecialZoneItems();
-            }
 
             // Ensure exit accessibility
             pathGenerator.ensureExitAccess();
@@ -279,7 +278,7 @@ export class ZoneGenerator {
         // Initialize specialized generators
         const structureGenerator = new StructureGenerator(this.grid);
         const featureGenerator = new FeatureGenerator(this.grid, foodAssets);
-        const itemGenerator = new ItemGenerator(this.grid, foodAssets, zoneX, zoneY);
+        const itemGenerator = new ItemGenerator(this.grid, foodAssets, zoneX, zoneY, dimension);
         const enemyGenerator = new EnemyGenerator(this.enemies);
         const pathGenerator = new PathGenerator(this.grid);
 
@@ -448,22 +447,31 @@ export class ZoneGenerator {
                 }
             }
 
-            // Apply exits based on pre-generated connections with bounds checking
-            if (connections.north !== null && connections.north >= 0 && connections.north < GRID_SIZE) {
-                this.grid[0][connections.north] = TILE_TYPES.EXIT;
+            // For underground zones, severely reduce connectivity - only 10% chance to have each connection
+            let effectiveConnections = { ...connections };
+            if (this.currentDimension === 2) {
+                effectiveConnections.north = connections.north !== null && Math.random() < 0.10 ? connections.north : null;
+                effectiveConnections.south = connections.south !== null && Math.random() < 0.10 ? connections.south : null;
+                effectiveConnections.west = connections.west !== null && Math.random() < 0.10 ? connections.west : null;
+                effectiveConnections.east = connections.east !== null && Math.random() < 0.10 ? connections.east : null;
             }
-            if (connections.south !== null && connections.south >= 0 && connections.south < GRID_SIZE) {
-                this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.EXIT;
+
+            // Apply exits based on effective connections with bounds checking
+            if (effectiveConnections.north !== null && effectiveConnections.north >= 0 && effectiveConnections.north < GRID_SIZE) {
+                this.grid[0][effectiveConnections.north] = TILE_TYPES.EXIT;
             }
-            if (connections.west !== null && connections.west >= 0 && connections.west < GRID_SIZE) {
-                this.grid[connections.west][0] = TILE_TYPES.EXIT;
+            if (effectiveConnections.south !== null && effectiveConnections.south >= 0 && effectiveConnections.south < GRID_SIZE) {
+                this.grid[GRID_SIZE - 1][effectiveConnections.south] = TILE_TYPES.EXIT;
             }
-            if (connections.east !== null && connections.east >= 0 && connections.east < GRID_SIZE) {
-                this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.EXIT;
+            if (effectiveConnections.west !== null && effectiveConnections.west >= 0 && effectiveConnections.west < GRID_SIZE) {
+                this.grid[effectiveConnections.west][0] = TILE_TYPES.EXIT;
+            }
+            if (effectiveConnections.east !== null && effectiveConnections.east >= 0 && effectiveConnections.east < GRID_SIZE) {
+                this.grid[effectiveConnections.east][GRID_SIZE - 1] = TILE_TYPES.EXIT;
             }
 
             // Block some exits with shrubbery in Frontier regions (zone level 4)
-            featureGenerator.blockExitsWithShrubbery(zoneLevel, connections);
+            featureGenerator.blockExitsWithShrubbery(zoneLevel, effectiveConnections);
         }
     }
 

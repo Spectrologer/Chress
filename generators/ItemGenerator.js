@@ -5,11 +5,12 @@ import { PathGenerator } from './PathGenerator.js';
 import logger from '../core/logger.js';
 
 export class ItemGenerator {
-    constructor(grid, foodAssets, zoneX, zoneY) {
+    constructor(grid, foodAssets, zoneX, zoneY, dimension) {
         this.grid = grid;
         this.foodAssets = foodAssets;
         this.zoneX = zoneX;
         this.zoneY = zoneY;
+        this.dimension = dimension || 0;
         this.zoneLevel = ZoneStateManager.getZoneLevel(zoneX, zoneY);
     }
 
@@ -93,30 +94,30 @@ export class ItemGenerator {
             this.addHammerItem();
         }
 
-        // Add a rare lion with 2% chance per zone
-        if (Math.random() < 0.02) { // 2% chance
+        // Add a rare lion with 2% chance per zone, only on surface
+        if (this.dimension === 0 && Math.random() < 0.02) { // 2% chance
             this.addLionItem();
         }
 
-        // Add a rare squig with 2% chance per zone
-        if (Math.random() < 0.02) { // 2% chance
+        // Add a rare squig with 2% chance per zone, only on surface
+        if (this.dimension === 0 && Math.random() < 0.02) { // 2% chance
             this.addSquigItem();
         }
 
-        // Add a rare nib with 2% chance per zone
-        if (Math.random() < 0.02) { // 2% chance
+        // Add a rare nib with 2% chance per zone, only in underground
+        if (this.dimension === 2 && Math.random() < 0.02) { // 2% chance
             this.addNibItem();
         }
 
-        // Add a rare Mark with 2% chance per zone
-        if (Math.random() < 0.02) { // 2% chance
+        // Add a rare Mark with 2% chance per zone, only on surface
+        if (this.dimension === 0 && Math.random() < 0.02) { // 2% chance
             this.addMarkItem();
         }
 
-        // Add a rare rune with 2% chance per zone
-        // if (Math.random() < 0.02) { // 2% chance
-        //     this.addRuneItem();
-        // }
+        // Add a rare rune with 2% chance per zone, only in underground
+        if (this.dimension === 2 && Math.random() < 0.02) { // 2% chance
+            this.addRuneItem();
+        }
 
         // Add a rare note with 4% chance per zone
         if (Math.random() < 0.04) { // 4% chance (reduced slightly)
