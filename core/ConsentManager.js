@@ -9,15 +9,18 @@ export class ConsentManager {
     }
 
     initialize() {
-        const consent = localStorage.getItem(this.consentKey);
-        logger.log('Consent from localStorage:', consent);
+        // Delay the consent check to ensure UI managers are fully initialized
+        setTimeout(() => {
+            const consent = localStorage.getItem(this.consentKey);
+            logger.log('Consent from localStorage:', consent);
 
-        if (consent === 'true') {
-            this.enableTracking();
-        } else if (consent === null) {
-            this.showConsentBanner();
-        }
-        // If consent is 'false' or not given, tracking remains disabled.
+            if (consent === 'true') {
+                this.enableTracking();
+            } else if (consent === null) {
+                this.showConsentBanner();
+            }
+            // If consent is 'false' or not given, tracking remains disabled.
+        }, 100);
     }
 
     showConsentBanner() {
@@ -35,7 +38,11 @@ export class ConsentManager {
             </div>
         `;
 
-        this.game.uiManager.showOverlayMessage(html, null, true, true); // overlay, persistent
+        if (this.game.uiManager && typeof this.game.uiManager.showOverlayMessage === 'function') {
+            this.game.uiManager.showOverlayMessage(html, null, true, true); // overlay, persistent
+        } else {
+            logger.error('UIManager.showOverlayMessage not available');
+        }
 
         // Attach event listeners after a short delay to ensure the HTML is rendered
         setTimeout(() => {
