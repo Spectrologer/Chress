@@ -100,11 +100,17 @@ export class BaseTileRenderer {
             if (cisternInfo) {
                 // The PORT is the top part of the cistern.
                 this.structureRenderer.renderCisternTop(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-            } else if (this.multiTileHandler.findShackPosition(x, y, grid)) {
-                this.structureRenderer.renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
             } else {
-                // Default to house if not a shack
-                this.structureRenderer.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+                // Check if it's a door for a shack or house.
+                // A PORT is a door if it's part of a larger structure.
+                // A cistern PORT might be isolated or next to an EXIT, not part of a house/shack structure.
+                const isShack = this.multiTileHandler.findShackPosition(x, y, grid);
+                if (isShack) {
+                    this.structureRenderer.renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+                } else {
+                    // Default to house if not a shack
+                    this.structureRenderer.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+                }
             }
         } else {
             this.renderFloorTile(ctx, pixelX, pixelY, actualType);

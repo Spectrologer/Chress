@@ -35,7 +35,7 @@ export class ConsentManager {
             </div>
         `;
 
-        this.game.uiManager.showMessage(html, null, true, true); // overlay, persistent
+        this.game.uiManager.showOverlayMessage(html, null, true, true); // overlay, persistent
 
         // Attach event listeners after a short delay to ensure the HTML is rendered
         setTimeout(() => {

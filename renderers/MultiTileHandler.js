@@ -1,10 +1,10 @@
 import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
 
 export class MultiTileHandler {
-    static findHousePosition(targetX, targetY, grid) {
+    static findHousePosition(targetX, targetY, grid, isStrictCheck = false) {
         // Find the top-left corner of the 4x3 club that contains this tile
         for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
-            for (let startX = Math.max(0, targetX - 3); startX <= Math.min(GRID_SIZE - 4, targetX); startX++) {
+            for (let startX = Math.max(0, targetX - 3); startX <= Math.min(GRID_SIZE - 4, targetX); startX++) {                
                 // Check if there's a 4x3 club starting at this position
                 let isHouse = true;
                 for (let y = startY; y < startY + 3 && isHouse; y++) { // 3 tiles high
@@ -17,6 +17,11 @@ export class MultiTileHandler {
                     }
                 }
 
+                // If doing a strict check (e.g., for cistern detection), ensure the target tile itself is a HOUSE or PORT.
+                if (isStrictCheck && isHouse) {
+                    const targetTile = grid[targetY]?.[targetX];
+                    if (!(targetTile === TILE_TYPES.HOUSE || targetTile === TILE_TYPES.PORT)) continue;
+                }
                 if (isHouse && targetX >= startX && targetX < startX + 4 &&
                     targetY >= startY && targetY < startY + 3) {
                     return { startX, startY };
@@ -74,10 +79,10 @@ export class MultiTileHandler {
         return null;
     }
 
-    static findShackPosition(targetX, targetY, grid) {
+    static findShackPosition(targetX, targetY, grid, isStrictCheck = false) {
         // Find the top-left corner of the shack that contains this tile
         for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
-            for (let startX = Math.max(0, targetX - 2); startX <= Math.min(GRID_SIZE - 3, targetX); startX++) {
+            for (let startX = Math.max(0, targetX - 2); startX <= Math.min(GRID_SIZE - 3, targetX); startX++) {                
                 // Check if there's a 3x3 shack starting at this position
                 let isShack = true;
                 for (let y = startY; y < startY + 3 && isShack; y++) {
@@ -90,6 +95,11 @@ export class MultiTileHandler {
                     }
                 }
 
+                // If doing a strict check (e.g., for cistern detection), ensure the target tile itself is a SHACK or PORT.
+                if (isStrictCheck && isShack) {
+                    const targetTile = grid[targetY]?.[targetX];
+                    if (!(targetTile === TILE_TYPES.SHACK || targetTile === TILE_TYPES.PORT)) continue;
+                }
                 if (isShack && targetX >= startX && targetX < startX + 3 &&
                     targetY >= startY && targetY < startY + 3) {
                     return { startX, startY };
@@ -110,8 +120,8 @@ export class MultiTileHandler {
         // Check if the current tile is the top part.
         if (targetY < GRID_SIZE - 1 && grid[targetY][targetX] === TILE_TYPES.PORT && grid[targetY + 1][targetX] === TILE_TYPES.CISTERN) {
             // Before confirming, ensure this isn't a door for a shack or house
-            const shackInfo = this.findShackPosition(targetX, targetY, grid);
-            const houseInfo = this.findHousePosition(targetX, targetY, grid);
+            const shackInfo = this.findShackPosition(targetX, targetY, grid, true);
+            const houseInfo = this.findHousePosition(targetX, targetY, grid, true);
             if (!shackInfo && !houseInfo) {
                 return { startX: targetX, startY: targetY };
             }

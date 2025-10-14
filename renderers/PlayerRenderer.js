@@ -77,8 +77,8 @@ export class PlayerRenderer {
                         // For cisterns, arrow points down to enter, and up to exit.
                         rotationAngle = this.game.player.currentZone.dimension === 0 ? Math.PI : 0;
                     } else {
-                        // For other structures (house, shack), arrow always points up to indicate entry/exit.
-                        rotationAngle = 0;
+                        // For other structures (house, shack), arrow points down to enter, and up to exit.
+                        rotationAngle = this.game.player.currentZone.dimension === 0 ? 0 : Math.PI;
                     }
 
                 } else { // It's an EXIT tile
