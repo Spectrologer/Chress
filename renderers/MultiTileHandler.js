@@ -98,4 +98,25 @@ export class MultiTileHandler {
         }
         return null;
     }
+
+    static findCisternPosition(targetX, targetY, grid) {
+        // Find the top-left corner of the 1x2 cistern that contains this tile
+        // The structure is a top PORT tile and a bottom CISTERN tile.
+        // Check if the current tile is the bottom part.
+        if (targetY > 0 && grid[targetY][targetX] === TILE_TYPES.CISTERN && grid[targetY - 1][targetX] === TILE_TYPES.PORT) {
+            return { startX: targetX, startY: targetY - 1 };
+        }
+    
+        // Check if the current tile is the top part.
+        if (targetY < GRID_SIZE - 1 && grid[targetY][targetX] === TILE_TYPES.PORT && grid[targetY + 1][targetX] === TILE_TYPES.CISTERN) {
+            // Before confirming, ensure this isn't a door for a shack or house
+            const shackInfo = this.findShackPosition(targetX, targetY, grid);
+            const houseInfo = this.findHousePosition(targetX, targetY, grid);
+            if (!shackInfo && !houseInfo) {
+                return { startX: targetX, startY: targetY };
+            }
+        }
+    
+        return null;
+    }
 }

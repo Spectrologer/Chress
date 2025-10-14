@@ -92,10 +92,15 @@ export class BaseTileRenderer {
             this.structureRenderer.renderForgeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.SHACK) {
             this.structureRenderer.renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.CISTERN) {
+            this.structureRenderer.renderCisternTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.PORT) {
             // PORT tiles are invisible overlays. Render the structure tile underneath them.
-            // Check if it's part of a house or a shack.
-            if (this.multiTileHandler.findShackPosition(x, y, grid)) {
+            const cisternInfo = this.multiTileHandler.findCisternPosition(x, y, grid);
+            if (cisternInfo) {
+                // The PORT is the top part of the cistern.
+                this.structureRenderer.renderCisternTop(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+            } else if (this.multiTileHandler.findShackPosition(x, y, grid)) {
                 this.structureRenderer.renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
             } else {
                 // Default to house if not a shack

@@ -81,7 +81,7 @@ export class RenderManager {
             for (let x = 0; x < GRID_SIZE; x++) {
                 const tile = this.game.grid[y][x];
                 try {
-                    if (tile && typeof tile === 'object' && tile.type === 'BOMB') {
+                    if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
                         // Render pulsating bomb
                         // First draw the background (floor)
                         this.textureManager.renderTile(this.ctx, x, y, TILE_TYPES.FLOOR, this.game.grid, zoneLevel);
@@ -113,4 +113,6 @@ export class RenderManager {
             }
         }
     }
+
+
 }

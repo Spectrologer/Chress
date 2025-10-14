@@ -1,4 +1,5 @@
 import { GRID_SIZE, TILE_SIZE, TILE_TYPES } from '../core/constants.js';
+import { MultiTileHandler } from './MultiTileHandler.js';
 
 export class PlayerRenderer {
     constructor(game) {
@@ -8,13 +9,14 @@ export class PlayerRenderer {
     }
 
     drawPlayer() {
-        this.drawPlayerSprite();
+    // Draw player sprite first
+    this.drawPlayerSprite();
 
-        // Draw smoke animation if active (for player only)
-        this.drawPlayerSmokeAnimation();
+    // Draw indicator arrow above player (higher z-level)
+    this.drawExitIndicator();
 
-        // Draw visual indicator if player is on an exit tile (drawn after player sprite)
-        this.drawExitIndicator();
+    // Draw smoke animation if active (for player only)
+    this.drawPlayerSmokeAnimation();
     }
 
     drawPlayerSprite() {
@@ -70,12 +72,15 @@ export class PlayerRenderer {
                 let rotationAngle = 0; // Default to North (arrow.png points up)
 
                 if (tileUnderPlayer === TILE_TYPES.PORT) {
-                    // Specific directions for PORT tiles
-                    if (this.game.player.currentZone.dimension === 0) { // Exterior house door
-                        rotationAngle = 0; // North
-                    } else { // Interior house door
-                        rotationAngle = Math.PI; // South
+                    const isCistern = MultiTileHandler.findCisternPosition(playerGridX, playerGridY, this.game.grid);
+                    if (isCistern) {
+                        // For cisterns, arrow points down to enter, and up to exit.
+                        rotationAngle = this.game.player.currentZone.dimension === 0 ? Math.PI : 0;
+                    } else {
+                        // For other structures (house, shack), arrow always points up to indicate entry/exit.
+                        rotationAngle = 0;
                     }
+
                 } else { // It's an EXIT tile
                     if (playerGridY === 0) { // Top edge exit
                         rotationAngle = 0; // North
@@ -93,9 +98,9 @@ export class PlayerRenderer {
                 // Set slight transparency
                 this.ctx.globalAlpha = 0.8;
 
-                // Draw the image, offset by half its size to center it after rotation, and slightly above the player
+                // Draw the image, offset by half its size to center it after rotation, and slightly above the player (higher z-level)
                 const arrowSize = TILE_SIZE * 0.75; // Make arrow slightly smaller than tile
-                this.ctx.drawImage(arrowImage, -arrowSize / 2, -arrowSize / 2 - TILE_SIZE / 4, arrowSize, arrowSize);
+                this.ctx.drawImage(arrowImage, -arrowSize / 2, -arrowSize / 2 - TILE_SIZE / 2, arrowSize, arrowSize);
 
                 this.ctx.restore();
             }

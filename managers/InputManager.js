@@ -22,10 +22,7 @@ export class InputManager {
         window.addEventListener('keydown', (event) => {
             this.handleKeyPress(event);
         });
-        document.addEventListener('keydown', (event) => {
-            this.handleKeyPress(event);
-        });
-
+        
         // Mouse controls for desktop (same as tap)
         this.game.canvas.addEventListener('click', (e) => {
             this.handleTap(e.clientX, e.clientY);

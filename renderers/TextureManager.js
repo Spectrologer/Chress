@@ -17,6 +17,8 @@ export class TextureManager {
         TextureDetector.TILE_TYPES = TILE_TYPES;
         // Create renderer with dependencies
         this.renderer = new TileRenderer(this.loader.getImages(), TextureDetector, MultiTileHandler, TILE_SIZE);
+        // Expose structureRenderer for direct access
+        this.structureRenderer = this.renderer.structureRenderer;
         if (this.onAllImagesLoaded) {
             this.onAllImagesLoaded();
         }

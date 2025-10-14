@@ -207,6 +207,20 @@ const consoleCommands = {
     }
   },
 
+  spawnCistern: function(game) {
+    const pos = findCisternSpawnPosition(game);
+    if (pos) {
+      // Place the 1x2 cistern
+      game.grid[pos.y][pos.x] = TILE_TYPES.PORT;    // Top part (entrance)
+      game.grid[pos.y + 1][pos.x] = TILE_TYPES.CISTERN; // Bottom part
+
+      logger.log('Spawned cistern at', pos);
+    } else {
+      logger.log('No valid spawn position found for cistern');
+    }
+  },
+
+
   // Enemy spawn commands (additional)
   spawnLizardeaux: function(game) {
     this.spawnEnemy(game, 'lizardeaux');
@@ -256,6 +270,7 @@ const consoleCommands = {
   hotkeyG: function(game) { this.spawnSquig(game); }, // G for green squig
   hotkeyX: function(game) { this.spawnMark(game); }, // X for Mark
   hotkeyJ: function(game) { this.spawnShack(game); }, // J for shack
+  hotkeyC: function(game) { this.spawnCistern(game); }, // C for cistern
 
   hotkeyShift1: function(game) { this.spawnEnemy(game, 'lizardy'); },
   hotkeyShift2: function(game) { this.spawnEnemy(game, 'lizardo'); },
@@ -290,6 +305,7 @@ const consoleCommands = {
       if (lowerKey === 'g') { this.hotkeyG(game); return true; }
       if (lowerKey === 'x') { this.hotkeyX(game); return true; }
       if (lowerKey === 'j') { this.hotkeyJ(game); return true; }
+      if (lowerKey === 'c') { this.hotkeyC(game); return true; }
       // Enemies (numbers without shift)
       if (lowerKey === '1') { this.hotkeyShift1(game); return true; }
       if (lowerKey === '2') { this.hotkeyShift2(game); return true; }
@@ -393,6 +409,41 @@ function isValidShackPosition(game, x, y) {
   }
 
   return true;
+}
+
+function findCisternSpawnPosition(game) {
+    const availablePositions = [];
+
+    // Scan for available 1x2 vertical space
+    for (let y = 1; y < GRID_SIZE - 2; y++) { // y from 1 to GRID_SIZE - 3
+        for (let x = 1; x < GRID_SIZE - 1; x++) { // x from 1 to GRID_SIZE - 2
+            if (isValidCisternPosition(game, x, y)) {
+                availablePositions.push({ x, y });
+            }
+        }
+    }
+
+    if (availablePositions.length === 0) {
+        return undefined;
+    }
+
+    const randomIndex = Math.floor(Math.random() * availablePositions.length);
+    return availablePositions[randomIndex];
+}
+
+function isValidCisternPosition(game, x, y) {
+    // Check 1x2 vertical area
+    for (let dy = 0; dy < 2; dy++) {
+        const tileX = x;
+        const tileY = y + dy;
+        if (tileX < 0 || tileX >= GRID_SIZE || tileY < 0 || tileY >= GRID_SIZE) {
+            return false;
+        }
+        if (game.grid[tileY][tileX] !== TILE_TYPES.FLOOR) {
+            return false;
+        }
+    }
+    return true;
 }
 
 export default consoleCommands;

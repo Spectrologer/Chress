@@ -98,8 +98,9 @@ export const TILE_TYPES = {
     FORGE: 38,
     BOOK_OF_TIME_TRAVEL: 40,
     BOW: 41,
+    MARK: 43,
     SHACK: 44,
-    MARK: 43
+    CISTERN: 45
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -140,7 +141,8 @@ export const TILE_COLORS = {
     [TILE_TYPES.FORGE]: '#8A2BE2', // Blueviolet for Forge
     [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: '#D2691E', // Chocolate color for book
     [TILE_TYPES.BOW]: '#8B4513', // Brown for bow
-    [TILE_TYPES.MARK]: '#FFD700' // Gold for Mark
+    [TILE_TYPES.MARK]: '#FFD700', // Gold for Mark
+    [TILE_TYPES.CISTERN]: '#708090' // Slate gray for cistern
 };
 
 // Direction constants for exits and movements
@@ -166,6 +168,7 @@ export const IMAGE_ASSETS = [
     'items/water.png',
     'doodads/shack.png',
     'protag/Special2.png',
+    'doodads/cistern.png',
     'protag/whack.png',
     'protag/dead.png',
     'fauna/lizardy.png',

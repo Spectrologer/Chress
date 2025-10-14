@@ -385,4 +385,79 @@ export class StructureTileRenderer {
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
     }
+
+    renderCisternTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // This is the BOTTOM part of the cistern.
+        // First render dirt background
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern')) {
+            const cisternImage = this.images['doodads/cistern'];
+            const partWidth = cisternImage.width; // 16
+            const partHeight = cisternImage.height / 2; // 9
+
+            // Pixel perfect scaling: 16x9 -> 64x36
+            const destW = partWidth * 4; // 64
+            const destH = partHeight * 4; // 36
+            const destX = pixelX; // Left justified
+            const destY = pixelY; // Top of tile
+
+            ctx.drawImage(
+                cisternImage,
+                0, partHeight, // Source position (bottom part)
+                partWidth, partHeight, // Source size
+                destX, destY, // Destination position, aligned to top of tile
+                destW, destH // Destination size
+            );
+        } else {
+            // Fallback color rendering - semi-transparent slab to show dirt behind
+            const partHeight = 9;
+            const scaleFactor = 4;
+            const destW = 16 * scaleFactor;
+            const destH = partHeight * scaleFactor;
+            const destX = pixelX;
+            const destY = pixelY;
+            ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
+            ctx.fillRect(destX, destY, destW, destH);
+        }
+    }
+
+    renderCisternTop(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // This is the TOP part of the cistern (the PORT/entrance).
+
+        // First render dirt background so transparency works
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern')) {
+            const cisternImage = this.images['doodads/cistern'];
+            const partWidth = cisternImage.width; // 16
+            const partHeight = cisternImage.height / 2; // 9
+
+            // Pixel perfect scaling: 16x9 -> 64x36
+            // Position at the bottom of the tile
+            const destW = partWidth * 4; // 64
+            const destH = partHeight * 4; // 36
+            const destX = pixelX; // Left justified
+            const destY = pixelY + TILE_SIZE - destH; // Bottom of tile
+
+            ctx.drawImage(
+                cisternImage,
+                0, 0, // Source position (top part)
+                partWidth, partHeight, // Source size
+                destX, destY, // Destination position, aligned to top of tile
+                destW, destH // Destination size
+            );
+        } else {
+            // Fallback rendering - semi-transparent slab to show dirt behind
+            const partHeight = 9;
+            const scaleFactor = 4;
+            const destW = 16 * scaleFactor;
+            const destH = partHeight * scaleFactor;
+            const destX = pixelX;
+            const destY = pixelY + TILE_SIZE - destH;
+
+            ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
+            ctx.fillRect(destX, destY, destW, destH);
+        }
+    }
 }
