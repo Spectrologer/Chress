@@ -355,7 +355,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Then render the shack part
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/shack')) {
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/shack') && this.images['doodads/shack'].complete) {
             // For a 3x3 shack, we need to determine which part of the shack image to draw
             // Find the shack area bounds to determine the position within the shack
             const shackInfo = this.multiTileHandler.findShackPosition(x, y, grid);
@@ -380,9 +380,15 @@ export class StructureTileRenderer {
                 );
             }
         } else {
-            // Fallback color rendering
+            // Fallback color rendering - with debug message on gh-pages
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.SHACK] || '#8B4513';
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            // Debug for gh-pages - show shack location with 'S'
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('S', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 
@@ -391,7 +397,7 @@ export class StructureTileRenderer {
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern')) {
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern') && this.images['doodads/cistern'].complete) {
             const cisternImage = this.images['doodads/cistern'];
             const partWidth = cisternImage.width; // 16
             const partHeight = cisternImage.height / 2; // 9
@@ -419,6 +425,12 @@ export class StructureTileRenderer {
             const destY = pixelY;
             ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
             ctx.fillRect(destX, destY, destW, destH);
+            // Debug for gh-pages - show cistern location with 'C'
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('C', pixelX + TILE_SIZE / 2, pixelY + destH / 2);
         }
     }
 
@@ -428,7 +440,7 @@ export class StructureTileRenderer {
         // First render dirt background so transparency works
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern')) {
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern') && this.images['doodads/cistern'].complete) {
             const cisternImage = this.images['doodads/cistern'];
             const partWidth = cisternImage.width; // 16
             const partHeight = cisternImage.height / 2; // 9
@@ -458,6 +470,12 @@ export class StructureTileRenderer {
 
             ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
             ctx.fillRect(destX, destY, destW, destH);
+            // Debug for gh-pages - show cistern top with small 'C'
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('C', destX + destW / 2, destY + destH / 2 + 2);
         }
     }
 
