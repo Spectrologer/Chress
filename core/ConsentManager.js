@@ -25,21 +25,19 @@ export class ConsentManager {
 
     showConsentBanner() {
         const html = `
-            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px;">
-                <div style="text-align: center;">
-                    <span class="character-name" style="font-size: 1.5em; display: block; margin-bottom: 5px;">Rune</span>
-                    <img src="assets/fauna/runeface.png" alt="Rune" style="width: 96px; height: 96px; image-rendering: pixelated;">
-                </div>
-                <p style="margin: 0; font-size: 1.4em; text-align: left;">"I crave points... You will give me... Data points."<br><em style="font-size: 0.8em;">(Consent to tracking error messages?)</em></p>
+            <span class="character-name">Rune</span>
+            <div class="barter-portrait-container small-consent-portrait">
+                <img src="assets/fauna/runeface.png" class="barter-portrait">
             </div>
-            <div style="display: flex; justify-content: center; gap: 20px;">
-                <button id="consent-accept" style="background: linear-gradient(135deg, #CD853F, #B8860B); border: 2px solid #8B4513; color: #3A2418; padding: 10px 20px; font-family: 'Cinzel', serif; font-size: 1em; font-weight: 700; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Let Him Feast</button>
-                <button id="consent-decline" style="background: linear-gradient(135deg, #CD853F, #B8860B); border: 2px solid #8B4513; color: #3A2418; padding: 10px 20px; font-family: 'Cinzel', serif; font-size: 1em; font-weight: 700; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Let Him Starve</button>
+            "I crave points... You will give me... Data points."<br><em>(Consent to tracking error messages?)</em>
+            <div class="consent-buttons">
+                <button id="consent-accept" class="consent-button">Let Him Feast</button>
+                <button id="consent-decline" class="consent-button">Let Him Starve</button>
             </div>
         `;
 
         if (this.game.uiManager && typeof this.game.uiManager.showOverlayMessage === 'function') {
-            this.game.uiManager.showOverlayMessage(html, null, true, true); // overlay, persistent
+            this.game.uiManager.showOverlayMessage(html, null, true, false); // overlay, persistent, NOT large text
         } else {
             logger.error('UIManager.showOverlayMessage not available');
         }
