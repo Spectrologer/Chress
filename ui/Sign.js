@@ -158,10 +158,11 @@ export class Sign {
             trades: [
                 {
                     id: 'axelotl_axe',
-                    requiredItem: 'points',
+                    requiredItem: 'DISCOVERED',
                     requiredAmount: 10,
-                    requiredItemImg: 'assets/items/points.png',
-                    receivedItemName: 'Axe',
+                    requiredItemName: 'Discoveries',
+                    requiredItemImg: 'assets/ui/talk.png',
+                    receivedItemName: 'Axe Ability',
                     receivedItemImg: 'assets/items/axe.png'
                 }
             ]
@@ -314,6 +315,16 @@ export class Sign {
                 "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, and then live happily ever after.",
                 "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, live happily ever after, and then tell everyone about it.",
                 "I once saw squig eat a nut.",
+            ]
+        },
+        axelotl_post_trade: {
+            name: 'Axe-O-Lot\'l',
+            portrait: 'assets/fauna/axolotlface.png',
+            subclass: 'dialogue',
+            currentMessageIndex: 0,
+            messages: [
+                "You look sharp!",
+                "Seen any interesting colors lately?"
             ]
         }
     };

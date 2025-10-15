@@ -24,6 +24,18 @@ export class BarterWindow {
     }
 
     showBarterWindow(npcType) {
+        if (npcType === 'axelotl' && this.game.player.abilities.has('axe')) {
+            // Player already has the axe, show dialogue instead of trade.
+            const npcData = Sign.getDialogueNpcData('axelotl_post_trade');
+            if (npcData) {
+                const message = npcData.messages[npcData.currentMessageIndex];
+                this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
+                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+            }
+            return;
+        }
+
         const npcData = Sign.getBarterNpcData(npcType);
         if (!npcData) {
             return; // No data for this NPC type
@@ -166,10 +178,10 @@ export class BarterWindow {
             this.game.player.inventory.push({ type: 'food', foodType: 'food/meat/beaf.png' });
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} Discoveries for meat.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
-        } else if (tradeData.id === 'axelotl_axe') { // Trade points for axe ability
-            this.game.player.addPoints(-tradeData.requiredAmount);
+        } else if (tradeData.id === 'axelotl_axe') { // Trade discoveries for axe ability
+            this.game.player.spentDiscoveries += tradeData.requiredAmount;
             this.game.player.abilities.add('axe');
-            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for axe ability.`);
+            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} discoveries for axe ability.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic

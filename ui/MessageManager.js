@@ -147,6 +147,12 @@ export class MessageManager {
     showSignMessage(text, imageSrc, name = null) {
         const messageElement = document.getElementById('messageOverlay');
         if (messageElement) {
+            // Clear any existing overlay timeout to prevent auto-hiding sign messages
+            if (this.currentOverlayTimeout) {
+                clearTimeout(this.currentOverlayTimeout);
+                this.currentOverlayTimeout = null;
+            }
+
             // Set content for sign message (persistent until clicked again)
             if (name && imageSrc) {
                 // NPC dialogue with name and portrait

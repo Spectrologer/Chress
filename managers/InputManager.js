@@ -579,6 +579,16 @@ export class InputManager {
             return; // Stop further processing
         }
 
+        // Debug hotkey for adding 999 discoveries
+        if (event.key === '8') {
+            // Discoveries = visitedZones.size - spentDiscoveries
+            // To get 999 discoveries, either add many zones or reduce spentDiscoveries
+            // We'll reduce spentDiscoveries (negative number means "discovered" discoveries beyond visited zones)
+            this.game.player.spentDiscoveries = this.game.player.getVisitedZones().size - 999;
+            this.game.uiManager.updateZoneDisplay(); // Update the discoveries display
+            return; // Stop further processing
+        }
+
         const currentPos = this.game.player.getPosition();
         let newX = currentPos.x;
         let newY = currentPos.y;
