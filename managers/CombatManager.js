@@ -122,11 +122,10 @@ export class CombatManager {
                         midY = enemy.lastY;
                     }
                 }
-                this.game.horseChargeAnimations.push({
+                this.game.animationManager.addHorseChargeAnimation({
                     startPos: { x: enemy.lastX, y: enemy.lastY },
                     midPos: { x: midX, y: midY },
                     endPos: { x: enemy.x, y: enemy.y },
-                    frame: 20
                 });
             }
         }

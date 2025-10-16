@@ -3,11 +3,11 @@ import { TILE_SIZE } from '../core/constants.js';
 
 export class RendererUtils {
     // Utility methods moved from TileRenderer
-    static drawRotatedImage(ctx, image, x, y, rotation, tileSize = TILE_SIZE) {
+    static drawRotatedImage(ctx, image, x, y, rotation, width = TILE_SIZE, height = TILE_SIZE) {
         ctx.save();
-        ctx.translate(x + tileSize / 2, y + tileSize / 2);
+        ctx.translate(x + width / 2, y + height / 2);
         ctx.rotate(rotation);
-        ctx.drawImage(image, -tileSize / 2, -tileSize / 2, tileSize, tileSize);
+        ctx.drawImage(image, -width / 2, -height / 2, width, height);
         ctx.restore();
     }
 
