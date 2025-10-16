@@ -266,19 +266,5 @@ export class BaseTileRenderer {
 
 
 
-    findHousePosition(x, y, grid) {
-        return this.multiTileHandler.findHousePosition(x, y, grid);
-    }
 
-    findWellPosition(x, y, grid) {
-        return this.multiTileHandler.findWellPosition(x, y, grid);
-    }
-
-    findDeadTreePosition(x, y, grid) {
-        return this.multiTileHandler.findDeadTreePosition(x, y, grid);
-    }
-
-    findShackPosition(x, y, grid) {
-        return this.multiTileHandler.findShackPosition(x, y, grid);
-    }
 }

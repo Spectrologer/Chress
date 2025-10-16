@@ -1,3 +1,4 @@
+// (Merged ItemUsageManager logic: useMapNote for revealing distant zones)
 // Inventory management system
 // Inventory management system
 import { TILE_TYPES } from '../core/constants.js';
@@ -86,6 +87,40 @@ export class InventoryManager {
         }
     }
 
+    // Helper to add uses indicator to an item slot
+    _addUsesIndicator(slot, item) {
+        slot.style.position = 'relative';
+        const usesText = document.createElement('div');
+        usesText.style.position = 'absolute';
+        usesText.style.bottom = '4px';
+        usesText.style.right = '5px';
+        usesText.style.fontSize = '1.8em';
+        usesText.style.fontWeight = 'bold';
+        usesText.style.color = item.disabled ? '#666666' : '#000000';
+        usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
+        usesText.textContent = `x${item.uses}`;
+        slot.appendChild(usesText);
+    }
+
+    // Helper to create a container for an item image and its uses indicator
+    _createItemImageContainer(slot, item, imageSrc, styles = {}) {
+        const container = document.createElement('div');
+        container.style.position = 'relative';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.display = 'flex';
+        container.style.justifyContent = 'center';
+        container.style.alignItems = 'center';
+        slot.appendChild(container);
+
+        const img = document.createElement('img');
+        img.src = imageSrc;
+        Object.assign(img.style, { width: '70%', height: '70%', objectFit: 'contain', imageRendering: 'pixelated', opacity: item.disabled ? '0.5' : '1', ...styles });
+        container.appendChild(img);
+
+        this._addUsesIndicator(container, item);
+    }
+
     // Add visual elements to inventory slot
     addItemVisuals(slot, item) {
         if (item.disabled) {
@@ -110,50 +145,9 @@ export class InventoryManager {
             slot.classList.add('item-hammer');
         } else if (item.type === 'bishop_spear') {
             slot.classList.add('item-spear'); // Reuse the class since same image
-            // Add uses indicator
-            slot.style.position = 'relative';
-            const usesText = document.createElement('div');
-            usesText.style.position = 'absolute';
-            usesText.style.bottom = '4px';
-            usesText.style.right = '5px';
-            usesText.style.fontSize = '1.8em';
-            usesText.style.fontWeight = 'bold';
-            usesText.style.color = item.disabled ? '#666666' : '#000000';
-            usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
-            usesText.textContent = `x${item.uses}`;
-            slot.appendChild(usesText);
+            this._addUsesIndicator(slot, item);
         } else if (item.type === 'horse_icon') {
-            // Create a container for the image and the uses text
-            const container = document.createElement('div');
-            container.style.position = 'relative';
-            container.style.width = '100%';
-            container.style.height = '100%';
-            container.style.display = 'flex';
-            container.style.justifyContent = 'center';
-            container.style.alignItems = 'center';
-            slot.appendChild(container);
-
-            // Add the horse icon image to inventory slot
-            const horseImg = document.createElement('img');
-            horseImg.src = 'assets/items/horse.png';
-            horseImg.style.width = '70%';
-            horseImg.style.height = '70%';
-            horseImg.style.objectFit = 'contain';
-            horseImg.style.imageRendering = 'pixelated';
-            horseImg.style.opacity = item.disabled ? '0.5' : '1';
-            container.appendChild(horseImg);
-
-            // Add uses indicator
-            const usesText = document.createElement('div');
-            usesText.style.position = 'absolute';
-            usesText.style.bottom = '4px';
-            usesText.style.right = '5px';
-            usesText.style.fontSize = '1.8em';
-            usesText.style.fontWeight = 'bold';
-            usesText.style.color = item.disabled ? '#666666' : '#000000';
-            usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
-            usesText.textContent = `x${item.uses}`;
-            container.appendChild(usesText);
+            this._createItemImageContainer(slot, item, 'assets/items/horse.png');
         } else if (item.type === 'bomb') {
             slot.classList.add('item-bomb');
         } else if (item.type === 'heart') {
@@ -162,185 +156,93 @@ export class InventoryManager {
             slot.classList.add('item-note');
         } else if (item.type === 'book_of_time_travel') {
             slot.classList.add('item-book');
-            // Add uses indicator
-            slot.style.position = 'relative';
-            const usesText = document.createElement('div');
-            usesText.style.position = 'absolute';
-            usesText.style.bottom = '4px';
-            usesText.style.right = '5px';
-            usesText.style.fontSize = '1.8em';
-            usesText.style.fontWeight = 'bold';
-            usesText.style.color = item.disabled ? '#666666' : '#000000';
-            usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
-            usesText.textContent = `x${item.uses}`;
-            slot.appendChild(usesText);
+            this._addUsesIndicator(slot, item);
         } else if (item.type === 'bow') {
-            // Create a container for the image and the uses text
-            const container = document.createElement('div');
-            container.style.position = 'relative';
-            container.style.width = '100%';
-            container.style.height = '100%';
-            container.style.display = 'flex';
-            container.style.justifyContent = 'center';
-            container.style.alignItems = 'center';
-            slot.appendChild(container);
-
-            // Add the bow image to inventory slot
-            const bowImg = document.createElement('img');
-            bowImg.src = 'assets/items/bow.png';
-            bowImg.style.width = '70%';
-            bowImg.style.height = '70%';
-            bowImg.style.objectFit = 'contain';
-            bowImg.style.imageRendering = 'pixelated';
-            bowImg.style.transform = 'rotate(-90deg)';
-            bowImg.style.opacity = item.disabled ? '0.5' : '1';
-            container.appendChild(bowImg);
-
-            // Add uses indicator
-            const usesText = document.createElement('div');
-            usesText.style.position = 'absolute';
-            usesText.style.bottom = '4px';
-            usesText.style.right = '5px';
-            usesText.style.fontSize = '1.8em';
-            usesText.style.fontWeight = 'bold';
-            usesText.style.color = item.disabled ? '#666666' : '#000000';
-            usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
-            usesText.textContent = `x${item.uses}`;
-            container.appendChild(usesText);
+            this._createItemImageContainer(slot, item, 'assets/items/bow.png', { transform: 'rotate(-90deg)' });
         }
     }
 
     // Add event listeners for inventory slot interactions
     addInventorySlotEvents(slot, item, idx, tooltipText) {
-        let longPress = false;
-        let longPressTimeout = null;
+        const isDisablable = ['bishop_spear', 'horse_icon', 'bow'].includes(item.type);
+        let isLongPress = false;
+        let pressTimeout = null;
 
-        // Helper functions for showing/hiding tooltips
-        const showTooltip = () => {
-            if (!this.tooltip) return;
-            this.tooltip.textContent = tooltipText;
-            const rect = slot.getBoundingClientRect();
-            const inventoryRect = slot.closest('.player-inventory').getBoundingClientRect();
-            const tooltipWidth = 200; // Approximate width
-
-            // Position tooltip above the slot, centered, relative to player-inventory
-            this.tooltip.style.left = `${rect.left - inventoryRect.left + (rect.width / 2) - (tooltipWidth / 2)}px`;
-            this.tooltip.style.top = `${rect.top - inventoryRect.top - 40}px`; // 40px above
-            this.tooltip.classList.add('show');
+        const showTooltip = () => this.showTooltip(slot, tooltipText);
+        const hideTooltip = () => this.hideTooltip();
+        const useItem = () => this.useInventoryItem(item, idx);
+        const toggleDisabled = () => {
+            this.toggleItemDisabled(item, idx);
+            this.game.uiManager.updatePlayerStats();
+            hideTooltip();
         };
 
-        const hideTooltip = () => {
-            if (this.tooltip) {
-                this.tooltip.classList.remove('show');
-            }
-        };
+        // --- Event Listeners ---
 
-        // Use item function to avoid duplication
-        const useItem = () => {
-            this.useInventoryItem(item, idx);
-        };
+        // Hover for Tooltip (Desktop)
+        slot.addEventListener('mouseover', showTooltip);
+        slot.addEventListener('mouseout', hideTooltip);
 
-        // Desktop hover events
-        if (item.type === 'bishop_spear' || item.type === 'horse_icon' || item.type === 'bow') {
-            // For special items, hover shows tooltip
-            slot.addEventListener('mouseover', () => {
-                if (!longPress) {
-                    showTooltip();
-                }
-            });
-            slot.addEventListener('mouseout', () => {
-                if (!longPress) {
-                    hideTooltip();
-                }
-            });
-        } else {
-            slot.addEventListener('mouseover', () => {
-                if (!longPress) {
-                    showTooltip();
-                }
-            });
-            slot.addEventListener('mouseout', () => {
-                if (!longPress) {
-                    hideTooltip();
-                }
-            });
-        }
-
-        // Special handling for bishop_spear and horse_icon - long press to toggle disabled
-        if (item.type === 'bishop_spear' || item.type === 'horse_icon' || item.type === 'bow') {
-            // Desktop right-click or long press to toggle disabled
+        // Right-click to toggle disabled (Desktop)
+        if (isDisablable) {
             slot.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
-                this.toggleItemDisabled(item, idx);
-                this.game.uiManager.updatePlayerStats();
-            });
-
-            // Mobile touch events for long press to toggle disabled
-            slot.addEventListener('touchstart', (e) => {
-                e.preventDefault(); // Prevent click
-                longPress = false;
-                longPressTimeout = setTimeout(() => {
-                    longPress = true;
-                    this.toggleItemDisabled(item, idx);
-                    this.game.uiManager.updatePlayerStats();
-                    // Update tooltip if shown
-                    hideTooltip();
-                }, 500);
-            });
-            slot.addEventListener('touchmove', () => {
-                if (longPressTimeout) {
-                    clearTimeout(longPressTimeout);
-                    longPressTimeout = null;
-                }
-            });
-            slot.addEventListener('touchend', (e) => {
-                if (longPressTimeout) {
-                    clearTimeout(longPressTimeout);
-                    // Short tap - use the item if not disabled
-                    if (!longPress && !item.disabled) {
-                        useItem();
-                    }
-                }
-            });
-
-            // Desktop click - use item if not disabled
-            slot.addEventListener('click', () => {
-                if (this.game.player.isDead() || item.disabled) return;
-                useItem();
-            });
-        } else {
-            // Mobile touch events for long press (general items)
-            slot.addEventListener('touchstart', (e) => {
-                e.preventDefault(); // Prevent click
-                longPress = false;
-                longPressTimeout = setTimeout(() => {
-                    longPress = true;
-                    showTooltip();
-                    // Auto-hide after 2 seconds using AnimationScheduler
-                    this.game.animationScheduler.createSequence()
-                        .wait(2000)
-                        .then(() => {
-                            hideTooltip();
-                        })
-                        .start();
-                }, 500);
-            });
-            slot.addEventListener('touchmove', () => {
-                if (longPressTimeout) {
-                    clearTimeout(longPressTimeout);
-                    longPressTimeout = null;
-                }
-            });
-            slot.addEventListener('touchend', (e) => {
-                if (longPressTimeout) {
-                    clearTimeout(longPressTimeout);
-                    // Short tap - use the item
-                    if (!longPress) {
-                        useItem();
-                    }
-                }
+                toggleDisabled();
             });
         }
+
+        // Click to use (Desktop)
+        slot.addEventListener('click', () => {
+            if (this.game.player.isDead()) return;
+            if (item.type === 'bomb') {
+                // Special bomb logic is handled separately
+                return;
+            }
+            if (!isDisablable || !item.disabled) {
+                useItem();
+            }
+        });
+
+        // Touch Events (Mobile)
+        slot.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isLongPress = false;
+            pressTimeout = setTimeout(() => {
+                isLongPress = true;
+                if (isDisablable) {
+                    toggleDisabled();
+                } else {
+                    showTooltip();
+                    // Auto-hide tooltip after 2s
+                    this.game.animationScheduler.createSequence().wait(2000).then(hideTooltip).start();
+                }
+            }, 500);
+        }, { passive: false });
+
+        slot.addEventListener('touchmove', () => {
+            if (pressTimeout) {
+                clearTimeout(pressTimeout);
+                pressTimeout = null;
+            }
+        });
+
+        slot.addEventListener('touchend', () => {
+            if (pressTimeout) {
+                clearTimeout(pressTimeout);
+                pressTimeout = null;
+            }
+            if (!isLongPress) {
+                // This was a tap
+                if (this.game.player.isDead()) return;
+                if (item.type === 'bomb') {
+                    // Special bomb logic is handled separately
+                    return;
+                }
+                if (!isDisablable || !item.disabled) {
+                    useItem();
+                }
+            }
+        });
 
         // Special handling for bomb inventory item
         if (item.type === 'bomb') {
@@ -372,14 +274,32 @@ export class InventoryManager {
                     this.game.bombPlacementMode = true;
                 }
             };
+            // We need to handle both click and tap for bombs
             slot.addEventListener('click', bombClick);
-        } else {
-            // Desktop click - use item
-            slot.addEventListener('click', () => {
-                if (this.game.player.isDead()) return;
-                useItem();
+            // Re-add touchend listener specifically for bomb's tap action
+            slot.addEventListener('touchend', () => {
+                 if (!isLongPress) {
+                    bombClick();
+                 }
             });
         }
+    }
+
+    showTooltip(slot, text) {
+        if (!this.tooltip) return;
+        this.tooltip.textContent = text;
+        const rect = slot.getBoundingClientRect();
+        const inventoryRect = slot.closest('.player-inventory').getBoundingClientRect();
+        const tooltipWidth = 200; // Approximate width
+
+        // Position tooltip above the slot, centered, relative to player-inventory
+        this.tooltip.style.left = `${rect.left - inventoryRect.left + (rect.width / 2) - (tooltipWidth / 2)}px`;
+        this.tooltip.style.top = `${rect.top - inventoryRect.top - 40}px`; // 40px above
+        this.tooltip.classList.add('show');
+    }
+
+    hideTooltip() {
+        if (this.tooltip) this.tooltip.classList.remove('show');
     }
 
     // Toggle the disabled state of an item

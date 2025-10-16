@@ -1,5 +1,6 @@
 import { Sign } from '../ui/Sign.js';
 import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { randomInt, findValidPlacement, getGridCenter, isWithinBounds } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import { PathGenerator } from './PathGenerator.js';
 import logger from '../core/logger.js';
@@ -61,17 +62,8 @@ export class ItemGenerator {
             }
         }
 
-        // Try to place the item in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = itemType;
-                break; // Successfully placed item
-            }
-        }
+        // Use the centralized placement method
+        this._placeItemRandomly(itemType);
     }
 
     addSpecialZoneItems() {
@@ -90,63 +82,34 @@ export class ItemGenerator {
             this.addHammerItem();
         }
 
-        // Define a multiplier for item spawn rates in the underground dimension
         const undergroundMultiplier = this.dimension === 2 ? 1.5 : 1.0;
 
-        // Add a rare lion with 2% chance per zone, only on surface
-        if (this.dimension === 0 && Math.random() < 0.02) { // 2% chance
-            this.addLionItem();
-        }
+        const specialItems = [
+            { name: 'Lion', tile: TILE_TYPES.LION, chance: 0.02, dimension: 0 },
+            { name: 'Squig', tile: TILE_TYPES.SQUIG, chance: 0.02, dimension: 0 },
+            { name: 'Nib', tile: TILE_TYPES.NIB, chance: 0.02, dimension: 2 },
+            { name: 'Mark', tile: TILE_TYPES.MARK, chance: 0.02, dimension: 0 },
+            { name: 'Rune', tile: TILE_TYPES.RUNE, chance: 0.02, dimension: 2 },
+            { name: 'Note', tile: TILE_TYPES.NOTE, chance: 0.04, dimension: 'any' },
+            { name: 'Bishop Spear', tile: { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4 },
+            { name: 'Horse Icon', tile: { type: TILE_TYPES.HORSE_ICON, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4, noMultiplier: true },
+            { name: 'Bomb', tile: TILE_TYPES.BOMB, chance: 0.04, minLevel: 2, maxLevel: 4 },
+            { name: 'Heart', tile: TILE_TYPES.HEART, chance: 0.025, minLevel: 2, maxLevel: 4 },
+            { name: 'Bow', tile: { type: TILE_TYPES.BOW, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4 },
+        ];
 
-        // Add a rare squig with 2% chance per zone, only on surface
-        if (this.dimension === 0 && Math.random() < 0.02 * undergroundMultiplier) { // 2% chance
-            this.addSquigItem();
-        }
+        specialItems.forEach(item => {
+            const dimensionMatch = item.dimension === 'any' || item.dimension === this.dimension;
+            const levelMatch = (!item.minLevel || this.zoneLevel >= item.minLevel) &&
+                               (!item.maxLevel || this.zoneLevel <= item.maxLevel);
 
-        // Add a rare nib with 2% chance per zone, only in underground
-        if (this.dimension === 2 && Math.random() < 0.02 * undergroundMultiplier) { // 2% chance
-            this.addNibItem();
-        }
-
-        // Add a rare Mark with 2% chance per zone, only on surface
-        if (this.dimension === 0 && Math.random() < 0.02 * undergroundMultiplier) { // 2% chance
-            this.addMarkItem();
-        }
-
-        // Add a rare rune with 2% chance per zone, only in underground
-        if (this.dimension === 2 && Math.random() < 0.02 * undergroundMultiplier) { // 2% chance
-            this.addRuneItem();
-        }
-
-        // Add a rare note with 4% chance per zone
-        if (Math.random() < 0.04 * undergroundMultiplier) { // 4% chance (reduced slightly)
-            this.addNoteItem();
-        }
-
-        // Add a bishop spear with a 4% chance in zones level 2-4
-        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04 * undergroundMultiplier) {
-            this.addSpearItem();
-        }
-
-        // Add a horse icon with a 4% chance in zones level 2-4
-        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04) {
-            this.addHorseIconItem();
-        }
-
-        // Add a bomb with a 4% chance in zones level 2-4
-        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04 * undergroundMultiplier) {
-            this.addBombItem();
-        }
-
-        // Add a heart with a 2.5% chance in zones level 2-4 (slightly rarer than bombs)
-        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.025 * undergroundMultiplier) {
-            this.addHeartItem();
-        }
-
-        // Add a bow with a 4% chance in zones level 2-4
-        if (this.zoneLevel >= 2 && this.zoneLevel <= 4 && Math.random() < 0.04 * undergroundMultiplier) {
-            this.addBowItem();
-        }
+            if (dimensionMatch && levelMatch) {
+                const multiplier = item.noMultiplier ? 1.0 : undergroundMultiplier;
+                if (Math.random() < item.chance * multiplier) {
+                    this._placeItem(item);
+                }
+            }
+        });
 
         // Add Axe-O-Lot'l with 100% chance in underground 0,0
         if (this.dimension === 2 && this.zoneX === 0 && this.zoneY === 0) {
@@ -154,178 +117,35 @@ export class ItemGenerator {
         }
     }
 
+    _placeItem(item) {
+        const loggableItems = ['Lion', 'Squig', 'Nib', 'Mark', 'Rune'];
+        let onPlacedCallback = null;
+
+        if (loggableItems.includes(item.name)) {
+            onPlacedCallback = (x, y) => logger.log(`${item.name} spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
+        }
+
+        this._placeItemRandomly(item.tile, onPlacedCallback);
+    }
+
+    _placeItemRandomly(itemData, onPlacedCallback = null) {
+        const pos = findValidPlacement({
+            maxAttempts: 50,
+            validate: (x, y) => this.grid[y][x] === TILE_TYPES.FLOOR
+        });
+        if (pos) {
+            const { x, y } = pos;
+            this.grid[y][x] = itemData;
+            if (onPlacedCallback) {
+                onPlacedCallback(x, y);
+            }
+            return true;
+        }
+        return false;
+    }
+
     addHammerItem() {
-        // Try to place the hammer in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.HAMMER;
-                ZoneStateManager.hammerSpawned = true;
-                break; // Successfully placed hammer
-            }
-        }
-    }
-
-    addSpearItem() {
-        // Try to place the bishop spear in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 };
-                break; // Successfully placed bishop spear
-            }
-        }
-    }
-
-    addHorseIconItem() {
-        // Try to place the horse icon in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = { type: TILE_TYPES.HORSE_ICON, uses: 3 };
-                break; // Successfully placed horse icon
-            }
-        }
-    }
-
-    addBombItem() {
-        // Try to place the bomb in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.BOMB;
-                break; // Successfully placed bomb
-            }
-        }
-    }
-
-    addNoteItem() {
-        // Try to place the note in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.NOTE;
-                break; // Successfully placed note
-            }
-        }
-    }
-
-    addLionItem() {
-        // Try to place the lion in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.LION;
-                logger.log(`Lion spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
-                break; // Successfully placed lion
-            }
-        }
-    }
-
-    addSquigItem() {
-        // Try to place the squig in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.SQUIG;
-                logger.log(`Squig spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
-                break; // Successfully placed squig
-            }
-        }
-    }
-
-    addNibItem() {
-        // Try to place the nib in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.NIB;
-                logger.log(`Nib spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
-                break; // Successfully placed nib
-            }
-        }
-    }
-
-    addMarkItem() {
-        // Try to place the mark in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.MARK;
-                logger.log(`Mark spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
-                break; // Successfully placed mark
-            }
-        }
-    }
-
-    addRuneItem() {
-        // Try to place the rune in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.RUNE;
-                logger.log(`Rune spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
-                break; // Successfully placed rune
-            }
-        }
-    }
-
-    addHeartItem() {
-        // Try to place the heart in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.HEART;
-                break; // Successfully placed heart
-            }
-        }
-    }
-
-    addBowItem() {
-        // Try to place the bow in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = { type: TILE_TYPES.BOW, uses: 3 };
-                break; // Successfully placed bow
-            }
-        }
+        this._placeItemRandomly(TILE_TYPES.HAMMER, () => { ZoneStateManager.hammerSpawned = true; });
     }
 
     addCisternItem(force = false) {
@@ -334,23 +154,16 @@ export class ItemGenerator {
 
     addAxelotlItem() {
         // Try to place the axelotl near the cistern (around center area)
-        const centerX = Math.floor(GRID_SIZE / 2);
-        const centerY = Math.floor(GRID_SIZE / 2);
-
-        // Try placing near the center first, then expand outward
+        const { centerX, centerY } = getGridCenter();
         for (let r = 0; r < 5; r++) { // Radius around center
             for (let dx = -r; dx <= r; dx++) {
                 for (let dy = -r; dy <= r; dy++) {
                     const x = centerX + dx;
                     const y = centerY + dy;
-
-                    // Check bounds and only place on floor tiles
-                    if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1 &&
-                        this.grid[y][x] === TILE_TYPES.FLOOR &&
-                        !(Math.abs(dx) < 2 && Math.abs(dy) < 2)) { // Avoid central cistern area
+                    if (isWithinBounds(x, y) && this.grid[y][x] === TILE_TYPES.FLOOR && !(Math.abs(dx) < 2 && Math.abs(dy) < 2)) {
                         this.grid[y][x] = TILE_TYPES.AXELOTL;
                         logger.log(`Axe-O-Lot'l spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
-                        return; // Successfully placed axelotl
+                        return;
                     }
                 }
             }

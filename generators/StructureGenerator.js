@@ -1,5 +1,6 @@
 import { Sign } from '../ui/Sign.js';
 import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { randomInt, findValidPlacement, isAllowedTile } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import logger from '../core/logger.js';
 
@@ -65,85 +66,52 @@ export class StructureGenerator {
             return; // Placed successfully
         }
 
-        // Try to place the sign in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+        this._placeSignRandomly(message);
+    }
 
-            // Only place on floor tiles
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = {
-                    type: TILE_TYPES.SIGN,
-                    message: message
-                };
-                break; // Successfully placed sign
+    _placeStructure(width, height, tileType, onPlacedCallback) {
+        const allowedTiles = [TILE_TYPES.FLOOR, TILE_TYPES.ROCK, TILE_TYPES.SHRUBBERY, TILE_TYPES.GRASS, TILE_TYPES.WATER];
+        const pos = findValidPlacement({
+            maxAttempts: 50,
+            minX: 1,
+            minY: 1,
+            maxX: GRID_SIZE - width,
+            maxY: GRID_SIZE - height,
+            validate: (x, y) => {
+                for (let dy = 0; dy < height; dy++) {
+                    for (let dx = 0; dx < width; dx++) {
+                        if (!isAllowedTile(this.grid[y + dy][x + dx], allowedTiles)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
             }
+        });
+        if (pos) {
+            const { x, y } = pos;
+            for (let dy = 0; dy < height; dy++) {
+                for (let dx = 0; dx < width; dx++) {
+                    this.grid[y + dy][x + dx] = tileType;
+                }
+            }
+            if (onPlacedCallback) {
+                onPlacedCallback(x, y);
+            }
+            return true;
         }
+        return false;
     }
 
     addWell(zoneX, zoneY) {
-        // Place a 2x2 well in Frontier zones (level 4) randomly, avoiding borders
-        // Try to place the well in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            // Place away from borders
-            const x = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // x from 1 to GRID_SIZE-3
-            const y = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // y from 1 to GRID_SIZE-3
-
-            // Check if all 2x2 tiles are placeable (allow clearing obstacles)
-            let free = true;
-            const allowedTiles = [TILE_TYPES.FLOOR, TILE_TYPES.ROCK, TILE_TYPES.SHRUBBERY, TILE_TYPES.GRASS, TILE_TYPES.WATER];
-            for (let dy = 0; dy < 2 && free; dy++) {
-                for (let dx = 0; dx < 2 && free; dx++) {
-                    if (!allowedTiles.includes(this.grid[y + dy][x + dx])) {
-                        free = false;
-                    }
-                }
-            }
-
-            if (free) {
-                // Place the 2x2 well, overwriting any obstacles
-                for (let dy = 0; dy < 2; dy++) {
-                    for (let dx = 0; dx < 2; dx++) {
-                        this.grid[y + dy][x + dx] = TILE_TYPES.WELL;
-                    }
-                }
-                ZoneStateManager.wellSpawned = true;
-                break; // Successfully placed well
-            }
-        }
+        this._placeStructure(2, 2, TILE_TYPES.WELL, () => { ZoneStateManager.wellSpawned = true; });
     }
 
     addDeadTree(zoneX, zoneY) {
-        // Place a 2x2 dead tree in Woods zones (level 2) randomly, avoiding borders
-        // Try to place the dead tree in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            // Place away from borders
-            const x = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // x from 1 to GRID_SIZE-3
-            const y = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // y from 1 to GRID_SIZE-3
-
-            // Check if all 2x2 tiles are placeable (allow clearing obstacles)
-            let free = true;
-            const allowedTiles = [TILE_TYPES.FLOOR, TILE_TYPES.ROCK, TILE_TYPES.SHRUBBERY, TILE_TYPES.GRASS, TILE_TYPES.WATER];
-            for (let dy = 0; dy < 2 && free; dy++) {
-                for (let dx = 0; dx < 2 && free; dx++) {
-                    if (!allowedTiles.includes(this.grid[y + dy][x + dx])) {
-                        free = false;
-                    }
-                }
-            }
-
-            if (free) {
-                // Place the 2x2 dead tree, overwriting any obstacles
-                for (let dy = 0; dy < 2; dy++) {
-                    for (let dx = 0; dx < 2; dx++) {
-                        this.grid[y + dy][x + dx] = TILE_TYPES.DEADTREE;
-                    }
-                }
-                ZoneStateManager.deadTreeSpawned = true;
-                logger.log(`Dead tree spawned at zone (${zoneX}, ${zoneY})`);
-                break; // Successfully placed shack
-            }
-        }
+        this._placeStructure(2, 2, TILE_TYPES.DEADTREE, () => {
+            ZoneStateManager.deadTreeSpawned = true;
+            logger.log(`Dead tree spawned at zone (${zoneX}, ${zoneY})`);
+        });
     }
 
     addShack(zoneX, zoneY) {
@@ -161,22 +129,23 @@ export class StructureGenerator {
         }
 
         // For random spawning, try to place a cistern in a valid location
-        for (let attempts = 0; attempts < 50; attempts++) {
-            // Place away from borders, need 2x2 space minimum
-            const startX = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // x from 1 to GRID_SIZE-3
-            const startY = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // y from 1 to GRID_SIZE-3
-
-            // Check if both tiles are placeable (currently floor tiles)
-            const placeableTiles = [TILE_TYPES.FLOOR, TILE_TYPES.GRASS, TILE_TYPES.WATER];
-            const topTile = this.grid[startY][startX];
-            const bottomTile = this.grid[startY + 1][startX];
-
-            if (placeableTiles.includes(topTile) && placeableTiles.includes(bottomTile)) {
-                // Place the 2-part cistern structure, overwriting any obstacles
-                this.grid[startY][startX] = TILE_TYPES.PORT;         // Top part (entrance)
-                this.grid[startY + 1][startX] = TILE_TYPES.CISTERN; // Bottom part
-                break; // Successfully placed cistern
+        const placeableTiles = [TILE_TYPES.FLOOR, TILE_TYPES.GRASS, TILE_TYPES.WATER];
+        const pos = findValidPlacement({
+            maxAttempts: 50,
+            minX: 1,
+            minY: 1,
+            maxX: GRID_SIZE - 3,
+            maxY: GRID_SIZE - 3,
+            validate: (x, y) => {
+                const topTile = this.grid[y][x];
+                const bottomTile = this.grid[y + 1][x];
+                return isAllowedTile(topTile, placeableTiles) && isAllowedTile(bottomTile, placeableTiles);
             }
+        });
+        if (pos) {
+            const { x, y } = pos;
+            this.grid[y][x] = TILE_TYPES.PORT;
+            this.grid[y + 1][x] = TILE_TYPES.CISTERN;
         }
     }
 
@@ -221,37 +190,38 @@ export class StructureGenerator {
         }
 
         // For other zones, use random placement
-        for (let attempts = 0; attempts < 50; attempts++) {
-            x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = {
-                    type: TILE_TYPES.SIGN,
-                    message: message
-                };
-                Sign.spawnedMessages.add(message);
-                break; // Successfully placed sign
-            }
-        }
+        this._placeSignRandomly(message, () => Sign.spawnedMessages.add(message));
     }
 
     addRandomSign(zoneX, zoneY) {
         // Try to place the sign in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-            const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-            // Only place on floor tiles (not on walls, rocks, grass, etc.)
-            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                const message = Sign.getProceduralMessage(zoneX, zoneY);
-                this.grid[y][x] = {
-                    type: TILE_TYPES.SIGN,
-                    message: message
-                };
-                break; // Successfully placed sign
-            }
+        const pos = findValidPlacement({
+            maxAttempts: 50,
+            validate: (x, y) => this.grid[y][x] === TILE_TYPES.FLOOR
+        });
+        if (pos) {
+            const { x, y } = pos;
+            const message = Sign.getProceduralMessage(zoneX, zoneY);
+            this.grid[y][x] = {
+                type: TILE_TYPES.SIGN,
+                message: message
+            };
         }
+    }
+
+    _placeSignRandomly(message, onPlacedCallback = null) {
+        const pos = findValidPlacement({
+            maxAttempts: 50,
+            validate: (x, y) => this.grid[y][x] === TILE_TYPES.FLOOR
+        });
+        if (pos) {
+            const { x, y } = pos;
+            this.grid[y][x] = { type: TILE_TYPES.SIGN, message: message };
+            if (onPlacedCallback) {
+                onPlacedCallback();
+            }
+            return true;
+        }
+        return false;
     }
 }

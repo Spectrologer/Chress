@@ -357,7 +357,7 @@ export class StructureTileRenderer {
         // Debug logging
         const imageKey = 'doodads/shack';
         const imageLoaded = RendererUtils.isImageLoaded(this.images, imageKey);
-        const shackInfo = this.multiTileHandler.findShackPosition(x, y, grid);
+        const shackInfo = MultiTileHandler.findShackPosition(x, y, grid);
         if (x === 0 && y === 0) { // Only log once per frame for performance
             console.log('[renderShackTile] imageKey:', imageKey, 'imageLoaded:', imageLoaded, 'shackInfo:', shackInfo);
         }

@@ -31,22 +31,22 @@ export class MultiTileHandler {
         return null;
     }
 
-    static findWellPosition(targetX, targetY, grid) {
-        // Find the top-left corner of the well that contains this tile
+    static _find2x2StructurePosition(targetX, targetY, grid, tileType) {
+        // Find the top-left corner of the 2x2 structure that contains this tile
         for (let startY = Math.max(0, targetY - 1); startY <= Math.min(GRID_SIZE - 2, targetY); startY++) {
             for (let startX = Math.max(0, targetX - 1); startX <= Math.min(GRID_SIZE - 2, targetX); startX++) {
-                // Check if there's a 2x2 well starting at this position
-                let isWell = true;
-                for (let y = startY; y < startY + 2 && isWell; y++) {
-                    for (let x = startX; x < startX + 2 && isWell; x++) {
+                // Check if there's a 2x2 structure starting at this position
+                let isStructure = true;
+                for (let y = startY; y < startY + 2 && isStructure; y++) {
+                    for (let x = startX; x < startX + 2 && isStructure; x++) {
                         if (y >= 0 && y < GRID_SIZE && x >= 0 && x < GRID_SIZE &&
-                            grid[y][x] !== TILE_TYPES.WELL) {
-                            isWell = false;
+                            grid[y][x] !== tileType) {
+                            isStructure = false;
                         }
                     }
                 }
 
-                if (isWell && targetX >= startX && targetX < startX + 2 &&
+                if (isStructure && targetX >= startX && targetX < startX + 2 &&
                     targetY >= startY && targetY < startY + 2) {
                     return { startX, startY };
                 }
@@ -55,28 +55,12 @@ export class MultiTileHandler {
         return null;
     }
 
-    static findDeadTreePosition(targetX, targetY, grid) {
-        // Find the top-left corner of the dead tree that contains this tile
-        for (let startY = Math.max(0, targetY - 1); startY <= Math.min(GRID_SIZE - 2, targetY); startY++) {
-            for (let startX = Math.max(0, targetX - 1); startX <= Math.min(GRID_SIZE - 2, targetX); startX++) {
-                // Check if there's a 2x2 dead tree starting at this position
-                let isDeadTree = true;
-                for (let y = startY; y < startY + 2 && isDeadTree; y++) {
-                    for (let x = startX; x < startX + 2 && isDeadTree; x++) {
-                        if (y >= 0 && y < GRID_SIZE && x >= 0 && x < GRID_SIZE &&
-                            grid[y][x] !== TILE_TYPES.DEADTREE) {
-                            isDeadTree = false;
-                        }
-                    }
-                }
+    static findWellPosition(targetX, targetY, grid) {
+        return this._find2x2StructurePosition(targetX, targetY, grid, TILE_TYPES.WELL);
+    }
 
-                if (isDeadTree && targetX >= startX && targetX < startX + 2 &&
-                    targetY >= startY && targetY < startY + 2) {
-                    return { startX, startY };
-                }
-            }
-        }
-        return null;
+    static findDeadTreePosition(targetX, targetY, grid) {
+        return this._find2x2StructurePosition(targetX, targetY, grid, TILE_TYPES.DEADTREE);
     }
 
     static findShackPosition(targetX, targetY, grid, isStrictCheck = false) {

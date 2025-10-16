@@ -1,6 +1,6 @@
+
 import { NPCInteractionManager } from './NPCInteractionManager.js';
 import { ItemPickupManager } from './ItemPickupManager.js';
-import { ItemUsageManager } from './ItemUsageManager.js';
 import { CombatActionManager } from './CombatActionManager.js';
 import { BombInteractionManager } from './BombInteractionManager.js';
 import { TerrainInteractionManager } from './TerrainInteractionManager.js';
@@ -15,7 +15,6 @@ export class InteractionManager {
         // Initialize specialized managers
         this.npcManager = new NPCInteractionManager(game);
         this.itemPickupManager = new ItemPickupManager(game);
-        this.itemUsageManager = new ItemUsageManager(game);
         this.combatManager = new CombatActionManager(game);
         this.bombManager = new BombInteractionManager(game);
         this.terrainManager = new TerrainInteractionManager(game);
@@ -23,12 +22,26 @@ export class InteractionManager {
         this.environmentManager = new EnvironmentalInteractionManager(game);
     }
 
+    // Consolidated interaction delegation methods
+    checkLionInteraction() {
+        // Example: delegate to NPC manager or handle directly
+        // (Assuming lion is a type of NPC or tile)
+        // You may want to refactor this to a more generic handler if needed
+        return this.npcManager.interactWithPenne({ x: this.game.player.getPosition().x + 1, y: this.game.player.getPosition().y });
+    }
+
+    checkSquigInteraction() {
+        return this.npcManager.interactWithSquig({ x: this.game.player.getPosition().x + 1, y: this.game.player.getPosition().y });
+    }
+
+
+
     checkItemPickup() {
         return this.itemPickupManager.checkItemPickup();
     }
 
     useMapNote() {
-        return this.itemUsageManager.useMapNote();
+        return this.game.inventoryManager.useMapNote();
     }
 
     handleTap(gridCoords) {

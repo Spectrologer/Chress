@@ -41,6 +41,6 @@ export class TextureManager {
 
     // Static method for configuring canvas
     static configureCanvas(ctx) {
-        TileRenderer.configureCanvas(ctx);
+        ctx.imageSmoothingEnabled = false;
     }
 }

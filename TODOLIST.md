@@ -1,0 +1,5 @@
+- [x] Investigate statue placement in ZoneGenerator.js for interior (0,0)
+- [x] Check TILE_TYPES constants and mappings in renderers
+- [x] Verify LIZARDO_STATUE rendering in StructureTileRenderer.js
+- [x] Add missing mappings if any in StructureTileRenderer.js
+- [ ] Test or run the game to confirm statues appear

@@ -8,7 +8,7 @@ Chress is a mobile browser-based, 2D grid-based, top-down survival roguelike gam
 
 - **World:** The world is an infinite grid of "zones." Each zone is a 9x9 grid of tiles.
 - **Survival:** The player must manage Health, Hunger, and Thirst.
-- **Exploration:** The player moves from zone to zone by reaching the edge of the grid. A minimap helps track visited zones, with regions generated procedurally.
+- **Exploration:** The player moves from zone to zone by reaching the edge of the grid. A minimap helps track visited zones, with regions generated procedurally, there is an underground that also expands infinitely.
 - **Interaction:** The player can interact with the environment using items (e.g., an axe to chop shrubs, a hammer to break rocks, a bomb to destroy walls).
 - **Combat:** Combat is turn-based. The player attacks enemies by moving into their tile. Enemies have unique movement and attack patterns inspired by chess pieces (Rook, Bishop, Knight), with special actions and pathfinding.
 - **Items & Inventory:** The player has a limited inventory to carry tools, weapons, consumables (food, water), and special items like map notes.

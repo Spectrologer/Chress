@@ -94,70 +94,27 @@ export class ZoneGenerator {
                 // Place Felt near Crayn
                 this.grid[4][6] = TILE_TYPES.FELT;
 
-                // Helper to find a spawn location for Forge, 2 tiles away from Felt
-                const findForgeSpawn = () => {
-                    const feltX = 6;
-                    const feltY = 4;
-                    const distance = 2;
-                    const candidates = [];
-
-                    // Iterate over a square perimeter 2 tiles away from Felt
-                    for (let x = feltX - distance; x <= feltX + distance; x++) {
-                        for (let y = feltY - distance; y <= feltY + distance; y++) {
-                            // Check if it's on the perimeter of the 5x5 square
-                            if (Math.max(Math.abs(x - feltX), Math.abs(y - feltY)) === distance) {
-                                if (this.isTileFree(x, y)) {
-                                    candidates.push({ x, y });
-                                }
-                            }
-                        }
-                    }
-
-                    if (candidates.length > 0) {
-                        return candidates[Math.floor(Math.random() * candidates.length)];
-                    }
-                    return null; // Fallback if no valid spot is found
-                };
-                const forgePos = findForgeSpawn() || this.findOpenNpcSpawn(4); // Fallback to old method if needed
+                // Place Forge in an open spot
+                const forgePos = this.findOpenNpcSpawn(4);
                 if (forgePos) {
                     this.grid[forgePos.y][forgePos.x] = TILE_TYPES.FORGE;
                 }
 
                 // Place enemy statues on the back wall (y=1)
-                // Left side: 3 statues
                 this.grid[1][1] = TILE_TYPES.LIZARDY_STATUE;
                 this.grid[1][2] = TILE_TYPES.LIZARDO_STATUE;
                 this.grid[1][3] = TILE_TYPES.ZARD_STATUE;
-
-                // Right side: 3 statues
                 this.grid[1][5] = TILE_TYPES.LIZARDEAUX_STATUE;
                 this.grid[1][6] = TILE_TYPES.LIZORD_STATUE;
                 this.grid[1][7] = TILE_TYPES.LAZERD_STATUE;
 
-                // Helper to find a random valid spawn location in the interior
-                const findValidInteriorSpawn = () => {
-                    const validSpawns = [];
-                    // Only spawn in the lower part of the house, away from statues and the door
-                    for (let y = 3; y < GRID_SIZE - 2; y++) {
-                        for (let x = 1; x < GRID_SIZE - 1; x++) {
-                            if (this.grid[y][x] === TILE_TYPES.FLOOR) {
-                                validSpawns.push({ x, y });
-                            }
-                        }
-                    }
-                    if (validSpawns.length > 0) {
-                        return validSpawns[Math.floor(Math.random() * validSpawns.length)];
-                    }
-                    return null;
-                };
-
                 // 1. NPCs have a chance to randomly spawn
                 if (Math.random() < 0.1) { // 10% chance for a Lion
-                    const pos = findValidInteriorSpawn();
+                    const pos = this.findOpenNpcSpawn(2);
                     if (pos) this.grid[pos.y][pos.x] = TILE_TYPES.LION;
                 }
                 if (Math.random() < 0.1) { // 10% chance for a Squig
-                    const pos = findValidInteriorSpawn();
+                    const pos = this.findOpenNpcSpawn(2);
                     if (pos) this.grid[pos.y][pos.x] = TILE_TYPES.SQUIG;
                 }
 
@@ -175,7 +132,7 @@ export class ZoneGenerator {
                 const numItemsToSpawn = 1 + (Math.random() < 0.5 ? 1 : 0); // 1 item, plus a 50% chance for a 2nd
 
                 for (let i = 0; i < numItemsToSpawn; i++) {
-                    const pos = findValidInteriorSpawn();
+                    const pos = this.findOpenNpcSpawn(0);
                     if (pos) {
                         // Select a random item from the pool
                         const itemToSpawn = itemPool[Math.floor(Math.random() * itemPool.length)];

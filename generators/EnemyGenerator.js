@@ -1,5 +1,6 @@
 import { Enemy } from '../entities/Enemy.js';
 import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { findValidPlacement } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 
 const ENEMY_WEIGHTS = {
@@ -61,33 +62,25 @@ export class EnemyGenerator {
     addRandomEnemy(zoneLevel, zoneX, zoneY) {
         const maxWeight = MAX_WEIGHT_PER_LEVEL[zoneLevel] || 12;
         let currentWeight = 0;
-
         let localId = 0; // Unique per zone
-
         let spawnAttempts = 0;
-        while (currentWeight < maxWeight) { // Continue spawning while under weight limit
+        while (currentWeight < maxWeight) {
             let enemyPlaced = false;
-            // Try to place the enemy in a valid location (max 50 attempts per enemy type selection)
-            for (let attempts = 0; attempts < 50; attempts++) {
-                const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-                const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-                // Only place on floor tiles (not on walls, rocks, grass, etc.) and not already occupied by enemy
-                if (this.isFloorTileAvailable(x, y, zoneX, zoneY)) {
-                    let enemyType = this.selectEnemyType(zoneLevel);
-                    let weight = ENEMY_WEIGHTS[enemyType];
-                    if (currentWeight + weight <= maxWeight) {
-                        this.enemies.push({ x, y, enemyType: enemyType, id: `${zoneX}_${zoneY}_${localId++}` });
-                        currentWeight += weight;
-                        enemyPlaced = true;
-                        break; // Successfully placed enemy
-                    }
+            const pos = findValidPlacement({
+                maxAttempts: 50,
+                validate: (x, y) => this.isFloorTileAvailable(x, y, zoneX, zoneY)
+            });
+            if (pos) {
+                let enemyType = this.selectEnemyType(zoneLevel);
+                let weight = ENEMY_WEIGHTS[enemyType];
+                if (currentWeight + weight <= maxWeight) {
+                    this.enemies.push({ x: pos.x, y: pos.y, enemyType: enemyType, id: `${zoneX}_${zoneY}_${localId++}` });
+                    currentWeight += weight;
+                    enemyPlaced = true;
+                    spawnAttempts++;
                 }
             }
-            if (enemyPlaced) {
-                spawnAttempts++;
-            } else {
-                // Could not place an enemy after 50 attempts, give up for zone
+            if (!enemyPlaced) {
                 break;
             }
         }
