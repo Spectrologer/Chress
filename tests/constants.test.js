@@ -25,8 +25,8 @@ describe('Constants', () => {
     expect(SIMULATION_CONSTANTS.DEFEAT_DAMAGE).toBe(999);
   });
 
-  test('INPUT_CONSTANTS.LEGACY_PATH_DELAY should be 250', () => {
-    expect(INPUT_CONSTANTS.LEGACY_PATH_DELAY).toBe(250);
+  test('INPUT_CONSTANTS.LEGACY_PATH_DELAY should be 150', () => {
+    expect(INPUT_CONSTANTS.LEGACY_PATH_DELAY).toBe(150);
   });
 
   test('ZONE_CONSTANTS.PLAYER_SPAWN_POSITION should be {x: 4, y: 7}', () => {

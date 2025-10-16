@@ -137,8 +137,8 @@ describe('CombatManager', () => {
   });
 
   test('checkCollisions triggers bomb explosion when timer >= 2', () => {
-    // Place bomb adjacent to player
-    mockGame.grid[1][2] = { type: 'BOMB', actionsSincePlaced: 2 };
+    // Place bomb at position
+    mockGame.grid[1][2] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 2 };
 
     combatManager.checkCollisions();
 
@@ -155,7 +155,7 @@ describe('CombatManager', () => {
     });
 
     // Place bomb at grid[1][2] (y=1,x=2), player at x=2,y=2 (adjacent below)
-    mockGame.grid[1][2] = { type: 'BOMB', actionsSincePlaced: 2 };
+    mockGame.grid[1][2] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 2 };
     mockPlayer.x = 2;
     mockPlayer.y = 2; // Player at (2,2)
 

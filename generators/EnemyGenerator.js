@@ -96,7 +96,7 @@ export class EnemyGenerator {
     isFloorTileAvailable(x, y, zoneX, zoneY) {
         // Need to check grid, enemy positions, items etc. - we'll inject these dependencies
         // For now, basic check
-        return true; // Placeholder - this will be passed from parent generator
+        return true;
     }
 
     isTileOccupiedByEnemy(x, y) {

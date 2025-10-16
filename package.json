@@ -1,26 +1,40 @@
 {
   "name": "chress",
   "version": "1.0.0",
+  "description": "A browser-based RPG game with turn-based combat, zone exploration, and procedural generation",
+  "keywords": ["game", "rpg", "javascript", "html5-canvas", "browser-game"],
+  "homepage": "https://github.com/Spectrologer/Chress",
+  "bugs": {
+    "url": "https://github.com/Spectrologer/Chress/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Spectrologer/Chress.git"
+  },
+  "license": "ISC",
+  "author": "Spectrologer",
   "type": "module",
-  "main": "ConnectionManager.js",
+  "main": "index.html",
   "scripts": {
     "dev": "live-server --port=3000 --host=0.0.0.0 --cors --open=/ --spa",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "@sentry/browser": "^10.19.0",
     "rivescript": "^2.2.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "babel-jest": "^30.2.0",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
     "live-server": "^1.2.2"
   },
   "jest": {
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "transformIgnorePatterns": []
   }
 }

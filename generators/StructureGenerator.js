@@ -151,12 +151,32 @@ export class StructureGenerator {
     }
 
     addCistern(zoneX, zoneY, force = false) {
-        // Cistern generation disabled (except for home zone)
+        // Handle forced placement for home zone
         if (zoneX === 0 && zoneY === 0 && force) {
             // Always add the cistern behind the house in the home zone (0,0)
             // Place PORT tile two tiles above the sign (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
             this.grid[3][2] = TILE_TYPES.PORT;     // Top part (entrance)
             this.grid[4][2] = TILE_TYPES.CISTERN; // Bottom part
+            return;
+        }
+
+        // For random spawning, try to place a cistern in a valid location
+        for (let attempts = 0; attempts < 50; attempts++) {
+            // Place away from borders, need 2x2 space minimum
+            const startX = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // x from 1 to GRID_SIZE-3
+            const startY = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // y from 1 to GRID_SIZE-3
+
+            // Check if both tiles are placeable (currently floor tiles)
+            const placeableTiles = [TILE_TYPES.FLOOR, TILE_TYPES.GRASS, TILE_TYPES.WATER];
+            const topTile = this.grid[startY][startX];
+            const bottomTile = this.grid[startY + 1][startX];
+
+            if (placeableTiles.includes(topTile) && placeableTiles.includes(bottomTile)) {
+                // Place the 2-part cistern structure, overwriting any obstacles
+                this.grid[startY][startX] = TILE_TYPES.PORT;         // Top part (entrance)
+                this.grid[startY + 1][startX] = TILE_TYPES.CISTERN; // Bottom part
+                break; // Successfully placed cistern
+            }
         }
     }
 

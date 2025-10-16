@@ -147,7 +147,7 @@ export class BarterWindow {
         if (tradeData.id === 'rune_food') {
             this.game.player.addPoints(-tradeData.requiredAmount);
             const randomFood = FOOD_ASSETS[Math.floor(Math.random() * FOOD_ASSETS.length)];
-            this.game.player.inventory.push({ type: 'food', foodType: randomFood }); // This was correct, but let's ensure it's always valid
+            this.game.player.inventory.push({ type: 'food', foodType: randomFood });
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for food.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else if (tradeData.id === 'rune_item') {

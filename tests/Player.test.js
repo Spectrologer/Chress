@@ -77,10 +77,11 @@ describe('Player', () => {
   });
 
   test('markZoneVisited tracks visited zones', () => {
-    expect(player.hasVisitedZone(0, 0)).toBe(true); // Initial zone
-    player.markZoneVisited(5, 6);
-    expect(player.hasVisitedZone(5, 6)).toBe(true);
-    expect(player.hasVisitedZone(1, 1)).toBe(false);
+    expect(player.hasVisitedZone(0, 0, 0)).toBe(true); // Initial zone with dimension
+    player.markZoneVisited(5, 6, 0);
+    expect(player.hasVisitedZone(5, 6, 0)).toBe(true);
+    expect(player.hasVisitedZone(1, 1, 0)).toBe(false);
+    expect(player.hasVisitedZone(0, 0, 1)).toBe(false); // Different dimension
   });
 
   test('getValidSpawnPosition finds valid position', () => {

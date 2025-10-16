@@ -22,7 +22,7 @@ export class BaseTileRenderer {
         const pixelX = x * TILE_SIZE;
         const pixelY = y * TILE_SIZE;
 
-        // Handle object tiles (like notes, but defer to subRenderer for most)
+        // Handle object tiles
         const actualType = tileType && tileType.type ? tileType.type : tileType;
 
         if (actualType === TILE_TYPES.FLOOR) {
@@ -140,7 +140,6 @@ export class BaseTileRenderer {
             ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             return;
         }
-        // ...existing code...
         if (TextureDetector.shouldUseDirtTunnelHorizontal(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_tunnel')) {
             ctx.drawImage(this.images.dirt_tunnel, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else if (TextureDetector.shouldUseDirtTunnelVertical(x, y, grid) && RendererUtils.isImageLoaded(this.images, 'dirt_tunnel')) {

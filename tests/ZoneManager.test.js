@@ -15,7 +15,8 @@ describe('ZoneManager', () => {
       onZoneTransition: jest.fn(),
       getPosition: jest.fn().mockReturnValue({ x: 1, y: 1 }),
       ensureValidPosition: jest.fn(),
-      setPosition: jest.fn()
+      setPosition: jest.fn(),
+      currentZone: { x: 0, y: 0, dimension: 0 }
     };
 
     mockUIManager = {
@@ -128,9 +129,9 @@ describe('ZoneManager', () => {
     });
   });
 
-  describe('positionPlayerAfterZoneTransition', () => {
+  describe('positionPlayerAfterTransition', () => {
     test('positions from bottom exit at top', () => {
-      zoneManager.positionPlayerAfterZoneTransition('bottom', 2, 8);
+      zoneManager.positionPlayerAfterTransition('bottom', 2, 8);
 
       expect(mockPlayer.setPosition).toHaveBeenCalledWith(2, 0);
       expect(mockZoneGenerator.clearPathToExit).toHaveBeenCalledWith(2, 0);
@@ -138,7 +139,7 @@ describe('ZoneManager', () => {
     });
 
     test('positions from top exit at bottom', () => {
-      zoneManager.positionPlayerAfterZoneTransition('top', 3, 0);
+      zoneManager.positionPlayerAfterTransition('top', 3, 0);
 
       expect(mockPlayer.setPosition).toHaveBeenCalledWith(3, 8);
       expect(mockZoneGenerator.clearPathToExit).toHaveBeenCalledWith(3, 8);
@@ -146,7 +147,7 @@ describe('ZoneManager', () => {
     });
 
     test('positions from teleport in center', () => {
-      zoneManager.positionPlayerAfterZoneTransition('teleport', 0, 0);
+      zoneManager.positionPlayerAfterTransition('teleport', 0, 0);
 
       expect(mockPlayer.setPosition).toHaveBeenCalledWith(4, 4);
     });
@@ -154,7 +155,7 @@ describe('ZoneManager', () => {
     test('positions at PORT tile', () => {
       mockGame.grid[5][5] = TILE_TYPES.PORT;
 
-      zoneManager.positionPlayerAfterZoneTransition('port', 0, 0);
+      zoneManager.positionPlayerAfterTransition('port', 0, 0);
 
       expect(mockPlayer.setPosition).toHaveBeenCalledWith(5, 5);
     });

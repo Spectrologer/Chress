@@ -380,6 +380,11 @@ export class ZoneGenerator {
                 ZoneStateManager.hammerWarningSignPlaced = true;
             }
 
+            // Add random cistern with 7% chance in all non-home zones
+            if (Math.random() < 0.07) {
+                structureGenerator.addCistern(zoneX, zoneY, false);
+            }
+
             // Add level-based items and enemies
             itemGenerator.addLevelBasedFoodAndWater();
 
@@ -489,13 +494,13 @@ export class ZoneGenerator {
                 }
             }
 
-            // For underground zones, severely reduce connectivity - only 10% chance to have each connection
+            // For underground zones, reduce connectivity - only 50% chance to have each connection
             let effectiveConnections = { ...connections };
             if (this.currentDimension === 2) {
-                effectiveConnections.north = connections.north !== null && Math.random() < 0.10 ? connections.north : null;
-                effectiveConnections.south = connections.south !== null && Math.random() < 0.10 ? connections.south : null;
-                effectiveConnections.west = connections.west !== null && Math.random() < 0.10 ? connections.west : null;
-                effectiveConnections.east = connections.east !== null && Math.random() < 0.10 ? connections.east : null;
+                effectiveConnections.north = connections.north !== null && Math.random() < 0.50 ? connections.north : null;
+                effectiveConnections.south = connections.south !== null && Math.random() < 0.50 ? connections.south : null;
+                effectiveConnections.west = connections.west !== null && Math.random() < 0.50 ? connections.west : null;
+                effectiveConnections.east = connections.east !== null && Math.random() < 0.50 ? connections.east : null;
             }
 
             // Apply exits based on effective connections with bounds checking
@@ -512,8 +517,8 @@ export class ZoneGenerator {
                 this.grid[effectiveConnections.east][GRID_SIZE - 1] = TILE_TYPES.EXIT;
             }
 
-            // Block some exits with shrubbery in Frontier regions (zone level 4)
-            featureGenerator.blockExitsWithShrubbery(zoneLevel, effectiveConnections);
+            // Block some exits with rocks/shrubbery
+            featureGenerator.blockExitsWithShrubbery(zoneLevel, effectiveConnections, this.currentDimension === 2);
         }
     }
 

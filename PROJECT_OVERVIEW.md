@@ -91,8 +91,8 @@ The project is structured into modules, each handling a specific domain of the g
 
 ### Tests (tests/ folder)
 
-- `CombatManager.test.js`, `InventoryManager.test.js`, etc.: Jest tests for key modules.
-- Babel and Jest config for testing.
+- `CombatManager.test.js`, `InventoryManager.test.js`, `Player.test.js`, `ZoneManager.test.js`, `InputManager.test.js`, `ZoneStateManager.test.js`, `ItemGenerator.test.js`, `constants.test.js`: Comprehensive Jest test suite with 78 passed tests covering core game mechanics.
+- Babel configuration (`.babelrc`) for ES module support in Jest testing framework with `@babel/preset-env`.
 
 ## 3. Folder Structure Quick Reference
 

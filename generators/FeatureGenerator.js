@@ -198,40 +198,62 @@ export class FeatureGenerator {
         }
     }
 
-    blockExitsWithShrubbery(zoneLevel, connections) {
-        if (zoneLevel !== 4 || !connections) {
+    blockExitsWithShrubbery(zoneLevel, connections, isUnderground = false) {
+        if (!connections) {
             return;
         }
 
-        // Block exits with either rock (20% chance) or shrubbery (20% chance) in Frontier
-        if (connections.north !== null) {
-            if (Math.random() < 0.2) {
+        // Underground zones use only rocks for exit blocking (no shrubbery)
+        if (isUnderground) {
+            // Block exits with rocks in underground zones (55% chance)
+            const rockChance = 0.55;
+            if (connections.north !== null && Math.random() < rockChance) {
                 this.grid[0][connections.north] = TILE_TYPES.ROCK;
-            } else if (Math.random() < 0.4) {
-                this.grid[0][connections.north] = TILE_TYPES.SHRUBBERY;
             }
-        }
-        if (connections.south !== null) {
-            if (Math.random() < 0.2) {
+            if (connections.south !== null && Math.random() < rockChance) {
                 this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.ROCK;
-            } else if (Math.random() < 0.4) {
-                this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.SHRUBBERY;
             }
-        }
-        if (connections.west !== null) {
-            if (Math.random() < 0.2) {
+            if (connections.west !== null && Math.random() < rockChance) {
                 this.grid[connections.west][0] = TILE_TYPES.ROCK;
-            } else if (Math.random() < 0.4) {
-                this.grid[connections.west][0] = TILE_TYPES.SHRUBBERY;
             }
-        }
-        if (connections.east !== null) {
-            if (Math.random() < 0.2) {
+            if (connections.east !== null && Math.random() < rockChance) {
                 this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.ROCK;
-            } else if (Math.random() < 0.4) {
-                this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.SHRUBBERY;
+            }
+        } else if (zoneLevel === 4) {
+            // Surface frontier zones (maintain existing behavior)
+            const rockChance = 0.2;
+            const shrubberyChance = 0.4;
+
+            if (connections.north !== null) {
+                if (Math.random() < rockChance) {
+                    this.grid[0][connections.north] = TILE_TYPES.ROCK;
+                } else if (Math.random() < shrubberyChance) {
+                    this.grid[0][connections.north] = TILE_TYPES.SHRUBBERY;
+                }
+            }
+            if (connections.south !== null) {
+                if (Math.random() < rockChance) {
+                    this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.ROCK;
+                } else if (Math.random() < shrubberyChance) {
+                    this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.SHRUBBERY;
+                }
+            }
+            if (connections.west !== null) {
+                if (Math.random() < rockChance) {
+                    this.grid[connections.west][0] = TILE_TYPES.ROCK;
+                } else if (Math.random() < shrubberyChance) {
+                    this.grid[connections.west][0] = TILE_TYPES.SHRUBBERY;
+                }
+            }
+            if (connections.east !== null) {
+                if (Math.random() < rockChance) {
+                    this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.ROCK;
+                } else if (Math.random() < shrubberyChance) {
+                    this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.SHRUBBERY;
+                }
             }
         }
+        // No blocking in other surface zones
     }
 
     addUndergroundFeatures(zoneLevel, zoneX, zoneY) {
@@ -252,10 +274,10 @@ export class FeatureGenerator {
             if (this.grid[y][x] !== TILE_TYPES.FLOOR) continue;
 
             const featureType = Math.random();
-            if (featureType < 0.6) { // Increased rock chance
+            if (featureType < 0.7) { // Higher rock chance underground
                 this.grid[y][x] = TILE_TYPES.ROCK; // Rocks for obstacles
                 placedCount++;
-            } else if (featureType < 0.8) { // Reduced wall chance
+            } else if (featureType < 0.85) { // Reduced wall chance
                 this.grid[y][x] = TILE_TYPES.WALL; // Some walls for structure
                 placedCount++;
             } else {
