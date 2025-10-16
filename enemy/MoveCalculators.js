@@ -229,14 +229,27 @@ class BaseMoveCalculator {
 
         // Perform attack based on enemy type
         if (enemy.enemyType === 'lizord' && !isSimulation) {
-            // Lizord has special bump attack
-            this.performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game);
-            return null;
+            // Lizord has special bump attack, but only if the planned move would land on
+            // or adjacent to the player. Previously this ran unconditionally which could
+            // teleport the lizord from anywhere.
+            const maxDist = Math.max(dx, dy);
+            if (maxDist <= 1) {
+                // Planned move is on or adjacent to player: perform bump attack
+                this.performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game);
+                return null;
+            }
+            // Otherwise fall through and allow the move to proceed normally
         }
-        else if (dx === 1 && dy === 1) {
-            // Diagonal adjacent - perform attack in place
-            this.performAttack(enemy, player, playerX, playerY, grid, enemies, game);
-            return null;
+
+        if (dx === 1 && dy === 1) {
+            // Diagonal adjacent - most enemies attack, but lizardeaux should not
+            if (enemy.enemyType !== 'lizardeaux') {
+                this.performAttack(enemy, player, playerX, playerY, grid, enemies, game);
+                return null;
+            } else {
+                // For lizardeaux, do not perform a diagonal attack; proceed with move instead
+                return next;
+            }
         }
         else if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
             // Orthogonal adjacent - perform attack in place
@@ -381,6 +394,11 @@ class BaseMoveCalculator {
      */
     performAttack(enemy, player, playerX, playerY, grid, enemies, game) {
         if (game && game.playerJustAttacked) return; // Player just attacked, no retaliation
+
+        // Prevent lizardeaux from performing regular diagonal attacks
+        const dx = Math.abs(enemy.x - playerX);
+        const dy = Math.abs(enemy.y - playerY);
+        if (enemy.enemyType === 'lizardeaux' && dx === 1 && dy === 1) return;
 
         player.takeDamage(enemy.attack);
         player.startBump(enemy.x - playerX, enemy.y - playerY);

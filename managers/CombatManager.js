@@ -101,27 +101,23 @@ export class CombatManager {
             if (enemy.enemyType === 'lizord' && (enemy.lastX !== enemy.x || enemy.lastY !== enemy.y)) {
                 const dx = enemy.x - enemy.lastX;
                 const dy = enemy.y - enemy.lastY;
-                let midX, midY;
-                if (dx === 0 || dy === 0) {
-                    // Straight move, midpoint
-                    midX = (enemy.lastX + enemy.x) / 2;
-                    midY = (enemy.lastY + enemy.y) / 2;
+                let midX, midY; // The "corner" of the L-shaped move
+
+                // A lizord (knight) moves 2 tiles in one cardinal direction and 1 in a perpendicular one.
+                // The 'midPos' should be the corner of the 'L'.
+                // We determine the long leg of the L-move and set the midpoint accordingly.
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    // Moved further horizontally (e.g., 2 tiles) than vertically (e.g., 1 tile).
+                    // The corner of the L is at the end of the horizontal leg.
+                    midX = enemy.x;
+                    midY = enemy.lastY;
                 } else {
-                    // Diagonal move, L shape
-                    if (Math.abs(dx) > Math.abs(dy)) {
-                        // Horizontal dominant: move horizontal first
-                        midX = enemy.x;
-                        midY = enemy.lastY;
-                    } else if (Math.abs(dy) > Math.abs(dx)) {
-                        // Vertical dominant: move vertical first
-                        midX = enemy.lastX;
-                        midY = enemy.y;
-                    } else {
-                        // Equal (45 degree), arbitrary choice
-                        midX = enemy.x;
-                        midY = enemy.lastY;
-                    }
+                    // Moved further vertically than horizontally.
+                    // The corner of the L is at the end of the vertical leg.
+                    midX = enemy.lastX;
+                    midY = enemy.y;
                 }
+
                 this.game.animationManager.addHorseChargeAnimation({
                     startPos: { x: enemy.lastX, y: enemy.lastY },
                     midPos: { x: midX, y: midY },

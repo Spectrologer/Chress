@@ -70,9 +70,11 @@ export class ZoneTransitionManager {
         const playerPos = this.game.player.getPosition();
         const currentDim = this.game.player.currentZone.dimension;
 
-        // Check if player is in a pitfall zone and if there are enemies remaining
-        if (this.game.isInPitfallZone && this.game.enemies.length > 0) {
-            this.game.uiManager.showOverlayMessage("You must defeat all enemies to escape the pit!");
+        // Check if player is in a pitfall zone and hasn't survived 10 turns yet
+        if (this.game.isInPitfallZone && this.game.pitfallTurnsSurvived < 10) {
+            const turnsRemaining = 10 - this.game.pitfallTurnsSurvived;
+            const turnText = turnsRemaining === 1 ? 'turn' : 'turns';
+            this.game.uiManager.showOverlayMessage(`You must survive ${turnsRemaining} more ${turnText} to escape!`);
             this.game.soundManager.playSound('error');
             return;
         }

@@ -29,46 +29,46 @@ export class AnimationRenderer {
     drawHorseChargeAnimation() {
         const animations = this.game.animationManager.horseChargeAnimations;
         animations.forEach(anim => {
-            const progress = 1 - (anim.frame / ANIMATION_CONSTANTS.HORSE_CHARGE_FRAMES);
-            const horseImage = this.textureManager.getImage('horse');
-
-            if (horseImage && horseImage.complete) {
-                const startPixelX = anim.startPos.x * TILE_SIZE;
-                const startPixelY = anim.startPos.y * TILE_SIZE;
-                const endPixelX = anim.endPos.x * TILE_SIZE;
-                const endPixelY = anim.endPos.y * TILE_SIZE;
-
-                // L-shape path interpolation
-                const dx = endPixelX - startPixelX;
-                const dy = endPixelY - startPixelY;
-
-                let currentX, currentY;
-                const turnPoint = Math.abs(dx) > Math.abs(dy) ? 0.5 : 0.5;
-
-                if (progress < turnPoint) {
-                    // Move along the first leg of the "L"
-                    const legProgress = progress / turnPoint;
-                    if (Math.abs(dx) > Math.abs(dy)) { // Horizontal first
-                        currentX = startPixelX + dx * legProgress;
-                        currentY = startPixelY;
-                    } else { // Vertical first
-                        currentX = startPixelX;
-                        currentY = startPixelY + dy * legProgress;
-                    }
-                } else {
-                    // Move along the second leg
-                    const legProgress = (progress - turnPoint) / (1 - turnPoint);
-                    if (Math.abs(dx) > Math.abs(dy)) { // Vertical second
-                        currentX = endPixelX;
-                        currentY = startPixelY + dy * legProgress;
-                    } else { // Horizontal second
-                        currentX = startPixelX + dx * legProgress;
-                        currentY = endPixelY;
-                    }
-                }
-
-                this.ctx.drawImage(horseImage, currentX, currentY, TILE_SIZE, TILE_SIZE);
+            const progress = 1.0 - (anim.frame / ANIMATION_CONSTANTS.HORSE_CHARGE_FRAMES);
+            const alpha = 1.0 - progress; // Fade out as it completes
+    
+            const startPixelX = anim.startPos.x * TILE_SIZE + TILE_SIZE / 2;
+            const startPixelY = anim.startPos.y * TILE_SIZE + TILE_SIZE / 2;
+            const midPixelX = anim.midPos.x * TILE_SIZE + TILE_SIZE / 2;
+            const midPixelY = anim.midPos.y * TILE_SIZE + TILE_SIZE / 2;
+            const endPixelX = anim.endPos.x * TILE_SIZE + TILE_SIZE / 2;
+            const endPixelY = anim.endPos.y * TILE_SIZE + TILE_SIZE / 2;
+    
+            this.ctx.save();
+            this.ctx.strokeStyle = `rgba(255, 255, 100, ${alpha})`; // Bright yellow, fading out
+            this.ctx.lineWidth = 6;
+            this.ctx.lineCap = 'round';
+            this.ctx.beginPath();
+    
+            const turnPoint = 0.5; // The point in the animation where it turns the corner
+    
+            if (progress < turnPoint) {
+                // Draw the first leg of the L
+                const legProgress = progress / turnPoint;
+                const currentX = startPixelX + (midPixelX - startPixelX) * legProgress;
+                const currentY = startPixelY + (midPixelY - startPixelY) * legProgress;
+                this.ctx.moveTo(startPixelX, startPixelY);
+                this.ctx.lineTo(currentX, currentY);
+            } else {
+                // Draw the full first leg
+                this.ctx.moveTo(startPixelX, startPixelY);
+                this.ctx.lineTo(midPixelX, midPixelY);
+    
+                // Draw the second leg of the L
+                const legProgress = (progress - turnPoint) / (1 - turnPoint);
+                const currentX = midPixelX + (endPixelX - midPixelX) * legProgress;
+                const currentY = midPixelY + (endPixelY - midPixelY) * legProgress;
+                this.ctx.moveTo(midPixelX, midPixelY);
+                this.ctx.lineTo(currentX, currentY);
             }
+    
+            this.ctx.stroke();
+            this.ctx.restore();
         });
     }
 

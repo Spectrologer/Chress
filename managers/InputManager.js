@@ -200,14 +200,25 @@ export class InputManager {
 
         // Handle shovel mode first to intercept any other tap action
         if (this.game.shovelMode) {
-            const success = this.itemUsageManager.useItem(this.game.activeShovel, gridCoords.x, gridCoords.y);
-            if (success) {
-                // Successfully used shovel, exit shovel mode
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = dx <= 1 && dy <= 1 && !(dx === 0 && dy === 0);
+
+            if (isAdjacent) {
+                const success = this.itemUsageManager.useItem(this.game.activeShovel, gridCoords.x, gridCoords.y);
+                if (success) {
+                    // Successfully used shovel, exit shovel mode
+                    this.game.shovelMode = false;
+                    this.game.activeShovel = null;
+                    this.game.hideOverlayMessage();
+                }
+                // If not successful, the ItemUsageManager shows a message. We stay in shovel mode.
+            } else {
+                // Clicked a non-adjacent tile, so cancel shovel mode.
                 this.game.shovelMode = false;
                 this.game.activeShovel = null;
                 this.game.hideOverlayMessage();
             }
-            // If not successful, the ItemUsageManager shows a message. We stay in shovel mode.
             return; // End tap handling here, preventing movement.
         }
 
@@ -663,6 +674,11 @@ export class InputManager {
                     this.game.justEnteredZone = false; // Reset flag after skipping enemy movement
                 } else {
                     this.game.startEnemyTurns();
+
+                    // If in a pitfall zone, increment the survival timer
+                    if (this.game.isInPitfallZone) {
+                        this.game.pitfallTurnsSurvived++;
+                    }
                 }
 
                 // Collision and pickup checks are now handled after the enemy turn sequence finishes

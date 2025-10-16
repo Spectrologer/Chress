@@ -5,6 +5,11 @@ export const EnemyAttackMixin = {
         const sameCol = this.x === playerX;
         const sameDiagonal = Math.abs(this.x - playerX) === Math.abs(this.y - playerY) && (playerX !== this.x) && (playerY !== this.y);
 
+        // Enforce rook-like attacks for lizardeaux: disallow diagonal rams
+        if (this.enemyType === 'lizardeaux' && sameDiagonal) {
+            return false;
+        }
+
         if (!sameRow && !sameCol && !sameDiagonal) {
             return false; // Not in straight line
         }

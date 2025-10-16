@@ -365,10 +365,11 @@ export class AnimationManager {
     /**
      * Adds a horse charge animation
      * @param {object} startPos - Start position {x, y}
+     * @param {object} midPos - Midpoint position for L-shaped moves {x, y}
      * @param {object} endPos - End position {x, y}
      */
-    addHorseChargeAnimation(startPos, endPos) {
-        const animation = { startPos: { ...startPos }, endPos: { ...endPos }, frame: 20 };
+    addHorseChargeAnimation({ startPos, midPos, endPos }) {
+        const animation = { startPos: { ...startPos }, midPos: { ...midPos }, endPos: { ...endPos }, frame: 20 };
         DataContractValidator.validateAnimation('HORSE_CHARGE', animation);
         this.horseChargeAnimations.push(animation);
     }

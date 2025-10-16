@@ -24,8 +24,8 @@ export class BaseEnemy {
     getPoints() {
         switch (this.enemyType) {
             case 'lizardy':
-            case 'lizardo':
                 return 1;
+            case 'lizardo':
             case 'lizord':
             case 'zard':
                 return 3;

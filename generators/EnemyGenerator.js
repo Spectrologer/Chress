@@ -8,14 +8,15 @@ const ENEMY_WEIGHTS = {
     lizardo: 2,
     lizardeaux: 3,
     lizord: 3,
-    lazerd: 4
+    lazerd: 5,
+    zard: 3
 };
 
 const MAX_WEIGHT_PER_LEVEL = {
-    1: 7,
-    2: 7,
-    3: 9,
-    4: 12
+    1: 4,
+    2: 6,
+    3: 8,
+    4: 10
 };
 
 const ENEMY_SPAWN_PROBS = {
@@ -25,21 +26,26 @@ const ENEMY_SPAWN_PROBS = {
         { type: 'lizardeaux', prob: 0.05 }
     ],
     2: [
-        { type: 'lizardy', prob: 0.6 },
-        { type: 'lizardo', prob: 0.3 },
-        { type: 'lizardeaux', prob: 0.1 }
+        { type: 'lizardy', prob: 0.5 },
+        { type: 'lizardo', prob: 0.25 },
+        { type: 'lizardeaux', prob: 0.1 },
+        { type: 'zard', prob: 0.1 },
+        { type: 'lizord', prob: 0.05 }
     ],
     3: [
-        { type: 'lizardy', prob: 0.4 },
-        { type: 'lizardo', prob: 0.3 },
+        { type: 'lizardy', prob: 0.2 },
+        { type: 'lizardo', prob: 0.2 },
         { type: 'lizardeaux', prob: 0.2 },
+        { type: 'zard', prob: 0.2 },
+        { type: 'lizord', prob: 0.1 },
         { type: 'lazerd', prob: 0.1 }
     ],
     4: [
         { type: 'lizardeaux', prob: 0.25 },
         { type: 'lizardy', prob: 0.25 },
         { type: 'lizord', prob: 0.25 },
-        { type: 'lazerd', prob: 0.25 }
+        { type: 'lazerd', prob: 0.15 },
+        { type: 'zard', prob: 0.10 }
     ]
 };
 

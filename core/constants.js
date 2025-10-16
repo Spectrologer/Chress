@@ -296,6 +296,7 @@ export const ANIMATION_SCHEMAS = {
     },
     HORSE_CHARGE: {
         startPos: 'object', // { x: number, y: number }
+        midPos: 'object',   // { x: number, y: number }
         endPos: 'object',   // { x: number, y: number }
         frame: 'number'
     },

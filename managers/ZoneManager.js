@@ -19,12 +19,18 @@ export class ZoneManager {
         // Set pitfall zone flag based on transition data
         this.game.isInPitfallZone = this.game.portTransitionData?.from === 'pitfall';
         if (exitSide !== 'port') {
+            this.game.pitfallTurnsSurvived = 0; // Reset on any non-port transition
             this.game.isInPitfallZone = false; // Clear flag if not a port transition
         }
 
         // Check if this is a special zone marked by a note
         const zoneKey = `${newZoneX},${newZoneY}`;
         const hasReachedSpecialZone = this.game.specialZones.has(zoneKey);
+
+        // If entering a pitfall zone, reset the turn counter
+        if (this.game.isInPitfallZone) {
+            this.game.pitfallTurnsSurvived = 0;
+        }
 
         // Update player's current zone (keep dimension)
         this.game.player.setCurrentZone(newZoneX, newZoneY);

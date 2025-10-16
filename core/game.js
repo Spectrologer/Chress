@@ -87,6 +87,7 @@ class Game {
         this.activeShovel = null;
         this.portTransitionData = null; // Data for hole -> cistern transitions
         this.isInPitfallZone = false; // True if player is in a zone entered via pitfall
+        this.pitfallTurnsSurvived = 0; // Turns survived in a pitfall zone
 
         // Legacy animation arrays (deprecated - use animationManager)
         this.arrowAnimations = [];
