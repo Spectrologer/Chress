@@ -360,17 +360,15 @@ export class StructureTileRenderer {
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        // Debug logging
+        // Check for shack image
         const imageKey = 'doodads/shack';
         const imageLoaded = RendererUtils.isImageLoaded(this.images, imageKey);
-        const shackInfo = MultiTileHandler.findShackPosition(x, y, grid);
-        if (x === 0 && y === 0) { // Only log once per frame for performance
-            console.log('[renderShackTile] imageKey:', imageKey, 'imageLoaded:', imageLoaded, 'shackInfo:', shackInfo);
-        }
 
         // Then render the shack part
         if (imageLoaded) {
-            // For a 3x3 shack, determine which part of the shack image to draw
+            // Find the shack position using the multi-tile handler
+            const shackInfo = this.multiTileHandler.findShackPosition(x, y, grid);
+
             if (shackInfo) {
                 // Calculate position within the 3x3 shack
                 const partX = x - shackInfo.startX;
@@ -395,7 +393,7 @@ export class StructureTileRenderer {
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
         } else {
-            // Fallback color rendering
+            // Fallback color rendering - using SHACK tile color instead of hardcoded
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.SHACK] || '#8B4513';
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }

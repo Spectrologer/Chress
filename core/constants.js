@@ -145,6 +145,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.BOW]: '#8B4513', // Brown for bow
     [TILE_TYPES.MARK]: '#FFD700', // Gold for Mark
     [TILE_TYPES.CISTERN]: '#708090', // Slate gray for cistern
+    [TILE_TYPES.SHACK]: '#8B4513', // Brown for shack
     [TILE_TYPES.GOUGE]: '#8A2BE2' // Blueviolet for Gouge
 };
 

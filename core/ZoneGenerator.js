@@ -153,6 +153,13 @@ export class ZoneGenerator {
                     playerSpawn: { x: Math.floor(GRID_SIZE / 2), y: Math.floor(GRID_SIZE / 2) + 2 }
                 };
             } else {
+                // Check if this is the interior for the special Wilds shack
+                if (ZoneStateManager.wildsShackSpawnZone && zoneX === ZoneStateManager.wildsShackSpawnZone.x && zoneY === ZoneStateManager.wildsShackSpawnZone.y) {
+                    // Place Gouge in the center of the shack
+                    const gougePos = this.findOpenNpcSpawn(2);
+                    if (gougePos) this.grid[gougePos.y][gougePos.x] = TILE_TYPES.GOUGE;
+                }
+
                 // Shack interior: generate food/water items
                 // Ensure PORT tile exists at bottom-middle for exit
                 const portX = Math.floor(GRID_SIZE / 2);
@@ -327,6 +334,12 @@ export class ZoneGenerator {
             // Add unique structures based on zone level (moved here to place after obstacles)
             if (zoneLevel === 4 && !ZoneStateManager.wellSpawned) {
                 structureGenerator.addWell(zoneX, zoneY);
+            }
+            if (zoneLevel === 3 && !ZoneStateManager.wildsShackSpawned) {
+                if (structureGenerator.addShack(zoneX, zoneY)) {
+                    ZoneStateManager.wildsShackSpawned = true;
+                    ZoneStateManager.wildsShackSpawnZone = { x: zoneX, y: zoneY };
+                }
             }
             if (zoneLevel === 2 && !ZoneStateManager.deadTreeSpawned) {
                 structureGenerator.addDeadTree(zoneX, zoneY);

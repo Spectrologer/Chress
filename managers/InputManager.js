@@ -589,6 +589,13 @@ export class InputManager {
             return; // Stop further processing
         }
 
+        // Debug hotkey for teleporting to level 3 (Wilds)
+        if (event.key === '7') {
+            // Teleport to zone (9,0) which is in level 3, and place player in the center.
+            this.game.transitionToZone(9, 0, 'teleport', this.game.player.x, this.game.player.y);
+            return; // Stop further processing
+        }
+
         const currentPos = this.game.player.getPosition();
         let newX = currentPos.x;
         let newY = currentPos.y;

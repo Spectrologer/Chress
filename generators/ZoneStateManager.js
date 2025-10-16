@@ -13,6 +13,8 @@ export class ZoneStateManager {
     static squigSpawned = false;
 // Flag to ensure at least one shack spawns in level 1 per session
 static shackSpawned = false;
+// Flag for the special shack in the Wilds
+static wildsShackSpawned = false;
 // Flag to ensure at least one cistern spawns in level 1 per session
 static cisternSpawnedForLevel1 = false;
 static wellSpawned = false;
@@ -27,6 +29,7 @@ static hammerWarningSignPlaced = false;
     static noteSpawnZone = null;
     static spearSpawnZone = null;
     static horseIconSpawnZone = null;
+    static wildsShackSpawnZone = null;
 
     static initializeItemLocations() {
         if (this.axeSpawnZone && this.hammerSpawnZone && this.spearSpawnZone && this.horseIconSpawnZone) {
@@ -91,6 +94,7 @@ static hammerWarningSignPlaced = false;
         this.noteSpawned = false;
         this.lionSpawned = false;
         this.shackSpawned = false;
+        this.wildsShackSpawned = false;
         this.cisternSpawnedForLevel1 = false;
         this.squigSpawned = false;
         this.wellSpawned = false;
@@ -103,5 +107,6 @@ static hammerWarningSignPlaced = false;
         this.noteSpawnZone = null;
         this.spearSpawnZone = null;
         this.horseIconSpawnZone = null;
+        this.wildsShackSpawnZone = null;
     }
 }

@@ -115,7 +115,53 @@ export class StructureGenerator {
     }
 
     addShack(zoneX, zoneY) {
-        // Shack generation disabled
+        // Place a 3x3 shack with a PORT at the middle bottom
+        // Allow placement on floor, grass, rock, shrubbery, and water to ensure reliable spawning in wilds zones
+        const allowedTiles = [TILE_TYPES.FLOOR, TILE_TYPES.GRASS, TILE_TYPES.ROCK, TILE_TYPES.SHRUBBERY, TILE_TYPES.WATER];
+        const pos = findValidPlacement({
+            maxAttempts: 50,
+            minX: 1,
+            minY: 1,
+            maxX: GRID_SIZE - 3,
+            maxY: GRID_SIZE - 3,
+            validate: (x, y) => {
+                // Check 3x3 area + one tile in front for the door
+                for (let dy = 0; dy < 4; dy++) {
+                    for (let dx = 0; dx < 3; dx++) {
+                        if (!isAllowedTile(this.grid[y + dy]?.[x + dx], allowedTiles)) return false;
+                    }
+                }
+                return true;
+            }
+        });
+
+        if (pos) {
+            const { x, y } = pos;
+            for (let dy = 0; dy < 3; dy++) {
+                for (let dx = 0; dx < 3; dx++) {
+                    this.grid[y + dy][x + dx] = (dy === 2 && dx === 1) ? TILE_TYPES.PORT : TILE_TYPES.SHACK;
+                }
+            }
+
+            // Clear a 3x3 area around the entrance (PORT) to ensure the shack fits and has space
+            // The entrance is at (x+1, y+2), so clear tiles from (x, y+3) to (x+2, y+5)
+            // Also clear the sides and a bit in front
+            const entranceX = x + 1;
+            const entranceY = y + 2;
+            for (let clearY = entranceY - 1; clearY <= entranceY + 3 && clearY < GRID_SIZE - 1; clearY++) {
+                for (let clearX = entranceX - 1; clearX <= entranceX + 1 && clearX >= 1 && clearX < GRID_SIZE - 1; clearX++) {
+                    // Only clear rocks, shrubs, and other obstacles; leave floor/grass/water/shack/port
+                    const tile = this.grid[clearY][clearX];
+                    if (tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY) {
+                        this.grid[clearY][clearX] = TILE_TYPES.FLOOR;
+                    }
+                }
+            }
+
+            logger.log(`Shack spawned at zone (${zoneX}, ${zoneY}) position (${x}, ${y})`);
+            return true;
+        }
+        return false;
     }
 
     addCistern(zoneX, zoneY, force = false) {
