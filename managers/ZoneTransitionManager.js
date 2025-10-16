@@ -70,6 +70,13 @@ export class ZoneTransitionManager {
         const playerPos = this.game.player.getPosition();
         const currentDim = this.game.player.currentZone.dimension;
 
+        // Check if player is in a pitfall zone and if there are enemies remaining
+        if (this.game.isInPitfallZone && this.game.enemies.length > 0) {
+            this.game.uiManager.showOverlayMessage("You must defeat all enemies to escape the pit!");
+            this.game.soundManager.playSound('error');
+            return;
+        }
+
         let targetDim, portType;
         if (currentDim === 0) {
             // On the surface, determine where the PORT leads
@@ -99,6 +106,18 @@ export class ZoneTransitionManager {
         this.game.player.currentZone.dimension = targetDim;
         this.game.player.currentZone.portType = portType;
         this.game.transitionToZone(this.game.player.currentZone.x, this.game.player.currentZone.y, 'port', playerPos.x, playerPos.y);
+    }
+
+    handlePitfallTransition(x, y) {
+        // Player stepped on a pitfall trap
+        this.game.grid[y][x] = TILE_TYPES.PORT; // The pitfall becomes a hole
+
+        // Set data for the transition
+        this.game.portTransitionData = { from: 'pitfall', x, y };
+
+        // Transition to the underground dimension
+        this.game.player.currentZone.dimension = 2; // Underground
+        this.game.transitionToZone(this.game.player.currentZone.x, this.game.player.currentZone.y, 'port', x, y);
     }
 
     isTransitionEligible(gridCoords, playerPos) {

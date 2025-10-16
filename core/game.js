@@ -86,6 +86,7 @@ class Game {
         this.shovelMode = false;
         this.activeShovel = null;
         this.portTransitionData = null; // Data for hole -> cistern transitions
+        this.isInPitfallZone = false; // True if player is in a zone entered via pitfall
 
         // Legacy animation arrays (deprecated - use animationManager)
         this.arrowAnimations = [];

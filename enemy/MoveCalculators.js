@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../core/constants.js';
+import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { EnemyPathfinding } from './EnemyPathfinding.js';
 import { EnemySpecialActions } from './EnemySpecialActions.js';
 
@@ -37,7 +37,7 @@ class BaseMoveCalculator {
         const followLeader = isLargeGroup && enemy !== leader;
         const targetX = followLeader ? leader.x : playerX;
         const targetY = followLeader ? leader.y : playerY;
-
+        
         // Use BFS to find the shortest path to target (player or leader)
         const path = EnemyPathfinding.findPath(enemy.x, enemy.y, targetX, targetY, grid, enemy.enemyType, (x, y, g) => enemy.isWalkable(x, y, g));
 
@@ -59,6 +59,13 @@ class BaseMoveCalculator {
 
             // Check if within bounds and walkable
             if (enemy.isWalkable(next.x, next.y, grid)) {
+                // Check for pitfall traps before handling player interactions
+                if (!isSimulation && grid[next.y][next.x] === TILE_TYPES.PITFALL) {
+                    // Enemy falls through pitfall trap
+                    this.handleEnemyPitfallTransition(enemy, next.x, next.y, game);
+                    return null; // Don't move, enemy is being transitioned
+                }
+
                 // Check for player interactions
                 return this.handlePlayerInteraction(enemy, next, player, playerX, playerY, grid, enemies, isSimulation, game);
             }
@@ -177,30 +184,28 @@ class BaseMoveCalculator {
     }
 
     /**
-     * Apply defensive moves if the planned move would leave enemy vulnerable
+     * Apply defensive moves if the enemy is vulnerable to player attacks
      */
     applyDefensiveMoves(enemy, player, next, playerX, playerY, grid, enemies, isSimulation, game) {
         if (!this.tacticalAI) return next;
 
         const dx = Math.abs(next.x - playerX);
         const dy = Math.abs(next.y - playerY);
-        const newDistance = dx + dy;
+        const nextDistance = dx + dy;
 
-        // If moving closer to player but would be vulnerable (adjacent)
-        // For certain enemy types, be more aggressive and don't retreat
-        const aggressiveTypes = new Set(['lizardo']);
-        if (!aggressiveTypes.has(enemy.enemyType) && newDistance <= 2) {
-            const alternatives = this.tacticalAI.getDefensiveMoves(enemy, playerX, playerY, next.x, next.y, grid, enemies);
-            if (alternatives.length > 0) {
-                // Add smoke for defensive retreat if moving more than 1 tile
-                if (!isSimulation && Math.abs(alternatives[0].x - enemy.x) + Math.abs(alternatives[0].y - enemy.y) > 1) {
+        // If next move makes enemy adjacent to player (vulnerable), try to find defensive retreat
+        if (nextDistance <= 2) {
+            const defensiveMoves = this.tacticalAI.getDefensiveMoves(enemy, playerX, playerY, next.x, next.y, grid, enemies);
+            if (defensiveMoves.length > 0) {
+                // Add smoke animation for defensive retreat if it's a multi-tile move
+                if (!isSimulation && this.calculateMoveDistance(enemy.x, enemy.y, defensiveMoves[0].x, defensiveMoves[0].y) > 1) {
                     enemy.smokeAnimations.push({
-                        x: enemy.x + (alternatives[0].x - enemy.x) / 2,
-                        y: enemy.y + (alternatives[0].y - enemy.y) / 2,
+                        x: enemy.x + (defensiveMoves[0].x - enemy.x) / 2,
+                        y: enemy.y + (defensiveMoves[0].y - enemy.y) / 2,
                         frame: 18
                     });
                 }
-                return { x: alternatives[0].x, y: alternatives[0].y };
+                return { x: defensiveMoves[0].x, y: defensiveMoves[0].y };
             }
         }
 
@@ -208,33 +213,103 @@ class BaseMoveCalculator {
     }
 
     /**
-     * Handle interactions when moving onto or near the player
+     * Calculate chebyshev distance for smoke animations
+     */
+    calculateMoveDistance(x1, y1, x2, y2) {
+        return Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
+    }
+
+    /**
+     * Handle interactions when enemy moves onto player or adjacent positions
      */
     handlePlayerInteraction(enemy, next, player, playerX, playerY, grid, enemies, isSimulation, game) {
-        // Check if another enemy is already at the target position
-        const enemyAtTarget = enemies.find(e => e.x === next.x && e.y === next.y && e !== enemy);
-        if (enemyAtTarget) {
-            return null; // Can't move onto another enemy
+        // Check if this move puts enemy adjacent to player
+        const dx = Math.abs(next.x - playerX);
+        const dy = Math.abs(next.y - playerY);
+
+        // Perform attack based on enemy type
+        if (enemy.enemyType === 'lizord' && !isSimulation) {
+            // Lizord has special bump attack
+            this.performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game);
+            return null;
+        }
+        else if (dx === 1 && dy === 1) {
+            // Diagonal adjacent - perform attack in place
+            this.performAttack(enemy, player, playerX, playerY, grid, enemies, game);
+            return null;
+        }
+        else if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
+            // Orthogonal adjacent - perform attack in place
+            this.performAttack(enemy, player, playerX, playerY, grid, enemies, game);
+            return null;
+        }
+        else {
+            // Not adjacent to player, proceed with move
+            return next;
+        }
+    }
+
+    /**
+     * Handle enemy falling through a pitfall trap
+     */
+    handleEnemyPitfallTransition(enemy, x, y, game) {
+        // Change pitfall to PORT tile
+        game.grid[y][x] = TILE_TYPES.PORT;
+
+        // Set up the same portTransitionData that the player uses for pitfalls
+        game.portTransitionData = { from: 'pitfall', x, y };
+
+        // Temporarily remove enemy from current zone
+        const enemyIndex = game.enemies.indexOf(enemy);
+        if (enemyIndex > -1) {
+            game.enemies.splice(enemyIndex, 1);
         }
 
-        // Check if the target position has the player
-        if (next.x === playerX && next.y === playerY) {
-            if (!isSimulation) {
-                if (enemy.enemyType === 'lizord') {
-                    // Lizord bump attack: displace player to nearest walkable tile
-                    this.performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game);
-                } else {
-                    // Regular attack
-                    this.performAttack(enemy, player, playerX, playerY, grid, enemies, game);
-                }
-            } else {
-                // In simulation, attacking results in no net movement
-                return null;
-            }
-            return null; // Attack means no position change
-        } else {
-            return next; // Valid movement
+        // Transition enemy to underground zone immediately using zone transition logic
+        const currentZone = game.player.currentZone;
+
+        // Create the underground zone key
+        const undergroundZoneKey = `${currentZone.x},${currentZone.y}:2`;
+
+        // Generate the underground zone if it doesn't exist yet
+        if (!game.zones.has(undergroundZoneKey)) {
+            const undergroundZoneData = game.zoneGenerator.generateZone(
+                currentZone.x,
+                currentZone.y,
+                2, // underground dimension
+                game.zones,
+                game.connectionManager.zoneConnections,
+                game.availableFoodAssets,
+                'port'
+            );
+            game.zones.set(undergroundZoneKey, undergroundZoneData);
         }
+
+        // Get the existing underground zone data
+        const undergroundZoneData = game.zones.get(undergroundZoneKey);
+
+        // Create a fresh copy with the enemy added
+        const updatedZoneData = {
+            ...undergroundZoneData,
+            enemies: [...(undergroundZoneData.enemies || []), {
+                ...enemy, // Copy enemy data including position
+                x: enemy.x,
+                y: enemy.y,
+                enemyType: enemy.enemyType,
+                health: enemy.health,
+                id: enemy.id
+            }]
+        };
+
+        // Save the updated underground zone with the enemy
+        game.zones.set(undergroundZoneKey, updatedZoneData);
+
+        // Add visual/sound effects for falling
+        if (window.soundManager) {
+            window.soundManager.playSound('pitfall');
+        }
+
+        console.log(`Enemy ${enemy.enemyType} fell through pitfall at (${x}, ${y}) and is now in underground zone`);
     }
 
     /**

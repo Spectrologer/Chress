@@ -100,6 +100,8 @@ export class BaseTileRenderer {
             this.structureRenderer.renderCisternTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.SHOVEL) {
             this.itemRenderer.renderShovelTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.PITFALL) {
+            this.structureRenderer.renderPitfallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.PORT) {
             // PORT tiles are invisible overlays. Render the structure tile underneath them.
             const cisternInfo = this.multiTileHandler.findCisternPosition(x, y, grid);

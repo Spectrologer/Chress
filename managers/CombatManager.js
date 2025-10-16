@@ -62,6 +62,29 @@ export class CombatManager {
 
         const move = enemy.planMoveTowards(this.game.player, this.game.grid, this.game.enemies, playerPos, false, this.game);
         if (move) {
+            // Check if enemy is moving onto a pitfall trap
+            const targetTile = this.game.grid[move.y]?.[move.x];
+            if (targetTile === TILE_TYPES.PITFALL) {
+                // The enemy falls into the pit!
+                this.game.grid[move.y][move.x] = TILE_TYPES.PORT; // The pitfall becomes a hole
+
+                // Remove the enemy from the current zone's active enemy list
+                this.game.enemies = this.game.enemies.filter(e => e.id !== enemy.id);
+
+                // Add the enemy to the corresponding underground zone's data
+                const currentZone = this.game.player.getCurrentZone();
+                const undergroundZoneKey = `${currentZone.x},${currentZone.y}:2`;
+                if (this.game.zones.has(undergroundZoneKey)) {
+                    const undergroundZoneData = this.game.zones.get(undergroundZoneKey);
+                    // Find a valid spawn point for the enemy in the pitfall zone
+                    const spawnPos = this.game.player.getValidSpawnPosition(this.game);
+                    enemy.x = spawnPos.x;
+                    enemy.y = spawnPos.y;
+                    undergroundZoneData.enemies.push(enemy.serialize());
+                }
+                return; // Enemy has fallen, its turn in this zone is over.
+            }
+
             const key = `${move.x},${move.y}`;
             if (this.occupiedTiles.has(key)) {
                 return; // Tile is already claimed for this turn sequence

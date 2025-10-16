@@ -544,4 +544,17 @@ export class StructureTileRenderer {
             ctx.fillText('GOU', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
+
+    renderPitfallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First draw the base tile
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the pitfall image if loaded, otherwise it's invisible
+        if (RendererUtils.isImageLoaded(this.images, 'pitfall')) {
+            ctx.save();
+            ctx.globalAlpha = 0.7; // Make it slightly transparent to blend in
+            ctx.drawImage(this.images.pitfall, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            ctx.restore();
+        }
+    }
 }

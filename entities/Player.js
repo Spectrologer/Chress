@@ -72,6 +72,13 @@ export class Player {
             this.x = newX;
             this.y = newY;
 
+            // Check for pitfall trap after moving
+            const newTile = grid[this.y][this.x];
+            if (newTile === TILE_TYPES.PITFALL) {
+                window.gameInstance.interactionManager.zoneManager.handlePitfallTransition(this.x, this.y);
+                return true; // Movement was successful, but transition is happening
+            }
+
             this.animations.liftFrames = ANIMATION_CONSTANTS.LIFT_FRAMES; // Start lift animation
             window.soundManager?.playSound('move');
 
@@ -144,6 +151,7 @@ export class Player {
             (tile && tile.type === TILE_TYPES.BOOK_OF_TIME_TRAVEL) ||
             (tile && tile.type === TILE_TYPES.BOW) ||
             tile === TILE_TYPES.CISTERN ||
+            tile === TILE_TYPES.PITFALL ||
             (tile && tile.type === TILE_TYPES.SHOVEL) ||
             tile === TILE_TYPES.PORT) {
             return true;

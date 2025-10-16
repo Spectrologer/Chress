@@ -103,7 +103,8 @@ export const TILE_TYPES = {
     SHOVEL: 48,
     CISTERN: 45,
     AXELOTL: 46,
-    GOUGE: 47
+    GOUGE: 47,
+    PITFALL: 49
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -148,7 +149,8 @@ export const TILE_COLORS = {
     [TILE_TYPES.CISTERN]: '#708090', // Slate gray for cistern
     [TILE_TYPES.SHACK]: '#8B4513', // Brown for shack
     [TILE_TYPES.SHOVEL]: '#8B4513', // Brown for shovel
-    [TILE_TYPES.GOUGE]: '#8A2BE2' // Blueviolet for Gouge
+    [TILE_TYPES.GOUGE]: '#8A2BE2', // Blueviolet for Gouge
+    [TILE_TYPES.PITFALL]: '#ffcb8d' // Same as floor, should be mostly invisible
 };
 
 // Direction constants for exits and movements
@@ -196,6 +198,7 @@ export const IMAGE_ASSETS = [
     'doodads/well.png',
     'doodads/hole.png',
     'doodads/deadtree.png',
+    'doodads/pitfall.png',
     'fauna/lion.png',
     'fauna/squig.png',
     'fauna/nib.png',

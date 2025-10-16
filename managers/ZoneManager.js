@@ -16,6 +16,12 @@ export class ZoneManager {
         this.game.lastSignMessage = null;
         this.game.displayingMessageForSign = null;
 
+        // Set pitfall zone flag based on transition data
+        this.game.isInPitfallZone = this.game.portTransitionData?.from === 'pitfall';
+        if (exitSide !== 'port') {
+            this.game.isInPitfallZone = false; // Clear flag if not a port transition
+        }
+
         // Check if this is a special zone marked by a note
         const zoneKey = `${newZoneX},${newZoneY}`;
         const hasReachedSpecialZone = this.game.specialZones.has(zoneKey);
@@ -69,6 +75,9 @@ export class ZoneManager {
 
         // Save game state after zone transition
         this.game.gameStateManager.saveGameState();
+
+        // Now that the transition is complete, clear the one-time transition data
+        this.game.portTransitionData = null;
     }
 
     positionPlayerAfterTransition(exitSide, exitX, exitY) {
@@ -102,13 +111,20 @@ export class ZoneManager {
                 this.game.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
                 break;
             case 'port':
-                // When using a port, the player should emerge at the same coordinates
-                // in the new zone. The zone generation logic is responsible for ensuring
-                // a corresponding PORT tile exists at this location.
-                // exitX and exitY are the coordinates of the port used in the previous zone.
-                this.game.player.setPosition(exitX, exitY);
-                // Ensure the tile is a PORT in the new grid.
-                this.game.grid[exitY][exitX] = TILE_TYPES.PORT;
+                // For pitfalls, the player spawns at a random valid location, not on the entrance.
+                // The zoneData contains the correct spawn point.
+                const zoneData = this.game.zones.get(`${this.game.player.currentZone.x},${this.game.player.currentZone.y}:${this.game.player.currentZone.dimension}`);
+                if (this.game.portTransitionData?.from === 'pitfall' && zoneData?.playerSpawn) {
+                    this.game.player.setPosition(zoneData.playerSpawn.x, zoneData.playerSpawn.y);
+                } else {
+                    // For regular ports (cisterns, holes, doors), spawn at the entrance.
+                    // exitX and exitY are the coordinates of the port used in the previous zone.
+                    this.game.player.setPosition(exitX, exitY);
+                }
+                // Ensure the entrance tile is a PORT in the new grid.
+                if (exitY >= 0 && exitY < GRID_SIZE && exitX >= 0 && exitX < GRID_SIZE) {
+                    this.game.grid[exitY][exitX] = TILE_TYPES.PORT;
+                }
                 break;
             default:
                 // Fallback to center
@@ -185,5 +201,26 @@ export class ZoneManager {
 
         // Add message to log
         this.game.uiManager.addMessageToLog('Treasures found scattered throughout the zone!');
+    }
+
+    saveCurrentZoneState() {
+        // Save the current zone's grid and enemies to the zones map
+        const currentZone = this.game.player.getCurrentZone();
+        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+
+        // Save current zone state to preserve any changes made during gameplay
+        this.game.zones.set(zoneKey, {
+            grid: JSON.parse(JSON.stringify(this.game.grid)),
+            enemies: [...this.game.enemies.map(enemy => ({
+                x: enemy.x,
+                y: enemy.y,
+                enemyType: enemy.enemyType,
+                health: enemy.health,
+                id: enemy.id
+            }))],
+            playerSpawn: null // playerSpawn not needed for current zone
+        });
+
+        console.log(`Saved current zone state for ${zoneKey}`);
     }
 }

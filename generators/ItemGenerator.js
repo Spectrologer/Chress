@@ -96,6 +96,7 @@ export class ItemGenerator {
             { name: 'Heart', tile: TILE_TYPES.HEART, chance: 0.025, minLevel: 2, maxLevel: 4 },
             { name: 'Bow', tile: { type: TILE_TYPES.BOW, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4 },
             { name: 'Shovel', tile: { type: TILE_TYPES.SHOVEL, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4, dimension: 'any' },
+            { name: 'Pitfall', tile: TILE_TYPES.PITFALL, chance: 0.03, minLevel: 2, maxLevel: 4, dimension: 0 }, // 3% chance in Woods, Wilds, Frontier
         ];
 
         specialItems.forEach(item => {
@@ -118,7 +119,7 @@ export class ItemGenerator {
     }
 
     _placeItem(item) {
-        const loggableItems = ['Lion', 'Squig', 'Nib', 'Mark', 'Rune'];
+        const loggableItems = ['Lion', 'Squig', 'Nib', 'Mark', 'Rune', 'Pitfall'];
         let onPlacedCallback = null;
 
         if (loggableItems.includes(item.name)) {

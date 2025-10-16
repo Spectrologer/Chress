@@ -127,7 +127,8 @@ export class BaseEnemy {
             TILE_TYPES.BOMB,
             TILE_TYPES.NOTE,
             TILE_TYPES.HEART,
-            TILE_TYPES.PORT
+            TILE_TYPES.PORT,
+            TILE_TYPES.PITFALL
         ];
 
         return walkableTypes.includes(tileType);

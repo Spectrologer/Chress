@@ -230,6 +230,16 @@ const consoleCommands = {
     }
   },
 
+  spawnPitfall: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.PITFALL;
+      logger.log('Spawned pitfall at', pos);
+    } else {
+      logger.log('No valid spawn position found');
+    }
+  },
+
 
   // Enemy spawn commands (additional)
   spawnLizardeaux: function(game) {
@@ -283,6 +293,7 @@ const consoleCommands = {
   hotkeyX: function(game) { this.spawnMark(game); }, // X for Mark
   hotkeyJ: function(game) { this.spawnShack(game); }, // J for shack
   hotkeyC: function(game) { this.spawnCistern(game); }, // C for cistern
+  hotkeyP: function(game) { this.spawnPitfall(game); }, // P for pitfall
 
   hotkeyShift1: function(game) { this.spawnEnemy(game, 'lizardy'); },
   hotkeyShift2: function(game) { this.spawnEnemy(game, 'lizardo'); },
@@ -319,6 +330,7 @@ const consoleCommands = {
       if (lowerKey === 'x') { this.hotkeyX(game); return true; }
       if (lowerKey === 'j') { this.hotkeyJ(game); return true; }
       if (lowerKey === 'c') { this.hotkeyC(game); return true; }
+      if (lowerKey === 'p') { this.hotkeyP(game); return true; }
       // Enemies (numbers without shift)
       if (lowerKey === '1') { this.hotkeyShift1(game); return true; }
       if (lowerKey === '2') { this.hotkeyShift2(game); return true; }

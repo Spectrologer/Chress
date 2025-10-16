@@ -126,15 +126,14 @@ export class GameStateManager {
                     smellLemons: this.game.player.smellLemons,
                     spentDiscoveries: this.game.player.spentDiscoveries
                 },
-                // Game state
+                // Game state - save all zones across all dimensions
                 zones: Array.from(this.game.zones.entries()),
                 grid: this.game.grid,
                 enemies: this.game.enemies.map(enemy => ({
                     x: enemy.x,
                     y: enemy.y,
+                    enemyType: enemy.enemyType, // Use enemyType property instead of type
                     health: enemy.health,
-                    type: enemy.type,
-                    sprite: enemy.sprite,
                     id: enemy.id
                 })),
                 defeatedEnemies: Array.from(this.game.defeatedEnemies),
@@ -143,6 +142,7 @@ export class GameStateManager {
                 currentRegion: this.game.currentRegion,
                 bombPlacementMode: this.game.bombPlacementMode,
                 bombPlacementPositions: this.game.bombPlacementPositions,
+                isInPitfallZone: this.game.isInPitfallZone,
                 // Zone state manager counters and flags
                 zoneStateManager: {
                     zoneCounter: this.game.zoneGenerator.constructor.zoneCounter,
@@ -210,6 +210,7 @@ export class GameStateManager {
             this.game.currentRegion = gameState.currentRegion || null;
             this.game.bombPlacementMode = gameState.bombPlacementMode || false;
             this.game.bombPlacementPositions = gameState.bombPlacementPositions || [];
+            this.game.isInPitfallZone = gameState.isInPitfallZone || false;
 
             // Restore zone state manager statics
             if (gameState.zoneStateManager) {

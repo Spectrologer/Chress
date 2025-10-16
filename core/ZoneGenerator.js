@@ -253,21 +253,22 @@ export class ZoneGenerator {
             // If entering from a hole, place a PORT at the entry point.
             // If entering from a cistern, place a full cistern structure.
             if (this.game.portTransitionData) {
+                const isFromPitfall = this.game.portTransitionData.from === 'pitfall';
                 const isFromHole = this.game.portTransitionData.from === 'hole';
                 structureGenerator.addCistern(zoneX, zoneY, true, this.game.portTransitionData.x, this.game.portTransitionData.y);
                 if (!isFromHole) { // It's a cistern, so add the bottom part
                     this.grid[this.game.portTransitionData.y + 1][this.game.portTransitionData.x] = TILE_TYPES.CISTERN;
                 }
-                this.game.portTransitionData = null; // Consume the data
             }
 
             // Add special zone items - this includes nib and rune spawning logic which are now restricted to underground
             itemGenerator.addSpecialZoneItems();
+            const isFromPitfall = this.game.portTransitionData?.from === 'pitfall';
 
             // Higher enemy chance in underground for challenge
             const baseProbabilities = { 1: 0.15, 2: 0.20, 3: 0.22, 4: 0.27 };
             const baseEnemyProbability = baseProbabilities[zoneLevel] || 0.15;
-            const enemyProbability = baseEnemyProbability + Math.floor(ZoneStateManager.zoneCounter / 10) * 0.01;
+            const enemyProbability = (baseEnemyProbability + Math.floor(ZoneStateManager.zoneCounter / 10) * 0.01) * (isFromPitfall ? 2.5 : 1); // 2.5x enemy chance from pitfall
 
             if (Math.random() < enemyProbability) {
                 enemyGenerator.addRandomEnemyWithValidation(zoneLevel, zoneX, zoneY, this.grid, []);
@@ -277,8 +278,8 @@ export class ZoneGenerator {
             // Ensure exit accessibility
             pathGenerator.ensureExitAccess();
 
-            // Find a valid player spawn tile
-            this.playerSpawn = this.findValidPlayerSpawn();
+            // Find a valid player spawn tile. If from a pitfall, don't spawn on the entrance.
+            this.playerSpawn = this.findValidPlayerSpawn(isFromPitfall);
 
             // Sanitize grid to fix any corrupted tiles
             this.sanitizeGrid();
@@ -390,6 +391,41 @@ export class ZoneGenerator {
             enemies: [...this.enemies],
             playerSpawn: this.playerSpawn ? { ...this.playerSpawn } : null
         };
+    }
+
+    // Find a valid spawn tile for the player that is not occupied by an enemy, item, or impassable tile.
+    // Returns {x, y} or null if none found.
+    findValidPlayerSpawn(avoidEntrance = false) {
+        // Prefer spawning in front of house in home zone
+        if (this.currentZoneX === 0 && this.currentZoneY === 0 && this.currentDimension === 0) {
+            const houseStartX = 3;
+            const houseStartY = 3;
+            const frontY = houseStartY + 3; // Row in front of the 3-tile high club
+            for (let x = houseStartX; x < houseStartX + 4; x++) { // Club is 4 tiles wide
+                if (this.isTileFree(x, frontY)) {
+                    return { x, y: frontY };
+                }
+            }
+        }
+        // Otherwise, pick a random free floor tile
+        let candidates = [];
+        const entrancePos = this.game.portTransitionData;
+
+        for (let y = 1; y < GRID_SIZE - 1; y++) {
+            for (let x = 1; x < GRID_SIZE - 1; x++) {
+                // If we need to avoid the entrance (from a pitfall), skip that tile.
+                if (avoidEntrance && entrancePos && x === entrancePos.x && y === entrancePos.y) {
+                    continue;
+                }
+                if (this.isTileFree(x, y)) {
+                    candidates.push({ x, y });
+                }
+            }
+        }
+        if (candidates.length > 0) {
+            return candidates[Math.floor(Math.random() * candidates.length)];
+        }
+        return null;
     }
 
     initialize() {
