@@ -82,6 +82,8 @@ export class InventoryManager {
                 return `Book of Time Travel - Passes one turn, allowing enemies to move. Has ${item.uses} charges.`;
             case 'bow':
                 return `Bow${disabledText} - Fires an arrow in an orthogonal direction. Has ${item.uses} charges.`;
+            case 'shovel':
+                return `Shovel - Digs a hole in an adjacent empty tile. Has ${item.uses} uses.`;
             default:
                 return '';
         }
@@ -159,6 +161,8 @@ export class InventoryManager {
             this._addUsesIndicator(slot, item);
         } else if (item.type === 'bow') {
             this._createItemImageContainer(slot, item, 'assets/items/bow.png', { transform: 'rotate(-90deg)' });
+        } else if (item.type === 'shovel') {
+            this._createItemImageContainer(slot, item, 'assets/items/shovel.png');
         }
     }
 
@@ -339,6 +343,12 @@ export class InventoryManager {
                 break;
             case 'bow':
                 this.dropItem('bow', { type: TILE_TYPES.BOW, uses: item.uses });
+                break;
+            case 'shovel':
+                this.game.shovelMode = true;
+                this.game.activeShovel = item;
+                this.game.uiManager.showOverlayMessage('Click an adjacent tile to dig a hole.');
+                // Don't end turn, wait for player to click a tile
                 break;
 
             case 'heart':

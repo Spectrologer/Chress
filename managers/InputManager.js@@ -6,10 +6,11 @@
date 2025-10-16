@@ -25,8 +25,8 @@ export class InputManager {
         });
         
         // Mouse controls for desktop (same as tap)
-        this.game.canvas.addEventListener('click', (event) => {
-            this.handleTap(event.clientX, event.clientY);
+        this.game.canvas.addEventListener('click', (e) => {
+            this.handleTap(e.clientX, e.clientY);
         });
 
         // Touch controls for mobile
@@ -198,17 +198,18 @@ export class InputManager {
 
         const playerPos = this.game.player.getPosition();
 
-        // Handle shovel mode first to intercept any other tap action
+        // Handle shovel mode
         if (this.game.shovelMode) {
-            const success = this.itemUsageManager.useItem(this.game.activeShovel, gridCoords.x, gridCoords.y);
+            const success = this.itemUsageManager.useItem('shovel', gridCoords.x, gridCoords.y);
             if (success) {
-                // Successfully used shovel, exit shovel mode
+                // Successfully used shovel
                 this.game.shovelMode = false;
                 this.game.activeShovel = null;
                 this.game.hideOverlayMessage();
+            } else {
+                // Failed to use, keep shovel mode active
             }
-            // If not successful, the ItemUsageManager shows a message. We stay in shovel mode.
-            return; // End tap handling here, preventing movement.
+            return; // End tap handling here
         }
 
         // If stats panel is open, close it on any tap
@@ -563,6 +564,11 @@ export class InputManager {
             // This now includes sign messages, which will close upon movement.
             if (this.game.displayingMessageForSign) {
                 Sign.hideMessageForSign(this.game);
+            } else if (this.game.shovelMode) {
+                // If moving, cancel shovel mode
+                this.game.shovelMode = false;
+                this.game.activeShovel = null;
+                this.game.hideOverlayMessage();
             } else if (this.game.bombPlacementMode) {
                 // If moving, cancel bomb placement
                 this.game.bombPlacementMode = false;

@@ -47,6 +47,8 @@ export class TextureLoader {
                     imageKey = 'doodads/cistern';
                 } else if (assetName === 'doodads/shack.png') {
                     imageKey = 'doodads/shack';
+                } else if (assetName === 'doodads/hole.png') {
+                    imageKey = 'hole';
                 } else {
                     imageKey = assetName.replace('.png', '');
                 }

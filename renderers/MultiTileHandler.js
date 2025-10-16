@@ -138,4 +138,16 @@ export class MultiTileHandler {
     
         return null;
     }
+
+    static isHole(targetX, targetY, grid) {
+        const tile = grid[targetY]?.[targetX];
+        if (tile !== TILE_TYPES.PORT) {
+            return false;
+        }
+        const isCistern = this.findCisternPosition(targetX, targetY, grid);
+        const isShack = this.findShackPosition(targetX, targetY, grid);
+        const isHouse = this.findHousePosition(targetX, targetY, grid);
+
+        return !isCistern && !isShack && !isHouse;
+    }
 }

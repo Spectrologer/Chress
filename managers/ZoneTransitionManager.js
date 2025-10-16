@@ -72,12 +72,19 @@ export class ZoneTransitionManager {
 
         let targetDim, portType;
         if (currentDim === 0) {
-            // Check if this is a cistern portal (has CISTERN below)
+            // On the surface, determine where the PORT leads
             const cisternPos = MultiTileHandler.findCisternPosition(playerPos.x, playerPos.y, this.game.grid);
+            const isHole = MultiTileHandler.isHole(playerPos.x, playerPos.y, this.game.grid);
+
             if (cisternPos) {
                 // Entering underground via cistern
                 targetDim = 2;
                 portType = 'underground';
+                this.game.portTransitionData = { from: 'cistern', x: playerPos.x, y: playerPos.y };
+            } else if (isHole) {
+                targetDim = 2;
+                portType = 'underground';
+                this.game.portTransitionData = { from: 'hole', x: playerPos.x, y: playerPos.y };
             } else {
                 // Entering interior via house/shack door
                 targetDim = 1;

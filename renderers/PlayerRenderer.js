@@ -73,11 +73,13 @@ export class PlayerRenderer {
 
                 if (tileUnderPlayer === TILE_TYPES.PORT) {
                     const isCistern = MultiTileHandler.findCisternPosition(playerGridX, playerGridY, this.game.grid);
-                    if (isCistern) {
-                        // For cisterns, arrow points down to enter, and up to exit.
+                    const isHole = !isCistern && !MultiTileHandler.findShackPosition(playerGridX, playerGridY, this.game.grid) && !MultiTileHandler.findHousePosition(playerGridX, playerGridY, this.game.grid);
+
+                    if (isCistern || isHole) {
+                        // For underground entrances (cisterns, holes), arrow points down to enter, and up to exit.
                         rotationAngle = this.game.player.currentZone.dimension === 0 ? Math.PI : 0;
                     } else {
-                        // For other structures (house, shack), arrow points down to enter, and up to exit.
+                        // For interior structures (house, shack), arrow points up to enter, and down to exit.
                         rotationAngle = this.game.player.currentZone.dimension === 0 ? 0 : Math.PI;
                     }
 

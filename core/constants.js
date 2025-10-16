@@ -100,6 +100,7 @@ export const TILE_TYPES = {
     BOW: 41,
     MARK: 43,
     SHACK: 44,
+    SHOVEL: 48,
     CISTERN: 45,
     AXELOTL: 46,
     GOUGE: 47
@@ -146,6 +147,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.MARK]: '#FFD700', // Gold for Mark
     [TILE_TYPES.CISTERN]: '#708090', // Slate gray for cistern
     [TILE_TYPES.SHACK]: '#8B4513', // Brown for shack
+    [TILE_TYPES.SHOVEL]: '#8B4513', // Brown for shovel
     [TILE_TYPES.GOUGE]: '#8A2BE2' // Blueviolet for Gouge
 };
 
@@ -188,9 +190,11 @@ export const IMAGE_ASSETS = [
     'items/note.png',
     'items/book.png',
     'items/bow.png',
+    'items/shovel.png',
     'items/points.png',
     'items/chest.png',
     'doodads/well.png',
+    'doodads/hole.png',
     'doodads/deadtree.png',
     'fauna/lion.png',
     'fauna/squig.png',

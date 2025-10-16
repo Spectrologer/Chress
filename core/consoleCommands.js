@@ -207,6 +207,16 @@ const consoleCommands = {
     }
   },
 
+  spawnShovel: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.SHOVEL, uses: 3 };
+      logger.log('Spawned shovel at', pos);
+    } else {
+      logger.log('No valid spawn position found');
+    }
+  },
+
   spawnCistern: function(game) {
     const pos = findCisternSpawnPosition(game);
     if (pos) {
@@ -248,6 +258,7 @@ const consoleCommands = {
   hotkeyB: function(game) { this.spawnBomb(game); },
   hotkeyH: function(game) { this.spawnHorseIcon(game); },
   hotkeyM: function(game) { this.spawnHammer(game); },
+  hotkeyV: function(game) { this.spawnShovel(game); }, // V for shovel (vacuum? or V is unused)
   hotkeyS: function(game) { this.spawnBishopSpear(game); },
   hotkeyN: function(game) { this.spawnNote(game); },
   hotkeyR: function(game) { this.spawnHeart(game); },
@@ -291,6 +302,7 @@ const consoleCommands = {
       if (lowerKey === 'b') { this.hotkeyB(game); return true; }
       if (lowerKey === 'h') { this.hotkeyH(game); return true; }
       if (lowerKey === 'm') { this.hotkeyM(game); return true; }
+      if (lowerKey === 'v') { this.hotkeyV(game); return true; }
       if (lowerKey === 's') { this.hotkeyS(game); return true; }
       if (lowerKey === 'n') { this.hotkeyN(game); return true; }
       if (lowerKey === 'r') { this.hotkeyR(game); return true; }

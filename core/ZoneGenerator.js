@@ -10,7 +10,8 @@ import { initializeGrid, validateAndSetTile } from '../generators/GeneratorUtils
 
 export class ZoneGenerator {
 
-    constructor() {
+    constructor(game) {
+        this.game = game;
         this.grid = null;
         this.enemies = null;
         this.currentZoneX = null;
@@ -231,31 +232,13 @@ export class ZoneGenerator {
             // Debug: Always log zone information for troubleshooting
             logger.log(`[ZONE SPAWN DEBUG] Generating zone (${zoneX}, ${zoneY}) - Level: ${zoneLevel}, Dimension: ${dimension}, FirstWildsPlaced: ${ZoneStateManager.firstWildsZonePlaced}, hasExits: ${exitSide !== null}`);
 
-            // Check if there's a surface cistern that requires an underground counterpart
-            const surfaceZoneKey = `${zoneX},${zoneY}:${0}`;
-            const surfaceZone = existingZones.get(surfaceZoneKey);
-            let hasSurfaceCistern = false;
-
-            if (surfaceZone && surfaceZone.grid) {
-                // Check if surface zone has a cistern
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    for (let x = 0; x < GRID_SIZE; x++) {
-                        if (surfaceZone.grid[y][x] === TILE_TYPES.CISTERN) {
-                            hasSurfaceCistern = true;
-                            break;
-                        }
-                    }
-                    if (hasSurfaceCistern) break;
-                }
-            }
-
             // Initialize specialized generators
             const structureGenerator = new StructureGenerator(this.grid);
             const featureGenerator = new FeatureGenerator(this.grid, foodAssets);
             const itemGenerator = new ItemGenerator(this.grid, foodAssets, zoneX, zoneY, dimension);
             const enemyGenerator = new EnemyGenerator(this.enemies);
             const pathGenerator = new PathGenerator(this.grid);
-
+ 
             // Generate exits and add frontier sign if needed
             this.generateExits(zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel);
 
@@ -267,9 +250,15 @@ export class ZoneGenerator {
                 featureGenerator.addRandomFeatures(zoneLevel, zoneX, zoneY, true); // Pass true for underground
             }
 
-            // Force a cistern if there's a surface cistern above
-            if (hasSurfaceCistern) {
-                structureGenerator.addCistern(zoneX, zoneY, true);
+            // If entering from a hole, place a PORT at the entry point.
+            // If entering from a cistern, place a full cistern structure.
+            if (this.game.portTransitionData) {
+                const isFromHole = this.game.portTransitionData.from === 'hole';
+                structureGenerator.addCistern(zoneX, zoneY, true, this.game.portTransitionData.x, this.game.portTransitionData.y);
+                if (!isFromHole) { // It's a cistern, so add the bottom part
+                    this.grid[this.game.portTransitionData.y + 1][this.game.portTransitionData.x] = TILE_TYPES.CISTERN;
+                }
+                this.game.portTransitionData = null; // Consume the data
             }
 
             // Add special zone items - this includes nib and rune spawning logic which are now restricted to underground
@@ -643,94 +632,5 @@ export class ZoneGenerator {
 
         // Clear any enemies that might have been placed
         this.enemies = [];
-    }
-
-    /**
-     * Forces the shack to spawn in the center of the zone.
-     * Used for the first wilds zone to ensure critical progression.
-     */
-    forcePlaceShackInCenter(zoneX, zoneY) {
-        const centerX = Math.floor(GRID_SIZE / 2);
-        const centerY = Math.floor(GRID_SIZE / 2) - 1; // Slightly north of center for player approach
-
-        logger.log(`Force placing shack at (${centerX}, ${centerY}) for first wilds zone`);
-
-        // Place the shack at the calculated position
-        for (let dy = 0; dy < 3; dy++) {
-            for (let dx = 0; dx < 3; dx++) {
-                const x = centerX + dx - 1; // Center the 3x3 structure
-                const y = centerY + dy - 1;
-
-                if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1) {
-                    if (dy === 2 && dx === 1) { // Door position (middle-bottom)
-                        this.grid[y][x] = TILE_TYPES.PORT;
-                    } else {
-                        this.grid[y][x] = TILE_TYPES.SHACK;
-                    }
-                }
-            }
-        }
-
-        // Clear space around the shack entrance (3x3 area around PORT)
-        const entranceX = centerX;
-        const entranceY = centerY + 1;
-        for (let clearY = entranceY - 1; clearY <= entranceY + 3 && clearY < GRID_SIZE - 1; clearY++) {
-            for (let clearX = entranceX - 1; clearX <= entranceX + 1 && clearX >= 1 && clearX < GRID_SIZE - 1; clearX++) {
-                const tile = this.grid[clearY][clearX];
-                if (tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY) {
-                    this.grid[clearY][clearX] = TILE_TYPES.FLOOR;
-                }
-            }
-        }
-
-        return true; // Forced placement always succeeds
-    }
-
-    /**
-     * Clears all features from the zone except exits, leaving only floor tiles.
-     * Used for the first wilds zone to ensure the shack spawns reliably.
-     */
-    clearZoneForShackOnly() {
-        logger.log('Clearing first wilds zone for shack-only placement');
-
-        // Preserve exits and borders, clear everything else
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.grid[y][x];
-                // Keep walls, exits, and floor
-                if (tile !== TILE_TYPES.WALL && tile !== TILE_TYPES.EXIT &&
-                    tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.GRASS) {
-                    this.grid[y][x] = TILE_TYPES.FLOOR;
-                }
-            }
-        }
-
-        // Clear any enemies that might have been placed
-        this.enemies = [];
-    }
-
-    /**
-     * Forces the shack to spawn in the center of the zone.
-     * Used for the first wilds zone to ensure critical progression.
-     */
-    forcePlaceShackInCenter(zoneX, zoneY) {
-        const centerX = Math.floor(GRID_SIZE / 2);
-        const centerY = Math.floor(GRID_SIZE / 2) - 1; // Slightly north of center for player approach
-
-        logger.log(`Force placing shack at (${centerX}, ${centerY}) for first wilds zone`);
-
-        // Place the shack at the calculated position
-        for (let dy = 0; dy < 3; dy++) {
-            for (let dx = 0; dx < 3; dx++) {
-                const x = centerX + dx - 1; // Center the 3x3 structure
-                const y = centerY + dy - 1;
-
-                if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1) {
-                    this.grid[y][x] = (dy === 2 && dx === 1) ? TILE_TYPES.PORT : TILE_TYPES.SHACK;
-                }
-            }
-        }
-
-        return true; // Forced placement always succeeds
     }
 }

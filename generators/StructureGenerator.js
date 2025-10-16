@@ -164,13 +164,21 @@ export class StructureGenerator {
         return false;
     }
 
-    addCistern(zoneX, zoneY, force = false) {
+    addCistern(zoneX, zoneY, force = false, forcedX = null, forcedY = null) {
         // Handle forced placement for home zone
         if (zoneX === 0 && zoneY === 0 && force) {
             // Always add the cistern behind the house in the home zone (0,0)
             // Place PORT tile two tiles above the sign (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
             this.grid[3][2] = TILE_TYPES.PORT;     // Top part (entrance)
             this.grid[4][2] = TILE_TYPES.CISTERN; // Bottom part
+            return;
+        }
+
+        // Handle forced placement at specific coordinates (e.g., from a hole)
+        if (forcedX !== null && forcedY !== null) {
+            this.grid[forcedY][forcedX] = TILE_TYPES.PORT;
+            // The cistern structure is a PORT on top of a CISTERN tile. But for a hole, it's just a PORT.
+            // The logic in ZoneTransitionManager handles this. We just need the PORT to exist.
             return;
         }
 

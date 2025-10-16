@@ -250,6 +250,20 @@ export class ItemTileRenderer {
         ctx.restore();
     }
 
+    renderShovelTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First draw the base tile
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the shovel image if loaded, otherwise use fallback
+        if (RendererUtils.isImageLoaded(this.images, 'shovel')) {
+            // Scale shovel to fit within tile while maintaining aspect ratio
+            const shovelImage = this.images.shovel;
+            ctx.drawImage(shovelImage, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.SHOVEL], '⛏️');
+        }
+    }
+
     renderFallback(ctx, pixelX, pixelY, color, emoji, fontSize = 32) {
         // Fallback to colored square with emoji
         ctx.fillStyle = color;

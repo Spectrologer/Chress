@@ -144,6 +144,7 @@ export class Player {
             (tile && tile.type === TILE_TYPES.BOOK_OF_TIME_TRAVEL) ||
             (tile && tile.type === TILE_TYPES.BOW) ||
             tile === TILE_TYPES.CISTERN ||
+            (tile && tile.type === TILE_TYPES.SHOVEL) ||
             tile === TILE_TYPES.PORT) {
             return true;
         }

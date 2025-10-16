@@ -95,6 +95,7 @@ export class ItemGenerator {
             { name: 'Bomb', tile: TILE_TYPES.BOMB, chance: 0.04, minLevel: 2, maxLevel: 4 },
             { name: 'Heart', tile: TILE_TYPES.HEART, chance: 0.025, minLevel: 2, maxLevel: 4 },
             { name: 'Bow', tile: { type: TILE_TYPES.BOW, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4 },
+            { name: 'Shovel', tile: { type: TILE_TYPES.SHOVEL, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4, dimension: 'any' },
         ];
 
         specialItems.forEach(item => {

@@ -14,6 +14,7 @@ import { RenderManager } from '../renderers/RenderManager.js';
 import { CombatManager } from '../managers/CombatManager.js';
 import { InteractionManager } from '../managers/InteractionManager.js';
 import { ItemManager } from '../managers/ItemManager.js';
+import { ItemUsageManager } from '../managers/ItemUsageManager.js';
 import { ZoneManager } from '../managers/ZoneManager.js';
 import { GameStateManager } from './GameStateManager.js';
 import { SoundManager } from './SoundManager.js';
@@ -30,10 +31,10 @@ class Game {
         // Initialize modules
         this.textureManager = new TextureManager();
         this.connectionManager = new ConnectionManager();
-        this.zoneGenerator = new ZoneGenerator();
+        this.zoneGenerator = new ZoneGenerator(this);
         this.player = new Player();
         this.itemManager = new ItemManager(this);
-        this.inputManager = new InputManager(this);
+        this.inputManager = new InputManager(this, new ItemUsageManager(this));
         this.inventoryManager = new InventoryManager(this);
         this.uiManager = new UIManager(this);
 
@@ -80,6 +81,11 @@ class Game {
         this.defeatedEnemies = new Set();
         this.availableFoodAssets = [];
         this.pendingCharge = null;
+
+        // Item usage modes
+        this.shovelMode = false;
+        this.activeShovel = null;
+        this.portTransitionData = null; // Data for hole -> cistern transitions
 
         // Legacy animation arrays (deprecated - use animationManager)
         this.arrowAnimations = [];

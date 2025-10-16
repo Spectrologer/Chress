@@ -102,77 +102,13 @@ export class ZoneManager {
                 this.game.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
                 break;
             case 'port':
-                let portFound = false;
-                const targetPortType = this.game.player.currentZone.portType;
-
-                if (targetPortType === 'interior') {
-                    // Find the interior PORT (house or shack door) and place the player there
-                    for (let y = 0; y < GRID_SIZE; y++) {
-                        for (let x = 0; x < GRID_SIZE; x++) {
-                            if (this.game.grid[y][x] === TILE_TYPES.PORT) {
-                                // Check if this is NOT near a cistern (i.e., it's an interior door)
-                                let isNearCistern = false;
-                                // Check below for CISTERN
-                                if (y + 1 < GRID_SIZE && this.game.grid[y + 1][x] === TILE_TYPES.CISTERN) {
-                                    isNearCistern = true;
-                                }
-                                // Check above for PORT above CISTERN pattern
-                                if (y - 1 >= 0 && this.game.grid[y - 1][x] === TILE_TYPES.CISTERN) {
-                                    isNearCistern = true;
-                                }
-
-                                if (!isNearCistern) {
-                                    this.game.player.setPosition(x, y);
-                                    portFound = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (portFound) break;
-                    }
-                } else if (targetPortType === 'underground') {
-                    // Find the underground PORT (cistern entrance) and place the player there
-                    for (let y = 0; y < GRID_SIZE; y++) {
-                        for (let x = 0; x < GRID_SIZE; x++) {
-                            if (this.game.grid[y][x] === TILE_TYPES.PORT) {
-                                // Check if this is near a cistern (i.e., it's an underground entrance)
-                                let isNearCistern = false;
-                                // Check below for CISTERN
-                                if (y + 1 < GRID_SIZE && this.game.grid[y + 1][x] === TILE_TYPES.CISTERN) {
-                                    isNearCistern = true;
-                                }
-                                // Check above for PORT above CISTERN pattern
-                                if (y - 1 >= 0 && this.game.grid[y - 1][x] === TILE_TYPES.CISTERN) {
-                                    isNearCistern = true;
-                                }
-
-                                if (isNearCistern) {
-                                    this.game.player.setPosition(x, y);
-                                    portFound = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (portFound) break;
-                    }
-                } else {
-                    // Universal fallback for when portType is not specified
-                    for (let y = 0; y < GRID_SIZE; y++) {
-                        for (let x = 0; x < GRID_SIZE; x++) {
-                            if (this.game.grid[y][x] === TILE_TYPES.PORT) {
-                                this.game.player.setPosition(x, y);
-                                portFound = true;
-                                break;
-                            }
-                        }
-                        if (portFound) break;
-                    }
-                }
-
-                // Fallback to center if no port is found in the destination zone (should not happen with correct setup)
-                if (!portFound) {
-                    this.game.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
-                }
+                // When using a port, the player should emerge at the same coordinates
+                // in the new zone. The zone generation logic is responsible for ensuring
+                // a corresponding PORT tile exists at this location.
+                // exitX and exitY are the coordinates of the port used in the previous zone.
+                this.game.player.setPosition(exitX, exitY);
+                // Ensure the tile is a PORT in the new grid.
+                this.game.grid[exitY][exitX] = TILE_TYPES.PORT;
                 break;
             default:
                 // Fallback to center

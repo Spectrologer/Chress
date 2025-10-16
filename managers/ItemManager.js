@@ -5,7 +5,8 @@ const typeMap = {
     [TILE_TYPES.BOW]: 'bow',
     [TILE_TYPES.BISHOP_SPEAR]: 'bishop_spear',
     [TILE_TYPES.HORSE_ICON]: 'horse_icon',
-    [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: 'book_of_time_travel'
+    [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: 'book_of_time_travel',
+    [TILE_TYPES.SHOVEL]: 'shovel'
 };
 
 export class ItemManager {
@@ -64,6 +65,7 @@ export class ItemManager {
                         case TILE_TYPES.HORSE_ICON:
                         case TILE_TYPES.BOOK_OF_TIME_TRAVEL:
                         case TILE_TYPES.BOW:
+                        case TILE_TYPES.SHOVEL:
                             pickup({ type: typeMap[tile.type] || 'unknown', uses: tile.uses });
                             break;
                     }
