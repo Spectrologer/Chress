@@ -23,8 +23,18 @@ export class ItemPickupManager {
                 ui.addMessageToLog('Found some food.');
             }
             else if (tile === TILE_TYPES.WATER) pick({ type: 'water' });
-            else if (tile === TILE_TYPES.AXE) pick({ type: 'axe' });
-            else if (tile === TILE_TYPES.HAMMER) pick({ type: 'hammer' });
+            else if (tile === TILE_TYPES.AXE) {
+                this.game.player.abilities.add('axe');
+                this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
+                ui.addMessageToLog('Gained axe ability! Can now chop grass and shrubbery.');
+                ui.updatePlayerStats();
+            }
+            else if (tile === TILE_TYPES.HAMMER) {
+                this.game.player.abilities.add('hammer');
+                this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
+                ui.addMessageToLog('Gained hammer ability! Can now smash rocks.');
+                ui.updatePlayerStats();
+            }
             else if (tile?.type === TILE_TYPES.BISHOP_SPEAR) pick({ type: 'bishop_spear', uses: tile.uses });
             else if (tile?.type === TILE_TYPES.HORSE_ICON) pick({ type: 'horse_icon', uses: tile.uses });
             else if (tile === TILE_TYPES.BOMB) pick({ type: 'bomb' });

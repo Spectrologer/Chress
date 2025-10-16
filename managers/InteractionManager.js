@@ -69,6 +69,7 @@ export class InteractionManager {
         if (this.npcManager.interactWithCrayn(gridCoords)) return true;
         if (this.npcManager.interactWithFelt(gridCoords)) return true;
         if (this.npcManager.interactWithAxelotl(gridCoords)) return true;
+        if (this.npcManager.interactWithGouge(gridCoords)) return true;
         if (this.npcManager.interactWithForge(gridCoords)) return true;
         if (this.environmentManager.handleSignTap(gridCoords)) return true;
         if (this.environmentManager.handleStatueTap(gridCoords)) return true;

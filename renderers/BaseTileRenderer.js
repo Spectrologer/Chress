@@ -94,6 +94,8 @@ export class BaseTileRenderer {
             this.structureRenderer.renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.AXELOTL) {
             this.structureRenderer.renderAxelotlTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        } else if (actualType === TILE_TYPES.GOUGE) {
+            this.structureRenderer.renderGougeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.CISTERN) {
             this.structureRenderer.renderCisternTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.PORT) {

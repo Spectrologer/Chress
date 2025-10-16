@@ -78,9 +78,8 @@ export class ItemGenerator {
         const enemyProbability = baseEnemyProbability + Math.floor(ZoneStateManager.zoneCounter / 10) * 0.01;
         // This will be handled by the main generator
 
-        if (ZoneStateManager.hammerSpawnZone && this.zoneX === ZoneStateManager.hammerSpawnZone.x && this.zoneY === ZoneStateManager.hammerSpawnZone.y && !ZoneStateManager.hammerSpawned) {
-            this.addHammerItem();
-        }
+        // Hammer is now an ability obtained through trading with Gouge
+        // Remove hammer spawning logic
 
         const undergroundMultiplier = this.dimension === 2 ? 1.5 : 1.0;
 
@@ -92,7 +91,7 @@ export class ItemGenerator {
             { name: 'Rune', tile: TILE_TYPES.RUNE, chance: 0.02, dimension: 2 },
             { name: 'Note', tile: TILE_TYPES.NOTE, chance: 0.04, dimension: 'any' },
             { name: 'Bishop Spear', tile: { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4 },
-            { name: 'Horse Icon', tile: { type: TILE_TYPES.HORSE_ICON, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4, noMultiplier: true },
+            { name: 'Horse Icon', tile: { type: TILE_TYPES.HORSE_ICON, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4 },
             { name: 'Bomb', tile: TILE_TYPES.BOMB, chance: 0.04, minLevel: 2, maxLevel: 4 },
             { name: 'Heart', tile: TILE_TYPES.HEART, chance: 0.025, minLevel: 2, maxLevel: 4 },
             { name: 'Bow', tile: { type: TILE_TYPES.BOW, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4 },
@@ -144,9 +143,8 @@ export class ItemGenerator {
         return false;
     }
 
-    addHammerItem() {
-        this._placeItemRandomly(TILE_TYPES.HAMMER, () => { ZoneStateManager.hammerSpawned = true; });
-    }
+    // Hammer is now an ability - no longer spawns as item
+    // Keeping method for potential future use or console commands
 
     addCisternItem(force = false) {
         // Cistern generation disabled

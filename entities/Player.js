@@ -97,7 +97,7 @@ export class Player {
                     return false; // Don't move, just attack
                 }
 
-                const hasHammer = this.inventory.some(item => item.type === 'hammer');
+                const hasHammer = this.abilities.has('hammer');
                 if (hasHammer && tile === TILE_TYPES.ROCK) {
                     // Break at target position without moving
                     const isBorder = newY === 0 || newY === GRID_SIZE - 1 || newX === 0 || newX === GRID_SIZE - 1;

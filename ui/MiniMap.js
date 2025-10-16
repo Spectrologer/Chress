@@ -1,3 +1,5 @@
+import { ZoneStateManager } from '../generators/ZoneStateManager.js';
+
 export class MiniMap {
     constructor(game) {
         this.game = game;
@@ -160,9 +162,25 @@ export class MiniMap {
                 // Determine zone color with parchment-friendly palette
                 let color = '#C8B99C'; // Unexplored - darker parchment tone
                 if (this.game.player.hasVisitedZone(zoneX, zoneY, currentZone.dimension)) {
-                    color = '#B8860B'; // Visited - darker gold
                     if (currentZone.dimension === 2) {
                         color = '#4B0082'; // Indigo for visited underground
+                    } else {
+                        // Color code by zone level for the overworld
+                        const zoneLevel = ZoneStateManager.getZoneLevel(zoneX, zoneY);
+                        switch (zoneLevel) {
+                            case 1: // Home
+                                color = '#B8860B'; // Darker gold
+                                break;
+                            case 2: // Woods
+                                color = '#556B2F'; // Dark Olive Green
+                                break;
+                            case 3: // Wilds
+                                color = '#8B4513'; // Saddle Brown
+                                break;
+                            case 4: // Frontier
+                                color = '#D2691E'; // Chocolate/Orange-Brown
+                                break;
+                        }
                     }
                 }
                 if (zoneX === currentZone.x && zoneY === currentZone.y) {
@@ -185,6 +203,16 @@ export class MiniMap {
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText('X', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
+                }
+
+                // Draw star icon for special zones (from map notes)
+                const zoneKey = `${zoneX},${zoneY}`;
+                if (this.game.specialZones.has(zoneKey)) {
+                    ctx.fillStyle = '#000000'; // Black color for the star
+                    ctx.font = `bold ${zoneSize * 0.9}px serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('★', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
                 }
 
                 // Draw club icon for the home zone (0,0) in the overworld

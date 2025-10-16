@@ -127,15 +127,7 @@ describe('InventoryManager', () => {
     expect(mockPlayer.inventory).toHaveLength(0);
   });
 
-  test('useInventoryItem handles hammer dropping', () => {
-    const hammerItem = { type: 'hammer' };
-    mockPlayer.inventory = [hammerItem];
-
-    inventoryManager.useInventoryItem(hammerItem, 0);
-
-    expect(mockGame.grid[1][1]).toBe(TILE_TYPES.HAMMER);
-    expect(mockPlayer.inventory).toHaveLength(0);
-  });
+  // Hammer functionality has been changed - it's now an ability, not inventory item
 
   test('dropItem only drops on floor tiles', () => {
     mockGame.grid[1][1] = TILE_TYPES.WALL; // Not floor

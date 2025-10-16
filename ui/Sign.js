@@ -167,6 +167,23 @@ export class Sign {
                 }
             ]
         },
+        gouge: {
+            name: 'Gouge',
+            portrait: 'assets/fauna/gougeface.png',
+            message: 'Gimme discoveries, I\'ll give you a hammer.',
+            subclass: 'merchant',
+            trades: [
+                {
+                    id: 'gouge_hammer',
+                    requiredItem: 'DISCOVERED',
+                    requiredAmount: 35,
+                    requiredItemName: 'Discoveries',
+                    requiredItemImg: 'assets/ui/talk.png',
+                    receivedItemName: 'Hammer Ability',
+                    receivedItemImg: 'assets/items/hammer.png'
+                }
+            ]
+        },
     };
 
     static getProceduralMessage(zoneX, zoneY, usedMessagesSet = Sign.spawnedMessages) {
@@ -248,17 +265,20 @@ export class Sign {
             subclass: 'dialogue',
             currentMessageIndex: 0,
             messages: [
+                "You dropped your axe down the well.",
                 "Press down on items to disable them.",
-                "There is no end to the frontier.",
-                "Trees must be chopped.",
+                "Sometimes I chop a tree to pass the time.",
                 "They say you are descended from a King.",
                 "The Woodcutter's Club is members only.",
                 "Spears can be used to get past obstacles.",
                 "Bombs can send you flying.",
                 "You can only hold six items, but you can use as many as you like.",
                 "The path gets harder the farther you go.",
+                "Sometimes enemies simply have a better position.",
+                "There is no end to the frontier.",
                 "Beyond the frontier is the adjudicator",
-                "Sometimes enemies are simply in a better position.",
+
+
             ]
         },
         felt: {
@@ -286,7 +306,6 @@ export class Sign {
                 "I'm not in your way, am I?",
                 "There was so much food in here earlier. Yumm!",
                 "Did you get a chance to play with the horse icons in here a minute ago?",
-                "I always file my taxes as married. It's foolish not to.",
                 "If you stand still for long enough, enemies can't hurt you.",
                 "The walls are edible. You just need to be hungry enough.",
                 "Water actually makes you thirstier the more you drink it.",
@@ -299,22 +318,6 @@ export class Sign {
                 "The world is a sphere. Go far enough east, you'll end up back at the start from the west.",
                 "If you don't score points for 100 boards, you might find a secret.",
                 "I once saw a Penne eat a nut.",
-                "I once saw a Penne eat a nut and then drink water.",
-                "I once saw a Penne eat a nut, drink water, and then trade the water for a nut.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, and then eat the nut.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, and then ask for more water.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, and then leave.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, and then come back.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, and then do it all over again.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, and then take a nap.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, and then dream about nuts.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, and then wake up hungry.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, and then go find some food.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, and then become the king of the jungle.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, and then rule with kindness and wisdom.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, and then live happily ever after.",
-                "I once saw a Penne eat a nut, drink water, trade the water for a nut, eat the nut, ask for more water, leave, come back, do it all over again, take a nap, dream about nuts, wake up hungry, go find some food, become the king of the jungle, rule with kindness and wisdom, live happily ever after, and then tell everyone about it.",
-                "I once saw squig eat a nut.",
             ]
         },
         axelotl_post_trade: {
@@ -323,8 +326,7 @@ export class Sign {
             subclass: 'dialogue',
             currentMessageIndex: 0,
             messages: [
-                "You look sharp!",
-                "Seen any interesting colors lately?"
+                "The underground is dangerous."
             ]
         }
     };

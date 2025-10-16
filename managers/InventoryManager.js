@@ -409,7 +409,7 @@ export class InventoryManager {
                 if (!visited.has(zoneKey) && !this.game.specialZones.has(zoneKey)) {
                     // Calculate Manhattan distance (zones)
                     const distance = Math.max(Math.abs(zoneX - currentZone.x), Math.abs(zoneY - currentZone.y));
-                    if (distance >= 15 && distance <= 20) {
+                    if (distance >= 5 && distance <= 15) {
                         candidates.push({ x: zoneX, y: zoneY, distance });
                     }
                 }
@@ -424,14 +424,23 @@ export class InventoryManager {
         const selected = candidates[Math.floor(Math.random() * candidates.length)];
         const zoneKey = `${selected.x},${selected.y}`;
 
-        // Mark the zone as a special zone (with treasures)
-        const availableFood = this.game.availableFoodAssets;
-        const randomFood = availableFood[Math.floor(Math.random() * availableFood.length)];
-        this.game.specialZones.set(zoneKey, [
-            TILE_TYPES.BOMB,
-            { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 },
-            { type: TILE_TYPES.FOOD, foodType: randomFood }
-        ]);
+        // Mark the zone as a special zone with a new set of treasures
+        const treasurePool = [
+            () => ({ type: TILE_TYPES.FOOD, foodType: this.game.availableFoodAssets[Math.floor(Math.random() * this.game.availableFoodAssets.length)] }),
+            () => TILE_TYPES.WATER,
+            () => TILE_TYPES.BOMB,
+            () => ({ type: TILE_TYPES.BOW, uses: 3 }),
+            () => ({ type: TILE_TYPES.HORSE_ICON, uses: 3 }),
+            () => ({ type: TILE_TYPES.BOOK_OF_TIME_TRAVEL, uses: 3 }),
+            () => ({ type: TILE_TYPES.BISHOP_SPEAR, uses: 3 })
+        ];
+
+        const treasures = [];
+        for (let i = 0; i < 4; i++) {
+            const getRandomTreasure = treasurePool[Math.floor(Math.random() * treasurePool.length)];
+            treasures.push(getRandomTreasure());
+        }
+        this.game.specialZones.set(zoneKey, treasures);
 
         // Mark the zone as visited (this adds it to the map)
         this.game.player.markZoneVisited(selected.x, selected.y);

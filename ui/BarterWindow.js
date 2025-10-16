@@ -183,6 +183,11 @@ export class BarterWindow {
             this.game.player.abilities.add('axe');
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} discoveries for axe ability.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+        } else if (tradeData.id === 'gouge_hammer') { // Trade discoveries for hammer ability
+            this.game.player.spentDiscoveries += tradeData.requiredAmount;
+            this.game.player.abilities.add('hammer');
+            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} discoveries for hammer ability.`);
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic
             const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));

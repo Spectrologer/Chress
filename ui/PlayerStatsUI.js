@@ -52,6 +52,12 @@ export class PlayerStatsUI {
             axeIcon.style.display = this.game.player.abilities.has('axe') ? 'block' : 'none';
         }
 
+        // Update hammer ability display
+        const hammerIcon = document.querySelector('.hammer-ability-icon');
+        if (hammerIcon) {
+            hammerIcon.style.display = this.game.player.abilities.has('hammer') ? 'block' : 'none';
+        }
+
         // Update inventory display
         this.game.inventoryManager.updateInventoryDisplay();
     }

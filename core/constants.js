@@ -101,7 +101,8 @@ export const TILE_TYPES = {
     MARK: 43,
     SHACK: 44,
     CISTERN: 45,
-    AXELOTL: 46
+    AXELOTL: 46,
+    GOUGE: 47
 };
 
 // Colors for different tile types (fallback when images don't load)
@@ -143,7 +144,8 @@ export const TILE_COLORS = {
     [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: '#D2691E', // Chocolate color for book
     [TILE_TYPES.BOW]: '#8B4513', // Brown for bow
     [TILE_TYPES.MARK]: '#FFD700', // Gold for Mark
-    [TILE_TYPES.CISTERN]: '#708090' // Slate gray for cistern
+    [TILE_TYPES.CISTERN]: '#708090', // Slate gray for cistern
+    [TILE_TYPES.GOUGE]: '#8A2BE2' // Blueviolet for Gouge
 };
 
 // Direction constants for exits and movements
@@ -197,6 +199,8 @@ export const IMAGE_ASSETS = [
     'fauna/felt.png',
     'fauna/forge.png',
     'fauna/mark.png',
+    'fauna/gouge.png',
+    'fauna/gougeface.png',
     'fauna/axolotl.png',
     'fauna/forgeface.png',
     'fauna/axolotlface.png',

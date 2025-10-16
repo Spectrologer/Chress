@@ -116,6 +116,7 @@ export class GameStateManager {
                     thirst: this.game.player.thirst,
                     hunger: this.game.player.hunger,
                     inventory: this.game.player.inventory,
+                    abilities: Array.from(this.game.player.abilities),
                     health: this.game.player.health,
                     dead: this.game.player.dead,
                     sprite: this.game.player.sprite,
@@ -188,6 +189,7 @@ export class GameStateManager {
                 this.game.player.thirst = gameState.player.thirst;
                 this.game.player.hunger = gameState.player.hunger;
                 this.game.player.inventory = gameState.player.inventory;
+                this.game.player.abilities = new Set(gameState.player.abilities || []);
                 this.game.player.health = gameState.player.health;
                 this.game.player.dead = gameState.player.dead;
                 this.game.player.sprite = gameState.player.sprite;

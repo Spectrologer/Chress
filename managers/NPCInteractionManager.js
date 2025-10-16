@@ -109,6 +109,21 @@ export class NPCInteractionManager {
         return false;
     }
 
+    interactWithGouge(gridCoords) {
+        const playerPos = this.game.player.getPosition();
+        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        if (targetTile !== TILE_TYPES.GOUGE) return false;
+
+        const dx = Math.abs(gridCoords.x - playerPos.x);
+        const dy = Math.abs(gridCoords.y - playerPos.y);
+        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+        if (isAdjacent) {
+            this.game.uiManager.showBarterWindow('gouge');
+            return true;
+        }
+        return false;
+    }
+
     interactWithCrayn(gridCoords) {
         const playerPos = this.game.player.getPosition();
         const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
@@ -229,6 +244,10 @@ export class NPCInteractionManager {
         }
         if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.AXELOTL) {
             this.game.uiManager.showBarterWindow('axelotl');
+            return;
+        }
+        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.GOUGE) {
+            this.game.uiManager.showBarterWindow('gouge');
             return;
         }
     }

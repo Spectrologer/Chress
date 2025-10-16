@@ -507,4 +507,24 @@ export class StructureTileRenderer {
             ctx.fillText('AXL', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
+
+    renderGougeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First draw the base tile
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Try to draw the gouge image if loaded, otherwise use fallback
+        if (RendererUtils.isImageLoaded(this.images, 'gouge')) {
+            ctx.drawImage(this.images['gouge'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback to colored square with emoji
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.GOUGE] || '#8A2BE2';
+            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('GOU', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+        }
+    }
 }

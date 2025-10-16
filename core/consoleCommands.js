@@ -177,6 +177,16 @@ const consoleCommands = {
     }
   },
 
+  spawnGouge: function(game) {
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = TILE_TYPES.GOUGE;
+      logger.log('Spawned Gouge at', pos);
+    } else {
+      logger.log('No valid spawn position found');
+    }
+  },
+
   spawnShack: function(game) {
     // Find position and check if enough space for 3x3 shack + 1 front space
     const pos = findShackSpawnPosition(game);
@@ -257,6 +267,8 @@ const consoleCommands = {
   hotkeyU: function(game) { this.spawnFoodNut(game); }, // U for nut
   hotkeyL: function(game) { this.spawnPenne(game); },
   hotkeyG: function(game) { this.spawnSquig(game); }, // G for green squig
+
+  hotkeyD: function(game) { this.spawnGouge(game); }, // D for Gouge
   hotkeyX: function(game) { this.spawnMark(game); }, // X for Mark
   hotkeyJ: function(game) { this.spawnShack(game); }, // J for shack
   hotkeyC: function(game) { this.spawnCistern(game); }, // C for cistern
@@ -291,6 +303,7 @@ const consoleCommands = {
       if (lowerKey === 'u') { this.hotkeyU(game); return true; }
       if (lowerKey === 'l') { this.hotkeyL(game); return true; }
       if (lowerKey === 'g') { this.hotkeyG(game); return true; }
+      if (lowerKey === 'd') { this.hotkeyD(game); return true; }
       if (lowerKey === 'x') { this.hotkeyX(game); return true; }
       if (lowerKey === 'j') { this.hotkeyJ(game); return true; }
       if (lowerKey === 'c') { this.hotkeyC(game); return true; }
