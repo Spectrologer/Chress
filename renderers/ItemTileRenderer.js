@@ -22,11 +22,7 @@ export class ItemTileRenderer {
         const foodKey = foodAsset.replace('.png', '').replace('/', '_');
 
         // First draw the base tile
-        if (zoneLevel >= 4 && RendererUtils.isImageLoaded(this.images, 'desert')) {
-            ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else {
-            baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-        }
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the food image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, foodKey)) {
@@ -38,11 +34,7 @@ export class ItemTileRenderer {
 
     renderAxeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        if (zoneLevel >= 4 && RendererUtils.isImageLoaded(this.images, 'desert')) {
-            ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else {
-            baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-        }
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the axe image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'axe')) {
@@ -54,7 +46,7 @@ export class ItemTileRenderer {
 
     renderHammerTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the hammer image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'hammer')) {
@@ -66,24 +58,13 @@ export class ItemTileRenderer {
 
     renderSpearTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the spear image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'spear')) {
             // Scale spear to fit within tile while maintaining aspect ratio
             const spearImage = this.images.spear;
-            const aspectRatio = spearImage.width / spearImage.height;
-
-            let scaledWidth, scaledHeight;
-            if (aspectRatio > 1) {
-                // Image is wider than tall
-                scaledWidth = TILE_SIZE;
-                scaledHeight = TILE_SIZE / aspectRatio;
-            } else {
-                // Image is taller than wide (or square)
-                scaledHeight = TILE_SIZE;
-                scaledWidth = TILE_SIZE * aspectRatio;
-            }
+            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(spearImage, TILE_SIZE);
 
             // Center the image in the tile
             const offsetX = (TILE_SIZE - scaledWidth) / 2;
@@ -103,24 +84,13 @@ export class ItemTileRenderer {
 
     renderHorseIconTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the horse image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'horse')) {
             // Scale horse to fit within tile while maintaining aspect ratio
             const horseImage = this.images.horse;
-            const aspectRatio = horseImage.width / horseImage.height;
-
-            let scaledWidth, scaledHeight;
-            if (aspectRatio > 1) {
-                // Image is wider than tall
-                scaledWidth = TILE_SIZE * 0.7;
-                scaledHeight = (TILE_SIZE * 0.7) / aspectRatio;
-            } else {
-                // Image is taller than wide (or square)
-                scaledHeight = TILE_SIZE * 0.7;
-                scaledWidth = (TILE_SIZE * 0.7) * aspectRatio;
-            }
+            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(horseImage, TILE_SIZE * 0.7);
 
             // Center the image in the tile
             const offsetX = (TILE_SIZE - scaledWidth) / 2;
@@ -142,7 +112,7 @@ export class ItemTileRenderer {
         const tile = grid[y][x];
 
         // First draw the base tile
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Get the bomb image
         const bombImage = this.images.bomb;
@@ -179,7 +149,7 @@ export class ItemTileRenderer {
 
     renderHeartTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the heart image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'heart')) {
@@ -195,24 +165,13 @@ export class ItemTileRenderer {
 
     renderNoteTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the note image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'note')) {
             // Scale note to fit within tile while maintaining aspect ratio, 70% size
             const noteImage = this.images.note;
-            const aspectRatio = noteImage.width / noteImage.height;
-
-            let scaledWidth, scaledHeight;
-            if (aspectRatio > 1) {
-                // Image is wider than tall
-                scaledWidth = TILE_SIZE * 0.7;
-                scaledHeight = (TILE_SIZE * 0.7) / aspectRatio;
-            } else {
-                // Image is taller than wide (or square)
-                scaledHeight = TILE_SIZE * 0.7;
-                scaledWidth = (TILE_SIZE * 0.7) * aspectRatio;
-            }
+            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(noteImage, TILE_SIZE * 0.7);
 
             // Center the image in the tile
             const offsetX = (TILE_SIZE - scaledWidth) / 2;
@@ -232,7 +191,7 @@ export class ItemTileRenderer {
 
     renderSignTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the sign image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'sign')) {
@@ -244,24 +203,13 @@ export class ItemTileRenderer {
 
     renderBookTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the book image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'book')) {
             // Scale book to fit within tile while maintaining aspect ratio, 70% size
             const bookImage = this.images.book;
-            const aspectRatio = bookImage.width / bookImage.height;
-
-            let scaledWidth, scaledHeight;
-            if (aspectRatio > 1) {
-                // Image is wider than tall
-                scaledWidth = TILE_SIZE * 0.7;
-                scaledHeight = (TILE_SIZE * 0.7) / aspectRatio;
-            } else {
-                // Image is taller than wide (or square)
-                scaledHeight = TILE_SIZE * 0.7;
-                scaledWidth = (TILE_SIZE * 0.7) * aspectRatio;
-            }
+            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(bookImage, TILE_SIZE * 0.7);
 
             // Center the image in the tile
             const offsetX = (TILE_SIZE - scaledWidth) / 2;
@@ -281,7 +229,7 @@ export class ItemTileRenderer {
 
     renderBowTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Rotate counter clockwise, maintain proportions, scale to fit tile, pixel perfect
         ctx.save();

@@ -31,4 +31,22 @@ export class RendererUtils {
         const image = images[key];
         return image && image.complete && image.naturalWidth > 0;
     }
+
+    // Calculate scaled dimensions maintaining aspect ratio and pixel perfection
+    static calculateScaledDimensions(image, maxSize) {
+        const aspectRatio = image.width / image.height;
+        let scaledWidth, scaledHeight;
+
+        if (aspectRatio > 1) {
+            // Image is wider than tall - maintain pixel-perfect scaling
+            scaledWidth = maxSize;
+            scaledHeight = Math.round(maxSize / aspectRatio);
+        } else {
+            // Image is taller than wide (or square) - maintain pixel-perfect scaling
+            scaledHeight = maxSize;
+            scaledWidth = Math.round(maxSize * aspectRatio);
+        }
+
+        return { width: scaledWidth, height: scaledHeight };
+    }
 }

@@ -110,18 +110,9 @@ export class AnimationRenderer {
             this.ctx.translate(pixelX, pixelY);
             this.ctx.rotate(rotation);
 
-            // Scale arrow to fit while maintaining aspect ratio, 75% size
-            const aspectRatio = arrowImage.width / arrowImage.height;
-            let scaledWidth, scaledHeight;
-            if (aspectRatio > 1) {
-                // Image is wider than tall
-                scaledWidth = TILE_SIZE * 0.75;
-                scaledHeight = (TILE_SIZE * 0.75) / aspectRatio;
-            } else {
-                // Image is taller than wide (or square)
-                scaledHeight = TILE_SIZE * 0.75;
-                scaledWidth = (TILE_SIZE * 0.75) * aspectRatio;
-            }
+            // Import RendererUtils for pixel-perfect scaling
+            const { RendererUtils } = require('./RendererUtils');
+            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(arrowImage, TILE_SIZE * 0.75);
 
             // Center the image
             const offsetX = -scaledWidth / 2;

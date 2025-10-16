@@ -1,6 +1,6 @@
 import { Sign } from '../ui/Sign.js';
 import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
-import { randomInt, findValidPlacement, isAllowedTile } from './GeneratorUtils.js';
+import { randomInt, findValidPlacement, isAllowedTile, validateAndSetTile } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import logger from '../core/logger.js';
 
@@ -22,12 +22,12 @@ export class StructureGenerator {
                 // Centered for a 4-wide building, we place one door.
                 if (x === houseStartX + 1 && y === houseStartY + 2) {
                     if (!(this.grid[y][x] && typeof this.grid[y][x] === 'object' && this.grid[y][x].type === TILE_TYPES.SIGN)) {
-                        this.grid[y][x] = TILE_TYPES.PORT;
+                        validateAndSetTile(this.grid, x, y, TILE_TYPES.PORT);
                     }
                 } else if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1) {
                     // Check bounds for the rest of the club
                     if (!(this.grid[y][x] && typeof this.grid[y][x] === 'object' && this.grid[y][x].type === TILE_TYPES.SIGN)) {
-                        this.grid[y][x] = TILE_TYPES.HOUSE;
+                        validateAndSetTile(this.grid, x, y, TILE_TYPES.HOUSE);
                     }
                 }
             }

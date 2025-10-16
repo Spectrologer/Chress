@@ -6,6 +6,7 @@ import { ItemGenerator } from '../generators/ItemGenerator.js';
 import { StructureGenerator } from '../generators/StructureGenerator.js';
 import { EnemyGenerator } from '../generators/EnemyGenerator.js';
 import { PathGenerator } from '../generators/PathGenerator.js';
+import { initializeGrid, validateAndSetTile } from '../generators/GeneratorUtils.js';
 
 export class ZoneGenerator {
 
@@ -375,14 +376,8 @@ export class ZoneGenerator {
     }
 
     initialize() {
-        // Initialize grid with floor tiles
-        this.grid = [];
-        for (let y = 0; y < GRID_SIZE; y++) {
-            this.grid[y] = [];
-            for (let x = 0; x < GRID_SIZE; x++) {
-                this.grid[y][x] = TILE_TYPES.FLOOR;
-            }
-        }
+        // Initialize grid with floor tiles using safe initialization
+        this.grid = initializeGrid();
         this.enemies = [];
         this.addWallBorders();
 

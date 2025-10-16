@@ -264,7 +264,13 @@ export class BaseTileRenderer {
         }
     }
 
-
-
+    // Utility method to render base floor tiles for items and structures (reduces duplication)
+    renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+        if (zoneLevel >= 4 && RendererUtils.isImageLoaded(this.images, 'desert')) {
+            ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        }
+    }
 
 }

@@ -1,6 +1,7 @@
 import { GRID_SIZE, TILE_TYPES } from './constants.js';
 import logger from './logger.js';
 import { Sign } from '../ui/Sign.js';
+import { validateLoadedGrid } from '../generators/GeneratorUtils.js';
 
 const GAME_STATE_KEY = 'chress_game_state';
 
@@ -197,9 +198,9 @@ export class GameStateManager {
                 this.game.player.spentDiscoveries = gameState.player.spentDiscoveries || 0;
             }
 
-            // Restore game state
+            // Restore game state with validation for grid data
             this.game.zones = new Map(gameState.zones || []);
-            this.game.grid = gameState.grid;
+            this.game.grid = validateLoadedGrid(gameState.grid);
             this.game.enemies = (gameState.enemies || []).map(e => new this.game.Enemy(e));
             this.game.defeatedEnemies = new Set(gameState.defeatedEnemies || []);
             this.game.specialZones = new Map(gameState.specialZones || []);
