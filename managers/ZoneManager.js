@@ -114,22 +114,88 @@ export class ZoneManager {
                 // For pitfalls, the player spawns at a random valid location, not on the entrance.
                 // The zoneData contains the correct spawn point.
                 const zoneData = this.game.zones.get(`${this.game.player.currentZone.x},${this.game.player.currentZone.y}:${this.game.player.currentZone.dimension}`);
-                if (this.game.portTransitionData?.from === 'pitfall' && zoneData?.playerSpawn) {
+
+                if (this.game.portTransitionData?.from === 'pitfall') {
+                    // Entering underground via pitfall: Use the zone's designated spawn point.
                     this.game.player.setPosition(zoneData.playerSpawn.x, zoneData.playerSpawn.y);
+                } else if (this.game.player.currentZone.dimension === 1) { // Entering an interior
+                    // Entering an interior: place player at bottom-middle of interior (consistent spawn)
+                    const portX = Math.floor(GRID_SIZE / 2);
+                    const portY = GRID_SIZE - 1; // bottom edge
+                    this.validateAndSetTile(this.game.grid, portX, portY, TILE_TYPES.PORT);
+                    this.game.player.setPosition(portX, portY);
+                } else if (this.game.player.currentZone.dimension === 0 && this.game.player.currentZone.portType === 'underground') {
+                    // Exiting to the surface FROM underground. Place player at the port they came from.
+                    const portX = exitX;
+                    const portY = exitY;
+                    this.validateAndSetTile(this.game.grid, portX, portY, TILE_TYPES.PORT);
+                    this.game.player.setPosition(portX, portY);
+                } else if (this.game.player.currentZone.dimension === 0) {
+                    // Exiting to the surface. Prefer the interior's recorded return coordinates if available.
+                    const interiorZoneKey = `${this.game.player.currentZone.x},${this.game.player.currentZone.y}:1`;
+                    const interiorZoneData = this.game.zones.get(interiorZoneKey);
+                    let placed = false;
+
+                    if (interiorZoneData && interiorZoneData.returnToSurface) {
+                        const sx = interiorZoneData.returnToSurface.x;
+                        const sy = interiorZoneData.returnToSurface.y;
+                        if (sx !== undefined && sy !== undefined) {
+                            this.game.player.setPosition(sx, sy);
+                            this.validateAndSetTile(this.game.grid, sx, sy, TILE_TYPES.PORT);
+                            placed = true;
+                        }
+                    }
+
+                    if (!placed) {
+                        // If the explicit exit coords are a PORT in the new grid, use them
+                        if (exitX >= 0 && exitX < GRID_SIZE && exitY >= 0 && exitY < GRID_SIZE && this.game.grid[exitY][exitX] === TILE_TYPES.PORT) {
+                            this.game.player.setPosition(exitX, exitY);
+                            placed = true;
+                        }
+                    }
+
+                    if (!placed) {
+                        // Search the grid for any PORT tile and use the first found
+                        for (let y = 0; y < GRID_SIZE && !placed; y++) {
+                            for (let x = 0; x < GRID_SIZE; x++) {
+                                if (this.game.grid[y][x] === TILE_TYPES.PORT) {
+                                    this.game.player.setPosition(x, y);
+                                    placed = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!placed) {
+                        // Fallback to using exitX/exitY
+                        this.game.player.setPosition(exitX, exitY);
+                        this.validateAndSetTile(this.game.grid, exitX, exitY, TILE_TYPES.PORT);
+                    }
                 } else {
                     // For regular ports (cisterns, holes, doors), spawn at the entrance.
                     // exitX and exitY are the coordinates of the port used in the previous zone.
                     this.game.player.setPosition(exitX, exitY);
-                }
-                // Ensure the entrance tile is a PORT in the new grid.
-                if (exitY >= 0 && exitY < GRID_SIZE && exitX >= 0 && exitX < GRID_SIZE) {
-                    this.game.grid[exitY][exitX] = TILE_TYPES.PORT;
+                    this.validateAndSetTile(this.game.grid, exitX, exitY, TILE_TYPES.PORT);
                 }
                 break;
             default:
                 // Fallback to center
                 this.game.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
                 break;
+        }
+    }
+
+    /**
+     * Helper to safely set a tile on the grid, checking bounds.
+     * @param {Array<Array<any>>} grid The game grid.
+     * @param {number} x The x-coordinate.
+     * @param {number} y The y-coordinate.
+     * @param {any} tile The tile to set.
+     */
+    validateAndSetTile(grid, x, y, tile) {
+        if (y >= 0 && y < GRID_SIZE && x >= 0 && x < GRID_SIZE) {
+            grid[y][x] = tile;
         }
     }
 
@@ -161,6 +227,11 @@ export class ZoneManager {
                 this.game.lastExitSide // Pass how the player entered
             );
             // Save the generated zone
+            // If we are generating an interior zone as a result of entering via a surface port,
+            // persist the surface port coordinates so we can return the player to that exact spot when exiting.
+            if (currentZone.dimension === 1 && this.game.portTransitionData?.from === 'interior') {
+                zoneData.returnToSurface = { x: this.game.portTransitionData.x, y: this.game.portTransitionData.y };
+            }
             this.game.zones.set(zoneKey, zoneData);
         }
 

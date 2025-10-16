@@ -95,6 +95,11 @@ export class PlayerRenderer {
                     }
                 }
 
+                // Force interior indicator arrows to point down (interior dimension = 1)
+                if (this.game.player.currentZone.dimension === 1) {
+                    rotationAngle = Math.PI;
+                }
+
                 this.ctx.rotate(rotationAngle);
 
                 // Set slight transparency

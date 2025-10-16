@@ -250,14 +250,18 @@ export class ZoneGenerator {
                 featureGenerator.addRandomFeatures(zoneLevel, zoneX, zoneY, true); // Pass true for underground
             }
 
-            // If entering from a hole, place a PORT at the entry point.
-            // If entering from a cistern, place a full cistern structure.
+            // If entering from a hole or pitfall, place a PORT at the entry point.
+            // If entering from a cistern, place a full cistern structure. This ensures an exit is always created.
             if (this.game.portTransitionData) {
-                const isFromPitfall = this.game.portTransitionData.from === 'pitfall';
                 const isFromHole = this.game.portTransitionData.from === 'hole';
-                structureGenerator.addCistern(zoneX, zoneY, true, this.game.portTransitionData.x, this.game.portTransitionData.y);
-                if (!isFromHole) { // It's a cistern, so add the bottom part
+                const isFromCistern = this.game.portTransitionData.from === 'cistern';
+                const isFromPitfall = this.game.portTransitionData.from === 'pitfall';
+
+                if (isFromCistern) {
+                    structureGenerator.addCistern(zoneX, zoneY, true, this.game.portTransitionData.x, this.game.portTransitionData.y);
                     this.grid[this.game.portTransitionData.y + 1][this.game.portTransitionData.x] = TILE_TYPES.CISTERN;
+                } else if (isFromHole || isFromPitfall) { // Place a PORT if it's from a hole or pitfall
+                    this.grid[this.game.portTransitionData.y][this.game.portTransitionData.x] = TILE_TYPES.PORT;
                 }
             }
 
@@ -558,9 +562,10 @@ export class ZoneGenerator {
                 const ny = inwardY + dy;
                 if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
                     const tile = this.grid[ny][nx];
-                    if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.SHACK) {
-                        this.grid[ny][nx] = TILE_TYPES.FLOOR;
-                    }
+                        // Preserve SHACK tiles: do not overwrite them when clearing paths or entrances.
+                        if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY) {
+                            this.grid[ny][nx] = TILE_TYPES.FLOOR;
+                        }
                 }
             }
         }
@@ -591,7 +596,10 @@ export class ZoneGenerator {
             }
 
             // Clear this tile if it's not already floor or exit
-            if (this.grid[currentY][currentX] === TILE_TYPES.WALL || this.grid[currentY][currentX] === TILE_TYPES.ROCK || this.grid[currentY][currentX] === TILE_TYPES.SHRUBBERY || this.grid[currentY][currentX] === TILE_TYPES.SHACK) {
+            // When carving a path toward the center, avoid replacing SHACK tiles so
+            // multi-tile detection (findShackPosition) still recognizes the 3x3 structure.
+            const curTile = this.grid[currentY][currentX];
+            if (curTile === TILE_TYPES.WALL || curTile === TILE_TYPES.ROCK || curTile === TILE_TYPES.SHRUBBERY) {
                 this.grid[currentY][currentX] = TILE_TYPES.FLOOR;
             }
 
@@ -668,5 +676,35 @@ export class ZoneGenerator {
 
         // Clear any enemies that might have been placed
         this.enemies = [];
+    }
+
+    /**
+     * Forces the placement of a 3x3 shack structure near the center of the grid.
+     * This is used for the special first Wilds zone.
+     * @param {number} zoneX - The x-coordinate of the zone.
+     * @param {number} zoneY - The y-coordinate of the zone.
+     * @returns {boolean} - True if the shack was placed successfully.
+     */
+    forcePlaceShackInCenter(zoneX, zoneY) {
+        // Since the zone is cleared, we can place it near the center.
+        // Center is (4,4). A 3x3 shack would be from (3,3) to (5,5).
+        const startX = 3;
+        const startY = 3;
+
+        // Place the 3x3 shack with a PORT at the middle bottom
+        for (let dy = 0; dy < 3; dy++) {
+            for (let dx = 0; dx < 3; dx++) {
+                const tileX = startX + dx;
+                const tileY = startY + dy;
+                if (dy === 2 && dx === 1) { // Middle bottom tile is the door
+                    this.grid[tileY][tileX] = TILE_TYPES.PORT;
+                } else {
+                    this.grid[tileY][tileX] = TILE_TYPES.SHACK;
+                }
+            }
+        }
+
+        logger.log(`Shack force-placed at zone (${zoneX}, ${zoneY}) position (${startX}, ${startY})`);
+        return true; // Always succeeds in a cleared zone.
     }
 }

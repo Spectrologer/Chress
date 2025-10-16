@@ -123,7 +123,15 @@ export class BaseTileRenderer {
                 return;
             }
 
-            // If it's not a door or cistern, it's a simple hole from a shovel
+            // Interior zones use PORT as doors that transition back to surface; they are not holes.
+            // Zone level 5 corresponds to interior zones in RenderManager. Don't render hole sprite there.
+            if (zoneLevel === 5) {
+                // Render the underlying floor/house texture for interior tiles and return.
+                this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+                return;
+            }
+
+            // If it's not a door or cistern and not interior, it's a simple hole from a shovel
             this.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
             if (RendererUtils.isImageLoaded(this.images, 'hole')) {
                 ctx.drawImage(this.images.hole, pixelX, pixelY, TILE_SIZE, TILE_SIZE);

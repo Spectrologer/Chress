@@ -83,20 +83,21 @@ export class ItemGenerator {
 
         const undergroundMultiplier = this.dimension === 2 ? 1.5 : 1.0;
 
+        // AI Note: "Activated Items" are items that require player interaction to use, such as Bombs, Spears, Bows, etc.
         const specialItems = [
             { name: 'Lion', tile: TILE_TYPES.LION, chance: 0.02, dimension: 0 },
             { name: 'Squig', tile: TILE_TYPES.SQUIG, chance: 0.02, dimension: 0 },
             { name: 'Nib', tile: TILE_TYPES.NIB, chance: 0.02, dimension: 2 },
             { name: 'Mark', tile: TILE_TYPES.MARK, chance: 0.02, dimension: 0 },
             { name: 'Rune', tile: TILE_TYPES.RUNE, chance: 0.02, dimension: 2 },
-            { name: 'Note', tile: TILE_TYPES.NOTE, chance: 0.04, dimension: 'any' },
-            { name: 'Bishop Spear', tile: { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4 },
-            { name: 'Horse Icon', tile: { type: TILE_TYPES.HORSE_ICON, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4 },
-            { name: 'Bomb', tile: TILE_TYPES.BOMB, chance: 0.04, minLevel: 2, maxLevel: 4 },
+            { name: 'Note', tile: TILE_TYPES.NOTE, chance: 0.04, dimension: 'any' }, // Activated Item
+            { name: 'Bishop Spear', tile: { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
+            { name: 'Horse Icon', tile: { type: TILE_TYPES.HORSE_ICON, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
+            { name: 'Bomb', tile: TILE_TYPES.BOMB, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
             { name: 'Heart', tile: TILE_TYPES.HEART, chance: 0.025, minLevel: 2, maxLevel: 4 },
-            { name: 'Bow', tile: { type: TILE_TYPES.BOW, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4 },
-            { name: 'Shovel', tile: { type: TILE_TYPES.SHOVEL, uses: 3 }, chance: 0.04, minLevel: 2, maxLevel: 4, dimension: 'any' },
-            { name: 'Pitfall', tile: TILE_TYPES.PITFALL, chance: 0.03, minLevel: 2, maxLevel: 4, dimension: 0 }, // 3% chance in Woods, Wilds, Frontier
+            { name: 'Bow', tile: { type: TILE_TYPES.BOW, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
+            { name: 'Shovel', tile: { type: TILE_TYPES.SHOVEL, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
+            { name: 'Pitfall', tile: TILE_TYPES.PITFALL, chance: 0.03, minLevel: 2, maxLevel: 4, dimension: 0 }, // 3% chance on surface in Woods, Wilds, Frontier
         ];
 
         specialItems.forEach(item => {
@@ -104,7 +105,10 @@ export class ItemGenerator {
             const levelMatch = (!item.minLevel || this.zoneLevel >= item.minLevel) &&
                                (!item.maxLevel || this.zoneLevel <= item.maxLevel);
 
-            if (dimensionMatch && levelMatch) {
+            // Prevent activated items from spawning on the surface in level 1
+            const activatedItemRestriction = item.isActivated && this.zoneLevel === 1 && this.dimension === 0;
+
+            if (dimensionMatch && levelMatch && !activatedItemRestriction) {
                 const multiplier = item.noMultiplier ? 1.0 : undergroundMultiplier;
                 if (Math.random() < item.chance * multiplier) {
                     this._placeItem(item);

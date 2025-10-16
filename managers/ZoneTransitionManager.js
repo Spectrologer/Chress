@@ -96,6 +96,8 @@ export class ZoneTransitionManager {
                 // Entering interior via house/shack door
                 targetDim = 1;
                 portType = 'interior';
+                // Record the surface port coords so we can return the player to this exact port when exiting the interior
+                this.game.portTransitionData = { from: 'interior', x: playerPos.x, y: playerPos.y };
             }
         } else {
             // Exiting to surface from interior/under
