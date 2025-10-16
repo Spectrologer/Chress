@@ -278,4 +278,8 @@ export class BaseTileRenderer {
     findDeadTreePosition(x, y, grid) {
         return this.multiTileHandler.findDeadTreePosition(x, y, grid);
     }
+
+    findShackPosition(x, y, grid) {
+        return this.multiTileHandler.findShackPosition(x, y, grid);
+    }
 }

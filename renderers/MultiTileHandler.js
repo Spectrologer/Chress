@@ -82,25 +82,38 @@ export class MultiTileHandler {
     static findShackPosition(targetX, targetY, grid, isStrictCheck = false) {
         // Find the top-left corner of the shack that contains this tile
         for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
-            for (let startX = Math.max(0, targetX - 2); startX <= Math.min(GRID_SIZE - 3, targetX); startX++) {                
-                // Check if there's a 3x3 shack starting at this position
-                let isShack = true;
-                for (let y = startY; y < startY + 3 && isShack; y++) {
-                    for (let x = startX; x < startX + 3 && isShack; x++) {
-                        const tile = grid[y]?.[x];
-                        // A shack tile can be either SHACK or a PORT (the door)
-                        if (!(tile === TILE_TYPES.SHACK || tile === TILE_TYPES.PORT)) {
-                            isShack = false;
+            for (let startX = Math.max(0, targetX - 2); startX <= Math.min(GRID_SIZE - 3, targetX); startX++) {
+                // Check all 3x3 tiles to ensure it's a complete shack structure
+                let isCompleteShack = true;
+                for (let dy = 0; dy < 3 && isCompleteShack; dy++) {
+                    for (let dx = 0; dx < 3 && isCompleteShack; dx++) {
+                        const tileY = startY + dy;
+                        const tileX = startX + dx;
+                        const tile = grid[tileY]?.[tileX];
+
+                        if (dy === 2 && dx === 1) {
+                            // Door must be PORT
+                            if (tile !== TILE_TYPES.PORT) {
+                                isCompleteShack = false;
+                            }
+                        } else {
+                            // Other tiles must be SHACK
+                            if (tile !== TILE_TYPES.SHACK) {
+                                isCompleteShack = false;
+                            }
                         }
                     }
                 }
 
-                // If doing a strict check (e.g., for cistern detection), ensure the target tile itself is a SHACK or PORT.
-                if (isStrictCheck && isShack) {
+                // If doing a strict check, ensure the target tile is part of this shack
+                if (isStrictCheck && isCompleteShack) {
                     const targetTile = grid[targetY]?.[targetX];
-                    if (!(targetTile === TILE_TYPES.SHACK || targetTile === TILE_TYPES.PORT)) continue;
+                    if (!(targetTile === TILE_TYPES.SHACK || targetTile === TILE_TYPES.PORT)) {
+                        isCompleteShack = false;
+                    }
                 }
-                if (isShack && targetX >= startX && targetX < startX + 3 &&
+
+                if (isCompleteShack && targetX >= startX && targetX < startX + 3 &&
                     targetY >= startY && targetY < startY + 3) {
                     return { startX, startY };
                 }

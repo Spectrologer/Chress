@@ -153,7 +153,7 @@ export class Sign {
         axelotl: {
             name: 'Axe-O-Lot\'l',
             portrait: 'assets/fauna/axolotlface.png',
-            message: 'Colors are my specialty. By something sharp?',
+            message: 'Wanna chop down trees? Show me some new places.',
             subclass: 'merchant',
             trades: [
                 {

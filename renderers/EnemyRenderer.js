@@ -98,8 +98,8 @@ export class EnemyRenderer {
                 this.ctx.filter = 'none';
                 this.ctx.globalAlpha = 1.0;
                 this.ctx.restore();
-            } else {
-                // Fallback
+            } else if (enemy.health > 0) {
+                // Fallback to green tile only if enemy is alive
                 let pixelXBase = enemy.x * TILE_SIZE + enemy.bumpOffsetX;
                 let pixelYBase = enemy.y * TILE_SIZE + enemy.bumpOffsetY;
                 pixelXBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelXBase));

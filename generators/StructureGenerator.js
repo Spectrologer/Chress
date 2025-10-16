@@ -89,18 +89,19 @@ export class StructureGenerator {
             const x = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // x from 1 to GRID_SIZE-3
             const y = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // y from 1 to GRID_SIZE-3
 
-            // Check if all 2x2 tiles are free floor and not house
+            // Check if all 2x2 tiles are placeable (allow clearing obstacles)
             let free = true;
+            const allowedTiles = [TILE_TYPES.FLOOR, TILE_TYPES.ROCK, TILE_TYPES.SHRUBBERY, TILE_TYPES.GRASS, TILE_TYPES.WATER];
             for (let dy = 0; dy < 2 && free; dy++) {
                 for (let dx = 0; dx < 2 && free; dx++) {
-                    if (this.grid[y + dy][x + dx] !== TILE_TYPES.FLOOR) {
+                    if (!allowedTiles.includes(this.grid[y + dy][x + dx])) {
                         free = false;
                     }
                 }
             }
 
             if (free) {
-                // Place the 2x2 well
+                // Place the 2x2 well, overwriting any obstacles
                 for (let dy = 0; dy < 2; dy++) {
                     for (let dx = 0; dx < 2; dx++) {
                         this.grid[y + dy][x + dx] = TILE_TYPES.WELL;
@@ -120,18 +121,19 @@ export class StructureGenerator {
             const x = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // x from 1 to GRID_SIZE-3
             const y = Math.floor(Math.random() * ((GRID_SIZE - 3) - 1)) + 1; // y from 1 to GRID_SIZE-3
 
-            // Check if all 2x2 tiles are free floor and not house
+            // Check if all 2x2 tiles are placeable (allow clearing obstacles)
             let free = true;
+            const allowedTiles = [TILE_TYPES.FLOOR, TILE_TYPES.ROCK, TILE_TYPES.SHRUBBERY, TILE_TYPES.GRASS, TILE_TYPES.WATER];
             for (let dy = 0; dy < 2 && free; dy++) {
                 for (let dx = 0; dx < 2 && free; dx++) {
-                    if (this.grid[y + dy][x + dx] !== TILE_TYPES.FLOOR) {
+                    if (!allowedTiles.includes(this.grid[y + dy][x + dx])) {
                         free = false;
                     }
                 }
             }
 
             if (free) {
-                // Place the 2x2 dead tree
+                // Place the 2x2 dead tree, overwriting any obstacles
                 for (let dy = 0; dy < 2; dy++) {
                     for (let dx = 0; dx < 2; dx++) {
                         this.grid[y + dy][x + dx] = TILE_TYPES.DEADTREE;
@@ -139,70 +141,22 @@ export class StructureGenerator {
                 }
                 ZoneStateManager.deadTreeSpawned = true;
                 logger.log(`Dead tree spawned at zone (${zoneX}, ${zoneY})`);
-                break; // Successfully placed dead tree
-            }
-        }
-    }
-
-    addShack(zoneX, zoneY) {
-        // Place a 3x3 shack in Woods and Wilds zones (level 2 and 3) randomly, avoiding borders
-        // Try to place the shack in a valid location (max 50 attempts)
-        for (let attempts = 0; attempts < 50; attempts++) {
-            // Place away from borders, need 3x3 space + 1 space in front
-            const x = Math.floor(Math.random() * ((GRID_SIZE - 5) - 1)) + 1; // x from 1 to GRID_SIZE-5 (3 for shack + 1 front + 1 border)
-            const y = Math.floor(Math.random() * ((GRID_SIZE - 5) - 1)) + 1; // y from 1 to GRID_SIZE-5
-
-            // Check if all 3x3 tiles are free floor and space in front (south side, middle bottom)
-            let free = true;
-            // Check the 3x3 structure space
-            for (let dy = 0; dy < 3 && free; dy++) {
-                for (let dx = 0; dx < 3 && free; dx++) {
-                    if (this.grid[y + dy][x + dx] !== TILE_TYPES.FLOOR) {
-                        free = false;
-                    }
-                }
-            }
-            // Check space in front (south side, middle bottom)
-            if (y + 3 < GRID_SIZE && this.grid[y + 2][x + 1] !== TILE_TYPES.FLOOR) { // Middle bottom of 3x3 is (x+1,y+2)
-                free = false;
-            }
-
-            if (free) {
-                // Place the 3x3 shack with PORT at middle bottom
-                for (let dy = 0; dy < 3; dy++) {
-                    for (let dx = 0; dx < 3; dx++) {
-                        if (dy === 2 && dx === 1) { // Middle bottom tile
-                            this.grid[y + dy][x + dx] = TILE_TYPES.PORT; // Entrance
-                        } else {
-                            this.grid[y + dy][x + dx] = TILE_TYPES.SHACK;
-                        }
-                    }
-                }
-                logger.log(`Shack spawned at zone (${zoneX}, ${zoneY})`);
                 break; // Successfully placed shack
             }
         }
     }
 
+    addShack(zoneX, zoneY) {
+        // Shack generation disabled
+    }
+
     addCistern(zoneX, zoneY, force = false) {
-        // Place a 1x2 cistern: PORT on top, CISTERN on bottom
-        // Try to place in a valid location (max 50 attempts)
-
-        // If not forced, check the 5% random chance
-        if (!force && Math.random() >= 0.05) return;
-
-        // Try to place the cistern (up to 100 attempts if forced, to be safe)
-        for (let attempts = 0; attempts < (force ? 100 : 50); attempts++) {
-            const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1; // x from 1 to GRID_SIZE-2
-            const y = Math.floor(Math.random() * (GRID_SIZE - 3)) + 1; // y from 1 to GRID_SIZE-3
-
-            // Check if both tiles are free floor
-            if (this.grid[y][x] === TILE_TYPES.FLOOR && this.grid[y + 1][x] === TILE_TYPES.FLOOR) {
-                this.grid[y][x] = TILE_TYPES.PORT;     // Top part (entrance/exit)
-                this.grid[y + 1][x] = TILE_TYPES.CISTERN; // Bottom part
-                logger.log(`Cistern spawned at zone (${zoneX}, ${zoneY})`);
-                break; // Successfully placed cistern
-            }
+        // Cistern generation disabled (except for home zone)
+        if (zoneX === 0 && zoneY === 0 && force) {
+            // Always add the cistern behind the house in the home zone (0,0)
+            // Place PORT tile two tiles above the sign (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
+            this.grid[3][2] = TILE_TYPES.PORT;     // Top part (entrance)
+            this.grid[4][2] = TILE_TYPES.CISTERN; // Bottom part
         }
     }
 

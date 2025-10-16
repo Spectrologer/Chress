@@ -263,6 +263,24 @@ export class ZoneGenerator {
             const zoneLevel = ZoneStateManager.getZoneLevel(zoneX, zoneY);
             const isHomeZone = (zoneX === 0 && zoneY === 0);
 
+            // Check if there's a surface cistern that requires an underground counterpart
+            const surfaceZoneKey = `${zoneX},${zoneY}:${0}`;
+            const surfaceZone = existingZones.get(surfaceZoneKey);
+            let hasSurfaceCistern = false;
+
+            if (surfaceZone && surfaceZone.grid) {
+                // Check if surface zone has a cistern
+                for (let y = 0; y < GRID_SIZE; y++) {
+                    for (let x = 0; x < GRID_SIZE; x++) {
+                        if (surfaceZone.grid[y][x] === TILE_TYPES.CISTERN) {
+                            hasSurfaceCistern = true;
+                            break;
+                        }
+                    }
+                    if (hasSurfaceCistern) break;
+                }
+            }
+
             // Initialize specialized generators
             const structureGenerator = new StructureGenerator(this.grid);
             const featureGenerator = new FeatureGenerator(this.grid, foodAssets);
@@ -281,12 +299,9 @@ export class ZoneGenerator {
                 featureGenerator.addRandomFeatures(zoneLevel, zoneX, zoneY, true); // Pass true for underground
             }
 
-            // If entering from a port, guarantee a cistern. Otherwise, 4% chance.
-            const shouldForceCistern = exitSide === 'port';
-            if (shouldForceCistern) {
-                itemGenerator.addCisternItem(true); // Force spawn
-            } else {
-                itemGenerator.addCisternItem(); // 4% chance
+            // Force a cistern if there's a surface cistern above
+            if (hasSurfaceCistern) {
+                structureGenerator.addCistern(zoneX, zoneY, true);
             }
 
             // Add special zone items - this includes nib and rune spawning logic which are now restricted to underground
@@ -337,27 +352,6 @@ export class ZoneGenerator {
             structureGenerator.addSign("WOODCUTTERS<br>CLUB", zoneX, zoneY);
         }
 
-        // Add unique structures based on zone level
-        if (zoneLevel === 4 && !ZoneStateManager.wellSpawned) {
-            structureGenerator.addWell(zoneX, zoneY);
-        }
-        if (zoneLevel === 2 && !ZoneStateManager.deadTreeSpawned) {
-            structureGenerator.addDeadTree(zoneX, zoneY);
-        }
-
-        // Add shack with ~4% chance in Woods and Wilds zones (2 & 3)
-        if ((zoneLevel === 2 || zoneLevel === 3) && Math.random() < 0.04) {
-            structureGenerator.addShack(zoneX, zoneY);
-        }
-
-        // Add cistern with 5% chance in non-home zones for dimension 0
-        const shouldForceCistern = exitSide === 'port';
-        if (shouldForceCistern) {
-            structureGenerator.addCistern(zoneX, zoneY, true); // Force spawn
-        } else if (dimension === 0 && !isHomeZone && Math.random() < 0.05) {
-            structureGenerator.addCistern(zoneX, zoneY, false); // 5% chance
-        }
-
         // Generate exits and add frontier sign if needed
         this.generateExits(zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel);
         if (zoneLevel === 4 && !ZoneStateManager.firstFrontierSignPlaced) {
@@ -371,6 +365,14 @@ export class ZoneGenerator {
 
             // Add random features
             featureGenerator.addRandomFeatures(zoneLevel, zoneX, zoneY);
+
+            // Add unique structures based on zone level (moved here to place after obstacles)
+            if (zoneLevel === 4 && !ZoneStateManager.wellSpawned) {
+                structureGenerator.addWell(zoneX, zoneY);
+            }
+            if (zoneLevel === 2 && !ZoneStateManager.deadTreeSpawned) {
+                structureGenerator.addDeadTree(zoneX, zoneY);
+            }
 
             // Add hammer warning sign in the first level 2 zone encountered
             if (zoneLevel === 2 && !ZoneStateManager.hammerWarningSignPlaced) {

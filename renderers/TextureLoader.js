@@ -45,6 +45,8 @@ export class TextureLoader {
                     imageKey = assetName.replace('fx/smoke/', '').replace('.png', '');
                 } else if (assetName === 'doodads/cistern.png') {
                     imageKey = 'doodads/cistern';
+                } else if (assetName === 'doodads/shack.png') {
+                    imageKey = 'doodads/shack';
                 } else {
                     imageKey = assetName.replace('.png', '');
                 }
@@ -71,6 +73,9 @@ export class TextureLoader {
         this.images[key] = new Image();
 
         this.images[key].onload = () => {
+            if (key === 'doodads/shack') {
+                console.log('[TextureLoader] Shack image loaded successfully:', filename);
+            }
             this.imagesLoaded++;
             if (this.imagesLoaded === this.totalImages && this.onAllImagesLoaded) {
                 this.onAllImagesLoaded();
@@ -78,6 +83,9 @@ export class TextureLoader {
         };
 
         this.images[key].onerror = () => {
+            if (key === 'doodads/shack') {
+                console.error('[TextureLoader] Failed to load shack image:', filename);
+            }
             this.imagesLoaded++;
             if (this.imagesLoaded === this.totalImages && this.onAllImagesLoaded) {
                 this.onAllImagesLoaded();

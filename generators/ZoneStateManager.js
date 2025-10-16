@@ -11,10 +11,14 @@ export class ZoneStateManager {
     static noteSpawned = false;
     static lionSpawned = false;
     static squigSpawned = false;
-    static wellSpawned = false;
-    static deadTreeSpawned = false;
-    static axeWarningSignPlaced = false;
-    static hammerWarningSignPlaced = false;
+// Flag to ensure at least one shack spawns in level 1 per session
+static shackSpawned = false;
+// Flag to ensure at least one cistern spawns in level 1 per session
+static cisternSpawnedForLevel1 = false;
+static wellSpawned = false;
+static deadTreeSpawned = false;
+static axeWarningSignPlaced = false;
+static hammerWarningSignPlaced = false;
     static firstFrontierSignPlaced = false;
 
     // Pre-determined spawn locations for special items
@@ -86,6 +90,8 @@ export class ZoneStateManager {
         this.spearSpawned = false;
         this.noteSpawned = false;
         this.lionSpawned = false;
+        this.shackSpawned = false;
+        this.cisternSpawnedForLevel1 = false;
         this.squigSpawned = false;
         this.wellSpawned = false;
         this.deadTreeSpawned = false;

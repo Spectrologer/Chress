@@ -198,21 +198,13 @@ body {
     flex-direction: column;
     gap: 2px;
 }
-    width: 100%;
-    max-width: 130px;
-    box-sizing: border-box;
 .player-name {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    align-self: stretch;
     font-family: 'MedievalSharp', serif;
     font-size: 1.8em;
     font-weight: 700;
     color: #7a5c2e;
-    line-height: 1;
-    text-align: left;
+    line-height: 1.2;
+    text-align: center;
     padding-right: 8px;
     border-right: 2px solid #e2cfa2;
 }

@@ -28,6 +28,10 @@ export class CombatManager {
     }
 
     defeatEnemy(enemy) {
+        // Prevent double defeat/points by checking if already defeated
+        if (this.game.defeatedEnemies.has(`${enemy.id}`)) {
+            return;
+        }
         if (enemy.health > 0) {
             enemy.takeDamage(999);
         }
@@ -39,8 +43,7 @@ export class CombatManager {
         this.game.player.addPoints(enemy.getPoints());
         this.game.defeatedEnemies.add(`${enemy.id}`);
         this.game.soundManager.playSound('attack');
-        this.game.enemies = this.game.enemies.filter(e => e !== enemy);
-        // Remove from zone data
+        // Remove from zone data (enemy will be removed from game.enemies by checkCollisions)
         const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
         if (this.game.zones.has(zoneKey)) {
             const zoneData = this.game.zones.get(zoneKey);
@@ -108,7 +111,7 @@ export class CombatManager {
 
     handleEnemyMovements() {
         // Handle enemy movements after player actions
-        // This is a placeholder for now as the main enemy movement logic might be in game.js
+         // This is a placeholder for now as the main enemy movement logic might be in game.js
     }
 
     checkCollisions() {

@@ -187,6 +187,16 @@ export class MiniMap {
                     ctx.fillText('X', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
                 }
 
+                // Draw club icon for the home zone (0,0) in the overworld
+                if (zoneX === 0 && zoneY === 0 && currentZone.dimension === 0) {
+                    ctx.fillStyle = '#2F1B14'; // Dark brown for the symbol
+                    ctx.font = `bold ${zoneSize * 0.8}px serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    // Draw the club symbol in the center of the tile
+                    ctx.fillText('♣', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
+                }
+
                 // Draw player icon (king symbol) for the current zone
                 if (zoneX === currentZone.x && zoneY === currentZone.y) {
                     ctx.fillStyle = '#2F1B14'; // Dark brown for the symbol

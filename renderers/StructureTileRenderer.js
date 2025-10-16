@@ -354,20 +354,25 @@ export class StructureTileRenderer {
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        // Then render the shack part
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/shack') && this.images['doodads/shack'].complete) {
-            // For a 3x3 shack, we need to determine which part of the shack image to draw
-            // Find the shack area bounds to determine the position within the shack
-            const shackInfo = this.multiTileHandler.findShackPosition(x, y, grid);
+        // Debug logging
+        const imageKey = 'doodads/shack';
+        const imageLoaded = RendererUtils.isImageLoaded(this.images, imageKey);
+        const shackInfo = this.multiTileHandler.findShackPosition(x, y, grid);
+        if (x === 0 && y === 0) { // Only log once per frame for performance
+            console.log('[renderShackTile] imageKey:', imageKey, 'imageLoaded:', imageLoaded, 'shackInfo:', shackInfo);
+        }
 
+        // Then render the shack part
+        if (imageLoaded) {
+            // For a 3x3 shack, determine which part of the shack image to draw
             if (shackInfo) {
-                // Calculate which part of the shack image to use
+                // Calculate position within the 3x3 shack
                 const partX = x - shackInfo.startX;
                 const partY = y - shackInfo.startY;
 
                 // Draw the corresponding part of the shack image
                 // Divide the shack image into 3x3 parts
-                const shackImage = this.images['doodads/shack'];
+                const shackImage = this.images[imageKey];
                 const partWidth = shackImage.width / 3;
                 const partHeight = shackImage.height / 3;
 
@@ -378,17 +383,15 @@ export class StructureTileRenderer {
                     pixelX, pixelY, // Destination position
                     TILE_SIZE, TILE_SIZE // Destination size
                 );
+            } else {
+                // Fallback if shack info not found - use color rendering
+                ctx.fillStyle = TILE_COLORS[TILE_TYPES.SHACK] || '#8B4513';
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
         } else {
-            // Fallback color rendering - with debug message on gh-pages
+            // Fallback color rendering
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.SHACK] || '#8B4513';
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-            // Debug for gh-pages - show shack location with 'S'
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 24px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('S', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 
@@ -397,7 +400,7 @@ export class StructureTileRenderer {
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern') && this.images['doodads/cistern'].complete && this.images['doodads/cistern'].naturalWidth > 0) {
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern')) {
             const cisternImage = this.images['doodads/cistern'];
             const partWidth = cisternImage.width; // 16
             const partHeight = cisternImage.height / 2; // 9
@@ -440,7 +443,7 @@ export class StructureTileRenderer {
         // First render dirt background so transparency works
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern') && this.images['doodads/cistern'].complete) {
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern')) {
             const cisternImage = this.images['doodads/cistern'];
             const partWidth = cisternImage.width; // 16
             const partHeight = cisternImage.height / 2; // 9
