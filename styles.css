@@ -2102,6 +2102,41 @@ input:checked + .toggle-slider:before {
         font-size: 1.2em;
         line-height: 1.4;
     }
+
+    /* Barter window scaling for desktop */
+    .barter-window {
+        padding: 10px;
+        gap: 8px;
+    }
+    .barter-window h2 {
+        font-size: 1.5em;
+    }
+    .barter-window p {
+        font-size: 1em;
+        line-height: 1.2;
+    }
+    .barter-main-content {
+        padding: 8px;
+        gap: 8px;
+    }
+    .barter-portrait-container {
+        width: 80px;
+        height: 80px;
+    }
+    .barter-offers-container {
+        gap: 8px;
+    }
+    .barter-offer {
+        padding: 8px;
+    }
+    .barter-exchange-item {
+        width: 48px;
+        height: 48px;
+    }
+    .barter-window button {
+        padding: 6px 12px;
+        font-size: 0.9em;
+    }
 }
 
 @media (min-width: 769px) {
