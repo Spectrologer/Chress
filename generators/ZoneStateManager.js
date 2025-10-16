@@ -15,6 +15,8 @@ export class ZoneStateManager {
 static shackSpawned = false;
 // Flag for the special shack in the Wilds
 static wildsShackSpawned = false;
+// Flag to ensure the first wilds zone is clear except for shack
+static firstWildsZonePlaced = false;
 // Flag to ensure at least one cistern spawns in level 1 per session
 static cisternSpawnedForLevel1 = false;
 static wellSpawned = false;
@@ -95,6 +97,7 @@ static hammerWarningSignPlaced = false;
         this.lionSpawned = false;
         this.shackSpawned = false;
         this.wildsShackSpawned = false;
+        this.firstWildsZonePlaced = false;
         this.cisternSpawnedForLevel1 = false;
         this.squigSpawned = false;
         this.wellSpawned = false;

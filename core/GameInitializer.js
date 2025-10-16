@@ -15,6 +15,7 @@ import { InteractionManager } from '../managers/InteractionManager.js';
 import { ZoneManager } from '../managers/ZoneManager.js';
 import { GameStateManager } from './GameStateManager.js';
 import { SoundManager } from './SoundManager.js';
+import { ZoneStateManager } from '../generators/ZoneStateManager.js';
 import { ConsentManager } from './ConsentManager.js';
 
 export class GameInitializer {
@@ -191,6 +192,9 @@ export class GameInitializer {
     }
 
     resetGame() {
+        // Reset session-specific static data that doesn't get cleared on a soft reset.
+        ZoneStateManager.resetSessionData();
+
         this.game.gameStateManager.resetGame();
     }
 }

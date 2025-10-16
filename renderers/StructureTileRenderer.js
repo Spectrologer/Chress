@@ -360,9 +360,12 @@ export class StructureTileRenderer {
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        // Check for shack image
+        // Check for shack image with proper key
         const imageKey = 'doodads/shack';
-        const imageLoaded = RendererUtils.isImageLoaded(this.images, imageKey);
+        const shackImage = this.images[imageKey];
+        const imageLoaded = RendererUtils.isImageLoaded(this.images, imageKey) &&
+                          shackImage &&
+                          shackImage.width >= 48 && shackImage.height >= 48; // Minimum 3x3 expected
 
         // Then render the shack part
         if (imageLoaded) {
@@ -374,29 +377,45 @@ export class StructureTileRenderer {
                 const partX = x - shackInfo.startX;
                 const partY = y - shackInfo.startY;
 
-                // Draw the corresponding part of the shack image
-                // Divide the shack image into 3x3 parts
-                const shackImage = this.images[imageKey];
-                const partWidth = shackImage.width / 3;
-                const partHeight = shackImage.height / 3;
+                // Validate coordinates are within bounds
+                if (partX >= 0 && partX < 3 && partY >= 0 && partY < 3) {
+                    // Divide the shack image into 3x3 parts
+                    const partWidth = shackImage.width / 3;
+                    const partHeight = shackImage.height / 3;
 
-                ctx.drawImage(
-                    shackImage,
-                    partX * partWidth, partY * partHeight, // Source position
-                    partWidth, partHeight, // Source size
-                    pixelX, pixelY, // Destination position
-                    TILE_SIZE, TILE_SIZE // Destination size
-                );
-            } else {
-                // Fallback if shack info not found - use color rendering
-                ctx.fillStyle = TILE_COLORS[TILE_TYPES.SHACK] || '#8B4513';
-                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    // Ensure dimensions are reasonable
+                    if (partWidth > 0 && partHeight > 0 && partWidth <= shackImage.width && partHeight <= shackImage.height) {
+                        try {
+                            ctx.drawImage(
+                                shackImage,
+                                partX * partWidth, partY * partHeight, // Source position
+                                partWidth, partHeight, // Source size
+                                pixelX, pixelY, // Destination position
+                                TILE_SIZE, TILE_SIZE // Destination size
+                            );
+                            return; // Successfully rendered
+                        } catch (error) {
+                            console.warn('[Shack Render Error] Failed to draw shack part:', partX, partY, error.message);
+                        }
+                    } else {
+                        console.warn('[Shack Render Warning] Invalid shack image dimensions:', shackImage.width, shackImage.height);
+                    }
+                } else {
+                    console.warn('[Shack Render Warning] Invalid shack part coordinates:', partX, partY);
+                }
             }
-        } else {
-            // Fallback color rendering - using SHACK tile color instead of hardcoded
-            ctx.fillStyle = TILE_COLORS[TILE_TYPES.SHACK] || '#8B4513';
-            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
+
+        // Fallback color rendering with distinctive marking
+        ctx.fillStyle = TILE_COLORS[TILE_TYPES.SHACK] || '#654321';
+        ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+
+        // Add distinguishable 'S' marker for fallback
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 18px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('S', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
     }
 
     renderCisternTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {

@@ -64,6 +64,12 @@ export class MultiTileHandler {
     }
 
     static findShackPosition(targetX, targetY, grid, isStrictCheck = false) {
+        // Handle grid corruption - ensure positions are valid
+        if (!Array.isArray(grid) || targetY >= grid.length || targetX >= grid[targetY]?.length ||
+            grid[targetY][targetX] === null || grid[targetY][targetX] === undefined) {
+            return null;
+        }
+
         // Find the top-left corner of the shack that contains this tile
         for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
             for (let startX = Math.max(0, targetX - 2); startX <= Math.min(GRID_SIZE - 3, targetX); startX++) {
@@ -74,6 +80,12 @@ export class MultiTileHandler {
                         const tileY = startY + dy;
                         const tileX = startX + dx;
                         const tile = grid[tileY]?.[tileX];
+
+                        // Check for grid corruption in shack detection
+                        if (tile === null || tile === undefined) {
+                            isCompleteShack = false;
+                            break;
+                        }
 
                         if (dy === 2 && dx === 1) {
                             // Door must be PORT

@@ -74,7 +74,12 @@ export class TextureLoader {
 
         this.images[key].onload = () => {
             if (key === 'doodads/shack') {
-                console.log('[TextureLoader] Shack image loaded successfully:', filename);
+                console.log('[TextureLoader] Shack image loaded successfully:', filename, `dimensions: ${this.images[key].width}x${this.images[key].height}`);
+                // Validate shack image is at least 3x3 sprite sheet
+                const img = this.images[key];
+                if (img.width < 48 || img.height < 48) {
+                    console.warn('[TextureLoader] Shack image too small for 3x3 sprite sheet, rendering may fail:', `got ${img.width}x${img.height}, need >=48x48`);
+                }
             }
             this.imagesLoaded++;
             if (this.imagesLoaded === this.totalImages && this.onAllImagesLoaded) {
@@ -82,9 +87,9 @@ export class TextureLoader {
             }
         };
 
-        this.images[key].onerror = () => {
+        this.images[key].onerror = (error) => {
             if (key === 'doodads/shack') {
-                console.error('[TextureLoader] Failed to load shack image:', filename);
+                console.error('[TextureLoader] Failed to load shack image:', filename, error);
             }
             this.imagesLoaded++;
             if (this.imagesLoaded === this.totalImages && this.onAllImagesLoaded) {
