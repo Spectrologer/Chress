@@ -230,14 +230,6 @@ export class InputManager {
             return;
         }
 
-        // Check if tapped on player to open stats panel
-        // Only allow stats panel if not standing on an exit tile
-        const playerTile = this.game.grid[playerPos.y]?.[playerPos.x];
-        if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y && playerTile !== TILE_TYPES.EXIT && playerTile !== TILE_TYPES.PORT) {
-            this.game.uiManager.showStatsPanel();
-            return;
-        }
-
         // Double tap detection and handling
         const isDoubleTap = this.handleDoubleTapLogic(gridCoords);
         const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];

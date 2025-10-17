@@ -115,6 +115,16 @@ export class PanelManager {
                     e.stopPropagation();
                 });
             }
+
+            // Open panel when clicking on the main player portrait
+            const playerPortraitContainer = document.querySelector('.player-portrait-container');
+            if (playerPortraitContainer) {
+                playerPortraitContainer.addEventListener('click', () => this.showStatsPanel());
+                playerPortraitContainer.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    this.showStatsPanel();
+                });
+            }
         }
     }
 

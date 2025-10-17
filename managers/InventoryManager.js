@@ -382,6 +382,8 @@ export class InventoryManager {
                 this.game.player.inventory.splice(idx, 1);
                 break;
             case 'note':
+                // Consume a single note from the stack
+                item.quantity = (item.quantity || 1) - 1;
                 this.useMapNote();
                 this.game.hideOverlayMessage(); // Clear any existing overlay message
 
@@ -405,7 +407,10 @@ export class InventoryManager {
                         .start();
                 }
 
-                this.game.player.inventory.splice(idx, 1); // Remove note from inventory
+                // Remove the inventory entry only when quantity reaches zero
+                if (item.quantity <= 0) {
+                    this.game.player.inventory.splice(idx, 1);
+                }
                 break;
             case 'book_of_time_travel':
                 item.uses--;
