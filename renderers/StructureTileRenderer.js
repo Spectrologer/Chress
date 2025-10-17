@@ -584,4 +584,19 @@ export class StructureTileRenderer {
             ctx.restore();
         }
     }
+
+    renderTableTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+        // First render the base tile (interior floor)
+        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+        // Then render the table image on top
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/table')) {
+            ctx.drawImage(this.images['doodads/table'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            // Fallback color rendering
+            ctx.fillStyle = TILE_COLORS[TILE_TYPES.TABLE];
+            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        }
+    }
+
 }

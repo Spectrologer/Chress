@@ -93,14 +93,11 @@ export class ZoneGenerator {
                 // Place Crayn in the center
                 this.grid[4][4] = TILE_TYPES.CRAYN;
 
-                // Place Felt near Crayn
-                this.grid[4][6] = TILE_TYPES.FELT;
+                // Place Felt at 3,6
+                this.grid[6][3] = TILE_TYPES.FELT;
 
-                // Place Forge in an open spot
-                const forgePos = this.findOpenNpcSpawn(4);
-                if (forgePos) {
-                    this.grid[forgePos.y][forgePos.x] = TILE_TYPES.FORGE;
-                }
+                // Place Forge at 3,3
+                this.grid[3][3] = TILE_TYPES.FORGE;
 
                 // Place enemy statues on the back wall (y=1)
                 this.grid[1][1] = TILE_TYPES.LIZARDY_STATUE;
@@ -109,6 +106,11 @@ export class ZoneGenerator {
                 this.grid[1][5] = TILE_TYPES.LIZARDEAUX_STATUE;
                 this.grid[1][6] = TILE_TYPES.LIZORD_STATUE;
                 this.grid[1][7] = TILE_TYPES.LAZERD_STATUE;
+
+                // Place table tiles
+                this.grid[6][6] = TILE_TYPES.TABLE;
+                this.grid[5][7] = TILE_TYPES.TABLE;
+                this.grid[6][7] = TILE_TYPES.TABLE;
 
                 // Place statues for activated items along the left and right club walls.
                 // The club (4x3) is placed at startX=3,startY=3 in StructureGenerator.
@@ -161,16 +163,19 @@ export class ZoneGenerator {
                 // Determine number of items to spawn (1 or 2)
                 const numItemsToSpawn = 1 + (Math.random() < 0.5 ? 1 : 0); // 1 item, plus a 50% chance for a 2nd
 
+                const tableTiles = [{x: 6, y: 6}, {x: 5, y: 7}, {x: 6, y: 7}];
+
                 for (let i = 0; i < numItemsToSpawn; i++) {
-                    const pos = this.findOpenNpcSpawn(0);
-                    if (pos) {
+                    // Spawn items on the table tiles
+                    const tableSpot = tableTiles.pop();
+                    if (tableSpot) {
                         // Select a random item from the pool
                         const itemToSpawn = itemPool[Math.floor(Math.random() * itemPool.length)];
                         // Special handling for food if no food assets are loaded
                         if (itemToSpawn.type === TILE_TYPES.FOOD && (!this.foodAssets || this.foodAssets.length === 0)) {
-                            this.grid[pos.y][pos.x] = TILE_TYPES.WATER; // Fallback to water
+                            this.grid[tableSpot.y][tableSpot.x] = TILE_TYPES.WATER; // Fallback to water
                         } else {
-                            this.grid[pos.y][pos.x] = itemToSpawn;
+                            this.grid[tableSpot.y][tableSpot.x] = itemToSpawn;
                         }
                     }
                 }
@@ -579,8 +584,11 @@ export class ZoneGenerator {
             inwardX = GRID_SIZE - 2;
         }
 
-        // Clear the adjacent tile
-        this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
+        // Clear the adjacent tile only if it's an obstacle (preserve PORT/CISTERN and other structures)
+        const adjacentTile = this.grid[inwardY][inwardX];
+        if (adjacentTile === TILE_TYPES.WALL || adjacentTile === TILE_TYPES.ROCK || adjacentTile === TILE_TYPES.SHRUBBERY) {
+            this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
+        }
 
         // Clear adjacent inward tiles to create wider entry area (3x3 around inward tile)
         for (let dy = -1; dy <= 1; dy++) {
