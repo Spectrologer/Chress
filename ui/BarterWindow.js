@@ -115,7 +115,12 @@ export class BarterWindow {
         const player = this.game.player;
         const requiredAmount = tradeData.requiredAmount || 1;
 
-        if (player.inventory.length >= 6) return false; // Inventory full
+        // Only check for full inventory if the trade results in an item.
+        // Abilities do not take up inventory space.
+        const isAbilityTrade = tradeData.id === 'axelotl_axe' || tradeData.id === 'gouge_hammer';
+        if (!isAbilityTrade && player.inventory.length >= 6) {
+            return false; // Inventory full
+        }
 
         if (tradeData.requiredItem === 'points') {
             return player.getPoints() >= requiredAmount;
