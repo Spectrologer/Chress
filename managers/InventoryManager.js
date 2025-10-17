@@ -60,7 +60,19 @@ export class InventoryManager {
         let disabledText = item.disabled ? ' (DISABLED)' : '';
         switch (item.type) {
             case 'food':
-                const foodName = item.foodType.split('/').pop().replace('.png', '') || item.foodType;
+                // Expected format: 'food/<category>/<name.png>' -> show category (e.g. 'meat')
+                // Tests expect 'meat' for 'food/meat/beaf.png'. Use the second segment when present.
+                let foodName = item.foodType || '';
+                try {
+                    const parts = foodName.split('/');
+                    if (parts.length >= 2) {
+                        foodName = parts[1];
+                    } else {
+                        foodName = parts.pop().replace('.png', '');
+                    }
+                } catch (e) {
+                    foodName = (item.foodType || '').split('/').pop().replace('.png', '');
+                }
                 const foodQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
                 return `${foodName}${foodQuantity} - Restores 10 hunger`;
             case 'water':
@@ -136,9 +148,9 @@ export class InventoryManager {
             // Add the actual food sprite image to inventory slot
             const foodImg = document.createElement('img');
             foodImg.src = `assets/${item.foodType}`;
-            foodImg.style.width = '100%';
-            foodImg.style.height = '100%';
-            foodImg.style.objectFit = 'contain';
+            foodImg.style.width = '70%'; // Scale down to match on-ground appearance
+            foodImg.style.height = '70%';
+            foodImg.style.objectFit = 'contain'; // Keep aspect ratio
             foodImg.style.imageRendering = 'pixelated';
             foodImg.style.opacity = item.disabled ? '0.5' : '1';
             slot.appendChild(foodImg);

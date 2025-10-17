@@ -291,7 +291,8 @@ body {
     height: 24px;
 }
 
-.axe-ability-icon {
+.axe-ability-icon,
+.hammer-ability-icon {
     width: 24px;
     height: 24px;
     display: none; /* Hidden by default, shown when player has ability */
@@ -2171,7 +2172,7 @@ input:checked + .toggle-slider::after {
         height: 55px;
     }
 
-    .heart-icon, .axe-ability-icon {
+    .heart-icon, .axe-ability-icon, .hammer-ability-icon {
         width: 15px;
         height: 15px;
     }

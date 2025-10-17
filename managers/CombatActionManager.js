@@ -81,12 +81,22 @@ export class CombatActionManager {
     }
 
     confirmPendingCharge(chargeDetails) {
+        // Capture any transient data needed (e.g. enemy reference for bow) before clearing pending state
+        const enemyRef = chargeDetails.enemy;
+
+        // Clear pending state and hide overlay immediately so UI doesn't persist after confirmation
+        this.game.pendingCharge = null;
+        if (typeof this.game.hideOverlayMessage === 'function') {
+            this.game.hideOverlayMessage();
+        }
+
         if (chargeDetails.type === 'bishop_spear') {
             this.game.performBishopSpearCharge(chargeDetails.item, chargeDetails.target.x, chargeDetails.target.y, chargeDetails.enemy, chargeDetails.dx, chargeDetails.dy);
         } else if (chargeDetails.type === 'horse_icon') {
             this.game.performHorseIconCharge(chargeDetails.item, chargeDetails.target.x, chargeDetails.target.y, chargeDetails.enemy, chargeDetails.dx, chargeDetails.dy);
         } else if (chargeDetails.type === 'bow') {
-            this.game.actionManager.performBowShot(chargeDetails.item, chargeDetails.target.x, chargeDetails.target.y);
+            // Pass the captured enemy reference so performBowShot can operate after pendingCharge is cleared
+            this.game.actionManager.performBowShot(chargeDetails.item, chargeDetails.target.x, chargeDetails.target.y, enemyRef);
         }
     }
 

@@ -124,7 +124,7 @@ export class ActionManager {
         this.game.updatePlayerStats();
     }
 
-    performBowShot(item, targetX, targetY) {
+    performBowShot(item, targetX, targetY, enemy = null) {
         item.uses--;
         if (item.uses <= 0) {
             const index = this.game.player.inventory.findIndex(i => i === item);
@@ -132,7 +132,8 @@ export class ActionManager {
         }
 
         const playerPos = this.game.player.getPosition();
-        const enemy = this.game.pendingCharge.enemy; // Use stored enemy reference
+        // Use provided enemy reference when available; do not rely on pendingCharge here
+        const targetEnemy = enemy || null;
 
         // Create animation sequence for bow shot
         this.game.animationScheduler.createSequence()
@@ -149,8 +150,8 @@ export class ActionManager {
             })
             .wait(300) // 300ms delay for arrow to travel
             .then(() => {
-                if (enemy && this.game.enemies.includes(enemy)) { // Check if enemy still exists
-                    this.game.combatManager.defeatEnemy(enemy);
+                if (targetEnemy && this.game.enemies.includes(targetEnemy)) { // Check if enemy still exists
+                    this.game.combatManager.defeatEnemy(targetEnemy);
                 }
                 // Now that the arrow has hit, enemies can take their turn.
                 this.game.playerJustAttacked = false;

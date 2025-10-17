@@ -20,6 +20,54 @@ export class InteractionManager {
         this.terrainManager = new TerrainInteractionManager(game);
         this.zoneManager = new ZoneTransitionManager(game, inputManager);
         this.environmentManager = new EnvironmentalInteractionManager(game);
+
+        // Register interaction handlers for handleTap
+        this.interactionHandlers = [
+            (gridCoords, playerPos) => this.bombManager.handleBombPlacement(gridCoords),
+            (gridCoords, playerPos) => this.npcManager.interactWithPenne(gridCoords),
+            (gridCoords, playerPos) => this.npcManager.interactWithSquig(gridCoords),
+            (gridCoords, playerPos) => this.npcManager.interactWithRune(gridCoords),
+            (gridCoords, playerPos) => this.npcManager.interactWithNib(gridCoords),
+            (gridCoords, playerPos) => this.npcManager.interactWithMark(gridCoords),
+            (gridCoords, playerPos) => this.npcManager.interactWithCrayn(gridCoords),
+            (gridCoords, playerPos) => this.npcManager.interactWithFelt(gridCoords),
+            (gridCoords, playerPos) => this.npcManager.interactWithAxelotl(gridCoords),
+            (gridCoords, playerPos) => this.npcManager.interactWithGouge(gridCoords),
+            (gridCoords, playerPos) => this.npcManager.interactWithForge(gridCoords),
+            (gridCoords, playerPos) => this.environmentManager.handleSignTap(gridCoords),
+            (gridCoords, playerPos) => this.environmentManager.handleStatueTap(gridCoords),
+            (gridCoords, playerPos) => this.bombManager.triggerBombExplosion(gridCoords, playerPos),
+            (gridCoords, playerPos) => {
+                const bishopSpearCharge = this.combatManager.isValidBishopSpearCharge(gridCoords, playerPos);
+                if (bishopSpearCharge) {
+                    this.game.pendingCharge = bishopSpearCharge;
+                    this.game.uiManager.showOverlayMessage('Tap again to confirm Bishop Charge', null, true, true);
+                    return true;
+                }
+                return false;
+            },
+            (gridCoords, playerPos) => {
+                const horseIconCharge = this.combatManager.isValidHorseIconCharge(gridCoords, playerPos);
+                if (horseIconCharge) {
+                    this.game.pendingCharge = horseIconCharge;
+                    this.game.uiManager.showOverlayMessage('Tap again to confirm Knight Charge', null, true, true);
+                    return true;
+                }
+                return false;
+            },
+            (gridCoords, playerPos) => {
+                const bowShot = this.combatManager.isValidBowShot(gridCoords, playerPos);
+                if (bowShot) {
+                    this.game.pendingCharge = bowShot;
+                    this.game.uiManager.showOverlayMessage('Tap again to confirm Bow Shot', null, true, true);
+                    return true;
+                }
+                return false;
+            },
+            (gridCoords, playerPos) => this.terrainManager.handleChoppableTile(gridCoords, playerPos),
+            (gridCoords, playerPos) => this.zoneManager.checkForZoneTransitionGesture(gridCoords, playerPos),
+            (gridCoords, playerPos) => this.zoneManager.isTransitionEligible(gridCoords, playerPos),
+        ];
     }
 
     // Consolidated interaction delegation methods
@@ -60,53 +108,9 @@ export class InteractionManager {
         const playerPos = this.game.player.getPosition();
 
         // Delegate to specialized managers based on tile type and context
-        if (this.bombManager.handleBombPlacement(gridCoords)) return true;
-        if (this.npcManager.interactWithPenne(gridCoords)) return true;
-        if (this.npcManager.interactWithSquig(gridCoords)) return true;
-        if (this.npcManager.interactWithRune(gridCoords)) return true;
-        if (this.npcManager.interactWithNib(gridCoords)) return true;
-        if (this.npcManager.interactWithMark(gridCoords)) return true;
-        if (this.npcManager.interactWithCrayn(gridCoords)) return true;
-        if (this.npcManager.interactWithFelt(gridCoords)) return true;
-        if (this.npcManager.interactWithAxelotl(gridCoords)) return true;
-        if (this.npcManager.interactWithGouge(gridCoords)) return true;
-        if (this.npcManager.interactWithForge(gridCoords)) return true;
-        if (this.environmentManager.handleSignTap(gridCoords)) return true;
-        if (this.environmentManager.handleStatueTap(gridCoords)) return true;
-
-        // Bomb explosion handling
-        if (this.bombManager.triggerBombExplosion(gridCoords, playerPos)) return true;
-
-        // Combat action validation
-        const bishopSpearCharge = this.combatManager.isValidBishopSpearCharge(gridCoords, playerPos);
-        if (bishopSpearCharge) {
-            this.game.pendingCharge = bishopSpearCharge;
-            this.game.uiManager.showOverlayMessage('Tap again to confirm Bishop Charge', null, true, true);
-            return true;
+        for (const handler of this.interactionHandlers) {
+            if (handler(gridCoords, playerPos)) return true;
         }
-
-        const horseIconCharge = this.combatManager.isValidHorseIconCharge(gridCoords, playerPos);
-        if (horseIconCharge) {
-            this.game.pendingCharge = horseIconCharge;
-            this.game.uiManager.showOverlayMessage('Tap again to confirm Knight Charge', null, true, true);
-            return true;
-        }
-
-        const bowShot = this.combatManager.isValidBowShot(gridCoords, playerPos);
-        if (bowShot) {
-            this.game.pendingCharge = bowShot;
-            this.game.uiManager.showOverlayMessage('Tap again to confirm Bow Shot', null, true, true);
-            return true;
-        }
-
-        // Terrain interactions
-        if (this.terrainManager.handleChoppableTile(gridCoords, playerPos)) return true;
-
-        // Zone transition gestures
-        if (this.zoneManager.checkForZoneTransitionGesture(gridCoords, playerPos)) return true;
-
-        // Zone transitions when standing on special tiles
-        if (this.zoneManager.isTransitionEligible(gridCoords, playerPos)) return true;
 
         return false; // No interaction, allow pathfinding
     }

@@ -1,5 +1,6 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { MultiTileHandler } from '../renderers/MultiTileHandler.js';
+import { getExitDirection } from '../core/utils/transitionUtils.js';
 
 export class ZoneTransitionManager {
     constructor(game, inputManager) {
@@ -42,22 +43,7 @@ export class ZoneTransitionManager {
 
     // Handle tapping on exit tiles to trigger zone transitions
     handleExitTap(exitX, exitY) {
-        // Determine which direction to move based on exit position
-        let direction = '';
-
-        if (exitY === 0) {
-            // Top edge exit - move north
-            direction = 'arrowup';
-        } else if (exitY === GRID_SIZE - 1) {
-            // Bottom edge exit - move south
-            direction = 'arrowdown';
-        } else if (exitX === 0) {
-            // Left edge exit - move west
-            direction = 'arrowleft';
-        } else if (exitX === GRID_SIZE - 1) {
-            // Right edge exit - move east
-            direction = 'arrowright';
-        }
+        const direction = getExitDirection(exitX, exitY);
 
         if (direction) {
             // Simulate the key press to trigger zone transition

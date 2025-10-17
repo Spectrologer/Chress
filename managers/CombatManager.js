@@ -157,7 +157,9 @@ export class CombatManager {
 
         for (const enemy of this.game.enemies) {
             // If enemy is already dead from a charge/bow attack, skip collision logic
-            if (enemy.isDead()) {
+            // Some tests/mocks may provide plain objects without isDead(); handle defensively.
+            const enemyIsDead = (typeof enemy.isDead === 'function') ? enemy.isDead() : (enemy.health <= 0);
+            if (enemyIsDead) {
                 this.defeatEnemy(enemy); // Ensure points/removal logic runs
                 continue;
             }

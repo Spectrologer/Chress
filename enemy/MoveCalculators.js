@@ -519,6 +519,7 @@ export class LizardyMoveCalculator extends BaseMoveCalculator {
             enemy.movementDirection = 1;
         }
 
+
         const attackDirections = enemy.movementDirection === -1
             ? [{ x: -1, y: -1 }, { x: 1, y: -1 }] // NW, NE when moving North
             : [{ x: -1, y: 1 }, { x: 1, y: 1 }];   // SW, SE when moving South
@@ -552,6 +553,8 @@ export class LizardyMoveCalculator extends BaseMoveCalculator {
 
         // Check if forward move is blocked
         if (!enemy.isWalkable(nextX, nextY, grid) || enemies.some(e => e.x === nextX && e.y === nextY)) {
+            // (No special-case tracking needed; allow attacks regardless of obstacle type)
+
             // Reverse direction
             enemy.movementDirection *= -1;
             nextY = enemy.y + enemy.movementDirection;
@@ -565,13 +568,14 @@ export class LizardyMoveCalculator extends BaseMoveCalculator {
                 return null;
             }
 
-            // Check if after reversing we move onto player
-            if (nextX === playerX && nextY === playerY) {
-                this.performBumpAttack(enemy, player, isSimulation);
-                return null;
-            }
+                // Check if after reversing we move onto player
+                if (nextX === playerX && nextY === playerY) {
+                    this.performBumpAttack(enemy, player, isSimulation);
+                    return null;
+                }
         }
 
+        // We're about to move successfully.
         return { x: nextX, y: nextY };
     }
 

@@ -24,9 +24,11 @@ export class BarterWindow {
     }
 
     showBarterWindow(npcType) {
-        if (npcType === 'axelotl' && this.game.player.abilities.has('axe')) {
-            // Player already has the axe, show dialogue instead of trade.
-            const npcData = Sign.getDialogueNpcData('axelotl_post_trade');
+        // If the player already has the ability granted by this NPC, show post-trade dialogue instead of trade.
+        if ((npcType === 'axelotl' && this.game.player.abilities.has('axe')) ||
+            (npcType === 'gouge' && this.game.player.abilities.has('hammer'))) {
+            const key = npcType === 'axelotl' ? 'axelotl_post_trade' : 'gouge_post_trade';
+            const npcData = Sign.getDialogueNpcData(key);
             if (npcData) {
                 const message = npcData.messages[npcData.currentMessageIndex];
                 this.game.displayingMessageForSign = { message: message, type: 'npc' };
@@ -125,7 +127,7 @@ export class BarterWindow {
         if (tradeData.requiredItem === 'points') {
             return player.getPoints() >= requiredAmount;
         } else if (tradeData.requiredItem === 'DISCOVERED') {
-            const discoveries = player.getVisitedZones().size - player.spentDiscoveries;
+            const discoveries = player.getVisitedZones().size - player.getSpentDiscoveries();
             return discoveries >= requiredAmount;
         } else {
             const requiredItems = player.inventory.filter(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));
@@ -180,17 +182,21 @@ export class BarterWindow {
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
 
         } else if (tradeData.id === 'mark_meat') { // Trade discoveries for meat
-            this.game.player.spentDiscoveries += tradeData.requiredAmount;
+            // Update spent discoveries via the Player API
+            const cur = this.game.player.getSpentDiscoveries();
+            this.game.player.setSpentDiscoveries(cur + tradeData.requiredAmount);
             this.game.player.inventory.push({ type: 'food', foodType: 'food/meat/beaf.png' });
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} Discoveries for meat.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else if (tradeData.id === 'axelotl_axe') { // Trade discoveries for axe ability
-            this.game.player.spentDiscoveries += tradeData.requiredAmount;
+            const cur2 = this.game.player.getSpentDiscoveries();
+            this.game.player.setSpentDiscoveries(cur2 + tradeData.requiredAmount);
             this.game.player.abilities.add('axe');
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} discoveries for axe ability.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else if (tradeData.id === 'gouge_hammer') { // Trade discoveries for hammer ability
-            this.game.player.spentDiscoveries += tradeData.requiredAmount;
+            const cur3 = this.game.player.getSpentDiscoveries();
+            this.game.player.setSpentDiscoveries(cur3 + tradeData.requiredAmount);
             this.game.player.abilities.add('hammer');
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} discoveries for hammer ability.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);

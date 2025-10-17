@@ -3,6 +3,7 @@ import { Enemy } from '../entities/Enemy.js';
 import { Sign } from '../ui/Sign.js';
 import consoleCommands from '../core/consoleCommands.js';
 import logger from '../core/logger.js';
+import { getExitDirection } from '../core/utils/transitionUtils.js';
 
 export class InputManager {
     constructor(game, itemUsageManager) {
@@ -320,22 +321,7 @@ export class InputManager {
 
     // Handle tapping on exit tiles to trigger zone transitions
     handleExitTap(exitX, exitY) {
-        // Determine which direction to move based on exit position
-        let direction = '';
-
-        if (exitY === 0) {
-            // Top edge exit - move north
-            direction = 'arrowup';
-        } else if (exitY === GRID_SIZE - 1) {
-            // Bottom edge exit - move south
-            direction = 'arrowdown';
-        } else if (exitX === 0) {
-            // Left edge exit - move west
-            direction = 'arrowleft';
-        } else if (exitX === GRID_SIZE - 1) {
-            // Right edge exit - move east
-            direction = 'arrowright';
-        }
+        const direction = getExitDirection(exitX, exitY);
 
         if (direction) {
             // Simulate the key press to trigger zone transition
@@ -578,10 +564,15 @@ export class InputManager {
             }
         }
 
-        // Handle hotkey spawning
-        if (consoleCommands.handleHotkey(this.game, event.key, event.shiftKey)) {
-            event.preventDefault();
-            return;
+        // Handle hotkey spawning — but don't treat movement keys as hotkeys.
+        // Movement keys (WASD and arrow keys) must always be processed as movement.
+        const lowerKey = (event.key || '').toLowerCase();
+        const movementKeys = ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'];
+        if (!movementKeys.includes(lowerKey)) {
+            if (consoleCommands.handleHotkey(this.game, event.key, event.shiftKey)) {
+                event.preventDefault();
+                return;
+            }
         }
 
         // Debug hotkey for adding points
@@ -603,7 +594,7 @@ export class InputManager {
             // Discoveries = visitedZones.size - spentDiscoveries
             // To get 999 discoveries, either add many zones or reduce spentDiscoveries
             // We'll reduce spentDiscoveries (negative number means "discovered" discoveries beyond visited zones)
-            this.game.player.spentDiscoveries = this.game.player.getVisitedZones().size - 999;
+            this.game.player.setSpentDiscoveries(this.game.player.getVisitedZones().size - 999);
             this.game.uiManager.updateZoneDisplay(); // Update the discoveries display
             return; // Stop further processing
         }

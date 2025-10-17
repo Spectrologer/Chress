@@ -26,7 +26,11 @@ export class ItemTileRenderer {
 
         // Try to draw the food image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, foodKey)) {
-            ctx.drawImage(this.images[foodKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            // Scale food to 70% to make it slightly smaller, like water/hearts
+            const scaledSize = TILE_SIZE * 0.7;
+            const offsetX = (TILE_SIZE - scaledSize) / 2;
+            const offsetY = (TILE_SIZE - scaledSize) / 2;
+            ctx.drawImage(this.images[foodKey], pixelX + offsetX, pixelY + offsetY, scaledSize, scaledSize);
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.FOOD], '🥖');
         }

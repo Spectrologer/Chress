@@ -348,6 +348,16 @@ export class Sign {
                 "The underground is dangerous."
             ]
         }
+        ,
+        gouge_post_trade: {
+            name: 'Gouge',
+            portrait: 'assets/fauna/gougeface.png',
+            subclass: 'dialogue',
+            currentMessageIndex: 0,
+            messages: [
+                "Mind the cracks. The hammer helps, but it won't fix everything."
+            ]
+        }
     };
 
     static getDialogueNpcData(npcType) {
