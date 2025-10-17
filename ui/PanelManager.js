@@ -67,7 +67,7 @@ export class PanelManager {
                     <div class="stat-item"><span class="stat-label">Points:</span> <span class="stat-value">${playerPoints}</span></div>
                     <div class="stat-item"><span class="stat-label">Discoveries:</span> <span class="stat-value">${totalDiscoveries}</span></div>
                     <div class="stat-item">
-                        <span class="stat-label">Path Animations:</span>
+                        <span class="stat-label">Pathing:</span>
                         <span class="stat-value">
                             <label class="setting-toggle">
                                 <input type="checkbox" id="verbose-path-toggle" ${this.game.player.stats.verbosePathAnimations ? 'checked' : ''}>

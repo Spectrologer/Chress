@@ -44,8 +44,11 @@ export class PathGenerator {
             inwardX = GRID_SIZE - 2;
         }
 
-        // Clear the adjacent tile
-        this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
+        // Clear the adjacent tile only if it's an obstacle (preserve PORT/CISTERN and other structures)
+        const adjacentTile = this.grid[inwardY][inwardX];
+        if (adjacentTile === TILE_TYPES.WALL || adjacentTile === TILE_TYPES.ROCK || adjacentTile === TILE_TYPES.SHRUBBERY) {
+            this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
+        }
 
         // Clear adjacent inward tiles to create wider entry area (3x3 around inward tile)
         for (let dy = -1; dy <= 1; dy++) {

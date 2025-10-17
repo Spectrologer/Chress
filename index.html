@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script type="module" src="core/game.js"></script>
     <title>CHRESS</title>
     <link rel="icon" href="assets/fauna/zard.png" type="image/png">
     
@@ -22,12 +21,15 @@
     </script>
 
     <script>
+        // Ensure a base href is present early so module scripts and asset loads
+        // resolve correctly when hosted under a GitHub Pages project site.
         if (window.location.hostname.includes('github.io')) {
             var base = document.createElement('base');
             base.href = '/Chress/';
             document.head.appendChild(base);
         }
     </script>
+    <script type="module" src="core/game.js"></script>
     <link rel="stylesheet" href="styles.css">
     <style>
         .barter-window button {

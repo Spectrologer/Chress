@@ -38,15 +38,17 @@ export class InputManager {
         let touchStartY = 0;
         let touchStartTime = 0;
 
+        // Use non-passive listeners so e.preventDefault() works on mobile browsers
         this.game.canvas.addEventListener('touchstart', (e) => {
+            // preventDefault is important to stop double-tap-to-zoom and native gestures
             e.preventDefault();
             const touch = e.touches[0];
             touchStartX = touch.clientX;
             touchStartY = touch.clientY;
             touchStartTime = Date.now();
         });
-
         this.game.canvas.addEventListener('touchend', (e) => {
+            // preventDefault to avoid triggering browser gestures
             e.preventDefault();
             const touch = e.changedTouches[0];
             const deltaX = touch.clientX - touchStartX;
@@ -76,10 +78,10 @@ export class InputManager {
             }
         });
 
-        // Prevent default touch behaviors
+        // Prevent default touch behaviors (non-passive)
         this.game.canvas.addEventListener('touchmove', (e) => {
             e.preventDefault();
-        });
+        }, { passive: false });
     }
 
     // Convert screen coordinates to grid coordinates

@@ -101,7 +101,13 @@ export class TextureLoader {
             }
         };
 
-        this.images[key].src = `assets/${filename}`;
+        // Resolve against document.baseURI so assets work correctly on GitHub Pages
+        try {
+            this.images[key].src = new URL(`assets/${filename}`, document.baseURI).href;
+        } catch (e) {
+            // Fallback for environments where document or baseURI isn't available
+            this.images[key].src = `assets/${filename}`;
+        }
     }
 
     getImage(key) {

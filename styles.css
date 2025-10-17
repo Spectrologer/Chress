@@ -42,6 +42,12 @@
     display: block;
     touch-action: none;
 }
+
+/* Ensure the main game canvas doesn't trigger browser gestures on mobile */
+#gameCanvas {
+    touch-action: none;
+    -ms-touch-action: none;
+}
 /* This is a mobile browser game meant to be played in portrait mode. All design considerations should adhere to this. */
 
 /* Local Fonts */
@@ -110,7 +116,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px; /* Increase vertical space below header */
+    margin-bottom: 0; /* Increase vertical space below header */
     gap: 28px; /* Increase gap between header items */
     max-width: 800px;
     width: 100%;
@@ -369,7 +375,7 @@ body {
 .player-map-area {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch; /* Allow children to fill width */
     gap: 4px;
 }
 
@@ -377,14 +383,13 @@ body {
     position: relative; /* Needed for absolute positioning of the button */
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Center items like the button and map */
     gap: 8px; /* Space between button and minimap */
 }
 
     .player-map canvas {
         width: 30px;
         height: 30px;
-        border-radius: 8px;
         border: 1px solid #e2cfa2;
         background: #f5e6c0;
     }
@@ -743,8 +748,8 @@ h1 {
     display: flex;
     justify-content: center;
     flex: 1;
-    align-items: center;
-    margin: 24px 0; /* Increase vertical margin above/below game area */
+    align-items: flex-start; /* Changed from center to align top */
+    margin: 0; /* Increase vertical margin above/below game area */
 }
 
 
@@ -861,7 +866,6 @@ h1 {
 
 #zoneMap {
     border: 2px solid #8B4513;
-    border-radius: 12px;
     background: 
         /* Aged parchment texture */
         radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 15%),
@@ -958,10 +962,9 @@ h1 {
     .header-area {
         flex-direction: column;
         align-items: stretch;
-        gap: 0;
-        margin-bottom: 18px; /* Increase space below header for mobile */
+        gap: 18px; /* Restore gap for mobile layout consistency */
+        margin-bottom: 0; /* Increase space below header for mobile */
         max-width: 100%;
-        gap: 18px; /* Increase gap between header items for mobile */
     }
 
     .character-card {
@@ -975,7 +978,7 @@ h1 {
 
     .game-area {
         justify-content: flex-start;
-        margin: 18px 0; /* Increase vertical margin for mobile */
+        margin: 0; /* Increase vertical margin for mobile */
     }
 
     .character-profile {
@@ -1329,13 +1332,14 @@ h1 {
     z-index: 5;
     transition: all 0.3s ease;
     text-transform: uppercase;
+    text-align: center; /* Ensure text is centered inside the button */
     letter-spacing: 0.5px;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     white-space: nowrap;
-    display: inline-block; /* Make the button only as wide as its content */
+    align-self: center; /* Center the button within its flex container */
 }
 
 .message-log-button:hover, .message-log-button:active {
