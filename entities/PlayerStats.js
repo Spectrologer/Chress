@@ -77,4 +77,24 @@ export class PlayerStats {
     isDead() {
         return this.dead;
     }
+
+    getPoints() {
+        return this.points;
+    }
+
+    setPoints(value) {
+        this.points = value || 0;
+    }
+
+    addPoints(amount) {
+        this.points += amount;
+    }
+
+    getSpentDiscoveries() {
+        return this.spentDiscoveries;
+    }
+
+    setSpentDiscoveries(value) {
+        this.spentDiscoveries = value || 0;
+    }
 }

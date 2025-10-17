@@ -289,11 +289,23 @@ export class Player {
     }
 
     getPoints() {
-        return this.stats.points;
+        return this.stats.getPoints();
     }
 
     addPoints(points) {
-        this.stats.points += points;
+        this.stats.addPoints(points);
+    }
+
+    setPoints(points) {
+        this.stats.setPoints(points);
+    }
+
+    getSpentDiscoveries() {
+        return this.stats.getSpentDiscoveries();
+    }
+
+    setSpentDiscoveries(value) {
+        this.stats.setSpentDiscoveries(value);
     }
 
     startBump(deltaX, deltaY) {

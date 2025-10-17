@@ -113,18 +113,16 @@ export class GameStateManager {
                     x: this.game.player.x,
                     y: this.game.player.y,
                     currentZone: this.game.player.currentZone,
-                    thirst: this.game.player.thirst,
-                    hunger: this.game.player.hunger,
+                    thirst: this.game.player.getThirst(),
+                    hunger: this.game.player.getHunger(),
                     inventory: this.game.player.inventory,
                     abilities: Array.from(this.game.player.abilities),
-                    health: this.game.player.health,
+                    health: this.game.player.getHealth(),
                     dead: this.game.player.dead,
                     sprite: this.game.player.sprite,
-                    points: this.game.player.points,
+                    points: this.game.player.getPoints(),
                     visitedZones: Array.from(this.game.player.visitedZones),
-                    smellOranges: this.game.player.smellOranges,
-                    smellLemons: this.game.player.smellLemons,
-                    spentDiscoveries: this.game.player.spentDiscoveries
+                    spentDiscoveries: this.game.player.getSpentDiscoveries()
                 },
                 // Game state - save all zones across all dimensions
                 zones: Array.from(this.game.zones.entries()),
@@ -186,18 +184,16 @@ export class GameStateManager {
                 this.game.player.x = gameState.player.x;
                 this.game.player.y = gameState.player.y;
                 this.game.player.currentZone = gameState.player.currentZone;
-                this.game.player.thirst = gameState.player.thirst;
-                this.game.player.hunger = gameState.player.hunger;
+                this.game.player.setThirst(gameState.player.thirst);
+                this.game.player.setHunger(gameState.player.hunger);
                 this.game.player.inventory = gameState.player.inventory;
                 this.game.player.abilities = new Set(gameState.player.abilities || []);
-                this.game.player.health = gameState.player.health;
+                this.game.player.setHealth(gameState.player.health);
                 this.game.player.dead = gameState.player.dead;
                 this.game.player.sprite = gameState.player.sprite;
-                this.game.player.points = gameState.player.points || 0;
+                this.game.player.setPoints(gameState.player.points);
                 this.game.player.visitedZones = new Set(gameState.player.visitedZones);
-                this.game.player.smellOranges = gameState.player.smellOranges;
-                this.game.player.smellLemons = gameState.player.smellLemons;
-                this.game.player.spentDiscoveries = gameState.player.spentDiscoveries || 0;
+                this.game.player.setSpentDiscoveries(gameState.player.spentDiscoveries);
             }
 
             // Restore game state with validation for grid data
