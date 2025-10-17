@@ -62,6 +62,25 @@ export class Sign {
         lizord: {
             message: 'Moves in <strong>L-shapes</strong>.<br><br><em>A real fork in the road.</em>'
         },
+        // Item statue descriptions
+        bomb: {
+            message: 'Select from inventory to place on an adjacent tile. It explodes after two turns, or if you tap it.<br><br><em>Destroys walls, enemies, and can even launch you.</em>'
+        },
+        spear: {
+            message: 'Tap an enemy on a diagonal line to charge through them.<br><br><em>Hold down to disable, tap to drop.</em>'
+        },
+        bow: {
+            message: 'Tap an enemy in a straight line (up, down, left, or right) to shoot an arrow.<br><br><em>Patience is key.</em>'
+        },
+        horse: {
+            message: 'Tap an enemy in an L-shape (like a knight) to charge them.<br><br><em>Hold down to disable, tap to drop.</em>'
+        },
+        book: {
+            message: 'Use from inventory to pass your turn, allowing enemies to move while you stand still.<br><br><em>A tactical tool for repositioning foes.</em>'
+        },
+        shovel: {
+            message: 'Select from inventory, then tap an adjacent empty floor tile to dig a hole.<br><br><em>What lies beneath?</em>'
+        },
         default: {
             message: 'An ancient statue depicting a mysterious creature from the wilderness.'
         }

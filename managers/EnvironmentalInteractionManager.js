@@ -52,6 +52,18 @@ export class EnvironmentalInteractionManager {
             statueNpcType = 'statue_lazerd';
         } else if (statueTile === TILE_TYPES.LIZORD_STATUE) {
             statueNpcType = 'statue_lizord';
+        } else if (statueTile === TILE_TYPES.BOMB_STATUE) {
+            statueNpcType = 'statue_bomb';
+        } else if (statueTile === TILE_TYPES.SPEAR_STATUE) {
+            statueNpcType = 'statue_spear';
+        } else if (statueTile === TILE_TYPES.BOW_STATUE) {
+            statueNpcType = 'statue_bow';
+        } else if (statueTile === TILE_TYPES.HORSE_STATUE) {
+            statueNpcType = 'statue_horse';
+        } else if (statueTile === TILE_TYPES.BOOK_STATUE) {
+            statueNpcType = 'statue_book';
+        } else if (statueTile === TILE_TYPES.SHOVEL_STATUE) {
+            statueNpcType = 'statue_shovel';
         }
 
         if (statueNpcType) {
@@ -94,12 +106,18 @@ export class EnvironmentalInteractionManager {
         // Check enemy statue
         const statueTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
         let statueNpcType = null;
-        if (statueTile === TILE_TYPES.LIZARDY_STATUE) statueNpcType = 'statue_lizardy';
-        else if (statueTile === TILE_TYPES.LIZARDO_STATUE) statueNpcType = 'statue_lizardo';
-        else if (statueTile === TILE_TYPES.LIZARDEAUX_STATUE) statueNpcType = 'statue_lizardeaux';
-        else if (statueTile === TILE_TYPES.ZARD_STATUE) statueNpcType = 'statue_zard';
-        else if (statueTile === TILE_TYPES.LAZERD_STATUE) statueNpcType = 'statue_lazerd';
-        else if (statueTile === TILE_TYPES.LIZORD_STATUE) statueNpcType = 'statue_lizord';
+    if (statueTile === TILE_TYPES.LIZARDY_STATUE) statueNpcType = 'statue_lizardy';
+    else if (statueTile === TILE_TYPES.LIZARDO_STATUE) statueNpcType = 'statue_lizardo';
+    else if (statueTile === TILE_TYPES.LIZARDEAUX_STATUE) statueNpcType = 'statue_lizardeaux';
+    else if (statueTile === TILE_TYPES.ZARD_STATUE) statueNpcType = 'statue_zard';
+    else if (statueTile === TILE_TYPES.LAZERD_STATUE) statueNpcType = 'statue_lazerd';
+    else if (statueTile === TILE_TYPES.LIZORD_STATUE) statueNpcType = 'statue_lizord';
+    else if (statueTile === TILE_TYPES.BOMB_STATUE) statueNpcType = 'statue_bomb';
+    else if (statueTile === TILE_TYPES.SPEAR_STATUE) statueNpcType = 'statue_spear';
+    else if (statueTile === TILE_TYPES.BOW_STATUE) statueNpcType = 'statue_bow';
+    else if (statueTile === TILE_TYPES.HORSE_STATUE) statueNpcType = 'statue_horse';
+    else if (statueTile === TILE_TYPES.BOOK_STATUE) statueNpcType = 'statue_book';
+    else if (statueTile === TILE_TYPES.SHOVEL_STATUE) statueNpcType = 'statue_shovel';
 
         if (statueNpcType) {
             this.game.uiManager.showStatueInfo(statueNpcType);

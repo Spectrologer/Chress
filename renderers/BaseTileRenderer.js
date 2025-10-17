@@ -84,6 +84,13 @@ export class BaseTileRenderer {
                    actualType === TILE_TYPES.LAZERD_STATUE ||
                    actualType === TILE_TYPES.LIZORD_STATUE) {
             this.structureRenderer.renderStatueTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this, actualType);
+         } else if (actualType === TILE_TYPES.BOMB_STATUE ||
+                 actualType === TILE_TYPES.SPEAR_STATUE ||
+                 actualType === TILE_TYPES.BOW_STATUE ||
+                 actualType === TILE_TYPES.HORSE_STATUE ||
+                 actualType === TILE_TYPES.BOOK_STATUE ||
+                 actualType === TILE_TYPES.SHOVEL_STATUE) {
+             this.structureRenderer.renderStatueTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this, actualType);
         } else if (actualType === TILE_TYPES.CRAYN) {
             this.structureRenderer.renderCraynTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else if (actualType === TILE_TYPES.FELT) {

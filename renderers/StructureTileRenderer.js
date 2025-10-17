@@ -35,18 +35,45 @@ export class StructureTileRenderer {
             [TILE_TYPES.LAZERD_STATUE]: 'lazerd',
         };
 
-        const spriteKey = enemySpriteMap[tileType];
+        const itemSpriteMap = {
+            [TILE_TYPES.BOMB_STATUE]: 'bomb',
+            [TILE_TYPES.SPEAR_STATUE]: 'spear',
+            [TILE_TYPES.BOW_STATUE]: 'bow',
+            [TILE_TYPES.HORSE_STATUE]: 'horse',
+            [TILE_TYPES.BOOK_STATUE]: 'book',
+            [TILE_TYPES.SHOVEL_STATUE]: 'shovel'
+        };
+
+        // Prefer enemy sprite mapping, otherwise check item statue mapping
+        const spriteKey = enemySpriteMap[tileType] || itemSpriteMap[tileType];
         if (spriteKey && RendererUtils.isImageLoaded(this.images, spriteKey)) {
-            const enemyImage = this.images[spriteKey];
+            const image = this.images[spriteKey];
             ctx.save();
             ctx.filter = 'grayscale(100%) brightness(0.8)';
-            ctx.drawImage(
-                enemyImage,
-                pixelX,
-                pixelY - 10, // Draw slightly higher on the pedestal
-                TILE_SIZE,
-                TILE_SIZE
-            );
+
+            // If this is an item-statue, scale to maintain aspect ratio and center on pedestal
+            const isItemStatue = itemSpriteMap[tileType] !== undefined;
+            if (isItemStatue) {
+                // Leave a small margin so statue sits nicely on the pedestal
+                const maxSize = TILE_SIZE - 16;
+                const dims = RendererUtils.calculateScaledDimensions(image, maxSize);
+                const drawX = pixelX + Math.round((TILE_SIZE - dims.width) / 2);
+                const drawY = pixelY + Math.round((TILE_SIZE - dims.height) / 2) - 6; // slightly higher
+
+                // Special-case rotation for the bow statue: rotate 90deg CCW
+                if (tileType === TILE_TYPES.BOW_STATUE) {
+                    ctx.translate(drawX + dims.width / 2, drawY + dims.height / 2);
+                    ctx.rotate(-Math.PI / 2);
+                    ctx.drawImage(image, -dims.width / 2, -dims.height / 2, dims.width, dims.height);
+                } else {
+                    // General scaled draw (handles spear, bomb, horse, book, shovel)
+                    ctx.drawImage(image, drawX, drawY, dims.width, dims.height);
+                }
+            } else {
+                // Enemy statues use full tile draw like before
+                ctx.drawImage(image, pixelX, pixelY - 10, TILE_SIZE, TILE_SIZE);
+            }
+
             ctx.restore();
         } else {
             // Fallback if image not loaded

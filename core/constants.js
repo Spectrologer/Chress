@@ -107,6 +107,14 @@ export const TILE_TYPES = {
     PITFALL: 49
 };
 
+// Item statue tile types (stone statues of activated items)
+TILE_TYPES.BOMB_STATUE = 50;
+TILE_TYPES.SPEAR_STATUE = 51;
+TILE_TYPES.BOW_STATUE = 52;
+TILE_TYPES.HORSE_STATUE = 53;
+TILE_TYPES.BOOK_STATUE = 54;
+TILE_TYPES.SHOVEL_STATUE = 55;
+
 // Colors for different tile types (fallback when images don't load)
 export const TILE_COLORS = {
     [TILE_TYPES.FLOOR]: '#ffcb8d',
@@ -152,6 +160,14 @@ export const TILE_COLORS = {
     [TILE_TYPES.GOUGE]: '#8A2BE2', // Blueviolet for Gouge
     [TILE_TYPES.PITFALL]: '#ffcb8d' // Same as floor, should be mostly invisible
 };
+
+// Stone statue fallbacks (grey) for item statues
+TILE_COLORS[TILE_TYPES.BOMB_STATUE] = '#A0A0A0';
+TILE_COLORS[TILE_TYPES.SPEAR_STATUE] = '#A0A0A0';
+TILE_COLORS[TILE_TYPES.BOW_STATUE] = '#A0A0A0';
+TILE_COLORS[TILE_TYPES.HORSE_STATUE] = '#A0A0A0';
+TILE_COLORS[TILE_TYPES.BOOK_STATUE] = '#A0A0A0';
+TILE_COLORS[TILE_TYPES.SHOVEL_STATUE] = '#A0A0A0';
 
 // Direction constants for exits and movements
 export const DIRECTIONS = {

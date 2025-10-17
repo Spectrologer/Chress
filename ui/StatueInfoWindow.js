@@ -33,7 +33,18 @@ export class StatueInfoWindow {
         const enemyType = statueNpcType.substring(7); // Remove 'statue_' prefix
         const statueDetails = Sign.getStatueData(enemyType);
         const name = enemyType.charAt(0).toUpperCase() + enemyType.slice(1) + ' Statue';
-        const portrait = `assets/fauna/${enemyType}.png`; // Use regular enemy sprites
+        // Use fauna portraits for enemy statues, but item-statues use item images so we don't 404
+        const itemPortraitMap = {
+            bomb: 'assets/items/bomb.png',
+            spear: 'assets/items/spear.png',
+            bow: 'assets/items/bow.png',
+            horse: 'assets/items/horse.png',
+            book: 'assets/items/book.png',
+            shovel: 'assets/items/shovel.png'
+        };
+    const portrait = itemPortraitMap[enemyType] || `assets/fauna/${enemyType}.png`;
+    // Portrait style overrides (rotate bow counter-clockwise)
+    const portraitStyle = enemyType === 'bow' ? 'style="transform: rotate(-90deg);"' : '';
         const message = statueDetails.message;
 
         // Dynamically create and set statue info content
@@ -42,7 +53,7 @@ export class StatueInfoWindow {
             <div class="statue-main-content">
                 <div class="statue-info">
                     <div class="statue-portrait-container large-portrait">
-                        <img id="statuePortrait" src="${portrait}" alt="Portrait of ${name}" class="statue-portrait">
+                        <img id="statuePortrait" src="${portrait}" alt="Portrait of ${name}" class="statue-portrait" ${portraitStyle}>
                     </div>
                     <p id="statueMessage">${message}</p>
                 </div>

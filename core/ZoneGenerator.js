@@ -110,6 +110,34 @@ export class ZoneGenerator {
                 this.grid[1][6] = TILE_TYPES.LIZORD_STATUE;
                 this.grid[1][7] = TILE_TYPES.LAZERD_STATUE;
 
+                // Place statues for activated items along the left and right club walls.
+                // The club (4x3) is placed at startX=3,startY=3 in StructureGenerator.
+                // Left wall x = 3, right wall x = 6, vertical rows y = 3..5 (top to bottom).
+                const houseStartX = 3;
+                const houseStartY = 3;
+
+                // Use dedicated statue tile types so they render on pedestals like enemy statues
+                const leftItems = [TILE_TYPES.BOMB_STATUE, TILE_TYPES.SPEAR_STATUE, TILE_TYPES.BOW_STATUE];
+                const rightItems = [TILE_TYPES.HORSE_STATUE, TILE_TYPES.BOOK_STATUE, TILE_TYPES.SHOVEL_STATUE];
+
+                for (let i = 0; i < 3; i++) {
+                    const y = houseStartY + i;
+                    // Left statues should be two tiles to the left of the house
+                    const leftX = houseStartX - 2;
+                    // Right statues should be one tile to the right of the house
+                    const rightX = houseStartX + 4;
+                    // Only place if not a sign object
+                    if (!(this.grid[y][leftX] && typeof this.grid[y][leftX] === 'object' && this.grid[y][leftX].type === TILE_TYPES.SIGN)) {
+                        // Use validateAndSetTile for primitives, or set object tiles directly
+                        // Statue tiles are primitives (numbers) so set them directly
+                        validateAndSetTile(this.grid, leftX, y, leftItems[i]);
+                    }
+
+                    if (!(this.grid[y][rightX] && typeof this.grid[y][rightX] === 'object' && this.grid[y][rightX].type === TILE_TYPES.SIGN)) {
+                        validateAndSetTile(this.grid, rightX, y, rightItems[i]);
+                    }
+                }
+
                 // 1. NPCs have a chance to randomly spawn
                 if (Math.random() < 0.1) { // 10% chance for a Lion
                     const pos = this.findOpenNpcSpawn(2);
