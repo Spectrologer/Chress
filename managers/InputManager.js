@@ -656,9 +656,7 @@ export class InputManager {
                     this.game.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
                     enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
                     this.game.combatManager.defeatEnemy(enemyAtTarget);
-                    // Enemy movements happen after attacks to simulate turn-based combat
-                    this.game.startEnemyTurns();
-                    // Player does not move
+                    // Player does not move. Enemy turns will be started once below.
                 } else {
                     // A move is an action, so increment bomb timers
                     this.game.incrementBombActions();

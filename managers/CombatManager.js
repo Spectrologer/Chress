@@ -86,6 +86,13 @@ export class CombatManager {
             }
 
             const key = `${move.x},${move.y}`;
+            // Disallow moving into tiles that were occupied at the start of the enemy turn
+            // by other enemies. Allow moving into your own starting tile (enemy may choose to stay).
+            const initialSet = this.game.initialEnemyTilesThisTurn || new Set();
+            const ownStartKey = `${enemy.lastX || enemy.x},${enemy.lastY || enemy.y}`;
+            if (initialSet.has(key) && key !== ownStartKey) {
+                return; // Prevent moving into a tile that was occupied at turn start
+            }
             if (this.occupiedTiles.has(key)) {
                 return; // Tile is already claimed for this turn sequence
             }

@@ -123,8 +123,9 @@ export class BarterWindow {
             const discoveries = player.getVisitedZones().size - player.spentDiscoveries;
             return discoveries >= requiredAmount;
         } else {
-            const itemCount = player.inventory.filter(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem)).length;
-            return itemCount >= requiredAmount;
+            const requiredItems = player.inventory.filter(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));
+            const totalCount = requiredItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            return totalCount >= requiredAmount;
         }
     }
 
@@ -190,16 +191,22 @@ export class BarterWindow {
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic
-            const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));
-            if (index >= 0) {
-                // Check if inventory has space for water
-                if (this.game.player.inventory.length >= 6) {
-                    this.game.uiManager.addMessageToLog('Inventory is full! Cannot complete trade.');
-                    this.hideBarterWindow();
-                    return;
+            const requiredItem = this.game.player.inventory.find(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));
+            if (requiredItem) {
+                const canReceiveWater = this.game.player.inventory.length < 6 || this.game.player.inventory.some(i => i.type === 'water');
+                if (!canReceiveWater) {
+                     this.game.uiManager.addMessageToLog('Inventory is full! Cannot complete trade.');
+                     this.hideBarterWindow();
+                     return;
                 }
-                this.game.player.inventory.splice(index, 1);
-                this.game.player.inventory.push({ type: 'water' });
+
+                requiredItem.quantity = (requiredItem.quantity || 1) - 1;
+                if (requiredItem.quantity <= 0) {
+                    const index = this.game.player.inventory.indexOf(requiredItem);
+                    this.game.player.inventory.splice(index, 1);
+                }
+
+                this.game.itemManager.handleItemPickup(this.game.player, -1, -1, [[{type: 'water'}]]); // Use item manager to handle stacking
                 this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
             }
         }

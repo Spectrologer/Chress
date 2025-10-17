@@ -106,6 +106,10 @@ class Game {
 
         this.isPlayerTurn = false;
         this.occupiedTilesThisTurn.clear();
+        // Snapshot enemy positions at the start of enemy turns. Any tiles that were
+        // occupied at this moment should not be usable by other enemies during
+        // the same enemy-turn sequence (prevents moving into freed tiles).
+        this.initialEnemyTilesThisTurn = new Set((this.enemies || []).map(e => `${e.x},${e.y}`));
         // Add player's position to occupied tiles to prevent enemies from moving there
         const playerPos = this.player.getPosition();
         this.occupiedTilesThisTurn.add(`${playerPos.x},${playerPos.y}`);

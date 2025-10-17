@@ -7,6 +7,13 @@ export class EnemySpecialActions {
         if (EnemyLineOfSight.checkDiagonalLineOfSight(enemy, playerX, playerY, grid)) {
             const chargeMove = EnemyChargeBehaviors.getChargeAdjacentDiagonalMove(enemy, playerX, playerY, grid, enemies);
             if (chargeMove) {
+                // Prevent charging into a tile that was occupied at the start of the enemy turn
+                const initialSet = (game && game.initialEnemyTilesThisTurn) || new Set();
+                const chargeKey = `${chargeMove.x},${chargeMove.y}`;
+                const ownStartKey = `${enemy.x},${enemy.y}`;
+                if (initialSet.has(chargeKey) && chargeKey !== ownStartKey) {
+                    return null; // Treat as no-op this turn to avoid moving into freed tile
+                }
                 // Move to adjacent tile, leaving smoke trail
                 if (!isSimulation) {
                     // Add smoke on each tile traversed during charge
@@ -58,6 +65,14 @@ export class EnemySpecialActions {
 
                 const chargeMove = { x: playerX - stepX, y: playerY - stepY };
 
+                // Prevent charging into a tile that was occupied at the start of the enemy turn
+                const initialSet2 = (game && game.initialEnemyTilesThisTurn) || new Set();
+                const chargeKey2 = `${chargeMove.x},${chargeMove.y}`;
+                const ownStartKey2 = `${enemy.x},${enemy.y}`;
+                if (initialSet2.has(chargeKey2) && chargeKey2 !== ownStartKey2) {
+                    return null; // Cancel charge to avoid moving into freed tile
+                }
+
                 // Move to adjacent tile
                 if (!isSimulation) {
                     // Add smoke on each tile traversed during charge (excluding player tile)
@@ -107,6 +122,13 @@ export class EnemySpecialActions {
         // Check if orthogonal or diagonal line of sight exists
         const chargeMove = EnemyChargeBehaviors.getQueenChargeAdjacentMove(enemy, playerX, playerY, grid, enemies);
         if (chargeMove) {
+            // Prevent charging into a tile that was occupied at the start of the enemy turn
+            const initialSet3 = (game && game.initialEnemyTilesThisTurn) || new Set();
+            const chargeKey3 = `${chargeMove.x},${chargeMove.y}`;
+            const ownStartKey3 = `${enemy.x},${enemy.y}`;
+            if (initialSet3.has(chargeKey3) && chargeKey3 !== ownStartKey3) {
+                return null; // Don't charge into a tile that was occupied at turn start
+            }
             // Set charge position to adjacent of player
             if (!isSimulation) {
                 // Add smoke on each tile traversed during charge

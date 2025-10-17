@@ -60,10 +60,12 @@ export class InventoryManager {
         let disabledText = item.disabled ? ' (DISABLED)' : '';
         switch (item.type) {
             case 'food':
-                const foodName = item.foodType.split('/')[1] || item.foodType;
-                return `${foodName} - Restores 10 hunger`;
+                const foodName = item.foodType.split('/').pop().replace('.png', '') || item.foodType;
+                const foodQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
+                return `${foodName}${foodQuantity} - Restores 10 hunger`;
             case 'water':
-                return 'Water - Restores 10 thirst';
+                const waterQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
+                return `Water${waterQuantity} - Restores 10 thirst`;
             case 'axe':
                 return 'Axe - Chops grass and shrubbery to create pathways';
             case 'hammer':
@@ -73,7 +75,8 @@ export class InventoryManager {
             case 'horse_icon':
                 return `Horse Icon${disabledText} - Charge in L-shape (knight moves) towards enemies, has ${item.uses} charges`;
             case 'bomb':
-                return 'Bomb - Blasts through walls to create exits';
+                const bombQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
+                return `Bomb${bombQuantity} - Blasts through walls to create exits`;
             case 'heart':
                 return 'Heart - Restores 1 health';
             case 'note':
@@ -100,7 +103,7 @@ export class InventoryManager {
         usesText.style.fontWeight = 'bold';
         usesText.style.color = item.disabled ? '#666666' : '#000000';
         usesText.style.textShadow = '0 0 3px white, 0 0 3px white, 0 0 3px white';
-        usesText.textContent = `x${item.uses}`;
+        usesText.textContent = `x${item.uses || item.quantity}`;
         slot.appendChild(usesText);
     }
 
@@ -139,8 +142,14 @@ export class InventoryManager {
             foodImg.style.imageRendering = 'pixelated';
             foodImg.style.opacity = item.disabled ? '0.5' : '1';
             slot.appendChild(foodImg);
+            if (item.quantity > 1) {
+                this._addUsesIndicator(slot, item);
+            }
         } else if (item.type === 'water') {
             slot.classList.add('item-water');
+            if (item.quantity > 1) {
+                this._addUsesIndicator(slot, item);
+            }
         } else if (item.type === 'axe') {
             slot.classList.add('item-axe');
         } else if (item.type === 'hammer') {
@@ -151,7 +160,7 @@ export class InventoryManager {
         } else if (item.type === 'horse_icon') {
             this._createItemImageContainer(slot, item, 'assets/items/horse.png');
         } else if (item.type === 'bomb') {
-            slot.classList.add('item-bomb');
+            this._createItemImageContainer(slot, item, 'assets/items/bomb.png');
         } else if (item.type === 'heart') {
             slot.classList.add('item-heart');
         } else if (item.type === 'note') {
@@ -259,8 +268,10 @@ export class InventoryManager {
                     // Double click: drop bomb where player is standing
                     const px = this.game.player.x, py = this.game.player.y;
                     this.game.grid[py][px] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true };
-                    const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
-                    if (bombIndex !== -1) this.game.player.inventory.splice(bombIndex, 1);
+                    const bombItem = this.game.player.inventory.find(item => item.type === 'bomb');
+                    if (bombItem) {
+                        this.useInventoryItem(bombItem, this.game.player.inventory.indexOf(bombItem));
+                    }
                     this.game.uiManager.updatePlayerStats();
                 } else {
                     // Single click: start bomb placement mode
@@ -322,12 +333,24 @@ export class InventoryManager {
     useInventoryItem(item, idx) {
         switch (item.type) {
             case 'food':
+                item.quantity = (item.quantity || 1) - 1;
                 this.game.player.restoreHunger(10);
-                this.game.player.inventory.splice(idx, 1);
+                if (item.quantity <= 0) {
+                    this.game.player.inventory.splice(idx, 1);
+                }
                 break;
             case 'water':
+                item.quantity = (item.quantity || 1) - 1;
                 this.game.player.restoreThirst(10);
-                this.game.player.inventory.splice(idx, 1);
+                if (item.quantity <= 0) {
+                    this.game.player.inventory.splice(idx, 1);
+                }
+                break;
+            case 'bomb':
+                item.quantity = (item.quantity || 1) - 1;
+                if (item.quantity <= 0) {
+                    this.game.player.inventory.splice(idx, 1);
+                }
                 break;
             case 'axe':
                 this.dropItem('axe', TILE_TYPES.AXE);

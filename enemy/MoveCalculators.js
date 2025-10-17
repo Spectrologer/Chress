@@ -227,34 +227,60 @@ class BaseMoveCalculator {
         const dx = Math.abs(next.x - playerX);
         const dy = Math.abs(next.y - playerY);
 
-        // Perform attack based on enemy type
-        if (enemy.enemyType === 'lizord' && !isSimulation) {
-            // Lizord has special bump attack, but only if the planned move would land on
-            // or adjacent to the player. Previously this ran unconditionally which could
-            // teleport the lizord from anywhere.
-            const maxDist = Math.max(dx, dy);
-            if (maxDist <= 1) {
-                // Planned move is on or adjacent to player: perform bump attack
-                this.performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game);
-                return null;
+            // Perform attack based on enemy type
+            if (enemy.enemyType === 'lizord' && !isSimulation) {
+                // Lizord's bump attack must be a true L-shaped (knight) move and the
+                // endpoint must be the player's tile. Enforce that by checking the delta
+                // from the start position to the planned endpoint.
+                const startDx = Math.abs(next.x - enemy.x);
+                const startDy = Math.abs(next.y - enemy.y);
+
+                const isKnightMove = (startDx === 2 && startDy === 1) || (startDx === 1 && startDy === 2);
+
+                // Only perform the bump if the endpoint equals the player's position
+                if (isKnightMove && next.x === playerX && next.y === playerY) {
+                    const key = `${next.x},${next.y}`;
+                    const initialSet = (game && game.initialEnemyTilesThisTurn) || new Set();
+                    const ownStart = `${enemy.x},${enemy.y}`;
+                    if (initialSet.has(key) && key !== ownStart) {
+                        // Cancel moving into a tile that was occupied at turn start
+                        return null;
+                    }
+                    if (game && game.occupiedTilesThisTurn) game.occupiedTilesThisTurn.add(key);
+                    enemy.lastX = enemy.x;
+                    enemy.lastY = enemy.y;
+                    enemy.x = next.x;
+                    enemy.y = next.y;
+                    enemy.liftFrames = 15;
+
+                    this.performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game);
+                    return null;
+                }
+                // Otherwise fall through and allow the move to proceed normally
             }
-            // Otherwise fall through and allow the move to proceed normally
-        }
 
         if (dx === 1 && dy === 1) {
             // Diagonal adjacent - most enemies attack, but lizardeaux should not
             if (enemy.enemyType !== 'lizardeaux') {
-                this.performAttack(enemy, player, playerX, playerY, grid, enemies, game);
-                return null;
+                // Attack only if the enemy is staying in place (not moving this action).
+                if (next.x === enemy.x && next.y === enemy.y) {
+                    this.performAttack(enemy, player, playerX, playerY, grid, enemies, game);
+                    return null;
+                }
+                // Otherwise, return the move (movement is the action for this turn)
+                return next;
             } else {
                 // For lizardeaux, do not perform a diagonal attack; proceed with move instead
                 return next;
             }
         }
         else if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
-            // Orthogonal adjacent - perform attack in place
-            this.performAttack(enemy, player, playerX, playerY, grid, enemies, game);
-            return null;
+            // Orthogonal adjacent - perform attack in place only if not moving
+            if (next.x === enemy.x && next.y === enemy.y) {
+                this.performAttack(enemy, player, playerX, playerY, grid, enemies, game);
+                return null;
+            }
+            return next;
         }
         else {
             // Not adjacent to player, proceed with move
@@ -329,63 +355,61 @@ class BaseMoveCalculator {
      * Perform Lizord's special bump attack
      */
     performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game) {
+        // Enemy should already be moved to the L endpoint by caller (enemy.x/ y set).
+        // Apply damage first. If the player survives, attempt to displace them to an
+        // adjacent orthogonal tile (bumped out) because the lizord now occupies
+        // the tile where the attack terminated.
+        player.takeDamage(enemy.attack);
+
+        // mark attack + animation/sound
+        enemy.justAttacked = true;
+        enemy.attackAnimation = 15;
+        if (window.soundManager) window.soundManager.playSound('attack');
+
+        // If player is dead after damage, no displacement needed.
+        if (player.isDead && player.isDead()) {
+            return;
+        }
+
+        // Find possible orthogonal displacement tiles around player's original position
         const possiblePositions = [
             { x: playerX, y: playerY - 1 },
             { x: playerX, y: playerY + 1 },
             { x: playerX - 1, y: playerY },
             { x: playerX + 1, y: playerY }
         ];
-        let displaced = false;
-        for (const pos of possiblePositions) {
-            if (player.isWalkable(pos.x, pos.y, grid) && !enemies.some(e => e.x === pos.x && e.y === pos.y)) {
-                player.setPosition(pos.x, pos.y);
-                displaced = true;
-                break;
+
+        const candidates = possiblePositions.filter(pos => {
+            // must be inside grid and walkable and not occupied by any enemy
+            if (!player.isWalkable(pos.x, pos.y, grid)) return false;
+            if (enemies.some(e => e.x === pos.x && e.y === pos.y)) return false;
+            return true;
+        });
+
+        if (candidates.length === 0) {
+            // cannot displace the player; leave them where they are (enemy occupies tile)
+            // Optionally could handle blocking effects here.
+            return;
+        }
+
+        // Prefer a candidate that maximizes distance from enemy's start position
+        // (enemy.lastX/lastY expected to be set by caller before the move)
+        let best = candidates[0];
+        let bestScore = -Infinity;
+        for (const c of candidates) {
+            const score = Math.abs(c.x - (enemy.lastX || enemy.x)) + Math.abs(c.y - (enemy.lastY || enemy.y));
+            if (score > bestScore) {
+                bestScore = score;
+                best = c;
             }
         }
-        if (displaced) {
-            // Damage player and move enemy to player's old position
-            player.takeDamage(enemy.attack);
-            player.startBump(enemy.x - playerX, enemy.y - playerY);
-            enemy.startBump(playerX - enemy.x, playerY - enemy.y);
-            enemy.justAttacked = true;
-            enemy.attackAnimation = 15;
-            if (window.soundManager) window.soundManager.playSound('attack');
 
-            // Move enemy to where player was
-            enemy.lastX = enemy.x;
-            enemy.lastY = enemy.y;
-            enemy.x = playerX;
-            enemy.y = playerY;
-
-            // Add horse charge animation for lizord
-            if (game && enemy.enemyType === 'lizord') {
-                const dx = enemy.x - enemy.lastX;
-                const dy = enemy.y - enemy.lastY;
-                let midX, midY;
-                if (dx === 0 || dy === 0) {
-                    midX = (enemy.lastX + enemy.x) / 2;
-                    midY = (enemy.lastY + enemy.y) / 2;
-                } else {
-                    // L-shaped path for diagonal movement
-                    if (Math.abs(dx) > Math.abs(dy)) {
-                        midX = enemy.x;
-                        midY = enemy.lastY;
-                    } else if (Math.abs(dy) > Math.abs(dx)) {
-                        midX = enemy.lastX;
-                        midY = enemy.y;
-                    } else {
-                        midX = enemy.x;
-                        midY = enemy.lastY;
-                    }
-                }
-                game.horseChargeAnimations.push({
-                    startPos: { x: enemy.lastX, y: enemy.lastY },
-                    midPos: { x: midX, y: midY },
-                    endPos: { x: enemy.x, y: enemy.y },
-                    frame: 20
-                });
-            }
+        // Move player to chosen tile and trigger bump animations
+        player.setPosition(best.x, best.y);
+        player.startBump(best.x - playerX, best.y - playerY);
+        // Animate enemy bump from its start position into the player's tile
+        if (typeof enemy.lastX !== 'undefined' && typeof enemy.lastY !== 'undefined') {
+            enemy.startBump(playerX - enemy.lastX, playerY - enemy.lastY);
         }
     }
 
