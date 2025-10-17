@@ -14,7 +14,15 @@ export class BombInteractionManager {
         // Place timed bomb here
         this.game.grid[placed.y][placed.x] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true };
         const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
-        if (bombIndex !== -1) this.game.player.inventory.splice(bombIndex, 1);
+        if (bombIndex !== -1) {
+            const bombItem = this.game.player.inventory[bombIndex];
+            // If bombs are stacked, decrement quantity; otherwise remove the slot
+            if (typeof bombItem.quantity === 'number' && bombItem.quantity > 1) {
+                bombItem.quantity = bombItem.quantity - 1;
+            } else {
+                this.game.player.inventory.splice(bombIndex, 1);
+            }
+        }
         this.game.uiManager.updatePlayerStats();
         // Placing bomb counts as an action - increment bomb timers and start enemy turns
         this.game.incrementBombActions();

@@ -11,15 +11,25 @@ export class AnimationRenderer {
     drawSplodeAnimation() {
         this.game.player.animations.splodeAnimations.forEach(anim => {
             if (anim.frame > 0) {
-                const frameNumber = Math.floor((anim.totalFrames - anim.frame) / (anim.totalFrames / 8)) + 1;
+                // Calculate a frame index from 1..8. If totalFrames is missing, fall back.
+                let frameNumber = 1;
+                if (anim.totalFrames && anim.totalFrames > 0) {
+                    const elapsed = anim.totalFrames - anim.frame;
+                    const per = Math.max(1, Math.floor(anim.totalFrames / 8));
+                    frameNumber = Math.min(8, Math.floor(elapsed / per) + 1);
+                }
                 const splodeImage = this.textureManager.getImage(`fx/splode/splode_${frameNumber}`);
                 if (splodeImage && splodeImage.complete) {
+                    // Draw the splode visual as a 3x3 tile block centered on the bomb location
+                    const size = TILE_SIZE * 3;
+                    const drawX = anim.x * TILE_SIZE - TILE_SIZE; // shift left by 1 tile
+                    const drawY = anim.y * TILE_SIZE - TILE_SIZE; // shift up by 1 tile
                     this.ctx.drawImage(
                         splodeImage,
-                        anim.x * TILE_SIZE,
-                        anim.y * TILE_SIZE,
-                        TILE_SIZE,
-                        TILE_SIZE
+                        drawX,
+                        drawY,
+                        size,
+                        size
                     );
                 }
             }

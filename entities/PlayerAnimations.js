@@ -38,7 +38,10 @@ export class PlayerAnimations {
     }
 
     startSplodeAnimation(x, y) {
-        this.splodeAnimations.push({ x, y, frame: 16 });
+        // Make the splode animation slightly faster than the previous 48 frames but slower than original 16.
+        // frame represents remaining frames; totalFrames is used by renderer to map to sprite frames
+        const total = 36; // slightly faster visual than 48
+        this.splodeAnimations.push({ x, y, frame: total, totalFrames: total });
     }
 
     update() {
