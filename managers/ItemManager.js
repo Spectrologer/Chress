@@ -1,6 +1,6 @@
 import { TILE_TYPES } from '../core/constants.js';
 
-const STACKABLE_ITEMS = ['food', 'water', 'bomb', 'bishop_spear', 'horse_icon', 'book_of_time_travel', 'bow', 'shovel'];
+const STACKABLE_ITEMS = ['food', 'water', 'bomb', 'note', 'bishop_spear', 'horse_icon', 'book_of_time_travel', 'bow', 'shovel'];
 // Type mapping for special object-based tiles
 const typeMap = {
     [TILE_TYPES.BOW]: 'bow',
@@ -21,7 +21,8 @@ export class ItemManager {
 
         const pickup = (item, sound = 'pickup') => {            
             if (STACKABLE_ITEMS.includes(item.type)) {
-                const existingStack = player.inventory.find(i => i.type === item.type && i.foodType === item.foodType);
+                // Find existing stack: match type and, if present, match distinguishing properties like foodType
+                const existingStack = player.inventory.find(i => i.type === item.type && (typeof item.foodType === 'undefined' || i.foodType === item.foodType));
                 if (existingStack) {
                     if (item.uses) {
                         existingStack.uses = (existingStack.uses || 0) + item.uses;
@@ -36,7 +37,7 @@ export class ItemManager {
 
             // If no stack exists or it's not a stackable item, add to a new slot if space is available
             if (player.inventory.length < 6) {
-                if (item.type === 'food' || item.type === 'water' || item.type === 'bomb') {
+                if (item.type === 'food' || item.type === 'water' || item.type === 'bomb' || item.type === 'note') {
                     item.quantity = 1; // Start a new stack
                 }
                 // For items with uses, the 'uses' property is already on the item object.
@@ -51,14 +52,22 @@ export class ItemManager {
         };
 
         const isStackableItem = (tile) => {
-            const itemType = typeMap[tile.type] || (tile.type === TILE_TYPES.FOOD ? 'food' : (tile === TILE_TYPES.WATER ? 'water' : (tile === TILE_TYPES.BOMB ? 'bomb' : null)));
-            return STACKABLE_ITEMS.includes(itemType);
+            // Handle both object tiles (tile.type) and primitive tile constants
+            if (tile === TILE_TYPES.NOTE) return true;
+            if (tile === TILE_TYPES.WATER) return true;
+            if (tile === TILE_TYPES.BOMB) return true;
+            if (tile && tile.type) {
+                const itemType = typeMap[tile.type] || (tile.type === TILE_TYPES.FOOD ? 'food' : null);
+                return STACKABLE_ITEMS.includes(itemType);
+            }
+            return false;
         };
 
         const canPickup = player.inventory.length < 6;
         const isStackable = isStackableItem(tile) || (tile.type && isStackableItem(tile));
         const hasExistingStack = player.inventory.some(i => 
             (i.type === 'water' && tile === TILE_TYPES.WATER) ||
+            (i.type === 'note' && tile === TILE_TYPES.NOTE) ||
             (i.type === 'food' && tile.type === TILE_TYPES.FOOD && i.foodType === tile.foodType)
         );
 

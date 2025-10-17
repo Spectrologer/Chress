@@ -183,8 +183,8 @@ body {
 }
 
 .player-portrait-container {
-    width: 92px;
-    height: 92px;
+    width: 110px;
+    height: 110px;
     background: url('assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
@@ -294,23 +294,26 @@ body {
 }
 .bar-track {
     flex: 1;
-    height: 14px;
-    background: #f5e6c0;
-    border-radius: 7px;
+    height: 20px;
+    background: #e6d3a3;
+    border-radius: 2px;
     border: 1px solid #e2cfa2;
     overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
 }
 .progress-fill {
     height: 100%;
     width: 100%;
-    border-radius: 7px;
+    border-radius: 2px;
     transition: width 0.3s ease-in-out;
 }
 #hunger-progress {
-    background: linear-gradient(90deg, #d32f2f 60%, #ff5252 100%);
+    background-color: #d84315;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px);
 }
 #thirst-progress {
-    background: linear-gradient(90deg, #1976d2 60%, #448aff 100%);
+    background-color: #1976d2;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px);
 }
 .player-details {
     display: flex;
@@ -1209,6 +1212,61 @@ h1 {
     );
 }
 
+/* Stacked notes (small transient note cards) */
+.note-stack {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 320px;
+    max-width: calc(100% - 24px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 250; /* Above most overlays but below critical modals */
+    pointer-events: none; /* Cards themselves are non-interactive by default */
+}
+
+.note-card {
+    pointer-events: auto; /* Allow clicks if needed */
+    background: #fffdf6;
+    border: 2px solid #d1b089;
+    padding: 10px 12px;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+    font-family: 'Cinzel', serif;
+    color: #4a2f1a;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(-6px) scale(0.995);
+    transition: opacity 220ms ease, transform 220ms ease;
+}
+.note-card.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+.note-card img.note-thumb {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    flex: 0 0 48px;
+}
+.note-card .note-text {
+    font-size: 0.95em;
+    line-height: 1.2;
+}
+
+/* If the UI needs compact stacking on small screens */
+@media (max-width: 480px) {
+    .note-stack {
+        right: 8px;
+        top: 8px;
+        width: 88%;
+    }
+    .note-card img.note-thumb { width: 40px; height: 40px; }
+}
+
 /* Region Notification Overlay */
 .region-notification-overlay {
     position: fixed;
@@ -1367,18 +1425,22 @@ h1 {
 
 /* Message Log Overlay */
 .message-log-overlay {
-    position: fixed;
+    /* Position the log overlay inside the player card so it overlays the panel like NPC messages */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
     display: none; /* Hidden by default */
     align-items: center;
     justify-content: center;
-    z-index: 1102; /* Above game over */
+    z-index: 200; /* Above player card content and similar to #messageOverlay */
     opacity: 0;
+    padding: 0; /* remove overlay padding so inner box can occupy the full panel */
     transition: opacity 0.3s ease;
+    box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
+    border: 3px solid #B8860B;
 }
 
 .message-log-overlay.show {
@@ -1390,13 +1452,18 @@ h1 {
     background: #fffbe9;
     border: 3px solid #e2cfa2;
     border-radius: 12px;
-    padding: 20px;
+    padding: 12px;
     text-align: center;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     font-family: 'Cinzel', serif;
-    max-width: 90vw;
-    width: 400px;
-    max-height: 80vh;
+    /* Fill the overlay area so the message box occupies the same area as other overlays */
+    box-sizing: border-box;
+    position: relative; /* required for absolutely positioned close button */
+    /* Fill the overlay fully so the message box occupies the entire panel area */
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
     display: flex;
     flex-direction: column;
 }
@@ -1408,13 +1475,37 @@ h1 {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+/* Small close button in the corner */
+.message-log-close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(184, 139, 74, 0.95);
+    color: #fffbe9;
+    font-size: 20px;
+    line-height: 34px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.message-log-close:active { transform: translateY(1px); }
+
 .message-log-content {
-    flex-grow: 1;
+    /* Grow to fill available box height and scroll when content is long */
+    flex: 1 1 auto;
     overflow-y: auto;
     text-align: left;
     color: #5a4223;
     font-size: 1.3em;
-    padding: 10px;
+    padding: 8px;
     background: #f5e6c0;
     border-radius: 6px;
     margin-bottom: 20px;
@@ -1426,27 +1517,7 @@ h1 {
     padding-bottom: 10px;
 }
 
-.message-log-box button {
-    background: linear-gradient(135deg, #CD853F, #B8860B);
-    border: 2px solid #8B4513;
-    color: #3A2418;
-    padding: 12px 24px;
-    font-family: 'Cinzel', serif;
-    font-size: 1.2em;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
-}
-
-.message-log-box button:hover {
-    background: linear-gradient(135deg, #B8860B, #CD853F);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5);
-}
+/* Legacy close button styles removed; using compact corner close button (.message-log-close) */
 
 /* Scrolling Ticker */
 .ticker {
@@ -1708,7 +1779,8 @@ h1 {
     background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
     border: 2px solid #e2cfa2;
     border-radius: 0;
-    padding: 20px;
+    /* Use minimal padding so the panel occupies as much space as possible */
+    padding: 8px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.12);
     font-family: 'Cinzel', serif;
     width: 100%;
@@ -1716,49 +1788,57 @@ h1 {
     max-height: none;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 8px;
 }
 
 .stats-main-content {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 8px;
     border: 1px solid rgba(139, 69, 19, 0.2);
     background: rgba(0,0,0,0.05);
-    padding: 15px;
+    padding: 8px 6px; /* smaller padding to give more horizontal room */
     border-radius: 6px;
+    /* Allow the main content to grow and scroll within the stats panel */
+    flex: 1 1 auto;
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .stats-info {
     display: flex;
     flex-direction: column; /* Stack portrait and text vertically */
     align-items: stretch; /* Stretch items to fill width */
-    gap: 15px;
+    gap: 8px;
     text-align: left;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .stats-header {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 6px;
+    margin-bottom: 8px;
     border-bottom: 2px solid #e2cfa2a8;
-    padding-bottom: 12px;
+    padding-bottom: 8px;
 }
 
 .stats-panel h2 {
     color: #7a5c2e;    
-    font-size: 2.2em;
+    font-size: 1.6em;
     font-weight: 900;
     margin: 0;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    text-align: left;
-    flex-grow: 1;
+    text-align: center;
+    flex-grow: 0;
 }
 
 .stats-portrait-container {
-    width: 92px; /* Make portrait smaller */
-    height: 92px;
+    width: 84px; /* Slightly reduce portrait size to free horizontal space */
+    height: 84px;
     background: url('assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px;
     display: flex;
@@ -1770,7 +1850,8 @@ h1 {
 .stats-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
+    width: 100%;
 }
 
 .stats-list .stat-item {
@@ -1785,7 +1866,8 @@ h1 {
 .stats-list .stat-label {
     font-weight: bold;
     color: #7a5c2e;
-    white-space: nowrap; /* Prevent the label from wrapping */
+    /* Allow label wrapping if space is tight on mobile */
+    white-space: normal;
 }
 
 .stats-list .stat-value {
@@ -1803,14 +1885,22 @@ h1 {
 .setting-toggle {
     position: relative;
     display: inline-block;
-    width: 40px;
-    height: 20px;
+    /* More rectangular track for better legibility and touch targets */
+    width: 84px;
+    height: 34px;
 }
 
 .setting-toggle input {
+    /* Make the native input fill the entire toggle so taps/clicks register reliably */
+    position: absolute;
+    inset: 0; /* top:0; right:0; bottom:0; left:0; */
     opacity: 0;
-    width: 0;
-    height: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2; /* place the invisible input above the visual slider so it receives taps */
 }
 
 .toggle-slider {
@@ -1820,29 +1910,59 @@ h1 {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    /* Red track when OFF */
+    background-color: #c0392b;
     transition: 0.4s;
-    border-radius: 20px;
+    border-radius: 8px; /* less pill-shaped, more rectangular */
+    z-index: 1; /* visual track sits below the input */
 }
 
 .toggle-slider:before {
     position: absolute;
     content: "";
-    height: 16px;
-    width: 16px;
-    left: 2px;
-    bottom: 2px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
+    height: 28px;
+    width: 28px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff;
+    transition: 0.28s ease;
+    border-radius: 6px; /* knob is a rounded rectangle for a rectangular look */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
 }
 
 input:checked + .toggle-slider {
-    background-color: #8B4513;
+    /* Green track when ON */
+    background-color: #27ae60;
 }
 
 input:checked + .toggle-slider:before {
-    transform: translateX(20px);
+    /* Move knob to the right end (calculated for the new width) */
+    transform: translateX(50px);
+}
+
+/* Add small ON/OFF label inside the track */
+.toggle-slider::after {
+    content: "OFF";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px; /* slightly larger for readability */
+    color: #ffffff;
+    font-weight: 900; /* bolder label */
+    letter-spacing: 0.4px;
+    opacity: 1;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.45); /* boost contrast against track */
+    font-family: 'Courier New', monospace; /* crisper monospace rendering for small labels */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+input:checked + .toggle-slider::after {
+    content: "ON";
+    left: 10px;
+    right: auto;
 }
 
 .stats-panel p {
@@ -2062,7 +2182,7 @@ input:checked + .toggle-slider:before {
     }
 
     .bar-track {
-        height: 8px;
+        height: 12px;
     }
 
     .game-area {

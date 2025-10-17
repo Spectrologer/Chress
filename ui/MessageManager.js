@@ -11,6 +11,8 @@ export class MessageManager {
 
         // UI state
         this.currentOverlayTimeout = null;
+        this.noteIdCounter = 0;
+        this.activeNotes = new Map(); // id -> timeoutId
     }
 
     setupMessageLogButton() {
@@ -171,6 +173,78 @@ export class MessageManager {
             messageElement.classList.add('show');
             logger.log(`Sign message shown: ${text}`);
         }
+    }
+
+    // Add a small note card to the stacked note container.
+    // text: HTML/text content; imageSrc: optional thumbnail; timeout: ms to auto-hide (default 2000)
+    addNoteToStack(text, imageSrc = null, timeout = 2000) {
+        try {
+            const container = document.getElementById('noteStack');
+            if (!container) return null;
+
+            const id = `note-${++this.noteIdCounter}`;
+            const card = document.createElement('div');
+            card.className = 'note-card';
+            card.id = id;
+
+            if (imageSrc) {
+                const img = document.createElement('img');
+                img.className = 'note-thumb';
+                img.src = imageSrc;
+                img.alt = '';
+                card.appendChild(img);
+            }
+
+            const textNode = document.createElement('div');
+            textNode.className = 'note-text';
+            textNode.innerHTML = text;
+            card.appendChild(textNode);
+
+            // Insert at top so newest notes are at top of stack
+            container.insertBefore(card, container.firstChild);
+
+            // Force reflow then animate in
+            void card.offsetWidth;
+            card.classList.add('show');
+
+            // Auto-remove after timeout
+            const removeFn = () => {
+                card.classList.remove('show');
+                // After transition, remove from DOM
+                setTimeout(() => {
+                    if (card.parentNode) card.parentNode.removeChild(card);
+                    this.activeNotes.delete(id);
+                }, 260);
+            };
+
+            const tId = setTimeout(removeFn, timeout);
+            this.activeNotes.set(id, tId);
+
+            // Allow manual click to dismiss sooner
+            card.addEventListener('click', () => {
+                const existing = this.activeNotes.get(id);
+                if (existing) clearTimeout(existing);
+                removeFn();
+            });
+
+            return id;
+        } catch (e) {
+            logger.error('Failed to add note to stack', e);
+            return null;
+        }
+    }
+
+    // Remove a note by id (if still active)
+    removeNoteFromStack(id) {
+        if (!id) return;
+        const timeoutId = this.activeNotes.get(id);
+        if (timeoutId) clearTimeout(timeoutId);
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.remove('show');
+            setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 260);
+        }
+        this.activeNotes.delete(id);
     }
 
     showRegionNotification(zoneX, zoneY) {

@@ -143,6 +143,8 @@ export class BaseTileRenderer {
             if (RendererUtils.isImageLoaded(this.images, 'hole')) {
                 ctx.drawImage(this.images.hole, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
+        } else if (actualType === TILE_TYPES.TABLE) {
+            this.structureRenderer.renderTableTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
         } else {
             this.renderFloorTile(ctx, pixelX, pixelY, actualType);
         }

@@ -61,6 +61,8 @@
             <!-- AI INSTRUCTION: This is the Main Panel. It contains the player's portrait, health (hearts), points, hunger and thirst bars, inventory, and a minimap of the world showing discovered zones. -->
             <div class="character-card-container">
                 <div id="messageOverlay" class="message-overlay"></div>
+                <!-- Container for stacked note messages (map notes, small transient notes) -->
+                <div id="noteStack" class="note-stack" aria-live="polite" aria-atomic="false"></div>
                 <div id="barterOverlay" class="barter-overlay">
                     <div class="barter-window">
                         <h2 id="barterNPCName">NPC Name</h2>
@@ -91,9 +93,6 @@
                 </div>
                 <div id="player-card-content" class="character-card modern-player-card">
                     <div class="player-header">
-                        <div class="player-name">
-                            C<br>H<br>A<br>L<br>K
-                        </div>
                         <div class="player-portrait-container">
                             <img src="assets/protag/faceset.png" alt="Player Portrait" class="player-portrait">
                         </div>
@@ -147,6 +146,13 @@
                             </div>
                         </div>
                     </div>
+                            <!-- Message Log overlay moved inside player card so it overlays the player panel like NPC messages -->
+                            <div id="messageLogOverlay" class="message-log-overlay">
+                                <div class="message-log-box">
+                                    <button id="closeMessageLogButton" class="message-log-close" aria-label="Close">×</button>
+                                    <div id="messageLogContent" class="message-log-content"></div>
+                                </div>
+                            </div>
                 </div>
             </div>
         </div>
@@ -158,13 +164,7 @@
         </div>
         <div id="messageBox" class="message-box message-overlay"></div>
         <div id="regionNotification" class="region-notification-overlay"></div>
-        <div id="messageLogOverlay" class="message-log-overlay">
-            <div class="message-log-box">
-                <h2>Message Log</h2>
-                <div id="messageLogContent" class="message-log-content"></div>
-                <button id="closeMessageLogButton">Close</button>
-            </div>
-        </div>
+        
         <div id="game-over-overlay" class="game-over-overlay">
             <div class="game-over-box">
                 <h1>Game Over</h1>

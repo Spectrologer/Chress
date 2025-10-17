@@ -58,7 +58,7 @@ export class PanelManager {
                 <div class="stats-portrait-container">
                         <img src="assets/protag/faceset.png" alt="Player Portrait" class="player-portrait">
                     </div>
-                    <h2>Player Stats</h2>
+                    <h2>CHALK</h2>
                 </div>
                 <div class="stats-list">
                     <div class="stat-item"><span class="stat-label">Captures:</span> <span class="stat-value">${enemiesCaptured}</span></div>
@@ -121,9 +121,26 @@ export class PanelManager {
     setupPathAnimationToggle() {
         const toggle = document.getElementById('verbose-path-toggle');
         if (toggle) {
-            toggle.addEventListener('change', (e) => {
-                this.game.player.stats.verbosePathAnimations = e.target.checked;
+            // Update on change (keyboard/desktop) and on single click/tap for mobile
+            const applyState = (checked) => {
+                this.game.player.stats.verbosePathAnimations = checked;
+            };
+
+            toggle.addEventListener('change', (e) => applyState(e.target.checked));
+
+            // For single-click/tap support (some devices or custom toggles may require click)
+            toggle.addEventListener('click', (e) => {
+                // Toggle the checked state and apply immediately
+                toggle.checked = !toggle.checked;
+                applyState(toggle.checked);
             });
+
+            // Touch devices: ensure touch toggles without requiring double-tap
+            toggle.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                toggle.checked = !toggle.checked;
+                applyState(toggle.checked);
+            }, { passive: false });
         }
     }
 }

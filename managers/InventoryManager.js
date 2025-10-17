@@ -165,6 +165,9 @@ export class InventoryManager {
             slot.classList.add('item-heart');
         } else if (item.type === 'note') {
             slot.classList.add('item-note');
+            if (item.quantity > 1) {
+                this._addUsesIndicator(slot, item);
+            }
         } else if (item.type === 'book_of_time_travel') {
             slot.classList.add('item-book');
             this._addUsesIndicator(slot, item);
@@ -384,21 +387,23 @@ export class InventoryManager {
 
                 const noteMessageText = 'Coordinates revealed! Added to message log.';
 
-                // Use the sign message system to show a temporary, persistent message
-                // This prevents the game loop (e.g., checkLionInteraction) from hiding it immediately.
-                this.game.displayingMessageForSign = { message: noteMessageText }; // Set flag
-                this.game.showSignMessage(noteMessageText, 'assets/items/note.png'); // Show message
-
-                // Set a timeout to hide the message and clear the flag after 2 seconds using AnimationScheduler
-                this.game.animationScheduler.createSequence()
-                    .wait(2000)
-                    .then(() => {
-                        // Only hide if the current message is still the one we set
-                        if (this.game.displayingMessageForSign && this.game.displayingMessageForSign.message === noteMessageText) {
-                            Sign.hideMessageForSign(this.game);
-                        }
-                    })
-                    .start();
+                // Add a stacked note card instead of using the single sign overlay
+                if (this.game.uiManager && this.game.uiManager.messageManager && typeof this.game.uiManager.messageManager.addNoteToStack === 'function') {
+                    this.game.uiManager.messageManager.addNoteToStack(noteMessageText, 'assets/items/note.png', 2000);
+                } else {
+                    // Fallback to older sign message system for compatibility
+                    this.game.displayingMessageForSign = { message: noteMessageText }; // Set flag
+                    this.game.showSignMessage(noteMessageText, 'assets/items/note.png'); // Show message
+                    // Hide after 2s using AnimationScheduler
+                    this.game.animationScheduler.createSequence()
+                        .wait(2000)
+                        .then(() => {
+                            if (this.game.displayingMessageForSign && this.game.displayingMessageForSign.message === noteMessageText) {
+                                Sign.hideMessageForSign(this.game);
+                            }
+                        })
+                        .start();
+                }
 
                 this.game.player.inventory.splice(idx, 1); // Remove note from inventory
                 break;

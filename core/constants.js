@@ -105,7 +105,8 @@ export const TILE_TYPES = {
     CISTERN: 45,
     AXELOTL: 46,
     GOUGE: 47,
-    PITFALL: 49
+    PITFALL: 49,
+    TABLE: 56
 };
 
 // Item statue tile types (stone statues of activated items)
@@ -161,6 +162,7 @@ export const TILE_COLORS = {
     [TILE_TYPES.GOUGE]: '#8A2BE2', // Blueviolet for Gouge
     [TILE_TYPES.PITFALL]: '#ffcb8d' // Same as floor, should be mostly invisible
 };
+TILE_COLORS[TILE_TYPES.TABLE] = '#A0522D'; // Sienna for table fallback
 
 // Stone statue fallbacks (grey) for item statues
 TILE_COLORS[TILE_TYPES.BOMB_STATUE] = '#A0A0A0';
@@ -190,6 +192,7 @@ export const IMAGE_ASSETS = [
     'bush.png',
     'floors/dirt/dircle.png',
     'doodads/club.png',
+    'doodads/table.png',
     'items/water.png',
     'doodads/shack.png',
     'protag/Special2.png',
