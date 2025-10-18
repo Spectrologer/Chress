@@ -23,9 +23,9 @@ export class MessageManager {
                 this.handleMessageLogClick();
             });
 
-            // Mobile touch
-            messageLogButton.addEventListener('touchstart', (e) => {
-                e.preventDefault();
+            // Mobile / pointer
+            messageLogButton.addEventListener('pointerdown', (e) => {
+                try { e.preventDefault(); } catch (err) {}
                 this.handleMessageLogClick();
             });
         }

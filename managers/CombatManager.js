@@ -71,6 +71,20 @@ export class CombatManager {
                 this.game.grid[move.y][move.x] = TILE_TYPES.PORT; // The pitfall becomes a hole
 
                 // Remove the enemy from the current zone's active enemy list
+                // Before removing, clear any turn-manager bookkeeping for this enemy so
+                // other enemies don't rely on stale occupancy data.
+                try {
+                    const startKey = `${enemy.x},${enemy.y}`;
+                    if (this.game.turnManager && this.game.turnManager.initialEnemyTilesThisTurn) {
+                        this.game.turnManager.initialEnemyTilesThisTurn.delete(startKey);
+                    }
+                    if (this.occupiedTiles) {
+                        this.occupiedTiles.delete(startKey);
+                    }
+                } catch (e) {
+                    // Defensive: continue even if turnManager isn't present or delete fails
+                }
+
                 this.game.enemies = this.game.enemies.filter(e => e.id !== enemy.id);
 
                 // Add the enemy to the corresponding underground zone's data
@@ -88,6 +102,12 @@ export class CombatManager {
             }
 
             const key = `${move.x},${move.y}`;
+            // Extra safeguard: don't move onto a tile currently occupied by another enemy
+            // (exclude the moving enemy itself when comparing)
+            const occupiedNow = this.game.enemies.some(e => e.id !== enemy.id && e.x === move.x && e.y === move.y);
+            if (occupiedNow) {
+                return; // Tile is currently occupied, block the move
+            }
             // Disallow moving into tiles that were occupied at the start of the enemy turn
             // by other enemies. Allow moving into your own starting tile (enemy may choose to stay).
             const initialSet = this.game.initialEnemyTilesThisTurn || new Set();

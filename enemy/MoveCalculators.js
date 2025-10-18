@@ -400,6 +400,23 @@ class BaseMoveCalculator {
             }]
         };
 
+        // If a TurnManager exists, remove this enemy's starting tile from its
+        // initial/occupied sets so later movement checks in this zone won't
+        // incorrectly consider the tile occupied.
+        try {
+            const startKey = `${enemy.x},${enemy.y}`;
+            if (game && game.turnManager && game.turnManager.initialEnemyTilesThisTurn) {
+                game.turnManager.initialEnemyTilesThisTurn.delete(startKey);
+            }
+            if (game && game.turnManager && game.turnManager.occupiedTilesThisTurn) {
+                game.turnManager.occupiedTilesThisTurn.delete(startKey);
+            }
+            // Also clear alias on game if present
+            if (game && game.occupiedTilesThisTurn) game.occupiedTilesThisTurn.delete(startKey);
+        } catch (e) {
+            // ignore failures — this is a defensive cleanup
+        }
+
         // Save the updated underground zone with the enemy
         game.zones.set(undergroundZoneKey, updatedZoneData);
 

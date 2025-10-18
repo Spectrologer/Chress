@@ -231,10 +231,13 @@ export class InventoryManager {
             }
         });
 
-        // Touch Events (Mobile)
-        slot.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+        // Pointer-based long-press/tap handling for inventory slots
+        let pressPointerId = null;
+        const onPointerDown = (e) => {
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            try { e.preventDefault(); } catch (err) {}
             isLongPress = false;
+            pressPointerId = e.pointerId;
             pressTimeout = setTimeout(() => {
                 isLongPress = true;
                 if (isDisablable) {
@@ -245,16 +248,19 @@ export class InventoryManager {
                     this.game.animationScheduler.createSequence().wait(2000).then(hideTooltip).start();
                 }
             }, 500);
-        }, { passive: false });
+            try { e.target.setPointerCapture?.(e.pointerId); } catch (err) {}
+        };
 
-        slot.addEventListener('touchmove', () => {
+        const onPointerMove = (e) => {
+            if (pressPointerId !== e.pointerId) return;
             if (pressTimeout) {
                 clearTimeout(pressTimeout);
                 pressTimeout = null;
             }
-        });
+        };
 
-        slot.addEventListener('touchend', () => {
+        const onPointerUp = (e) => {
+            if (pressPointerId !== e.pointerId) return;
             if (pressTimeout) {
                 clearTimeout(pressTimeout);
                 pressTimeout = null;
@@ -270,7 +276,13 @@ export class InventoryManager {
                     useItem();
                 }
             }
-        });
+            try { e.target.releasePointerCapture?.(e.pointerId); } catch (err) {}
+            pressPointerId = null;
+        };
+
+        slot.addEventListener('pointerdown', onPointerDown, { passive: false });
+        slot.addEventListener('pointermove', onPointerMove);
+        slot.addEventListener('pointerup', onPointerUp);
 
         // Special handling for bomb inventory item
         if (item.type === 'bomb') {
@@ -306,12 +318,12 @@ export class InventoryManager {
             };
             // We need to handle both click and tap for bombs
             slot.addEventListener('click', bombClick);
-            // Re-add touchend listener specifically for bomb's tap action
-            slot.addEventListener('touchend', () => {
-                 if (!isLongPress) {
-                    bombClick();
-                 }
-            });
+                // Re-add pointerup listener specifically for bomb's tap action
+                slot.addEventListener('pointerup', (e) => {
+                      if (!isLongPress && e.pointerType !== 'mouse') {
+                          bombClick();
+                      }
+                });
         }
     }
 

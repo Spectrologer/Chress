@@ -20,31 +20,26 @@ export class MiniMap {
         this.expandedCtx = this.expandedCanvas.getContext('2d');
 
         // Expand on click/tap inside minimap
-        smallCanvas.addEventListener('click', () => this.expand());
-        smallCanvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            this.expand();
-        });
+    // smallCanvas expand is handled via pointer events only
+    smallCanvas.addEventListener('pointerup', (e) => { try { e.preventDefault(); } catch (err) {} ; this.expand(); });
 
         // Retract on click/tap outside expanded minimap
-        overlay.addEventListener('click', () => this.retract());
-        overlay.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            this.retract();
-        });
+    overlay.addEventListener('pointerup', (e) => { try { e.preventDefault(); } catch (err) {} ; this.retract(); });
 
         // Prevent retraction when clicking/tapping on the expanded minimap itself
-        this.expandedCanvas.addEventListener('click', (e) => e.stopPropagation());
-        this.expandedCanvas.addEventListener('touchstart', (e) => e.stopPropagation());
+    this.expandedCanvas.addEventListener('pointerdown', (e) => e.stopPropagation());
 
         // Panning for expanded map
-        this.expandedCanvas.addEventListener('mousedown', (e) => {
+        // Pointer-based panning for expanded map canvas
+        this.expandedCanvas.addEventListener('pointerdown', (e) => {
             this.isDragging = true;
             this.lastX = e.clientX;
             this.lastY = e.clientY;
+            try { e.target.setPointerCapture?.(e.pointerId); } catch (err) {}
         });
-        this.expandedCanvas.addEventListener('mousemove', (e) => {
-            if (this.isDragging) {
+
+        this.expandedCanvas.addEventListener('pointermove', (e) => {
+            if (this.isDragging && e.pointerType) {
                 // Invert pan direction for intuitive map movement
                 this.panX -= (this.lastX - e.clientX) / 90;
                 this.panY -= (this.lastY - e.clientY) / 90;
@@ -53,34 +48,12 @@ export class MiniMap {
                 this.renderExpanded();
             }
         });
-        this.expandedCanvas.addEventListener('mouseup', () => {
-            this.isDragging = false;
-        });
-        this.expandedCanvas.addEventListener('mouseleave', () => {
-            this.isDragging = false;
-        });
 
-        // Touch panning
-        this.expandedCanvas.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 1) {
-                this.isDragging = true;
-                this.lastX = e.touches[0].clientX;
-                this.lastY = e.touches[0].clientY;
-            }
-            e.stopPropagation();
+        this.expandedCanvas.addEventListener('pointerup', (e) => {
+            this.isDragging = false;
+            try { e.target.releasePointerCapture?.(e.pointerId); } catch (err) {}
         });
-        this.expandedCanvas.addEventListener('touchmove', (e) => {
-            if (this.isDragging && e.touches.length === 1) {
-                // Invert pan direction for intuitive map movement (match mouse)
-                this.panX -= (this.lastX - e.touches[0].clientX) / 90;
-                this.panY -= (this.lastY - e.touches[0].clientY) / 90;
-                this.lastX = e.touches[0].clientX;
-                this.lastY = e.touches[0].clientY;
-                this.renderExpanded();
-                e.preventDefault();
-            }
-        });
-        this.expandedCanvas.addEventListener('touchend', () => {
+        this.expandedCanvas.addEventListener('pointerleave', () => {
             this.isDragging = false;
         });
     }

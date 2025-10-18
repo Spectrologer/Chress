@@ -109,17 +109,17 @@ export class PanelManager {
                 // Click handler for mouse/keyboard
                 statsRestartBtn.addEventListener('click', doRestart);
 
-                // Touch handlers to make single-tap work reliably on touch devices.
-                // Use touchend to trigger the action and prevent the overlay's touchend from firing.
-                statsRestartBtn.addEventListener('touchstart', (e) => {
-                    // Prevent default so the browser doesn't synthesize extra mouse events
+                // Pointer handlers to make single-tap work reliably on touch devices.
+                statsRestartBtn.addEventListener('pointerdown', (e) => {
                     if (e && typeof e.preventDefault === 'function') e.preventDefault();
                     if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+                    try { e.target.setPointerCapture?.(e.pointerId); } catch (err) {}
                 }, { passive: false });
 
-                statsRestartBtn.addEventListener('touchend', (e) => {
+                statsRestartBtn.addEventListener('pointerup', (e) => {
                     if (e && typeof e.preventDefault === 'function') e.preventDefault();
                     doRestart(e);
+                    try { e.target.releasePointerCapture?.(e.pointerId); } catch (err) {}
                 });
             }
         }
@@ -140,8 +140,8 @@ export class PanelManager {
         if (this.statsPanelOverlay) {
             // Close panel when clicking outside (on overlay background)
             this.statsPanelOverlay.addEventListener('click', () => this.hideStatsPanel());
-            this.statsPanelOverlay.addEventListener('touchend', (e) => {
-                e.preventDefault();
+            this.statsPanelOverlay.addEventListener('pointerup', (e) => {
+                if (e && typeof e.preventDefault === 'function') e.preventDefault();
                 this.hideStatsPanel();
             });
 
@@ -149,8 +149,8 @@ export class PanelManager {
             const statsPanel = this.statsPanelOverlay.querySelector('.stats-panel');
             if (statsPanel) {
                 statsPanel.addEventListener('click', (e) => e.stopPropagation());
-                statsPanel.addEventListener('touchend', (e) => {
-                    e.preventDefault();
+                statsPanel.addEventListener('pointerup', (e) => {
+                    if (e && typeof e.preventDefault === 'function') e.preventDefault();
                     e.stopPropagation();
                 });
             }
@@ -159,8 +159,8 @@ export class PanelManager {
             const playerPortraitContainer = document.querySelector('.player-portrait-container');
             if (playerPortraitContainer) {
                 playerPortraitContainer.addEventListener('click', () => this.showStatsPanel());
-                playerPortraitContainer.addEventListener('touchend', (e) => {
-                    e.preventDefault();
+                playerPortraitContainer.addEventListener('pointerup', (e) => {
+                    if (e && typeof e.preventDefault === 'function') e.preventDefault();
                     this.showStatsPanel();
                 });
             }
@@ -185,7 +185,7 @@ export class PanelManager {
             });
 
             // Touch devices: ensure touch toggles without requiring double-tap
-            toggle.addEventListener('touchstart', (e) => {
+            toggle.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
                 toggle.checked = !toggle.checked;
                 applyState(toggle.checked);

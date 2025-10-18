@@ -98,73 +98,62 @@ describe('Input feedback integration', () => {
     expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('bloop');
   });
 
-  test('mousedown -> mousemove -> mouseup calls startHoldFeedback, updates, and clears + triggers tap', () => {
+  test('pointerdown -> pointermove -> pointerup calls startHoldFeedback, updates, and clears + triggers tap', () => {
     const handlers = mockGame.canvas.__listeners;
-    const mousedown = handlers['mousedown'];
-    expect(typeof mousedown).toBe('function');
-
-    // Capture window.addEventListener registrations so we can call the window handlers
-    const added = {};
-    const origAdd = window.addEventListener;
-    window.addEventListener = jest.fn((name, fn) => {
-      added[name] = added[name] || [];
-      added[name].push(fn);
-    });
+    const pointerdown = handlers['pointerdown'];
+    expect(typeof pointerdown).toBe('function');
 
     const spyHandleTap = jest.spyOn(inputManager, 'handleTap');
 
-    // Simulate mousedown at tile (1,1) -> pixel 96,96 (tile 1 index center approx 96)
-    mousedown({ clientX: 96, clientY: 96 });
+    // Simulate pointerdown at tile (1,1) -> pixel 96,96 (tile 1 index center approx 96)
+    pointerdown({ clientX: 96, clientY: 96, pointerId: 1, pointerType: 'mouse', button: 0, target: mockGame.canvas });
 
     // Expect startHoldFeedback called for initial tile
     expect(mockGame.renderManager.startHoldFeedback).toHaveBeenCalled();
-  expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('bloop');
+    expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('bloop');
 
-    // There should be window mousemove and mouseup handlers registered
-    expect(added['mousemove'] && added['mousemove'].length).toBeGreaterThan(0);
-    expect(added['mouseup'] && added['mouseup'].length).toBeGreaterThan(0);
+    // There should be canvas pointermove and pointerup handlers registered
+    expect(typeof handlers['pointermove']).toBe('function');
+    expect(typeof handlers['pointerup']).toBe('function');
 
-    const onMouseMove = added['mousemove'][0];
-    const onMouseUp = added['mouseup'][0];
+    const onPointerMove = handlers['pointermove'];
+    const onPointerUp = handlers['pointerup'];
 
-    // Simulate dragging to tile (3,1) - pixel ~224
-    onMouseMove({ clientX: 224, clientY: 96 });
+  // Simulate dragging to tile (3,1) - pixel ~224
+  onPointerMove({ clientX: 224, clientY: 96, pointerId: 1, pointerType: 'mouse' });
     expect(mockGame.renderManager.startHoldFeedback).toHaveBeenCalledWith(3, 1);
-  expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('bloop');
+    expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('bloop');
 
-    // Simulate mouseup: should clear feedback and trigger handleTap
-    onMouseUp({ clientX: 224, clientY: 96 });
+    // Simulate pointerup: should clear feedback and trigger handleTap
+  onPointerUp({ clientX: 224, clientY: 96, pointerId: 1, pointerType: 'mouse', target: mockGame.canvas });
     expect(mockGame.renderManager.clearFeedback).toHaveBeenCalled();
     expect(spyHandleTap).toHaveBeenCalled();
-
-    // Restore original
-    window.addEventListener = origAdd;
   });
 
   test('long press + drag release treated as tap at release tile (touch)', () => {
     const handlers = mockGame.canvas.__listeners;
-    const touchstart = handlers['touchstart'];
-    const touchend = handlers['touchend'];
-    expect(typeof touchstart).toBe('function');
-    expect(typeof touchend).toBe('function');
+  const pointerdownTouch = handlers['pointerdown'];
+  const pointerupTouch = handlers['pointerup'];
+  expect(typeof pointerdownTouch).toBe('function');
+  expect(typeof pointerupTouch).toBe('function');
 
-    const spyHandleTap = jest.spyOn(inputManager, 'handleTap');
+  const spyHandleTap = jest.spyOn(inputManager, 'handleTap');
 
-    // Mock Date.now to simulate a long press
-    let now = 1000;
-    jest.spyOn(Date, 'now').mockImplementation(() => now);
+  // Mock Date.now to simulate a long press
+  let now = 1000;
+  jest.spyOn(Date, 'now').mockImplementation(() => now);
 
-    // Start touch at (96,96)
-    touchstart({ preventDefault: () => {}, touches: [{ clientX: 96, clientY: 96 }] });
+  // Start touch-like pointer at (96,96)
+  pointerdownTouch({ clientX: 96, clientY: 96, pointerId: 2, pointerType: 'touch', target: mockGame.canvas });
 
-    // Advance time beyond MAX_TAP_TIME
-    now += INPUT_CONSTANTS.MAX_TAP_TIME + 200;
+  // Advance time beyond MAX_TAP_TIME
+  now += INPUT_CONSTANTS.MAX_TAP_TIME + 200;
 
-    // End touch at (416,96) ~ tile (6,1)
-    touchend({ preventDefault: () => {}, changedTouches: [{ clientX: 416, clientY: 96 }] });
+  // End pointer at (416,96) ~ tile (6,1)
+  pointerupTouch({ clientX: 416, clientY: 96, pointerId: 2, pointerType: 'touch', target: mockGame.canvas });
 
-    // Long-press-drag-release should call handleTap at release coordinates
-    expect(spyHandleTap).toHaveBeenCalledWith(416, 96);
-    expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('bloop');
+  // Long-press-drag-release should call handleTap at release coordinates
+  expect(spyHandleTap).toHaveBeenCalledWith(416, 96);
+  expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('bloop');
   });
 });

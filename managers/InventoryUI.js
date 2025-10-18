@@ -157,25 +157,41 @@ export class InventoryUI {
             if (!isDisablable || !item.disabled) useItem();
         });
 
-        slot.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+        // Pointer-based long-press/tap handling for inventory slots
+        let pressPointerId = null;
+        const onPointerDown = (e) => {
+            // only consider primary button for mouse
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            try { e.preventDefault(); } catch (err) {}
             isLongPress = false;
+            pressPointerId = e.pointerId;
             pressTimeout = setTimeout(() => {
                 isLongPress = true;
                 if (isDisablable) toggleDisabled(); else { showTooltip(); this.game.animationScheduler.createSequence().wait(2000).then(hideTooltip).start(); }
             }, 500);
-        }, { passive: false });
+            try { e.target.setPointerCapture?.(e.pointerId); } catch (err) {}
+        };
 
-        slot.addEventListener('touchmove', () => { if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; } });
+        const onPointerMove = (e) => {
+            if (pressPointerId !== e.pointerId) return;
+            if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; }
+        };
 
-        slot.addEventListener('touchend', () => {
+        const onPointerUp = (e) => {
+            if (pressPointerId !== e.pointerId) return;
             if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; }
             if (!isLongPress) {
                 if (this.game.player.isDead()) return;
                 if (item.type === 'bomb') return;
                 if (!isDisablable || !item.disabled) useItem();
             }
-        });
+            try { e.target.releasePointerCapture?.(e.pointerId); } catch (err) {}
+            pressPointerId = null;
+        };
+
+        slot.addEventListener('pointerdown', onPointerDown, { passive: false });
+        slot.addEventListener('pointermove', onPointerMove);
+        slot.addEventListener('pointerup', onPointerUp);
 
     // Bomb handling delegated to ItemUsageHandler via ItemService
         if (item.type === 'bomb') {
@@ -204,7 +220,7 @@ export class InventoryUI {
                 }
             };
             slot.addEventListener('click', bombClick);
-            slot.addEventListener('touchend', () => { if (!isLongPress) bombClick(); });
+            slot.addEventListener('pointerup', (e) => { if (!isLongPress && e.pointerType !== 'mouse') bombClick(); });
         }
     }
 

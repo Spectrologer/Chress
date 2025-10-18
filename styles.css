@@ -78,6 +78,10 @@ body {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 @keyframes pulsate {
@@ -100,7 +104,7 @@ body {
 .game-container {
     text-align: center;
     padding: 0;
-    max-width: none;
+    max-width: 760px; /* slightly smaller overall layout */
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -110,6 +114,21 @@ body {
     gap: 24px; /* Add vertical gap between children */
     padding-bottom: 0; /* Remove extra bottom padding */
     position: relative;
+}
+
+.main-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* Minimal gap */
+    width: 100%;
+    max-width: 800px;
+    padding: 2px; /* Minimal padding */
+}
+
+.content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* Minimal gap */
 }
 
 .header-area {
@@ -133,12 +152,12 @@ body {
     background: #fffbe9;
     border-radius: 0px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 0 #e2cfa2;
-    padding: 30px 20px;
-    max-width: 400px;
+    padding: 12px 8px;
+    max-width: 380px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: clamp(20px, 4vw, 32px);
+    gap: clamp(8px, 1.5vw, 14px);
     position: relative;
     border: 2px solid #e2cfa2;
 }
@@ -175,8 +194,8 @@ body {
 }
 
 .menu-button {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     background-color: rgba(245, 222, 179, 0.7);
     border: 1px solid #B8860B;
     border-radius: 6px;
@@ -201,15 +220,15 @@ body {
 }
 .player-header {
     display: flex;
-    align-items: center;
-    gap: 12px; /* Slightly reduce gap to accommodate the new button */
+    align-items: center;    
+    gap: 8px; /* Reduced gap */
     flex-wrap: wrap; /* Allow items to wrap */
     /* justify-content: space-between; */
 }
 
 .player-portrait-container {
-    width: 110px;
-    height: 110px;
+    width: 88px;
+    height: 88px;
     background: url('assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
@@ -251,16 +270,19 @@ body {
 }
 .health-points-wrapper {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row; /* place points and hearts side-by-side */
+    align-items: center;
+    justify-content: space-between; /* push hearts to the right edge */
     gap: 8px;
-    flex: 1;
-    align-items: flex-start;
+    width: 100%;
 }
+/* Ensure points come before hearts visually */
+.player-points { order: 1; flex: 0 0 auto; }
+.player-health { order: 2; display: flex; gap: 6px; align-items: center; }
 .player-stats-main {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     flex-grow: 1; /* Allow it to take up available horizontal space */
 }
 .player-points {
@@ -273,8 +295,8 @@ body {
     /* border: 1px solid #e2cfa2; */
 }
 .points-icon {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     image-rendering: pixelated;
 }
 .points-value {
@@ -287,11 +309,20 @@ body {
 }
 
 .heart-icon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
 }
 
-.axe-ability-icon {
+/* Place hearts to the right of points to save vertical space */
+.player-points {
+    display: flex;
+    align-items: center;
+}
+.player-points .points-value { order: 1; }
+.player-points .character-hearts { order: 2; margin-left: 8px; }
+
+.axe-ability-icon,
+.hammer-ability-icon {
     width: 24px;
     height: 24px;
     display: none; /* Hidden by default, shown when player has ability */
@@ -299,7 +330,7 @@ body {
 .player-bars {
     display: flex;
     flex-direction: column;
-    gap: clamp(12px, 2vw, 16px);
+    gap: clamp(6px, 1vw, 8px);
 }
 .bar {
     display: flex;
@@ -319,7 +350,7 @@ body {
 }
 .bar-track {
     flex: 1;
-    height: 20px;
+    height: 16px;
     background: #e6d3a3;
     border-radius: 2px;
     border: 1px solid #e2cfa2;
@@ -343,13 +374,13 @@ body {
 .player-details {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 12px;
     justify-content: space-between;
 }
 
 .map-inventory-wrapper {
     display: flex;
-    gap: clamp(20px, 3vw, 24px);
+    gap: clamp(10px, 1.5vw, 12px);
     justify-content: center;
     width: 100%;
     align-items: center;
@@ -716,7 +747,7 @@ body {
 
 .bar-container {
     flex: 0.5;
-    height: 12px; /* Taller bar */
+    height: 10px; /* slightly reduced bar height */
     background: rgba(0, 0, 0, 0.3); /* Darker background for contrast */
     border: 1px solid #61382B;
     border-radius: 8px;
@@ -778,6 +809,14 @@ h1 {
     flex: 1;
     align-items: flex-start; /* Changed from center to align top */
     margin: 0; /* Increase vertical margin above/below game area */
+}
+
+/* Keep the visible game board constrained so desktop doesn't overstretch it */
+.game-area, .game-parchment {
+    max-width: 400px; /* match modern-player-card width */
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 
@@ -878,8 +917,8 @@ h1 {
         /* Main parchment gradient */
         linear-gradient(135deg, #F5DEB3 0%, #F0E68C 25%, #DEB887 50%, #D2B48C 75%, #C19A6B 100%);
     display: block;
-    width: 200px;
-    height: 200px;
+    width: 160px;
+    height: 160px;
     position: relative;
     box-shadow:
         /* Multiple border effect */
@@ -923,9 +962,9 @@ h1 {
     background-color: #F5DEB3;
     display: block;
     margin: 0 auto;
-    width: 640px;
-    height: 640px;
-    max-width: 95vw;
+    width: 100%;
+    max-width: 400px; /* constrain canvas to board size */
+    height: auto;
     max-height: 70vh;
     box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
     image-rendering: -moz-crisp-edges;
@@ -934,10 +973,9 @@ h1 {
     image-rendering: crisp-edges;
 }
 
-/* Mobile Responsive Styles */
-@media screen and (max-width: 768px) {
+/* Responsive (mobile-first) rules applied globally so desktop uses the same layout as mobile */
     body { 
-        padding: 2px;
+        padding: 0;
     }
 
     .page-header {
@@ -975,13 +1013,17 @@ h1 {
         display: grid; /* Changed to grid */
         grid-template-columns: 1fr; /* Single column layout */
         align-items: center;
-        padding: 12px;
-        gap: clamp(18px, 5vw, 28px); /* Increase gap for mobile */
+        padding: 8px;
+        gap: clamp(10px, 3vw, 14px); /* Reduced gap for mobile */
     }
 
     .game-area {
-        justify-content: flex-start;
+        justify-content: center; /* Center the parchment container */
+        align-items: center; /* Vertically center it too */
         margin: 0; /* Increase vertical margin for mobile */
+        width: 100%; /* Ensure it takes full width to center its child */
+        padding: 0; /* Removed horizontal padding */
+    max-width: 400px; /* Respect the constrained board width on mobile-first rules as well */
     }
 
     .character-profile {
@@ -1066,40 +1108,37 @@ h1 {
     }
 
     .game-parchment {
-        padding: 0;
+        padding: 4px; /* Minimal padding for the parchment effect */
+        width: 100%; /* Allow it to fill the container */
+    max-width: 400px; /* Match constrained canvas width */
+        display: flex; /* Use flex to center the canvas inside */
+        justify-content: center;
     }
 
     .game-area {
         margin: 0;
     }
 
-    .game-parchment {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
     #gameCanvas {
-        width: 100%;
-        max-width: 95vw;
+        width: 100%; /* Canvas should fill the padded parchment area */
+    max-width: 400px; /* Keep canvas capped to board size */
         height: auto;
         max-height: 95vh;
         aspect-ratio: 1;
         touch-action: none; /* Prevent default touch behaviors */
+        -webkit-tap-highlight-color: transparent; /* remove highlight on tap (mobile browsers) */
+        -webkit-touch-callout: none; /* disable callout on long press */
+        outline: none; /* avoid focus outline flicker on some browsers */
     }
 
-    /* Add visual feedback for touch interactions */
-    #gameCanvas:active {
-        opacity: 0.9;
-    }
+     /* Remove forced opacity change on :active which can trigger paint/blink on mobile.
+         Visual feedback should be handled explicitly via JS or UI elements. */
 
     .message-overlay, #messageOverlay {
         top: 50%;
         left: 50%;
     }
-}
+/* End of mobile-first responsive rules (previously inside @media screen and (max-width: 768px)) */
 
 /* Message Box */
 .message-box {
@@ -1349,26 +1388,91 @@ h1 {
     margin-bottom: 30px;
 }
 
-.game-over-box button {
+/* Shared restart button base - used both in the Game Over box and stats panel */
+.restart-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px; /* slightly increased gap with larger size */
     background: linear-gradient(135deg, #CD853F, #B8860B);
     border: 2px solid #8B4513;
     color: #3A2418;
-    padding: 12px 24px;
+    padding: 15px 27px; /* ~1.5x larger */
     font-family: 'Cinzel', serif;
-    font-size: 1.1em;
+    font-size: 1.575em; /* ~1.5x of 1.05em */
     font-weight: 700;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
-    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+    box-shadow: 0 8px 20px rgba(139, 69, 19, 0.32);
+    line-height: 1; /* keep icon and text vertically tight */
 }
 
-.game-over-box button:hover {
+/* Specific styling when the restart button appears inside the game-over box */
+.game-over-box .restart-button {
+    padding: 21px 33px; /* ~1.5x of previous game-over padding */
+    font-size: 1.725em; /* ~1.5x of 1.15em */
+}
+
+.restart-button:hover {
+    transform: translateY(-2px) scale(1.02);
     background: linear-gradient(135deg, #B8860B, #CD853F);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5);
+    box-shadow: 0 10px 26px rgba(139, 69, 19, 0.45);
+}
+
+/* Keyboard-focus visible state for accessibility */
+.restart-button:focus-visible {
+    outline: 3px solid rgba(255, 223, 160, 0.9);
+    outline-offset: 3px;
+}
+
+/* Icon inside restart buttons */
+.restart-btn-icon, .restart-icon {
+    width: 42px; /* ~1.5x larger */
+    height: 42px;
+    flex: 0 0 42px;
+}
+
+/* Smaller variant used in the top-left stats panel; keep prior dimensions but inherit base visuals */
+.stats-restart-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    background: linear-gradient(135deg, #CD853F, #B8860B);
+    border: 2px solid #8B4513;
+    color: #3A2418;
+    padding: 18px 36px; /* 1.5x of 12px 24px */
+    font-family: 'Cinzel', serif;
+    font-size: 1.575em; /* ~1.5x of 1.05em (from .restart-button) */
+    font-weight: 700;
+    border-radius: 12px; /* 1.5x of 8px */
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 6px 18px rgba(139, 69, 19, 0.3); /* 1.5x of 4px/12px */
+    touch-action: manipulation;
+    line-height: 1;
+}
+.stats-restart-button:hover {
+    transform: translateY(-3px) scale(1.02); /* 1.5x of -2px */
+    background: linear-gradient(135deg, #B8860B, #CD853F);
+    box-shadow: 0 9px 24px rgba(139, 69, 19, 0.5); /* 1.5x of 6px/16px */
+}
+
+/* New styles for stats panel footer and divider */
+.stats-divider {
+    border: none;
+    border-top: 2px solid #e2cfa2a8;
+    margin: 12px 0;
+}
+
+.stats-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 4px;
 }
 
 /* Message Log Button */
@@ -1597,21 +1701,28 @@ h1 {
 }
 
 .barter-portrait-container {
-    width: 120px; /* Adjusted for better balance */
-    height: 120px;
+    /* Make portrait container responsive so it never overflows the barter panel.
+       Use a square aspect ratio but allow width to scale relative to available space. */
+    width: clamp(64px, 28%, 160px);
+    max-width: 160px;
+    height: auto;
+    aspect-ratio: 1 / 1;
     background: url('assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-sizing: border-box;
 }
 
 .barter-portrait {
     width: 100%;
     height: 100%;
+    max-height: 100%;
     object-fit: contain;
     image-rendering: pixelated;
+    display: block;
 }
 
 .barter-window p {
@@ -1625,7 +1736,7 @@ h1 {
 .barter-offers-container {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px; /* tightened gap between offers */
     width: 100%;
     max-height: 50vh;
     overflow-y: auto;
@@ -1637,11 +1748,11 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: stretch; /* Stretch to fill width */
-    gap: 10px;
-    padding: 10px;
+    gap: 8px; /* slightly smaller gaps */
+    padding: 8px; /* reduced padding to save space */
     background: rgba(0,0,0,0.05);
     border-radius: 6px;
-    border: 1px solid rgba(139, 69, 19, 0.2);
+    border: 1px solid rgba(139, 69, 19, 0.18);
     flex-wrap: wrap; /* Allow wrapping */
 }
 
@@ -1656,7 +1767,7 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 3px; /* tightened */
 }
 /* Smaller text for statue descriptions */
 .barter-window .statue-description {
@@ -1671,7 +1782,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    gap: 20px;
+    gap: 12px; /* reduce spacing between exchange columns */
 }
 
 .barter-offer-section {
@@ -1691,8 +1802,8 @@ h1 {
 }
 
 .barter-exchange-item {
-    width: 64px;
-    height: 64px;
+    width: 40px; /* match reduced icon size used in desktop scaling */
+    height: 40px;
     image-rendering: pixelated;
     object-fit: contain;
 }
@@ -1708,11 +1819,11 @@ h1 {
 }
 
 .barter-exchange-arrow {
-    font-size: 3em;
+    font-size: 2.4em; /* slightly reduced arrow size to balance smaller icons */
     color: #7a5c2e;
     font-weight: 900;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    padding-bottom: 8px; /* Align with images */
+    padding-bottom: 6px; /* Align with images */
 }
 
 .barter-window button {
@@ -1806,17 +1917,17 @@ h1 {
     box-sizing: border-box;
 }
 
-.stats-info {
-    display: flex;
-    flex-direction: column; /* Stack portrait and text vertically */
-    align-items: stretch; /* Stretch items to fill width */
-    gap: 8px;
-    text-align: left;
-    width: 100%;
-    box-sizing: border-box;
+
+
+/* SVG icon inside the restart button */
+.restart-icon {
+    width: 32px;
+    height: 32px;
 }
 
+/* Ensure stats header is positioned to allow absolute child positioning */
 .stats-header {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2087,191 +2198,11 @@ input:checked + .toggle-slider::after {
     box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
 }
 
-.statue-window button:hover {
-    background: linear-gradient(135deg, #B8860B, #CD853F);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5);
-}
-/* Desktop Layout Adjustments */
-@media (min-width: 769px) {
-    body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+/* Desktop-specific overrides removed so desktop inherits the mobile-first layout.
+   If needed later, add targeted overrides using min-width queries that adjust
+   spacing or scaling rather than swapping whole layouts. */
 
-    .game-container {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        gap: 0;
-        width: auto;
-        max-width: none;
-    }
-
-    .header-area {
-        position: relative;
-        width: 309px;
-        margin-bottom: 0;
-        margin: 0;
-    }
-
-    .character-card-container {
-        width: 309px;
-        height: 309px;
-        overflow: hidden;
-    }
-
-    .modern-player-card {
-        width: 100%;
-        height: 100%;
-        padding: 4px 6px 6px 6px;
-        margin: 0;
-        font-size: 0.45em;
-    }
-
-    .modern-player-card * {
-        font-size: inherit;
-    }
-
-    .player-name {
-        font-size: 1.1em;
-        padding-right: 2px;
-        border-right: 1px solid #e2cfa2;
-    }
-
-    .player-stats-main {
-        gap: 0px;
-    }
-
-    .player-bars {
-        gap: 3px;
-    }
-
-    .player-details {
-        gap: 6px;
-    }
-
-    .map-inventory-wrapper {
-        gap: 6px;
-    }
-
-    .inventory-list {
-        gap: 1px;
-    }
-
-    .bar-label {
-        font-size: 0.9em;
-        flex-basis: 40px;
-    }
-
-    .player-portrait-container {
-        width: 55px;
-        height: 55px;
-    }
-
-    .heart-icon, .axe-ability-icon {
-        width: 15px;
-        height: 15px;
-    }
-
-    .points-icon {
-        width: 14px;
-        height: 14px;
-    }
-
-    .bar-track {
-        height: 12px;
-    }
-
-    .game-area {
-        position: relative;
-        width: 309px;
-        margin: 0;
-        flex: none;
-    }
-
-    .game-parchment {
-        width: 309px;
-        height: 309px;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    #gameCanvas {
-        width: 309px;
-        height: 309px;
-        max-width: none;
-        max-height: none;
-    }
-
-    .player-map {
-        flex: 1; /* Give map and inventory equal flex space */
-    }
-
-    #zoneMap {
-        width: 120px; /* A more subtle reduction in map size */
-        height: 120px;
-    }
-
-    .map-info {
-        font-size: 1.2em; /* A more subtle font size reduction */
-    }
-
-    #messageOverlay {
-        padding: 10px;
-        font-size: 1.2em;
-        line-height: 1.4;
-    }
-
-    /* Barter window scaling for desktop */
-    .barter-window {
-        padding: 10px;
-        gap: 8px;
-    }
-    .barter-window h2 {
-        font-size: 1.5em;
-    }
-    .barter-window p {
-        font-size: 1em;
-        line-height: 1.2;
-    }
-    .barter-main-content {
-        padding: 8px;
-        gap: 8px;
-    }
-    .barter-portrait-container {
-        width: 80px;
-        height: 80px;
-    }
-    .barter-offers-container {
-        gap: 8px;
-    }
-    .barter-offer {
-        padding: 8px;
-    }
-    .barter-exchange-item {
-        width: 48px;
-        height: 48px;
-    }
-    .barter-window button {
-        padding: 6px 12px;
-        font-size: 0.9em;
-    }
-}
-
-@media (min-width: 769px) {
-    .player-inventory {
-        min-width: 0; /* Allow the inventory to shrink properly */
-        margin-bottom: 15px; /* Add some space at the bottom */
-    }
-    .toggle-label {
-        font-size: 0.8em; /* Reduce the font size of the 'Attack Range' label */
-    }
-}
+/* .stats-info was intentionally left empty in the original stylesheet; removed to satisfy lint rules. */
 
 /* Consent Banner Styles */
 .small-consent-portrait {
