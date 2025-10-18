@@ -15,6 +15,10 @@ export class InputManager {
         this.lastTapTime = null;
         this.lastTapX = null;
         this.lastTapY = null;
+        // Store last raw client coordinates to allow tolerant double-tap
+        // detection in screen space (fixes small rounding/dpr differences)
+        this.lastTapClientX = null;
+        this.lastTapClientY = null;
         this.tapTimeout = null;
         this.autoUseNextExitReach = false;
     }
@@ -170,12 +174,35 @@ export class InputManager {
     }
 
     // Extract double-tap detection logic
-    handleDoubleTapLogic(gridCoords) {
+    // Double-tap detection: compare recent tap time and allow a small
+    // pixel tolerance for client coordinates to handle DPR/rounding.
+    handleDoubleTapLogic(gridCoords, clientX, clientY) {
         const now = Date.now();
-        const isDoubleTap = this.lastTapTime !== null && (now - this.lastTapTime) < INPUT_CONSTANTS.DOUBLE_TAP_TIME && this.lastTapX === gridCoords.x && this.lastTapY === gridCoords.y;
+
+        let isDoubleTap = false;
+        if (this.lastTapTime !== null && (now - this.lastTapTime) < INPUT_CONSTANTS.DOUBLE_TAP_TIME) {
+            // If last tap was on same grid cell, that's sufficient
+            if (this.lastTapX === gridCoords.x && this.lastTapY === gridCoords.y) {
+                isDoubleTap = true;
+            } else if (this.lastTapClientX !== null && this.lastTapClientY !== null) {
+                // Otherwise allow small pixel movement between taps
+                const dx = clientX - this.lastTapClientX;
+                const dy = clientY - this.lastTapClientY;
+                const distSq = dx * dx + dy * dy;
+                const tol = INPUT_CONSTANTS.DOUBLE_TAP_PIXEL_TOLERANCE || 12;
+                if (distSq <= tol * tol) {
+                    isDoubleTap = true;
+                }
+            }
+        }
+
+        // Update last tap tracking
         this.lastTapTime = now;
         this.lastTapX = gridCoords.x;
         this.lastTapY = gridCoords.y;
+        this.lastTapClientX = clientX;
+        this.lastTapClientY = clientY;
+
         return isDoubleTap;
     }
 
@@ -232,7 +259,9 @@ export class InputManager {
         }
 
         // Double tap detection and handling
-        const isDoubleTap = this.handleDoubleTapLogic(gridCoords);
+    // Use client coordinates to make double-tap detection robust
+    // across devices and hosting environments (GH Pages etc.).
+    const isDoubleTap = this.handleDoubleTapLogic(gridCoords, screenX, screenY);
         const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
 
         // Handle double tap on exit tiles

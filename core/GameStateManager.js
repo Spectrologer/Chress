@@ -4,11 +4,17 @@ import { Sign } from '../ui/Sign.js';
 import { validateLoadedGrid } from '../generators/GeneratorUtils.js';
 
 const GAME_STATE_KEY = 'chress_game_state';
+const SAVE_VERSION = 2; // bump if save format changes
 
 export class GameStateManager {
     constructor(game) {
         this.game = game;
         this.initializeState();
+        // Autosave configuration
+        this.saveDebounceMs = 750; // debounce writes when many changes happen in quick succession
+        this._saveTimer = null;
+        this.saveIntervalMs = 30000; // periodic save every 30s
+        this._saveIntervalId = null;
     }
 
     initializeState() {
@@ -106,6 +112,23 @@ export class GameStateManager {
     }
 
     saveGameState() {
+        // Public method: schedule a debounced save to avoid blocking main thread
+        this.scheduleSave();
+    }
+
+    scheduleSave() {
+        // Cancel any pending save and schedule a new one
+        if (this._saveTimer) clearTimeout(this._saveTimer);
+        this._saveTimer = setTimeout(() => this.saveGameStateImmediate(), this.saveDebounceMs);
+    }
+
+    saveGameStateImmediate() {
+        // Immediately write state to localStorage (used by periodic flush and unload handlers)
+        if (this._saveTimer) {
+            clearTimeout(this._saveTimer);
+            this._saveTimer = null;
+        }
+
         try {
             const gameState = {
                 // Player state
@@ -165,8 +188,22 @@ export class GameStateManager {
                 },
                 signSpawnedMessages: Array.from(Sign.spawnedMessages)
             };
+            // add metadata
+            const payload = {
+                version: SAVE_VERSION,
+                lastSaved: Date.now(),
+                state: gameState
+            };
 
-            localStorage.setItem(GAME_STATE_KEY, JSON.stringify(gameState));
+            // Try to use requestIdleCallback when available to avoid jank
+            const write = () => localStorage.setItem(GAME_STATE_KEY, JSON.stringify(payload));
+            if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+                window.requestIdleCallback(() => {
+                    try { write(); } catch (e) { logger.warn('Failed to save (idle):', e); }
+                }, { timeout: 2000 });
+            } else {
+                write();
+            }
         } catch (error) {
             logger.warn('Failed to save game state:', error);
         }
@@ -177,7 +214,15 @@ export class GameStateManager {
             const savedState = localStorage.getItem(GAME_STATE_KEY);
             if (!savedState) return false; // No saved state
 
-            const gameState = JSON.parse(savedState);
+            const payload = JSON.parse(savedState);
+            // Support older saves that stored state directly (back-compat)
+            const gameState = payload && payload.state ? payload.state : payload;
+            const version = payload && payload.version ? payload.version : 1;
+            // If version too new, avoid attempting to load incompatible structure
+            if (version > SAVE_VERSION) {
+                logger.warn('Saved game version is newer than supported. Skipping load.');
+                return false;
+            }
 
             // Restore player state
             if (gameState.player) {
@@ -245,5 +290,28 @@ export class GameStateManager {
 
     clearSavedState() {
         localStorage.removeItem(GAME_STATE_KEY);
+    }
+
+    // Start periodic autosave
+    startAutoSave() {
+        if (this._saveIntervalId) return;
+        this._saveIntervalId = setInterval(() => {
+            try {
+                this.saveGameStateImmediate();
+            } catch (e) {
+                logger.warn('Periodic save failed:', e);
+            }
+        }, this.saveIntervalMs);
+    }
+
+    stopAutoSave() {
+        if (this._saveIntervalId) {
+            clearInterval(this._saveIntervalId);
+            this._saveIntervalId = null;
+        }
+        if (this._saveTimer) {
+            clearTimeout(this._saveTimer);
+            this._saveTimer = null;
+        }
     }
 }

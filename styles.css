@@ -1350,26 +1350,91 @@ h1 {
     margin-bottom: 30px;
 }
 
-.game-over-box button {
+/* Shared restart button base - used both in the Game Over box and stats panel */
+.restart-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px; /* slightly increased gap with larger size */
     background: linear-gradient(135deg, #CD853F, #B8860B);
     border: 2px solid #8B4513;
     color: #3A2418;
-    padding: 12px 24px;
+    padding: 15px 27px; /* ~1.5x larger */
     font-family: 'Cinzel', serif;
-    font-size: 1.1em;
+    font-size: 1.575em; /* ~1.5x of 1.05em */
     font-weight: 700;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
-    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+    box-shadow: 0 8px 20px rgba(139, 69, 19, 0.32);
+    line-height: 1; /* keep icon and text vertically tight */
 }
 
-.game-over-box button:hover {
+/* Specific styling when the restart button appears inside the game-over box */
+.game-over-box .restart-button {
+    padding: 21px 33px; /* ~1.5x of previous game-over padding */
+    font-size: 1.725em; /* ~1.5x of 1.15em */
+}
+
+.restart-button:hover {
+    transform: translateY(-2px) scale(1.02);
     background: linear-gradient(135deg, #B8860B, #CD853F);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5);
+    box-shadow: 0 10px 26px rgba(139, 69, 19, 0.45);
+}
+
+/* Keyboard-focus visible state for accessibility */
+.restart-button:focus-visible {
+    outline: 3px solid rgba(255, 223, 160, 0.9);
+    outline-offset: 3px;
+}
+
+/* Icon inside restart buttons */
+.restart-btn-icon, .restart-icon {
+    width: 42px; /* ~1.5x larger */
+    height: 42px;
+    flex: 0 0 42px;
+}
+
+/* Smaller variant used in the top-left stats panel; keep prior dimensions but inherit base visuals */
+.stats-restart-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    background: linear-gradient(135deg, #CD853F, #B8860B);
+    border: 2px solid #8B4513;
+    color: #3A2418;
+    padding: 18px 36px; /* 1.5x of 12px 24px */
+    font-family: 'Cinzel', serif;
+    font-size: 1.575em; /* ~1.5x of 1.05em (from .restart-button) */
+    font-weight: 700;
+    border-radius: 12px; /* 1.5x of 8px */
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 6px 18px rgba(139, 69, 19, 0.3); /* 1.5x of 4px/12px */
+    touch-action: manipulation;
+    line-height: 1;
+}
+.stats-restart-button:hover {
+    transform: translateY(-3px) scale(1.02); /* 1.5x of -2px */
+    background: linear-gradient(135deg, #B8860B, #CD853F);
+    box-shadow: 0 9px 24px rgba(139, 69, 19, 0.5); /* 1.5x of 6px/16px */
+}
+
+/* New styles for stats panel footer and divider */
+.stats-divider {
+    border: none;
+    border-top: 2px solid #e2cfa2a8;
+    margin: 12px 0;
+}
+
+.stats-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 4px;
 }
 
 /* Message Log Button */
@@ -1808,16 +1873,18 @@ h1 {
 }
 
 .stats-info {
-    display: flex;
-    flex-direction: column; /* Stack portrait and text vertically */
-    align-items: stretch; /* Stretch items to fill width */
-    gap: 8px;
-    text-align: left;
-    width: 100%;
-    box-sizing: border-box;
+    /* Container for dynamically-inserted stats content; no default rules required */
 }
 
+/* SVG icon inside the restart button */
+.restart-icon {
+    width: 32px;
+    height: 32px;
+}
+
+/* Ensure stats header is positioned to allow absolute child positioning */
 .stats-header {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -146,14 +146,36 @@ export class GameInitializer {
         this.game.uiManager.setupBarterHandlers();
 
         // Save game state before page unload
-        window.addEventListener('beforeunload', () => {
-            this.game.gameStateManager.saveGameState();
+        // Start periodic autosave and schedule debounced saves
+        if (this.game.gameStateManager && typeof this.game.gameStateManager.startAutoSave === 'function') {
+            this.game.gameStateManager.startAutoSave();
+        }
+
+        // Use pagehide (fires reliably on mobile & refresh) to flush save immediately
+        window.addEventListener('pagehide', () => {
+            if (this.game.gameStateManager && typeof this.game.gameStateManager.saveGameStateImmediate === 'function') {
+                this.game.gameStateManager.saveGameStateImmediate();
+            } else if (this.game.gameStateManager) {
+                // Fallback to scheduled save
+                this.game.gameStateManager.saveGameState();
+            }
         });
 
         // Save game state when page becomes hidden (user switches tabs/switches apps)
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
+            if (document.hidden && this.game.gameStateManager) {
                 this.game.gameStateManager.saveGameState();
+            }
+        });
+
+        // Detect cross-tab save events and notify the user (if UIManager supports notifications)
+        window.addEventListener('storage', (ev) => {
+            if (ev.key === null) return; // ignore clear events
+            if (ev.key === 'chress_game_state') {
+                // Another tab updated the save — optionally notify the player
+                if (this.game.uiManager && typeof this.game.uiManager.addMessageToLog === 'function') {
+                    this.game.uiManager.addMessageToLog('Game state updated in another tab. Your session will keep running with current state.');
+                }
             }
         });
 

@@ -87,8 +87,8 @@ export class TextureLoader {
                     console.warn('[TextureLoader] Shack image too small for 3x3 sprite sheet, rendering may fail:', `got ${img.width}x${img.height}, need >=48x48`);
                 }
             }
-            // Targeted matte removal for known assets that use a solid background
-            const keysWithMatte = new Set(['doodads/club', 'spear']);
+                    // Targeted matte removal for known assets that use a solid background
+                    const keysWithMatte = new Set(['doodads/club', 'spear', 'shovel', 'axe', 'hammer', 'bow']);
             if (keysWithMatte.has(key)) {
                 try {
                     const img = this.images[key];

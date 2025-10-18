@@ -55,7 +55,7 @@ export class PanelManager {
             const totalDiscoveries = this.game.player.getVisitedZones().size - this.game.player.getSpentDiscoveries();
             statsInfoContainer.innerHTML = `
                 <div class="stats-header">
-                <div class="stats-portrait-container">
+                    <div class="stats-portrait-container">
                         <img src="assets/protag/faceset.png" alt="Player Portrait" class="player-portrait">
                     </div>
                     <h2>CHALK</h2>
@@ -76,6 +76,10 @@ export class PanelManager {
                         </span>
                     </div>
                 </div>
+                <hr class="stats-divider">
+                <div class="stats-footer">
+                    <button id="stats-restart-button" class="stats-restart-button" title="Reset game" aria-label="Reset game">Reset</button>
+                </div>
             `;
 
             // Setup toggle handler after content is added
@@ -83,6 +87,41 @@ export class PanelManager {
 
             this.statsPanelOverlay.classList.add('show');
             this.statsPanelOpen = true;
+
+            // Add restart button handler for stats panel (top-left)
+            const statsRestartBtn = document.getElementById('stats-restart-button');
+            if (statsRestartBtn) {
+                // Shared restart action so both click and touchend use the same logic
+                const doRestart = (e) => {
+                    // Some events (touch) may not provide stopPropagation on the same object,
+                    // so defensively stop propagation here as well.
+                    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+                    if (confirm('Are you sure you want to restart the game? All progress will be lost.')) {
+                        this.hideStatsPanel();
+                        this.game.resetGame();
+                        // If the main loop is paused (e.g., on death), try to resume it
+                        if (typeof this.game.gameLoop === 'function') {
+                            try { this.game.gameLoop(); } catch (err) { /* non-fatal */ }
+                        }
+                    }
+                };
+
+                // Click handler for mouse/keyboard
+                statsRestartBtn.addEventListener('click', doRestart);
+
+                // Touch handlers to make single-tap work reliably on touch devices.
+                // Use touchend to trigger the action and prevent the overlay's touchend from firing.
+                statsRestartBtn.addEventListener('touchstart', (e) => {
+                    // Prevent default so the browser doesn't synthesize extra mouse events
+                    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+                    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+                }, { passive: false });
+
+                statsRestartBtn.addEventListener('touchend', (e) => {
+                    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+                    doRestart(e);
+                });
+            }
         }
     }
 

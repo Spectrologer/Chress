@@ -39,8 +39,13 @@ export const INPUT_CONSTANTS = {
     // Touch detection
     MIN_SWIPE_DISTANCE: 30,
     MAX_TAP_TIME: 300, // Maximum time for a tap (milliseconds)
-    // Tighter interval for double-tap detection to require closer taps
-    DOUBLE_TAP_TIME: 150,
+    // Time window for double-tap detection (ms). Raised from 150 to be
+    // more forgiving across browsers/hosts (GH Pages, mobile delays).
+    DOUBLE_TAP_TIME: 300,
+    // Pixel tolerance for double-tap detection. Sometimes subsequent
+    // taps fall on slightly different client coordinates due to
+    // devicePixelRatio / rounding; allow small movement to still count.
+    DOUBLE_TAP_PIXEL_TOLERANCE: 12,
 
     // Animation timing
     PATH_STEP_DELAY: 150, // ms between path steps
