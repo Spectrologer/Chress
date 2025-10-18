@@ -20,16 +20,93 @@ export class InputManager {
         this.lastTapClientX = null;
         this.lastTapClientY = null;
         this.tapTimeout = null;
-        this.autoUseNextExitReach = false;
+    // Marker for auto-using a transition when the player reaches a special tile.
+    // Can be null, 'exit' or 'port'.
+    this.autoUseNextTransition = null;
+        // Track last tile that produced a selection sound to avoid repeats while holding
+        this.lastHighlightedTile = { x: null, y: null };
     }
 
     setupControls() {
+        // Ensure the audio context is resumed on first user gesture (browsers block audio until user interaction)
+        this._audioResumed = false;
+        const _resumeAudioIfNeeded = () => {
+            if (this._audioResumed) return;
+            this._audioResumed = true;
+            try {
+                if (this.game && this.game.soundManager && typeof this.game.soundManager.resumeAudioContext === 'function') {
+                    this.game.soundManager.resumeAudioContext();
+                }
+            } catch (e) {}
+        };
         // Keyboard controls - attach to both window and document for cross-browser coverage
         window.addEventListener('keydown', (event) => {
+            _resumeAudioIfNeeded();
             this.handleKeyPress(event);
         });
         
         // Mouse controls for desktop (same as tap)
+        // Use mousedown/up to support press-and-hold feedback
+        this.game.canvas.addEventListener('mousedown', (event) => {
+            _resumeAudioIfNeeded();
+            // Show hold feedback immediately
+            const gridCoords = this.convertScreenToGrid(event.clientX, event.clientY);
+            try {
+                if (this.game && this.game.renderManager && typeof this.game.renderManager.startHoldFeedback === 'function') {
+                    this.game.renderManager.startHoldFeedback(gridCoords.x, gridCoords.y);
+                }
+                if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
+                    // Play bloop for initial press unless this tile contains an enemy;
+                    // enemy taps get a dedicated sound later and we don't want both.
+                    const enemyAtInitial = this.game.enemies.find(e => e.x === gridCoords.x && e.y === gridCoords.y && e.health > 0);
+                    if (!enemyAtInitial) {
+                        this.game.soundManager.playSound('bloop');
+                    }
+                    this.lastHighlightedTile.x = gridCoords.x;
+                    this.lastHighlightedTile.y = gridCoords.y;
+                }
+            } catch (e) {}
+
+            // Prepare for potential click if the user releases without moving
+            const onMouseMove = (ev) => {
+                // Update the hold feedback to follow the mouse while pressed
+                try {
+                    const gc = this.convertScreenToGrid(ev.clientX, ev.clientY);
+                    if (this.game && this.game.renderManager && typeof this.game.renderManager.startHoldFeedback === 'function') {
+                        this.game.renderManager.startHoldFeedback(gc.x, gc.y);
+                    }
+                    // Play bloop if we've moved onto a new tile (skip if the
+                    // new tile contains an enemy - enemy taps get a different sound)
+                    if (this.lastHighlightedTile.x !== gc.x || this.lastHighlightedTile.y !== gc.y) {
+                        if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
+                            const enemyOnGc = this.game.enemies.find(e => e.x === gc.x && e.y === gc.y && e.health > 0);
+                            if (!enemyOnGc) this.game.soundManager.playSound('bloop');
+                        }
+                        this.lastHighlightedTile.x = gc.x;
+                        this.lastHighlightedTile.y = gc.y;
+                    }
+                } catch (e) {}
+            };
+
+            const onMouseUp = (ev) => {
+                // Clear hold feedback and treat as a click
+                try {
+                    if (this.game && this.game.renderManager && typeof this.game.renderManager.clearFeedback === 'function') {
+                        this.game.renderManager.clearFeedback();
+                    }
+                } catch (e) {}
+                this.lastHighlightedTile.x = null;
+                this.lastHighlightedTile.y = null;
+                this.handleTap(ev.clientX, ev.clientY);
+                window.removeEventListener('mouseup', onMouseUp);
+                window.removeEventListener('mousemove', onMouseMove);
+            };
+
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+        });
+
+        // Also support simple click (fallback)
         this.game.canvas.addEventListener('click', (event) => {
             this.handleTap(event.clientX, event.clientY);
         });
@@ -47,10 +124,28 @@ export class InputManager {
         this.game.canvas.addEventListener('touchstart', (e) => {
             // preventDefault is important to stop double-tap-to-zoom and native gestures
             e.preventDefault();
+            // Resume audio on first user gesture
+            try { if (typeof _resumeAudioIfNeeded === 'function') _resumeAudioIfNeeded(); } catch (ex) {}
             const touch = e.touches[0];
             touchStartX = touch.clientX;
             touchStartY = touch.clientY;
             touchStartTime = Date.now();
+
+            // Start hold feedback on touch
+            try {
+                const gridCoords = this.convertScreenToGrid(touch.clientX, touch.clientY);
+                if (this.game && this.game.renderManager && typeof this.game.renderManager.startHoldFeedback === 'function') {
+                    this.game.renderManager.startHoldFeedback(gridCoords.x, gridCoords.y);
+                }
+                if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
+                    const enemyAtInitial = this.game.enemies.find(e => e.x === gridCoords.x && e.y === gridCoords.y && e.health > 0);
+                    if (!enemyAtInitial) {
+                        this.game.soundManager.playSound('bloop');
+                    }
+                    this.lastHighlightedTile.x = gridCoords.x;
+                    this.lastHighlightedTile.y = gridCoords.y;
+                }
+            } catch (e) {}
         });
         this.game.canvas.addEventListener('touchend', (e) => {
             // preventDefault to avoid triggering browser gestures
@@ -63,10 +158,24 @@ export class InputManager {
 
             // Check if this was a tap (short duration, small movement)
             if (touchDuration < INPUT_CONSTANTS.MAX_TAP_TIME && distance < INPUT_CONSTANTS.MIN_SWIPE_DISTANCE) {
-                // Handle tap - convert to grid coordinates and move
+                // Short tap: handle normally
+                try {
+                    if (this.game && this.game.renderManager && typeof this.game.renderManager.clearFeedback === 'function') {
+                        this.game.renderManager.clearFeedback();
+                    }
+                } catch (e) {}
                 this.handleTap(touch.clientX, touch.clientY);
             }
-            // Otherwise, check if it was a swipe gesture
+            // If the user held (long press) and then released (possibly after dragging), treat as a tap at release
+            else if (touchDuration >= INPUT_CONSTANTS.MAX_TAP_TIME) {
+                try {
+                    if (this.game && this.game.renderManager && typeof this.game.renderManager.clearFeedback === 'function') {
+                        this.game.renderManager.clearFeedback();
+                    }
+                } catch (e) {}
+                this.handleTap(touch.clientX, touch.clientY);
+            }
+            // Otherwise, check if it was a quick swipe gesture (short time but dragged fast)
             else if (distance > INPUT_CONSTANTS.MIN_SWIPE_DISTANCE) {
                 let direction = '';
 
@@ -86,7 +195,35 @@ export class InputManager {
         // Prevent default touch behaviors (non-passive)
         this.game.canvas.addEventListener('touchmove', (e) => {
             e.preventDefault();
+            // Update hold feedback to the tile under the finger so dragging highlights tiles
+            const touch = e.touches[0];
+            if (!touch) return;
+            try {
+                const gc = this.convertScreenToGrid(touch.clientX, touch.clientY);
+                if (this.game && this.game.renderManager && typeof this.game.renderManager.startHoldFeedback === 'function') {
+                    this.game.renderManager.startHoldFeedback(gc.x, gc.y);
+                }
+                if (this.lastHighlightedTile.x !== gc.x || this.lastHighlightedTile.y !== gc.y) {
+                    if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
+                        const enemyOnGc = this.game.enemies.find(e => e.x === gc.x && e.y === gc.y && e.health > 0);
+                        if (!enemyOnGc) this.game.soundManager.playSound('bloop');
+                    }
+                    this.lastHighlightedTile.x = gc.x;
+                    this.lastHighlightedTile.y = gc.y;
+                }
+            } catch (err) {}
         }, { passive: false });
+
+        // Ensure we clear feedback if touch is cancelled (e.g. system gesture)
+        this.game.canvas.addEventListener('touchcancel', (e) => {
+            try {
+                if (this.game && this.game.renderManager && typeof this.game.renderManager.clearFeedback === 'function') {
+                    this.game.renderManager.clearFeedback();
+                }
+                this.lastHighlightedTile.x = null;
+                this.lastHighlightedTile.y = null;
+            } catch (err) {}
+        });
     }
 
     // Convert screen coordinates to grid coordinates
@@ -217,6 +354,19 @@ export class InputManager {
         // Calculate grid coordinates first
         const gridCoords = this.convertScreenToGrid(screenX, screenY);
 
+        // Show immediate tap feedback on the render manager (visual depression/highlight)
+        try {
+            if (this.game && this.game.renderManager && typeof this.game.renderManager.showTapFeedback === 'function') {
+                this.game.renderManager.showTapFeedback(gridCoords.x, gridCoords.y);
+            }
+        } catch (e) {
+            // Non-fatal: rendering feedback is best-effort
+        }
+
+        // NOTE: selection sound (bloop or double_tap) is played after we
+        // detect whether this is a double-tap. This avoids playing the
+        // same generic sound for both taps when a double-tap occurs.
+
         // Debug: Log comprehensive tile information on click
         logger.log(`Tile clicked at (${gridCoords.x}, ${gridCoords.y})`);
         const clickedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
@@ -262,22 +412,48 @@ export class InputManager {
     // Use client coordinates to make double-tap detection robust
     // across devices and hosting environments (GH Pages etc.).
     const isDoubleTap = this.handleDoubleTapLogic(gridCoords, screenX, screenY);
+        // Play a subtler, distinct sound for double-tap. Single taps get the
+        // regular (already-subdued) 'bloop'. If tapping an enemy tile, play
+        // a different feedback sound so the player gets clearer audio cues.
+        try {
+            if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
+                // If the tapped tile contains an enemy, always play the enemy tap sound
+                if (enemyAtTile) {
+                    this.game.soundManager.playSound('tap_enemy');
+                } else if (isDoubleTap) {
+                    this.game.soundManager.playSound('double_tap');
+                } else {
+                    this.game.soundManager.playSound('bloop');
+                }
+            }
+        } catch (e) {}
         const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
 
-        // Handle double tap on exit tiles
-        if (isDoubleTap && tile === TILE_TYPES.EXIT) {
+        // Handle double tap on exit or port tiles
+        if (isDoubleTap && (tile === TILE_TYPES.EXIT || tile === TILE_TYPES.PORT)) {
             if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
-                // Double tap on current exit: immediately use (allowed even during path execution)
-                this.handleExitTap(gridCoords.x, gridCoords.y);
+                // Double tap on current exit/port: immediately use (allowed even during path execution)
+                if (tile === TILE_TYPES.EXIT) {
+                    this.handleExitTap(gridCoords.x, gridCoords.y);
+                } else {
+                    // PORT transition handled by ZoneTransitionManager
+                    try {
+                        this.game.interactionManager.zoneManager.handlePortTransition();
+                    } catch (e) {}
+                }
                 return;
             } else {
-                // Double tap on distant exit: move there and auto-use upon reaching
-                this.autoUseNextExitReach = true;
+                // Double tap on distant exit/port: move there and auto-use upon reaching
+                this.autoUseNextTransition = (tile === TILE_TYPES.EXIT) ? 'exit' : 'port';
             }
         }
 
         if (isDoubleTap) {
             this.handleDoubleTap(gridCoords);
+            // We've handled the double-tap by starting movement/interaction.
+            // Return early so the cancellation checks below don't immediately
+            // cancel the path we just started.
+            return;
         } else {
             this.tapTimeout = setTimeout(() => this.executeMovementOrInteraction(gridCoords), INPUT_CONSTANTS.DOUBLE_TAP_TIME);
         }
@@ -303,12 +479,18 @@ export class InputManager {
         const playerPos = this.game.player.getPosition();
         const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
 
-        if (tile === TILE_TYPES.EXIT) {
+        if (tile === TILE_TYPES.EXIT || tile === TILE_TYPES.PORT) {
             if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
-                this.handleExitTap(gridCoords.x, gridCoords.y);
+                if (tile === TILE_TYPES.EXIT) {
+                    this.handleExitTap(gridCoords.x, gridCoords.y);
+                } else {
+                    try {
+                        this.game.interactionManager.zoneManager.handlePortTransition();
+                    } catch (e) {}
+                }
             } else {
-                this.autoUseNextExitReach = true;
-                this.executeMovementOrInteraction(gridCoords); // Path to the exit
+                this.autoUseNextTransition = (tile === TILE_TYPES.EXIT) ? 'exit' : 'port';
+                this.executeMovementOrInteraction(gridCoords); // Path to the exit/port
             }
         } else {
             this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
@@ -354,7 +536,7 @@ export class InputManager {
 
         if (direction) {
             // Simulate the key press to trigger zone transition
-            this.handleKeyPress({ key: direction, preventDefault: () => {} });
+            this.handleKeyPress({ key: direction, preventDefault: () => {}, _synthetic: true });
         }
     }
 
@@ -367,58 +549,98 @@ export class InputManager {
 
         this.isExecutingPath = true;
         this.cancelPath = false;
+        // Hold reference to any animation sequence used for path execution so it
+        // can be cancelled cleanly by cancelPathExecution.
+        this.currentPathSequence = null;
 
         // Check if verbose animations are enabled
         if (this.game.player.stats.verbosePathAnimations) {
-            // Verbose mode: show step-by-step movement with delays that wait for lift animation
-            let stepIndex = 0;
+            // Verbose mode: build a single animation sequence to step through the path
+            // This prevents overlapping sequences and makes cancellation deterministic.
+            const seq = this.game.animationScheduler.createSequence();
+            this.currentPathSequence = seq;
 
-            const executeNextStep = () => {
-                if (stepIndex >= path.length || this.cancelPath) {
-                    if (this.cancelPath) {
-                        this.cancelPath = false;
-                        this.isExecutingPath = false;
-                        return;
-                    }
+            for (let i = 0; i < path.length; i++) {
+                const stepKey = path[i];
+                seq.then(() => {
+                    // If sequence was cancelled, short-circuit
+                    if (this.cancelPath) return;
+                    this.handleKeyPress({ key: stepKey, preventDefault: () => {}, _synthetic: true });
+                }).wait(INPUT_CONSTANTS.LEGACY_PATH_DELAY);
+            }
 
+            // Finalize sequence: handle end-of-path state
+            seq.then(() => {
+                if (this.cancelPath) {
+                    this.cancelPath = false;
                     this.isExecutingPath = false;
-
-                    // Check if player ended up on an exit tile after path completion
-                    const playerPos = this.game.player.getPosition();
-                    if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
-                        if (this.autoUseNextExitReach) {
-                            this.handleExitTap(playerPos.x, playerPos.y);
-                            this.autoUseNextExitReach = false;
-                        }
-                    }
-
-                    // Trigger interaction if set (for double tap on interactive tiles)
-                    if (this.game.player.interactOnReach) {
-                        const target = this.game.player.interactOnReach;
-                        this.game.player.clearInteractOnReach();
-                        this.game.interactionManager.triggerInteractAt(target);
-                    }
                     return;
                 }
 
-                // Execute the next step
-                this.handleKeyPress({ key: path[stepIndex], preventDefault: () => {} });
-                stepIndex++;
+                this.isExecutingPath = false;
 
-                // Wait for the lift animation to complete (15 frames) plus a bit extra for visibility
-                this.game.animationScheduler.createSequence()
-                    .wait(INPUT_CONSTANTS.LEGACY_PATH_DELAY) // Reduced from 250ms for faster pathing
-                    .then(() => {
-                        executeNextStep(); // Continue to next step
-                    })
-                    .start();
-            };
+                // Check if player ended up on an exit tile after path completion
+                const playerPos = this.game.player.getPosition();
+                if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
+                    if (this.autoUseNextTransition === 'exit') {
+                        this.handleExitTap(playerPos.x, playerPos.y);
+                        this.autoUseNextTransition = null;
+                    }
+                } else if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.PORT) {
+                    if (this.autoUseNextTransition === 'port') {
+                        try {
+                            this.game.interactionManager.zoneManager.handlePortTransition();
+                        } catch (e) {}
+                        this.autoUseNextTransition = null;
+                    }
+                }
 
-            executeNextStep(); // Start the sequence
+                // Trigger interaction if set (for double tap on interactive tiles)
+                if (this.game.player.interactOnReach) {
+                    const target = this.game.player.interactOnReach;
+                    this.game.player.clearInteractOnReach();
+                    this.game.interactionManager.triggerInteractAt(target);
+                }
+            });
+
+            // Start the sequence and clear reference when complete. The real
+            // AnimationSequence.start() returns a Promise; the test mock does
+            // not, so handle both cases by using a fallback timer when start()
+            // doesn't return a thenable.
+            const startResult = seq.start();
+            // Compute a safe fallback duration (path steps * delay + margin)
+            const fallbackDelay = Math.max(50, path.length * INPUT_CONSTANTS.LEGACY_PATH_DELAY + 50);
+            if (startResult && typeof startResult.then === 'function') {
+                startResult.then(() => {
+                    if (this.currentPathSequence && this.currentPathSequence.id === seq.id) {
+                        this.currentPathSequence = null;
+                    }
+                    if (this.currentPathSequenceFallback) {
+                        clearTimeout(this.currentPathSequenceFallback);
+                        this.currentPathSequenceFallback = null;
+                    }
+                }).catch(() => {
+                    if (this.currentPathSequence && this.currentPathSequence.id === seq.id) {
+                        this.currentPathSequence = null;
+                    }
+                    if (this.currentPathSequenceFallback) {
+                        clearTimeout(this.currentPathSequenceFallback);
+                        this.currentPathSequenceFallback = null;
+                    }
+                });
+            } else {
+                // Non-promise start: schedule fallback to clear reference
+                this.currentPathSequenceFallback = setTimeout(() => {
+                    if (this.currentPathSequence && this.currentPathSequence.id === seq.id) {
+                        this.currentPathSequence = null;
+                    }
+                    this.currentPathSequenceFallback = null;
+                }, fallbackDelay);
+            }
         } else {
             // Instant mode: execute all path steps immediately
             for (let i = 0; i < path.length && !this.cancelPath; i++) {
-                this.handleKeyPress({ key: path[i], preventDefault: () => {} });
+                this.handleKeyPress({ key: path[i], preventDefault: () => {}, _synthetic: true });
             }
 
             this.isExecutingPath = false;
@@ -445,7 +667,19 @@ export class InputManager {
     cancelPathExecution() {
         this.cancelPath = true;
         this.isExecutingPath = false;
-        // The AnimationScheduler will handle cancelling the sequence
+        // Cancel any active path sequence created for verbose pathing
+        if (this.currentPathSequence) {
+            try {
+                this.game.animationScheduler.cancelSequence(this.currentPathSequence.id);
+            } catch (e) {
+                // Best-effort: if cancellation fails, fall back to flagging cancelPath
+            }
+            this.currentPathSequence = null;
+        }
+        if (this.currentPathSequenceFallback) {
+            clearTimeout(this.currentPathSequenceFallback);
+            this.currentPathSequenceFallback = null;
+        }
     }
 
     // Check if a tile at (x,y) is interactive (has interaction logic but may not be walkable)
@@ -659,6 +893,21 @@ export class InputManager {
                 return;
         }
         event.preventDefault();
+
+        // Show tap/press feedback on the destination tile to mirror touch behavior
+        // Skip visual/audio feedback for synthetic events (programmatic movement)
+        try {
+            if (!event._synthetic) {
+                if (this.game && this.game.renderManager && typeof this.game.renderManager.showTapFeedback === 'function') {
+                    this.game.renderManager.showTapFeedback(newX, newY);
+                }
+                if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
+                    this.game.soundManager.playSound('bloop');
+                }
+            }
+        } catch (e) {
+            // Best-effort: rendering feedback should not block input handling
+        }
 
         // Check if player is trying to move onto an enemy tile
                 const enemyAtTarget = this.game.enemies.find(enemy => enemy.x === newX && enemy.y === newY);

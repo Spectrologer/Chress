@@ -217,6 +217,28 @@ describe('InputManager', () => {
 
       expect(handleExitTapSpy).toHaveBeenCalledWith(2, 2);
     });
+
+    test('handles port double tap', () => {
+      mockGame.grid[2][2] = TILE_TYPES.PORT;
+      mockPlayer.getPosition = jest.fn().mockReturnValue({ x: 2, y: 2 });
+      mockGame.canvas.width = 576;
+      mockGame.canvas.height = 576;
+      mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
+        left: 0, top: 0, width: 576, height: 576
+      });
+
+      if (!mockGame.interactionManager.zoneManager) {
+        mockGame.interactionManager.zoneManager = { handlePortTransition: jest.fn() };
+      }
+      const handlePortSpy = jest.spyOn(mockGame.interactionManager.zoneManager, 'handlePortTransition');
+
+      // First tap (when player is at the port)
+      inputManager.handleTap(160, 160);
+      // Second tap (double tap on same port)
+      inputManager.handleTap(160, 160);
+
+      expect(handlePortSpy).toHaveBeenCalled();
+    });
   });
 
   describe('handleExitTap', () => {
@@ -226,7 +248,7 @@ describe('InputManager', () => {
 
       inputManager.handleExitTap(0, 1);
 
-      expect(handleKeyPressSpy).toHaveBeenCalledWith({ key: 'arrowleft', preventDefault: expect.any(Function) });
+  expect(handleKeyPressSpy).toHaveBeenCalledWith(expect.objectContaining({ key: 'arrowleft', preventDefault: expect.any(Function) }));
     });
   });
 
@@ -290,10 +312,10 @@ describe('InputManager', () => {
       inputManager.executePath(['arrowright', 'arrowdown']);
 
       expect(inputManager.isExecutingPath).toBe(true);
-      expect(handleKeyPressSpy).toHaveBeenCalledWith({ key: 'arrowright', preventDefault: expect.any(Function) });
+  expect(handleKeyPressSpy).toHaveBeenCalledWith(expect.objectContaining({ key: 'arrowright', preventDefault: expect.any(Function) }));
 
       jest.advanceTimersByTime(150);
-      expect(handleKeyPressSpy).toHaveBeenCalledWith({ key: 'arrowright', preventDefault: expect.any(Function) });
+  expect(handleKeyPressSpy).toHaveBeenCalledWith(expect.objectContaining({ key: 'arrowright', preventDefault: expect.any(Function) }));
 
       jest.advanceTimersByTime(150);
       // Note: The path may still be executing due to animation timing, so we check after enough time
@@ -309,6 +331,96 @@ describe('InputManager', () => {
 
       inputManager.executePath(['arrowup']);
       expect(inputManager.isExecutingPath).toBe(true);
+    });
+
+    test('works with Promise-based AnimationSequence and cleans up sequence reference', async () => {
+      jest.useFakeTimers();
+
+      // Provide a Promise-returning sequence implementation to mimic real AnimationScheduler
+      const actions = [];
+      const seq = {
+        id: 'promise-seq',
+        actions: [],
+        then(cb) { this.actions.push({ type: 'then', cb }); return this; },
+        wait(ms) { this.actions.push({ type: 'wait', ms }); return this; },
+        start() {
+          return new Promise((resolve) => {
+            const run = (i) => {
+              if (i >= this.actions.length) { resolve(); return; }
+              const a = this.actions[i];
+              if (a.type === 'then') {
+                a.cb();
+                run(i + 1);
+              } else if (a.type === 'wait') {
+                setTimeout(() => run(i + 1), a.ms);
+              }
+            };
+            run(0);
+          });
+        }
+      };
+
+      mockGame.animationScheduler.createSequence = jest.fn(() => seq);
+      mockGame.animationScheduler.cancelSequence = jest.fn((id) => {
+        // no-op for this test
+      });
+
+      const handleKeyPressSpy = jest.spyOn(inputManager, 'handleKeyPress');
+
+      inputManager.executePath(['arrowright', 'arrowdown']);
+
+      expect(inputManager.isExecutingPath).toBe(true);
+      // First step's then() should have been invoked synchronously
+  expect(handleKeyPressSpy).toHaveBeenCalledWith(expect.objectContaining({ key: 'arrowright', preventDefault: expect.any(Function) }));
+
+      // Advance timers by one LEGACY_PATH_DELAY to allow the next step to run
+      jest.advanceTimersByTime(INPUT_CONSTANTS.LEGACY_PATH_DELAY + 10);
+
+      // Second step should run
+  expect(handleKeyPressSpy).toHaveBeenCalledWith(expect.objectContaining({ key: 'arrowdown', preventDefault: expect.any(Function) }));
+
+      // Advance timers to complete sequence
+      jest.advanceTimersByTime(INPUT_CONSTANTS.LEGACY_PATH_DELAY + 50);
+
+      // Wait for any pending promise microtasks
+      await Promise.resolve();
+
+      expect(inputManager.isExecutingPath).toBe(false);
+      expect(inputManager.currentPathSequence).toBeNull();
+    });
+
+    test('cancelPathExecution cancels active AnimationSequence', () => {
+      jest.useFakeTimers();
+
+      const seq = {
+        id: 'to-cancel',
+        actions: [],
+        then(cb) { this.actions.push({ type: 'then', cb }); return this; },
+        wait(ms) { this.actions.push({ type: 'wait', ms }); return this; },
+        start() {
+          // Non-promise start (legacy)
+          this.executeNext = () => {
+            for (const a of this.actions) {
+              if (a.type === 'then') a.cb();
+            }
+          };
+          this.executeNext();
+        }
+      };
+
+      mockGame.animationScheduler.createSequence = jest.fn(() => seq);
+      mockGame.animationScheduler.cancelSequence = jest.fn();
+
+      inputManager.executePath(['arrowright']);
+
+      // Sequence reference should be set
+      expect(inputManager.currentPathSequence).toBe(seq);
+
+      inputManager.cancelPathExecution();
+
+      expect(mockGame.animationScheduler.cancelSequence).toHaveBeenCalledWith(seq.id);
+      expect(inputManager.currentPathSequence).toBeNull();
+      expect(inputManager.currentPathSequenceFallback).toBeNull();
     });
   });
 });

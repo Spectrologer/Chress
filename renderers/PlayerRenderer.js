@@ -1,5 +1,6 @@
-import { GRID_SIZE, TILE_SIZE, TILE_TYPES } from '../core/constants.js';
+import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '../core/constants.js';
 import { MultiTileHandler } from './MultiTileHandler.js';
+import { RendererUtils } from './RendererUtils.js';
 
 export class PlayerRenderer {
     constructor(game) {
@@ -21,6 +22,8 @@ export class PlayerRenderer {
 
     drawPlayerSprite() {
         const pos = this.game.player.getPosition();
+        const player = this.game.player;
+        const anim = player.animations;
         let spriteKey = 'default'; // Default idle sprite
         if (this.game.player.animations.attackAnimation > 0) {
             spriteKey = 'whack';
@@ -30,22 +33,144 @@ export class PlayerRenderer {
             spriteKey = 'dead';
         }
         const playerImage = this.game.textureManager.getImage(spriteKey);
+        // Compute pixel position. If a lift animation is active we interpolate from last position -> current position
+        let pixelXBase, pixelYBase;
+        if (anim.liftFrames > 0 && typeof player.lastX !== 'undefined' && typeof player.lastY !== 'undefined') {
+            const remaining = anim.liftFrames; // remaining frames
+            const totalFrames = ANIMATION_CONSTANTS.LIFT_FRAMES || 15;
+            const progress = 1 - (remaining / totalFrames); // progress 0..1
+            // Use lastX/lastY to interpolate smooth movement between tiles
+            const startX = player.lastX;
+            const startY = player.lastY;
+            const endX = player.x;
+            const endY = player.y;
+            pixelXBase = (startX + (endX - startX) * progress) * TILE_SIZE + anim.bumpOffsetX;
+            pixelYBase = (startY + (endY - startY) * progress) * TILE_SIZE + anim.bumpOffsetY + anim.liftOffsetY;
+        } else {
+            pixelXBase = pos.x * TILE_SIZE + anim.bumpOffsetX;
+            pixelYBase = pos.y * TILE_SIZE + anim.bumpOffsetY + anim.liftOffsetY;
+        }
+
         if (playerImage && playerImage.complete) {
             this.ctx.drawImage(
                 playerImage,
-                pos.x * TILE_SIZE + this.game.player.animations.bumpOffsetX,
-                pos.y * TILE_SIZE + this.game.player.animations.bumpOffsetY + this.game.player.animations.liftOffsetY,
+                pixelXBase,
+                pixelYBase,
                 TILE_SIZE,
                 TILE_SIZE
             );
         } else {
             this.ctx.fillStyle = '#ff4444';
             this.ctx.fillRect(
-                pos.x * TILE_SIZE + this.game.player.animations.bumpOffsetX + 2,
-                pos.y * TILE_SIZE + this.game.player.animations.bumpOffsetY + 2,
+                pixelXBase + 2,
+                pixelYBase + 2,
                 TILE_SIZE - 4,
                 TILE_SIZE - 4
             );
+        }
+        // Draw bow shot animation if present on player.animations
+        const bowAnim = player.animations.bowShot;
+        if (bowAnim && bowAnim.frames > 0) {
+            const bowImage = this.textureManager.getImage('bow');
+            const progress = 1 - (bowAnim.frames / bowAnim.totalFrames);
+            // Stronger scale and a quick outward/back motion
+            const power = bowAnim.power || 1.2;
+            const scale = 0.6 * power; // base 60% of tile, multiplied by power
+            const floatOffset = Math.sin(progress * Math.PI) * 8; // small up/down for dramatic effect
+            const rotateAngle = -Math.PI / 2; // -90deg counter-clockwise
+
+            this.ctx.save();
+            // translate to center of player sprite, then apply float and extra upward offset
+            const centerX = pixelXBase + TILE_SIZE / 2;
+            const centerY = pixelYBase + TILE_SIZE / 2 + floatOffset - 6;
+            this.ctx.translate(centerX, centerY);
+            this.ctx.rotate(rotateAngle);
+
+            const bw = (bowImage?.width || TILE_SIZE) * scale;
+            const bh = (bowImage?.height || TILE_SIZE) * scale;
+
+            // Slight pulsing based on progress
+            const pulse = 1 + Math.sin(progress * Math.PI * 2) * 0.08 * (power - 1);
+
+            if (bowImage && bowImage.complete) {
+                this.ctx.drawImage(bowImage, -bw / 2 * pulse, -bh / 2 * pulse, bw * pulse, bh * pulse);
+            } else {
+                // Fallback: draw a rotated rectangle to represent the bow
+                this.ctx.fillStyle = '#8B4513';
+                this.ctx.fillRect(-TILE_SIZE * 0.3, -TILE_SIZE * 0.05, TILE_SIZE * 0.6, TILE_SIZE * 0.1);
+            }
+            this.ctx.restore();
+
+            // decrement frames here as a safeguard (animations update should normally handle this)
+            // but only if update() isn't called elsewhere synchronously
+            // player.animations.bowShot.frames = Math.max(0, player.animations.bowShot.frames - 0);
+        }
+
+        // Draw pickup hover (icon floating above player's head)
+        const pickup = player.animations.pickupHover;
+        if (pickup && pickup.imageKey) {
+            const img = this.textureManager.getImage(pickup.imageKey);
+            // Compute progress 0..1 where 0 is start, 1 is end
+            const progress = 1 - (pickup.frames / pickup.totalFrames);
+            // Vertical float: start near top of head and move up a bit.
+            // Use a slower, gentler float so the player has time to read the icon.
+            const floatY = -12 - (Math.sin(progress * Math.PI * 0.6) * 12); // pixels above player
+            // Slower fade so the pickup stays visible longer
+            const alpha = Math.max(0, 1 - progress * 0.9);
+
+            this.ctx.save();
+            this.ctx.globalAlpha = alpha;
+
+            // Use pixel-preserving scaling. For bow, match ItemTileRenderer's approach (scale by max dimension)
+            // Make pickup icons larger so they are easier to read.
+            const maxSize = TILE_SIZE * 0.8;
+            let drawW = Math.round(maxSize);
+            let drawH = Math.round(maxSize);
+            if (img && img.complete && typeof img.width === 'number' && typeof img.height === 'number') {
+                if (pickup.imageKey === 'bow') {
+                    // For bows, match ItemTileRenderer but make it slightly larger for the pickup hover
+                    const maxDim = Math.max(img.width, img.height);
+                    const scale = (TILE_SIZE * 0.95) / maxDim; // 95% of tile for bows
+                    drawW = Math.round(img.width * scale);
+                    drawH = Math.round(img.height * scale);
+                } else {
+                    const dims = RendererUtils.calculateScaledDimensions(img, maxSize);
+                    drawW = dims.width;
+                    drawH = dims.height;
+                }
+            }
+
+            const iconX = pixelXBase + (TILE_SIZE - drawW) / 2;
+            const iconY = pixelYBase + floatY - drawH; // place above head
+
+            if (img && img.complete) {
+                if (pickup.imageKey === 'bow') {
+                    // Rotate -90deg around the icon center and draw using scaled dimensions
+                    this.ctx.save();
+                    const cx = iconX + drawW / 2;
+                    const cy = iconY + drawH / 2;
+                    this.ctx.translate(cx, cy);
+                    this.ctx.rotate(-Math.PI / 2);
+                    this.ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+                    this.ctx.restore();
+                } else {
+                    this.ctx.drawImage(img, iconX, iconY, drawW, drawH);
+                }
+            } else {
+                // Fallback: draw a simple circle with letter
+                this.ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                this.ctx.beginPath();
+                this.ctx.arc(iconX + drawW / 2, iconY + drawH / 2, Math.max(drawW, drawH) / 2, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.fillStyle = '#000';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.font = `${Math.floor(Math.max(drawW, drawH) * 0.5)}px sans-serif`;
+                const label = (pickup.type === 'food' ? '🍞' : (pickup.type ? pickup.type[0].toUpperCase() : '?'));
+                this.ctx.fillText(label, iconX + drawW / 2, iconY + drawH / 2);
+            }
+
+            this.ctx.restore();
         }
     }
 

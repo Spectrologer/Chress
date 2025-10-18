@@ -6,8 +6,10 @@ export class EnemyLineOfSight {
 
         if (dx !== dy) return false; // Not on diagonal
 
-        const sameDiagonal1 = (playerX - enemy.x) === (playerY - enemy.y);
-        const sameDiagonal2 = (playerX - enemy.x) === -(playerY - enemy.y);
+        const relX = playerX - enemy.x;
+        const relY = playerY - enemy.y;
+        const sameDiagonal1 = relX === relY; // down-right or up-left
+        const sameDiagonal2 = relX === -relY; // up-right or down-left
 
         if (!sameDiagonal1 && !sameDiagonal2) return false;
 
@@ -15,21 +17,13 @@ export class EnemyLineOfSight {
         const stepX = playerX > enemy.x ? 1 : -1;
         const stepY = playerY > enemy.y ? 1 : -1;
 
-        if (sameDiagonal1) {
-            // Step diagonally
-            for (let i = 1; i < dx; i++) {
-                const x = enemy.x + i * stepX;
-                const y = enemy.y + i * stepY;
-                if (!enemy.isWalkable(x, y, grid)) return false;
-            }
-        } else {
-            // Other diagonal
-            const stepYAlt = playerY > enemy.y ? -1 : -1;
-            for (let i = 1; i < dx; i++) {
-                const x = enemy.x + i * stepX;
-                const y = enemy.y + i * stepYAlt;
-                if (!enemy.isWalkable(x, y, grid)) return false;
-            }
+        // Determine step direction and check every tile along the diagonal
+        const stepXFinal = playerX > enemy.x ? 1 : -1;
+        const stepYFinal = playerY > enemy.y ? 1 : -1;
+        for (let i = 1; i < dx; i++) {
+            const x = enemy.x + i * stepXFinal;
+            const y = enemy.y + i * stepYFinal;
+            if (!enemy.isWalkable(x, y, grid)) return false;
         }
 
         return true;

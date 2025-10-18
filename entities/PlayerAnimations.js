@@ -1,3 +1,5 @@
+import { ANIMATION_CONSTANTS } from '../core/constants.js';
+
 export class PlayerAnimations {
     constructor(player) {
         this.player = player;
@@ -14,21 +16,24 @@ export class PlayerAnimations {
         this.bumpFrames = 0;
         this.liftOffsetY = 0;
         this.liftFrames = 0;
+        this.pickupHover = null; // { imageKey, frames, totalFrames, type, foodType }
+    this.bowShot = null; // { frames, totalFrames, power }
     }
 
     startBump(deltaX, deltaY) {
+        // Keep consistency with enemies (stronger visual bump)
         this.bumpOffsetX = deltaX * 24;
         this.bumpOffsetY = deltaY * 24;
-        this.bumpFrames = 15;
+        this.bumpFrames = ANIMATION_CONSTANTS.BUMP_ANIMATION_FRAMES;
     }
 
     startAttackAnimation() {
-        this.attackAnimation = 20;
+        this.attackAnimation = ANIMATION_CONSTANTS.ATTACK_ANIMATION_FRAMES;
         window.soundManager?.playSound('attack');
     }
 
     startActionAnimation() {
-        this.actionAnimation = 15;
+        this.actionAnimation = ANIMATION_CONSTANTS.ATTACK_ANIMATION_FRAMES;
     }
 
     startSmokeAnimation() {
@@ -38,9 +43,7 @@ export class PlayerAnimations {
     }
 
     startSplodeAnimation(x, y) {
-        // Make the splode animation slightly faster than the previous 48 frames but slower than original 16.
-        // frame represents remaining frames; totalFrames is used by renderer to map to sprite frames
-        const total = 36; // slightly faster visual than 48
+        const total = 36; // keep previous chosen value
         this.splodeAnimations.push({ x, y, frame: total, totalFrames: total });
     }
 
@@ -57,14 +60,35 @@ export class PlayerAnimations {
             this.actionAnimation--;
         }
         if (this.liftFrames > 0) {
+            // Use animation constant for consistent timing
             this.liftFrames--;
-            const progress = this.liftFrames / 15;
-            const maxLift = -12;
-            this.liftOffsetY = maxLift * 4 * progress * (1 - progress);
+            const total = ANIMATION_CONSTANTS.LIFT_FRAMES;
+            const elapsed = total - this.liftFrames; // 0..total
+            const t = Math.max(0, Math.min(1, elapsed / total)); // normalized 0..1
+            // Make hop more pronounced: larger negative maxLift (upwards)
+            const maxLift = -28; // pixels up at peak (more pronounced)
+            // Use a sine ease (smooth up and down) for natural hop
+            // sin(pi * t) goes 0 -> 1 -> 0 over t in [0,1]
+            this.liftOffsetY = maxLift * Math.sin(Math.PI * t);
+        } else {
+            this.liftOffsetY = 0;
         }
         this.smokeAnimations.forEach(anim => anim.frame--);
         this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);
         this.splodeAnimations.forEach(anim => anim.frame--);
         this.splodeAnimations = this.splodeAnimations.filter(anim => anim.frame > 0);
+
+        // Update pickup hover animation (brief float above player's head)
+        if (this.pickupHover) {
+            this.pickupHover.frames--;
+            if (this.pickupHover.frames <= 0) {
+                this.pickupHover = null;
+            }
+        }
+        // Update bowShot animation
+        if (this.bowShot) {
+            this.bowShot.frames--;
+            if (this.bowShot.frames <= 0) this.bowShot = null;
+        }
     }
 }

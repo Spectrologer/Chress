@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE } from '../core/constants.js';
+import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS } from '../core/constants.js';
 
 export class EnemyRenderer {
     constructor(game) {
@@ -51,7 +51,9 @@ export class EnemyRenderer {
 
                 // If the enemy is moving (lift animation is active), interpolate its position for a slide effect.
                 if (enemy.liftFrames > 0 && enemy.lastX !== undefined && enemy.lastY !== undefined) {
-                    const progress = 1 - (enemy.liftFrames / 15); // Animation progress from 0 to 1
+                    const remaining = enemy.liftFrames;
+                    const totalFrames = ANIMATION_CONSTANTS.LIFT_FRAMES || 15;
+                    const progress = 1 - (remaining / totalFrames);
                     pixelXBase = (enemy.lastX + (enemy.x - enemy.lastX) * progress) * TILE_SIZE + enemy.bumpOffsetX;
                     pixelYBase = (enemy.lastY + (enemy.y - enemy.lastY) * progress) * TILE_SIZE + enemy.bumpOffsetY + enemy.liftOffsetY;
                 } else {

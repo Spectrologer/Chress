@@ -15,41 +15,78 @@ export class ItemManager {
         this.game = game;
     }
 
+    // Add an item to a player's inventory, merging with existing stacks when appropriate.
+    // Returns true if the item was added or merged, false if inventory was full and couldn't be added.
+    addItemToInventory(player, item, sound = 'pickup') {
+        if (!player || !item) return false;
+
+        const playSoundAndAnimate = (it) => {
+            try {
+                const key = this._getImageKeyForItem(it);
+                player.animations.pickupHover = { imageKey: key, frames: 60, totalFrames: 60, type: it.type, foodType: it.foodType };
+            } catch (e) {}
+            if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
+                this.game.soundManager.playSound(sound);
+            } else if (typeof window !== 'undefined' && window.soundManager?.playSound) {
+                window.soundManager.playSound(sound);
+            }
+        };
+
+        if (STACKABLE_ITEMS.includes(item.type)) {
+            const existingStack = player.inventory.find(i => i.type === item.type && (typeof item.foodType === 'undefined' || i.foodType === item.foodType));
+            if (existingStack) {
+                if (item.uses) {
+                    existingStack.uses = (existingStack.uses || 0) + item.uses;
+                } else {
+                    existingStack.quantity = (existingStack.quantity || 1) + (item.quantity || 1);
+                }
+                playSoundAndAnimate(item);
+                return true;
+            }
+        }
+
+        if (player.inventory.length < 6) {
+            if (item.type === 'food' || item.type === 'water' || item.type === 'bomb' || item.type === 'note') {
+                if (typeof item.quantity === 'undefined') item.quantity = 1;
+            }
+            player.inventory.push(item);
+            playSoundAndAnimate(item);
+            return true;
+        }
+
+        return false; // Inventory full and no existing stack
+    }
+
     handleItemPickup(player, x, y, grid) {
         const tile = grid[y][x];
         if (!tile) return;
 
-        const pickup = (item, sound = 'pickup') => {            
-            if (STACKABLE_ITEMS.includes(item.type)) {
-                // Find existing stack: match type and, if present, match distinguishing properties like foodType
-                const existingStack = player.inventory.find(i => i.type === item.type && (typeof item.foodType === 'undefined' || i.foodType === item.foodType));
-                if (existingStack) {
-                    if (item.uses) {
-                        existingStack.uses = (existingStack.uses || 0) + item.uses;
-                    } else {
-                        existingStack.quantity = (existingStack.quantity || 1) + 1;
-                    }
-                    grid[y][x] = TILE_TYPES.FLOOR;
-                    window.soundManager?.playSound(sound);
-                    return;
-                }
-            }
-
-            // If no stack exists or it's not a stackable item, add to a new slot if space is available
-            if (player.inventory.length < 6) {
-                if (item.type === 'food' || item.type === 'water' || item.type === 'bomb' || item.type === 'note') {
-                    item.quantity = 1; // Start a new stack
-                }
-                // For items with uses, the 'uses' property is already on the item object.
-                // We just need to ensure it's added to inventory.
-                if (item.uses && !item.quantity) {
-                    // It's a new item with uses, just push it.
-                }
-                player.inventory.push(item);
+        const pickup = (item, sound = 'pickup') => {
+            const success = this.addItemToInventory(player, item, sound);
+            if (success) {
                 grid[y][x] = TILE_TYPES.FLOOR;
-                window.soundManager?.playSound(sound);
             }
         };
+
+        const getImageKeyForItem = (item) => {
+            // Map item.type to texture keys used by TextureLoader
+            if (!item) return null;
+            if (item.type === 'food' && item.foodType) return item.foodType.replace('.png', '').replace('/', '_');
+            if (item.type === 'water') return 'water';
+            if (item.type === 'axe') return 'axe';
+            if (item.type === 'bomb') return 'bomb';
+            if (item.type === 'note') return 'note';
+            if (item.type === 'heart') return 'heart';
+            if (item.type === 'bishop_spear') return 'spear';
+            if (item.type === 'horse_icon') return 'horse';
+            if (item.type === 'book_of_time_travel') return 'book';
+            if (item.type === 'bow') return 'bow';
+            if (item.type === 'shovel') return 'shovel';
+            return null;
+        };
+
+        // Expose image key helper for other methods (used by addItemToInventory)
+        this._getImageKeyForItem = getImageKeyForItem;
 
         const isStackableItem = (tile) => {
             // Handle both object tiles (tile.type) and primitive tile constants

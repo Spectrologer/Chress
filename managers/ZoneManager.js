@@ -65,6 +65,13 @@ export class ZoneManager {
         // Ensure player is on a walkable tile
         this.game.player.ensureValidPosition(this.game.grid);
 
+        // Prevent cross-zone interpolation: reset last position to current so renderer doesn't
+        // interpolate from previous zone coordinates (which may be off-screen).
+        if (this.game.player) {
+            this.game.player.lastX = this.game.player.x;
+            this.game.player.lastY = this.game.player.y;
+        }
+
         // Check for special zone treasures
         if (hasReachedSpecialZone) {
             const treasures = this.game.specialZones.get(zoneKey);

@@ -4,8 +4,8 @@ export class EnemyChargeBehaviors {
     // Helper for zard: find adjacent tile next to player along diagonal line of sight and charge there
     static getChargeAdjacentDiagonalMove(enemy, playerX, playerY, grid, enemies) {
         // Assume diagonal line of sight already checked
-        const stepX = playerX > enemy.x ? 1 : -1;
-        const stepY = playerY > enemy.y ? 1 : -1;
+    const stepX = playerX > enemy.x ? 1 : -1;
+    const stepY = playerY > enemy.y ? 1 : -1;
 
         // Check clear line of sight (walls/obstacles AND other enemies)
         const dx = Math.abs(enemy.x - playerX);
@@ -16,9 +16,12 @@ export class EnemyChargeBehaviors {
             if (enemies.find(e => e.x === checkX && e.y === checkY)) return null;
         }
 
-        // Find diagonal adjacent tile next to player
-        const adjX = playerX - stepX;
-        const adjY = playerY - stepY;
+    // Find diagonal adjacent tile next to player
+    const adjX = playerX - stepX;
+    const adjY = playerY - stepY;
+
+    // Sanity: ensure the adj tile is truly diagonal adjacent to player (dx=1,dy=1)
+    if (Math.abs(adjX - playerX) !== 1 || Math.abs(adjY - playerY) !== 1) return null;
 
         // Check if that tile is walkable and not occupied by another enemy
         if (adjX >= 0 && adjX < GRID_SIZE && adjY >= 0 && adjY < GRID_SIZE &&

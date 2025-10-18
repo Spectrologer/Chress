@@ -43,6 +43,39 @@ class BaseMoveCalculator {
 
         if (path && path.length > 1) {
             let next = path[1];
+
+            // Early special-case: if a lizord has a direct knight-move to the player's
+            // tile as the very next step, execute the bump attack immediately and
+            // return null to indicate the action was consumed. This prevents later
+            // tactical/defensive adjustments from cancelling a valid attack.
+            if (enemy.enemyType === 'lizord' && !isSimulation) {
+                const startDx = Math.abs(next.x - enemy.x);
+                const startDy = Math.abs(next.y - enemy.y);
+                const isKnightMove = (startDx === 2 && startDy === 1) || (startDx === 1 && startDy === 2);
+                if (isKnightMove && next.x === playerX && next.y === playerY) {
+                    const key = `${next.x},${next.y}`;
+                    const initialSet = (game && game.initialEnemyTilesThisTurn) || new Set();
+                    const ownStart = `${enemy.x},${enemy.y}`;
+                    if (initialSet.has(key) && key !== ownStart) {
+                        // Can't move into a tile that was occupied at the start of the turn
+                        return null;
+                    }
+                    if (game && game.occupiedTilesThisTurn) game.occupiedTilesThisTurn.add(key);
+                    enemy.lastX = enemy.x;
+                    enemy.lastY = enemy.y;
+                    enemy.x = next.x;
+                    enemy.y = next.y;
+                    enemy.liftFrames = 15;
+
+                    this.performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game);
+                    return null;
+                }
+            }
+            // Debug: trace lizord path decisions to help diagnose retreating behavior
+            if (enemy.enemyType === 'lizord' && !isSimulation) {
+                console.log(`[Lizord Debug] path=${path.map(p=>`${p.x},${p.y}`).join(' -> ')}`);
+                console.log(`[Lizord Debug] initial next=${next.x},${next.y} enemy=${enemy.x},${enemy.y} player=${playerX},${playerY}`);
+            }
             // For enemy types that can move multiple tiles, apply aggressive distance closing
             next = this.applyAggressiveMovement(enemy, path, next);
 
@@ -67,6 +100,9 @@ class BaseMoveCalculator {
                 }
 
                 // Check for player interactions
+                if (enemy.enemyType === 'lizord' && !isSimulation) {
+                    console.log(`[Lizord Debug] considering player interaction at next=${next.x},${next.y}`);
+                }
                 return this.handlePlayerInteraction(enemy, next, player, playerX, playerY, grid, enemies, isSimulation, game);
             }
         }
@@ -195,6 +231,21 @@ class BaseMoveCalculator {
     applyDefensiveMoves(enemy, player, next, playerX, playerY, grid, enemies, isSimulation, game) {
         if (!this.tacticalAI) return next;
 
+        // If this planned move would actually be a valid attack for certain
+        // enemy types, do not perform a defensive retreat — prefer the attack.
+        // Specifically handle Lizord's knight-like bump attack here so it isn't
+        // canceled by defensive logic.
+        if (enemy.enemyType === 'lizord') {
+            const startDx = Math.abs(next.x - enemy.x);
+            const startDy = Math.abs(next.y - enemy.y);
+            const isKnightMove = (startDx === 2 && startDy === 1) || (startDx === 1 && startDy === 2);
+            if (isKnightMove && next.x === playerX && next.y === playerY) {
+                // This next move is a bump attack endpoint — allow it.
+                if (!isSimulation) console.log(`[Lizord Debug] allowing knight bump to ${next.x},${next.y}`);
+                return next;
+            }
+        }
+
         const dx = Math.abs(next.x - playerX);
         const dy = Math.abs(next.y - playerY);
         const nextDistance = dx + dy;
@@ -203,6 +254,9 @@ class BaseMoveCalculator {
         if (nextDistance <= 2) {
             const defensiveMoves = this.tacticalAI.getDefensiveMoves(enemy, playerX, playerY, next.x, next.y, grid, enemies);
             if (defensiveMoves.length > 0) {
+                if (enemy.enemyType === 'lizord' && !isSimulation) {
+                    console.log(`[Lizord Debug] defensiveMoves candidates=${defensiveMoves.map(m=>`${m.x},${m.y}`).join(';')}`);
+                }
                 // Add smoke animation for defensive retreat if it's a multi-tile move
                 if (!isSimulation && this.calculateMoveDistance(enemy.x, enemy.y, defensiveMoves[0].x, defensiveMoves[0].y) > 1) {
                     enemy.smokeAnimations.push({
@@ -429,6 +483,8 @@ class BaseMoveCalculator {
         const dx = Math.abs(enemy.x - playerX);
         const dy = Math.abs(enemy.y - playerY);
         if (enemy.enemyType === 'lizardeaux' && dx === 1 && dy === 1) return;
+        // Zard only attacks diagonally (bishop-like). Prevent orthogonal attacks.
+        if (enemy.enemyType === 'zard' && ((dx === 1 && dy === 0) || (dx === 0 && dy === 1))) return;
 
         player.takeDamage(enemy.attack);
         player.startBump(enemy.x - playerX, enemy.y - playerY);
@@ -446,16 +502,8 @@ class BaseMoveCalculator {
      * Find any valid adjacent move to satisfy "must move if can" rule
      */
     findAnyValidAdjacentMove(enemy, grid, enemies) {
-        const directions = [
-            { x: 0, y: -1 }, // North
-            { x: 0, y: 1 },  // South
-            { x: -1, y: 0 }, // West
-            { x: 1, y: 0 },  // East
-            { x: -1, y: -1 }, // Northwest
-            { x: 1, y: -1 },  // Northeast
-            { x: -1, y: 1 },  // Southwest
-            { x: 1, y: 1 }    // Southeast
-        ];
+        // Use movement directions appropriate for this enemy type (e.g., zard -> diagonals only)
+        const directions = EnemyPathfinding.getMovementDirections(enemy.enemyType || enemy.type);
 
         // Check each adjacent tile
         for (const dir of directions) {
@@ -657,7 +705,7 @@ export class ZardMoveCalculator extends BaseMoveCalculator {
         const dx_adj = Math.abs(enemy.x - playerX);
         const dy_adj = Math.abs(enemy.y - playerY);
         if (dx_adj === 1 && dy_adj === 1) {
-            this.performDiagonalAttack(enemy, player, isSimulation);
+            this.performDiagonalAttack(enemy, player, isSimulation, game);
             return null;
         }
 
@@ -689,7 +737,7 @@ export class ZardMoveCalculator extends BaseMoveCalculator {
         return super.calculateMove(enemy, player, playerPos, grid, enemies, isSimulation, game);
     }
 
-    performDiagonalAttack(enemy, player, isSimulation) {
+    performDiagonalAttack(enemy, player, isSimulation, game) {
         if (!isSimulation && (!game || !game.playerJustAttacked)) {
             player.takeDamage(enemy.attack);
             player.startBump(enemy.x - player.x, enemy.y - player.y);

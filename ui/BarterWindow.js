@@ -120,8 +120,56 @@ export class BarterWindow {
         // Only check for full inventory if the trade results in an item.
         // Abilities do not take up inventory space.
         const isAbilityTrade = tradeData.id === 'axelotl_axe' || tradeData.id === 'gouge_hammer';
+
+        // If inventory is full, allow the trade only if the resulting item would merge into an
+        // existing stack. Determine possible received item types for the trade and check for
+        // matching stacks in the player's inventory.
         if (!isAbilityTrade && player.inventory.length >= 6) {
-            return false; // Inventory full
+            // Helper to check if player has an existing stack for a given item descriptor
+            const hasExistingStackFor = (itemType, foodType) => {
+                return player.inventory.some(i => {
+                    if (itemType === 'food') {
+                        return i.type === 'food' && i.foodType === foodType;
+                    }
+                    return i.type === itemType;
+                });
+            };
+
+            // Identify possible received item types for known trades
+            if (tradeData.id === 'rune_food') {
+                // random food: can merge with any existing food stack regardless of sub-type only if types match exactly;
+                // conservatively allow if player has any food stack (may not merge if different foodType, but most NPC foods use common types)
+                if (player.inventory.some(i => i.type === 'food')) return true;
+            } else if (tradeData.id === 'rune_item') {
+                // random among bomb, bow, bishop_spear
+                if (hasExistingStackFor('bomb') || hasExistingStackFor('bow') || hasExistingStackFor('bishop_spear')) return true;
+            } else if (tradeData.id === 'nib_item') {
+                // nib gives either a book or a horse_icon
+                if (hasExistingStackFor('horse_icon') || hasExistingStackFor('book_of_time_travel') || hasExistingStackFor('book')) return true;
+            } else if (tradeData.id === 'mark_meat') {
+                // Mark gives a specific meat asset 'food/meat/beaf.png'
+                if (hasExistingStackFor('food', 'food/meat/beaf.png')) return true;
+            }
+
+            // Also support legacy trades which don't have an id but specify receivedItemName or receivedItemImg
+            // e.g. squig gives Water (receivedItemName: 'Water', receivedItemImg: 'assets/items/water.png')
+            if (!tradeData.id) {
+                // If the trade explicitly gives Water, allow if player has a water stack
+                const receivedName = (tradeData.receivedItemName || '').toLowerCase();
+                const receivedImg = (tradeData.receivedItemImg || '').toLowerCase();
+                if (receivedName.includes('water') || receivedImg.includes('water')) {
+                    if (hasExistingStackFor('water')) return true;
+                }
+
+                // If the trade gives a specific food name/image, try to match exact food asset
+                if (receivedImg.includes('/food/') || receivedName.includes('meat') || receivedName.includes('nut')) {
+                    // We can't always map names to exact foodType; conservatively allow if player has any food stack
+                    if (player.inventory.some(i => i.type === 'food')) return true;
+                }
+            }
+
+            // For other trades, if there's no merge possibility, disallow due to full inventory
+            return false;
         }
 
         if (tradeData.requiredItem === 'points') {
@@ -155,7 +203,8 @@ export class BarterWindow {
         if (tradeData.id === 'rune_food') {
             this.game.player.addPoints(-tradeData.requiredAmount);
             const randomFood = FOOD_ASSETS[Math.floor(Math.random() * FOOD_ASSETS.length)];
-            this.game.player.inventory.push({ type: 'food', foodType: randomFood });
+            // Use ItemManager helper to merge into existing stacks when possible
+            this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: randomFood });
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for food.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else if (tradeData.id === 'rune_item') {
@@ -171,13 +220,13 @@ export class BarterWindow {
             else if (selectedItemType === TILE_TYPES.BOW) inventoryItem = { type: 'bow', uses: 3 };
             else if (selectedItemType === TILE_TYPES.BISHOP_SPEAR) inventoryItem = { type: 'bishop_spear', uses: 3 };
 
-            if(inventoryItem) this.game.player.inventory.push(inventoryItem);
+            if (inventoryItem) this.game.itemManager.addItemToInventory(this.game.player, inventoryItem);
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for an item.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else if (tradeData.id === 'nib_item') {
             this.game.player.addPoints(-tradeData.requiredAmount);
             const randomItem = Math.random() < 0.5 ? { type: 'book' } : { type: 'horse_icon', uses: 3 };
-            this.game.player.inventory.push(randomItem);
+            this.game.itemManager.addItemToInventory(this.game.player, randomItem);
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for a random trinket.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
 
@@ -185,7 +234,7 @@ export class BarterWindow {
             // Update spent discoveries via the Player API
             const cur = this.game.player.getSpentDiscoveries();
             this.game.player.setSpentDiscoveries(cur + tradeData.requiredAmount);
-            this.game.player.inventory.push({ type: 'food', foodType: 'food/meat/beaf.png' });
+            this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: 'food/meat/beaf.png' });
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} Discoveries for meat.`);
             this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
         } else if (tradeData.id === 'axelotl_axe') { // Trade discoveries for axe ability
@@ -217,7 +266,8 @@ export class BarterWindow {
                     this.game.player.inventory.splice(index, 1);
                 }
 
-                this.game.itemManager.handleItemPickup(this.game.player, -1, -1, [[{type: 'water'}]]); // Use item manager to handle stacking
+                // Directly add the received item using ItemManager helper so stacking rules apply
+                this.game.itemManager.addItemToInventory(this.game.player, { type: 'water' });
                 this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
             }
         }

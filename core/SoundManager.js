@@ -3,6 +3,7 @@ import logger from './logger.js';
 export class SoundManager {
     constructor() {
         this.sounds = {};
+        this.audioContext = null; // lazily created/resumed on user gesture
         this.loadSounds();
     }
 
@@ -27,7 +28,7 @@ export class SoundManager {
     addSound(name, filePath) {
         const audio = new Audio();
         audio.src = filePath;
-        audio.volume = 0.3; // Set reasonable volume level
+        audio.volume = 0.2; // Slightly more subtle default
         this.sounds[name] = audio;
     }
 
@@ -36,8 +37,8 @@ export class SoundManager {
         if (audio) {
             // Create a fresh audio instance to allow overlapping sounds
             const newAudio = audio.cloneNode();
-            newAudio.volume = audio.volume;
-            newAudio.volume = 0.3;
+            // Keep clone volume in line with the stored asset but slightly subdued
+            newAudio.volume = Math.min(1, audio.volume || 0.2);
             newAudio.play().catch(error => {
                 // Could not play sound
             });
@@ -49,7 +50,11 @@ export class SoundManager {
 
     playProceduralSound(soundName) {
         try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            // Use or create a shared AudioContext so autoplay policies can be satisfied
+            if (!this.audioContext) {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const audioContext = this.audioContext;
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
 
@@ -58,29 +63,39 @@ export class SoundManager {
 
             switch(soundName) {
                 case 'attack':
-                    // Attack sound: descending pitch
+                    // Attack sound: descending pitch (subtler)
                     oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
                     oscillator.frequency.exponentialRampToValueAtTime(110, audioContext.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.06, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.008, audioContext.currentTime + 0.2);
                     oscillator.start(audioContext.currentTime);
                     oscillator.stop(audioContext.currentTime + 0.2);
                     break;
 
+                case 'tap_enemy':
+                    // Distinct subtle tone for tapping an enemy tile (not overly loud)
+                    oscillator.frequency.setValueAtTime(160, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(320, audioContext.currentTime + 0.06);
+                    gainNode.gain.setValueAtTime(0.035, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.005, audioContext.currentTime + 0.12);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.12);
+                    break;
+
                 case 'chop':
-                    // Chopping sound: low frequency burst
+                    // Chopping sound: low frequency burst (subtler)
                     oscillator.frequency.setValueAtTime(80, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                    gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.008, audioContext.currentTime + 0.15);
                     oscillator.start(audioContext.currentTime);
                     oscillator.stop(audioContext.currentTime + 0.15);
                     break;
 
                 case 'smash':
-                    // Smashing sound: noisy burst
+                    // Smashing sound: noisy burst (subtler)
                     oscillator.frequency.setValueAtTime(60, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.008, audioContext.currentTime + 0.25);
                     oscillator.start(audioContext.currentTime);
                     oscillator.stop(audioContext.currentTime + 0.25);
                     break;
@@ -88,20 +103,52 @@ export class SoundManager {
                 case 'move':
                     // Very subtle movement sound
                     oscillator.frequency.setValueAtTime(120, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.02, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.005, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.004, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.08);
+                    break;
+
+                case 'pickup':
+                    // Pickup sound: ascending ding (subtler)
+                    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.08);
+                    gainNode.gain.setValueAtTime(0.04, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.008, audioContext.currentTime + 0.1);
                     oscillator.start(audioContext.currentTime);
                     oscillator.stop(audioContext.currentTime + 0.1);
                     break;
 
-                case 'pickup':
-                    // Pickup sound: ascending ding
-                    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.08);
-                    gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                case 'bloop':
+                    // Subtle bloop/ping for selection (more subdued)
+                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(660, audioContext.currentTime + 0.06);
+                    // Reduce overall selection volume to be less intrusive
+                    gainNode.gain.setValueAtTime(0.015, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.003, audioContext.currentTime + 0.12);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.1);
+                    oscillator.stop(audioContext.currentTime + 0.12);
+                    break;
+
+                case 'bow_shot':
+                    // Twang-like bow shot: quick pluck + short higher overtone
+                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(700, audioContext.currentTime + 0.05);
+                    gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.004, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.18);
+                    break;
+
+                case 'double_tap':
+                    // Slightly different, shorter, and subtler tone for double-tap
+                    oscillator.frequency.setValueAtTime(660, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.035);
+                    // Make double-tap more subtle
+                    gainNode.gain.setValueAtTime(0.02, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.004, audioContext.currentTime + 0.07);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.08);
                     break;
 
                 default:
@@ -116,5 +163,22 @@ export class SoundManager {
         } catch (error) {
             // Could not play procedural sound
         }
+    }
+
+    // Attempt to resume or create the shared AudioContext. Call this from a
+    // user gesture (keydown, mousedown, touchstart) to satisfy browser policies.
+    resumeAudioContext() {
+        try {
+            if (!this.audioContext) {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                return Promise.resolve();
+            }
+            if (this.audioContext && typeof this.audioContext.resume === 'function') {
+                return this.audioContext.resume().catch(() => {});
+            }
+        } catch (e) {
+            // ignore
+        }
+        return Promise.resolve();
     }
 }

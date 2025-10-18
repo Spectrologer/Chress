@@ -12,6 +12,10 @@ export class RenderManager {
         this.ctx = game.ctx;
         this.textureManager = game.textureManager;
 
+    // Tap feedback state: { x, y, startTime, duration, hold }
+    // If hold === true the feedback persists until cleared by clearFeedback()
+    this.tapFeedback = null;
+
         // Initialize sub-renderers
         this.playerRenderer = new PlayerRenderer(game);
         this.enemyRenderer = new EnemyRenderer(game);
@@ -26,12 +30,97 @@ export class RenderManager {
         this.ctx.msImageSmoothingEnabled = false;     // For IE
     }
 
+    // Show a transient tap feedback at grid coordinates (tileX, tileY).
+    // durationMs controls how long the effect lasts (default 200ms).
+    showTapFeedback(tileX, tileY, durationMs = 200) {
+        this.tapFeedback = {
+            x: tileX,
+            y: tileY,
+            startTime: Date.now(),
+            duration: durationMs
+        };
+    }
+
+    // Start a persistent hold feedback that stays until clearFeedback() is called
+    startHoldFeedback(tileX, tileY) {
+        this.tapFeedback = {
+            x: tileX,
+            y: tileY,
+            startTime: Date.now(),
+            duration: Infinity,
+            hold: true
+        };
+    }
+
+    // Clear any active feedback immediately
+    clearFeedback() {
+        this.tapFeedback = null;
+    }
+
+    _drawTapFeedback() {
+        if (!this.tapFeedback) return;
+        const tf = this.tapFeedback;
+        const elapsed = Date.now() - tf.startTime;
+
+        // If not a hold and elapsed exceeds duration, clear
+        if (!tf.hold && elapsed > tf.duration) {
+            this.tapFeedback = null;
+            return;
+        }
+
+        // Compute alpha and inset. For hold, use a steady subtle value; for transient, fade out
+        const maxAlpha = 0.45;
+        let alpha = maxAlpha;
+        let inset = Math.round((TILE_SIZE || 64) * 0.06);
+
+        if (!tf.hold) {
+            const progress = Math.max(0, Math.min(1, elapsed / tf.duration)); // 0 -> 1
+            alpha = maxAlpha * (1 - progress);
+            inset = Math.round((TILE_SIZE || 64) * 0.06 * (1 - progress));
+        }
+
+    const px = tf.x * TILE_SIZE + inset;
+    const py = tf.y * TILE_SIZE + inset;
+    const size = TILE_SIZE - inset * 2;
+
+    // Subtle inner fill to indicate selection (very low alpha)
+    this.ctx.save();
+    this.ctx.fillStyle = `rgba(255,255,255,${Math.min(0.06, alpha * 0.15)})`;
+    this.ctx.fillRect(px, py, size, size);
+
+    // Marching ants outline: draw a black dashed stroke and then a thinner white dashed stroke
+    const dashLen = Math.max(4, Math.round(TILE_SIZE * 0.09));
+    const animMs = 800; // period for one cycle
+    const anim = (Date.now() % animMs) / animMs; // 0..1
+    const offset = anim * (dashLen * 2);
+
+    // Outer dark stroke
+    this.ctx.lineWidth = Math.max(2, Math.round(TILE_SIZE * 0.04));
+    this.ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+    this.ctx.setLineDash([dashLen, dashLen]);
+    this.ctx.lineDashOffset = -offset;
+    this.ctx.strokeRect(px + 0.5, py + 0.5, size - 1, size - 1);
+
+    // Inner light stroke (offset so dashes alternate)
+    this.ctx.lineWidth = Math.max(1, Math.round(TILE_SIZE * 0.02));
+    this.ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+    this.ctx.lineDashOffset = -offset - dashLen;
+    this.ctx.strokeRect(px + 0.5, py + 0.5, size - 1, size - 1);
+
+    // Reset dash
+    this.ctx.setLineDash([]);
+    this.ctx.restore();
+    }
+
     render() {
         // Clear canvas
         this.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
 
         // Draw grid
         this.drawGrid();
+
+        // Draw transient tap feedback if active
+        this._drawTapFeedback();
 
         // Draw enemies (sprites and animations)
         this.enemyRenderer.drawEnemies();

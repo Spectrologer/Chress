@@ -1,4 +1,4 @@
-import { TILE_TYPES } from '../core/constants.js';
+import { TILE_TYPES, ANIMATION_CONSTANTS } from '../core/constants.js';
 
 export class BaseEnemy {
     constructor(data) {
@@ -72,7 +72,7 @@ export class BaseEnemy {
         // Set initial bump offset (towards the other entity)
         this.bumpOffsetX = deltaX * 24; // Increased from 16 for more impact
         this.bumpOffsetY = deltaY * 24;
-        this.bumpFrames = 15; // Increased from 10 for longer animation
+        this.bumpFrames = ANIMATION_CONSTANTS.BUMP_ANIMATION_FRAMES;
     }
 
     updateAnimations() {
@@ -90,10 +90,12 @@ export class BaseEnemy {
         }
         if (this.liftFrames > 0) {
             this.liftFrames--;
-            // Lift animation: parabolic curve (lift up then land)
-            const progress = this.liftFrames / 15;
-            const maxLift = -12; // Lift 12 pixels up (half tile roughly)
-            this.liftOffsetY = maxLift * 4 * progress * (1 - progress); // Parabolic lift
+            // Use same timing constant as player and a smoother sine curve for hop
+            const total = ANIMATION_CONSTANTS.LIFT_FRAMES;
+            const elapsed = total - this.liftFrames; // 0..total
+            const t = Math.max(0, Math.min(1, elapsed / total));
+            const maxLift = -28; // match player's hop amplitude for visual parity
+            this.liftOffsetY = maxLift * Math.sin(Math.PI * t);
         }
         this.smokeAnimations.forEach(anim => anim.frame--);
         this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);

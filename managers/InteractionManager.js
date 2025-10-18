@@ -112,6 +112,50 @@ export class InteractionManager {
             if (handler(gridCoords, playerPos)) return true;
         }
 
+        // If the tapped tile contains a live enemy, handle it here.
+        // - If the player is adjacent, perform an immediate attack.
+        // - Otherwise, mark the tap handled to prevent auto-pathing onto the enemy.
+        const enemyAtCoords = this.game.enemies.find(e => e.x === gridCoords.x && e.y === gridCoords.y && e.health > 0);
+        if (enemyAtCoords) {
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+
+            if (isAdjacent) {
+                // Perform immediate player attack on the adjacent enemy
+                try {
+                    this.game.player.startAttackAnimation();
+                    this.game.player.startBump(enemyAtCoords.x - playerPos.x, enemyAtCoords.y - playerPos.y);
+                    if (typeof enemyAtCoords.startBump === 'function') {
+                        enemyAtCoords.startBump(playerPos.x - enemyAtCoords.x, playerPos.y - enemyAtCoords.y);
+                    }
+                    // Resolve defeat/points/removal via CombatManager
+                    this.game.combatManager.defeatEnemy(enemyAtCoords);
+                } catch (e) {
+                    // Best-effort: don't let an animation error block game flow
+                }
+
+                // Trigger enemy turns (unless we just entered a zone)
+                if (this.game.justEnteredZone) {
+                    this.game.justEnteredZone = false;
+                } else {
+                    try { this.game.startEnemyTurns(); } catch (e) {}
+                    if (this.game.isInPitfallZone) {
+                        this.game.pitfallTurnsSurvived++;
+                    }
+                }
+
+                // Update player visuals/stats after the attack
+                try { this.game.updatePlayerPosition(); } catch (e) {}
+                try { this.game.updatePlayerStats(); } catch (e) {}
+
+                return true;
+            }
+
+            // Not adjacent: consume the tap to prevent auto-pathing onto an enemy tile
+            return true;
+        }
+
         return false; // No interaction, allow pathfinding
     }
 

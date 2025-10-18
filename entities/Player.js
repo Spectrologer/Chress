@@ -6,6 +6,8 @@ export class Player {
     constructor() {
         this.x = 1;
         this.y = 1;
+        this.lastX = this.x;
+        this.lastY = this.y;
         this.currentZone = { x: 0, y: 0, dimension: 0 };
         this.visitedZones = new Set();
         this.inventory = [];
@@ -68,6 +70,10 @@ export class Player {
 
             // Delegate item pickup logic to ItemManager
             this.itemManager?.handleItemPickup(this, newX, newY, grid);
+
+            // Record previous position so renderer can interpolate movement
+            this.lastX = this.x;
+            this.lastY = this.y;
 
             this.x = newX;
             this.y = newY;
@@ -161,6 +167,9 @@ export class Player {
     }
 
     setPosition(x, y) {
+        // Keep previous position for interpolation/hop animations
+        this.lastX = this.x;
+        this.lastY = this.y;
         this.x = x;
         this.y = y;
     }

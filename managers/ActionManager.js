@@ -146,7 +146,13 @@ export class ActionManager {
                 // Player has acted. Prevent enemies from moving until the action resolves.
                 this.game.playerJustAttacked = true;
 
-                this.game.soundManager.playSound('whoosh');
+                // Give player a pronounced bow-shot animation state for rendering
+                try {
+                    this.game.player.animations.bowShot = { frames: 20, totalFrames: 20, power: 1.4 };
+                } catch (e) {}
+
+                // Play a distinct bow sound
+                this.game.soundManager.playSound('bow_shot' );
             })
             .wait(300) // 300ms delay for arrow to travel
             .then(() => {

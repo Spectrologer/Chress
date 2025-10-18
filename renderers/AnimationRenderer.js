@@ -114,16 +114,16 @@ export class AnimationRenderer {
         const animations = this.game.animationManager.pointAnimations;
         animations.forEach(anim => {
             const progress = 1 - (anim.frame / 15);
-            const yOffset = -progress * 30; // Move up
+            const yOffset = -progress * 40; // Move up
             const alpha = 1 - progress; // Fade out
 
             this.ctx.save();
             this.ctx.globalAlpha = alpha;
             this.ctx.fillStyle = '#ffd700'; // Gold color for points
-            this.ctx.font = 'bold 24px "Press Start 2P", cursive';
+            this.ctx.font = 'bold 36px "Press Start 2P", cursive';
             this.ctx.textAlign = 'center';
             this.ctx.strokeStyle = 'black';
-            this.ctx.lineWidth = 4;
+            this.ctx.lineWidth = 6;
 
             const text = `+${anim.amount}`;
             const x = anim.x * TILE_SIZE + TILE_SIZE / 2;
