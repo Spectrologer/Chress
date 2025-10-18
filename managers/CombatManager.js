@@ -1,10 +1,12 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
+import { BombManager } from './BombManager.js';
 
 export class CombatManager {
     constructor(game, occupiedTiles) {
         this.game = game;
         this.occupiedTiles = occupiedTiles;
         this.game.pointAnimations = this.game.pointAnimations || [];
+        this.bombManager = new BombManager(game);
     }
 
     addPointAnimation(x, y, amount) {
@@ -140,55 +142,35 @@ export class CombatManager {
     }
 
     checkCollisions() {
-        // Check for bomb explosion timers
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.game.grid[y][x];
-                if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
-                    if (tile.actionsSincePlaced >= 2) {
-                        this.game.explodeBomb(x, y);
-                    }
-                }
-            }
+        // Delegate bomb timing checks to BombManager
+        if (this.bombManager && typeof this.bombManager.tickBombsAndExplode === 'function') {
+            this.bombManager.tickBombsAndExplode();
         }
 
         const playerPos = this.game.player.getPosition();
         const remainingEnemies = [];
 
         for (const enemy of this.game.enemies) {
-            // If enemy is already dead from a charge/bow attack, skip collision logic
-            // Some tests/mocks may provide plain objects without isDead(); handle defensively.
             const enemyIsDead = (typeof enemy.isDead === 'function') ? enemy.isDead() : (enemy.health <= 0);
             if (enemyIsDead) {
-                this.defeatEnemy(enemy); // Ensure points/removal logic runs
+                this.defeatEnemy(enemy);
                 continue;
             }
 
             let isDefeated = false;
-
-            // Check for collision with player
             if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked && enemy.enemyType !== 'lizardy') {
                 this.game.player.takeDamage(enemy.attack);
-                enemy.takeDamage(enemy.health); // Ensure enemy dies from collision
+                enemy.takeDamage(enemy.health);
                 isDefeated = true;
             }
 
-            // Check if enemy was already dead (e.g., from player attack)
-            if (enemy.health <= 0) {
-                isDefeated = true;
-            }
+            if (enemy.health <= 0) isDefeated = true;
 
-            if (isDefeated) {
-                this.defeatEnemy(enemy);
-            } else {
-                remainingEnemies.push(enemy);
-            }
+            if (isDefeated) this.defeatEnemy(enemy); else remainingEnemies.push(enemy);
         }
 
         this.game.enemies = remainingEnemies;
-
-        // Update UI after collision checks
-        this.game.uiManager.updatePlayerStats();
+        if (this.game.uiManager && typeof this.game.uiManager.updatePlayerStats === 'function') this.game.uiManager.updatePlayerStats();
     }
 
 

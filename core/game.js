@@ -1,25 +1,5 @@
 import { GRID_SIZE, TILE_TYPES } from './constants.js';
-import { GameInitializer } from './GameInitializer.js'; // This is already here
-import { ActionManager } from '../managers/ActionManager.js';
-import { TextureManager } from '../renderers/TextureManager.js';
-import { ConnectionManager } from '../managers/ConnectionManager.js';
-import { ZoneGenerator } from './ZoneGenerator.js';
-import { Player } from '../entities/Player.js';
-import { Enemy } from '../entities/Enemy.js';
-import { Sign } from '../ui/Sign.js';
-import { InputManager } from '../managers/InputManager.js';
-import { InventoryManager } from '../managers/InventoryManager.js';
-import { UIManager } from '../ui/UIManager.js';
-import { RenderManager } from '../renderers/RenderManager.js';
-import { CombatManager } from '../managers/CombatManager.js';
-import { InteractionManager } from '../managers/InteractionManager.js';
-import { ItemManager } from '../managers/ItemManager.js';
-import { ItemUsageManager } from '../managers/ItemUsageManager.js';
-import { ZoneManager } from '../managers/ZoneManager.js';
-import { GameStateManager } from './GameStateManager.js';
-import { SoundManager } from './SoundManager.js';
-import { ConsentManager } from './ConsentManager.js';
-import { AnimationScheduler } from './AnimationScheduler.js';
+import { ServiceContainer } from './ServiceContainer.js';
 import { ECS, TileSystem, EnemySystem } from './ECS.js';
 import { AnimationManager } from './DataContracts.js';
 import { COMPONENT_TYPES } from './constants.js';
@@ -28,23 +8,16 @@ import { COMPONENT_TYPES } from './constants.js';
 class Game {
     constructor() {
 
-        // Initialize modules
-        this.textureManager = new TextureManager();
-        this.connectionManager = new ConnectionManager();
-        this.zoneGenerator = new ZoneGenerator(this);
-        this.player = new Player();
-        this.itemManager = new ItemManager(this);
-        this.inputManager = new InputManager(this, new ItemUsageManager(this));
-        this.inventoryManager = new InventoryManager(this);
-        this.uiManager = new UIManager(this);
+        // Use ServiceContainer to centralize manager/service creation
+        this._services = new ServiceContainer(this).createCoreServices();
 
-        // Initialize new managers
-        this.actionManager = new ActionManager(this);
-        this.consentManager = new ConsentManager(this);
-        this.gameInitializer = new GameInitializer(this);
-
-        // Assign managers to player
-        this.player.itemManager = this.itemManager;
+        // Backwards-compatible aliases for older code/tests that access turn state
+        // The TurnManager owns the canonical data.
+        if (this.turnManager) {
+            this.turnQueue = this.turnManager.turnQueue;
+            this.occupiedTilesThisTurn = this.turnManager.occupiedTilesThisTurn;
+            this.initialEnemyTilesThisTurn = this.turnManager.initialEnemyTilesThisTurn;
+        }
 
         // Turn-based system state
         this.isPlayerTurn = true;
@@ -57,23 +30,17 @@ class Game {
         this.animationManager = new AnimationManager();
 
         // Initialize animation scheduler
-        this.animationScheduler = new AnimationScheduler();
+    // animationScheduler created by ServiceContainer (referenced via this.animationScheduler)
 
-        // Perform consent check immediately on game load
-        this.consentManager.initialize();
+        // Perform consent check immediately on game load (created by ServiceContainer)
+        if (this.consentManager && typeof this.consentManager.initialize === 'function') {
+            this.consentManager.initialize();
+        }
         this.turnQueue = [];
         this.occupiedTilesThisTurn = new Set();
 
-        // Initialize additional managers
-        this.renderManager = new RenderManager(this);
-        this.combatManager = new CombatManager(this, this.occupiedTilesThisTurn);
-        this.interactionManager = new InteractionManager(this, this.inputManager);
-        this.zoneManager = new ZoneManager(this);
-        this.gameStateManager = new GameStateManager(this);
-        this.soundManager = new SoundManager();
+    // Additional managers and references were created by ServiceContainer
 
-        // Add references to managers for easier access
-        this.Enemy = Enemy;
 
         // Initialize game state properties (legacy support)
         this.zones = new Map();
@@ -99,55 +66,11 @@ class Game {
     }
 
     startEnemyTurns() {
-6        // If the player just attacked, and the attack has a delay (like a bow shot),
-        // the enemy turn will be started by the attack's resolution (in setTimeout).
-        // This prevents enemies from moving before the arrow hits.
-        if (this.playerJustAttacked) return;
-
-        this.isPlayerTurn = false;
-        this.occupiedTilesThisTurn.clear();
-        // Snapshot enemy positions at the start of enemy turns. Any tiles that were
-        // occupied at this moment should not be usable by other enemies during
-        // the same enemy-turn sequence (prevents moving into freed tiles).
-        this.initialEnemyTilesThisTurn = new Set((this.enemies || []).map(e => `${e.x},${e.y}`));
-        // Add player's position to occupied tiles to prevent enemies from moving there
-        const playerPos = this.player.getPosition();
-        this.occupiedTilesThisTurn.add(`${playerPos.x},${playerPos.y}`);
-
-        this.turnQueue = [...this.enemies]; // Get a fresh copy of enemies for the turn
-        this.processTurnQueue();
+        return this.turnManager.startEnemyTurns();
     }
 
     processTurnQueue() {
-        if (this.turnQueue.length === 0) {
-            // All enemies have moved, it's the player's turn again
-            this.isPlayerTurn = true;
-            this.playerJustAttacked = false; // Reset flag after enemy turns
-            this.checkCollisions(); // Check for collisions after all moves are done
-            this.checkItemPickup();
-            return;
-        }
-
-        // Process next enemy in queue
-        const enemy = this.turnQueue.shift();
-        // Re-check if the enemy is still alive and in the game's main enemy list.
-        // This is crucial because an enemy might have been defeated by a previous enemy's action
-        // (e.g., a bomb explosion) during the same turn sequence.
-        const isStillValid = enemy && !enemy.isDead() && this.enemies.includes(enemy);
-
-        // Create animation sequence for enemy turn with 150ms delay
-        this.animationScheduler.createSequence()
-            .then(() => {
-                if (isStillValid) {
-                    this.combatManager.handleSingleEnemyMovement(enemy);
-                }
-            })
-            .wait(150) // 150ms delay between enemy moves for animation
-            .then(() => {
-                // Recursively process remaining enemies
-                this.processTurnQueue();
-            })
-            .start();
+        return this.turnManager.processTurnQueue();
     }
     
     render() {

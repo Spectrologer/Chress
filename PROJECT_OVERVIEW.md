@@ -116,3 +116,8 @@ Total Files: ~90+ including assets. Entry: game.js. Dependencies: Sentry for tra
 4. **Enemy Turn:** `combatManager.handleEnemyMovements()`; enemies use pathfinding/AI.
 5. **UI Update:** `uiManager.updatePlayerStats()` for bars, positions.
 6. **Render:** `RenderManager` draws grid/Player via specialized renderers.
+
+## 5. Notes on recent refactor
+
+- A lightweight DI-style ServiceContainer was added at `core/ServiceContainer.js` to centralize creation and wiring of managers and services. This reduces the responsibilities of `core/Game.js` and makes it easier to test and swap services later.
+- To add a new manager/service, instantiate and attach it in `ServiceContainer.createCoreServices()` and pass `this.game` to constructors that need the game context.
