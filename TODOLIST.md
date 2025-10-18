@@ -1,5 +1,4 @@
-- [x] Investigate statue placement in ZoneGenerator.js for interior (0,0)
-- [x] Check TILE_TYPES constants and mappings in renderers
-- [x] Verify LIZARDO_STATUE rendering in StructureTileRenderer.js
-- [x] Add missing mappings if any in StructureTileRenderer.js
-- [ ] Test or run the game to confirm statues appear
+- [x] Analyze current enemy movement system
+- [x] Modify movement logic to ensure enemies move if they can
+- [x] Test changes to ensure enemies are forced to move when possible
+- [x] Handle special cases (trapped enemies, etc.)

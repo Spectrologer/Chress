@@ -71,6 +71,12 @@ class BaseMoveCalculator {
             }
         }
 
+        // If no strategic move found, try to find ANY valid adjacent move to satisfy "must move if can"
+        const anyAdjacentMove = this.findAnyValidAdjacentMove(enemy, grid, enemies);
+        if (anyAdjacentMove) {
+            return anyAdjacentMove;
+        }
+
         return null; // No path found or no valid move
     }
 
@@ -437,6 +443,50 @@ class BaseMoveCalculator {
     }
 
     /**
+     * Find any valid adjacent move to satisfy "must move if can" rule
+     */
+    findAnyValidAdjacentMove(enemy, grid, enemies) {
+        const directions = [
+            { x: 0, y: -1 }, // North
+            { x: 0, y: 1 },  // South
+            { x: -1, y: 0 }, // West
+            { x: 1, y: 0 },  // East
+            { x: -1, y: -1 }, // Northwest
+            { x: 1, y: -1 },  // Northeast
+            { x: -1, y: 1 },  // Southwest
+            { x: 1, y: 1 }    // Southeast
+        ];
+
+        // Check each adjacent tile
+        for (const dir of directions) {
+            const newX = enemy.x + dir.x;
+            const newY = enemy.y + dir.y;
+
+            // Must be within grid bounds
+            if (newX < 0 || newX >= GRID_SIZE || newY < 0 || newY >= GRID_SIZE) {
+                continue;
+            }
+
+            // Must be walkable (not a wall, water, etc.)
+            if (!enemy.isWalkable(newX, newY, grid)) {
+                continue;
+            }
+
+            // Must not be occupied by another enemy
+            const occupiedByOtherEnemy = enemies.some(e => e.x === newX && e.y === newY);
+            if (occupiedByOtherEnemy) {
+                continue;
+            }
+
+            // Valid move found
+            return { x: newX, y: newY };
+        }
+
+        // No valid adjacent moves found
+        return null;
+    }
+
+    /**
      * Add smoke trail animation for multi-tile moves
      */
     addSmokeTrail(enemy, next) {
@@ -565,7 +615,8 @@ export class LizardyMoveCalculator extends BaseMoveCalculator {
                 if (nextX === playerX && nextY === playerY) {
                     this.performBumpAttack(enemy, player, isSimulation);
                 }
-                return null;
+                // If no special Lizardy behavior applies, fall back to base movement
+                return super.calculateMove(enemy, player, playerPos, grid, enemies, isSimulation, game);
             }
 
                 // Check if after reversing we move onto player
@@ -634,7 +685,8 @@ export class ZardMoveCalculator extends BaseMoveCalculator {
             }
         }
 
-        return null;
+        // If no special Zard behavior applies, fall back to base movement
+        return super.calculateMove(enemy, player, playerPos, grid, enemies, isSimulation, game);
     }
 
     performDiagonalAttack(enemy, player, isSimulation) {
