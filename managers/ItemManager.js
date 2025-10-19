@@ -1,6 +1,6 @@
 import { TILE_TYPES } from '../core/constants.js';
 
-const STACKABLE_ITEMS = ['food', 'water', 'bomb', 'note', 'bishop_spear', 'horse_icon', 'book_of_time_travel', 'bow', 'shovel'];
+const STACKABLE_ITEMS = ['food', 'water', 'bomb', 'note', 'heart', 'bishop_spear', 'horse_icon', 'book_of_time_travel', 'bow', 'shovel'];
 // Type mapping for special object-based tiles
 const typeMap = {
     [TILE_TYPES.BOW]: 'bow',
@@ -46,7 +46,8 @@ export class ItemManager {
         }
 
         if (player.inventory.length < 6) {
-            if (item.type === 'food' || item.type === 'water' || item.type === 'bomb' || item.type === 'note') {
+            // Initialize quantity for stackable consumables so stacks behave consistently
+            if (item.type === 'food' || item.type === 'water' || item.type === 'bomb' || item.type === 'note' || item.type === 'heart') {
                 if (typeof item.quantity === 'undefined') item.quantity = 1;
             }
             player.inventory.push(item);
@@ -92,6 +93,7 @@ export class ItemManager {
             // Handle both object tiles (tile.type) and primitive tile constants
             if (tile === TILE_TYPES.NOTE) return true;
             if (tile === TILE_TYPES.WATER) return true;
+            if (tile === TILE_TYPES.HEART) return true;
             if (tile === TILE_TYPES.BOMB) return true;
             if (tile && tile.type) {
                 const itemType = typeMap[tile.type] || (tile.type === TILE_TYPES.FOOD ? 'food' : null);
@@ -104,6 +106,7 @@ export class ItemManager {
         const isStackable = isStackableItem(tile) || (tile.type && isStackableItem(tile));
         const hasExistingStack = player.inventory.some(i => 
             (i.type === 'water' && tile === TILE_TYPES.WATER) ||
+            (i.type === 'heart' && tile === TILE_TYPES.HEART) ||
             (i.type === 'note' && tile === TILE_TYPES.NOTE) ||
             (i.type === 'food' && tile.type === TILE_TYPES.FOOD && i.foodType === tile.foodType)
         );
@@ -116,6 +119,15 @@ export class ItemManager {
                     pickup({ type: 'water' });
                 } else {
                     player.restoreThirst(10);
+                }
+                grid[y][x] = TILE_TYPES.FLOOR;
+                break;
+            case TILE_TYPES.HEART:
+                if (canPickupOrStack) {
+                    pickup({ type: 'heart' });
+                } else {
+                    // If inventory is full and there's no stack, restore health directly
+                    player.setHealth((player.getHealth ? player.getHealth() : 0) + 1);
                 }
                 grid[y][x] = TILE_TYPES.FLOOR;
                 break;

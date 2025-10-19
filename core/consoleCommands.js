@@ -314,7 +314,7 @@ const consoleCommands = {
       if (lowerKey === 'h') { this.hotkeyH(game); return true; }
       if (lowerKey === 'm') { this.hotkeyM(game); return true; }
       if (lowerKey === 'v') { this.hotkeyV(game); return true; }
-      if (lowerKey === 's') { this.hotkeyS(game); return true; }
+  if (lowerKey === 'z') { this.hotkeyS(game); return true; }
       if (lowerKey === 'n') { this.hotkeyN(game); return true; }
       if (lowerKey === 'r') { this.hotkeyR(game); return true; }
       if (lowerKey === 'k') { this.hotkeyK(game); return true; }

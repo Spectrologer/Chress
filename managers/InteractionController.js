@@ -146,8 +146,7 @@ export class InteractionController {
         // Other doodads that should be interactive (e.g., table)
         if (tileType === TILE_TYPES.TABLE) return true;
 
-        // Bomb objects and choppable tiles
-        if (tileType === TILE_TYPES.BOMB) return true;
+    // Choppable tiles
         const choppableTypes = [TILE_TYPES.GRASS, TILE_TYPES.SHRUBBERY, TILE_TYPES.ROCK];
         if (choppableTypes.includes(tileType)) return true;
         return false;

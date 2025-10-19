@@ -44,8 +44,13 @@ export class ItemUsageHandler {
                 if (item.quantity <= 0) this.game.player.inventory.splice(idx, 1);
                 break;
             case 'heart':
+                // Hearts are stackable now — decrement quantity and heal
                 this.game.player.setHealth(this.game.player.getHealth() + 1);
-                this.game.player.inventory.splice(idx, 1);
+                if (item.quantity && item.quantity > 1) {
+                    item.quantity = item.quantity - 1;
+                } else {
+                    this.game.player.inventory.splice(idx, 1);
+                }
                 break;
             case 'note':
                 item.quantity = (item.quantity || 1) - 1;
@@ -66,7 +71,12 @@ export class ItemUsageHandler {
                 if (item.quantity <= 0) this.game.player.inventory.splice(idx, 1);
                 break;
             case 'book_of_time_travel':
+                if (window.inventoryDebugMode) {
+                    console.log('[ITEM.HANDLER] book use - BEFORE decrement', { idx, uses: item.uses });
+                    try { throw new Error('ITEM.HANDLER book decrement stack'); } catch (e) { console.log(e.stack); }
+                }
                 item.uses--;
+                if (window.inventoryDebugMode) console.log('[ITEM.HANDLER] book use - AFTER decrement', { idx, uses: item.uses });
                 if (item.uses <= 0) this.game.player.inventory.splice(idx, 1);
                 this.game.startEnemyTurns();
                 this.game.updatePlayerStats();

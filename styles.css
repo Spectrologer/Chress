@@ -664,7 +664,8 @@ body {
 
 .inventory-slot.item-heart {
     background-image: url('assets/items/heart.png'), url('assets/ui/cell.png');
-    background-size: 70%, contain;
+    /* make heart visually smaller in inventory */
+    background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
@@ -703,7 +704,8 @@ body {
 
 .inventory-slot.item-heart {
     background-image: url('assets/items/heart.png'), url('assets/ui/cell.png');
-    background-size: contain, contain;
+    /* tighter size for crispness in inventory */
+    background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
@@ -723,6 +725,12 @@ body {
 }
 
 .inventory-slot.item-disabled {
+    opacity: 0.5;
+    filter: grayscale(50%);
+}
+
+/* Temporary disabled appearance while holding long-press */
+.inventory-slot.item-disabled-temp {
     opacity: 0.5;
     filter: grayscale(50%);
 }

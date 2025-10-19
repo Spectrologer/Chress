@@ -10,6 +10,8 @@ export class InventoryManager {
         this.tooltip = null;
         this.longPressTimeout = null;
         this.isLongPress = false;
+        // WeakMap to track last-used timestamps per item object (survives DOM re-renders)
+        this._itemLastUsed = new WeakMap();
     }
 
     // Main method to update inventory display
@@ -175,6 +177,7 @@ export class InventoryManager {
             this._createItemImageContainer(slot, item, 'assets/items/bomb.png');
         } else if (item.type === 'heart') {
             slot.classList.add('item-heart');
+            if (item.quantity > 1) this._addUsesIndicator(slot, item);
         } else if (item.type === 'note') {
             slot.classList.add('item-note');
             if (item.quantity > 1) {
@@ -195,13 +198,42 @@ export class InventoryManager {
         const isDisablable = ['bishop_spear', 'horse_icon', 'bow'].includes(item.type);
         let isLongPress = false;
         let pressTimeout = null;
+    // Track recent pointer interactions so we can ignore the synthetic click
+    // event that follows a pointer sequence on some platforms.
+    let _lastPointerTime = 0;
+    let _lastPointerWasTouch = false;
+    // Track when a pointer handler actually triggered a use so click() can be suppressed
+    let _lastPointerTriggeredUseTime = 0;
+    // Use per-item timestamp to suppress contextmenu after long-press (survives re-render)
 
-        const showTooltip = () => this.showTooltip(slot, tooltipText);
+        const showTooltip = () => {
+            try {
+                if (item._suppressTooltipUntil && Date.now() < item._suppressTooltipUntil) return;
+            } catch (e) {}
+            this.showTooltip(slot, tooltipText);
+        };
         const hideTooltip = () => this.hideTooltip();
-        const useItem = () => this.useInventoryItem(item, idx);
+        const useItem = () => {
+            // Per-item guard to prevent duplicate uses within a short window
+            try {
+                const last = this._itemLastUsed.get(item) || 0;
+                const now = Date.now();
+                if (now - last < 600) {
+                    if (window.inventoryDebugMode) console.log('[INV.MGR] suppressed duplicate use', { idx, itemType: item.type, delta: now - last });
+                    return;
+                }
+                this._itemLastUsed.set(item, now);
+            } catch (e) {}
+            if (window.inventoryDebugMode) {
+                console.log('[INV.MGR] useItem called', { idx, itemType: item.type, time: Date.now() });
+                try { throw new Error('INV.MGR useItem stack'); } catch (e) { console.log(e.stack); }
+            }
+            return this.useInventoryItem(item, idx);
+        };
         const toggleDisabled = () => {
             this.toggleItemDisabled(item, idx);
             this.game.uiManager.updatePlayerStats();
+            try { item._suppressTooltipUntil = Date.now() + 300; } catch (e) {}
             hideTooltip();
         };
 
@@ -215,12 +247,33 @@ export class InventoryManager {
         if (isDisablable) {
             slot.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
+                try {
+                    if (item._suppressContextMenuUntil && Date.now() < item._suppressContextMenuUntil) {
+                        item._suppressContextMenuUntil = 0;
+                        if (item._pendingToggle) {
+                            delete item._pendingToggle;
+                            slot.classList.remove('item-disabled-temp');
+                        }
+                        return;
+                    }
+                } catch (err) {}
+                try {
+                    if (item._pendingToggle) {
+                        delete item._pendingToggle;
+                        slot.classList.remove('item-disabled-temp');
+                        toggleDisabled();
+                        return;
+                    }
+                } catch (err) {}
                 toggleDisabled();
             });
         }
 
         // Click to use (Desktop)
-        slot.addEventListener('click', () => {
+        slot.addEventListener('click', (ev) => {
+            const now = Date.now();
+            if (_lastPointerTriggeredUseTime && (now - _lastPointerTriggeredUseTime) < 500) return;
+            if (_lastPointerWasTouch && (now - _lastPointerTime) < 500) return;
             if (this.game.player.isDead()) return;
             if (item.type === 'bomb') {
                 // Special bomb logic is handled separately
@@ -228,6 +281,7 @@ export class InventoryManager {
             }
             if (!isDisablable || !item.disabled) {
                 useItem();
+                _lastPointerTriggeredUseTime = Date.now();
             }
         });
 
@@ -236,12 +290,20 @@ export class InventoryManager {
         const onPointerDown = (e) => {
             if (e.pointerType === 'mouse' && e.button !== 0) return;
             try { e.preventDefault(); } catch (err) {}
+            // record pointer info to suppress the following click
+            _lastPointerTime = Date.now();
+            _lastPointerWasTouch = e.pointerType !== 'mouse';
             isLongPress = false;
             pressPointerId = e.pointerId;
+            const startX = e.clientX || 0;
+            const startY = e.clientY || 0;
             pressTimeout = setTimeout(() => {
                 isLongPress = true;
                 if (isDisablable) {
-                    toggleDisabled();
+                    // Mark pending toggle and show temporary disabled visual during hold
+                    try { item._pendingToggle = true; } catch (e) {}
+                    slot.classList.add('item-disabled-temp');
+                    try { item._suppressContextMenuUntil = Date.now() + 1000; } catch (e) {}
                 } else {
                     showTooltip();
                     // Auto-hide tooltip after 2s
@@ -249,14 +311,32 @@ export class InventoryManager {
                 }
             }, 500);
             try { e.target.setPointerCapture?.(e.pointerId); } catch (err) {}
+            slot._pressStartX = startX;
+            slot._pressStartY = startY;
         };
 
         const onPointerMove = (e) => {
             if (pressPointerId !== e.pointerId) return;
-            if (pressTimeout) {
-                clearTimeout(pressTimeout);
-                pressTimeout = null;
+            const sx = slot._pressStartX || 0;
+            const sy = slot._pressStartY || 0;
+            const dx = (e.clientX || 0) - sx;
+            const dy = (e.clientY || 0) - sy;
+            const distSq = dx * dx + dy * dy;
+            const threshold = 12 * 12; // 12px threshold squared
+            if (distSq > threshold) {
+                if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; }
+                try { delete item._pendingToggle; } catch (err) {}
+                slot.classList.remove('item-disabled-temp');
             }
+        };
+
+        const onPointerCancel = (e) => {
+            if (pressPointerId !== e.pointerId) return;
+            if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; }
+            try { delete item._pendingToggle; } catch (err) {}
+            slot.classList.remove('item-disabled-temp');
+            pressPointerId = null;
+            hideTooltip();
         };
 
         const onPointerUp = (e) => {
@@ -274,21 +354,37 @@ export class InventoryManager {
                 }
                 if (!isDisablable || !item.disabled) {
                     useItem();
+                    _lastPointerTriggeredUseTime = Date.now();
                 }
             }
             try { e.target.releasePointerCapture?.(e.pointerId); } catch (err) {}
+            // Commit pending toggle if present (do the actual data change after release)
+            try {
+                if (item._pendingToggle) {
+                    delete item._pendingToggle;
+                    slot.classList.remove('item-disabled-temp');
+                    toggleDisabled();
+                }
+            } catch (err) {}
             pressPointerId = null;
+            // Ensure tooltip is hidden when pointer is released to avoid stuck tooltips
+            hideTooltip();
         };
 
-        slot.addEventListener('pointerdown', onPointerDown, { passive: false });
-        slot.addEventListener('pointermove', onPointerMove);
-        slot.addEventListener('pointerup', onPointerUp);
+    slot.addEventListener('pointerdown', onPointerDown, { passive: false });
+    slot.addEventListener('pointermove', onPointerMove);
+    slot.addEventListener('pointercancel', onPointerCancel);
+    slot.addEventListener('pointerup', onPointerUp);
 
         // Special handling for bomb inventory item
         if (item.type === 'bomb') {
             let lastBombClickTime = 0;
+            let _lastBombActionTime = 0; // debounce guard for immediate duplicate calls
             const bombClick = () => {
                 const now = Date.now();
+                if (now - _lastBombActionTime < 250) return;
+                _lastBombActionTime = now;
+
                 const isDouble = (now - lastBombClickTime) < 300;
                 lastBombClickTime = now;
                 if (isDouble) {
@@ -297,7 +393,13 @@ export class InventoryManager {
                     this.game.grid[py][px] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true };
                     const bombItem = this.game.player.inventory.find(item => item.type === 'bomb');
                     if (bombItem) {
-                        this.useInventoryItem(bombItem, this.game.player.inventory.indexOf(bombItem));
+                        // respect per-item guard to avoid double consumption
+                        const last = this._itemLastUsed.get(bombItem) || 0;
+                        const now = Date.now();
+                        if (now - last >= 600) {
+                            this._itemLastUsed.set(bombItem, now);
+                            this.useInventoryItem(bombItem, this.game.player.inventory.indexOf(bombItem));
+                        } else if (window.inventoryDebugMode) console.log('[INV.MGR] suppressed duplicate bomb use', {idx});
                     }
                     this.game.uiManager.updatePlayerStats();
                 } else {

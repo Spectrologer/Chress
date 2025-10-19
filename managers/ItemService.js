@@ -90,6 +90,12 @@ export class ItemService {
                 this.game.player.restoreThirst(10);
                 if (item.quantity <= 0) this.game.player.inventory.splice(idx, 1);
                 break;
+            case 'heart':
+                // Support stacked hearts
+                this.game.player.setHealth(this.game.player.getHealth() + 1);
+                item.quantity = (item.quantity || 1) - 1;
+                if (item.quantity <= 0) this.game.player.inventory.splice(idx, 1);
+                break;
             default:
                 break;
         }

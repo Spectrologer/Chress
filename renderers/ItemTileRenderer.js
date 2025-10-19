@@ -157,11 +157,18 @@ export class ItemTileRenderer {
 
         // Try to draw the heart image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'heart')) {
-            // Scale heart to 70% to make it slightly smaller
-            const scaledSize = TILE_SIZE * 0.7;
-            const offsetX = (TILE_SIZE - scaledSize) / 2;
-            const offsetY = (TILE_SIZE - scaledSize) / 2;
-            ctx.drawImage(this.images.heart, pixelX + offsetX, pixelY + offsetY, scaledSize, scaledSize);
+            // Scale heart to ~65% to be visually smaller on ground and draw crisply
+            const scaledSize = Math.round(TILE_SIZE * 0.65);
+            const offsetX = Math.round((TILE_SIZE - scaledSize) / 2);
+            const offsetY = Math.round((TILE_SIZE - scaledSize) / 2);
+            // Disable smoothing for a pixel-crisp draw, but restore context state afterwards
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            // Align to integer pixels for crisper blitting
+            const drawX = Math.round(pixelX + offsetX);
+            const drawY = Math.round(pixelY + offsetY);
+            ctx.drawImage(this.images.heart, drawX, drawY, scaledSize, scaledSize);
+            ctx.restore();
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.HEART], '💖');
         }
