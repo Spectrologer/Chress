@@ -1246,6 +1246,36 @@ h1 {
     align-items: center;
 }
 
+/* Constrain overlay content so long dialogue scrolls instead of overflowing the game area */
+#messageOverlay, .message-overlay {
+    box-sizing: border-box;
+    max-height: 60vh; /* Keep overlay within viewport */
+    overflow: auto; /* Allow scrolling for long content */
+    padding: 20px;
+}
+
+/* Barter/dialogue panel scrolling */
+.barter-window, .barter-main-content, .barter-offers-container {
+    box-sizing: border-box;
+    max-height: 60vh;
+    overflow: auto;
+}
+
+/* Message log area should scroll when long */
+.message-log-box, .message-log-content {
+    max-height: 70vh;
+    overflow: auto;
+}
+
+/* Improve scrollbar visibility on desktop browsers */
+#messageOverlay::-webkit-scrollbar, .barter-window::-webkit-scrollbar, .message-log-box::-webkit-scrollbar {
+    width: 10px;
+}
+#messageOverlay::-webkit-scrollbar-thumb, .barter-window::-webkit-scrollbar-thumb, .message-log-box::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.15);
+    border-radius: 6px;
+}
+
 /* For larger text like charge confirmations */
 .message-overlay.large-text, #messageOverlay.large-text {
     font-size: 2.8em;

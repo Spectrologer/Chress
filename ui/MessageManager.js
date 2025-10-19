@@ -95,7 +95,15 @@ export class MessageManager {
 
             // Use innerHTML to set content with image if provided
             if (imageSrc) {
-                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 128px; height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${displayText}`;
+                // Default thumbnail style: force a readable width while preserving aspect ratio
+                let imgStyle = 'width: 128px; height: auto; max-height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;';
+                // If this is the bow asset, rotate it 90deg CCW so it visually matches inventory orientation
+                try {
+                    if (typeof imageSrc === 'string' && imageSrc.toLowerCase().endsWith('/bow.png')) {
+                        imgStyle += ' transform: rotate(-90deg); transform-origin: center center;';
+                    }
+                } catch (e) {}
+                messageElement.innerHTML = `<img src="${imageSrc}" style="${imgStyle}">${displayText}`;
             } else {
                 messageElement.innerHTML = displayText;
             }
@@ -165,7 +173,14 @@ export class MessageManager {
                     </div>
                     ${text}`;
             } else if (imageSrc) {
-                messageElement.innerHTML = `<img src="${imageSrc}" style="width: 128px; height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;">${text}`;
+                // Apply same bow-rotation logic for sign messages
+                let imgStyle = 'width: 128px; height: auto; max-height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;';
+                try {
+                    if (typeof imageSrc === 'string' && imageSrc.toLowerCase().endsWith('/bow.png')) {
+                        imgStyle += ' transform: rotate(-90deg); transform-origin: center center;';
+                    }
+                } catch (e) {}
+                messageElement.innerHTML = `<img src="${imageSrc}" style="${imgStyle}">${text}`;
             } else {
                 messageElement.innerHTML = text;
             }

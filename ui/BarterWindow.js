@@ -220,15 +220,25 @@ export class BarterWindow {
             else if (selectedItemType === TILE_TYPES.BOW) inventoryItem = { type: 'bow', uses: 3 };
             else if (selectedItemType === TILE_TYPES.BISHOP_SPEAR) inventoryItem = { type: 'bishop_spear', uses: 3 };
 
-            if (inventoryItem) this.game.itemManager.addItemToInventory(this.game.player, inventoryItem);
+            let awardedImg = tradeData.receivedItemImg;
+            if (inventoryItem) {
+                this.game.itemManager.addItemToInventory(this.game.player, inventoryItem);
+                // Map awarded type to appropriate asset for the overlay
+                if (inventoryItem.type === 'bomb') awardedImg = 'assets/items/bomb.png';
+                else if (inventoryItem.type === 'bow') awardedImg = 'assets/items/bow.png';
+                else if (inventoryItem.type === 'bishop_spear') awardedImg = 'assets/items/spear.png';
+            }
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for an item.`);
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+            this.game.uiManager.showOverlayMessage('Trade successful!', awardedImg);
         } else if (tradeData.id === 'nib_item') {
             this.game.player.addPoints(-tradeData.requiredAmount);
-            const randomItem = Math.random() < 0.5 ? { type: 'book' } : { type: 'horse_icon', uses: 3 };
+            // Normalize to the canonical radial book type so ItemManager stacks it correctly
+            const randomItem = Math.random() < 0.5 ? { type: 'book_of_time_travel', uses: 1 } : { type: 'horse_icon', uses: 3 };
             this.game.itemManager.addItemToInventory(this.game.player, randomItem);
+            // Choose overlay image based on awarded item
+            const awardedImg = randomItem.type === 'book_of_time_travel' ? 'assets/items/book.png' : 'assets/items/horse.png';
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for a random trinket.`);
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+            this.game.uiManager.showOverlayMessage('Trade successful!', awardedImg);
 
         } else if (tradeData.id === 'mark_meat') { // Trade discoveries for meat
             // Update spent discoveries via the Player API
