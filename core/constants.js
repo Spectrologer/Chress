@@ -2,6 +2,7 @@
 export const ANIMATION_CONSTANTS = {
     LIFT_FRAMES: 15, // Frames for player/enemy lift animations
     ATTACK_ANIMATION_FRAMES: 15, // Frames for attack animations
+    LIZARDY_FLIP_FRAMES: 20, // Frames for lizardy flip animation
     BUMP_ANIMATION_FRAMES: 15, // Frames for bump animations
     DEATH_ANIMATION_FRAMES: 15, // Frames for death animations
     ARROW_ANIMATION_FRAMES: 20, // Frames for arrow animations

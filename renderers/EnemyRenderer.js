@@ -1,4 +1,5 @@
 import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS } from '../core/constants.js';
+import { RendererUtils } from './RendererUtils.js';
 
 export class EnemyRenderer {
     constructor(game) {
@@ -90,6 +91,29 @@ export class EnemyRenderer {
                     this.ctx.globalAlpha = 0.7;
                     this.ctx.filter = 'brightness(1.5) drop-shadow(0 0 8px red)';
                 }
+
+                // For 'lizardy', handle horizontal flipping with animation centered in the tile.
+                if (enemy.enemyType === 'lizardy') {
+                    let flipScale = enemy.movementDirection; // 1 for south, -1 for north
+                
+                    if (enemy.flipAnimation && enemy.flipAnimation > 0) {
+                        const totalFrames = ANIMATION_CONSTANTS.LIZARDY_FLIP_FRAMES;
+                        const progress = (totalFrames - enemy.flipAnimation) / totalFrames; // 0 -> 1
+                
+                        // Animate from previous direction to current direction
+                        const startScale = -enemy.movementDirection; // The direction it was facing
+                        const endScale = enemy.movementDirection;
+                        flipScale = startScale + (endScale - startScale) * progress;
+                
+                        enemy.flipAnimation--;
+                    }
+                
+                    // To flip in place, we translate to the center, scale, and translate back.
+                    this.ctx.translate(TILE_SIZE / 2, 0);
+                    this.ctx.scale(flipScale, 1);
+                    this.ctx.translate(-TILE_SIZE / 2, 0);
+                }
+
                 this.ctx.drawImage(
                     enemyImage,
                     0,

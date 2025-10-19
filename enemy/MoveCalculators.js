@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
+import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '../core/constants.js';
 import { EnemyPathfinding } from './EnemyPathfinding.js';
 import { EnemySpecialActions } from './EnemySpecialActions.js';
 import { logger } from '../core/logger.js';
@@ -673,6 +673,7 @@ export class LizardyMoveCalculator extends BaseMoveCalculator {
 
             // Reverse direction
             enemy.movementDirection *= -1;
+            enemy.flipAnimation = ANIMATION_CONSTANTS.LIZARDY_FLIP_FRAMES;
             nextY = enemy.y + enemy.movementDirection;
 
             // If still blocked after reversing, stay put
