@@ -253,20 +253,39 @@ export class InteractionController {
                 }, fallbackDelay);
             }
         } else {
-            for (let i = 0; i < path.length && !this.cancelPath; i++) {
-                const ev = { key: path[i], preventDefault: () => {}, _synthetic: true };
+            // Stagger execution of path steps so each movement is processed in its own
+            // tick. This lets animation and rendering happen between steps and avoids
+            // instantaneous synchronous moves that skip frames.
+            const stepDelay = Math.max(40, INPUT_CONSTANTS.LEGACY_PATH_DELAY || 50);
+            let stepIndex = 0;
+            const runNextStep = () => {
+                if (this.cancelPath || stepIndex >= path.length) {
+                    this.isExecutingPath = false;
+                    // Post-processing after path completes
+                    const playerPos = this.game.player.getPosition();
+                    if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
+                        if (this.autoUseNextExitReach) { if (this.exitHandler) this.exitHandler(playerPos.x, playerPos.y); else this.performExitTap(playerPos.x, playerPos.y); this.autoUseNextExitReach = false; }
+                    }
+                    if (this.game.player.interactOnReach) {
+                        const target = this.game.player.interactOnReach;
+                        this.game.player.clearInteractOnReach();
+                        this.game.interactionManager.triggerInteractAt(target);
+                    }
+                    return;
+                }
+
+                const ev = { key: path[stepIndex], preventDefault: () => {}, _synthetic: true };
                 if (this.keyHandler) this.keyHandler(ev); else this.handleKeyPress(ev);
-            }
-            this.isExecutingPath = false;
-            const playerPos = this.game.player.getPosition();
-            if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
-                if (this.autoUseNextExitReach) { if (this.exitHandler) this.exitHandler(playerPos.x, playerPos.y); else this.performExitTap(playerPos.x, playerPos.y); this.autoUseNextExitReach = false; }
-            }
-            if (this.game.player.interactOnReach) {
-                const target = this.game.player.interactOnReach;
-                this.game.player.clearInteractOnReach();
-                this.game.interactionManager.triggerInteractAt(target);
-            }
+                stepIndex++;
+                // Allow the render loop to process between steps
+                setTimeout(() => {
+                    requestAnimationFrame(() => runNextStep());
+                }, stepDelay);
+            };
+
+            this.isExecutingPath = true;
+            this.cancelPath = false;
+            runNextStep();
         }
     }
 

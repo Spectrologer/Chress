@@ -1,4 +1,5 @@
 import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES } from '../core/constants.js';
+import { logger } from '../core/logger.js';
 
 export class TextureLoader {
     constructor() {
@@ -79,12 +80,12 @@ export class TextureLoader {
         this.images[key] = new Image();
 
         this.images[key].onload = () => {
-            if (key === 'doodads/shack') {
-                console.log('[TextureLoader] Shack image loaded successfully:', filename, `dimensions: ${this.images[key].width}x${this.images[key].height}`);
+                if (key === 'doodads/shack') {
+                logger.debug('[TextureLoader] Shack image loaded successfully:', filename, `dimensions: ${this.images[key].width}x${this.images[key].height}`);
                 // Validate shack image is at least 3x3 sprite sheet
                 const img = this.images[key];
                 if (img.width < 48 || img.height < 48) {
-                    console.warn('[TextureLoader] Shack image too small for 3x3 sprite sheet, rendering may fail:', `got ${img.width}x${img.height}, need >=48x48`);
+                    logger.warn('[TextureLoader] Shack image too small for 3x3 sprite sheet, rendering may fail:', `got ${img.width}x${img.height}, need >=48x48`);
                 }
             }
                     // Targeted matte removal for known assets that use a solid background
@@ -138,8 +139,8 @@ export class TextureLoader {
         };
 
         this.images[key].onerror = (error) => {
-            if (key === 'doodads/shack') {
-                console.error('[TextureLoader] Failed to load shack image:', filename, error);
+                if (key === 'doodads/shack') {
+                logger.error('[TextureLoader] Failed to load shack image:', filename, error);
             }
             this.imagesLoaded++;
             if (this.imagesLoaded === this.totalImages && this.onAllImagesLoaded) {

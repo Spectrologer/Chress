@@ -1,5 +1,6 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { Sign } from '../ui/Sign.js';
+import { logger } from '../core/logger.js';
 
 export class ZoneManager {
     constructor(game) {
@@ -305,6 +306,6 @@ export class ZoneManager {
             playerSpawn: null // playerSpawn not needed for current zone
         });
 
-        console.log(`Saved current zone state for ${zoneKey}`);
+    logger.debug(`Saved current zone state for ${zoneKey}`);
     }
 }

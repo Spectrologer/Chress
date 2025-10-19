@@ -1,4 +1,5 @@
 import { TILE_TYPES } from '../core/constants.js';
+import { logger } from '../core/logger.js';
 
 export class InventoryUI {
     constructor(game, itemService) {
@@ -48,43 +49,18 @@ export class InventoryUI {
     addItemVisuals(slot, item) {
         // Add disabled styling
         if (item.disabled) slot.classList.add('item-disabled');
-
-        // Add uses indicator helper
-        const _addUsesIndicator = (parent, it) => {
-            parent.style.position = 'relative';
-            const usesText = document.createElement('div');
-            usesText.style.position = 'absolute';
-            usesText.style.bottom = '6px';
-            usesText.style.right = '6px';
-            usesText.style.fontSize = '1.6em';
-            usesText.style.lineHeight = '1';
-            usesText.style.padding = '2px 6px';
-            usesText.style.borderRadius = '10px';
-            usesText.style.background = it.disabled ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.5)';
-            usesText.style.fontWeight = '900';
-            usesText.style.color = it.disabled ? '#555555' : '#111111';
-            usesText.style.textShadow = '0 1px 0 rgba(255,255,255,0.6)';
-            usesText.style.boxShadow = '0 1px 2px rgba(0,0,0,0.2)';
-            usesText.textContent = `x${it.uses || it.quantity}`;
-            parent.appendChild(usesText);
-        };
-
-        const _createItemImage = (parent, src, styles = {}) => {
-            const img = document.createElement('img');
-            img.src = src;
-            Object.assign(img.style, { width: '70%', height: '70%', objectFit: 'contain', imageRendering: 'pixelated', opacity: item.disabled ? '0.5' : '1', ...styles });
-            parent.appendChild(img);
-        };
+        // Ensure slot is positioned for absolute children
+        slot.style.position = slot.style.position || '';
 
         // Visual rules for known item types (mirrors InventoryManager)
         switch (item.type) {
             case 'food':
-                _createItemImage(slot, `assets/${item.foodType}`);
-                if (item.quantity > 1) _addUsesIndicator(slot, item);
+                this._createItemImage(slot, `assets/${item.foodType}`, item);
+                if (item.quantity > 1) this._addUsesIndicator(slot, item);
                 break;
             case 'water':
                 slot.classList.add('item-water');
-                if (item.quantity > 1) _addUsesIndicator(slot, item);
+                if (item.quantity > 1) this._addUsesIndicator(slot, item);
                 break;
             case 'axe':
                 slot.classList.add('item-axe');
@@ -94,60 +70,66 @@ export class InventoryUI {
                 break;
             case 'bishop_spear':
                 slot.classList.add('item-spear');
-                _addUsesIndicator(slot, item);
+                this._addUsesIndicator(slot, item);
                 break;
             case 'horse_icon':
-                _createItemImage(slot, 'assets/items/horse.png');
-                if ((item.uses && item.uses > 1) || (item.quantity && item.quantity > 1)) _addUsesIndicator(slot, item);
+                this._createItemImage(slot, 'assets/items/horse.png', item);
+                if ((item.uses && item.uses > 1) || (item.quantity && item.quantity > 1)) this._addUsesIndicator(slot, item);
                 break;
             case 'bomb':
-                _createItemImage(slot, 'assets/items/bomb.png');
-                if (item.quantity > 1) _addUsesIndicator(slot, item);
+                this._createItemImage(slot, 'assets/items/bomb.png', item);
+                if (item.quantity > 1) this._addUsesIndicator(slot, item);
                 break;
             case 'heart':
                 slot.classList.add('item-heart');
                 if (item.quantity > 1) {
-                    const usesText = document.createElement('div');
-                    usesText.style.position = 'absolute';
-                    usesText.style.bottom = '6px';
-                    usesText.style.right = '6px';
-                    usesText.style.fontSize = '1.6em';
-                    usesText.style.lineHeight = '1';
-                    usesText.style.padding = '2px 6px';
-                    usesText.style.borderRadius = '10px';
-                    usesText.style.background = item.disabled ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.5)';
-                    usesText.style.fontWeight = '900';
-                    usesText.style.color = item.disabled ? '#555555' : '#111111';
-                    usesText.style.textShadow = '0 1px 0 rgba(255,255,255,0.6)';
-                    usesText.style.boxShadow = '0 1px 2px rgba(0,0,0,0.2)';
-                    usesText.textContent = `x${item.quantity}`;
-                    slot.style.position = 'relative';
-                    slot.appendChild(usesText);
+                    this._addUsesIndicator(slot, item);
                 }
                 break;
             case 'note':
                 slot.classList.add('item-note');
-                if (item.quantity > 1) _addUsesIndicator(slot, item);
+                if (item.quantity > 1) this._addUsesIndicator(slot, item);
                 break;
             case 'book_of_time_travel':
                 slot.classList.add('item-book');
-                _addUsesIndicator(slot, item);
+                this._addUsesIndicator(slot, item);
                 break;
             case 'bow':
-                _createItemImage(slot, 'assets/items/bow.png', { transform: 'rotate(-90deg)' });
-                _addUsesIndicator(slot, item);
+                this._createItemImage(slot, 'assets/items/bow.png', item, { transform: 'rotate(-90deg)' });
+                this._addUsesIndicator(slot, item);
                 break;
             case 'shovel':
-                _createItemImage(slot, 'assets/items/shovel.png');
-                _addUsesIndicator(slot, item);
+                this._createItemImage(slot, 'assets/items/shovel.png', item);
+                this._addUsesIndicator(slot, item);
                 break;
             default:
                 // Unknown item types: try to show an image if path provided
                 if (item.image) {
-                    _createItemImage(slot, item.image);
+                    this._createItemImage(slot, item.image, item);
                 }
                 break;
         }
+    }
+
+    // Private helper: create an img element and append to parent
+    _createItemImage(parent, src, item, extraStyles = {}) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.classList.add('item-img');
+        // Apply opacity for disabled items
+        if (item && item.disabled) img.style.opacity = '0.5';
+        if (extraStyles && extraStyles.transform) img.style.transform = extraStyles.transform;
+        parent.appendChild(img);
+    }
+
+    // Private helper: add a uses indicator element to parent
+    _addUsesIndicator(parent, item) {
+        try { parent.style.position = parent.style.position || 'relative'; } catch (e) {}
+        const usesText = document.createElement('div');
+        usesText.classList.add('uses-indicator');
+        usesText.textContent = `x${item.uses || item.quantity}`;
+        if (item && item.disabled) usesText.classList.add('disabled'); else usesText.classList.add('enabled');
+        parent.appendChild(usesText);
     }
 
     addInventorySlotEvents(slot, item, idx, tooltipText) {
@@ -176,14 +158,14 @@ export class InventoryUI {
                 const last = this._itemLastUsed.get(item) || 0;
                 const now = Date.now();
                 if (now - last < 600) {
-                    if (window.inventoryDebugMode) console.log('[INV.UI] suppressed duplicate use', { idx, itemType: item.type, delta: now - last });
+                    if (window.inventoryDebugMode) logger.debug('[INV.UI] suppressed duplicate use', { idx, itemType: item.type, delta: now - last });
                     return;
                 }
                 this._itemLastUsed.set(item, now);
             } catch (e) {}
             if (window.inventoryDebugMode) {
-                console.log('[INV.UI] useItem called', { idx, itemType: item.type, time: Date.now() });
-                try { throw new Error('INV.UI useItem stack'); } catch (e) { console.log(e.stack); }
+                logger.debug('[INV.UI] useItem called', { idx, itemType: item.type, time: Date.now() });
+                try { throw new Error('INV.UI useItem stack'); } catch (e) { logger.debug(e.stack); }
             }
             return this.itemService.useInventoryItem(item, idx);
         };
@@ -349,7 +331,7 @@ export class InventoryUI {
                         if (now - last >= 600) {
                             this._itemLastUsed.set(bombItem, now);
                             this.itemService.useInventoryItem(bombItem, this.game.player.inventory.indexOf(bombItem));
-                        } else if (window.inventoryDebugMode) console.log('[INV.UI] suppressed duplicate bomb use', {idx});
+                        } else if (window.inventoryDebugMode) logger.debug('[INV.UI] suppressed duplicate bomb use', {idx});
                     }
                     this.game.uiManager.updatePlayerStats();
                 } else {

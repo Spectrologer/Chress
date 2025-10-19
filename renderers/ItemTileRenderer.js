@@ -1,5 +1,6 @@
 import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from '../core/constants.js';
 import { RendererUtils } from './RendererUtils.js';
+import { logger } from '../core/logger.js';
 
 export class ItemTileRenderer {
     constructor(images, tileSize) {
@@ -121,7 +122,7 @@ export class ItemTileRenderer {
         // Get the bomb image
         const bombImage = this.images.bomb;
 
-        console.log('Bomb image loaded:', bombImage && bombImage.complete, 'naturalWidth:', bombImage?.naturalWidth);
+    logger.debug('Bomb image loaded:', bombImage && bombImage.complete, 'naturalWidth:', bombImage?.naturalWidth);
 
         // Check if it's an object bomb (player-placed with animation timer)
         if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
@@ -138,16 +139,16 @@ export class ItemTileRenderer {
                 }
                 ctx.drawImage(bombImage, 0, 0, TILE_SIZE, TILE_SIZE);
                 ctx.restore();
-            } else {
+                } else {
                 this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BOMB], '💣');
-                console.log('Using fallback for object bomb');
+                logger.debug('Using fallback for object bomb');
             }
         } else if (bombImage && bombImage.complete) {
             // Primitive bomb (randomly generated) - render normally without animation
             ctx.drawImage(bombImage, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BOMB], '💣');
-            console.log('Using fallback for primitive bomb');
+            logger.debug('Using fallback for primitive bomb');
         }
     }
 

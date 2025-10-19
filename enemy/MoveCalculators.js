@@ -1,6 +1,7 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { EnemyPathfinding } from './EnemyPathfinding.js';
 import { EnemySpecialActions } from './EnemySpecialActions.js';
+import { logger } from '../core/logger.js';
 
 // Base strategy for enemy movement calculation (now used for default enemy types)
 class BaseMoveCalculator {
@@ -73,8 +74,8 @@ class BaseMoveCalculator {
             }
             // Debug: trace lizord path decisions to help diagnose retreating behavior
             if (enemy.enemyType === 'lizord' && !isSimulation) {
-                console.log(`[Lizord Debug] path=${path.map(p=>`${p.x},${p.y}`).join(' -> ')}`);
-                console.log(`[Lizord Debug] initial next=${next.x},${next.y} enemy=${enemy.x},${enemy.y} player=${playerX},${playerY}`);
+                logger.debug(`[Lizord Debug] path=${path.map(p=>`${p.x},${p.y}`).join(' -> ')}`);
+                logger.debug(`[Lizord Debug] initial next=${next.x},${next.y} enemy=${enemy.x},${enemy.y} player=${playerX},${playerY}`);
             }
             // For enemy types that can move multiple tiles, apply aggressive distance closing
             next = this.applyAggressiveMovement(enemy, path, next);
@@ -101,7 +102,7 @@ class BaseMoveCalculator {
 
                 // Check for player interactions
                 if (enemy.enemyType === 'lizord' && !isSimulation) {
-                    console.log(`[Lizord Debug] considering player interaction at next=${next.x},${next.y}`);
+                    logger.debug(`[Lizord Debug] considering player interaction at next=${next.x},${next.y}`);
                 }
                 return this.handlePlayerInteraction(enemy, next, player, playerX, playerY, grid, enemies, isSimulation, game);
             }
@@ -235,13 +236,13 @@ class BaseMoveCalculator {
         // enemy types, do not perform a defensive retreat — prefer the attack.
         // Specifically handle Lizord's knight-like bump attack here so it isn't
         // canceled by defensive logic.
-        if (enemy.enemyType === 'lizord') {
+            if (enemy.enemyType === 'lizord') {
             const startDx = Math.abs(next.x - enemy.x);
             const startDy = Math.abs(next.y - enemy.y);
             const isKnightMove = (startDx === 2 && startDy === 1) || (startDx === 1 && startDy === 2);
             if (isKnightMove && next.x === playerX && next.y === playerY) {
                 // This next move is a bump attack endpoint — allow it.
-                if (!isSimulation) console.log(`[Lizord Debug] allowing knight bump to ${next.x},${next.y}`);
+                if (!isSimulation) logger.debug(`[Lizord Debug] allowing knight bump to ${next.x},${next.y}`);
                 return next;
             }
         }
@@ -255,7 +256,7 @@ class BaseMoveCalculator {
             const defensiveMoves = this.tacticalAI.getDefensiveMoves(enemy, playerX, playerY, next.x, next.y, grid, enemies);
             if (defensiveMoves.length > 0) {
                 if (enemy.enemyType === 'lizord' && !isSimulation) {
-                    console.log(`[Lizord Debug] defensiveMoves candidates=${defensiveMoves.map(m=>`${m.x},${m.y}`).join(';')}`);
+                    logger.debug(`[Lizord Debug] defensiveMoves candidates=${defensiveMoves.map(m=>`${m.x},${m.y}`).join(';')}`);
                 }
                 // Add smoke animation for defensive retreat if it's a multi-tile move
                 if (!isSimulation && this.calculateMoveDistance(enemy.x, enemy.y, defensiveMoves[0].x, defensiveMoves[0].y) > 1) {

@@ -621,6 +621,37 @@ body {
     object-fit: contain;
 }
 
+/* Centralized styles for inventory item visuals */
+.item-img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.uses-indicator {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    font-size: 1.6em;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 900;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.uses-indicator.enabled {
+    background: rgba(255,255,255,0.5);
+    color: #111111;
+}
+
+.uses-indicator.disabled {
+    background: rgba(255,255,255,0.35);
+    color: #555555;
+}
+
 .inventory-tooltip {
     position: absolute;
     background: #fffbe9;

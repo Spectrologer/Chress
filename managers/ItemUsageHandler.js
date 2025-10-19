@@ -1,5 +1,6 @@
 import { TILE_TYPES } from '../core/constants.js';
 import { Sign } from '../ui/Sign.js';
+import { logger } from '../core/logger.js';
 
 export class ItemUsageHandler {
     constructor(game) {
@@ -72,11 +73,11 @@ export class ItemUsageHandler {
                 break;
             case 'book_of_time_travel':
                 if (window.inventoryDebugMode) {
-                    console.log('[ITEM.HANDLER] book use - BEFORE decrement', { idx, uses: item.uses });
-                    try { throw new Error('ITEM.HANDLER book decrement stack'); } catch (e) { console.log(e.stack); }
+                    logger.debug('[ITEM.HANDLER] book use - BEFORE decrement', { idx, uses: item.uses });
+                    try { throw new Error('ITEM.HANDLER book decrement stack'); } catch (e) { logger.debug(e.stack); }
                 }
                 item.uses--;
-                if (window.inventoryDebugMode) console.log('[ITEM.HANDLER] book use - AFTER decrement', { idx, uses: item.uses });
+                if (window.inventoryDebugMode) logger.debug('[ITEM.HANDLER] book use - AFTER decrement', { idx, uses: item.uses });
                 if (item.uses <= 0) this.game.player.inventory.splice(idx, 1);
                 this.game.startEnemyTurns();
                 this.game.updatePlayerStats();
