@@ -29,7 +29,10 @@ export class PlayerAnimations {
 
     startAttackAnimation() {
         this.attackAnimation = ANIMATION_CONSTANTS.ATTACK_ANIMATION_FRAMES;
-        window.soundManager?.playSound('attack');
+        // Sound is played by the initiating controller (InteractionController/
+        // InteractionManager) so the played SFX can be context-sensitive
+        // (e.g., play 'slash' when the player has an axe). Avoid playing a
+        // generic attack/procedural sound here to prevent double sounds.
     }
 
     startActionAnimation() {

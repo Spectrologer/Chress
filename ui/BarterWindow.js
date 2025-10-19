@@ -272,7 +272,7 @@ export class BarterWindow {
             }
         }
 
-        this.game.soundManager.playSound('ding');
+    this.game.soundManager.playSound('point');
         this.game.updatePlayerStats();
         this.game.uiManager.updateZoneDisplay(); // Refresh discoveries count
         this.hideBarterWindow();

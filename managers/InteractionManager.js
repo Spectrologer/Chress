@@ -148,17 +148,30 @@ export class InteractionManager {
 
             if (isAdjacent) {
                 // Perform immediate player attack on the adjacent enemy
-                try {
-                    this.game.player.startAttackAnimation();
-                    this.game.player.startBump(enemyAtCoords.x - playerPos.x, enemyAtCoords.y - playerPos.y);
-                    if (typeof enemyAtCoords.startBump === 'function') {
-                        enemyAtCoords.startBump(playerPos.x - enemyAtCoords.x, playerPos.y - enemyAtCoords.y);
+                    try {
+                        this.game.player.startAttackAnimation();
+                        this.game.player.startBump(enemyAtCoords.x - playerPos.x, enemyAtCoords.y - playerPos.y);
+                        if (typeof enemyAtCoords.startBump === 'function') {
+                            enemyAtCoords.startBump(playerPos.x - enemyAtCoords.x, playerPos.y - enemyAtCoords.y);
+                        }
+
+                        // If player has the axe, play the file-backed 'slash' SFX
+                        // and mark the enemy to suppress the generic 'attack' sound
+                        // in CombatManager (prevents double-playing).
+                        try {
+                            if (this.game.player.abilities && this.game.player.abilities.has && this.game.player.abilities.has('axe')) {
+                                if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
+                                    this.game.soundManager.playSound('slash');
+                                }
+                                enemyAtCoords._suppressAttackSound = true;
+                            }
+                        } catch (e) {}
+
+                        // Resolve defeat/points/removal via CombatManager
+                        this.game.combatManager.defeatEnemy(enemyAtCoords);
+                    } catch (e) {
+                        // Best-effort: don't let an animation error block game flow
                     }
-                    // Resolve defeat/points/removal via CombatManager
-                    this.game.combatManager.defeatEnemy(enemyAtCoords);
-                } catch (e) {
-                    // Best-effort: don't let an animation error block game flow
-                }
 
                 // Trigger enemy turns (unless we just entered a zone)
                 if (this.game.justEnteredZone) {

@@ -182,6 +182,43 @@ export class GameInitializer {
         // Make soundManager global for easy access from other classes
         window.soundManager = this.game.soundManager;
 
+        // Try to resume audio context (may be required by browser autoplay policies)
+        try {
+            if (this.game.soundManager && typeof this.game.soundManager.resumeAudioContext === 'function') {
+                this.game.soundManager.resumeAudioContext().catch(() => {});
+            }
+        } catch (e) {}
+
+        // Ensure music begins based on the current zone (respecting player's musicEnabled setting)
+        try {
+            const currentZone = this.game.player.getCurrentZone && this.game.player.getCurrentZone();
+            const dimension = currentZone && typeof currentZone.dimension === 'number' ? currentZone.dimension : 0;
+            // Apply persisted player settings if available
+            try {
+                if (this.game.player && this.game.player.stats) {
+                    if (this.game.soundManager && typeof this.game.soundManager.setMusicEnabled === 'function') {
+                        this.game.soundManager.setMusicEnabled(!!this.game.player.stats.musicEnabled);
+                    }
+                    if (this.game.soundManager && typeof this.game.soundManager.setSfxEnabled === 'function') {
+                        this.game.soundManager.setSfxEnabled(!!this.game.player.stats.sfxEnabled);
+                    }
+                }
+            } catch (e) {}
+
+            // Debug: report audio-related state immediately after applying persisted settings
+            try {
+                if (typeof console !== 'undefined' && console.debug) {
+                    console.debug('[AUDIO STARTUP] restored player.stats.musicEnabled=', this.game.player && this.game.player.stats && this.game.player.stats.musicEnabled,
+                                  'soundManager.musicEnabled=', this.game.soundManager && this.game.soundManager.musicEnabled,
+                                  'soundManager.currentMusicTrack=', this.game.soundManager && this.game.soundManager.currentMusicTrack);
+                }
+            } catch (e) {}
+
+            if (this.game.soundManager && typeof this.game.soundManager.setMusicForZone === 'function') {
+                // Only set music if music setting is enabled (SoundManager handles muting)
+                this.game.soundManager.setMusicForZone({ dimension });
+            }
+        } catch (e) {}
         // Start game loop
         this.game.gameLoop();
 

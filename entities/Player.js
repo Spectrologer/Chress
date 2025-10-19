@@ -107,7 +107,8 @@ export class Player {
                     this.stats.decreaseHunger(); // Cutting costs hunger
                     this.animations.startActionAnimation(); // Start action animation
                     this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
-                    window.soundManager?.playSound('chop');
+                    // Play the slash SFX (file-backed) when chopping shrubbery/grass
+                    window.soundManager?.playSound('slash');
                     window.gameInstance.startEnemyTurns(); // Chopping takes a turn
                     return false; // Don't move, just attack
                 }

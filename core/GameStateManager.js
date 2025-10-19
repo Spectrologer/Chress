@@ -147,6 +147,12 @@ export class GameStateManager {
                     visitedZones: Array.from(this.game.player.visitedZones),
                     spentDiscoveries: this.game.player.getSpentDiscoveries()
                 },
+                // Player UI/settings (persist toggles)
+                playerStats: {
+                    verbosePathAnimations: (this.game.player.stats && !!this.game.player.stats.verbosePathAnimations) || false,
+                    musicEnabled: (this.game.player.stats && typeof this.game.player.stats.musicEnabled !== 'undefined') ? !!this.game.player.stats.musicEnabled : true,
+                    sfxEnabled: (this.game.player.stats && typeof this.game.player.stats.sfxEnabled !== 'undefined') ? !!this.game.player.stats.sfxEnabled : true
+                },
                 // Game state - save all zones across all dimensions
                 zones: Array.from(this.game.zones.entries()),
                 grid: this.game.grid,
@@ -239,6 +245,22 @@ export class GameStateManager {
                 this.game.player.setPoints(gameState.player.points);
                 this.game.player.visitedZones = new Set(gameState.player.visitedZones);
                 this.game.player.setSpentDiscoveries(gameState.player.spentDiscoveries);
+            }
+
+            // Restore persisted player settings (music/sfx/pathing)
+            if (gameState.playerStats) {
+                try {
+                    this.game.player.stats = this.game.player.stats || {};
+                    this.game.player.stats.verbosePathAnimations = !!gameState.playerStats.verbosePathAnimations;
+                    this.game.player.stats.musicEnabled = typeof gameState.playerStats.musicEnabled !== 'undefined' ? !!gameState.playerStats.musicEnabled : true;
+                    this.game.player.stats.sfxEnabled = typeof gameState.playerStats.sfxEnabled !== 'undefined' ? !!gameState.playerStats.sfxEnabled : true;
+
+                    // Apply to SoundManager
+                    if (this.game.soundManager) {
+                        try { this.game.soundManager.setMusicEnabled(this.game.player.stats.musicEnabled); } catch (e) {}
+                        try { this.game.soundManager.setSfxEnabled(this.game.player.stats.sfxEnabled); } catch (e) {}
+                    }
+                } catch (e) {}
             }
 
             // Restore game state with validation for grid data

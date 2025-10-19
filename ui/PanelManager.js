@@ -75,6 +75,24 @@ export class PanelManager {
                             </label>
                         </span>
                     </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Music:</span>
+                        <span class="stat-value">
+                            <label class="setting-toggle">
+                                <input type="checkbox" id="music-toggle" ${this.game.player.stats.musicEnabled !== false ? 'checked' : ''}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">SFX:</span>
+                        <span class="stat-value">
+                            <label class="setting-toggle">
+                                <input type="checkbox" id="sfx-toggle" ${this.game.player.stats.sfxEnabled !== false ? 'checked' : ''}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </span>
+                    </div>
                 </div>
                 <hr class="stats-divider">
                 <div class="stats-footer">
@@ -84,6 +102,7 @@ export class PanelManager {
 
             // Setup toggle handler after content is added
             this.setupPathAnimationToggle();
+            this.setupAudioToggles();
 
             this.statsPanelOverlay.classList.add('show');
             this.statsPanelOpen = true;
@@ -189,6 +208,47 @@ export class PanelManager {
                 e.preventDefault();
                 toggle.checked = !toggle.checked;
                 applyState(toggle.checked);
+            }, { passive: false });
+        }
+    }
+
+    setupAudioToggles() {
+        const musicToggle = document.getElementById('music-toggle');
+        const sfxToggle = document.getElementById('sfx-toggle');
+
+        const applyMusicState = (checked) => {
+            try { this.game.player.stats.musicEnabled = !!checked; } catch (e) {}
+            try { if (this.game.soundManager && typeof this.game.soundManager.setMusicEnabled === 'function') this.game.soundManager.setMusicEnabled(checked); } catch (e) {}
+        };
+
+        const applySfxState = (checked) => {
+            try { this.game.player.stats.sfxEnabled = !!checked; } catch (e) {}
+            try { if (this.game.soundManager && typeof this.game.soundManager.setSfxEnabled === 'function') this.game.soundManager.setSfxEnabled(checked); } catch (e) {}
+        };
+
+        if (musicToggle) {
+            musicToggle.addEventListener('change', (e) => applyMusicState(e.target.checked));
+            musicToggle.addEventListener('click', () => {
+                musicToggle.checked = !musicToggle.checked;
+                applyMusicState(musicToggle.checked);
+            });
+            musicToggle.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                musicToggle.checked = !musicToggle.checked;
+                applyMusicState(musicToggle.checked);
+            }, { passive: false });
+        }
+
+        if (sfxToggle) {
+            sfxToggle.addEventListener('change', (e) => applySfxState(e.target.checked));
+            sfxToggle.addEventListener('click', () => {
+                sfxToggle.checked = !sfxToggle.checked;
+                applySfxState(sfxToggle.checked);
+            });
+            sfxToggle.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                sfxToggle.checked = !sfxToggle.checked;
+                applySfxState(sfxToggle.checked);
             }, { passive: false });
         }
     }

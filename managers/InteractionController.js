@@ -491,6 +491,15 @@ export class InteractionController {
             this.game.player.startAttackAnimation();
             this.game.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
             enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
+            // If player has the axe, play the slash SFX (file-backed). Suppress the
+            // default 'attack' sound in CombatManager to avoid double-playing.
+            try {
+                if (this.game.player.abilities.has('axe')) {
+                    this.game.soundManager.playSound('slash');
+                    // Mark the enemy so CombatManager knows not to play the generic attack SFX
+                    enemyAtTarget._suppressAttackSound = true;
+                }
+            } catch (e) {}
             this.game.combatManager.defeatEnemy(enemyAtTarget);
         } else {
             this.game.incrementBombActions();

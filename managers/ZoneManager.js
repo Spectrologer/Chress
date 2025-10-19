@@ -87,6 +87,22 @@ export class ZoneManager {
         this.game.uiManager.updatePlayerPosition();
         this.game.uiManager.updatePlayerStats();
 
+        // Set background music based on zone dimension (0=surface,1=interior,2=underground)
+        try {
+            const dimension = this.game.player.currentZone && typeof this.game.player.currentZone.dimension === 'number'
+                ? this.game.player.currentZone.dimension
+                : 0;
+            if (this.game.soundManager && typeof this.game.soundmanager?.setMusicForZone === 'function') {
+                this.game.soundManager.setMusicForZone({ dimension });
+            } else if (this.game.soundManager && typeof this.game.soundManager.setMusicForZone === 'function') {
+                this.game.soundManager.setMusicForZone({ dimension });
+            } else if (typeof window !== 'undefined' && window.soundManager && typeof window.soundManager.setMusicForZone === 'function') {
+                window.soundManager.setMusicForZone({ dimension });
+            }
+        } catch (e) {
+            // Non-fatal if music can't be set
+        }
+
         // Save game state after zone transition
         this.game.gameStateManager.saveGameState();
 

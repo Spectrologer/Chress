@@ -11,14 +11,18 @@ export class CombatManager {
 
     addPointAnimation(x, y, amount) {
         this.game.animationManager.addPointAnimation(x, y, amount);
-        this.game.soundManager.playSound('ding'); // Play a sound for getting points
+        this.game.soundManager.playSound('point'); // Play a sound for getting points
     }
 
     handleEnemyDefeated(enemy, currentZone) {
         this.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
         this.game.player.addPoints(enemy.getPoints());
         this.game.defeatedEnemies.add(`${enemy.id}`);
-        this.game.soundManager.playSound('attack');
+        // Only play generic attack SFX if the event hasn't been suppressed by
+        // the initiator (e.g., player played 'slash' when using an axe).
+        try {
+            if (!enemy._suppressAttackSound) this.game.soundManager.playSound('attack');
+        } catch (e) {}
 
         // Remove from zone data to prevent respawn
         const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
@@ -44,7 +48,9 @@ export class CombatManager {
         this.addPointAnimation(enemyX, enemyY, enemy.getPoints());
         this.game.player.addPoints(enemy.getPoints());
         this.game.defeatedEnemies.add(`${enemy.id}`);
-        this.game.soundManager.playSound('attack');
+        try {
+            if (!enemy._suppressAttackSound) this.game.soundManager.playSound('attack');
+        } catch (e) {}
         // Remove from zone data (enemy will be removed from game.enemies by checkCollisions)
         const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
         if (this.game.zones.has(zoneKey)) {
