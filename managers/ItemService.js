@@ -71,10 +71,33 @@ export class ItemService {
         }
     }
 
-    useInventoryItem(item, idx) {
-        // Prefer the dedicated ItemUsageHandler if provided
+    // Remove an item object from either normal inventory or radial inventory
+    _removeItemFromEither(item) {
+        const pi = this.game.player.inventory.indexOf(item);
+        if (pi >= 0) { this.game.player.inventory.splice(pi, 1); return true; }
+        const ri = this.game.player.radialInventory ? this.game.player.radialInventory.indexOf(item) : -1;
+        if (ri >= 0) { this.game.player.radialInventory.splice(ri, 1); try { import('./RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){} return true; }
+        return false;
+    }
+
+    // Drop a tile at player's position and remove the corresponding item from either inventory
+    _dropFromEither(itemType, tileType) {
+        const currentTile = this.game.grid[this.game.player.y][this.game.player.x];
+        if (currentTile === TILE_TYPES.FLOOR || (typeof currentTile === 'object' && currentTile.type === TILE_TYPES.FLOOR)) {
+            this.game.grid[this.game.player.y][this.game.player.x] = tileType;
+            // remove one item of itemType from inventories
+            const pi = this.game.player.inventory.findIndex(i => i.type === itemType);
+            if (pi >= 0) { this.game.player.inventory.splice(pi, 1); return true; }
+            const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(i => i.type === itemType) : -1;
+            if (ri >= 0) { this.game.player.radialInventory.splice(ri, 1); try { import('./RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){} return true; }
+        }
+        return false;
+    }
+
+    useInventoryItem(item, idx, fromRadial = false) {
+        // Prefer the dedicated ItemUsageHandler if provided - forward the fromRadial flag
         if (this.itemUsageHandler && typeof this.itemUsageHandler.applyItemUse === 'function') {
-            this.itemUsageHandler.applyItemUse(item, idx);
+            this.itemUsageHandler.applyItemUse(item, idx, fromRadial);
             return;
         }
 
@@ -95,6 +118,67 @@ export class ItemService {
                 this.game.player.setHealth(this.game.player.getHealth() + 1);
                 item.quantity = (item.quantity || 1) - 1;
                 if (item.quantity <= 0) this.game.player.inventory.splice(idx, 1);
+                break;
+            case 'bomb':
+                // If used from radial inventory (or explicitly flagged), enter bomb placement mode (choose adjacent tile)
+                if (fromRadial || (this.game.player.radialInventory && this.game.player.radialInventory.indexOf(item) >= 0)) {
+                    const px = this.game.player.x, py = this.game.player.y;
+                    this.game.bombPlacementPositions = [];
+                    const directions = [{dx:1,dy:0},{dx:-1,dy:0},{dx:0,dy:1},{dx:0,dy:-1}];
+                    for (const dir of directions) {
+                        const nx = px + dir.dx, ny = py + dir.dy;
+                        if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9 && (this.game.grid[ny][nx] === TILE_TYPES.FLOOR || this.game.grid[ny][nx] === TILE_TYPES.EXIT)) {
+                            this.game.bombPlacementPositions.push({x: nx, y: ny});
+                        }
+                    }
+                    this.game.bombPlacementMode = true;
+                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap a tile to place a bomb', null, true, true);
+                } else {
+                    // Place bomb at player tile immediately when used from main inventory (legacy behavior)
+                    item.quantity = (item.quantity || 1) - 1;
+                    const px = this.game.player.x, py = this.game.player.y;
+                    this.game.grid[py][px] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true };
+                    if (item.quantity <= 0) { this._removeItemFromEither(item); try { import('./RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){} }
+                }
+                break;
+            case 'bishop_spear':
+                // If the item comes from the radial, start a pending charge selection to choose the target tile
+                if (fromRadial || (this.game.player.radialInventory && this.game.player.radialInventory.indexOf(item) >= 0)) {
+                    // Enter selection mode: player will tap a tile to choose the charge target
+                    this.game.pendingCharge = { selectionType: 'bishop_spear', item };
+                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap a tile to confirm Bishop Charge', null, true, true);
+                } else {
+                    this._dropFromEither('bishop_spear', { type: TILE_TYPES.BISHOP_SPEAR, uses: item.uses });
+                }
+                break;
+            case 'horse_icon':
+                if (fromRadial || (this.game.player.radialInventory && this.game.player.radialInventory.indexOf(item) >= 0)) {
+                    this.game.pendingCharge = { selectionType: 'horse_icon', item };
+                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap a tile to confirm Knight Charge', null, true, true);
+                } else {
+                    this._dropFromEither('horse_icon', { type: TILE_TYPES.HORSE_ICON, uses: item.uses });
+                }
+                break;
+            case 'bow':
+                if (fromRadial || (this.game.player.radialInventory && this.game.player.radialInventory.indexOf(item) >= 0)) {
+                    this.game.pendingCharge = { selectionType: 'bow', item };
+                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap an enemy tile to confirm Bow Shot', null, true, true);
+                } else {
+                    this._dropFromEither('bow', { type: TILE_TYPES.BOW, uses: item.uses });
+                }
+                break;
+            case 'book_of_time_travel':
+                // Consume one use and pass a turn (allow enemies to move)
+                item.uses = (item.uses || 1) - 1;
+                if (item.uses <= 0) this._removeItemFromEither(item);
+                // Ensure any zero-use items (in either inventory) are pruned so the radial
+                // doesn't later re-migrate a zero-use copy from the main inventory.
+                try { this._pruneZeroUseItems(); } catch (e) {}
+                if (typeof this.game.startEnemyTurns === 'function') this.game.startEnemyTurns();
+                break;
+            case 'shovel':
+                // activate shovel mode
+                this.game.shovelMode = true;
                 break;
             default:
                 break;
@@ -184,5 +268,38 @@ export class ItemService {
         if (this.game.uiManager && typeof this.game.uiManager.addMessageToLog === 'function') this.game.uiManager.addMessageToLog(`A distant location has been revealed on your map: (${selected.x}, ${selected.y})`);
         if (typeof this.game.updatePlayerStats === 'function') this.game.updatePlayerStats();
         if (this.game.uiManager && typeof this.game.uiManager.renderZoneMap === 'function') this.game.uiManager.renderZoneMap();
+    }
+
+    // Remove any items that have zero uses/quantity from both main and radial inventories
+    _pruneZeroUseItems() {
+        try {
+            const p = this.game.player;
+            if (!p) return;
+            // Remove zero-use from main inventory
+            if (Array.isArray(p.inventory)) {
+                for (let i = p.inventory.length - 1; i >= 0; i--) {
+                    const it = p.inventory[i];
+                    if (!it) continue;
+                    if ((typeof it.uses !== 'undefined' && it.uses <= 0) || (typeof it.quantity !== 'undefined' && it.quantity <= 0)) {
+                        p.inventory.splice(i, 1);
+                    }
+                }
+            }
+            // Remove zero-use from radial inventory and persist if changed
+            if (Array.isArray(p.radialInventory)) {
+                let changed = false;
+                for (let i = p.radialInventory.length - 1; i >= 0; i--) {
+                    const it = p.radialInventory[i];
+                    if (!it) continue;
+                    if ((typeof it.uses !== 'undefined' && it.uses <= 0) || (typeof it.quantity !== 'undefined' && it.quantity <= 0)) {
+                        p.radialInventory.splice(i, 1);
+                        changed = true;
+                    }
+                }
+                if (changed) {
+                    try { import('./RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){}
+                }
+            }
+        } catch (e) {}
     }
 }

@@ -1,4 +1,4 @@
-import { INPUT_CONSTANTS } from './constants.js';
+import { INPUT_CONSTANTS, TILE_TYPES } from './constants.js';
 
 // Lightweight pointer normalization for the game canvas. Keeps behavior similar
 // to existing mouse/touch handlers: tap detection, hold-feedback updates, and
@@ -38,6 +38,29 @@ export class PointerInput {
             lastTile: this._safeConvert(e.clientX, e.clientY)
         });
 
+        // If this is a touch and the pointer started on the player's tile, open radial UI immediately
+        try {
+            const info = this.activePointers.get(e.pointerId);
+            const t = info && info.lastTile;
+            if (e.pointerType !== 'mouse' && t && this.game && this.game.player) {
+                const playerPos = this.game.player.getPosition();
+                if (t.x === playerPos.x && t.y === playerPos.y && this.game.radialInventoryUI) {
+                    // Don't open radial when standing on an exit or port tile
+                    const currentTile = this.game.grid[playerPos.y]?.[playerPos.x];
+                    if (currentTile === TILE_TYPES.EXIT || currentTile === TILE_TYPES.PORT) {
+                        // If radial is already open, close it; otherwise do not open or suppress the tap
+                        if (this.game.radialInventoryUI.open) try { this.game.radialInventoryUI.close(); } catch (err) {}
+                        // NOTE: do NOT set info._radialOpened here — we want the tap to reach the
+                        // normal handlers so exit/port double-tap logic can run.
+                    } else {
+                        // open radial UI and mark to suppress the following tap
+                        try { this.game.radialInventoryUI.openAtPlayer(); } catch (err) {}
+                        info._radialOpened = true;
+                    }
+                }
+            }
+        } catch (err) {}
+
         if (this.game && this.game.renderManager && typeof this.game.renderManager.startHoldFeedback === 'function') {
             const t = this.activePointers.get(e.pointerId).lastTile;
             if (t) this.game.renderManager.startHoldFeedback(t.x, t.y);
@@ -54,6 +77,22 @@ export class PointerInput {
         if (!info) return;
         const gc = this._safeConvert(e.clientX, e.clientY);
         if (!gc) return;
+        // If pointer moved onto the player's tile and radial isn't open yet for this pointer, open it
+        try {
+            if (e.pointerType !== 'mouse' && this.game && this.game.player && this.game.radialInventoryUI) {
+                const playerPos = this.game.player.getPosition();
+                if (gc.x === playerPos.x && gc.y === playerPos.y && !info._radialHoverOpened) {
+                    // Don't open radial on hover when standing on exits or ports
+                    const currentTile = this.game.grid[playerPos.y]?.[playerPos.x];
+                    if (currentTile === TILE_TYPES.EXIT || currentTile === TILE_TYPES.PORT) {
+                        info._radialHoverOpened = true; // mark to avoid re-opening
+                    } else {
+                        try { this.game.radialInventoryUI.openAtPlayer(); } catch (err) {}
+                        info._radialHoverOpened = true;
+                    }
+                }
+            }
+        } catch (err) {}
         if (this.game && this.game.renderManager && typeof this.game.renderManager.startHoldFeedback === 'function') {
             this.game.renderManager.startHoldFeedback(gc.x, gc.y);
         }
@@ -73,6 +112,12 @@ export class PointerInput {
 
         if (this.game && this.game.renderManager && typeof this.game.renderManager.clearFeedback === 'function') {
             this.game.renderManager.clearFeedback();
+        }
+
+        // If radial UI was opened on pointerdown for this pointer, suppress the normal tap handling
+        if (info._radialOpened) {
+            this.activePointers.delete(e.pointerId);
+            return;
         }
 
         // For mouse input, preserve legacy behavior: mouse drag + release should

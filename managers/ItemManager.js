@@ -1,4 +1,5 @@
 import { TILE_TYPES } from '../core/constants.js';
+import { saveRadialInventory } from './RadialPersistence.js';
 
 const STACKABLE_ITEMS = ['food', 'water', 'bomb', 'note', 'heart', 'bishop_spear', 'horse_icon', 'book_of_time_travel', 'bow', 'shovel'];
 // Type mapping for special object-based tiles
@@ -31,6 +32,42 @@ export class ItemManager {
                 window.soundManager.playSound(sound);
             }
         };
+
+        // Some items belong in the radial quick-actions inventory instead of the main player card inventory
+        const RADIAL_TYPES = ['bomb', 'horse_icon', 'bow', 'bishop_spear', 'book_of_time_travel'];
+
+        // Normalize certain item shapes: books should always use 'uses' not 'quantity'
+        if (item && item.type === 'book_of_time_travel') {
+            if (typeof item.uses === 'undefined') {
+                item.uses = (typeof item.quantity !== 'undefined') ? item.quantity : 1;
+            }
+            try { delete item.quantity; } catch (e) {}
+        }
+
+        if (RADIAL_TYPES.includes(item.type)) {
+            // Try to stack into existing radial slot when possible
+            const existing = player.radialInventory.find(i => i.type === item.type && (typeof item.foodType === 'undefined' || i.foodType === item.foodType));
+            if (existing) {
+                if (typeof item.uses !== 'undefined') existing.uses = (existing.uses || 0) + item.uses; else existing.quantity = (existing.quantity || 1) + (item.quantity || 1);
+                playSoundAndAnimate(item);
+                return true;
+            }
+            if (player.radialInventory.length < 8) {
+                if (item.type === 'bomb' || item.type === 'book_of_time_travel' || item.type === 'bow') {
+                    // Ensure these items have a quantity when represented as counts
+                    if (typeof item.quantity === 'undefined' && typeof item.uses === 'undefined') item.quantity = 1;
+                    // If book has quantity, promote to uses so consumption code decrements correctly
+                    if (item.type === 'book_of_time_travel' && typeof item.uses === 'undefined' && typeof item.quantity !== 'undefined') {
+                        item.uses = item.quantity; try { delete item.quantity; } catch(e){}
+                    }
+                }
+                player.radialInventory.push(item);
+                playSoundAndAnimate(item);
+                try { saveRadialInventory(this.game); } catch (e) {}
+                return true;
+            }
+            // Fall back to main inventory if radial is full
+        }
 
         if (STACKABLE_ITEMS.includes(item.type)) {
             const existingStack = player.inventory.find(i => i.type === item.type && (typeof item.foodType === 'undefined' || i.foodType === item.foodType));

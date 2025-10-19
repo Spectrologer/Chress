@@ -16,6 +16,8 @@ import { TurnManager } from './TurnManager.js';
 import { ItemUsageHandler } from '../managers/ItemUsageHandler.js';
 import { ItemService } from '../managers/ItemService.js';
 import { InventoryUI } from '../managers/InventoryUI.js';
+import { RadialInventoryUI } from '../managers/RadialInventoryUI.js';
+import { loadRadialInventory } from '../managers/RadialPersistence.js';
 import { GameStateManager } from './GameStateManager.js';
 import { SoundManager } from './SoundManager.js';
 import { ConsentManager } from './ConsentManager.js';
@@ -49,6 +51,9 @@ export class ServiceContainer {
         this.game.itemUsageHandler = new ItemUsageHandler(this.game);
         this.game.itemService = new ItemService(this.game, this.game.itemUsageHandler);
         this.game.inventoryUI = new InventoryUI(this.game, this.game.itemService);
+    this.game.radialInventoryUI = new RadialInventoryUI(this.game, this.game.itemService);
+    // Load persisted radial items (if any)
+    try { loadRadialInventory(this.game); } catch (e) {}
         this.game.itemUsageHandler.game = this.game;
         this.game.inputManager = new InputManager(this.game, this.game.itemUsageManager);
     this.game.uiManager = new UIManager(this.game);

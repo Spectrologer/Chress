@@ -11,6 +11,8 @@ export class Player {
         this.currentZone = { x: 0, y: 0, dimension: 0 };
         this.visitedZones = new Set();
         this.inventory = [];
+    // Separate inventory for quick radial actions (icons around player)
+    this.radialInventory = []; // items like bombs, horse_icon, bow, bishop_spear, book_of_time_travel
         this.abilities = new Set(); // Track player abilities
         this.sprite = 'SeparateAnim/Special2';
 
@@ -228,6 +230,7 @@ export class Player {
     this.y = ZONE_CONSTANTS.PLAYER_SPAWN_POSITION.y;
     this.currentZone = { x: 0, y: 0, dimension: 0 };
     this.inventory = [];
+    this.radialInventory = [];
     this.abilities.clear();
     this.sprite = 'SeparateAnim/Special2';
     this.visitedZones.clear();

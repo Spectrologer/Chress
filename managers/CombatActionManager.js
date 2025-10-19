@@ -5,8 +5,11 @@ export class CombatActionManager {
         this.game = game;
     }
 
-    isValidBishopSpearCharge(gridCoords, playerPos) {
-        const bishopSpearItem = this.game.player.inventory.find(item => item.type === 'bishop_spear' && item.uses > 0 && !item.disabled);
+    isValidBishopSpearCharge(gridCoords, playerPos, includeRadial = false) {
+        const inventoryItems = (this.game.player.inventory || []).slice();
+        const radialItems = includeRadial ? (this.game.player.radialInventory || []) : [];
+        const allItems = inventoryItems.concat(radialItems);
+        const bishopSpearItem = allItems.find(item => item.type === 'bishop_spear' && item.uses > 0 && !item.disabled);
         if (!bishopSpearItem) return null;
 
         const enemyAtCoords = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
@@ -24,8 +27,11 @@ export class CombatActionManager {
         return null;
     }
 
-    isValidHorseIconCharge(gridCoords, playerPos) {
-        const horseIconItem = this.game.player.inventory.find(item => item.type === 'horse_icon' && item.uses > 0 && !item.disabled);
+    isValidHorseIconCharge(gridCoords, playerPos, includeRadial = false) {
+        const inventoryItems = (this.game.player.inventory || []).slice();
+        const radialItems = includeRadial ? (this.game.player.radialInventory || []) : [];
+        const allItems = inventoryItems.concat(radialItems);
+        const horseIconItem = allItems.find(item => item.type === 'horse_icon' && item.uses > 0 && !item.disabled);
         if (!horseIconItem) return null;
 
         const enemyAtCoords = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
@@ -45,8 +51,11 @@ export class CombatActionManager {
         return null;
     }
 
-    isValidBowShot(gridCoords, playerPos) {
-        const bowItem = this.game.player.inventory.find(item => item.type === 'bow' && item.uses > 0 && !item.disabled);
+    isValidBowShot(gridCoords, playerPos, includeRadial = false) {
+        const inventoryItems = (this.game.player.inventory || []).slice();
+        const radialItems = includeRadial ? (this.game.player.radialInventory || []) : [];
+        const allItems = inventoryItems.concat(radialItems);
+        const bowItem = allItems.find(item => item.type === 'bow' && item.uses > 0 && !item.disabled);
         if (!bowItem) return null;
 
         const enemyAtCoords = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);

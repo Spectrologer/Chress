@@ -63,6 +63,10 @@ class Game {
 
         // Load assets and start game
         this.gameInitializer.loadAssets();
+
+        // Track last known player position so UI updates that don't move the player
+        // don't accidentally close the radial inventory.
+        try { this._lastPlayerPos = this.player ? { x: this.player.x, y: this.player.y } : null; } catch (e) { this._lastPlayerPos = null; }
     }
 
     startEnemyTurns() {
@@ -128,6 +132,15 @@ class Game {
 
     updatePlayerPosition() {
         this.uiManager.updatePlayerPosition();
+        try {
+            const cur = this.player ? { x: this.player.x, y: this.player.y } : null;
+            const last = this._lastPlayerPos;
+            const moved = !last || !cur || last.x !== cur.x || last.y !== cur.y;
+            if (moved) {
+                if (this.radialInventoryUI && this.radialInventoryUI.open) this.radialInventoryUI.close();
+            }
+            this._lastPlayerPos = cur;
+        } catch (e) {}
     }
 
     updatePlayerStats() {

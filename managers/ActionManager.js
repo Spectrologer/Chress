@@ -40,8 +40,12 @@ export class ActionManager {
 
         item.uses--;
         if (item.uses <= 0) {
-            const index = this.game.player.inventory.findIndex(i => i === item);
-            if (index !== -1) this.game.player.inventory.splice(index, 1);
+            const pi = this.game.player.inventory.findIndex(i => i === item);
+            if (pi !== -1) { this.game.player.inventory.splice(pi, 1); }
+            else {
+                const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(i => i === item) : -1;
+                if (ri !== -1) { this.game.player.radialInventory.splice(ri, 1); try { import('../managers/RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){} }
+            }
         }
 
         // Add smoke animations along the diagonal charge path
@@ -65,8 +69,12 @@ export class ActionManager {
     performHorseIconCharge(item, targetX, targetY, enemy, dx, dy) {
         item.uses--;
         if (item.uses <= 0) {
-            const index = this.game.player.inventory.findIndex(i => i === item);
-            if (index !== -1) this.game.player.inventory.splice(index, 1);
+            const pi = this.game.player.inventory.findIndex(i => i === item);
+            if (pi !== -1) { this.game.player.inventory.splice(pi, 1); }
+            else {
+                const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(i => i === item) : -1;
+                if (ri !== -1) { this.game.player.radialInventory.splice(ri, 1); try { import('../managers/RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){} }
+            }
         }
 
         // Get current player position
@@ -76,41 +84,61 @@ export class ActionManager {
         const endX = targetX;
         const endY = targetY;
 
-        // Calculate the L-shape path: determine mid point
+        // Calculate the L-shape path: determine mid point (corner of the L)
         const absDx = Math.abs(dx);
         const absDy = Math.abs(dy);
         let midX, midY;
         if (absDx > absDy) {
-            // Horizontal dominant: move horizontal first
+            // Horizontal dominant: corner is at end of horizontal leg
             midX = startX + dx;
             midY = startY;
         } else {
-            // Vertical dominant: move vertical first
+            // Vertical dominant: corner is at end of vertical leg
             midX = startX;
             midY = startY + dy;
         }
 
-        // Add the L-shape charge animation using centralized manager
-        this.game.animationManager.addHorseChargeAnimation(
-            { x: startX, y: startY },
-            { x: endX, y: endY }
-        );
+        // Add the L-shape charge animation using centralized manager (start/mid/end)
+        try {
+            this.game.animationManager.addHorseChargeAnimation({ startPos: { x: startX, y: startY }, midPos: { x: midX, y: midY }, endPos: { x: endX, y: endY } });
+        } catch (e) { /* non-fatal */ }
 
-        // Add smoke animations along the path
-        const distX = Math.abs(endX - startX);
-        const distY = Math.abs(endY - startY);
-        if (distX >= distY) {
-            // Horizontal dominant
-            const stepX = dx > 0 ? 1 : -1;
-            for (let i = 1; i < distX; i++) {
-                this.game.player.animations.smokeAnimations.push({ x: startX + i * stepX, y: startY + Math.round((i * dy) / distX), frame: 18 });
-            }
-        } else {
-            // Vertical dominant
-            const stepY = dy > 0 ? 1 : -1;
-            for (let i = 1; i < distY; i++) {
-                this.game.player.animations.smokeAnimations.push({ x: startX + Math.round((i * dx) / distY), y: startY + i * stepY, frame: 18 });
-            }
+        // Build ordered positions along the L path (start -> mid -> end)
+        const smokePositions = [];
+        const leg1dx = midX - startX;
+        const leg1dy = midY - startY;
+        const step1x = Math.sign(leg1dx) || 0;
+        const step1y = Math.sign(leg1dy) || 0;
+        const len1 = Math.max(Math.abs(leg1dx), Math.abs(leg1dy));
+        for (let i = 1; i <= len1; i++) {
+            smokePositions.push({ x: startX + i * step1x, y: startY + i * step1y });
+        }
+
+        const leg2dx = endX - midX;
+        const leg2dy = endY - midY;
+        const step2x = Math.sign(leg2dx) || 0;
+        const step2y = Math.sign(leg2dy) || 0;
+        const len2 = Math.max(Math.abs(leg2dx), Math.abs(leg2dy));
+        // Exclude final target to match other charge smoke behavior
+        for (let i = 1; i < len2; i++) {
+            smokePositions.push({ x: midX + i * step2x, y: midY + i * step2y });
+        }
+
+        // Use animationScheduler to add smoke sequentially for a snappier trail
+        try {
+            const seq = this.game.animationScheduler.createSequence();
+            const smokeFrameLifetime = 12; // shorter lifetime for snappier trail
+            const stepDelay = 40; // ms between smoke spawns
+            smokePositions.forEach((pos, idx) => {
+                seq.then(() => {
+                    this.game.player.animations.smokeAnimations.push({ x: pos.x, y: pos.y, frame: smokeFrameLifetime });
+                }).wait(stepDelay);
+            });
+            // start sequence but don't block the rest of the logic
+            try { seq.start(); } catch (e) {}
+        } catch (e) {
+            // Fallback: if animationScheduler isn't available, add all at once
+            smokePositions.forEach(pos => this.game.player.animations.smokeAnimations.push({ x: pos.x, y: pos.y, frame: 12 }));
         }
 
         if (enemy) {
@@ -127,8 +155,12 @@ export class ActionManager {
     performBowShot(item, targetX, targetY, enemy = null) {
         item.uses--;
         if (item.uses <= 0) {
-            const index = this.game.player.inventory.findIndex(i => i === item);
-            if (index !== -1) this.game.player.inventory.splice(index, 1);
+            const pi = this.game.player.inventory.findIndex(i => i === item);
+            if (pi !== -1) { this.game.player.inventory.splice(pi, 1); }
+            else {
+                const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(i => i === item) : -1;
+                if (ri !== -1) { this.game.player.radialInventory.splice(ri, 1); try { import('../managers/RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){} }
+            }
         }
 
         const playerPos = this.game.player.getPosition();

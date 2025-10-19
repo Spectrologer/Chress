@@ -39,7 +39,8 @@ export class InteractionManager {
             (gridCoords, playerPos) => this.bombManager.triggerBombExplosion(gridCoords, playerPos),
             (gridCoords, playerPos) => {
                 const bishopSpearCharge = this.combatManager.isValidBishopSpearCharge(gridCoords, playerPos);
-                if (bishopSpearCharge) {
+                // Only auto-start a bishop charge if the item is present in the main inventory
+                if (bishopSpearCharge && this.game.player.inventory.indexOf(bishopSpearCharge.item) >= 0) {
                     this.game.pendingCharge = bishopSpearCharge;
                     this.game.uiManager.showOverlayMessage('Tap again to confirm Bishop Charge', null, true, true);
                     return true;
@@ -48,7 +49,8 @@ export class InteractionManager {
             },
             (gridCoords, playerPos) => {
                 const horseIconCharge = this.combatManager.isValidHorseIconCharge(gridCoords, playerPos);
-                if (horseIconCharge) {
+                // Only auto-start a knight charge if the item is present in the main inventory
+                if (horseIconCharge && this.game.player.inventory.indexOf(horseIconCharge.item) >= 0) {
                     this.game.pendingCharge = horseIconCharge;
                     this.game.uiManager.showOverlayMessage('Tap again to confirm Knight Charge', null, true, true);
                     return true;
@@ -57,7 +59,8 @@ export class InteractionManager {
             },
             (gridCoords, playerPos) => {
                 const bowShot = this.combatManager.isValidBowShot(gridCoords, playerPos);
-                if (bowShot) {
+                // Only auto-start a bow shot if the bow is in the main inventory
+                if (bowShot && this.game.player.inventory.indexOf(bowShot.item) >= 0) {
                     this.game.pendingCharge = bowShot;
                     this.game.uiManager.showOverlayMessage('Tap again to confirm Bow Shot', null, true, true);
                     return true;
@@ -95,11 +98,33 @@ export class InteractionManager {
     handleTap(gridCoords) {
         // Handle pending charge confirmation or cancellation
         if (this.game.pendingCharge) {
-            const chargeDetails = this.game.pendingCharge;
+            const pending = this.game.pendingCharge;
+            let chargeDetails = null;
 
-            if (gridCoords.x === chargeDetails.target.x && gridCoords.y === chargeDetails.target.y) {
-                this.combatManager.confirmPendingCharge(chargeDetails);
+            // If pending was initiated from the radial UI it will contain a
+            // selectionType and an item but not a concrete target. Re-run the
+            // validator for the tapped gridCoords to obtain a proper
+            // chargeDetails object to confirm.
+            if (pending && pending.selectionType) {
+                const playerPos = this.game.player.getPosition();
+                // Re-run validators including radial inventory because selection
+                // originated from the radial UI and the item may live there.
+                if (pending.selectionType === 'bishop_spear') chargeDetails = this.combatManager.isValidBishopSpearCharge(gridCoords, playerPos, true);
+                else if (pending.selectionType === 'horse_icon') chargeDetails = this.combatManager.isValidHorseIconCharge(gridCoords, playerPos, true);
+                else if (pending.selectionType === 'bow') chargeDetails = this.combatManager.isValidBowShot(gridCoords, playerPos, true);
             } else {
+                chargeDetails = pending;
+            }
+
+            // If we have valid chargeDetails with a target, confirm/cancel based on equality.
+            if (chargeDetails && chargeDetails.target) {
+                if (gridCoords.x === chargeDetails.target.x && gridCoords.y === chargeDetails.target.y) {
+                    this.combatManager.confirmPendingCharge(chargeDetails);
+                } else {
+                    this.combatManager.cancelPendingCharge();
+                }
+            } else {
+                // No valid charge - cancel pending state
                 this.combatManager.cancelPendingCharge();
             }
             return true;

@@ -13,14 +13,25 @@ export class BombInteractionManager {
 
         // Place timed bomb here
         this.game.grid[placed.y][placed.x] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true };
+        // Remove one bomb from either inventory (prefer main inventory)
         const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
         if (bombIndex !== -1) {
             const bombItem = this.game.player.inventory[bombIndex];
-            // If bombs are stacked, decrement quantity; otherwise remove the slot
             if (typeof bombItem.quantity === 'number' && bombItem.quantity > 1) {
                 bombItem.quantity = bombItem.quantity - 1;
             } else {
                 this.game.player.inventory.splice(bombIndex, 1);
+            }
+        } else {
+            const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(item => item.type === 'bomb') : -1;
+            if (ri !== -1) {
+                const bombItem = this.game.player.radialInventory[ri];
+                if (typeof bombItem.quantity === 'number' && bombItem.quantity > 1) {
+                    bombItem.quantity = bombItem.quantity - 1;
+                } else {
+                    this.game.player.radialInventory.splice(ri, 1);
+                }
+                try { import('../managers/RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){}
             }
         }
         this.game.uiManager.updatePlayerStats();

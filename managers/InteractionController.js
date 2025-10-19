@@ -352,7 +352,8 @@ export class InteractionController {
 
         if (this.game.uiManager.isStatsPanelOpen()) { this.game.uiManager.hideStatsPanel(); return; }
 
-        const isDoubleTap = this.handleDoubleTapLogic(gridCoords, screenX, screenY);
+    const isDoubleTap = this.handleDoubleTapLogic(gridCoords, screenX, screenY);
+    try { console.debug('[INT] handleTap gridCoords=', gridCoords, 'player=', playerPos, 'isDoubleTap=', isDoubleTap); } catch (e) {}
         try {
             if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
                 if (enemyAtTile) this.game.soundManager.playSound('tap_enemy');
@@ -361,7 +362,51 @@ export class InteractionController {
             }
         } catch (e) {}
 
-        const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+    const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        // If a pending selection was started by using an item from the radial (selectionType),
+        // validate the tapped tile using the combat manager and confirm/cancel accordingly.
+        try {
+            if (this.game.pendingCharge && this.game.pendingCharge.selectionType) {
+                const selType = this.game.pendingCharge.selectionType;
+                let chargeDetails = null;
+                const playerPosForSel = this.game.player.getPosition();
+                if (selType === 'bishop_spear') {
+                    chargeDetails = this.game.combatManager.isValidBishopSpearCharge(gridCoords, playerPosForSel);
+                } else if (selType === 'horse_icon') {
+                    chargeDetails = this.game.combatManager.isValidHorseIconCharge(gridCoords, playerPosForSel);
+                } else if (selType === 'bow') {
+                    chargeDetails = this.game.combatManager.isValidBowShot(gridCoords, playerPosForSel);
+                }
+                if (chargeDetails) {
+                    this.game.combatManager.confirmPendingCharge(chargeDetails);
+                } else {
+                    this.game.combatManager.cancelPendingCharge();
+                }
+                return true;
+            }
+        } catch (e) {}
+        // If player tapped their own tile (single tap) - handle transitions or open radial
+        if (!isDoubleTap && gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
+            try {
+                const currentTile = this.game.grid[playerPos.y]?.[playerPos.x];
+                // If standing on an exit or port, perform the transition immediately on single tap
+                if (currentTile === TILE_TYPES.EXIT) {
+                    if (this.exitHandler) this.exitHandler(playerPos.x, playerPos.y); else this.performExitTap(playerPos.x, playerPos.y);
+                    return true;
+                }
+                if (currentTile === TILE_TYPES.PORT) {
+                    try { this.game.interactionManager.zoneManager.handlePortTransition(); } catch (e) {}
+                    return true;
+                }
+
+                // Otherwise, toggle radial UI (if available)
+                if (this.game.radialInventoryUI) {
+                    console.debug('[INT] toggling radial UI (open?', this.game.radialInventoryUI.open, ')');
+                    if (this.game.radialInventoryUI.open) this.game.radialInventoryUI.close(); else this.game.radialInventoryUI.openAtPlayer();
+                    return true; // consume tap
+                }
+            } catch (e) {}
+        }
         if (isDoubleTap && (tile === TILE_TYPES.EXIT || tile === TILE_TYPES.PORT)) {
             if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
                 if (tile === TILE_TYPES.EXIT) { if (this.exitHandler) this.exitHandler(gridCoords.x, gridCoords.y); else this.performExitTap(gridCoords.x, gridCoords.y); }
@@ -440,8 +485,8 @@ export class InteractionController {
             }
         } catch (e) {}
 
-        const enemyAtTarget = this.game.enemies.find(enemy => enemy.x === newX && enemy.y === newY);
-        let playerMoved = false;
+    let playerMoved = false;
+    const enemyAtTarget = this.game.enemies.find(enemy => enemy.x === newX && enemy.y === newY);
         if (enemyAtTarget) {
             this.game.player.startAttackAnimation();
             this.game.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
