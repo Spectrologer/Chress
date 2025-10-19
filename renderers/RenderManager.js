@@ -110,6 +110,119 @@ export class RenderManager {
     // Reset dash
     this.ctx.setLineDash([]);
     this.ctx.restore();
+    // If this is a hold feedback on an enemy, draw that enemy's attack range overlay
+    if (tf.hold && this.game && Array.isArray(this.game.enemies)) {
+        try {
+            const enemy = this.game.enemies.find(en => en.x === tf.x && en.y === tf.y && en.health > 0);
+            if (enemy) {
+                this.drawEnemyAttackRange(enemy);
+            }
+        } catch (e) {
+            // ignore render-time errors for safety
+        }
+    }
+    }
+
+    // Draw an enemy's attack range as semi-transparent fills on tiles the enemy could
+    // attempt to attack/charge to. This uses simplified rules mirroring the movement
+    // calculators so it's cheap and deterministic for UI display only.
+    drawEnemyAttackRange(enemy) {
+        if (!enemy || !this.game || !this.game.grid) return;
+        const grid = this.game.grid;
+        const enemies = this.game.enemies || [];
+        const tiles = new Set();
+        const push = (x, y) => { if (x >= 0 && y >= 0 && y < grid.length && x < grid[0].length) tiles.add(`${x},${y}`); };
+
+        const stopRay = (x, y, dx, dy, orthogonalOnly = false) => {
+            let cx = x + dx;
+            let cy = y + dy;
+            while (cx >= 0 && cy >= 0 && cy < grid.length && cx < grid[0].length) {
+                // stop if tile is not walkable for charging/en-route
+                if (!enemy.isWalkable(cx, cy, grid)) break;
+                // stop if another enemy occupies the tile
+                if (enemies.find(e => e.x === cx && e.y === cy && e.health > 0)) break;
+                push(cx, cy);
+                if (orthogonalOnly) {
+                    cx += dx; cy += dy;
+                    continue;
+                }
+                cx += dx; cy += dy;
+            }
+        };
+
+        const ex = enemy.x, ey = enemy.y;
+        switch (enemy.enemyType) {
+            case 'lizardy': {
+                // pawn-like: diagonal forward attacks based on movementDirection
+                const dir = enemy.movementDirection === -1 ? -1 : 1;
+                push(ex - 1, ey + dir);
+                push(ex + 1, ey + dir);
+                break;
+            }
+            case 'lizardeaux': {
+                // orthogonal charge: rays N,S,E,W until blocked
+                stopRay(ex, ey, 0, -1, true);
+                stopRay(ex, ey, 0, 1, true);
+                stopRay(ex, ey, -1, 0, true);
+                stopRay(ex, ey, 1, 0, true);
+                break;
+            }
+            case 'zard': {
+                // diagonal bishop-like
+                stopRay(ex, ey, -1, -1);
+                stopRay(ex, ey, 1, -1);
+                stopRay(ex, ey, -1, 1);
+                stopRay(ex, ey, 1, 1);
+                // include adjacent diagonals
+                push(ex - 1, ey - 1); push(ex + 1, ey - 1); push(ex - 1, ey + 1); push(ex + 1, ey + 1);
+                break;
+            }
+            case 'lazerd': {
+                // queen-like: all 8 directions
+                stopRay(ex, ey, 0, -1);
+                stopRay(ex, ey, 0, 1);
+                stopRay(ex, ey, -1, 0);
+                stopRay(ex, ey, 1, 0);
+                stopRay(ex, ey, -1, -1);
+                stopRay(ex, ey, 1, -1);
+                stopRay(ex, ey, -1, 1);
+                stopRay(ex, ey, 1, 1);
+                break;
+            }
+            case 'lizord': {
+                // knight-like L moves: endpoints 2/1 offsets
+                const ks = [ [2,1],[1,2],[-1,2],[-2,1],[-2,-1],[-1,-2],[1,-2],[2,-1] ];
+                ks.forEach(k => push(ex + k[0], ey + k[1]));
+                break;
+            }
+            case 'lizardo':
+            default: {
+                // default: adjacent chebyshev (8 surrounding tiles)
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        if (dx === 0 && dy === 0) continue;
+                        push(ex + dx, ey + dy);
+                    }
+                }
+                break;
+            }
+        }
+
+        if (tiles.size === 0) return;
+
+        // Draw the tiles overlay
+        this.ctx.save();
+        this.ctx.fillStyle = 'rgba(200,40,40,0.18)';
+        this.ctx.strokeStyle = 'rgba(200,40,40,0.85)';
+        this.ctx.lineWidth = Math.max(1, Math.round(TILE_SIZE * 0.03));
+        for (const t of tiles) {
+            const [tx, ty] = t.split(',').map(n => parseInt(n, 10));
+            // Don't draw the enemy's own tile (focus on targets)
+            if (tx === ex && ty === ey) continue;
+            this.ctx.fillRect(tx * TILE_SIZE + 1, ty * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+            this.ctx.strokeRect(tx * TILE_SIZE + 1.5, ty * TILE_SIZE + 1.5, TILE_SIZE - 3, TILE_SIZE - 3);
+        }
+        this.ctx.restore();
     }
 
     render() {

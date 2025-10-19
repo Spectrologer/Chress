@@ -205,6 +205,27 @@ export class InteractionController {
         this.cancelPath = false;
         this.currentPathSequence = null;
 
+        // Compute final destination coordinates by simulating the path steps
+        try {
+            const pos = this.game.player.getPosition();
+            let destX = pos.x, destY = pos.y;
+            for (const stepKey of path) {
+                switch ((stepKey || '').toLowerCase()) {
+                    case 'arrowup': case 'w': destY--; break;
+                    case 'arrowdown': case 's': destY++; break;
+                    case 'arrowleft': case 'a': destX--; break;
+                    case 'arrowright': case 'd': destX++; break;
+                    default: break;
+                }
+            }
+            // Show a persistent selector at the destination while auto-pathing
+            if (this.game && this.game.renderManager && typeof this.game.renderManager.startHoldFeedback === 'function') {
+                this.game.renderManager.startHoldFeedback(destX, destY);
+            }
+        } catch (e) {
+            // Non-fatal; if anything goes wrong we simply won't show the persistent selector
+        }
+
         if (this.game.player.stats && this.game.player.stats.verbosePathAnimations) {
             const seq = this.game.animationScheduler.createSequence();
             this.currentPathSequence = seq;
@@ -221,6 +242,8 @@ export class InteractionController {
                 if (this.cancelPath) { this.cancelPath = false; this.isExecutingPath = false; return; }
                 this.isExecutingPath = false;
                 const playerPos = this.game.player.getPosition();
+                // Clear persistent selector now that path completed
+                try { if (this.game && this.game.renderManager && typeof this.game.renderManager.clearFeedback === 'function') this.game.renderManager.clearFeedback(); } catch (e) {}
                 if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
                     if (this.autoUseNextTransition === 'exit') {
                         if (this.exitHandler) this.exitHandler(playerPos.x, playerPos.y); else this.performExitTap(playerPos.x, playerPos.y);
@@ -261,6 +284,8 @@ export class InteractionController {
             const runNextStep = () => {
                 if (this.cancelPath || stepIndex >= path.length) {
                     this.isExecutingPath = false;
+                    // Clear persistent selector on completion/cancel
+                    try { if (this.game && this.game.renderManager && typeof this.game.renderManager.clearFeedback === 'function') this.game.renderManager.clearFeedback(); } catch (e) {}
                     // Post-processing after path completes
                     const playerPos = this.game.player.getPosition();
                     if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
@@ -292,6 +317,8 @@ export class InteractionController {
     cancelPathExecution() {
         this.cancelPath = true;
         this.isExecutingPath = false;
+        // Clear any persistent selector shown for auto-path destination
+        try { if (this.game && this.game.renderManager && typeof this.game.renderManager.clearFeedback === 'function') this.game.renderManager.clearFeedback(); } catch (e) {}
         if (this.currentPathSequence) {
             try { this.game.animationScheduler.cancelSequence(this.currentPathSequence.id); } catch (e) {}
             this.currentPathSequence = null;
