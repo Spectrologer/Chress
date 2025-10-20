@@ -87,6 +87,7 @@ export class ItemGenerator {
         const specialItems = [
             { name: 'Lion', tile: TILE_TYPES.LION, chance: 0.02, dimension: 0 },
             { name: 'Squig', tile: TILE_TYPES.SQUIG, chance: 0.02, dimension: 0 },
+            { name: 'Penne', tile: TILE_TYPES.PENNE, chance: 0.02, dimension: 0 },
             { name: 'Nib', tile: TILE_TYPES.NIB, chance: 0.02, dimension: 2 },
             { name: 'Mark', tile: TILE_TYPES.MARK, chance: 0.02, dimension: 0 },
             { name: 'Rune', tile: TILE_TYPES.RUNE, chance: 0.02, dimension: 2 },

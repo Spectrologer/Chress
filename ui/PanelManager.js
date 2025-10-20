@@ -66,20 +66,21 @@ export class PanelManager {
                     <div class="stat-item"><span class="stat-label">Thirst:</span> <span class="stat-value">${thirst}/50</span></div>
                     <div class="stat-item"><span class="stat-label">Points:</span> <span class="stat-value">${playerPoints}</span></div>
                     <div class="stat-item"><span class="stat-label">Discoveries:</span> <span class="stat-value">${totalDiscoveries}</span></div>
-                    <div class="stat-item">
-                        <span class="stat-label">Pathing:</span>
-                        <span class="stat-value">
-                            <label class="setting-toggle">
-                                <input type="checkbox" id="verbose-path-toggle" ${this.game.player.stats.verbosePathAnimations ? 'checked' : ''}>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </span>
-                    </div>
+                    <!-- Pathing toggle removed -->
                     <div class="stat-item">
                         <span class="stat-label">Music:</span>
                         <span class="stat-value">
                             <label class="setting-toggle">
                                 <input type="checkbox" id="music-toggle" ${this.game.player.stats.musicEnabled !== false ? 'checked' : ''}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Auto Path With Enemies:</span>
+                        <span class="stat-value">
+                            <label class="setting-toggle">
+                                <input type="checkbox" id="auto-path-enemies-toggle" ${this.game.player.stats.autoPathWithEnemies ? 'checked' : ''}>
                                 <span class="toggle-slider"></span>
                             </label>
                         </span>
@@ -100,8 +101,7 @@ export class PanelManager {
                 </div>
             `;
 
-            // Setup toggle handler after content is added
-            this.setupPathAnimationToggle();
+            // Pathing toggle removed (no-op)
             this.setupAudioToggles();
 
             this.statsPanelOverlay.classList.add('show');
@@ -186,31 +186,7 @@ export class PanelManager {
         }
     }
 
-    setupPathAnimationToggle() {
-        const toggle = document.getElementById('verbose-path-toggle');
-        if (toggle) {
-            // Update on change (keyboard/desktop) and on single click/tap for mobile
-            const applyState = (checked) => {
-                this.game.player.stats.verbosePathAnimations = checked;
-            };
-
-            toggle.addEventListener('change', (e) => applyState(e.target.checked));
-
-            // For single-click/tap support (some devices or custom toggles may require click)
-            toggle.addEventListener('click', (e) => {
-                // Toggle the checked state and apply immediately
-                toggle.checked = !toggle.checked;
-                applyState(toggle.checked);
-            });
-
-            // Touch devices: ensure touch toggles without requiring double-tap
-            toggle.addEventListener('pointerdown', (e) => {
-                e.preventDefault();
-                toggle.checked = !toggle.checked;
-                applyState(toggle.checked);
-            }, { passive: false });
-        }
-    }
+    // Pathing UI toggle removed — no setup method required
 
     setupAudioToggles() {
         const musicToggle = document.getElementById('music-toggle');
@@ -224,6 +200,11 @@ export class PanelManager {
         const applySfxState = (checked) => {
             try { this.game.player.stats.sfxEnabled = !!checked; } catch (e) {}
             try { if (this.game.soundManager && typeof this.game.soundManager.setSfxEnabled === 'function') this.game.soundManager.setSfxEnabled(checked); } catch (e) {}
+        };
+
+        const autoPathToggle = document.getElementById('auto-path-enemies-toggle');
+        const applyAutoPathState = (checked) => {
+            try { this.game.player.stats.autoPathWithEnemies = !!checked; } catch (e) {}
         };
 
         if (musicToggle) {
@@ -249,6 +230,19 @@ export class PanelManager {
                 e.preventDefault();
                 sfxToggle.checked = !sfxToggle.checked;
                 applySfxState(sfxToggle.checked);
+            }, { passive: false });
+        }
+
+        if (autoPathToggle) {
+            autoPathToggle.addEventListener('change', (e) => applyAutoPathState(e.target.checked));
+            autoPathToggle.addEventListener('click', () => {
+                autoPathToggle.checked = !autoPathToggle.checked;
+                applyAutoPathState(autoPathToggle.checked);
+            });
+            autoPathToggle.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                autoPathToggle.checked = !autoPathToggle.checked;
+                applyAutoPathState(autoPathToggle.checked);
             }, { passive: false });
         }
     }

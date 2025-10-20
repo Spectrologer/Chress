@@ -12,6 +12,9 @@ export class PlayerStats {
         this.spentDiscoveries = 0;
         this.dead = false;
         this.verbosePathAnimations = true; // Toggle for step-by-step movement animations
+        // Whether auto-pathing should be allowed to target tiles containing enemies.
+        // Default: OFF (false)
+        this.autoPathWithEnemies = false;
     }
 
     getThirst() {

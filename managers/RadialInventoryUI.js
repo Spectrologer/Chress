@@ -194,6 +194,69 @@ export class RadialInventoryUI {
             this._slotMap.set(el, idx);
         });
 
+        // Record when radial was opened so we can ignore the originating tap
+        // that opened it (mobile browsers may fire a click after touchend).
+        this._openedAt = Date.now();
+
+        // Add a document-level click handler so clicks on the player's own
+        // tile (which hit the canvas) will close the radial menu. We add
+        // the listener in capture phase so it runs even if other handlers
+        // stop propagation. Ignore clicks that occur very shortly after
+        // opening to avoid immediately closing from the same touch.
+        this._bodyClickHandler = (ev) => {
+            try {
+                const now = Date.now();
+                // Ignore clicks that happen within 300ms of opening
+                if (this._openedAt && (now - this._openedAt) < 300) return;
+                // Convert screen coords to grid using the game's input manager
+                const conv = this.game.inputManager && this.game.inputManager.convertScreenToGrid ? this.game.inputManager.convertScreenToGrid(ev.clientX, ev.clientY) : null;
+                if (!conv) return;
+                const playerPos = (this.game.player && typeof this.game.player.getPosition === 'function') ? this.game.player.getPosition() : { x: this.game.player.x, y: this.game.player.y };
+                if (conv.x === playerPos.x && conv.y === playerPos.y) {
+                    // Close radial when clicking own tile
+                    this.close();
+                }
+            } catch (e) {}
+        };
+        try { document.addEventListener('click', this._bodyClickHandler, true); } catch (e) {}
+
+        // Also listen for pointerdown on the game canvas directly. Pointer
+        // events are more reliable on some platforms (they fire before click),
+        // so this helps ensure a tap on the player's tile will close the radial.
+        this._canvasPointerHandler = (ev) => {
+            try {
+                const now = Date.now();
+                if (this._openedAt && (now - this._openedAt) < 300) return;
+                if (!this.game || !this.game.inputManager) return;
+                const conv = this.game.inputManager.convertScreenToGrid(ev.clientX, ev.clientY);
+                if (!conv) return;
+                const playerPos = (this.game.player && typeof this.game.player.getPosition === 'function') ? this.game.player.getPosition() : { x: this.game.player.x, y: this.game.player.y };
+                if (conv.x === playerPos.x && conv.y === playerPos.y) {
+                    try { this.close(); } catch (e) {}
+                }
+            } catch (e) {}
+        };
+        try { if (this.game && this.game.canvas) this.game.canvas.addEventListener('pointerdown', this._canvasPointerHandler, true); } catch (e) {}
+
+        // Some environments may swallow 'click' events or other handlers may
+        // stop propagation. Also listen for document-level pointerdown in the
+        // capture phase so a single click/tap reliably closes the radial UI
+        // (this fires earlier than 'click'). Keep the small ignore window to
+        // avoid immediately closing from the same interaction that opened it.
+        this._bodyPointerDownHandler = (ev) => {
+            try {
+                const now = Date.now();
+                if (this._openedAt && (now - this._openedAt) < 300) return;
+                const conv = this.game.inputManager && this.game.inputManager.convertScreenToGrid ? this.game.inputManager.convertScreenToGrid(ev.clientX, ev.clientY) : null;
+                if (!conv) return;
+                const playerPos = (this.game.player && typeof this.game.player.getPosition === 'function') ? this.game.player.getPosition() : { x: this.game.player.x, y: this.game.player.y };
+                if (conv.x === playerPos.x && conv.y === playerPos.y) {
+                    this.close();
+                }
+            } catch (e) {}
+        };
+        try { document.addEventListener('pointerdown', this._bodyPointerDownHandler, true); } catch (e) {}
+
         this.open = true;
     }
 
@@ -211,7 +274,15 @@ export class RadialInventoryUI {
 
     close() {
         if (!this.container) return;
-        this._slotMap.forEach((v,k) => { try { k.remove(); } catch (e) {} });
+    // Remove the global click handler if present
+    try { if (this._bodyClickHandler) document.removeEventListener('click', this._bodyClickHandler, true); } catch (e) {}
+    this._bodyClickHandler = null;
+    // Remove canvas pointer handler if present
+    try { if (this._canvasPointerHandler && this.game && this.game.canvas) this.game.canvas.removeEventListener('pointerdown', this._canvasPointerHandler, true); } catch (e) {}
+    this._canvasPointerHandler = null;
+    this._openedAt = null;
+        // Clear the container fully (remove any notes/slots)
+        try { this.container.innerHTML = ''; } catch (e) {}
         this._slotMap.clear();
         this.open = false;
     }

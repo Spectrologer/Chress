@@ -45,7 +45,17 @@ export class InteractionController {
         if ((targetTile && typeof targetTile === 'object' && targetTile.type === TILE_TYPES.SIGN) || targetTile === TILE_TYPES.SIGN) {
             return null;
         }
-        if (!this.game.player.isWalkable(targetX, targetY, this.game.grid, startX, startY)) return null;
+
+        // If the target tile contains a live enemy, allow finding a path to it only
+        // when the player setting 'autoPathWithEnemies' is enabled. Otherwise fall
+        // back to the normal walkability check which will reject enemy tiles.
+        const enemyAtTarget = this.game.enemies && this.game.enemies.find(e => e.x === targetX && e.y === targetY && e.health > 0);
+        if (enemyAtTarget) {
+            if (!(this.game.player.stats && this.game.player.stats.autoPathWithEnemies)) return null;
+            // allow pathfinding to the enemy tile even if isWalkable is false
+        } else {
+            if (!this.game.player.isWalkable(targetX, targetY, this.game.grid, startX, startY)) return null;
+        }
         if (startX === targetX && startY === targetY) return [];
 
         const queue = [{x: startX, y: startY, path: []}];
@@ -173,6 +183,36 @@ export class InteractionController {
         const playerPos = this.game.player.getPosition();
         const handled = this.game.interactionManager.handleTap(gridCoords);
         if (!handled) {
+            // If there are any live enemies on the board and the player has the
+            // 'Auto Path With Enemies' setting disabled, restrict movement to a
+            // single tile step toward the clicked destination instead of
+            // performing multi-tile auto-pathing.
+            const enemiesExist = this.game.enemies && this.game.enemies.some(e => e.health > 0);
+            const allowAutoPath = !!(this.game.player.stats && this.game.player.stats.autoPathWithEnemies);
+            if (enemiesExist && !allowAutoPath) {
+                const dx = gridCoords.x - playerPos.x;
+                const dy = gridCoords.y - playerPos.y;
+                if (dx === 0 && dy === 0) return; // clicking on player - nothing to do
+
+                // Choose primary cardinal direction toward target (prefer larger delta)
+                let stepKey = null;
+                if (Math.abs(dx) >= Math.abs(dy) && dx !== 0) {
+                    stepKey = dx > 0 ? 'arrowright' : 'arrowleft';
+                } else if (dy !== 0) {
+                    stepKey = dy > 0 ? 'arrowdown' : 'arrowup';
+                }
+
+                if (!stepKey) return;
+
+                const stepX = playerPos.x + (stepKey === 'arrowright' ? 1 : stepKey === 'arrowleft' ? -1 : 0);
+                const stepY = playerPos.y + (stepKey === 'arrowdown' ? 1 : stepKey === 'arrowup' ? -1 : 0);
+
+                // Only perform the single step if the destination tile is walkable
+                if (this.game.player.isWalkable(stepX, stepY, this.game.grid, playerPos.x, playerPos.y)) {
+                    this.executePath([stepKey]);
+                }
+                return;
+            }
             const isInteractive = this.isTileInteractive(gridCoords.x, gridCoords.y);
             const dx = Math.abs(gridCoords.x - playerPos.x);
             const dy = Math.abs(gridCoords.y - playerPos.y);

@@ -147,11 +147,11 @@ export class GameStateManager {
                     visitedZones: Array.from(this.game.player.visitedZones),
                     spentDiscoveries: this.game.player.getSpentDiscoveries()
                 },
-                // Player UI/settings (persist toggles)
+                // Player UI/settings (persist toggles - music/sfx)
                 playerStats: {
-                    verbosePathAnimations: (this.game.player.stats && !!this.game.player.stats.verbosePathAnimations) || false,
                     musicEnabled: (this.game.player.stats && typeof this.game.player.stats.musicEnabled !== 'undefined') ? !!this.game.player.stats.musicEnabled : true,
-                    sfxEnabled: (this.game.player.stats && typeof this.game.player.stats.sfxEnabled !== 'undefined') ? !!this.game.player.stats.sfxEnabled : true
+                    sfxEnabled: (this.game.player.stats && typeof this.game.player.stats.sfxEnabled !== 'undefined') ? !!this.game.player.stats.sfxEnabled : true,
+                    autoPathWithEnemies: (this.game.player.stats && typeof this.game.player.stats.autoPathWithEnemies !== 'undefined') ? !!this.game.player.stats.autoPathWithEnemies : false
                 },
                 // Game state - save all zones across all dimensions
                 zones: Array.from(this.game.zones.entries()),
@@ -247,13 +247,13 @@ export class GameStateManager {
                 this.game.player.setSpentDiscoveries(gameState.player.spentDiscoveries);
             }
 
-            // Restore persisted player settings (music/sfx/pathing)
+            // Restore persisted player settings (music/sfx)
             if (gameState.playerStats) {
                 try {
                     this.game.player.stats = this.game.player.stats || {};
-                    this.game.player.stats.verbosePathAnimations = !!gameState.playerStats.verbosePathAnimations;
                     this.game.player.stats.musicEnabled = typeof gameState.playerStats.musicEnabled !== 'undefined' ? !!gameState.playerStats.musicEnabled : true;
                     this.game.player.stats.sfxEnabled = typeof gameState.playerStats.sfxEnabled !== 'undefined' ? !!gameState.playerStats.sfxEnabled : true;
+                    this.game.player.stats.autoPathWithEnemies = typeof gameState.playerStats.autoPathWithEnemies !== 'undefined' ? !!gameState.playerStats.autoPathWithEnemies : false;
 
                     // Apply to SoundManager
                     if (this.game.soundManager) {

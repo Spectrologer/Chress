@@ -51,11 +51,17 @@ export class PointerInput {
                         // If radial is already open, close it; otherwise do not open or suppress the tap
                         if (this.game.radialInventoryUI.open) try { this.game.radialInventoryUI.close(); } catch (err) {}
                         // NOTE: do NOT set info._radialOpened here — we want the tap to reach the
-                        // normal handlers so exit/port double-tap logic can run.
+                        // normal handlers so exit/port logic can run.
                     } else {
-                        // open radial UI and mark to suppress the following tap
-                        try { this.game.radialInventoryUI.openAtPlayer(); } catch (err) {}
-                        info._radialOpened = true;
+                        try {
+                            if (this.game.radialInventoryUI.open) {
+                                this.game.radialInventoryUI.close();
+                                info._radialOpened = true; // Suppress tap on pointerup
+                            } else {
+                                this.game.radialInventoryUI.openAtPlayer();
+                                info._radialOpened = true;
+                            }
+                        } catch (err) {}
                     }
                 }
             }

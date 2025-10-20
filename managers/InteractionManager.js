@@ -137,7 +137,7 @@ export class InteractionManager {
             if (handler(gridCoords, playerPos)) return true;
         }
 
-        // If the tapped tile contains a live enemy, handle it here.
+    // If the tapped tile contains a live enemy, handle it here.
         // - If the player is adjacent, perform an immediate attack.
         // - Otherwise, mark the tap handled to prevent auto-pathing onto the enemy.
         const enemyAtCoords = this.game.enemies.find(e => e.x === gridCoords.x && e.y === gridCoords.y && e.health > 0);
@@ -191,7 +191,17 @@ export class InteractionManager {
             }
 
             // Not adjacent: consume the tap to prevent auto-pathing onto an enemy tile
-            return true;
+            // unless the player has enabled the 'Auto Path With Enemies' setting.
+            const allowAutoPath = !!(this.game.player.stats && this.game.player.stats.autoPathWithEnemies);
+            if (!isAdjacent && !allowAutoPath) return true;
+            if (!isAdjacent && allowAutoPath) {
+                // Let the input/controller logic proceed so it can attempt pathfinding
+                // (which will only succeed if a path exists and the controller allows
+                // targeting enemy tiles when the setting is enabled).
+                // Fall through to return false (meaning: not handled here).
+            } else {
+                return true; // adjacent handled above
+            }
         }
 
         return false; // No interaction, allow pathfinding
