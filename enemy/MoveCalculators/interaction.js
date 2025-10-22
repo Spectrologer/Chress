@@ -50,11 +50,19 @@ export function handlePitfallTransition(base, enemy, x, y, game) {
     const enemyIndex = game.enemies.indexOf(enemy);
     if (enemyIndex > -1) game.enemies.splice(enemyIndex, 1);
     const currentZone = game.player.currentZone;
-    const undergroundZoneKey = `${currentZone.x},${currentZone.y}:2`;
+    // Ensure the player's zone and depth reflect being in the first underground level
+    const depth = Number.isInteger(game.player.undergroundDepth) && game.player.undergroundDepth > 0 ? game.player.undergroundDepth : 1;
+    game.player.undergroundDepth = depth;
+    game.player.currentZone.dimension = 2;
+    game.player.currentZone.portType = 'underground';
+    game.player.currentZone.depth = depth;
+    const undergroundZoneKey = `${currentZone.x},${currentZone.y}:2:z-${depth}`;
     if (!game.zones.has(undergroundZoneKey)) {
         const undergroundZoneData = game.zoneGenerator.generateZone(
             currentZone.x, currentZone.y, 2, game.zones, game.connectionManager.zoneConnections, game.availableFoodAssets, 'port'
         );
+        // annotate the generated zone with depth so player/zone logic can access it
+        undergroundZoneData.depth = depth;
         game.zones.set(undergroundZoneKey, undergroundZoneData);
     }
     const undergroundZoneData = game.zones.get(undergroundZoneKey);

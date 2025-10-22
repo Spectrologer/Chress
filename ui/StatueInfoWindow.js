@@ -6,9 +6,9 @@ export class StatueInfoWindow {
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleOkayClick = this.handleOkayClick.bind(this);
 
-        // Statue Info UI elements
-        this.statueOverlay = document.getElementById('statueOverlay');
-        this.statueWindow = this.statueOverlay.querySelector('.statue-window');
+    // Statue Info UI elements - be defensive for tests that don't include full DOM
+    this.statueOverlay = document.getElementById('statueOverlay') || null;
+    this.statueWindow = this.statueOverlay ? this.statueOverlay.querySelector('.statue-window') : null;
     }
 
     setupStatueInfoHandlers() {

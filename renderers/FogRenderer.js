@@ -32,7 +32,8 @@ export class FogRenderer {
     updateAndDrawFog() {
         const currentZone = this.game.player.getCurrentZone(); // This is now safe as RenderManager ensures dimension is 2
 
-        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
+    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
         if (this.lastZoneKey !== zoneKey) {
             this.initializeFog();
             this.lastZoneKey = zoneKey;

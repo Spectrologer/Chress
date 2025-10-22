@@ -47,6 +47,14 @@ export class RadialInventoryUI {
         this.close(); // clear
     const canvasRect = this.game.canvas.getBoundingClientRect();
     const player = this.game.player;
+        // If player is standing on a stairdown, block opening radial so player must click to descend
+        try {
+            const tileUnder = this.game.grid[player.y] && this.game.grid[player.y][player.x];
+            if (tileUnder && tileUnder.type === TILE_TYPES.PORT && tileUnder.portKind === 'stairdown') {
+                // Don't open radial while standing on a stairdown — player must click to descend
+                return; // Do not open radial
+            }
+        } catch (e) {}
         // If radial inventory is empty, try to migrate eligible items from main inventory
         try {
             const RADIAL_TYPES = ['bomb', 'horse_icon', 'bow', 'bishop_spear', 'book_of_time_travel'];

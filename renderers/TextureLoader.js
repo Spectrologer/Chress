@@ -54,6 +54,11 @@ export class TextureLoader {
                     imageKey = 'hole';
                 } else if (assetName === 'doodads/pitfall.png') {
                     imageKey = 'pitfall';
+                } else if (assetName === 'doodads/stairdown.png') {
+                    // Register stair doodads under the simple key the renderer expects
+                    imageKey = 'stairdown';
+                } else if (assetName === 'doodads/stairup.png') {
+                    imageKey = 'stairup';
                 } else {
                     imageKey = assetName.replace('.png', '');
                 }

@@ -48,8 +48,9 @@ export class ZoneGenerator {
         this.currentZoneY = zoneY;
         this.currentDimension = dimension;
 
-        // Check if this zone already exists (include dimension in key)
-        const zoneKey = `${zoneX},${zoneY}:${dimension}`;
+        // Check if this zone already exists (include dimension and depth for underground)
+        const depthSuffix = (dimension === 2) ? `:z-${this.game.player.currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
+        const zoneKey = `${zoneX},${zoneY}:${dimension}${depthSuffix}`;
         if (existingZones.has(zoneKey)) {
             return existingZones.get(zoneKey);
         }

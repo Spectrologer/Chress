@@ -6,13 +6,15 @@ import { PathGenerator } from './PathGenerator.js';
 import logger from '../core/logger.js';
 
 export class ItemGenerator {
-    constructor(grid, foodAssets, zoneX, zoneY, dimension) {
+    constructor(grid, foodAssets, zoneX, zoneY, dimension, depth) {
         this.grid = grid;
         this.foodAssets = foodAssets;
         this.zoneX = zoneX;
         this.zoneY = zoneY;
         this.dimension = dimension || 0;
+        this.depth = depth || 1;
         this.zoneLevel = ZoneStateManager.getZoneLevel(zoneX, zoneY);
+        this.depthMultiplier = 1 + Math.max(0, (this.depth - 1)) * 0.02; // +2% per extra depth
     }
 
     addLevelBasedFoodAndWater() {
@@ -111,14 +113,16 @@ export class ItemGenerator {
 
             if (dimensionMatch && levelMatch && !activatedItemRestriction) {
                 const multiplier = item.noMultiplier ? 1.0 : undergroundMultiplier;
-                if (Math.random() < item.chance * multiplier) {
+                // Apply depthMultiplier on top of underground multiplier
+                const effectiveMultiplier = multiplier * this.depthMultiplier;
+                if (Math.random() < item.chance * effectiveMultiplier) {
                     this._placeItem(item);
                 }
             }
         });
 
-        // Add Axe-O-Lot'l with 100% chance in underground 0,0
-        if (this.dimension === 2 && this.zoneX === 0 && this.zoneY === 0) {
+        // Add Axe-O-Lot'l only in the first underground depth (depth === 1) for zone 0,0
+        if (this.dimension === 2 && this.zoneX === 0 && this.zoneY === 0 && this.depth === 1) {
             this.addAxelotlItem();
         }
     }

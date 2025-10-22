@@ -284,14 +284,21 @@ export class InteractionController {
                 const playerPos = this.game.player.getPosition();
                 // Clear persistent selector now that path completed
                 try { if (this.game && this.game.renderManager && typeof this.game.renderManager.clearFeedback === 'function') this.game.renderManager.clearFeedback(); } catch (e) {}
-                if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
-                    if (this.autoUseNextTransition === 'exit') {
-                        if (this.exitHandler) this.exitHandler(playerPos.x, playerPos.y); else this.performExitTap(playerPos.x, playerPos.y);
-                        this.autoUseNextTransition = null;
+                try {
+                    const landedTile = this.game.grid[playerPos.y]?.[playerPos.x];
+                    const landedTileType = (typeof landedTile === 'object' && landedTile?.type !== undefined) ? landedTile.type : landedTile;
+                    if (landedTileType === TILE_TYPES.EXIT) {
+                        if (this.autoUseNextTransition === 'exit') {
+                            if (this.exitHandler) this.exitHandler(playerPos.x, playerPos.y); else this.performExitTap(playerPos.x, playerPos.y);
+                            this.autoUseNextTransition = null;
+                        }
+                    } else if (landedTileType === TILE_TYPES.PORT) {
+                        if (this.autoUseNextTransition === 'port') {
+                            try { this.game.interactionManager.zoneManager.handlePortTransition(); } catch (e) {}
+                            this.autoUseNextTransition = null;
+                        }
                     }
-                } else if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.PORT) {
-                    if (this.autoUseNextTransition === 'port') { try { this.game.interactionManager.zoneManager.handlePortTransition(); } catch (e) {} this.autoUseNextTransition = null; }
-                }
+                } catch (e) {}
                 if (this.game.player.interactOnReach) {
                     const target = this.game.player.interactOnReach;
                     this.game.player.clearInteractOnReach();
@@ -322,15 +329,30 @@ export class InteractionController {
             const stepDelay = Math.max(40, INPUT_CONSTANTS.LEGACY_PATH_DELAY || 50);
             let stepIndex = 0;
             const runNextStep = () => {
-                if (this.cancelPath || stepIndex >= path.length) {
+                    if (this.cancelPath || stepIndex >= path.length) {
                     this.isExecutingPath = false;
                     // Clear persistent selector on completion/cancel
                     try { if (this.game && this.game.renderManager && typeof this.game.renderManager.clearFeedback === 'function') this.game.renderManager.clearFeedback(); } catch (e) {}
                     // Post-processing after path completes
                     const playerPos = this.game.player.getPosition();
-                    if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT) {
-                        if (this.autoUseNextExitReach) { if (this.exitHandler) this.exitHandler(playerPos.x, playerPos.y); else this.performExitTap(playerPos.x, playerPos.y); this.autoUseNextExitReach = false; }
-                    }
+                    try {
+                        const landedTile = this.game.grid[playerPos.y]?.[playerPos.x];
+                        const landedTileType = (typeof landedTile === 'object' && landedTile?.type !== undefined) ? landedTile.type : landedTile;
+                        if (landedTileType === TILE_TYPES.EXIT) {
+                            // honor either the legacy autoUseNextExitReach flag or the unified autoUseNextTransition
+                            if (this.autoUseNextExitReach || this.autoUseNextTransition === 'exit') {
+                                if (this.exitHandler) this.exitHandler(playerPos.x, playerPos.y); else this.performExitTap(playerPos.x, playerPos.y);
+                                this.autoUseNextExitReach = false;
+                                this.autoUseNextTransition = null;
+                            }
+                        }
+                        if (landedTileType === TILE_TYPES.PORT) {
+                            if (this.autoUseNextTransition === 'port') {
+                                try { this.game.interactionManager.zoneManager.handlePortTransition(); } catch (e) {}
+                                this.autoUseNextTransition = null;
+                            }
+                        }
+                    } catch (e) {}
                     if (this.game.player.interactOnReach) {
                         const target = this.game.player.interactOnReach;
                         this.game.player.clearInteractOnReach();
@@ -372,7 +394,8 @@ export class InteractionController {
         const gridCoords = this.convertScreenToGrid(screenX, screenY);
         try { if (this.game && this.game.renderManager && typeof this.game.renderManager.showTapFeedback === 'function') this.game.renderManager.showTapFeedback(gridCoords.x, gridCoords.y); } catch (e) {}
 
-        const clickedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+    const clickedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+    const clickedTileType = (typeof clickedTile === 'object' && clickedTile?.type !== undefined) ? clickedTile.type : clickedTile;
         const enemyAtTile = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
         const playerPos = this.game.player.getPosition();
 
@@ -403,6 +426,7 @@ export class InteractionController {
         } catch (e) {}
 
     const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        const tileType = (typeof tile === 'object' && tile?.type !== undefined) ? tile.type : tile;
         // If a pending selection was started by using an item from the radial (selectionType),
         // validate the tapped tile using the combat manager and confirm/cancel accordingly.
         try {
@@ -429,12 +453,13 @@ export class InteractionController {
         if (!isDoubleTap && gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
             try {
                 const currentTile = this.game.grid[playerPos.y]?.[playerPos.x];
+                const currentTileType = (typeof currentTile === 'object' && currentTile?.type !== undefined) ? currentTile.type : currentTile;
                 // If standing on an exit or port, perform the transition immediately on single tap
-                if (currentTile === TILE_TYPES.EXIT) {
+                if (currentTileType === TILE_TYPES.EXIT) {
                     if (this.exitHandler) this.exitHandler(playerPos.x, playerPos.y); else this.performExitTap(playerPos.x, playerPos.y);
                     return true;
                 }
-                if (currentTile === TILE_TYPES.PORT) {
+                if (currentTileType === TILE_TYPES.PORT) {
                     try { this.game.interactionManager.zoneManager.handlePortTransition(); } catch (e) {}
                     return true;
                 }
@@ -447,23 +472,23 @@ export class InteractionController {
                 }
             } catch (e) {}
         }
-        if (isDoubleTap && (tile === TILE_TYPES.EXIT || tile === TILE_TYPES.PORT)) {
+        if (isDoubleTap && (tileType === TILE_TYPES.EXIT || tileType === TILE_TYPES.PORT)) {
             if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
-                if (tile === TILE_TYPES.EXIT) { if (this.exitHandler) this.exitHandler(gridCoords.x, gridCoords.y); else this.performExitTap(gridCoords.x, gridCoords.y); }
+                if (tileType === TILE_TYPES.EXIT) { if (this.exitHandler) this.exitHandler(gridCoords.x, gridCoords.y); else this.performExitTap(gridCoords.x, gridCoords.y); }
                 else try { this.game.interactionManager.zoneManager.handlePortTransition(); } catch (e) {}
                 return;
             } else {
-                this.autoUseNextTransition = (tile === TILE_TYPES.EXIT) ? 'exit' : 'port';
+                this.autoUseNextTransition = (tileType === TILE_TYPES.EXIT) ? 'exit' : 'port';
             }
         }
 
         if (isDoubleTap) {
-            if (tile === TILE_TYPES.EXIT || tile === TILE_TYPES.PORT) {
+            if (tileType === TILE_TYPES.EXIT || tileType === TILE_TYPES.PORT) {
                 if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
-                    if (tile === TILE_TYPES.EXIT) { if (this.exitHandler) this.exitHandler(gridCoords.x, gridCoords.y); else this.performExitTap(gridCoords.x, gridCoords.y); }
+                    if (tileType === TILE_TYPES.EXIT) { if (this.exitHandler) this.exitHandler(gridCoords.x, gridCoords.y); else this.performExitTap(gridCoords.x, gridCoords.y); }
                     else try { this.game.interactionManager.zoneManager.handlePortTransition(); } catch (e) {}
                 } else {
-                    this.autoUseNextTransition = (tile === TILE_TYPES.EXIT) ? 'exit' : 'port';
+                    this.autoUseNextTransition = (tileType === TILE_TYPES.EXIT) ? 'exit' : 'port';
                     this.executeMovementOrInteraction(gridCoords);
                 }
             } else {

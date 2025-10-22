@@ -47,17 +47,12 @@ export class UIManager {
                 mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Woodcutter's Club</span>`;
             } else if (zone.dimension === 2) {
                 // Underground dimension
-                const dist = Math.max(Math.abs(zone.x), Math.abs(zone.y));
-                let zoneLevel = 1;
-                if (dist <= 2) zoneLevel = 1;
-                else if (dist <= 8) zoneLevel = 2;
-                else if (dist <= 16) zoneLevel = 3;
-                else zoneLevel = 4;
-
+                // Display the numerical underground depth the player is at (z-1, z-2, ...)
+                const depth = this.game.player.undergroundDepth || 1;
                 const totalDiscoveries = this.game.player.getVisitedZones().size;
                 const spentDiscoveries = this.game.player.getSpentDiscoveries() || 0;
                 const availableDiscoveries = totalDiscoveries - spentDiscoveries;
-                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Z-${zoneLevel}, ${zone.x},${zone.y}<br>DISCOVERIES: ${availableDiscoveries}</span>`;
+                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Z-${depth}, ${zone.x},${zone.y}<br>DISCOVERIES: ${availableDiscoveries}</span>`;
             } else {
                 const totalDiscoveries = this.game.player.getVisitedZones().size;
                 const spentDiscoveries = this.game.player.getSpentDiscoveries() || 0;

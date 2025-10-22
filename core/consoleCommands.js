@@ -240,6 +240,26 @@ const consoleCommands = {
     }
   },
 
+  spawnStairdown: function(game) {
+    // Try to place stairdown at player's position if valid, otherwise find random valid spawn
+    const playerPos = game.player.getPosition();
+    const tileAtPlayer = game.grid[playerPos.y]?.[playerPos.x];
+    const canPlaceAtPlayer = tileAtPlayer === TILE_TYPES.FLOOR || (tileAtPlayer && tileAtPlayer.type === TILE_TYPES.FLOOR);
+    if (canPlaceAtPlayer) {
+      game.grid[playerPos.y][playerPos.x] = { type: TILE_TYPES.PORT, portKind: 'stairdown' };
+      logger.log('Placed stairdown at player position', playerPos);
+      return;
+    }
+
+    const pos = findSpawnPosition(game);
+    if (pos) {
+      game.grid[pos.y][pos.x] = { type: TILE_TYPES.PORT, portKind: 'stairdown' };
+      logger.log('Spawned stairdown at', pos);
+    } else {
+      logger.log('No valid spawn position found for stairdown');
+    }
+  },
+
 
   // Enemy spawn commands (additional)
   spawnLizardeaux: function(game) {
@@ -294,6 +314,7 @@ const consoleCommands = {
   hotkeyJ: function(game) { this.spawnShack(game); }, // J for shack
   hotkeyC: function(game) { this.spawnCistern(game); }, // C for cistern
   hotkeyP: function(game) { this.spawnPitfall(game); }, // P for pitfall
+  hotkeyT: function(game) { this.spawnStairdown(game); }, // T for stairdown
 
   hotkeyShift1: function(game) { this.spawnEnemy(game, 'lizardy'); },
   hotkeyShift2: function(game) { this.spawnEnemy(game, 'lizardo'); },
@@ -331,6 +352,7 @@ const consoleCommands = {
       if (lowerKey === 'j') { this.hotkeyJ(game); return true; }
       if (lowerKey === 'c') { this.hotkeyC(game); return true; }
       if (lowerKey === 'p') { this.hotkeyP(game); return true; }
+  if (lowerKey === 't') { this.hotkeyT(game); return true; }
       // Enemies (numbers without shift)
       if (lowerKey === '1') { this.hotkeyShift1(game); return true; }
       if (lowerKey === '2') { this.hotkeyShift2(game); return true; }

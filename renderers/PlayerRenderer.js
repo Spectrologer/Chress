@@ -190,7 +190,7 @@ export class PlayerRenderer {
         const playerGridY = this.game.player.y;
         const tileUnderPlayer = this.game.grid[playerGridY]?.[playerGridX];
 
-        if (tileUnderPlayer === TILE_TYPES.EXIT || tileUnderPlayer === TILE_TYPES.PORT) {
+        if (tileUnderPlayer === TILE_TYPES.EXIT || tileUnderPlayer === TILE_TYPES.PORT || (tileUnderPlayer && tileUnderPlayer.type === TILE_TYPES.PORT)) {
             const arrowImage = this.game.textureManager.getImage('ui/arrow');
             if (arrowImage && arrowImage.complete) {
                 this.ctx.save();
@@ -206,7 +206,11 @@ export class PlayerRenderer {
 
                 let rotationAngle = 0; // Default to North (arrow.png points up)
 
-                if (tileUnderPlayer === TILE_TYPES.PORT) {
+                // If the tile under the player is an object-style PORT with explicit portKind, respect it
+                if (tileUnderPlayer && tileUnderPlayer.type === TILE_TYPES.PORT && tileUnderPlayer.portKind) {
+                    if (tileUnderPlayer.portKind === 'stairdown') rotationAngle = Math.PI; // point down to indicate descend
+                    else if (tileUnderPlayer.portKind === 'stairup') rotationAngle = 0; // point up to indicate ascend
+                } else if (tileUnderPlayer === TILE_TYPES.PORT) {
                     const isCistern = MultiTileHandler.findCisternPosition(playerGridX, playerGridY, this.game.grid);
                     const isHole = !isCistern && !MultiTileHandler.findShackPosition(playerGridX, playerGridY, this.game.grid) && !MultiTileHandler.findHousePosition(playerGridX, playerGridY, this.game.grid);
 

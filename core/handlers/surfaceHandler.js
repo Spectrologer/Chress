@@ -13,9 +13,9 @@ export function handleSurface(zoneGen, zoneX, zoneY, zoneConnections, foodAssets
     const isHomeZone = (zoneX === 0 && zoneY === 0);
 
     const structureGenerator = new StructureGenerator(zoneGen.grid);
-    const featureGenerator = new FeatureGenerator(zoneGen.grid, foodAssets);
-    const itemGenerator = new ItemGenerator(zoneGen.grid, foodAssets, zoneX, zoneY, 0);
-    const enemyGenerator = new EnemyGenerator(zoneGen.enemies);
+    const featureGenerator = new FeatureGenerator(zoneGen.grid, foodAssets, 0);
+    const itemGenerator = new ItemGenerator(zoneGen.grid, foodAssets, zoneX, zoneY, 0, 0);
+    const enemyGenerator = new EnemyGenerator(zoneGen.enemies, 0);
     const pathGenerator = new PathGenerator(zoneGen.grid);
 
     zoneGen.addRegionNotes(`${zoneX},${zoneY}`, structureGenerator);

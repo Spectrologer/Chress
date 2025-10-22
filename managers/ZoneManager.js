@@ -83,7 +83,7 @@ export class ZoneManager {
         }
 
         // Update UI
-        this.game.uiManager.updateZoneDisplay();
+    this.game.uiManager.updateZoneDisplay();
         this.game.uiManager.updatePlayerPosition();
         this.game.uiManager.updatePlayerStats();
 
@@ -146,8 +146,14 @@ export class ZoneManager {
                 const zoneData = this.game.zones.get(`${this.game.player.currentZone.x},${this.game.player.currentZone.y}:${this.game.player.currentZone.dimension}`);
 
                 if (this.game.portTransitionData?.from === 'pitfall') {
-                    // Entering underground via pitfall: Use the zone's designated spawn point.
-                    this.game.player.setPosition(zoneData.playerSpawn.x, zoneData.playerSpawn.y);
+                    // Entering underground via pitfall: Use the zone's designated spawn point
+                    // if available, otherwise fall back to the provided exit coords.
+                    if (zoneData && zoneData.playerSpawn) {
+                        this.game.player.setPosition(zoneData.playerSpawn.x, zoneData.playerSpawn.y);
+                    } else {
+                        this.game.player.setPosition(exitX, exitY);
+                        this.validateAndSetTile(this.game.grid, exitX, exitY, TILE_TYPES.PORT);
+                    }
                 } else if (this.game.player.currentZone.dimension === 1) { // Entering an interior
                     // Entering an interior: place player at bottom-middle of interior (consistent spawn)
                     const portX = Math.floor(GRID_SIZE / 2);
@@ -155,9 +161,27 @@ export class ZoneManager {
                     this.validateAndSetTile(this.game.grid, portX, portY, TILE_TYPES.PORT);
                     this.game.player.setPosition(portX, portY);
                 } else if (this.game.player.currentZone.dimension === 0 && this.game.player.currentZone.portType === 'underground') {
-                    // Exiting to the surface FROM underground. Place player at the port they came from.
-                    const portX = exitX;
-                    const portY = exitY;
+                    // Exiting to the surface FROM underground.
+                    // Prefer an explicit recorded returnToSurface (from the underground zone data) or
+                    // the original portTransitionData coordinates (the hole/cistern the player fell through)
+                    // before falling back to the exitX/exitY coordinates (which are the underground port coords).
+                    let portX = exitX;
+                    let portY = exitY;
+
+                    try {
+                        const undergroundZoneKey = `${this.game.player.currentZone.x},${this.game.player.currentZone.y}:2:z-${this.game.player.currentZone.depth || (this.game.player.undergroundDepth || 1)}`;
+                        const undergroundData = this.game.zones.get(undergroundZoneKey);
+                        if (undergroundData && undergroundData.returnToSurface) {
+                            portX = undergroundData.returnToSurface.x;
+                            portY = undergroundData.returnToSurface.y;
+                        } else if (this.game.portTransitionData && (this.game.portTransitionData.from === 'hole' || this.game.portTransitionData.from === 'pitfall')) {
+                            portX = this.game.portTransitionData.x;
+                            portY = this.game.portTransitionData.y;
+                        }
+                    } catch (e) {
+                        // Non-fatal, fall back to exitX/exitY
+                    }
+
                     this.validateAndSetTile(this.game.grid, portX, portY, TILE_TYPES.PORT);
                     this.game.player.setPosition(portX, portY);
                 } else if (this.game.player.currentZone.dimension === 0) {
@@ -225,13 +249,25 @@ export class ZoneManager {
      */
     validateAndSetTile(grid, x, y, tile) {
         if (y >= 0 && y < GRID_SIZE && x >= 0 && x < GRID_SIZE) {
+            // If we're trying to set a primitive PORT tile, don't overwrite an existing
+            // object-style PORT (which may contain metadata like portKind: 'stairup').
+            if (tile === TILE_TYPES.PORT) {
+                const existing = grid[y] && grid[y][x];
+                if (existing && typeof existing === 'object' && existing.type === TILE_TYPES.PORT) {
+                    // Preserve the object port
+                    return;
+                }
+            }
+
             grid[y][x] = tile;
         }
     }
 
     generateZone() {
-        const currentZone = this.game.player.getCurrentZone();
-        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+    const currentZone = this.game.player.getCurrentZone();
+    // For underground zones (dimension 2), include the player's depth so each depth layer is stored separately
+    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
+    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
 
         // Generate chunk connections for current area
         this.game.connectionManager.generateChunkConnections(currentZone.x, currentZone.y);
@@ -242,8 +278,13 @@ export class ZoneManager {
         // This handles cases where a zone was generated without a port, but now needs one.
         const isPortTransition = this.game.lastExitSide === 'port';
 
-        if (this.game.zones.has(zoneKey) && !isPortTransition) {
-            // Use existing zone data (loaded from save or previously generated)
+        if (this.game.zones.has(zoneKey)) {
+            // Use existing zone data (loaded from save or previously generated).
+            // Previously we forced regeneration for port transitions which could
+            // overwrite saved returnToSurface data (e.g. the surface hole where a
+            // player fell through). Prefer reusing saved data to preserve that
+            // mapping; generators will still patch emergence tiles below when
+            // portTransitionData is present.
             zoneData = this.game.zones.get(zoneKey);
         } else {
             // Generate new zone
@@ -256,16 +297,68 @@ export class ZoneManager {
                 this.game.availableFoodAssets,
                 this.game.lastExitSide // Pass how the player entered
             );
+            // Defensive: if a zoneGenerator mock or implementation returns falsy,
+            // ensure we have a minimal zoneData structure to avoid runtime errors.
+            if (!zoneData) {
+                zoneData = {
+                    grid: this.game.grid || Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)),
+                    enemies: [],
+                    playerSpawn: null
+                };
+            }
             // Save the generated zone
             // If we are generating an interior zone as a result of entering via a surface port,
             // persist the surface port coordinates so we can return the player to that exact spot when exiting.
             if (currentZone.dimension === 1 && this.game.portTransitionData?.from === 'interior') {
                 zoneData.returnToSurface = { x: this.game.portTransitionData.x, y: this.game.portTransitionData.y };
             }
+            // If generating an underground zone as a result of falling through a hole/pitfall,
+            // the underground handler may include returnToSurface metadata; ensure it's persisted
+            // on the saved zoneData so surface exits can return the player to the exact hole.
+            if (currentZone.dimension === 2 && this.game.portTransitionData && (this.game.portTransitionData.from === 'hole' || this.game.portTransitionData.from === 'pitfall')) {
+                // Use returnToSurface provided by the generator result if available, otherwise fall back to portTransitionData
+                if (!zoneData.returnToSurface) {
+                    zoneData.returnToSurface = { x: this.game.portTransitionData.x, y: this.game.portTransitionData.y };
+                }
+            }
             this.game.zones.set(zoneKey, zoneData);
         }
 
         this.game.grid = zoneData.grid;
+        // If we generated this zone as the result of a port transition, ensure
+        // the emergence tile reflects the correct port object (stairup/stairdown)
+        try {
+            if (this.game.lastExitSide === 'port' && this.game.portTransitionData) {
+                const px = this.game.portTransitionData.x;
+                const py = this.game.portTransitionData.y;
+                const from = this.game.portTransitionData.from;
+                if (px >= 0 && px < GRID_SIZE && py >= 0 && py < GRID_SIZE) {
+                    const existing = this.game.grid[py][px];
+                    // If transition was from stairdown, we should have a stairup at emergence
+                    if (from === 'stairdown') {
+                        if (!(existing && typeof existing === 'object' && existing.type === TILE_TYPES.PORT && existing.portKind === 'stairup')) {
+                            this.game.grid[py][px] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
+                        }
+                    } else if (from === 'stairup') {
+                        if (!(existing && typeof existing === 'object' && existing.type === TILE_TYPES.PORT && existing.portKind === 'stairdown')) {
+                            this.game.grid[py][px] = { type: TILE_TYPES.PORT, portKind: 'stairdown' };
+                        }
+                    } else if (from === 'cistern') {
+                        // ensure cistern top/port is present
+                        if (this.game.grid[py + 1] && this.game.grid[py + 1][px] !== TILE_TYPES.CISTERN) {
+                            this.validateAndSetTile(this.game.grid, px, py + 1, TILE_TYPES.CISTERN);
+                        }
+                    } else if (from === 'hole' || from === 'pitfall') {
+                        // holes/pitfalls are primitive ports
+                        if (this.game.grid[py][px] && typeof this.game.grid[py][px] === 'object' && this.game.grid[py][px].type === TILE_TYPES.PORT) {
+                            // leave object port if present; otherwise set primitive port
+                        } else {
+                            this.validateAndSetTile(this.game.grid, px, py, TILE_TYPES.PORT);
+                        }
+                    }
+                }
+            }
+        } catch (e) { /* non-fatal */ }
         // When loading enemies, filter out any that are in the defeatedEnemies set.
         const allEnemies = (zoneData.enemies || []).map(e => new this.game.Enemy(e));
         this.game.enemies = allEnemies.filter(enemy => {
@@ -306,8 +399,9 @@ export class ZoneManager {
 
     saveCurrentZoneState() {
         // Save the current zone's grid and enemies to the zones map
-        const currentZone = this.game.player.getCurrentZone();
-        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+    const currentZone = this.game.player.getCurrentZone();
+    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
+    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
 
         // Save current zone state to preserve any changes made during gameplay
         this.game.zones.set(zoneKey, {

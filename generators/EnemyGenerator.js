@@ -50,8 +50,10 @@ const ENEMY_SPAWN_PROBS = {
 };
 
 export class EnemyGenerator {
-    constructor(enemies) {
+    constructor(enemies, depth = 0) {
         this.enemies = enemies;
+        this.depth = depth || 0;
+        this.depthMultiplier = 1 + Math.max(0, (this.depth - 1)) * 0.02; // +2% per depth beyond first
     }
 
     selectEnemyType(zoneLevel) {
@@ -66,7 +68,10 @@ export class EnemyGenerator {
     }
 
     addRandomEnemy(zoneLevel, zoneX, zoneY) {
-        const maxWeight = MAX_WEIGHT_PER_LEVEL[zoneLevel] || 12;
+        // Scale max weight by depth multiplier but cap at 20
+        const baseMax = MAX_WEIGHT_PER_LEVEL[zoneLevel] || 12;
+        const scaledMax = Math.min(20, Math.floor(baseMax * this.depthMultiplier));
+        const maxWeight = scaledMax;
         let currentWeight = 0;
         let localId = 0; // Unique per zone
         let spawnAttempts = 0;

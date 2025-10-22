@@ -5,9 +5,12 @@ import { ZoneStateManager } from './ZoneStateManager.js';
 import logger from '../core/logger.js';
 
 export class FeatureGenerator {
-    constructor(grid, foodAssets) {
+    constructor(grid, foodAssets, depth = 0) {
         this.grid = grid;
         this.foodAssets = foodAssets;
+        this.depth = depth || 0;
+        // depthMultiplier: +2% per underground depth beyond the first (depth 1 -> 1.0)
+        this.depthMultiplier = 1 + Math.max(0, (this.depth - 1)) * 0.02;
     }
 
     addRandomFeatures(zoneLevel, zoneX, zoneY, isUnderground = false) {
@@ -46,10 +49,14 @@ export class FeatureGenerator {
             if (!pos) break;
             const { x, y } = pos;
             const featureType = Math.random();
-            let rockThreshold = zoneLevel === 1 ? 0.25 : 0.35;
+            // Apply depthMultiplier to obstruction likelihoods (more obstructions deeper)
+            let baseRockThresh = zoneLevel === 1 ? 0.25 : 0.35;
+            let baseShrubThresh = zoneLevel === 1 ? 0.40 : 0.55;
+            const rockThreshold = Math.min(0.95, baseRockThresh * this.depthMultiplier);
+            const shrubThreshold = Math.min(0.95, baseShrubThresh * this.depthMultiplier);
             if (featureType < rockThreshold) {
                 this.grid[y][x] = TILE_TYPES.ROCK;
-            } else if (featureType < (zoneLevel === 1 ? 0.4 : 0.55)) {
+            } else if (featureType < shrubThreshold) {
                 this.grid[y][x] = TILE_TYPES.SHRUBBERY;
             } else if (featureType >= 0.7) {
                 this.grid[y][x] = TILE_TYPES.GRASS;
@@ -58,7 +65,7 @@ export class FeatureGenerator {
         }
 
         // Add chance tiles past the frontier (zone level 3)
-        if (zoneLevel === 3 && Math.random() < 0.15) { // 15% chance
+        if (zoneLevel === 3 && Math.random() < 0.15 * this.depthMultiplier) { // 15% base chance scaled by depth
             this.addChanceTile(zoneX, zoneY);
         }
 
@@ -168,7 +175,9 @@ export class FeatureGenerator {
 
     addMazeBlockages() {
         // Add some rocks and shrubbery to block alternative paths
-        const blockages = randomInt(3, 8); // Math.floor(Math.random() * 5) + 3
+        // Slightly increase number of blockages with depth
+        const extra = Math.floor(Math.max(0, this.depth - 1) * 0.02 * 5);
+        const blockages = randomInt(3 + extra, 8 + extra); // Math.floor(Math.random() * 5) + 3
         for (let i = 0; i < blockages; i++) {
             const pos = findValidPlacement({
                 maxAttempts: 20,
@@ -176,7 +185,9 @@ export class FeatureGenerator {
             });
             if (pos) {
                 const { x, y } = pos;
-                this.grid[y][x] = Math.random() < 0.5 ? TILE_TYPES.ROCK : TILE_TYPES.SHRUBBERY;
+                // Increase chance of rock (hard obstruction) with depth
+                const rockProb = Math.min(0.95, 0.5 * this.depthMultiplier);
+                this.grid[y][x] = Math.random() < rockProb ? TILE_TYPES.ROCK : TILE_TYPES.SHRUBBERY;
             }
         }
     }
@@ -188,8 +199,8 @@ export class FeatureGenerator {
 
         // Underground zones use only rocks for exit blocking (no shrubbery)
         if (isUnderground) {
-            // Block exits with rocks in underground zones (55% chance)
-            const rockChance = 0.55;
+            // Block exits with rocks in underground zones (base 55% chance), scaled by depth
+            const rockChance = Math.min(0.98, 0.55 * this.depthMultiplier);
             if (connections.north !== null && Math.random() < rockChance) {
                 this.grid[0][connections.north] = TILE_TYPES.ROCK;
             }

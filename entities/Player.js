@@ -8,7 +8,7 @@ export class Player {
         this.y = 1;
         this.lastX = this.x;
         this.lastY = this.y;
-        this.currentZone = { x: 0, y: 0, dimension: 0 };
+        this.currentZone = { x: 0, y: 0, dimension: 0, depth: 0 };
         this.visitedZones = new Set();
         this.inventory = [];
     // Separate inventory for quick radial actions (icons around player)
@@ -24,7 +24,8 @@ export class Player {
         this.itemManager = null; // To be set by Game class
 
         this.interactOnReach = null; // {x, y} - interact with this tile when reaching adjacent        
-        this.markZoneVisited(0, 0, 0); // Start in dimension 0
+        this.undergroundDepth = 0; // 0 == surface, 1 == first underground, 2 == deeper, etc.
+        this.markZoneVisited(0, 0, 0); // Start in surface dimension 0
     }
 
     move(newX, newY, grid, onZoneTransition) {
@@ -168,7 +169,9 @@ export class Player {
             tile === TILE_TYPES.CISTERN ||
             tile === TILE_TYPES.PITFALL ||
             (tile && tile.type === TILE_TYPES.SHOVEL) ||
-            tile === TILE_TYPES.PORT) {
+            // Allow object PORT tiles (which carry metadata like portKind) as walkable
+            tile === TILE_TYPES.PORT ||
+            (tile && tile.type === TILE_TYPES.PORT)) {
             return true;
         }
 
@@ -195,14 +198,31 @@ export class Player {
         this.currentZone.x = x;
         this.currentZone.y = y;
         this.currentZone.dimension = dimension;
+        // Attach depth for underground zones
+        if (dimension === 2) {
+            // If an explicit depth exists on the zone object, use it; otherwise fallback to player's current depth
+            this.currentZone.depth = this.currentZone.depth || (this.undergroundDepth || 1);
+        } else {
+            this.currentZone.depth = 0;
+        }
         this.markZoneVisited(x, y, dimension);
     }
 
     markZoneVisited(x, y, dimension) {
-        this.visitedZones.add(`${x},${y}:${dimension}`);
+        // For underground zones, include depth in the saved key so different depths are tracked separately
+        if (dimension === 2) {
+            const depth = this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1);
+            this.visitedZones.add(`${x},${y}:${dimension}:z-${depth}`);
+        } else {
+            this.visitedZones.add(`${x},${y}:${dimension}`);
+        }
     }
 
     hasVisitedZone(x, y, dimension) {
+        if (dimension === 2) {
+            const depth = this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1);
+            return this.visitedZones.has(`${x},${y}:${dimension}:z-${depth}`);
+        }
         return this.visitedZones.has(`${x},${y}:${dimension}`);
     }
 

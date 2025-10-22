@@ -140,6 +140,16 @@ export class BaseTileRenderer {
 
             // If it's not a door or cistern and not interior, it's a simple hole from a shovel
             this.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+            // If this PORT has a portKind (stairdown/stairup), draw the corresponding doodad
+            if (tileType && tileType.portKind) {
+                if (tileType.portKind === 'stairdown' && RendererUtils.isImageLoaded(this.images, 'stairdown')) {
+                    ctx.drawImage(this.images.stairdown, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    return;
+                } else if (tileType.portKind === 'stairup' && RendererUtils.isImageLoaded(this.images, 'stairup')) {
+                    ctx.drawImage(this.images.stairup, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    return;
+                }
+            }
             if (RendererUtils.isImageLoaded(this.images, 'hole')) {
                 ctx.drawImage(this.images.hole, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }

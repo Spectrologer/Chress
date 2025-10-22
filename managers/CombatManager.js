@@ -9,6 +9,17 @@ export class CombatManager {
         this.bombManager = new BombManager(game);
     }
 
+    // Safe accessor for player's current zone to support tests/mocks
+    getCurrentZone() {
+        try {
+            if (this.game && this.game.player) {
+                if (typeof this.game.player.getCurrentZone === 'function') return this.game.player.getCurrentZone();
+                if (this.game.player.currentZone) return this.game.player.currentZone;
+            }
+        } catch (e) { /* fall through */ }
+        return { x: 0, y: 0, dimension: 0, depth: 0 };
+    }
+
     addPointAnimation(x, y, amount) {
         this.game.animationManager.addPointAnimation(x, y, amount);
         this.game.soundManager.playSound('point'); // Play a sound for getting points
@@ -25,7 +36,8 @@ export class CombatManager {
         } catch (e) {}
 
         // Remove from zone data to prevent respawn
-        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
+    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
         if (this.game.zones.has(zoneKey)) {
             const zoneData = this.game.zones.get(zoneKey);
             zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
@@ -43,7 +55,7 @@ export class CombatManager {
         if (enemy.health > 0) {
             enemy.takeDamage(999);
         }
-        const currentZone = this.game.player.getCurrentZone();
+    const currentZone = this.getCurrentZone();
         // Ensure enemy has valid coordinates
         const enemyX = Number.isFinite(enemy.x) ? enemy.x : 0;
         const enemyY = Number.isFinite(enemy.y) ? enemy.y : 0;
@@ -54,7 +66,8 @@ export class CombatManager {
             if (!enemy._suppressAttackSound) this.game.soundManager.playSound('attack');
         } catch (e) {}
         // Remove from zone data (enemy will be removed from game.enemies by checkCollisions)
-        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
+    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
         if (this.game.zones.has(zoneKey)) {
             const zoneData = this.game.zones.get(zoneKey);
             zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
@@ -146,8 +159,9 @@ export class CombatManager {
                 this.game.enemies = this.game.enemies.filter(e => e.id !== enemy.id);
 
                 // Add the enemy to the corresponding underground zone's data
-                const currentZone = this.game.player.getCurrentZone();
-                const undergroundZoneKey = `${currentZone.x},${currentZone.y}:2`;
+                const currentZone = this.getCurrentZone();
+                const depth = this.game.player.undergroundDepth || 1;
+                const undergroundZoneKey = `${currentZone.x},${currentZone.y}:2:z-${depth}`;
                 if (this.game.zones.has(undergroundZoneKey)) {
                     const undergroundZoneData = this.game.zones.get(undergroundZoneKey);
                     // Find a valid spawn point for the enemy in the pitfall zone

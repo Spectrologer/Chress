@@ -106,12 +106,29 @@ export class MiniMap {
         // Special case for Woodcutter's Club interior: show an axe icon instead of the map
         if (currentZone.x === 0 && currentZone.y === 0 && currentZone.dimension === 1) {
             const axeImage = this.game.textureManager.getImage('axe');
-            if (axeImage && axeImage.complete) {
-                // Draw the axe icon in the center of the map canvas
-                const iconSize = mapSize * 0.7; // Make it large
-                const iconX = (mapSize - iconSize) / 2;
-                const iconY = (mapSize - iconSize) / 2;
-                ctx.drawImage(axeImage, iconX, iconY, iconSize, iconSize);
+                if (axeImage && axeImage.complete) {
+                    // Draw the axe icon in the center of the map canvas
+                    // Turn off image smoothing so the scaled-up icon remains crisp
+                    // Preserve previous smoothing settings and restore after draw
+                    try {
+                        const prevSmoothing = ctx.imageSmoothingEnabled;
+                        const prevQuality = ctx.imageSmoothingQuality;
+                        ctx.imageSmoothingEnabled = false;
+                        // Some browsers support imageSmoothingQuality; set to 'low' when disabling smoothing
+                        if (typeof ctx.imageSmoothingQuality !== 'undefined') ctx.imageSmoothingQuality = 'low';
+
+                        const iconSize = mapSize * 0.7; // Make it large
+                        const iconX = (mapSize - iconSize) / 2;
+                        const iconY = (mapSize - iconSize) / 2;
+                        ctx.drawImage(axeImage, iconX, iconY, iconSize, iconSize);
+
+                        // Restore previous smoothing settings
+                        ctx.imageSmoothingEnabled = prevSmoothing;
+                        if (typeof prevQuality !== 'undefined' && typeof ctx.imageSmoothingQuality !== 'undefined') ctx.imageSmoothingQuality = prevQuality;
+                    } catch (err) {
+                        // If anything goes wrong, fallback to default draw
+                        ctx.drawImage(axeImage, (mapSize - mapSize * 0.7) / 2, (mapSize - mapSize * 0.7) / 2, mapSize * 0.7, mapSize * 0.7);
+                    }
             } else {
                 // Fallback text if image isn't loaded
                 ctx.fillStyle = '#2F1B14';
