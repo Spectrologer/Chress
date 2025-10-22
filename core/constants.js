@@ -313,6 +313,12 @@ export const ANIMATION_SCHEMAS = {
         amount: 'number',
         frame: 'number'
     },
+    MULTIPLIER: {
+        x: 'number',
+        y: 'number',
+        multiplier: 'number',
+        frame: 'number'
+    },
     ARROW: {
         startX: 'number',
         startY: 'number',

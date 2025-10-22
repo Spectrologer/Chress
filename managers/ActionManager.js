@@ -56,7 +56,11 @@ export class ActionManager {
         }
 
         if (enemy) {
-            this.game.combatManager.defeatEnemy(enemy);
+            try { this.game.player.setAction('attack'); } catch (e) {}
+            const res = this.game.combatManager.defeatEnemy(enemy, 'player');
+            if (res && res.defeated) {
+                if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(enemy.x - startX, enemy.y - startY);
+            }
         }
 
         this.game.player.setPosition(targetX, targetY);
@@ -142,7 +146,11 @@ export class ActionManager {
         }
 
         if (enemy) {
-            this.game.combatManager.defeatEnemy(enemy);
+            try { this.game.player.setAction('attack'); } catch (e) {}
+            const res = this.game.combatManager.defeatEnemy(enemy, 'player');
+            if (res && res.defeated) {
+                if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(enemy.x - startX, enemy.y - startY);
+            }
         }
 
         this.game.player.setPosition(targetX, targetY);
@@ -188,8 +196,12 @@ export class ActionManager {
             })
             .wait(300) // 300ms delay for arrow to travel
             .then(() => {
-                if (targetEnemy && this.game.enemies.includes(targetEnemy)) { // Check if enemy still exists
-                    this.game.combatManager.defeatEnemy(targetEnemy);
+                    if (targetEnemy && this.game.enemies.includes(targetEnemy)) { // Check if enemy still exists
+                    try { this.game.player.setAction('attack'); } catch (e) {}
+                    const res = this.game.combatManager.defeatEnemy(targetEnemy, 'player');
+                    if (res && res.defeated) {
+                        if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(targetEnemy.x - playerPos.x, targetEnemy.y - playerPos.y);
+                    }
                 }
                 // Now that the arrow has hit, enemies can take their turn.
                 this.game.playerJustAttacked = false;

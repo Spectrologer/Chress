@@ -18,6 +18,9 @@ export class Player {
 
         this.stats = new PlayerStats(this);
         this.animations = new PlayerAnimations(this);
+    this.consecutiveKills = 0; // track consecutive kills by player
+        this.lastActionType = null; // e.g. 'attack', 'move'
+        this.lastActionResult = null; // e.g. 'kill', 'miss'
         this.itemManager = null; // To be set by Game class
 
         this.interactOnReach = null; // {x, y} - interact with this tile when reaching adjacent        
@@ -89,6 +92,9 @@ export class Player {
 
             this.animations.liftFrames = ANIMATION_CONSTANTS.LIFT_FRAMES; // Start lift animation
             window.soundManager?.playSound('move');
+
+            // Movement interrupts attack combos
+            try { this.setAction('move'); } catch (e) {}
 
             return true;
         } else {
@@ -268,6 +274,8 @@ export class Player {
     }
 
     takeDamage(amount = 1) {
+        // Taking damage cancels any consecutive-kill streak
+        try { this.consecutiveKills = 0; } catch (e) {}
         this.stats.takeDamage(amount);
     }
 
@@ -325,6 +333,11 @@ export class Player {
         this.animations.startBump(deltaX, deltaY);
     }
 
+    startBackflip(frames = 20) {
+        // Visually perform a backflip (rotate sprite)
+        this.animations.startBackflip(frames);
+    }
+
     startAttackAnimation() {
         this.animations.startAttackAnimation();
     }
@@ -369,5 +382,11 @@ export class Player {
 
     clearInteractOnReach() {
         this.interactOnReach = null;
+    }
+
+    setAction(type) {
+        this.lastActionType = type;
+        // Clear lastActionResult unless it's a continuation of attack actions
+        if (type !== 'attack') this.lastActionResult = null;
     }
 }

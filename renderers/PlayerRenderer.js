@@ -45,28 +45,38 @@ export class PlayerRenderer {
             const endX = player.x;
             const endY = player.y;
             pixelXBase = (startX + (endX - startX) * progress) * TILE_SIZE + anim.bumpOffsetX;
-            pixelYBase = (startY + (endY - startY) * progress) * TILE_SIZE + anim.bumpOffsetY + anim.liftOffsetY;
+            pixelYBase = (startY + (endY - startY) * progress) * TILE_SIZE + anim.bumpOffsetY + anim.liftOffsetY + (anim.backflipLiftOffsetY || 0);
         } else {
             pixelXBase = pos.x * TILE_SIZE + anim.bumpOffsetX;
-            pixelYBase = pos.y * TILE_SIZE + anim.bumpOffsetY + anim.liftOffsetY;
+            pixelYBase = pos.y * TILE_SIZE + anim.bumpOffsetY + anim.liftOffsetY + (anim.backflipLiftOffsetY || 0);
         }
 
+        // If a backflip rotation is active, draw rotated around sprite center
         if (playerImage && playerImage.complete) {
-            this.ctx.drawImage(
-                playerImage,
-                pixelXBase,
-                pixelYBase,
-                TILE_SIZE,
-                TILE_SIZE
-            );
+            if (anim.backflipAngle && anim.backflipAngle !== 0) {
+                this.ctx.save();
+                const cx = pixelXBase + TILE_SIZE / 2;
+                const cy = pixelYBase + TILE_SIZE / 2;
+                this.ctx.translate(cx, cy);
+                this.ctx.rotate(anim.backflipAngle);
+                this.ctx.drawImage(playerImage, -TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
+                this.ctx.restore();
+            } else {
+                this.ctx.drawImage(playerImage, pixelXBase, pixelYBase, TILE_SIZE, TILE_SIZE);
+            }
         } else {
             this.ctx.fillStyle = '#ff4444';
-            this.ctx.fillRect(
-                pixelXBase + 2,
-                pixelYBase + 2,
-                TILE_SIZE - 4,
-                TILE_SIZE - 4
-            );
+            if (anim.backflipAngle && anim.backflipAngle !== 0) {
+                this.ctx.save();
+                const cx = pixelXBase + TILE_SIZE / 2;
+                const cy = pixelYBase + TILE_SIZE / 2;
+                this.ctx.translate(cx, cy);
+                this.ctx.rotate(anim.backflipAngle);
+                this.ctx.fillRect(-TILE_SIZE / 2 + 2, -TILE_SIZE / 2 + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+                this.ctx.restore();
+            } else {
+                this.ctx.fillRect(pixelXBase + 2, pixelYBase + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+            }
         }
         // Draw bow shot animation if present on player.animations
         const bowAnim = player.animations.bowShot;

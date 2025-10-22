@@ -514,6 +514,9 @@ export class InteractionController {
             case 's': case 'arrowdown': newY++; break;
             case 'a': case 'arrowleft': newX--; break;
             case 'd': case 'arrowright': newX++; break;
+            case 'k':
+                try { this.game.player.startBackflip(); } catch (e) {}
+                return;
             default: return;
         }
         event.preventDefault();
@@ -529,8 +532,11 @@ export class InteractionController {
     const enemyAtTarget = this.game.enemies.find(enemy => enemy.x === newX && enemy.y === newY);
         if (enemyAtTarget) {
             this.game.player.startAttackAnimation();
-            this.game.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
+            // Let enemy show bump animation away from player
             enemyAtTarget.startBump(currentPos.x - enemyAtTarget.x, currentPos.y - enemyAtTarget.y);
+
+            // Mark that player performed an attack
+            try { this.game.player.setAction('attack'); } catch (e) {}
             // If player has the axe, play the slash SFX (file-backed). Suppress the
             // default 'attack' sound in CombatManager to avoid double-playing.
             try {
@@ -540,7 +546,12 @@ export class InteractionController {
                     enemyAtTarget._suppressAttackSound = true;
                 }
             } catch (e) {}
-            this.game.combatManager.defeatEnemy(enemyAtTarget);
+
+            const result = this.game.combatManager.defeatEnemy(enemyAtTarget, 'player');
+            if (result && result.defeated) {
+                if (result.consecutiveKills >= 2) this.game.player.startBackflip();
+                else this.game.player.startBump(enemyAtTarget.x - currentPos.x, enemyAtTarget.y - currentPos.y);
+            }
         } else {
             this.game.incrementBombActions();
             playerMoved = this.game.player.move(newX, newY, this.game.grid, (zoneX, zoneY, exitSide) => {

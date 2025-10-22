@@ -116,16 +116,59 @@ export class AnimationRenderer {
             const progress = 1 - (anim.frame / 15);
             const yOffset = -progress * 40; // Move up
             const alpha = 1 - progress; // Fade out
+            const x = anim.x * TILE_SIZE + TILE_SIZE / 2;
+            // Show the point slightly above the tile center (over the enemy's head)
+            const headOffset = -18; // pixels above center
+            const y = anim.y * TILE_SIZE + TILE_SIZE / 2 + yOffset + headOffset;
+
+            // Try to use the 'points' image asset if loaded. Fallback to text if missing.
+            const img = this.textureManager.getImage('points');
+            if (img && img.complete) {
+                this.ctx.save();
+                this.ctx.globalAlpha = alpha;
+
+                // Scale icon slightly based on amount (more points = slightly larger)
+                const baseSize = TILE_SIZE * 0.6;
+                const scale = 1 + Math.min(0.6, (anim.amount - 1) * 0.12);
+                const drawW = baseSize * scale;
+                const drawH = baseSize * scale;
+
+                this.ctx.drawImage(img, x - drawW / 2, y - drawH / 2, drawW, drawH);
+                this.ctx.restore();
+            } else {
+                // Fallback to text rendering if image not available
+                this.ctx.save();
+                this.ctx.globalAlpha = alpha;
+                this.ctx.fillStyle = '#ffd700'; // Gold color for points
+                this.ctx.font = 'bold 36px "Press Start 2P", cursive';
+                this.ctx.textAlign = 'center';
+                this.ctx.strokeStyle = 'black';
+                this.ctx.lineWidth = 6;
+
+                const text = `+${anim.amount}`;
+                this.ctx.strokeText(text, x, y);
+                this.ctx.fillText(text, x, y);
+                this.ctx.restore();
+            }
+        });
+    }
+
+    drawMultiplierAnimations() {
+        const animations = this.game.animationManager.multiplierAnimations;
+        animations.forEach(anim => {
+            const progress = 1 - (anim.frame / 30);
+            const yOffset = -progress * 36; // float up
+            const alpha = 1 - progress;
 
             this.ctx.save();
             this.ctx.globalAlpha = alpha;
-            this.ctx.fillStyle = '#ffd700'; // Gold color for points
-            this.ctx.font = 'bold 36px "Press Start 2P", cursive';
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.font = 'bold 28px "Press Start 2P", cursive';
             this.ctx.textAlign = 'center';
             this.ctx.strokeStyle = 'black';
             this.ctx.lineWidth = 6;
 
-            const text = `+${anim.amount}`;
+            const text = `x${anim.multiplier}!`;
             const x = anim.x * TILE_SIZE + TILE_SIZE / 2;
             const y = anim.y * TILE_SIZE + TILE_SIZE / 2 + yOffset;
 

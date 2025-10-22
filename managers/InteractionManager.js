@@ -149,8 +149,10 @@ export class InteractionManager {
             if (isAdjacent) {
                 // Perform immediate player attack on the adjacent enemy
                     try {
+                        // Start attack animation
                         this.game.player.startAttackAnimation();
-                        this.game.player.startBump(enemyAtCoords.x - playerPos.x, enemyAtCoords.y - playerPos.y);
+
+                        // Let enemy show its bump away from player
                         if (typeof enemyAtCoords.startBump === 'function') {
                             enemyAtCoords.startBump(playerPos.x - enemyAtCoords.x, playerPos.y - enemyAtCoords.y);
                         }
@@ -167,8 +169,25 @@ export class InteractionManager {
                             }
                         } catch (e) {}
 
-                        // Resolve defeat/points/removal via CombatManager
-                        this.game.combatManager.defeatEnemy(enemyAtCoords);
+                        // Mark that player performed an attack (may be the start of a combo)
+                        try { this.game.player.setAction('attack'); } catch (e) {}
+
+                        // Resolve defeat/points/removal via CombatManager. Pass initiator to
+                        // allow consecutive-kill tracking. CombatManager returns info including
+                        // consecutiveKills which we use to choose the animation.
+                        const result = this.game.combatManager.defeatEnemy(enemyAtCoords, 'player');
+
+                        // CombatManager will record the action result for combo logic
+
+                        if (result && result.defeated) {
+                            // If this was a consecutive kill (2 or more), perform a backflip
+                            if (result.consecutiveKills >= 2) {
+                                this.game.player.startBackflip();
+                            } else {
+                                // Otherwise perform the normal bump towards enemy
+                                this.game.player.startBump(enemyAtCoords.x - playerPos.x, enemyAtCoords.y - playerPos.y);
+                            }
+                        }
                     } catch (e) {
                         // Best-effort: don't let an animation error block game flow
                     }

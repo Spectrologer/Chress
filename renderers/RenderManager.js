@@ -259,6 +259,9 @@ export class RenderManager {
         // Draw point animations
         this.animationRenderer.drawPointAnimations();
 
+    // Draw multiplier animations (combo x2/x3/etc.)
+    this.animationRenderer.drawMultiplierAnimations();
+
         // Draw charge confirmation indicator if active
         this.uiRenderer.drawChargeConfirmationIndicator();
 

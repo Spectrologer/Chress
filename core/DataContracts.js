@@ -335,6 +335,7 @@ export class AnimationManager {
         this.bumpAnimations = [];
         this.liftAnimations = [];
         this.smokeAnimations = [];
+        this.multiplierAnimations = [];
     }
 
     /**
@@ -347,6 +348,18 @@ export class AnimationManager {
         const animation = { x, y, amount, frame: 30 };
         DataContractValidator.validateAnimation('POINT', animation);
         this.pointAnimations.push(animation);
+    }
+
+    /**
+     * Adds a multiplier animation (e.g. x2, x3) shown near an enemy when combos occur
+     * @param {number} x - X tile coordinate
+     * @param {number} y - Y tile coordinate
+     * @param {number} multiplier - Multiplier value (2,3,...)
+     */
+    addMultiplierAnimation(x, y, multiplier) {
+        const animation = { x, y, multiplier, frame: 40 };
+        DataContractValidator.validateAnimation('MULTIPLIER', animation);
+        this.multiplierAnimations.push(animation);
     }
 
     /**
@@ -445,6 +458,10 @@ export class AnimationManager {
         // Update smoke animations
         this.smokeAnimations.forEach(anim => anim.frame--);
         this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);
+
+        // Update multiplier animations
+        this.multiplierAnimations.forEach(anim => anim.frame--);
+        this.multiplierAnimations = this.multiplierAnimations.filter(anim => anim.frame > 0);
     }
 
     /**
@@ -458,7 +475,8 @@ export class AnimationManager {
             horseChargeAnimations: [...this.horseChargeAnimations],
             bumpAnimations: [...this.bumpAnimations],
             liftAnimations: [...this.liftAnimations],
-            smokeAnimations: [...this.smokeAnimations]
+            smokeAnimations: [...this.smokeAnimations],
+            multiplierAnimations: [...this.multiplierAnimations]
         };
     }
 
@@ -472,5 +490,6 @@ export class AnimationManager {
         this.bumpAnimations = [];
         this.liftAnimations = [];
         this.smokeAnimations = [];
+        this.multiplierAnimations = [];
     }
 }

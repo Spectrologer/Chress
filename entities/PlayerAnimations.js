@@ -14,6 +14,12 @@ export class PlayerAnimations {
         this.bumpOffsetX = 0;
         this.bumpOffsetY = 0;
         this.bumpFrames = 0;
+        this.backflipFrames = 0; // frames remaining for backflip rotation
+        this.backflipTotal = 0; // total frames for backflip
+        this.backflipAngle = 0; // current rotation angle in radians
+    this.backflipLiftOffsetY = 0; // vertical offset for backflip jump
+    this.backflipLiftFrames = 0;
+    this.backflipLiftTotal = 0;
         this.liftOffsetY = 0;
         this.liftFrames = 0;
         this.pickupHover = null; // { imageKey, frames, totalFrames, type, foodType }
@@ -25,6 +31,23 @@ export class PlayerAnimations {
         this.bumpOffsetX = deltaX * 24;
         this.bumpOffsetY = deltaY * 24;
         this.bumpFrames = ANIMATION_CONSTANTS.BUMP_ANIMATION_FRAMES;
+    }
+
+    startBackflip(frames = 20) {
+        // Sequence: bump -> small delay -> jump+rotate -> land
+        // Optional: keep the bump visual for a short moment before the flip
+        // We'll use a small delay to separate the bump from the rotation.
+        this.backflipInProgress = true;
+        this.backflipDelayFrames = 6; // frames to wait after bump before jumping/rotating
+        // rotation is slightly slower than lift
+        const rotationFactor = 1.3;
+        this.backflipFrames = Math.max(1, Math.round(frames * rotationFactor));
+        this.backflipTotal = this.backflipFrames;
+        this.backflipAngle = 0;
+        // Jump slightly higher than normal lift for backflip
+        this.backflipLiftFrames = Math.max(6, Math.floor(frames * 0.8));
+        this.backflipLiftTotal = this.backflipLiftFrames;
+        this.backflipLiftOffsetY = 0;
     }
 
     startAttackAnimation() {
@@ -55,6 +78,39 @@ export class PlayerAnimations {
             this.bumpFrames--;
             this.bumpOffsetX *= 0.85;
             this.bumpOffsetY *= 0.85;
+        }
+        // Backflip handling: if a backflip was initiated, wait the delay then perform jump+rotation
+        if (this.backflipInProgress) {
+            if (this.backflipDelayFrames > 0) {
+                this.backflipDelayFrames--;
+                // keep bump offset visual until delay completes
+            } else {
+                // Perform rotation if frames remain
+                if (this.backflipFrames > 0) {
+                    const elapsed = this.backflipTotal - this.backflipFrames; // 0..total-1
+                    const t = Math.max(0, Math.min(1, elapsed / Math.max(1, this.backflipTotal)));
+                    // Ease-in-out for nicer motion
+                    const ease = 0.5 - 0.5 * Math.cos(Math.PI * t);
+                    // Single full rotation, counterclockwise (-2PI)
+                    this.backflipAngle = -ease * Math.PI * 2; // 0..-2PI
+                    this.backflipFrames--;
+                    if (this.backflipFrames === 0) {
+                        this.backflipAngle = 0;
+                        this.backflipInProgress = false; // finished
+                    }
+                }
+
+                // Backflip vertical jump: quick up-and-down movement
+                if (this.backflipLiftFrames > 0) {
+                    this.backflipLiftFrames--;
+                    const elapsedL = this.backflipLiftTotal - this.backflipLiftFrames; // 0..total
+                    const tL = Math.max(0, Math.min(1, elapsedL / Math.max(1, this.backflipLiftTotal)));
+                    // Use sine to do 0 -> 1 -> 0 over tL
+                    const maxLift = -48; // pixels up at peak (negative is up) — taller jump
+                    this.backflipLiftOffsetY = maxLift * Math.sin(Math.PI * tL);
+                    if (this.backflipLiftFrames === 0) this.backflipLiftOffsetY = 0;
+                }
+            }
         }
         if (this.attackAnimation > 0) {
             this.attackAnimation--;

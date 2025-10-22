@@ -33,10 +33,12 @@ export class CombatManager {
         }
     }
 
-    defeatEnemy(enemy) {
+    // initiator: optional string e.g. 'player', 'bomb', null
+    // Returns an object { defeated: bool, consecutiveKills: number }
+    defeatEnemy(enemy, initiator = null) {
         // Prevent double defeat/points by checking if already defeated
         if (this.game.defeatedEnemies.has(`${enemy.id}`)) {
-            return;
+            return { defeated: false, consecutiveKills: 0 };
         }
         if (enemy.health > 0) {
             enemy.takeDamage(999);
@@ -45,9 +47,9 @@ export class CombatManager {
         // Ensure enemy has valid coordinates
         const enemyX = Number.isFinite(enemy.x) ? enemy.x : 0;
         const enemyY = Number.isFinite(enemy.y) ? enemy.y : 0;
-        this.addPointAnimation(enemyX, enemyY, enemy.getPoints());
-        this.game.player.addPoints(enemy.getPoints());
-        this.game.defeatedEnemies.add(`${enemy.id}`);
+    this.addPointAnimation(enemyX, enemyY, enemy.getPoints());
+    this.game.player.addPoints(enemy.getPoints());
+    this.game.defeatedEnemies.add(`${enemy.id}`);
         try {
             if (!enemy._suppressAttackSound) this.game.soundManager.playSound('attack');
         } catch (e) {}
@@ -58,7 +60,50 @@ export class CombatManager {
             zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
             this.game.zones.set(zoneKey, zoneData);
         }
-        this.game.uiManager.updatePlayerStats();
+        // If the initiator was the player, increment their consecutive kill counter
+        let consecutive = 0;
+        try {
+            if (initiator === 'player' && this.game.player) {
+                // Only increment the consecutive kill counter when the previous
+                // action was an attack that resulted in a kill (combo: attack:kill attack:kill)
+                const player = this.game.player;
+                if (player.lastActionType === 'attack' && player.lastActionResult === 'kill') {
+                    player.consecutiveKills = (player.consecutiveKills || 0) + 1;
+                } else {
+                    // Start a new streak - this kill counts as 1
+                    player.consecutiveKills = 1;
+                }
+                player.lastActionResult = 'kill';
+                consecutive = player.consecutiveKills;
+                // If combo of 2 or more, show multiplier animation and play ding
+                try {
+                    if (consecutive >= 2 && this.game.animationManager) {
+                        this.game.animationManager.addMultiplierAnimation(enemyX, enemyY, consecutive);
+                        if (this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
+                            this.game.soundManager.playSound('point'); // reuse point sound as ding if specific ding asset missing
+                        }
+                        // Award combo bonus points equal to the combo multiplier (e.g., x2 -> +2)
+                        try {
+                            const bonus = consecutive;
+                            // Add a point animation for the bonus and increment player points
+                            this.addPointAnimation(enemyX, enemyY, bonus);
+                            if (this.game.player && typeof this.game.player.addPoints === 'function') {
+                                this.game.player.addPoints(bonus);
+                            }
+                        } catch (e) {}
+                    }
+                } catch (e) {}
+            } else if (this.game.player) {
+                // Non-player kills (bombs, environment) reset the streak
+                this.game.player.consecutiveKills = 0;
+                this.game.player.lastActionResult = null;
+                consecutive = 0;
+            }
+        } catch (e) { /* non-fatal */ }
+
+        try { this.game.uiManager.updatePlayerStats(); } catch (e) {}
+
+        return { defeated: true, consecutiveKills: consecutive };
     }
 
     handleSingleEnemyMovement(enemy) {
