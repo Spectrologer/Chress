@@ -2006,6 +2006,89 @@ h1 {
     padding-bottom: 8px;
 }
 
+/* Config button positioned in the top-left of the stats panel header */
+.stats-config-button {
+    position: absolute;
+    left: 12px;
+    top: 10px;
+    background: linear-gradient(135deg, #CD853F, #B8860B);
+    border: 2px solid #8B4513;
+    color: #3A2418;
+    padding: 6px 10px;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    z-index: 30; /* above header content */
+    font-size: 0.95em;
+}
+
+/* Records (trophy) button positioned in the top-right of stats header */
+.stats-records-button {
+    position: absolute;
+    right: 12px;
+    top: 10px;
+    /* Muted parchment tones to match app theme */
+    background: linear-gradient(135deg, #EFE6D1, #E4D3AF);
+    border: 2px solid #C9AB76;
+    color: #5a4223;
+    padding: 6px 8px; /* reduce interior padding so icon appears larger */
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+    z-index: 30;
+    font-size: 1.6em; /* base scaling for icon */
+    line-height: 1; /* keep compact */
+}
+
+.stats-records-button svg {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.stats-records-button .records-icon {
+    width: 2.2em; /* much larger image */
+    height: 2.2em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.records-list .stat-value {
+    text-align: right;
+}
+
+/* Reduce the label size for records overlay (half of normal stat-label) */
+.records-list .stat-label {
+    /* Make records labels readable: slightly smaller than normal but not tiny */
+    font-size: 0.9em;
+}
+
+/* Config overlay content laid out in two columns like the stats menu */
+.config-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+    width: 100%;
+    align-items: center;
+}
+
+.config-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 4px;
+    font-size: 1.2em;
+    color: #5a4223;
+}
+
+.config-item .stat-label {
+    font-weight: bold;
+    color: #7a5c2e;
+}
+
 .stats-panel h2 {
     color: #7a5c2e;    
     font-size: 1.6em;

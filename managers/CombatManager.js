@@ -90,6 +90,13 @@ export class CombatManager {
                             if (this.game.player && typeof this.game.player.addPoints === 'function') {
                                 this.game.player.addPoints(bonus);
                             }
+                            // Persist highest combo (consecutive kills) to localStorage if it exceeds previous record
+                            try {
+                                const prevCombo = parseInt(localStorage.getItem('chress:record:combo') || '0', 10) || 0;
+                                if (consecutive > prevCombo) {
+                                    localStorage.setItem('chress:record:combo', String(consecutive));
+                                }
+                            } catch (e) {}
                         } catch (e) {}
                     }
                 } catch (e) {}

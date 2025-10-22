@@ -85,6 +85,21 @@
                             <!-- Cancel button moved into individual trade offers -->
                         </div>
                     </div>
+                    <!-- Records overlay: trophy icon top-right -->
+                    <div id="recordsOverlay" class="stats-panel-overlay">
+                        <div class="stats-panel game-parchment">
+                            <div class="stats-main-content">
+                                <div class="stats-info">
+                                    <h2>Records</h2>
+                                    <div class="config-list records-list">
+                                        <div class="config-item"><span class="stat-label">Most Discoveries:</span><span id="record-zones" class="stat-value">0</span></div>
+                                        <div class="config-item"><span class="stat-label">Most Points:</span><span id="record-points" class="stat-value">0</span></div>
+                                        <div class="config-item"><span class="stat-label">Highest Combo:</span><span id="record-combo" class="stat-value">0</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div id="statueOverlay" class="statue-overlay">
                         <div class="statue-window">
                             <!-- Content will be populated by JS -->
@@ -95,6 +110,39 @@
                         <div class="stats-panel game-parchment">
                             <div class="stats-main-content">
                                 <div class="stats-info"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Config overlay: separate overlay like statsPanelOverlay -->
+                    <div id="configOverlay" class="stats-panel-overlay">
+                        <div class="stats-panel game-parchment">
+                            <div class="stats-main-content">
+                                <div class="stats-info">
+                                    <h2>Config</h2>
+                                    <div class="config-list">
+                                        <div class="config-item">
+                                            <span class="stat-label">Music:</span>
+                                            <label class="setting-toggle">
+                                                <input type="checkbox" id="music-toggle" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
+                                        <div class="config-item">
+                                            <span class="stat-label">SFX:</span>
+                                            <label class="setting-toggle">
+                                                <input type="checkbox" id="sfx-toggle" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
+                                        <div class="config-item">
+                                            <span class="stat-label">Auto Path With Enemies:</span>
+                                            <label class="setting-toggle">
+                                                <input type="checkbox" id="auto-path-enemies-toggle">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

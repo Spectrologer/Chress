@@ -7,6 +7,9 @@ export class PanelManager {
 
         // UI elements
         this.statsPanelOverlay = document.getElementById('statsPanelOverlay');
+        this.configOverlay = document.getElementById('configOverlay');
+    this.recordsOverlay = document.getElementById('recordsOverlay');
+        this.configHandlersAttached = false;
 
         // UI state
         this.statsPanelOpen = false;
@@ -17,6 +20,165 @@ export class PanelManager {
         // Sub-managers
         this.barterWindow = new BarterWindow(game);
         this.statueInfoWindow = new StatueInfoWindow(game);
+    }
+
+    showConfigOverlay() {
+        if (!this.configOverlay) return;
+        // Hide the stats panel while the config overlay is shown so returning works reliably
+        try { this.hideStatsPanel(); } catch (e) {}
+        // ensure the overlay inputs reflect current player stats
+        try {
+            const music = this.configOverlay.querySelector('#music-toggle');
+            const sfx = this.configOverlay.querySelector('#sfx-toggle');
+            const autoPath = this.configOverlay.querySelector('#auto-path-enemies-toggle');
+            if (music) music.checked = this.game.player.stats.musicEnabled !== false;
+            if (sfx) sfx.checked = this.game.player.stats.sfxEnabled !== false;
+            if (autoPath) autoPath.checked = !!this.game.player.stats.autoPathWithEnemies;
+        } catch (e) {}
+
+        this.configOverlay.classList.add('show');
+
+        // Add a global pointer handler so clicks anywhere on the page (game canvas,
+        // outside the body, etc.) will close the config overlay and return to stats.
+        // We add this on each open and remove it on close for reliability.
+        if (this._configGlobalHandler) {
+            try { document.removeEventListener('pointerdown', this._configGlobalHandler, true); } catch (e) {}
+            this._configGlobalHandler = null;
+        }
+        this._configGlobalHandler = (ev) => {
+            try {
+                const inner = this.configOverlay.querySelector('.stats-panel');
+                if (!inner || !inner.contains(ev.target)) {
+                    // Prevent other handlers (including overlay click handlers) from
+                    // seeing this event and immediately closing the stats panel again.
+                    try { ev.preventDefault(); } catch (e) {}
+                    try { ev.stopPropagation(); } catch (e) {}
+
+                    this.hideConfigOverlay();
+                    try { this.showStatsPanel(); } catch (err) {}
+                }
+            } catch (err) {
+                try { ev.preventDefault(); } catch (e) {}
+                try { ev.stopPropagation(); } catch (e) {}
+                this.hideConfigOverlay();
+                try { this.showStatsPanel(); } catch (err2) {}
+            }
+        };
+        try { document.addEventListener('pointerdown', this._configGlobalHandler, true); } catch (e) {}
+
+        // Attach handlers once
+        if (!this.configHandlersAttached) {
+            this.setupAudioToggles();
+
+            // Prevent clicks inside the inner panel from closing the overlay
+            const cfgPanel = this.configOverlay.querySelector('.stats-panel');
+            if (cfgPanel) {
+                cfgPanel.addEventListener('click', (e) => e.stopPropagation());
+                cfgPanel.addEventListener('pointerup', (e) => {
+                    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+                    e.stopPropagation();
+                });
+            }
+
+            // Close overlay when clicking outside of the inner panel and return to stats panel
+            this.configOverlay.addEventListener('click', (e) => {
+                try {
+                    const inner = this.configOverlay.querySelector('.stats-panel');
+                    if (!inner || !inner.contains(e.target)) {
+                        this.hideConfigOverlay();
+                        try { this.showStatsPanel(); } catch (err) {}
+                    }
+                } catch (err) {
+                    // Fallback: if any error, hide and return
+                    this.hideConfigOverlay();
+                    try { this.showStatsPanel(); } catch (err2) {}
+                }
+            });
+
+            this.configHandlersAttached = true;
+        }
+    }
+
+    showRecordsOverlay() {
+        if (!this.recordsOverlay) return;
+        // Populate record values from localStorage
+        try {
+            const rz = this.recordsOverlay.querySelector('#record-zones');
+            const rp = this.recordsOverlay.querySelector('#record-points');
+            const rc = this.recordsOverlay.querySelector('#record-combo');
+            const zones = parseInt(localStorage.getItem('chress:record:zones') || '0', 10) || 0;
+            const points = parseInt(localStorage.getItem('chress:record:points') || '0', 10) || 0;
+            const combo = parseInt(localStorage.getItem('chress:record:combo') || '0', 10) || 0;
+            if (rz) rz.textContent = String(zones);
+            if (rp) rp.textContent = String(points);
+            if (rc) rc.textContent = String(combo);
+        } catch (e) {}
+
+        // hide stats panel while showing records
+        try { this.hideStatsPanel(); } catch (e) {}
+        this.recordsOverlay.classList.add('show');
+
+        // Close records overlay when clicking outside
+        if (!this._recordsHandlerAttached) {
+            const panel = this.recordsOverlay.querySelector('.stats-panel');
+            if (panel) {
+                panel.addEventListener('click', (e) => e.stopPropagation());
+            }
+            this.recordsOverlay.addEventListener('click', (e) => {
+                try {
+                    const inner = this.recordsOverlay.querySelector('.stats-panel');
+                    if (!inner || !inner.contains(e.target)) {
+                        this.hideRecordsOverlay();
+                        try { this.showStatsPanel(); } catch (err) {}
+                    }
+                } catch (err) {
+                    this.hideRecordsOverlay();
+                    try { this.showStatsPanel(); } catch (err2) {}
+                }
+            });
+            this._recordsHandlerAttached = true;
+        }
+
+        // Add a global pointer handler so clicks anywhere will close records and return to stats
+        if (this._recordsGlobalHandler) {
+            try { document.removeEventListener('pointerdown', this._recordsGlobalHandler, true); } catch (e) {}
+            this._recordsGlobalHandler = null;
+        }
+        this._recordsGlobalHandler = (ev) => {
+            try {
+                const inner = this.recordsOverlay.querySelector('.stats-panel');
+                if (!inner || !inner.contains(ev.target)) {
+                    try { ev.preventDefault(); } catch (e) {}
+                    try { ev.stopPropagation(); } catch (e) {}
+                    this.hideRecordsOverlay();
+                    try { this.showStatsPanel(); } catch (err) {}
+                }
+            } catch (err) {
+                try { ev.preventDefault(); } catch (e) {}
+                try { ev.stopPropagation(); } catch (e) {}
+                this.hideRecordsOverlay();
+                try { this.showStatsPanel(); } catch (err2) {}
+            }
+        };
+        try { document.addEventListener('pointerdown', this._recordsGlobalHandler, true); } catch (e) {}
+    }
+
+    hideRecordsOverlay() {
+        if (!this.recordsOverlay) return;
+        this.recordsOverlay.classList.remove('show');
+        if (this._recordsGlobalHandler) {
+            try { document.removeEventListener('pointerdown', this._recordsGlobalHandler, true); } catch (e) {}
+            this._recordsGlobalHandler = null;
+        }
+    }
+
+    hideConfigOverlay() {
+        if (!this.configOverlay) return;
+        this.configOverlay.classList.remove('show');
+        if (this._configGlobalHandler) {
+            try { document.removeEventListener('pointerdown', this._configGlobalHandler, true); } catch (e) {}
+            this._configGlobalHandler = null;
+        }
     }
 
     setupBarterHandlers() {
@@ -46,20 +208,32 @@ export class PanelManager {
 
     showStatsPanel() {
         if (this.statsPanelOverlay) {
-            // Update stats content
-            const statsInfoContainer = document.querySelector('.stats-main-content .stats-info');
+            // Update stats content (scope to this.statsPanelOverlay so we don't hit other overlays)
+            const statsInfoContainer = this.statsPanelOverlay.querySelector('.stats-main-content .stats-info');
             const enemiesCaptured = this.game.defeatedEnemies ? this.game.defeatedEnemies.size : 0;
             const playerPoints = this.game.player.getPoints();
             const hunger = this.game.player.getHunger();
             const thirst = this.game.player.getThirst();
             const totalDiscoveries = this.game.player.getVisitedZones().size - this.game.player.getSpentDiscoveries();
             statsInfoContainer.innerHTML = `
-                <div class="stats-header">
+                    <div class="stats-header">
+                        <div class="stats-header-left">
+                            <!-- Config button placed top-left; opens the separate config overlay -->
+                            <div class="stats-config">
+                                <button id="stats-config-button" class="stats-config-button" title="Config" aria-label="Config">Config ▸</button>
+                            </div>
+                            <div class="stats-records">
+                                <button id="stats-records-button" class="stats-records-button" title="Records" aria-label="Records">
+                                    <img src="assets/ui/records.png" alt="Records" class="records-icon" aria-hidden="true">
+                                </button>
+                            </div>
+                        </div>
                     <div class="stats-portrait-container">
                         <img src="assets/protag/faceset.png" alt="Player Portrait" class="player-portrait">
                     </div>
                     <h2>CHALK</h2>
                 </div>
+                <!-- Records button (trophy) top-right is injected into header via CSS positioning -->
                 <div class="stats-list">
                     <div class="stat-item"><span class="stat-label">Captures:</span> <span class="stat-value">${enemiesCaptured}</span></div>
                     <div class="stat-item"><span class="stat-label">Hunger:</span> <span class="stat-value">${hunger}/50</span></div>
@@ -67,33 +241,7 @@ export class PanelManager {
                     <div class="stat-item"><span class="stat-label">Points:</span> <span class="stat-value">${playerPoints}</span></div>
                     <div class="stat-item"><span class="stat-label">Discoveries:</span> <span class="stat-value">${totalDiscoveries}</span></div>
                     <!-- Pathing toggle removed -->
-                    <div class="stat-item">
-                        <span class="stat-label">Music:</span>
-                        <span class="stat-value">
-                            <label class="setting-toggle">
-                                <input type="checkbox" id="music-toggle" ${this.game.player.stats.musicEnabled !== false ? 'checked' : ''}>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Auto Path With Enemies:</span>
-                        <span class="stat-value">
-                            <label class="setting-toggle">
-                                <input type="checkbox" id="auto-path-enemies-toggle" ${this.game.player.stats.autoPathWithEnemies ? 'checked' : ''}>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">SFX:</span>
-                        <span class="stat-value">
-                            <label class="setting-toggle">
-                                <input type="checkbox" id="sfx-toggle" ${this.game.player.stats.sfxEnabled !== false ? 'checked' : ''}>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </span>
-                    </div>
+                    <!-- Config moved to top-left; settings removed from main list to declutter -->
                 </div>
                 <hr class="stats-divider">
                 <div class="stats-footer">
@@ -107,8 +255,18 @@ export class PanelManager {
             this.statsPanelOverlay.classList.add('show');
             this.statsPanelOpen = true;
 
+            // Update persistent records if current stats exceed saved values
+            try {
+                const visited = this.game.player.getVisitedZones().size;
+                const pointsNow = this.game.player.getPoints();
+                const prevZones = parseInt(localStorage.getItem('chress:record:zones') || '0', 10) || 0;
+                const prevPoints = parseInt(localStorage.getItem('chress:record:points') || '0', 10) || 0;
+                if (visited > prevZones) localStorage.setItem('chress:record:zones', String(visited));
+                if (pointsNow > prevPoints) localStorage.setItem('chress:record:points', String(pointsNow));
+            } catch (e) {}
+
             // Add restart button handler for stats panel (top-left)
-            const statsRestartBtn = document.getElementById('stats-restart-button');
+            const statsRestartBtn = this.statsPanelOverlay.querySelector('#stats-restart-button');
             if (statsRestartBtn) {
                 // Shared restart action so both click and touchend use the same logic
                 const doRestart = (e) => {
@@ -139,6 +297,27 @@ export class PanelManager {
                     if (e && typeof e.preventDefault === 'function') e.preventDefault();
                     doRestart(e);
                     try { e.target.releasePointerCapture?.(e.pointerId); } catch (err) {}
+                });
+            }
+
+            // Wire stats-config-button to open the separate `configOverlay`
+            const configButton = this.statsPanelOverlay.querySelector('#stats-config-button');
+            if (configButton) {
+                configButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // If a config overlay exists in the DOM, show it similarly to stats overlay
+                    if (this.configOverlay) {
+                        this.showConfigOverlay();
+                    }
+                });
+            }
+
+            // Wire stats-records-button to show records overlay
+            const recordsButton = this.statsPanelOverlay.querySelector('#stats-records-button');
+            if (recordsButton) {
+                recordsButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (this.recordsOverlay) this.showRecordsOverlay();
                 });
             }
         }
