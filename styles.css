@@ -1402,7 +1402,7 @@ h1 {
     width: 100%;
     height: 100%;
     z-index: 100; /* Above other content in the player card */
-    padding: 30px;
+    padding: 16px;
     background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
     border: 3px solid #B8860B;
     box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
@@ -1411,10 +1411,10 @@ h1 {
     text-align: center;    
     opacity: 0;
     display: block; /* Ensure it's displayed */
-    line-height: 1.6;
+    line-height: 1.45;
     font-weight: 700;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    font-size: 1.8em;
+    font-size: 1.35em;
     pointer-events: none; /* Hidden by default */
     /* Disable overlay fade so menus appear/disappear instantly */
     transition: none;
@@ -1433,16 +1433,18 @@ h1 {
     pointer-events: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* Anchor content at the top of the overlay so tall character fonts
+       don't get visually clipped when vertically centering occurs. */
+    justify-content: flex-start;
     align-items: center;
 }
 
 /* Constrain overlay content so long dialogue scrolls instead of overflowing the game area */
 #messageOverlay, .message-overlay {
     box-sizing: border-box;
-    max-height: 60vh; /* Keep overlay within viewport */
+    max-height: 50vh; /* Keep overlay within viewport */
     overflow: auto; /* Allow scrolling for long content */
-    padding: 20px;
+    padding: 16px;
 }
 
 /* Barter/dialogue panel scrolling */
@@ -1475,7 +1477,35 @@ h1 {
 /* Smaller font for character names in message overlays */
 .message-overlay .character-name,
 #messageOverlay .character-name {
-    font-size: 1.2em; /* Relative to the new base font size */
+    display: block;           /* Make the name a block-level item in the flex column */
+    font-size: 1.2em;         /* Relative to the new base font size */
+    line-height: 1.05;        /* Tight line-height reduces risk of glyph clipping */
+    margin: 0 0 0.6em 0;      /* Small gap below the name */
+}
+
+/* Uniform dialogue text style used by sign/dialogue/merchant messages */
+.dialogue-text,
+#messageOverlay .dialogue-text,
+.barter-npc-message.dialogue-text,
+.barter-npc-message {
+    font-family: 'Cinzel', serif;
+    color: #3A2418;
+    font-size: 1.35em;
+    line-height: 1.45;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+/* Slightly reduce dialogue text on small screens for better fit */
+@media screen and (max-width: 768px) {
+    .dialogue-text,
+    #messageOverlay .dialogue-text,
+    .barter-npc-message.dialogue-text,
+    .barter-npc-message {
+        font-size: 1.05em; /* ~20% smaller than desktop */
+        line-height: 1.35;
+    }
 }
 
 /* The message box for notes now just uses the overlay styles */
@@ -2673,6 +2703,16 @@ input:checked + .toggle-slider::after {
 .small-consent-portrait {
     width: 80px;
     height: 80px;
+}
+
+/* Ensure portrait containers placed inside dialogue text or the overlay
+   are visually centered. Consent HTML is sometimes injected as a single
+   `.dialogue-text` block, so block-level portrait containers need an
+   explicit margin to center themselves. */
+.dialogue-text .barter-portrait-container,
+#messageOverlay .barter-portrait-container,
+.message-overlay .barter-portrait-container {
+    margin: 0 auto 10px auto;
 }
 
 /* Button styling for NPC-style messages */

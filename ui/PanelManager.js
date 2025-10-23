@@ -26,6 +26,8 @@ export class PanelManager {
         if (!this.configOverlay) return;
         // Hide the stats panel while the config overlay is shown so returning works reliably
         try { this.hideStatsPanel(); } catch (e) {}
+        // Ensure stats panel is not visible immediately (tests and headless envs expect this)
+        try { if (this.statsPanelOverlay) this.statsPanelOverlay.classList.remove('show'); } catch (e) {}
         // ensure the overlay inputs reflect current player stats
         try {
             const music = this.configOverlay.querySelector('#music-toggle');
@@ -228,6 +230,8 @@ export class PanelManager {
         } catch (e) {
             this.configOverlay.classList.remove('show');
         }
+        // Ensure overlay is not left visible in headless/test environments
+        try { this.configOverlay.classList.remove('show'); } catch (e) {}
         if (this._configGlobalHandler) {
             try { document.removeEventListener('pointerdown', this._configGlobalHandler, true); } catch (e) {}
             this._configGlobalHandler = null;

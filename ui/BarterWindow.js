@@ -55,7 +55,31 @@ export class BarterWindow {
         } else {
             this.barterNPCPortrait.classList.remove('squig-portrait-adjust');
         }
-        this.barterNPCMessage.innerHTML = message;
+        // Set message HTML then run the typewriter effect so merchant text
+        // appears character-by-character like sign messages.
+    this.barterNPCMessage.innerHTML = `<div class="dialogue-text">${message}</div>`;
+    // Ensure the element has the dialogue class for styling parity
+    this.barterNPCMessage.classList.add('dialogue-text');
+        try {
+            // Clear any existing typewriter running on the message manager
+            const mm = this.game.uiManager && this.game.uiManager.messageManager;
+            if (mm && mm.currentTypewriterInterval) {
+                try { clearInterval(mm.currentTypewriterInterval); } catch (e) {}
+                try { cancelAnimationFrame(mm.currentTypewriterInterval); } catch (e) {}
+                mm.currentTypewriterInterval = null;
+            }
+            // If we have a message manager, set its current voice settings so
+            // merchant dialogue gets the per-letter blips tuned to this NPC.
+            if (mm && typeof mm._getVoiceSettingsForName === 'function') {
+                try {
+                    mm._currentVoiceSettings = mm._getVoiceSettingsForName(name);
+                    try { console.debug && console.debug(`BarterWindow: set merchant voice for ${name}`, mm._currentVoiceSettings); } catch (e) {}
+                } catch (e) {}
+            }
+            if (mm && typeof mm._typewriter === 'function') {
+                mm._typewriter(this.barterNPCMessage, mm.typewriterSpeed, () => {});
+            }
+        } catch (e) {}
 
         const barterOffersContainer = document.getElementById('barterOffers');
         barterOffersContainer.innerHTML = ''; // Clear previous offers
@@ -186,6 +210,11 @@ export class BarterWindow {
 
     hideBarterWindow() {
         this.barterOverlay.classList.remove('show');
+        // Clear any merchant voice override on close so future messages don't inherit it
+        try {
+            const mm = this.game.uiManager && this.game.uiManager.messageManager;
+            if (mm) mm._currentVoiceSettings = null;
+        } catch (e) {}
     }
 
     confirmTrade(tradeData) {
