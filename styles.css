@@ -10,13 +10,9 @@
     align-items: center;
     justify-content: center;
     z-index: 2000;
-    transition: opacity 0.3s;
-    opacity: 0;
+    /* no opacity transition — show/hide instantly */
 }
-#expandedMapOverlay.show {
-    display: flex;
-    opacity: 1;
-}
+#expandedMapOverlay.show { display: flex; }
 .expanded-map-container {
     background: #fffbe9;
     border: 4px solid #e2cfa2;
@@ -42,6 +38,98 @@
     display: block;
     touch-action: none;
 }
+
+/* Start Overlay (player card) - occupy the full player card like other overlays */
+#startOverlay.start-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200; /* align with other player-card overlays */
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(2px);
+    padding: 0; /* let inner box control padding */
+    box-sizing: border-box;
+}
+
+#startOverlay.start-overlay[aria-hidden="false"],
+#startOverlay.start-overlay.show {
+    display: flex;
+}
+
+.start-overlay-box {
+    /* Make the inner box fill the overlay area so it matches other overlays */
+    position: relative; /* Needed for ::before pseudo-element */
+    background: #fffbe9; /* Match player card parchment */
+    padding: 18px; /* reduced padding so content fits well inside card */
+    border-radius: 0; /* Remove rounded corners for frayed look */
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 0 #e2cfa2; /* Match player card shadow */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* horizontally center content */
+    justify-content: center; /* vertically center content */
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box; /* include borders/padding in size */
+    border: 3px solid #e2cfa2; /* slightly larger border to match other overlays */
+    overflow: hidden; /* disable scrolling for this panel */
+}
+
+
+/* Add frayed parchment edges to the start overlay box */
+.start-overlay-box::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: inherit;
+    z-index: -1;
+    clip-path: polygon(
+        0% 3%, 2% 0%, 8% 2%, 12% 0%, 18% 3%, 25% 1%,
+        32% 4%, 38% 1%, 45% 2%, 52% 0%, 58% 3%, 65% 1%,
+        72% 3%, 78% 0%, 85% 2%, 92% 0%, 98% 3%, 100% 8%,
+        98% 15%, 100% 22%, 97% 28%, 100% 35%, 98% 42%,
+        100% 48%, 97% 55%, 100% 62%, 98% 68%, 100% 75%,
+        97% 82%, 100% 88%, 98% 95%, 92% 100%, 85% 98%,
+        78% 100%, 72% 97%, 65% 100%, 58% 97%, 52% 100%,
+        45% 98%, 38% 100%, 32% 96%, 25% 100%, 18% 97%,
+        12% 100%, 8% 98%, 2% 100%, 0% 97%, 3% 88%,
+        0% 82%, 2% 75%, 0% 68%, 3% 62%, 0% 55%, 2% 48%,
+        0% 42%, 3% 35%, 0% 28%, 2% 22%, 0% 15%, 3% 8%
+    );
+}
+.overlay-music-toggle {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    color: #2b2b1f;
+}
+.overlay-music-label {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+.start-overlay-action {
+    margin-top: 12px;
+    padding: 12px 20px;
+    font-size: 1.05rem;
+    border-radius: 10px;
+    border: none;
+    display: block;
+    width: 100%;
+}
+.start-overlay-action + .start-overlay-action { margin-top: 10px; }
+
 
 /* Ensure the main game canvas doesn't trigger browser gestures on mobile */
 #gameCanvas {
@@ -82,6 +170,19 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+}
+
+/* Center the app on larger screens (desktop) while preserving mobile/portrait layout.
+   We center the body (which contains .game-container). Because .game-container uses
+   min-height:100vh for mobile, override that on desktop so centering takes effect. */
+@media (min-width: 900px) {
+    body {
+        justify-content: center; /* vertical center */
+    }
+    .game-container {
+        min-height: auto; /* allow container to size to content on desktop */
+        height: auto;
+    }
 }
 
 @keyframes pulsate {
@@ -191,6 +292,94 @@ body {
     display: flex;
     gap: 6px;
     align-items: center; /* Vertically align items in the menu */
+}
+
+/* Start overlay native font button */
+.start-button-native {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: #3A2418;
+    background: linear-gradient(135deg, #CD853F, #B8860B);
+    border: 2px solid #8B4513;
+    padding: 12px 28px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+}
+.start-button-native:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5); }
+.start-button-native.disabled,
+.start-button-native[disabled] {
+    opacity: 0.45;
+    cursor: default;
+    filter: grayscale(0.2);
+}
+
+.start-overlay-title {
+    font-family: 'MedievalSharp', serif;
+    /* Responsive large title: min 18px, preferred 5.5vw, max 34px */
+    font-size: clamp(18px, 5.5vw, 34px);
+    font-weight: 800;
+    color: #2b2b1f;
+    text-align: center;
+    line-height: 1.05;
+    margin: 6px 0;
+}
+
+/* Furling parchment animation: slower, more pronounced curl and slightly elastic
+   rotation to emulate a parchment being gently unfurled. Duration increased for
+   a calmer visual feel. */
+@keyframes overlay-furl-up {
+    /* Simplified two-point animation to avoid intermediate micro-stops.
+       Only animate transform and opacity to reduce repaint cost and remove jerks. */
+    0% {
+        transform: translateY(0) rotateX(0deg) translateZ(0);
+    }
+    100% {
+        transform: translateY(-120%) rotateX(22deg) translateZ(0);
+    }
+}
+
+/* Apply a single smooth motion with GPU hints. */
+.start-overlay-furling {
+    animation: overlay-furl-up 1200ms cubic-bezier(.22,.12,.28,1) forwards;
+    transform-origin: 50% 0%; /* pivot from top edge for peeling effect */
+    will-change: transform, opacity;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    /* Minor translateZ to encourage GPU compositing */
+    transform: translateZ(0);
+}
+
+/* Give the overlay a modest perspective for smoother 3D rotation */
+#startOverlay.start-overlay {
+    perspective: 900px;
+}
+
+/* Disable pointer events while animating so interaction doesn't interrupt the furl */
+.start-overlay-furling * {
+    pointer-events: none !important;
+}
+
+.start-overlay-main {
+    font-size: clamp(28px, 7.5vw, 54px); /* Chress should be largest */
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+.start-overlay-sub {
+    font-size: clamp(14px, 3.2vw, 20px);
+    font-weight: 700;
+    opacity: 0.95;
+}
+
+/* Overlay music toggle checkbox basic styling */
+#overlayMusicToggleWrap input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #4a8a59;
 }
 
 .menu-button {
@@ -1197,7 +1386,8 @@ h1 {
     max-width: 600px;
     width: 90%;
     opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    /* Show/hide instantly for menu/message boxes (no fade) */
+    transition: none;
     position: relative;
 }
 
@@ -1226,7 +1416,8 @@ h1 {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
     font-size: 1.8em;
     pointer-events: none; /* Hidden by default */
-    transition: opacity 0.3s ease-in-out;
+    /* Disable overlay fade so menus appear/disappear instantly */
+    transition: none;
     filter: sepia(20%) saturate(1.2) contrast(1.1);
 }
 
@@ -1611,7 +1802,8 @@ h1 {
     z-index: 200; /* Above player card content and similar to #messageOverlay */
     opacity: 0;
     padding: 0; /* remove overlay padding so inner box can occupy the full panel */
-    transition: opacity 0.3s ease;
+    /* Disable fade for message log overlay */
+    transition: none;
     box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
     border: 3px solid #B8860B;
 }
@@ -1716,7 +1908,8 @@ h1 {
     justify-content: center;
     z-index: 101; /* Above player card content, below other modals */
     opacity: 0;
-    transition: opacity 0.3s ease;
+    /* Disable fade for barter overlay */
+    transition: none;
     pointer-events: none;
 }
 
@@ -1947,13 +2140,111 @@ h1 {
     justify-content: center;
     z-index: 102;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    /* Disable fade for stats panel overlay */
+    transition: none;
 }
 
 .stats-panel-overlay.show {
     display: flex;
     opacity: 1;
 }
+
+/* Stats panel furl-down animation: gently unfurl the panel downward into view */
+@keyframes stats-furl-down {
+    0% {
+        transform: translateY(-120%) rotateX(22deg) translateZ(0);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0) rotateX(0deg) translateZ(0);
+        opacity: 1;
+    }
+}
+
+/* Apply the furl animation to the inner stats panel when showing */
+.stats-panel-furling {
+    animation: stats-furl-down 520ms cubic-bezier(.22,.12,.28,1) forwards;
+    transform-origin: 50% 0%; /* pivot from top edge */
+    will-change: transform, opacity;
+    pointer-events: none; /* disable interactions while animating */
+}
+
+/* Closing furl (furl-up) to animate the stats panel curling away upwards */
+@keyframes stats-furl-up {
+    0% {
+        transform: translateY(0) rotateX(0deg) translateZ(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-120%) rotateX(22deg) translateZ(0);
+        opacity: 0;
+    }
+}
+
+.stats-panel-furling-up {
+    animation: stats-furl-up 520ms cubic-bezier(.22,.12,.28,1) forwards;
+    transform-origin: 50% 0%;
+    will-change: transform, opacity;
+    pointer-events: none;
+}
+
+/* Config panel: slide in from the left when opened, slide back out when closed.
+   These animations are applied to the inner .stats-panel element inside the
+   #configOverlay container. We keep them separate from the vertical furl
+   animations used by other overlays. */
+@keyframes slide-in-left {
+    0% {
+        transform: translateX(-110%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out-left {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-110%);
+        opacity: 0;
+    }
+}
+
+/* Apply when the panel is entering */
+.stats-panel.slide-in-left {
+    animation: slide-in-left 320ms cubic-bezier(.22,.12,.28,1) forwards;
+    will-change: transform, opacity;
+    pointer-events: none; /* disable interactions during entry */
+}
+
+/* Apply when the panel is exiting */
+.stats-panel.slide-out-left {
+    animation: slide-out-left 240ms cubic-bezier(.22,.12,.28,1) forwards;
+    will-change: transform, opacity;
+    pointer-events: none; /* ensure no interaction while leaving */
+}
+
+/* Make overlay transparent: do not tint the player card behind it. */
+.stats-panel-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 102;
+}
+.stats-panel-overlay.show {
+    display: flex;
+}
+
 
 .stats-panel {
     background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
@@ -1969,6 +2260,7 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    position: relative; /* allow absolutely positioned children such as the back button */
 }
 
 .stats-main-content {
@@ -2022,6 +2314,26 @@ h1 {
     z-index: 30; /* above header content */
     font-size: 0.95em;
 }
+
+/* Back button inside the config overlay (top-left). Small, consistent with other
+   top-left controls and placed above the panel content. */
+.config-back-button {
+    position: absolute;
+    left: 10px;
+    top: 8px;
+    background: linear-gradient(135deg, #CD853F, #B8860B);
+    border: 2px solid #8B4513;
+    color: #3A2418;
+    padding: 6px 10px;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    z-index: 60; /* above panel content */
+    font-size: 0.95em;
+}
+
+.config-back-button:hover { transform: translateX(-2px); }
 
 /* Records (trophy) button positioned in the top-right of stats header */
 .stats-records-button {
@@ -2249,7 +2561,8 @@ input:checked + .toggle-slider::after {
     justify-content: center;
     z-index: 101; /* Above player card content */
     opacity: 0;
-    transition: opacity 0.3s ease;
+    /* Disable fade for statue overlay */
+    transition: none;
     pointer-events: none;
 }
 

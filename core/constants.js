@@ -219,8 +219,7 @@ export const IMAGE_ASSETS = [
     'items/book.png',
     'items/bow.png',
     'doodads/stairdown.png',
-    'doodads/upstair.png',
-    // Keep historical filename present so existing builds with stairup.png still load
+    // Use the actual stairup filename present in the repo; TextureLoader will accept both names
     'doodads/stairup.png',
     'items/shovel.png',
     'items/points.png',

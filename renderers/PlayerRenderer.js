@@ -10,6 +10,9 @@ export class PlayerRenderer {
     }
 
     drawPlayer() {
+    // If preview mode is enabled (start overlay preview) do not draw the player
+    if (this.game.previewMode) return;
+
     // Draw player sprite first
     this.drawPlayerSprite();
 

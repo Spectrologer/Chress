@@ -76,12 +76,215 @@ export class GameInitializer {
                 const foodKey = foodAsset.replace('.png', '').replace('/', '_');
                 return this.game.textureManager.isImageLoaded(foodKey);
             });
-            this.startGame();
+            // If a saved session exists, auto-start the game so refreshing doesn't force the start panel.
+            // Otherwise, show the start panel and mute audio until a user gesture.
+            try {
+                // If a saved session exists we DO NOT auto-start. Show the start overlay so the
+                // user can explicitly tap "continue" to resume. This guarantees any audio
+                // playback only begins after a user gesture.
+                // const hasSaved = !!localStorage.getItem('chress_game_state');
+                // If hasSaved, overlay will show with Continue enabled.
+            } catch (e) {}
+
+            // No saved session: do NOT force-mute music here. Music preference should default to ON,
+            // but actual playback will be deferred until the user performs a gesture (start/continue).
+            // We intentionally avoid calling setMusicEnabled(false) so the default preference remains enabled.
+            this.showStartOverlay();
         } catch (error) {
             logger.error('Error loading assets:', error);
             this.game.availableFoodAssets = []; // No foods if loading failed
-            this.startGame(); // Start anyway with fallback colors
+            // If there's a saved session, start immediately; otherwise show the overlay.
+            try {
+                // On asset load failure, do not auto-start saved sessions. Show overlay so
+                // user can explicitly continue; this prevents music autoplay without user gesture.
+            } catch (e) {}
+            // On asset load failure, keep existing music preference (default ON). Playback is still
+            // deferred until a user gesture (the overlay handlers call resumeAudioContext and then
+            // setMusicEnabled based on the overlay toggle or saved preference).
+            this.showStartOverlay();
         }
+
+        // After assets are loaded, start a preview render loop.
+        // This will draw the board behind the start overlay.
+        if (!this.game.gameStarted) {
+            // Generate a temporary zone for the preview if no game state is loaded yet.
+            // We do this before showing the overlay.
+            if (!this.game.grid) {
+                this.game.generateZone();
+            }
+            this.game.previewMode = true;
+            // Start the game loop, which will respect previewMode.
+            this.game.gameLoop();
+        }
+    }
+
+    showStartOverlay() {
+        try {
+            // Find overlay element in DOM
+            const overlay = document.getElementById('startOverlay');
+            if (!overlay) return;
+
+            // Do not reveal the overlay yet; we'll show it after handlers are attached and
+            // previewMode is already enabled, so the board renders without the player.
+            // Ensure the overlay is invisible during DOM adjustments to avoid visual jumps
+            try { overlay.style.visibility = 'hidden'; } catch (e) {}
+            // Configure continue button state based on whether a saved session exists
+            const hasSaved = !!(localStorage && localStorage.getItem && localStorage.getItem('chress_game_state'));
+            const continueBtn = overlay.querySelector('#continueButton');
+            if (continueBtn) {
+                try { continueBtn.disabled = !hasSaved; } catch (e) {}
+                if (hasSaved) {
+                    continueBtn.classList.remove('disabled');
+                } else {
+                    continueBtn.classList.add('disabled');
+                }
+            }
+
+            // Synchronize overlay music toggle to a temporary state (don't resume audio yet)
+            const overlayMusicToggle = document.getElementById('overlay-music-toggle');
+            // Default music on (preference is ON), but playback will wait for user gesture
+            let overlayMusicPref = true;
+            if (overlayMusicToggle) {
+                try { overlayMusicPref = typeof overlayMusicToggle.checked === 'boolean' ? !!overlayMusicToggle.checked : true; } catch (e) {}
+                overlayMusicToggle.addEventListener('change', (e) => { try { overlayMusicPref = !!e.target.checked; } catch (err) {} });
+            }
+
+            // Start (new session) handler
+            const onStart = async () => {
+                // Reveal the player (stop preview mode) so the card content can be shown while
+                // the start overlay curls away.
+                try { this.game.previewMode = false; } catch (e) {}
+
+                // Resume/create AudioContext on user gesture (satisfy autoplay policies)
+                try {
+                    if (this.game.soundManager && typeof this.game.soundManager.resumeAudioContext === 'function') {
+                        await this.game.soundManager.resumeAudioContext();
+                    }
+                } catch (e) {}
+
+                // Apply overlay music preference (do not start audio until audioContext resumed)
+                try {
+                    if (this.game.player && this.game.player.stats) {
+                        this.game.player.stats.musicEnabled = !!overlayMusicPref;
+                    }
+                    if (this.game.soundManager && typeof this.game.soundManager.setMusicEnabled === 'function') {
+                        this.game.soundManager.setMusicEnabled(!!overlayMusicPref);
+                    }
+                    // SFX default to enabled unless player has pref saved
+                    if (this.game.player && this.game.player.stats && typeof this.game.player.stats.sfxEnabled !== 'undefined') {
+                        if (this.game.soundManager && typeof this.game.soundManager.setSfxEnabled === 'function') {
+                            this.game.soundManager.setSfxEnabled(!!this.game.player.stats.sfxEnabled);
+                        }
+                    }
+                } catch (e) {}
+
+                // Force-start a NEW game (clear any existing saved state) now that user has interacted
+                try {
+                    if (this.game.gameStateManager && typeof this.game.gameStateManager.resetGame === 'function') {
+                        // resetGame both clears saved state and reinitializes game state
+                        this.game.gameStateManager.resetGame();
+                        // After resetGame we should call startGame to fully initialize and begin loop
+                    } else if (this.game.gameStateManager && typeof this.game.gameStateManager.clearSavedState === 'function') {
+                        // best-effort: clear saved state, then start
+                        try { this.game.gameStateManager.clearSavedState(); } catch (e) {}
+                    }
+                } catch (e) {}
+
+                // Animate overlay curling away then start the game. We await the animation so the
+                // reveal feels deliberate (like peeling/curling parchment) before the game begins.
+                try {
+                    if (typeof animateOverlayCurl === 'function') {
+                        await animateOverlayCurl(overlay);
+                    } else {
+                        try { overlay.style.display = 'none'; } catch (e) {}
+                    }
+                } catch (e) {}
+
+                // Start new game now that user has interacted and overlay is gone
+                try { this.startGame(); } catch (e) { /* still try to start */ }
+            };
+
+            // Continue (load saved session) handler
+            const onContinue = async () => {
+                try { this.game.previewMode = false; } catch (e) {}
+
+                // Attempt to load saved game state before resuming audio so persisted audio prefs apply
+                try {
+                    if (this.game.gameStateManager && typeof this.game.gameStateManager.loadGameState === 'function') {
+                        this.game.gameStateManager.loadGameState();
+                    }
+                } catch (e) {}
+
+                // Resume/create AudioContext on user gesture
+                try {
+                    if (this.game.soundManager && typeof this.game.soundManager.resumeAudioContext === 'function') {
+                        await this.game.soundManager.resumeAudioContext();
+                    }
+                } catch (e) {}
+
+                // If overlay music toggle exists and user changed it, honor it by overriding saved pref
+                try {
+                    if (typeof overlayMusicPref !== 'undefined') {
+                        if (this.game.player && this.game.player.stats) this.game.player.stats.musicEnabled = !!overlayMusicPref;
+                        if (this.game.soundManager && typeof this.game.soundManager.setMusicEnabled === 'function') this.game.soundManager.setMusicEnabled(!!overlayMusicPref);
+                    }
+                } catch (e) {}
+
+                // Animate overlay curling away then start the game (init will continue from loaded state)
+                try {
+                    if (typeof animateOverlayCurl === 'function') {
+                        await animateOverlayCurl(overlay);
+                    } else {
+                        try { overlay.style.display = 'none'; } catch (e) {}
+                    }
+                } catch (e) {}
+
+                // Start game (init will continue from loaded state)
+                try { this.startGame(); } catch (e) {}
+            };
+
+            // Attach handlers (only button clicks start/continue — no overlay-wide start)
+            const startBtn = overlay.querySelector('#startButton');
+            // If a saved session exists, move the Continue button above Start so it's
+            // visually prioritized for returning players.
+            try {
+                if (continueBtn && startBtn && hasSaved) {
+                    const parent = startBtn.parentNode;
+                    if (parent && parent.contains(continueBtn) && parent.contains(startBtn)) {
+                        parent.insertBefore(continueBtn, startBtn);
+                    }
+                }
+            } catch (e) {}
+
+            if (startBtn) startBtn.addEventListener('click', onStart, { once: true });
+            if (continueBtn && hasSaved) continueBtn.addEventListener('click', onContinue, { once: true });
+
+            // Pre-render player card contents (stats, portrait, minimap) so they are ready
+            // behind the start overlay and don't visibly load after the overlay is removed.
+            try {
+                if (this.game.uiManager && typeof this.game.uiManager.updatePlayerStats === 'function') {
+                    try { this.game.uiManager.updatePlayerStats(); } catch (e) {}
+                }
+                if (this.game.uiManager && typeof this.game.uiManager.renderZoneMap === 'function') {
+                    try { this.game.uiManager.renderZoneMap(); } catch (e) {}
+                }
+
+                // If portrait image exists, attempt an early decode so it doesn't pop-in after the overlay.
+                try {
+                    const img = document.querySelector('.player-portrait');
+                    if (img && typeof img.decode === 'function') {
+                        img.decode().catch(() => {});
+                    }
+                } catch (e) {}
+            } catch (e) {}
+
+            // Now that handlers are attached and the player card is pre-rendered, enable preview
+            // mode and reveal the overlay so the board shows as a preview without the player.
+            try {
+                overlay.style.display = 'flex';
+                overlay.style.visibility = 'visible';
+            } catch (e) {}
+        } catch (e) {}
     }
 
     startGame() {

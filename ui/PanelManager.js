@@ -36,7 +36,28 @@ export class PanelManager {
             if (autoPath) autoPath.checked = !!this.game.player.stats.autoPathWithEnemies;
         } catch (e) {}
 
+        // Make overlay visible
         this.configOverlay.classList.add('show');
+
+        // Animate inner panel sliding in from the left
+        try {
+            const inner = this.configOverlay.querySelector('.stats-panel');
+            if (inner) {
+                // Ensure any exit class is removed, then trigger entry
+                inner.classList.remove('slide-out-left');
+                // Force a reflow to ensure the class removal is processed
+                // before adding the entry class (helps with rapid toggles).
+                void inner.offsetWidth;
+                inner.classList.add('slide-in-left');
+                // Remove the entry class after animation completes to allow pointer events
+                const onAnimEnd = (ev) => {
+                    if (ev && ev.target !== inner) return;
+                    inner.classList.remove('slide-in-left');
+                    inner.removeEventListener('animationend', onAnimEnd);
+                };
+                inner.addEventListener('animationend', onAnimEnd);
+            }
+        } catch (e) {}
 
         // Add a global pointer handler so clicks anywhere on the page (game canvas,
         // outside the body, etc.) will close the config overlay and return to stats.
@@ -96,6 +117,18 @@ export class PanelManager {
             });
 
             this.configHandlersAttached = true;
+            // Attach back button handler (top-left) to return to stats panel
+            try {
+                const backBtn = this.configOverlay.querySelector('#config-back-button');
+                if (backBtn) {
+                    backBtn.addEventListener('click', (e) => {
+                        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+                        if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+                        this.hideConfigOverlay();
+                        try { this.showStatsPanel(); } catch (err) {}
+                    });
+                }
+            } catch (e) {}
         }
     }
 
@@ -174,7 +207,27 @@ export class PanelManager {
 
     hideConfigOverlay() {
         if (!this.configOverlay) return;
-        this.configOverlay.classList.remove('show');
+        try {
+            const inner = this.configOverlay.querySelector('.stats-panel');
+            if (inner) {
+                // Start slide-out animation, then hide overlay when complete
+                inner.classList.remove('slide-in-left');
+                // Force reflow
+                void inner.offsetWidth;
+                inner.classList.add('slide-out-left');
+                const onEnd = (ev) => {
+                    if (ev && ev.target !== inner) return;
+                    try { this.configOverlay.classList.remove('show'); } catch (e) {}
+                    inner.classList.remove('slide-out-left');
+                    inner.removeEventListener('animationend', onEnd);
+                };
+                inner.addEventListener('animationend', onEnd);
+            } else {
+                this.configOverlay.classList.remove('show');
+            }
+        } catch (e) {
+            this.configOverlay.classList.remove('show');
+        }
         if (this._configGlobalHandler) {
             try { document.removeEventListener('pointerdown', this._configGlobalHandler, true); } catch (e) {}
             this._configGlobalHandler = null;
@@ -252,7 +305,48 @@ export class PanelManager {
             // Pathing toggle removed (no-op)
             this.setupAudioToggles();
 
+            // Make overlay visible and animate inner panel unfurling from top
             this.statsPanelOverlay.classList.add('show');
+            try {
+                const inner = this.statsPanelOverlay.querySelector('.stats-panel');
+                if (inner) {
+                    // Remove any closing class and force reflow before adding entry class
+                    inner.classList.remove('stats-panel-furling-up');
+                    void inner.offsetWidth;
+                    inner.classList.add('stats-panel-furling');
+                    const onEnd = (ev) => {
+                        if (ev && ev.target !== inner) return;
+                        inner.classList.remove('stats-panel-furling');
+                        inner.removeEventListener('animationend', onEnd);
+                    };
+                    inner.addEventListener('animationend', onEnd);
+                }
+            } catch (e) {}
+            // Install a short-lived capturing blocker (300ms) to absorb any immediate
+            // pointer events that follow opening the panel. This prevents the same
+            // interaction from activating buttons (like the config button) that were
+            // just rendered under the pointer when the panel opened.
+            try {
+                const captureHandler = (ev) => {
+                    try { if (ev && typeof ev.preventDefault === 'function') ev.preventDefault(); } catch (err) {}
+                    try { if (ev && typeof ev.stopPropagation === 'function') ev.stopPropagation(); } catch (err) {}
+                };
+
+                const removeAll = () => {
+                    try { document.removeEventListener('pointerdown', captureHandler, true); } catch (err) {}
+                    try { document.removeEventListener('pointerup', captureHandler, true); } catch (err) {}
+                    try { document.removeEventListener('click', captureHandler, true); } catch (err) {}
+                    try { document.removeEventListener('mousedown', captureHandler, true); } catch (err) {}
+                };
+
+                try { document.addEventListener('pointerdown', captureHandler, true); } catch (err) {}
+                try { document.addEventListener('pointerup', captureHandler, true); } catch (err) {}
+                try { document.addEventListener('click', captureHandler, true); } catch (err) {}
+                try { document.addEventListener('mousedown', captureHandler, true); } catch (err) {}
+
+                // Remove after a short delay so normal interactions resume
+                setTimeout(removeAll, 300);
+            } catch (e) {}
             this.statsPanelOpen = true;
 
             // Update persistent records if current stats exceed saved values
@@ -325,7 +419,26 @@ export class PanelManager {
 
     hideStatsPanel() {
         if (this.statsPanelOverlay) {
-            this.statsPanelOverlay.classList.remove('show');
+            try {
+                const inner = this.statsPanelOverlay.querySelector('.stats-panel');
+                if (inner) {
+                    // Start closing furl animation, then hide overlay when complete
+                    inner.classList.remove('stats-panel-furling');
+                    void inner.offsetWidth;
+                    inner.classList.add('stats-panel-furling-up');
+                    const onEnd = (ev) => {
+                        if (ev && ev.target !== inner) return;
+                        try { this.statsPanelOverlay.classList.remove('show'); } catch (e) {}
+                        inner.classList.remove('stats-panel-furling-up');
+                        inner.removeEventListener('animationend', onEnd);
+                    };
+                    inner.addEventListener('animationend', onEnd);
+                } else {
+                    this.statsPanelOverlay.classList.remove('show');
+                }
+            } catch (e) {
+                this.statsPanelOverlay.classList.remove('show');
+            }
             this.statsPanelOpen = false;
         }
     }
@@ -356,11 +469,27 @@ export class PanelManager {
             // Open panel when clicking on the main player portrait
             const playerPortraitContainer = document.querySelector('.player-portrait-container');
             if (playerPortraitContainer) {
-                playerPortraitContainer.addEventListener('click', () => this.showStatsPanel());
-                playerPortraitContainer.addEventListener('pointerup', (e) => {
-                    if (e && typeof e.preventDefault === 'function') e.preventDefault();
-                    this.showStatsPanel();
-                });
+                // Defensive handlers to avoid pointer events "clicking through" to
+                // overlays that may be rendered at the pointer location (e.g. the
+                // config overlay on show). Stop propagation and prevent default so
+                // the same interaction cannot immediately trigger another UI.
+                const openStats = (e) => {
+                    try { if (e && typeof e.preventDefault === 'function') e.preventDefault(); } catch (err) {}
+                    try { if (e && typeof e.stopPropagation === 'function') e.stopPropagation(); } catch (err) {}
+                    try { this.showStatsPanel(); } catch (err) {}
+                };
+
+                // Use pointerdown to capture interactions earlier on touch devices
+                // and prevent the subsequent pointerup/click from reaching elements
+                // positioned under the finger/cursor when the stats panel opens.
+                playerPortraitContainer.addEventListener('pointerdown', (e) => {
+                    // preventDefault only when available and not passive
+                    try { if (e && typeof e.preventDefault === 'function') e.preventDefault(); } catch (err) {}
+                    try { if (e && typeof e.stopPropagation === 'function') e.stopPropagation(); } catch (err) {}
+                }, { passive: false });
+
+                playerPortraitContainer.addEventListener('click', openStats);
+                playerPortraitContainer.addEventListener('pointerup', openStats, { passive: false });
             }
         }
     }
@@ -374,11 +503,15 @@ export class PanelManager {
         const applyMusicState = (checked) => {
             try { this.game.player.stats.musicEnabled = !!checked; } catch (e) {}
             try { if (this.game.soundManager && typeof this.game.soundManager.setMusicEnabled === 'function') this.game.soundManager.setMusicEnabled(checked); } catch (e) {}
+            // Persist preference
+            try { if (this.game.gameStateManager && typeof this.game.gameStateManager.saveGameState === 'function') this.game.gameStateManager.saveGameState(); } catch (e) {}
         };
 
         const applySfxState = (checked) => {
             try { this.game.player.stats.sfxEnabled = !!checked; } catch (e) {}
             try { if (this.game.soundManager && typeof this.game.soundManager.setSfxEnabled === 'function') this.game.soundManager.setSfxEnabled(checked); } catch (e) {}
+            // Persist preference
+            try { if (this.game.gameStateManager && typeof this.game.gameStateManager.saveGameState === 'function') this.game.gameStateManager.saveGameState(); } catch (e) {}
         };
 
         const autoPathToggle = document.getElementById('auto-path-enemies-toggle');

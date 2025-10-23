@@ -15,6 +15,9 @@ export class PlayerStats {
         // Whether auto-pathing should be allowed to target tiles containing enemies.
         // Default: OFF (false)
         this.autoPathWithEnemies = false;
+        // Audio preferences default to ON. Actual playback will only start after a user gesture.
+        this.musicEnabled = true;
+        this.sfxEnabled = true;
     }
 
     getThirst() {

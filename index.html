@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>CHRESS</title>
+    <title>Chress: Chess 2: The Sequel to Chess</title>
     <link rel="icon" href="assets/fauna/zard.png" type="image/png">
     
     <!-- Sentry CDN -->
@@ -61,8 +61,7 @@
     </style>
 </head>
 <body>
-
-    <div class="main-content-wrapper game-parchment">
+    <div class="main-content-wrapper game-parchment" style="position:relative;">
         <div class="content-inner">
             <div class="header-area">
                 <!-- AI INSTRUCTION: This is the Main Panel. It contains the player's portrait, health (hearts), points, hunger and thirst bars, inventory, and a minimap of the world showing discovered zones. -->
@@ -116,6 +115,8 @@
                     <!-- Config overlay: separate overlay like statsPanelOverlay -->
                     <div id="configOverlay" class="stats-panel-overlay">
                         <div class="stats-panel game-parchment">
+                            <!-- Small back button (top-left) to return to the stats panel -->
+                            <button id="config-back-button" class="config-back-button" aria-label="Back">◂ Back</button>
                             <div class="stats-main-content">
                                 <div class="stats-info">
                                     <h2>Config</h2>
@@ -146,7 +147,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="player-card-content" class="character-card modern-player-card">
+                    <div id="player-card-content" class="character-card modern-player-card" style="position:relative;z-index:3;">
                         <div class="player-header">
                             <div class="player-portrait-container">
                                 <img src="assets/protag/faceset.png" alt="Player Portrait" class="player-portrait">
@@ -201,6 +202,22 @@
                                 </div>
                             </div>
                         </div>
+                                <!-- Start overlay: sits over the player card so the board remains visible as a preview behind it -->
+                                <div id="startOverlay" class="start-overlay" aria-hidden="true">
+                                    <div class="start-overlay-box">
+                                        <!-- top-right music toggle -->
+                                        <label id="overlayMusicToggleWrap" class="overlay-music-toggle">
+                                            <input id="overlay-music-toggle" type="checkbox" aria-label="Music on/off" checked />
+                                            <span class="overlay-music-label">music</span>
+                                        </label>
+                                        <div class="start-overlay-title">
+                                            <div class="start-overlay-main">Chress</div>
+                                            <div class="start-overlay-sub">Chess 2: The Sequel to Chess</div>
+                                        </div>
+                                        <button id="startButton" class="start-button-native start-overlay-action">start game</button>
+                                        <button id="continueButton" class="start-button-native start-overlay-action">continue</button>
+                                    </div>
+                                </div>
                                 <!-- Message Log overlay moved inside player card so it overlays the player panel like NPC messages -->
                                 <div id="messageLogOverlay" class="message-log-overlay">
                                     <div class="message-log-box">
@@ -237,4 +254,5 @@
             </div>
         </div>
 </body>
+    <script src="ui/overlayAnimations.js"></script>
 </html>

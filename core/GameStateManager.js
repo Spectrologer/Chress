@@ -255,11 +255,11 @@ export class GameStateManager {
                     this.game.player.stats.sfxEnabled = typeof gameState.playerStats.sfxEnabled !== 'undefined' ? !!gameState.playerStats.sfxEnabled : true;
                     this.game.player.stats.autoPathWithEnemies = typeof gameState.playerStats.autoPathWithEnemies !== 'undefined' ? !!gameState.playerStats.autoPathWithEnemies : false;
 
-                    // Apply to SoundManager
-                    if (this.game.soundManager) {
-                        try { this.game.soundManager.setMusicEnabled(this.game.player.stats.musicEnabled); } catch (e) {}
-                        try { this.game.soundManager.setSfxEnabled(this.game.player.stats.sfxEnabled); } catch (e) {}
-                    }
+                    // Do NOT call into SoundManager here. Applying audio settings may start
+                    // playback or create/resume an AudioContext before a user gesture which
+                    // violates autoplay policies. The overlay Start/Continue handlers will
+                    // resume the audio context and apply these saved preferences after a
+                    // user gesture.
                 } catch (e) {}
             }
 
