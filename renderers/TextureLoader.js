@@ -57,7 +57,8 @@ export class TextureLoader {
                 } else if (assetName === 'doodads/stairdown.png') {
                     // Register stair doodads under the simple key the renderer expects
                     imageKey = 'stairdown';
-                } else if (assetName === 'doodads/stairup.png') {
+                } else if (assetName === 'doodads/upstair.png' || assetName === 'doodads/stairup.png') {
+                    // Support both the new upstair filename and the historical stairup name
                     imageKey = 'stairup';
                 } else {
                     imageKey = assetName.replace('.png', '');

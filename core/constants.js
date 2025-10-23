@@ -219,6 +219,8 @@ export const IMAGE_ASSETS = [
     'items/book.png',
     'items/bow.png',
     'doodads/stairdown.png',
+    'doodads/upstair.png',
+    // Keep historical filename present so existing builds with stairup.png still load
     'doodads/stairup.png',
     'items/shovel.png',
     'items/points.png',
@@ -270,6 +272,7 @@ export const IMAGE_ASSETS = [
     'fx/splode/splode_6.png',
     'fx/splode/splode_7.png',
     'fx/splode/splode_8.png'
+    , 'fx/fog.png'
 ];
 
 // Food image assets

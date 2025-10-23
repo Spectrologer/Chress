@@ -349,12 +349,13 @@ export class ZoneManager {
                             this.validateAndSetTile(this.game.grid, px, py + 1, TILE_TYPES.CISTERN);
                         }
                     } else if (from === 'hole' || from === 'pitfall') {
-                        // holes/pitfalls are primitive ports
-                        if (this.game.grid[py][px] && typeof this.game.grid[py][px] === 'object' && this.game.grid[py][px].type === TILE_TYPES.PORT) {
-                            // leave object port if present; otherwise set primitive port
-                        } else {
-                            this.validateAndSetTile(this.game.grid, px, py, TILE_TYPES.PORT);
+                        // Represent holes/pitfalls on the surface as an up-stair object PORT
+                        // so it's visually clear how to return to the surface.
+                        if (!(this.game.grid[py][px] && typeof this.game.grid[py][px] === 'object' && this.game.grid[py][px].type === TILE_TYPES.PORT)) {
+                            // If validateAndSetTile would overwrite an object, use direct assignment for object port
+                            this.game.grid[py][px] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
                         }
+                        // If an object-style port is already present, leave it as-is.
                     }
                 }
             }

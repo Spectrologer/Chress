@@ -1,68 +1,113 @@
 import { TILE_SIZE, GRID_SIZE } from '../core/constants.js';
 
+// Scrolling tiled fog overlay using a preloaded texture (assets/fx/fog.png).
+// The TextureLoader registers this under the key 'fx/fog' by default.
 export class FogRenderer {
     constructor(game) {
         this.game = game;
         this.ctx = game.ctx;
-        this.fogParticles = [];
+        this.textureManager = game.textureManager;
         this.lastZoneKey = null;
         this.canvasWidth = TILE_SIZE * GRID_SIZE;
         this.canvasHeight = TILE_SIZE * GRID_SIZE;
-    }
 
-    initializeFog() {
-        this.fogParticles = [];
-        const numParticles = 30; // More particles for a denser fog
-        for (let i = 0; i < numParticles; i++) {
-            this.fogParticles.push(this.createParticle());
-        }
-    }
+        // Scrolling offsets (pixels) and speed (pixels per frame)
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.speedX = 0.3; // slow horizontal scroll
+        this.speedY = 0.08; // gentle vertical drift
 
-    createParticle(x = null) {
-        const newX = x !== null ? x : Math.random() * this.canvasWidth;
-        return {
-            x: newX,
-            y: Math.random() * this.canvasHeight,
-            radius: Math.random() * 50 + 40, // Fog patches of various sizes
-            opacity: Math.random() * 0.1 + 0.05, // Subtle opacity
-            vx: (Math.random() - 0.5) * 0.15, // Slow horizontal drift
-        };
+        // Pattern instance cached per frame when available
+        this._pattern = null;
+    // Scaling factor for the fog tile ( >1 to make the fog tile larger)
+    this.scale = 3.2;
+        // Cached scaled canvas and a reference to the source image used to create it
+        this._scaledCanvas = null;
+        this._sourceImageRef = null;
     }
 
     updateAndDrawFog() {
-        const currentZone = this.game.player.getCurrentZone(); // This is now safe as RenderManager ensures dimension is 2
+        const currentZone = this.game.player.getCurrentZone();
 
-    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
-    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
+        const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
+        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
         if (this.lastZoneKey !== zoneKey) {
-            this.initializeFog();
+            // Reset scroll when changing zone to avoid visible jumps
+            this.offsetX = 0;
+            this.offsetY = 0;
+            this._pattern = null;
             this.lastZoneKey = zoneKey;
         }
 
+        // Try to get the fog image from the texture manager
+        let fogImg = null;
+        try {
+            fogImg = this.textureManager && this.textureManager.getImage('fx/fog');
+        } catch (e) {
+            // ignore
+        }
+
+        // Advance offsets (wrap by scaled tile size) — compute sizes after fogImg is known
+        const baseW = (fogImg && fogImg.width) ? fogImg.width : 320;
+        const baseH = (fogImg && fogImg.height) ? fogImg.height : 180;
+        const tileW = Math.max(1, Math.round(baseW * this.scale));
+        const tileH = Math.max(1, Math.round(baseH * this.scale));
+        this.offsetX = (this.offsetX + this.speedX) % tileW;
+        this.offsetY = (this.offsetY + this.speedY) % tileH;
+
         this.ctx.save();
-        this.fogParticles.forEach((p, index) => {
-            // Update position
-            p.x += p.vx;
+        // Draw fallback translucent fill if image isn't available yet
+        if (!fogImg) {
+            this.ctx.fillStyle = 'rgba(220,220,220,0.06)';
+            this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+            this.ctx.restore();
+            return;
+        }
 
-            // If particle goes off-screen, wrap it around
-            if (p.vx > 0 && p.x > this.canvasWidth + p.radius) {
-                // Moved off the right edge, reappear on the left
-                this.fogParticles[index] = this.createParticle(-p.radius);
-            } else if (p.vx < 0 && p.x < -p.radius) {
-                // Moved off the left edge, reappear on the right
-                this.fogParticles[index] = this.createParticle(this.canvasWidth + p.radius);
+        // Ensure we have a scaled canvas to create a pattern from (only recreate when source image changes)
+        if (this._sourceImageRef !== fogImg || !this._scaledCanvas) {
+            try {
+                const sw = Math.max(1, Math.round(baseW * this.scale));
+                const sh = Math.max(1, Math.round(baseH * this.scale));
+                const c = document.createElement('canvas');
+                c.width = sw;
+                c.height = sh;
+                const cx = c.getContext('2d');
+                // Draw the source image stretched to the scaled size
+                cx.drawImage(fogImg, 0, 0, sw, sh);
+                this._scaledCanvas = c;
+                this._sourceImageRef = fogImg;
+                // recreate pattern
+                try {
+                    this._pattern = this.ctx.createPattern(this._scaledCanvas, 'repeat');
+                } catch (e) {
+                    this._pattern = null;
+                }
+            } catch (e) {
+                this._scaledCanvas = null;
+                this._pattern = null;
             }
+        }
 
-            // Draw the fog particle as a radial gradient
-            const gradient = this.ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-            gradient.addColorStop(0, `rgba(255, 255, 255, ${p.opacity})`); // Denser center
-            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); // Fading out
+        if (this._pattern) {
+            // Apply ~3.5% overlay opacity (multiplies image alpha)
+            this.ctx.globalAlpha = 0.035;
 
-            this.ctx.fillStyle = gradient;
-            this.ctx.beginPath();
-            this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            this.ctx.fill();
-        });
+            // Translate by -offset to create scrolling effect, then fill using the pattern
+            this.ctx.translate(-this.offsetX, -this.offsetY);
+            this.ctx.fillStyle = this._pattern;
+            // Fill an area slightly larger than canvas to ensure full coverage while scrolling
+            this.ctx.fillRect(this.offsetX, this.offsetY, this.canvasWidth + tileW, this.canvasHeight + tileH);
+
+            // Reset transform and alpha
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+            this.ctx.globalAlpha = 1.0;
+        } else {
+            // Fallback if pattern creation failed
+            this.ctx.fillStyle = 'rgba(220,220,220,0.06)';
+            this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+        }
+
         this.ctx.restore();
     }
 }

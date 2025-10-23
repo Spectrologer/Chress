@@ -139,7 +139,8 @@ export class CombatManager {
             const targetTile = this.game.grid[move.y]?.[move.x];
             if (targetTile === TILE_TYPES.PITFALL) {
                 // The enemy falls into the pit!
-                this.game.grid[move.y][move.x] = TILE_TYPES.PORT; // The pitfall becomes a hole
+                // Represent the pitfall emergence as an up-stair object port for clarity
+                this.game.grid[move.y][move.x] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
 
                 // Remove the enemy from the current zone's active enemy list
                 // Before removing, clear any turn-manager bookkeeping for this enemy so

@@ -42,7 +42,9 @@ export function handleUnderground(zoneGen, zoneX, zoneY, zoneConnections, foodAs
             structureGenerator.addCistern(zoneX, zoneY, true, zoneGen.game.portTransitionData.x, zoneGen.game.portTransitionData.y);
             zoneGen.grid[zoneGen.game.portTransitionData.y + 1][zoneGen.game.portTransitionData.x] = TILE_TYPES.CISTERN;
         } else if (isFromHole || isFromPitfall) {
-            zoneGen.grid[zoneGen.game.portTransitionData.y][zoneGen.game.portTransitionData.x] = TILE_TYPES.PORT;
+            // Represent surface emergence as an up-stair object port so the renderer
+            // draws the upstair doodad (more intuitive than a primitive hole tile).
+            zoneGen.grid[zoneGen.game.portTransitionData.y][zoneGen.game.portTransitionData.x] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
         } else if (isFromStairDown) {
             // Player descended using a stairdown: place a stairup at the emergence point
             zoneGen.grid[zoneGen.game.portTransitionData.y][zoneGen.game.portTransitionData.x] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
