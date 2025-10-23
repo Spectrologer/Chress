@@ -164,10 +164,13 @@ export class InteractionManager {
         const enemyAtCoords = this.game.enemies.find(e => e.x === gridCoords.x && e.y === gridCoords.y && e.health > 0);
         if (enemyAtCoords) {
             const dx = Math.abs(gridCoords.x - playerPos.x);
-            const dy = Math.abs(gridCoords.y - playerPos.y);
-            const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
+                const dy = Math.abs(gridCoords.y - playerPos.y);
+                // Only allow cardinal (non-diagonal) immediate melee attacks when
+                // no item/charge is involved. This enforces 4-way adjacency
+                // (Manhattan distance == 1) instead of 8-way adjacency.
+                const isAdjacent = (dx + dy === 1);
 
-            if (isAdjacent) {
+                if (isAdjacent) {
                 // Perform immediate player attack on the adjacent enemy
                     try {
                         // Start attack animation
