@@ -172,9 +172,10 @@ export class ZoneTransitionManager {
 
     handlePitfallTransition(x, y) {
         // Player stepped on a pitfall trap
-        // Represent the emergence on the surface as an object-style PORT with an 'stairup' kind
-        // so the renderer will show the up-stairs doodad (more intuitive than a hole).
-        this.game.grid[y][x] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
+        // Player fell through a pitfall. Keep the surface tile as a primitive PITFALL
+        // (do not place an object-style 'stairup' on the surface). The underground
+        // generator will handle any emergence metadata.
+        this.game.grid[y][x] = TILE_TYPES.PITFALL;
 
         // Set data for the transition
         this.game.portTransitionData = { from: 'pitfall', x, y };

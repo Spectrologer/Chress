@@ -139,8 +139,9 @@ export class CombatManager {
             const targetTile = this.game.grid[move.y]?.[move.x];
             if (targetTile === TILE_TYPES.PITFALL) {
                 // The enemy falls into the pit!
-                // Represent the pitfall emergence as an up-stair object port for clarity
-                this.game.grid[move.y][move.x] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
+                // The enemy falls into the pit. Leave the surface tile as a primitive
+                // PITFALL (do not create an object-style 'stairup' on the surface).
+                this.game.grid[move.y][move.x] = TILE_TYPES.PITFALL;
 
                 // Remove the enemy from the current zone's active enemy list
                 // Before removing, clear any turn-manager bookkeeping for this enemy so

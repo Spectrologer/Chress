@@ -45,13 +45,15 @@ export class PointerInput {
             if (e.pointerType !== 'mouse' && t && this.game && this.game.player) {
                 const playerPos = this.game.player.getPosition();
                 if (t.x === playerPos.x && t.y === playerPos.y && this.game.radialInventoryUI) {
-                    // Don't open radial when standing on an exit or port tile
+                    // Normalize current tile: can be primitive number or object
                     const currentTile = this.game.grid[playerPos.y]?.[playerPos.x];
-                    if (currentTile === TILE_TYPES.EXIT || currentTile === TILE_TYPES.PORT) {
-                        // If radial is already open, close it; otherwise do not open or suppress the tap
+                    const currentTileType = (typeof currentTile === 'object' && currentTile?.type !== undefined) ? currentTile.type : currentTile;
+                    const portKind = (currentTile && typeof currentTile === 'object') ? currentTile.portKind : null;
+
+                    // If standing on an exit or any port, do not open radial; if radial already open, close it.
+                    if (currentTileType === TILE_TYPES.EXIT || currentTileType === TILE_TYPES.PORT || portKind === 'stairdown' || portKind === 'stairup') {
                         if (this.game.radialInventoryUI.open) try { this.game.radialInventoryUI.close(); } catch (err) {}
-                        // NOTE: do NOT set info._radialOpened here — we want the tap to reach the
-                        // normal handlers so exit/port logic can run.
+                        // Do not set info._radialOpened — allow tap to propagate so port/exit logic runs
                     } else {
                         try {
                             if (this.game.radialInventoryUI.open) {

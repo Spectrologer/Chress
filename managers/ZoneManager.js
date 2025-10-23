@@ -349,11 +349,19 @@ export class ZoneManager {
                             this.validateAndSetTile(this.game.grid, px, py + 1, TILE_TYPES.CISTERN);
                         }
                     } else if (from === 'hole' || from === 'pitfall') {
-                        // Represent holes/pitfalls on the surface as an up-stair object PORT
-                        // so it's visually clear how to return to the surface.
-                        if (!(this.game.grid[py][px] && typeof this.game.grid[py][px] === 'object' && this.game.grid[py][px].type === TILE_TYPES.PORT)) {
-                            // If validateAndSetTile would overwrite an object, use direct assignment for object port
+                        // Only convert a primitive PITFALL/hole into an object-style PORT
+                        // (stairup) if the current tile at that location is still a
+                        // primitive PITFALL. This prevents accidentally overwriting
+                        // unrelated tiles with an up-stair.
+                        const existing = this.game.grid[py] && this.game.grid[py][px];
+                        const isPrimitivePitfall = existing === TILE_TYPES.PITFALL || existing === TILE_TYPES.HOLE;
+                        if (isPrimitivePitfall) {
+                            // Convert to an object-style PORT to mark the emergence point
                             this.game.grid[py][px] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
+                            try { logger.debug && logger.debug(`Placed stairup at surface (${px},${py}) from ${from}`); } catch (e) {}
+                        } else {
+                            // Don't overwrite if something else occupies the tile
+                            try { logger.debug && logger.debug(`Did not place stairup at (${px},${py}) - existing tile prevents conversion.`); } catch (e) {}
                         }
                         // If an object-style port is already present, leave it as-is.
                     }

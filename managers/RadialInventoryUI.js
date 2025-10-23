@@ -50,8 +50,12 @@ export class RadialInventoryUI {
         // If player is standing on a stairdown, block opening radial so player must click to descend
         try {
             const tileUnder = this.game.grid[player.y] && this.game.grid[player.y][player.x];
-            if (tileUnder && tileUnder.type === TILE_TYPES.PORT && tileUnder.portKind === 'stairdown') {
-                // Don't open radial while standing on a stairdown — player must click to descend
+            // tileUnder can be a primitive TILE_TYPES.PORT number or an object { type: TILE_TYPES.PORT, portKind: 'stairdown' }
+            const tileType = (typeof tileUnder === 'object' && tileUnder?.type !== undefined) ? tileUnder.type : tileUnder;
+            const portKind = (tileUnder && typeof tileUnder === 'object') ? tileUnder.portKind : null;
+            // Don't open radial while standing on ANY port (stairdown/stairup/pitfall/cistern),
+            // because these should be actionable by tapping the player's tile.
+            if (tileType === TILE_TYPES.PORT || portKind === 'stairdown' || portKind === 'stairup') {
                 return; // Do not open radial
             }
         } catch (e) {}

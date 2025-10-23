@@ -75,6 +75,19 @@ export class GameStateManager {
         this.game.uiManager.updatePlayerPosition();
         this.game.uiManager.updateZoneDisplay();
         this.game.uiManager.updatePlayerStats();
+
+        // Ensure background music matches the new starting zone so any previous
+        // underground track doesn't continue playing after a respawn/reset.
+        try {
+            const dimension = this.game.player.currentZone && typeof this.game.player.currentZone.dimension === 'number'
+                ? this.game.player.currentZone.dimension
+                : 0;
+            if (this.game.soundManager && typeof this.game.soundManager.setMusicForZone === 'function') {
+                this.game.soundManager.setMusicForZone({ dimension });
+            } else if (typeof window !== 'undefined' && window.soundManager && typeof window.soundManager.setMusicForZone === 'function') {
+                window.soundManager.setMusicForZone({ dimension });
+            }
+        } catch (e) { /* non-fatal */ }
     }
 
     addTreasureToInventory() {

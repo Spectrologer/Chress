@@ -6,6 +6,7 @@ import { BombInteractionManager } from './BombInteractionManager.js';
 import { TerrainInteractionManager } from './TerrainInteractionManager.js';
 import { ZoneTransitionManager } from './ZoneTransitionManager.js';
 import { EnvironmentalInteractionManager } from './EnvironmentalInteractionManager.js';
+import { TILE_TYPES } from '../core/constants.js';
 
 export class InteractionManager {
     constructor(game, inputManager) {
@@ -136,6 +137,26 @@ export class InteractionManager {
         for (const handler of this.interactionHandlers) {
             if (handler(gridCoords, playerPos)) return true;
         }
+
+        // Fallback: if the player tapped their own tile and it's an exit/port,
+        // ensure we trigger the transition. This guards against cases where
+        // upstream handlers or input rounding prevented the immediate handling
+        // in the controller (touch/mouse edge-cases). Keep best-effort try/catch
+        // to avoid throwing during interaction processing.
+        try {
+            if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
+                const tileUnderPlayer = this.game.grid[playerPos.y]?.[playerPos.x];
+                const tileType = (typeof tileUnderPlayer === 'object' && tileUnderPlayer?.type !== undefined) ? tileUnderPlayer.type : tileUnderPlayer;
+                if (tileType === TILE_TYPES.PORT) {
+                    try { this.zoneManager.handlePortTransition(); } catch (e) {}
+                    return true;
+                }
+                if (tileType === TILE_TYPES.EXIT) {
+                    try { this.zoneManager.handleExitTap(playerPos.x, playerPos.y); } catch (e) {}
+                    return true;
+                }
+            }
+        } catch (e) {}
 
     // If the tapped tile contains a live enemy, handle it here.
         // - If the player is adjacent, perform an immediate attack.

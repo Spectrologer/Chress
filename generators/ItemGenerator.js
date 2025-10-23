@@ -97,7 +97,7 @@ export class ItemGenerator {
             { name: 'Bishop Spear', tile: { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
             { name: 'Horse Icon', tile: { type: TILE_TYPES.HORSE_ICON, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
             { name: 'Bomb', tile: TILE_TYPES.BOMB, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Heart', tile: TILE_TYPES.HEART, chance: 0.025, minLevel: 2, maxLevel: 4 },
+            { name: 'Heart', tile: TILE_TYPES.HEART, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any' },
             { name: 'Bow', tile: { type: TILE_TYPES.BOW, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
             { name: 'Shovel', tile: { type: TILE_TYPES.SHOVEL, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
             { name: 'Pitfall', tile: TILE_TYPES.PITFALL, chance: 0.03, minLevel: 2, maxLevel: 4, dimension: 0 }, // 3% chance on surface in Woods, Wilds, Frontier
