@@ -132,7 +132,8 @@ export class ItemService {
                         }
                     }
                     this.game.bombPlacementMode = true;
-                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap a tile to place a bomb', null, true, true);
+                    // Instructional overlay - no typewriter
+                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap a tile to place a bomb', null, true, true, false);
                 } else {
                     // Place bomb at player tile immediately when used from main inventory (legacy behavior)
                     item.quantity = (item.quantity || 1) - 1;
@@ -146,7 +147,8 @@ export class ItemService {
                 if (fromRadial || (this.game.player.radialInventory && this.game.player.radialInventory.indexOf(item) >= 0)) {
                     // Enter selection mode: player will tap a tile to choose the charge target
                     this.game.pendingCharge = { selectionType: 'bishop_spear', item };
-                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap a tile to confirm Bishop Charge', null, true, true);
+                    // Instructional overlay - no typewriter
+                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap a tile to confirm Bishop Charge', null, true, true, false);
                 } else {
                     this._dropFromEither('bishop_spear', { type: TILE_TYPES.BISHOP_SPEAR, uses: item.uses });
                 }
@@ -154,7 +156,8 @@ export class ItemService {
             case 'horse_icon':
                 if (fromRadial || (this.game.player.radialInventory && this.game.player.radialInventory.indexOf(item) >= 0)) {
                     this.game.pendingCharge = { selectionType: 'horse_icon', item };
-                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap a tile to confirm Knight Charge', null, true, true);
+                    // Instructional overlay - no typewriter
+                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap a tile to confirm Knight Charge', null, true, true, false);
                 } else {
                     this._dropFromEither('horse_icon', { type: TILE_TYPES.HORSE_ICON, uses: item.uses });
                 }
@@ -162,7 +165,8 @@ export class ItemService {
             case 'bow':
                 if (fromRadial || (this.game.player.radialInventory && this.game.player.radialInventory.indexOf(item) >= 0)) {
                     this.game.pendingCharge = { selectionType: 'bow', item };
-                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap an enemy tile to confirm Bow Shot', null, true, true);
+                    // Instructional overlay - no typewriter
+                    if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap an enemy tile to confirm Bow Shot', null, true, true, false);
                 } else {
                     this._dropFromEither('bow', { type: TILE_TYPES.BOW, uses: item.uses });
                 }
@@ -196,18 +200,21 @@ export class ItemService {
         const isAdjacent = dx <= 1 && dy <= 1 && !(dx === 0 && dy === 0);
 
         if (!isAdjacent) {
-            if (this.game.uiManager) this.game.uiManager.showOverlayMessage("You must dig in an adjacent tile!");
+            // Immediate feedback - skip typewriter
+            if (this.game.uiManager) this.game.uiManager.showOverlayMessage("You must dig in an adjacent tile!", null, false, false, false);
             return false;
         }
 
         if (this.game.grid[targetY][targetX] !== TILE_TYPES.FLOOR) {
-            if (this.game.uiManager) this.game.uiManager.showOverlayMessage("You can only dig on an empty floor tile.");
+            // Immediate feedback - skip typewriter
+            if (this.game.uiManager) this.game.uiManager.showOverlayMessage("You can only dig on an empty floor tile.", null, false, false, false);
             return false;
         }
 
         const enemiesAtPos = this.game.enemies ? this.game.enemies.filter(enemy => enemy.x === targetX && enemy.y === targetY) : [];
         if (enemiesAtPos.length > 0) {
-            if (this.game.uiManager) this.game.uiManager.showOverlayMessage("Cannot dig under an enemy!");
+            // Immediate feedback - skip typewriter
+            if (this.game.uiManager) this.game.uiManager.showOverlayMessage("Cannot dig under an enemy!", null, false, false, false);
             return false;
         }
 

@@ -197,24 +197,28 @@ export class Player {
     setCurrentZone(x, y, dimension = this.currentZone.dimension) {
         this.currentZone.x = x;
         this.currentZone.y = y;
-        this.currentZone.dimension = dimension;
-        // Attach depth for underground zones
-        if (dimension === 2) {
+        // Coerce dimension to a number to avoid cases where saved/loaded
+        // state supplies a string ("2"). Default to 0 if coercion fails.
+        this.currentZone.dimension = (typeof dimension === 'number') ? dimension : Number(dimension) || 0;
+        // Attach depth for underground zones (use coerced numeric value)
+        if (Number(this.currentZone.dimension) === 2) {
             // If an explicit depth exists on the zone object, use it; otherwise fallback to player's current depth
             this.currentZone.depth = this.currentZone.depth || (this.undergroundDepth || 1);
         } else {
             this.currentZone.depth = 0;
         }
-        this.markZoneVisited(x, y, dimension);
+        // Persist visited using numeric dimension
+        this.markZoneVisited(x, y, this.currentZone.dimension);
     }
 
     markZoneVisited(x, y, dimension) {
         // For underground zones, include depth in the saved key so different depths are tracked separately
-        if (dimension === 2) {
+        const numericDim = Number(dimension);
+        if (numericDim === 2) {
             const depth = this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1);
-            this.visitedZones.add(`${x},${y}:${dimension}:z-${depth}`);
+            this.visitedZones.add(`${x},${y}:${numericDim}:z-${depth}`);
         } else {
-            this.visitedZones.add(`${x},${y}:${dimension}`);
+            this.visitedZones.add(`${x},${y}:${numericDim}`);
         }
     }
 

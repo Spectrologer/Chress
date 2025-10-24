@@ -43,7 +43,8 @@ export class InteractionManager {
                 // Only auto-start a bishop charge if the item is present in the main inventory
                 if (bishopSpearCharge && this.game.player.inventory.indexOf(bishopSpearCharge.item) >= 0) {
                     this.game.pendingCharge = bishopSpearCharge;
-                    this.game.uiManager.showOverlayMessage('Tap again to confirm Bishop Charge', null, true, true);
+                    // Confirmation prompt - no typewriter
+                    this.game.uiManager.showOverlayMessage('Tap again to confirm Bishop Charge', null, true, true, false);
                     return true;
                 }
                 return false;
@@ -53,7 +54,8 @@ export class InteractionManager {
                 // Only auto-start a knight charge if the item is present in the main inventory
                 if (horseIconCharge && this.game.player.inventory.indexOf(horseIconCharge.item) >= 0) {
                     this.game.pendingCharge = horseIconCharge;
-                    this.game.uiManager.showOverlayMessage('Tap again to confirm Knight Charge', null, true, true);
+                    // Confirmation prompt - no typewriter
+                    this.game.uiManager.showOverlayMessage('Tap again to confirm Knight Charge', null, true, true, false);
                     return true;
                 }
                 return false;
@@ -63,7 +65,8 @@ export class InteractionManager {
                 // Only auto-start a bow shot if the bow is in the main inventory
                 if (bowShot && this.game.player.inventory.indexOf(bowShot.item) >= 0) {
                     this.game.pendingCharge = bowShot;
-                    this.game.uiManager.showOverlayMessage('Tap again to confirm Bow Shot', null, true, true);
+                    // Confirmation prompt - no typewriter
+                    this.game.uiManager.showOverlayMessage('Tap again to confirm Bow Shot', null, true, true, false);
                     return true;
                 }
                 return false;

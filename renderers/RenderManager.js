@@ -266,8 +266,11 @@ export class RenderManager {
         this.uiRenderer.drawChargeConfirmationIndicator();
 
         // --- Apply overlays and atmospheric effects last ---
-        const currentZone = this.game.player.getCurrentZone();
-        if (currentZone.dimension === 2) {
+    const currentZone = this.game.player.getCurrentZone();
+    // Coerce to number so comparisons work even if a dimension value was
+    // deserialized as a string in saved state. Treat only numeric 2 as
+    // underground.
+    if (Number(currentZone.dimension) === 2) {
             // 1. Draw the dark overlay on top of everything drawn so far
             this.ctx.save();
             this.ctx.fillStyle = 'rgba(0, 0, 0, 0.65)'; // 65% black overlay

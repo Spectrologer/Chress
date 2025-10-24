@@ -47,7 +47,8 @@ export function useInventoryItem(game, item, idx) {
         case 'shovel':
             game.shovelMode = true;
             game.activeShovel = item;
-            game.uiManager.showOverlayMessage('Click an adjacent tile to dig a hole.');
+            // Instructional overlay - don't use typewriter
+            game.uiManager.showOverlayMessage('Click an adjacent tile to dig a hole.', null, true, false, false);
             break;
         case 'heart':
             game.player.setHealth(game.player.getHealth() + 1);

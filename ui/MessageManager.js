@@ -83,14 +83,15 @@ export class MessageManager {
     }
 
     showOverlayMessageSilent(text, imageSrc) {
-        this.showMessage(text, imageSrc, true, false);
+        // Silent variant: do not run the typewriter effect
+        this.showMessage(text, imageSrc, true, false, false, false);
     }
 
-    showOverlayMessage(text, imageSrc, isPersistent = false, isLargeText = false) {
-        this.showMessage(text, imageSrc, true, isPersistent, isLargeText);
+    showOverlayMessage(text, imageSrc, isPersistent = false, isLargeText = false, useTypewriter = true) {
+        this.showMessage(text, imageSrc, true, isPersistent, isLargeText, useTypewriter);
     }
 
-    showMessage(text, imageSrc = null, useOverlay = false, isPersistent = false, isLargeText = false) {
+    showMessage(text, imageSrc = null, useOverlay = false, isPersistent = false, isLargeText = false, useTypewriter = true) {
         const messageElementId = useOverlay ? 'messageOverlay' : 'messageBox';
         const messageElement = document.getElementById(messageElementId);
         logger.log(`showMessage called with text: "${text}", imageSrc: ${imageSrc}, useOverlay: ${useOverlay}, isPersistent: ${isPersistent}, isLargeText: ${isLargeText}`);
@@ -133,7 +134,9 @@ export class MessageManager {
                 messageElement.classList.remove('large-text');
             }
 
+            // Add a marker class for sign-specific styling (centering)
             messageElement.classList.add('show');
+            messageElement.classList.add('sign-dialogue');
             logger.log("Message set and show class added");
 
             // Clear any existing typewriter interval before starting a new one
@@ -142,9 +145,10 @@ export class MessageManager {
                 this.currentTypewriterInterval = null;
             }
 
-            // Start typewriter animation for text nodes. After typing completes,
-            // auto-hide (if requested) will be scheduled. If typewriter is disabled
-            // (speed <= 0) this will call the onComplete immediately.
+            // Start typewriter animation for text nodes only when appropriate.
+            // After typing completes, auto-hide (if requested) will be scheduled.
+            // If typewriter is disabled (speed <= 0) or useTypewriter === false
+            // we skip the animation and immediately schedule auto-hide.
             const scheduleAutoHide = () => {
                 if (useOverlay && !isPersistent) {
                     // Start auto-hide 2s after typing completes
@@ -161,7 +165,23 @@ export class MessageManager {
                 }
             };
 
-            this._typewriter(messageElement, this.typewriterSpeed, scheduleAutoHide.bind(this));
+            // Only apply the typewriter if requested AND the message appears to be
+            // character/dialogue text (we detect this by presence of a .character-name
+            // element). Merchant/Barter windows use their own explicit typewriter
+            // calls elsewhere, so most confirmations/instructions will pass
+            // useTypewriter=false.
+            try {
+                const hasCharacterName = !!messageElement.querySelector && !!messageElement.querySelector('.character-name');
+                if (useTypewriter && hasCharacterName && this.typewriterSpeed > 0) {
+                    this._typewriter(messageElement, this.typewriterSpeed, scheduleAutoHide.bind(this));
+                } else {
+                    // No typewriter: ensure text is visible immediately, then schedule auto-hide
+                    scheduleAutoHide.bind(this)();
+                }
+            } catch (e) {
+                // Fallback to showing immediately
+                scheduleAutoHide.bind(this)();
+            }
         } else {
             logger.error(`${messageElementId} element not found`);
         }
@@ -671,6 +691,8 @@ export class MessageManager {
         const messageOverlay = document.getElementById('messageOverlay');
         if (messageOverlay && messageOverlay.classList.contains('show')) {
             messageOverlay.classList.remove('show');
+            // Remove any sign-specific styling when hiding the overlay
+            try { messageOverlay.classList.remove('sign-dialogue'); } catch (e) {}
             logger.log("Hiding overlay message.");
         }
         if (this.currentOverlayTimeout) {
@@ -692,11 +714,11 @@ export class MessageManager {
                 if (name && imageSrc) {
                 // NPC dialogue with name and portrait
                 messageElement.innerHTML = `
-                    <span class="character-name" style="font-size: 1.5em; margin-bottom: 10px;">${name}</span>
-                    <div class="barter-portrait-container large-portrait" style="margin: 0 auto 10px auto;">
+                    <span class="character-name" style="font-size: 1.5em; margin-bottom: 10px; display:block; text-align:center;">${name}</span>
+                    <div class="barter-portrait-container large-portrait" style="margin: 0 auto 10px auto; text-align:center;">
                         <img src="${imageSrc}" class="barter-portrait">
                     </div>
-                    <div class="dialogue-text">${text}</div>`;
+                    <div class="dialogue-text" style="text-align:center;">${text}</div>`;
             } else if (imageSrc) {
                 // Apply same bow-rotation logic for sign messages
                 let imgStyle = 'width: 128px; height: auto; max-height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;';
@@ -705,9 +727,9 @@ export class MessageManager {
                         imgStyle += ' transform: rotate(-90deg); transform-origin: center center;';
                     }
                 } catch (e) {}
-                messageElement.innerHTML = `<img src="${imageSrc}" style="${imgStyle}"><div class="dialogue-text">${text}</div>`;
+                messageElement.innerHTML = `<img src="${imageSrc}" style="${imgStyle}"><div class="dialogue-text" style="text-align:center;">${text}</div>`;
             } else {
-                messageElement.innerHTML = `<div class="dialogue-text">${text}</div>`;
+                messageElement.innerHTML = `<div class="dialogue-text" style="text-align:center;">${text}</div>`;
             }
 
             messageElement.classList.add('show');
@@ -719,14 +741,16 @@ export class MessageManager {
                 logger.log(`Sign message shown: ${text}`);
             }
 
-            // Start typewriter for sign messages as well (persistent signs won't auto-hide)
-            if (this.currentTypewriterInterval) {
-                clearInterval(this.currentTypewriterInterval);
-                this.currentTypewriterInterval = null;
-            }
-            // Start typewriter for sign messages as well (persistent signs won't auto-hide)
-            // Add lightweight instrumentation to trace any startup delay.
-            this._typewriter(messageElement, this.typewriterSpeed, () => {});
+            // Signs do not use the typewriter effect — show text immediately.
+            // Clear any existing typewriter so sign text isn't interleaved with
+            // a previous typing animation, but do NOT start a new one.
+            try {
+                if (this.currentTypewriterInterval) {
+                    try { clearInterval(this.currentTypewriterInterval); } catch (e) {}
+                    try { cancelAnimationFrame(this.currentTypewriterInterval); } catch (e) {}
+                    this.currentTypewriterInterval = null;
+                }
+            } catch (e) {}
         }
     }
 
@@ -848,7 +872,8 @@ export class MessageManager {
 
         // If coordinates were found in the message, show a temporary overlay message
         if (coordinates) {
-            this.showOverlayMessage(`Coordinates ${coordinates} added to log.`);
+            // Coordinate confirmation: show immediately without typewriter
+            this.showOverlayMessage(`Coordinates ${coordinates} added to log.`, null, false, false, false);
         }
     }
 

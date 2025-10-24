@@ -240,7 +240,8 @@ export class BarterWindow {
             // Use ItemManager helper to merge into existing stacks when possible
             this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: randomFood });
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for food.`);
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+            // Confirmation: do not use typewriter
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg, false, false, false);
         } else if (tradeData.id === 'rune_item') {
             this.game.player.addPoints(-tradeData.requiredAmount);
             const items = [
@@ -263,7 +264,8 @@ export class BarterWindow {
                 else if (inventoryItem.type === 'bishop_spear') awardedImg = 'assets/items/spear.png';
             }
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for an item.`);
-            this.game.uiManager.showOverlayMessage('Trade successful!', awardedImg);
+            // Confirmation: do not use typewriter
+            this.game.uiManager.showOverlayMessage('Trade successful!', awardedImg, false, false, false);
         } else if (tradeData.id === 'nib_item') {
             this.game.player.addPoints(-tradeData.requiredAmount);
             // Normalize to the canonical radial book type so ItemManager stacks it correctly
@@ -272,7 +274,8 @@ export class BarterWindow {
             // Choose overlay image based on awarded item
             const awardedImg = randomItem.type === 'book_of_time_travel' ? 'assets/items/book.png' : 'assets/items/horse.png';
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for a random trinket.`);
-            this.game.uiManager.showOverlayMessage('Trade successful!', awardedImg);
+            // Confirmation: do not use typewriter
+            this.game.uiManager.showOverlayMessage('Trade successful!', awardedImg, false, false, false);
 
         } else if (tradeData.id === 'mark_meat') { // Trade discoveries for meat
             // Update spent discoveries via the Player API
@@ -280,19 +283,22 @@ export class BarterWindow {
             this.game.player.setSpentDiscoveries(cur + tradeData.requiredAmount);
             this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: 'food/meat/beaf.png' });
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} Discoveries for meat.`);
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+            // Confirmation: do not use typewriter
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg, false, false, false);
         } else if (tradeData.id === 'axelotl_axe') { // Trade discoveries for axe ability
             const cur2 = this.game.player.getSpentDiscoveries();
             this.game.player.setSpentDiscoveries(cur2 + tradeData.requiredAmount);
             this.game.player.abilities.add('axe');
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} discoveries for axe ability.`);
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+            // Confirmation: do not use typewriter
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg, false, false, false);
         } else if (tradeData.id === 'gouge_hammer') { // Trade discoveries for hammer ability
             const cur3 = this.game.player.getSpentDiscoveries();
             this.game.player.setSpentDiscoveries(cur3 + tradeData.requiredAmount);
             this.game.player.abilities.add('hammer');
             this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} discoveries for hammer ability.`);
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+            // Confirmation: do not use typewriter
+            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg, false, false, false);
         } else {
             // Legacy/single trade logic
             const requiredItem = this.game.player.inventory.find(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));
@@ -312,7 +318,8 @@ export class BarterWindow {
 
                 // Directly add the received item using ItemManager helper so stacking rules apply
                 this.game.itemManager.addItemToInventory(this.game.player, { type: 'water' });
-                this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg);
+                // Confirmation: do not use typewriter
+                this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg, false, false, false);
             }
         }
 

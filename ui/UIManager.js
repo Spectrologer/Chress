@@ -111,8 +111,8 @@ export class UIManager {
         this.messageManager.showOverlayMessageSilent(text, imageSrc);
     }
 
-    showOverlayMessage(text, imageSrc, isPersistent = false, isLargeText = false) {
-        this.messageManager.showOverlayMessage(text, imageSrc, isPersistent, isLargeText);
+    showOverlayMessage(text, imageSrc, isPersistent = false, isLargeText = false, useTypewriter = true) {
+        this.messageManager.showOverlayMessage(text, imageSrc, isPersistent, isLargeText, useTypewriter);
     }
 
     showGameOverScreen() {

@@ -29,14 +29,29 @@ export class FogRenderer {
     updateAndDrawFog() {
         const currentZone = this.game.player.getCurrentZone();
 
-        const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
+    // Coerce dimension to number to tolerate loaded/serialized state that may
+    // have the value as a string (e.g. "2"). We only treat exact numeric 2
+    // as underground.
+    const isUnderground = Number(currentZone.dimension) === 2;
+    const depthSuffix = (isUnderground) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
         const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
         if (this.lastZoneKey !== zoneKey) {
             // Reset scroll when changing zone to avoid visible jumps
             this.offsetX = 0;
             this.offsetY = 0;
-            this._pattern = null;
+            // Don't unconditionally drop a prepared scaled canvas — the pattern
+            // can be recreated from it using the current rendering context.
+            // Clear only the per-zone key and attempt to recreate the pattern
+            // from an existing scaled canvas to avoid a frame where fog is
+            // missing after transitions.
             this.lastZoneKey = zoneKey;
+            if (this._scaledCanvas && !this._pattern) {
+                try {
+                    this._pattern = this.ctx.createPattern(this._scaledCanvas, 'repeat');
+                } catch (e) {
+                    this._pattern = null;
+                }
+            }
         }
 
         // Try to get the fog image from the texture manager
@@ -85,6 +100,19 @@ export class FogRenderer {
                 }
             } catch (e) {
                 this._scaledCanvas = null;
+                this._pattern = null;
+            }
+        }
+
+        // If for some reason a pattern wasn't created above but we still have
+        // a valid scaled canvas (e.g., pattern creation failed earlier or the
+        // scaled canvas was preserved across a zone switch), try again with
+        // the current canvas rendering context so the fog doesn't disappear
+        // after transitions.
+        if (!this._pattern && this._scaledCanvas) {
+            try {
+                this._pattern = this.ctx.createPattern(this._scaledCanvas, 'repeat');
+            } catch (e) {
                 this._pattern = null;
             }
         }
