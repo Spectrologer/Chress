@@ -18,24 +18,21 @@ export class ItemGenerator {
     }
 
     addLevelBasedFoodAndWater() {
-        let spawnChance = 0;
-
-        switch (this.zoneLevel) {
-            case 1: // Home
-                spawnChance = 0.40;
-                break;
-            case 2: // Woods
-                spawnChance = 0.25;
-                break;
-            case 3: // Wilds
-                spawnChance = 0.15;
-                break;
-            case 4: // Frontier
-                spawnChance = 0.05;
-                break;
+        if (this.dimension === 2) {
+            // Underground: Only aquamelon, 2% chance
+            if (Math.random() < 0.02) {
+                this._placeItemRandomly({ type: TILE_TYPES.FOOD, foodType: 'food/aquamelon.png' });
+            }
+            return;
         }
-
-        // Add the item if the random chance succeeds
+        // Surface/other: normal logic
+        let spawnChance = 0;
+        switch (this.zoneLevel) {
+            case 1: spawnChance = 0.40; break;
+            case 2: spawnChance = 0.25; break;
+            case 3: spawnChance = 0.15; break;
+            case 4: spawnChance = 0.05; break;
+        }
         if (Math.random() < spawnChance) {
             this.addRandomItem();
         }

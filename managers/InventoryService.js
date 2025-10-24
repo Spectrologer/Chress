@@ -22,6 +22,9 @@ export class InventoryService {
                     foodName = (item.foodType || '').split('/').pop().replace('.png', '');
                 }
                 const foodQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
+                if (item.foodType === 'food/aquamelon.png') {
+                    return `${foodName}${foodQuantity} - Restores 5 hunger, 5 thirst`;
+                }
                 return `${foodName}${foodQuantity} - Restores 10 hunger`;
             case 'water':
                 const waterQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
@@ -76,7 +79,12 @@ export class InventoryService {
             switch (item.type) {
                 case 'food':
                     item.quantity = (item.quantity || 1) - 1;
-                    this.game.player.restoreHunger(10);
+                    if (item.foodType === 'food/aquamelon.png') {
+                        this.game.player.restoreHunger(5);
+                        this.game.player.restoreThirst(5);
+                    } else {
+                        this.game.player.restoreHunger(10);
+                    }
                     if (item.quantity <= 0) this.game.player.inventory.splice(idx, 1);
                     break;
                 case 'water':

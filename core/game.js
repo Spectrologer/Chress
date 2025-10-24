@@ -221,5 +221,20 @@ class Game {
     
 // Initialize game when the page loads
 window.addEventListener('DOMContentLoaded', () => {
-    new Game();
+    const game = new Game();
+
+    // Debug: Press Q to spawn aquamelon at player position
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'q' || e.key === 'Q') {
+            if (game && game.player && game.zoneManager && game.zoneManager.game && game.zoneManager.game.grid) {
+                const { x, y } = game.player;
+                const grid = game.zoneManager.game.grid;
+                // Only place if floor
+                if (grid[y][x] === TILE_TYPES.FLOOR || (typeof grid[y][x] === 'object' && grid[y][x].type === TILE_TYPES.FLOOR)) {
+                    grid[y][x] = { type: TILE_TYPES.FOOD, foodType: 'food/aquamelon.png' };
+                    if (game.render) game.render();
+                }
+            }
+        }
+    });
 });

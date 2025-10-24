@@ -15,6 +15,9 @@ export function getItemTooltipText(item) {
                 foodName = (item.foodType || '').split('/').pop().replace('.png', '');
             }
             const foodQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
+            if (item.foodType === 'food/aquamelon.png') {
+                return `${foodName}${foodQuantity} - Restores 5 hunger, 5 thirst`;
+            }
             return `${foodName}${foodQuantity} - Restores 10 hunger`;
         }
         case 'water': {
