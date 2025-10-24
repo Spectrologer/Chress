@@ -12,7 +12,7 @@ beforeEach(() => {
       <div class="start-overlay-title">
         <div class="start-overlay-main">Chress</div>
       </div>
-      <button id="startButton">start game</button>
+  <button id="startButton">New Game</button>
       <button id="continueButton">continue</button>
     </div>
   `;
