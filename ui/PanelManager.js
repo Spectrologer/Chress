@@ -24,6 +24,7 @@ export class PanelManager {
 
     showConfigOverlay() {
         if (!this.configOverlay) return;
+        this.configOpenTime = Date.now();
         // ensure the overlay inputs reflect current player stats
         try {
             const music = this.configOverlay.querySelector('#music-toggle');
@@ -142,6 +143,7 @@ export class PanelManager {
 
     showRecordsOverlay() {
         if (!this.recordsOverlay) return;
+        this.recordsOpenTime = Date.now();
         // Populate record values from localStorage
         try {
             const rz = this.recordsOverlay.querySelector('#record-zones');
@@ -209,6 +211,8 @@ export class PanelManager {
         }
         this._recordsGlobalHandler = (ev) => {
             try {
+                const now = Date.now();
+                if (this.recordsOpenTime && now - this.recordsOpenTime < 300) return; // Skip if just opened
                 const inner = this.recordsOverlay.querySelector('.stats-panel');
                 if (!inner || !inner.contains(ev.target)) {
                     try { ev.preventDefault(); } catch (e) {}
@@ -233,6 +237,7 @@ export class PanelManager {
             try { document.removeEventListener('pointerdown', this._recordsGlobalHandler, true); } catch (e) {}
             this._recordsGlobalHandler = null;
         }
+        this.recordsOpenTime = undefined;
     }
 
     hideConfigOverlay() {
@@ -264,6 +269,7 @@ export class PanelManager {
             try { document.removeEventListener('pointerdown', this._configGlobalHandler, true); } catch (e) {}
             this._configGlobalHandler = null;
         }
+        this.configOpenTime = undefined;
     }
 
     setupBarterHandlers() {

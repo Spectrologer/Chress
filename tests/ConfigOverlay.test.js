@@ -39,7 +39,7 @@ describe('Config overlay interactions', () => {
     panelManager = new PanelManager(mockGame);
   });
 
-  test('clicking outside config overlay closes it and reopens stats panel', () => {
+  test('clicking outside config overlay closes it and reopens stats panel', async () => {
     // Open stats, then open config
     panelManager.showStatsPanel();
     expect(document.getElementById('statsPanelOverlay').classList.contains('show')).toBe(true);
@@ -56,7 +56,9 @@ describe('Config overlay interactions', () => {
     expect(document.getElementById('configOverlay').classList.contains('show')).toBe(true);
     expect(document.getElementById('statsPanelOverlay').classList.contains('show')).toBe(true);
 
-    // Simulate a pointerdown somewhere outside the config inner panel (document)
+    // Wait for the blocker to clear (300ms + a bit more), then simulate a pointerdown somewhere outside the config inner panel
+    await new Promise(resolve => setTimeout(resolve, 350));
+
     const ev = new MouseEvent('pointerdown', { bubbles: true });
     document.dispatchEvent(ev);
 
