@@ -19,6 +19,11 @@ export class BaseEnemy {
         this.liftOffsetY = 0;
         this.liftFrames = 0;
         this.smokeAnimations = [];
+
+        // Add a small scaling factor for lizardy to prevent clipping
+        if (this.enemyType === 'lizardy') {
+            this.scale = 0.9; // Render at 90% of original size
+        }
     }
 
     getPoints() {

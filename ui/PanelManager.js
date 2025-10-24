@@ -24,10 +24,6 @@ export class PanelManager {
 
     showConfigOverlay() {
         if (!this.configOverlay) return;
-        // Hide the stats panel while the config overlay is shown so returning works reliably
-        try { this.hideStatsPanel(); } catch (e) {}
-        // Ensure stats panel is not visible immediately (tests and headless envs expect this)
-        try { if (this.statsPanelOverlay) this.statsPanelOverlay.classList.remove('show'); } catch (e) {}
         // ensure the overlay inputs reflect current player stats
         try {
             const music = this.configOverlay.querySelector('#music-toggle');
@@ -70,24 +66,48 @@ export class PanelManager {
         }
         this._configGlobalHandler = (ev) => {
             try {
+                // Skip if clicking the config button in stats panel
+                if (ev.target?.id === 'stats-config-button') return;
+                const now = Date.now();
+                if (this.configOpenTime && now - this.configOpenTime < 300) return; // Skip if just opened
                 const inner = this.configOverlay.querySelector('.stats-panel');
                 if (!inner || !inner.contains(ev.target)) {
-                    // Prevent other handlers (including overlay click handlers) from
-                    // seeing this event and immediately closing the stats panel again.
                     try { ev.preventDefault(); } catch (e) {}
                     try { ev.stopPropagation(); } catch (e) {}
-
                     this.hideConfigOverlay();
-                    try { this.showStatsPanel(); } catch (err) {}
                 }
             } catch (err) {
                 try { ev.preventDefault(); } catch (e) {}
                 try { ev.stopPropagation(); } catch (e) {}
                 this.hideConfigOverlay();
-                try { this.showStatsPanel(); } catch (err2) {}
             }
         };
         try { document.addEventListener('pointerdown', this._configGlobalHandler, true); } catch (e) {}
+
+        // Install a short-lived capturing blocker (300ms) to absorb any immediate
+        // pointer events that follow opening the panel. This prevents the same
+        // interaction from activating buttons (like the config button) that were
+        // just rendered under the pointer when the panel opened.
+        try {
+            const captureHandler = (ev) => {
+                try { if (ev && typeof ev.preventDefault === 'function') ev.preventDefault(); } catch (err) {}
+            };
+
+            const removeAll = () => {
+                try { document.removeEventListener('pointerdown', captureHandler, true); } catch (err) {}
+                try { document.removeEventListener('pointerup', captureHandler, true); } catch (err) {}
+                try { document.removeEventListener('click', captureHandler, true); } catch (err) {}
+                try { document.removeEventListener('mousedown', captureHandler, true); } catch (err) {}
+            };
+
+            try { document.addEventListener('pointerdown', captureHandler, true); } catch (err) {}
+            try { document.addEventListener('pointerup', captureHandler, true); } catch (err) {}
+            try { document.addEventListener('click', captureHandler, true); } catch (err) {}
+            try { document.removeEventListener('mousedown', captureHandler, true); } catch (err) {}
+
+            // Remove after a short delay so normal interactions resume
+            setTimeout(removeAll, 300);
+        } catch (e) {}
 
         // Attach handlers once
         if (!this.configHandlersAttached) {
@@ -103,21 +123,6 @@ export class PanelManager {
                 });
             }
 
-            // Close overlay when clicking outside of the inner panel and return to stats panel
-            this.configOverlay.addEventListener('click', (e) => {
-                try {
-                    const inner = this.configOverlay.querySelector('.stats-panel');
-                    if (!inner || !inner.contains(e.target)) {
-                        this.hideConfigOverlay();
-                        try { this.showStatsPanel(); } catch (err) {}
-                    }
-                } catch (err) {
-                    // Fallback: if any error, hide and return
-                    this.hideConfigOverlay();
-                    try { this.showStatsPanel(); } catch (err2) {}
-                }
-            });
-
             this.configHandlersAttached = true;
             // Attach back button handler (top-left) to return to stats panel
             try {
@@ -127,7 +132,8 @@ export class PanelManager {
                         if (e && typeof e.preventDefault === 'function') e.preventDefault();
                         if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
                         this.hideConfigOverlay();
-                        try { this.showStatsPanel(); } catch (err) {}
+                        e.preventDefault();
+                        e.stopPropagation();
                     });
                 }
             } catch (e) {}
@@ -149,9 +155,33 @@ export class PanelManager {
             if (rc) rc.textContent = String(combo);
         } catch (e) {}
 
-        // hide stats panel while showing records
-        try { this.hideStatsPanel(); } catch (e) {}
         this.recordsOverlay.classList.add('show');
+
+        // Install a short-lived capturing blocker (300ms) to absorb any immediate
+        // pointer events that follow opening the panel. This prevents the same
+        // interaction from activating buttons (like the records button) that were
+        // just rendered under the pointer when the panel opened.
+        try {
+            const captureHandler = (ev) => {
+                try { if (ev && typeof ev.preventDefault === 'function') ev.preventDefault(); } catch (err) {}
+                try { if (ev && typeof ev.stopPropagation === 'function') ev.stopPropagation(); } catch (err) {}
+            };
+
+            const removeAll = () => {
+                try { document.removeEventListener('pointerdown', captureHandler, true); } catch (err) {}
+                try { document.removeEventListener('pointerup', captureHandler, true); } catch (err) {}
+                try { document.removeEventListener('click', captureHandler, true); } catch (err) {}
+                try { document.removeEventListener('mousedown', captureHandler, true); } catch (err) {}
+            };
+
+            try { document.addEventListener('pointerdown', captureHandler, true); } catch (err) {}
+            try { document.addEventListener('pointerup', captureHandler, true); } catch (err) {}
+            try { document.addEventListener('click', captureHandler, true); } catch (err) {}
+            try { document.addEventListener('mousedown', captureHandler, true); } catch (err) {}
+
+            // Remove after a short delay so normal interactions resume
+            setTimeout(removeAll, 300);
+        } catch (e) {}
 
         // Close records overlay when clicking outside
         if (!this._recordsHandlerAttached) {
@@ -164,11 +194,9 @@ export class PanelManager {
                     const inner = this.recordsOverlay.querySelector('.stats-panel');
                     if (!inner || !inner.contains(e.target)) {
                         this.hideRecordsOverlay();
-                        try { this.showStatsPanel(); } catch (err) {}
                     }
                 } catch (err) {
                     this.hideRecordsOverlay();
-                    try { this.showStatsPanel(); } catch (err2) {}
                 }
             });
             this._recordsHandlerAttached = true;
@@ -186,16 +214,16 @@ export class PanelManager {
                     try { ev.preventDefault(); } catch (e) {}
                     try { ev.stopPropagation(); } catch (e) {}
                     this.hideRecordsOverlay();
-                    try { this.showStatsPanel(); } catch (err) {}
                 }
             } catch (err) {
                 try { ev.preventDefault(); } catch (e) {}
                 try { ev.stopPropagation(); } catch (e) {}
                 this.hideRecordsOverlay();
-                try { this.showStatsPanel(); } catch (err2) {}
             }
         };
-        try { document.addEventListener('pointerdown', this._recordsGlobalHandler, true); } catch (e) {}
+        setTimeout(() => {
+            try { document.addEventListener('pointerdown', this._recordsGlobalHandler, true); } catch (e) {}
+        }, 0);
     }
 
     hideRecordsOverlay() {

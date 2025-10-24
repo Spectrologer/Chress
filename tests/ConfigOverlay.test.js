@@ -54,7 +54,7 @@ describe('Config overlay interactions', () => {
     panelManager.showConfigOverlay();
 
     expect(document.getElementById('configOverlay').classList.contains('show')).toBe(true);
-    expect(document.getElementById('statsPanelOverlay').classList.contains('show')).toBe(false);
+    expect(document.getElementById('statsPanelOverlay').classList.contains('show')).toBe(true);
 
     // Simulate a pointerdown somewhere outside the config inner panel (document)
     const ev = new MouseEvent('pointerdown', { bubbles: true });
