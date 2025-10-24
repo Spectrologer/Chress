@@ -80,10 +80,16 @@ export class ZoneTransitionManager {
                 targetDim = 2;
                 portType = 'underground';
                 this.game.portTransitionData = { from: 'cistern', x: playerPos.x, y: playerPos.y };
+                // Ensure player's underground depth is initialized to 1 (first underground level)
+                this.game.player.undergroundDepth = 1;
+                this.game.player.currentZone.depth = 1;
             } else if (isHole) {
                 targetDim = 2;
                 portType = 'underground';
                 this.game.portTransitionData = { from: 'hole', x: playerPos.x, y: playerPos.y };
+                // Ensure player's underground depth is initialized to 1 (first underground level)
+                this.game.player.undergroundDepth = 1;
+                this.game.player.currentZone.depth = 1;
             } else if (this.game.grid[playerPos.y]?.[playerPos.x] && this.game.grid[playerPos.y][playerPos.x].portKind === 'stairdown') {
                 // Descend via stairdown into a deeper underground level
                 // We represent deeper underground layers by keeping dimension=2 and tracking depth via player.undergroundDepth
