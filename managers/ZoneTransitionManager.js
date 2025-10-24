@@ -91,6 +91,7 @@ export class ZoneTransitionManager {
                 portType = 'underground';
                 // Mark transition as from stairdown so the new zone can place a stairup at emergence point
                 this.game.portTransitionData = { from: 'stairdown', x: playerPos.x, y: playerPos.y };
+                try { logger && logger.debug && logger.debug(`Port transition set: stairdown at (${playerPos.x},${playerPos.y}), prevDepth=${prevDepth} -> newDepth=${this.game.player.undergroundDepth}`); } catch (e) {}
                 // Increase player's underground depth (surface==0 -> first underground == 1)
                 const prevDepth = Number.isInteger(this.game.player.undergroundDepth) ? this.game.player.undergroundDepth : 0;
                 this.game.player.undergroundDepth = prevDepth + 1;
@@ -103,6 +104,7 @@ export class ZoneTransitionManager {
                     targetDim = 2;
                     portType = 'underground';
                     this.game.portTransitionData = { from: 'stairup', x: playerPos.x, y: playerPos.y };
+                        try { logger && logger.debug && logger.debug(`Port transition set: stairup at (${playerPos.x},${playerPos.y}), newDepth=${this.game.player.undergroundDepth}`); } catch (e) {}
                     this.game.player.undergroundDepth = prevDepth - 1;
                     this.game.player.currentZone.depth = this.game.player.undergroundDepth;
                 } else {
@@ -111,6 +113,7 @@ export class ZoneTransitionManager {
                     portType = this.game.player.currentZone.portType;
                     // Mark transition so the surface emergence will get the matching stairdown
                     this.game.portTransitionData = { from: 'stairup', x: playerPos.x, y: playerPos.y };
+                        try { logger && logger.debug && logger.debug(`Port transition set: stairup->surface at (${playerPos.x},${playerPos.y})`); } catch (e) {}
                     this.game.player.undergroundDepth = 0;
                     this.game.player.currentZone.depth = 0;
                 }

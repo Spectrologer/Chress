@@ -45,12 +45,15 @@ export function handleUnderground(zoneGen, zoneX, zoneY, zoneConnections, foodAs
             // Represent surface emergence as an up-stair object port so the renderer
             // draws the upstair doodad (more intuitive than a primitive hole tile).
             zoneGen.grid[zoneGen.game.portTransitionData.y][zoneGen.game.portTransitionData.x] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
+            try { logger && logger.debug && logger.debug(`undergroundHandler: placed stairup at (${zoneGen.game.portTransitionData.x},${zoneGen.game.portTransitionData.y}) from ${zoneGen.game.portTransitionData.from}`); } catch (e) {}
         } else if (isFromStairDown) {
             // Player descended using a stairdown: place a stairup at the emergence point
             zoneGen.grid[zoneGen.game.portTransitionData.y][zoneGen.game.portTransitionData.x] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
+            try { logger && logger.debug && logger.debug(`undergroundHandler: placed stairup at (${zoneGen.game.portTransitionData.x},${zoneGen.game.portTransitionData.y}) from stairdown`); } catch (e) {}
         } else if (isFromStairUp) {
             // Player ascended using a stairup: place a stairdown at the emergence point
             zoneGen.grid[zoneGen.game.portTransitionData.y][zoneGen.game.portTransitionData.x] = { type: TILE_TYPES.PORT, portKind: 'stairdown' };
+            try { logger && logger.debug && logger.debug(`undergroundHandler: placed stairdown at (${zoneGen.game.portTransitionData.x},${zoneGen.game.portTransitionData.y}) from stairup`); } catch (e) {}
         }
     }
 
@@ -59,14 +62,28 @@ export function handleUnderground(zoneGen, zoneX, zoneY, zoneConnections, foodAs
     try {
         if (!isHomeZone && Math.random() < 0.15) {
             // Try to place the stairdown on a random valid floor tile
+            // Avoid placing on the emergence port coords (if this zone was created
+            // due to a port transition) and avoid overwriting an existing
+            // object-style PORT which may contain metadata like portKind.
+            const avoidX = zoneGen.game?.portTransitionData?.x;
+            const avoidY = zoneGen.game?.portTransitionData?.y;
+
             for (let attempts = 0; attempts < 50; attempts++) {
                 const sx = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
                 const sy = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
+                // Skip the emergence location if present to avoid accidental overwrite
+                if (avoidX !== undefined && avoidY !== undefined && sx === avoidX && sy === avoidY) {
+                    try { logger.debug && logger.debug(`Skipping random stairdown placement at emergence coords (${sx},${sy})`); } catch (e) {}
+                    continue;
+                }
                 const tile = zoneGen.grid[sy][sx];
                 const isFloor = tile === TILE_TYPES.FLOOR || (tile && tile.type === TILE_TYPES.FLOOR);
                 const isExit = tile === TILE_TYPES.EXIT;
-                if (isFloor && !isExit) {
+                const isObjectPort = tile && typeof tile === 'object' && tile.type === TILE_TYPES.PORT;
+                // Only place on a plain floor tile, not on exit or existing object PORTs
+                if (isFloor && !isExit && !isObjectPort) {
                     zoneGen.grid[sy][sx] = { type: TILE_TYPES.PORT, portKind: 'stairdown' };
+                    try { logger.debug && logger.debug(`Placed random stairdown at (${sx},${sy})`); } catch (e) {}
                     break;
                 }
             }

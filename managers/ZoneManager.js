@@ -54,6 +54,8 @@ export class ZoneManager {
         // Generate or load the new zone
         this.game.generateZone();
 
+    try { logger && logger.debug && logger.debug(`Transition complete: lastExitSide=${exitSide}, portTransitionData=${JSON.stringify(this.game.portTransitionData)}`); } catch (e) {}
+
         // Position player based on which exit they used
         this.positionPlayerAfterTransition(exitSide, exitX, exitY);
 
@@ -107,7 +109,8 @@ export class ZoneManager {
         this.game.gameStateManager.saveGameState();
 
         // Now that the transition is complete, clear the one-time transition data
-        this.game.portTransitionData = null;
+    try { logger && logger.debug && logger.debug(`Clearing portTransitionData (was=${JSON.stringify(this.game.portTransitionData)})`); } catch (e) {}
+    this.game.portTransitionData = null;
     }
 
     positionPlayerAfterTransition(exitSide, exitX, exitY) {
