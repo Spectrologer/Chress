@@ -11,6 +11,9 @@ export class MiniMap {
         this.lastX = 0;
         this.lastY = 0;
         this.isDragging = false;
+        this.dragMoved = false;
+        // highlights keyed by "x,y,dimension" -> shape string ("circle","triangle","star","diamond")
+        this.highlights = {};
     }
 
     setupEvents() {
@@ -33,6 +36,7 @@ export class MiniMap {
         // Pointer-based panning for expanded map canvas
         this.expandedCanvas.addEventListener('pointerdown', (e) => {
             this.isDragging = true;
+            this.dragMoved = false;
             this.lastX = e.clientX;
             this.lastY = e.clientY;
             try { e.target.setPointerCapture?.(e.pointerId); } catch (err) {}
@@ -40,6 +44,11 @@ export class MiniMap {
 
         this.expandedCanvas.addEventListener('pointermove', (e) => {
             if (this.isDragging && e.pointerType) {
+                // If the pointer moved enough, mark as a drag so we don't interpret it as a click
+                const dx = Math.abs(this.lastX - e.clientX);
+                const dy = Math.abs(this.lastY - e.clientY);
+                if (dx > 2 || dy > 2) this.dragMoved = true;
+
                 // Invert pan direction for intuitive map movement
                 this.panX -= (this.lastX - e.clientX) / 90;
                 this.panY -= (this.lastY - e.clientY) / 90;
@@ -50,6 +59,14 @@ export class MiniMap {
         });
 
         this.expandedCanvas.addEventListener('pointerup', (e) => {
+            // Stop propagation so overlay doesn't immediately retract
+            e.stopPropagation();
+
+            // If this interaction was a drag, don't treat it as a click highlight
+            if (!this.dragMoved) {
+                try { this.handleExpandedClick(e); } catch (err) {}
+            }
+
             this.isDragging = false;
             try { e.target.releasePointerCapture?.(e.pointerId); } catch (err) {}
         });
@@ -75,6 +92,46 @@ export class MiniMap {
         this.expandedCanvas.width = size;
         this.expandedCanvas.height = size;
         this.renderZoneMap({ctx: this.expandedCtx, offsetX: this.panX, offsetY: this.panY, isExpanded: true, canvasSize: size});
+    }
+
+    // Handle clicks on the expanded minimap to cycle highlight shapes
+    handleExpandedClick(e) {
+        if (!this.expandedCanvas) return;
+        const rect = this.expandedCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const mapSize = this.expandedCanvas.width; // renderExpanded keeps canvas square
+        const visibleZoneCount = 15;
+        const zoneSize = Math.max(30, Math.min(64, Math.floor(mapSize / visibleZoneCount)));
+        const centerX = mapSize / 2;
+        const centerY = mapSize / 2;
+
+        const relX = x - centerX;
+        const relY = y - centerY;
+        const dx = Math.round(relX / zoneSize);
+        const dy = Math.round(relY / zoneSize);
+
+        const currentZone = this.game.player.getCurrentZone();
+        const zoneX = currentZone.x + dx - Math.round(this.panX);
+        const zoneY = currentZone.y + dy - Math.round(this.panY);
+        const hk = `${zoneX},${zoneY},${currentZone.dimension}`;
+
+    const shapes = ['circle', 'triangle', 'star', 'diamond', 'heart', 'club', null];
+        const current = this.highlights?.[hk] ?? null;
+        let idx = shapes.indexOf(current);
+        if (idx === -1) idx = shapes.length - 1; // treat unknown as blank
+        const next = shapes[(idx + 1) % shapes.length];
+        if (next === null) {
+            // remove highlight
+            delete this.highlights[hk];
+        } else {
+            this.highlights[hk] = next;
+        }
+
+        // Re-render both expanded and small minimap so highlights appear immediately
+        try { this.renderExpanded(); } catch (err) {}
+        try { this.renderZoneMap(); } catch (err) {}
     }
 
     retract() {
@@ -224,6 +281,43 @@ export class MiniMap {
                     ctx.textBaseline = 'middle';
                     // Draw the king symbol in the center of the tile
                     ctx.fillText('♔', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
+                }
+
+                // Draw highlight marker if present (only meaningful for expanded map but harmless otherwise)
+                try {
+                    const hk = `${zoneX},${zoneY},${currentZone.dimension}`;
+                    const shape = this.highlights?.[hk];
+                    if (shape) {
+                        // Map shape names to text glyphs and colors for crisp scaling
+                        const glyphs = { circle: '●', triangle: '▲', star: '★', diamond: '◆', heart: '♥', club: '♣' };
+                        const colorMap = {
+                            // darker/muted, higher contrast against light gray/parchment
+                            circle: '#8B0000',   // deep red
+                            triangle: '#B45309', // dark orange/brown
+                            star: '#B87333',     // bronze/gold-brown
+                            diamond: '#5B21B6',  // deep purple
+                            heart: '#9D174D',    // deep magenta
+                            club: '#0F766E'      // dark teal
+                        };
+                        const glyph = glyphs[shape] || null;
+                        if (glyph) {
+                            // Draw a subtle dark outline then fill so glyphs remain legible on light backgrounds
+                            ctx.save();
+                            ctx.font = `bold ${zoneSize * 0.9}px serif`;
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            // Stroke for contrast
+                            ctx.lineWidth = Math.max(1, Math.floor(zoneSize * 0.06));
+                            ctx.strokeStyle = 'rgba(0,0,0,0.65)';
+                            try { ctx.strokeText(glyph, mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1); } catch (err) {}
+                            // Fill with the shape color
+                            ctx.fillStyle = colorMap[shape] || '#111111';
+                            try { ctx.fillText(glyph, mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1); } catch (err) {}
+                            ctx.restore();
+                        }
+                    }
+                } catch (err) {
+                    // ignore rendering errors for highlights
                 }
 
 

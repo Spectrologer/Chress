@@ -1,5 +1,6 @@
 import { Sign } from './Sign.js';
 import { FOOD_ASSETS, TILE_TYPES } from '../core/constants.js';
+import { fitTextToContainer } from './TextFitter.js';
 
 export class BarterWindow {
     constructor(game) {
@@ -45,7 +46,9 @@ export class BarterWindow {
 
         const { name, portrait, message, trades } = npcData;
 
-        this.barterNPCName.textContent = name;
+    this.barterNPCName.textContent = name;
+    // Ensure the NPC name fits within its container on mobile devices
+    try { fitTextToContainer(this.barterNPCName, { minFontSize: 12 }); } catch (e) {}
         this.barterNPCPortrait.src = portrait;
         this.barterNPCPortrait.alt = `Portrait of ${name}`;
 
@@ -60,6 +63,8 @@ export class BarterWindow {
     this.barterNPCMessage.innerHTML = `<div class="dialogue-text">${message}</div>`;
     // Ensure the element has the dialogue class for styling parity
     this.barterNPCMessage.classList.add('dialogue-text');
+    // Fit dialogue text to the message container (exclude lists which may scroll)
+    try { fitTextToContainer(this.barterNPCMessage, { childSelector: '.dialogue-text', minFontSize: 12 }); } catch (e) {}
         try {
             // Clear any existing typewriter running on the message manager
             const mm = this.game.uiManager && this.game.uiManager.messageManager;

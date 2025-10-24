@@ -1,4 +1,5 @@
 import logger from '../core/logger.js';
+import { fitTextToContainer } from './TextFitter.js';
 
 export class MessageManager {
     constructor(game) {
@@ -121,6 +122,9 @@ export class MessageManager {
             } else {
                 messageElement.innerHTML = `<div class="dialogue-text">${displayText}</div>`;
             }
+
+            // Ensure dialogue text scales to fit in the overlay/panel on small devices
+            try { fitTextToContainer(messageElement, { childSelector: '.dialogue-text', minFontSize: 12 }); } catch (e) {}
 
             // Add or remove the large-text class
             if (isLargeText) {

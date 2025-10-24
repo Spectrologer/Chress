@@ -2,3 +2,4 @@
 - [x] Modify movement logic to ensure enemies move if they can
 - [x] Test changes to ensure enemies are forced to move when possible
 - [x] Handle special cases (trapped enemies, etc.)
+- [x] Remove furling/slide animations from stats & config overlays (instant show/hide)

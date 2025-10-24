@@ -124,7 +124,6 @@ export class BaseEnemy {
         // List of generally walkable tile types for any character
         const walkableTypes = [
             TILE_TYPES.FLOOR,
-            TILE_TYPES.EXIT,
             TILE_TYPES.WATER,
             TILE_TYPES.FOOD,
             TILE_TYPES.AXE,

@@ -1,123 +1,73 @@
-# Chress - Project Overview
+## Chress — Project Overview
 
-## 1. Game Concept
+Chress is a browser-based, 2D top-down, turn-based exploration/combat game with procedural zone generation and a modular codebase. It runs in modern browsers and is optimized for mobile and desktop; the UI is responsive and favors a compact, tile/grid-first presentation.
 
-Chress is a mobile browser-based, 2D grid-based, top-down survival roguelike game designed for portrait orientation and touch-first interaction. Optimized primarily for smartphones and tablets, the game runs directly in web browsers without downloads. Players control a character named "CHALK" in a procedurally generated world, managing health, hunger, and thirst while navigating zones, gathering resources, and engaging in turn-based combat with chess-inspired enemies. Key design considerations include minimal UI for small screens, swipe/tap controls, and a distinctive parchment-and-ink aesthetic with sound effects and Sentry analytics integration.
+This document summarizes the repository layout, how to run and test the project locally, and where to look for key systems when making changes.
 
-**Core Mechanics:**
+### Quick summary
 
-- **World:** The world is an infinite grid of "zones." Each zone is a 9x9 grid of tiles.
-- **Survival:** The player must manage Health, Hunger, and Thirst.
-- **Exploration:** The player moves from zone to zone by reaching the edge of the grid. A minimap helps track visited zones, with regions generated procedurally, there is an underground that also expands infinitely.
-- **Interaction:** The player can interact with the environment using items (e.g., an axe to chop shrubs, a hammer to break rocks, a bomb to destroy walls).
-- **Combat:** Combat is turn-based. The player attacks enemies by moving into their tile. Enemies have unique movement and attack patterns inspired by chess pieces (Rook, Bishop, Knight), with special actions and pathfinding.
-- **Items & Inventory:** The player has a limited inventory to carry tools, weapons, consumables (food, water), and special items like map notes.
-- **NPCs & Structures:** Non-player characters exist for bartering items (e.g., trading meat for water). Statues provide info on enemies, houses/wells add flavor.
-- **Progression:** The game state (player stats, inventory, visited zones) is saved automatically, allowing for persistent play sessions. Console commands for debugging.
-- **Audio & Tracking:** Basic sound management and user consent tracking for Sentry analytics.
+- Gameplay: turn-based tile movement, zone-to-zone exploration, item interactions, and chess-inspired enemy behaviors.
+- Platform: Browser (HTML5 canvas). Works on mobile and desktop; no native build required.
+- How to run locally:
 
-## 2. File Structure & Responsibilities
+```powershell
+npm install
+npm start    # launches the dev server (live-server)
+npm test     # runs Jest tests
+```
 
-The project is structured into modules, each handling a specific domain of the game's logic. The `Game` class acts as the central orchestrator. Key updates include modular rendering (split into specialized tile renderers), enhanced AI, sound integration, and connection management for consistent zone transitions.
+Note: `npm start` is an alias for the dev server command (`live-server`) configured in `package.json`.
 
-### Core & Entrypoint
+### What changed since older docs
 
-- `index.html`: The main HTML file. Defines UI structure, game canvas, stat card, inventory, overlays (messages, game over, bartering, stats panel).
-- `styles.css`: Main stylesheet for "frayed parchment" medieval theme, mobile-first layout.
-- `game.js`: Central `Game` class (extends base). Manages game loop, state, delegates to managers. Handles primary game logic like zone transitions, enemy turns, interactions.
-- `consoleCommands.js`: Utility functions for debugging, e.g., finding spawn positions for testing.
+- Project no longer assumes specific third-party runtime libraries (Sentry or RiveScript) as required dependencies — they were not present in runtime `dependencies` at the time of this update. Dev tooling (Jest, Babel, live-server) remains in `devDependencies`.
+- The codebase is organized into clear service/manager modules and a `core/ServiceContainer.js` that helps wire services for easier testing.
 
-### Initialization & State Management
+### High-level file / folder map (where to look)
 
-- `GameInitializer.js`: Startup sequence: canvas setup, asset loading via `TextureManager`, resize handling, initialization of game or loaded state.
-- `GameStateManager.js`: Persists game state in localStorage (player stats, inventory, zones).
-- `ConsentManager.js`: Manages user consent for tracking with Sentry. Shows banner, handles opt-in/out.
+- Root: `index.html`, `styles.css`, `game.js`, `package.json`, `PROJECT_OVERVIEW.md` (this file).
+- Core (`core/`): initialization, `ServiceContainer.js`, `GameInitializer.js`, `GameStateManager.js`, `Game.js`, and central wiring.
+- Managers (`managers/`): `InputManager.js`, `ActionManager.js`, `CombatManager.js`, `InventoryManager.js`, `ZoneManager.js`, `ConnectionManager.js`, `RenderManager.js`, `UIManager.js`, etc. — each encapsulates gameplay responsibilities.
+- Entities: `entities/` and `enemy/` contain `Player.js`, `Enemy.js`, `BaseEnemy.js`, and all specialized enemy behavior files.
+- Rendering: `renderers/` plus tile renderer classes (`BaseTileRenderer.js`, `ItemTileRenderer.js`, `StructureTileRenderer.js`, `WallTileRenderer.js`, `RendererUtils.js`) and texture loading (`TextureLoader.js`, `TextureManager.js`).
+- Generators: `generators/` (zone/item/feature/structure generators and helpers).
+- Assets: `assets/`, `Sounds/`, `fonts/` — images, audio and font assets used by the game.
+- Tests: `tests/` — Jest test files covering managers and generators.
 
-### Gameplay & Logic Managers
+### How the core loop typically flows
 
-- `InputManager.js`: Handles player input (keyboard, mouse, touch). Translates to movements, pathfinding via A\* algorithm.
-- `ActionManager.js`: Special actions: charging spears/horses, bombing, explosion logic.
-- `CombatManager.js`: Combat logic: enemy AI movements, attacks, collisions, point animations.
-- `InteractionManager.js`: Non-movement interactions: signs, NPCs, statues, item pickups, zone gestures.
-- `InventoryManager.js`: Inventory system: add/use/drop items, UI rendering (slots, tooltips).
-- `ZoneManager.js`: Zone generation, transitions, treasure spawning.
-- `ConnectionManager.js`: Manages deterministic connections between zones for consistent world traversal.
-- `MultiTileHandler.js`: Utilities for multi-tile structures like houses, wells.
+1. Input (player keyboard/tap) is handled by `InputManager` and translated to movement/actions.
+2. Player movement/action triggers game logic in managers (`ActionManager`, `InteractionManager`, `CombatManager`).
+3. Zone transitions are handled by `ZoneManager` and `ConnectionManager` for consistent world traversal.
+4. Enemy AI runs via enemy-specific modules and `CombatManager`.
+5. `RenderManager` and renderer modules draw the current state to the canvas; UI overlays are managed by `UIManager`.
 
-### UI & Rendering
+### Tests & development
 
-- `RenderManager.js`: Main rendering engine: grid, player, enemies, effects (explosions, smoke, charges, points).
-- `UIManager.js`: UI elements: stats bars, overlays (messages, regions, game over, barter, statue info, stats panel), minimap/inventory delegation.
-- `MiniMap.js`: Expands/retracts zone map display.
-- `BarterWindow.js`: Barter UI: offers, confirmations.
-- `StatueInfoWindow.js`: Info windows for statue interactions.
-- `PlayerStatsUI.js`: Detailed stats panel rendering.
-- `RendererUtils.js`: Utilities for rotated/flipped images on canvas.
+- Jest is configured for testing (`devDependencies` contain Jest + Babel transforms). Run `npm test` to execute Jest tests found in `tests/`.
+- The repository contains automated unit-style tests for many managers and generators. If you add new ES module files that need testing, ensure Babel/Jest transforms cover them.
 
-### Rendering Subsystem (Modular Tile Rendering)
+### Useful commands
 
-- `BaseTileRenderer.js`: Base renderer with common methods (image checks, exits, floors, water, dirt textures).
-- `ItemTileRenderer.js`: Renders items (food, axes, spears, bombs, etc.).
-- `StructureTileRenderer.js`: Structures (houses, wells, statues, dead trees, enemy tiles).
-- `WallTileRenderer.js`: Walls (rocks, grass, interior walls).
-- `TileRenderer.js`: Inherits from BaseTileRenderer, configures canvas.
-- `TextureDetector.js`: Determines appropriate textures based on grid neighbors.
-- `TextureLoader.js` & `TextureManager.js`: Asset loading and management for images.
+```powershell
+npm install      # install dev dependencies
+npm start        # dev server (opens index.html)
+npm test         # run Jest tests
+```
 
-### Game Entities & Data
+### Contribution & reporting issues
 
-- `Player.js`: Player entity: position, stats (health/hunger/thirst), inventory, movements, animations.
-- `Enemy.js`: Inherits from `BaseEnemy` in enemy/ folder. Defines enemy logic, attacks.
-- `Sign.js`: Manages sign/NPC dialogues, procedural messages, statue data.
-- `constants.js`: Game constants: grid size, tile types, asset paths.
-- `logger.js`: Logging utilities.
+- For bugs and feature requests, open an issue in the repository: https://github.com/Spectrologer/Chress/issues
+- The project license is ISC (see `package.json`).
 
-### AI & Movement (enemy/ folder)
+### Next steps / suggestions
 
-- `BaseEnemy.js`: Base enemy class with health, position, AI.
-- `EnemyMovement.js`: Shared movement algorithms.
-- `EnemyAttack.js`, `EnemyChargeBehaviors.js`, `EnemyLineOfSight.js`, `EnemyPathfinding.js`, `EnemySpecialActions.js`: Specialized enemy behaviors.
+- Add a minimal `README.md` showing the same run/test instructions and a short demo screenshot (helpful for contributors).
+- Consider adding a lightweight CI (GitHub Actions) that installs devDependencies and runs `npm test` on PRs.
+- If you plan to use external tracking or dialogue libraries (Sentry, RiveScript), add and document them explicitly in `package.json` and the README.
 
-### Generators (generators/ folder)
+If you'd like, I can also add a short `README.md` with the run/test steps and a one-line contribution guide, or add a CI workflow to run tests automatically on PRs.
 
-- `ZoneGenerator.js`: Generates zone layouts, walls, exits, treasures.
-- `ItemGenerator.js`: Item generation.
-- `FeatureGenerator.js`, `PathGenerator.js`, `StructureGenerator.js`, `ZoneStateManager.js`: Procedural generators.
+---
 
-### Utilities
-
-- `SoundManager.js`: Loads and plays sounds.
-- `TextureDetector.js` (also in main): Texture logic for tiles.
-
-### Tests (tests/ folder)
-
-- `CombatManager.test.js`, `InventoryManager.test.js`, `Player.test.js`, `ZoneManager.test.js`, `InputManager.test.js`, `ZoneStateManager.test.js`, `ItemGenerator.test.js`, `constants.test.js`: Comprehensive Jest test suite with 78 passed tests covering core game mechanics.
-- Babel configuration (`.babelrc`) for ES module support in Jest testing framework with `@babel/preset-env`.
-
-## 3. Folder Structure Quick Reference
-
-- **Root Files**: index.html, styles.css, game.js, constants.js, logger.js, package.json, babel.config.cjs, gitignore - Core setup and configs.
-- **Main Modules**: GameInitializer.js, GameStateManager.js, InputManager.js, ActionManager.js, CombatManager.js, InteractionManager.js, InventoryManager.js, ZoneManager.js, ConnectionManager.js, RenderManager.js, UIManager.js, Player.js, Enemy.js, Sign.js, etc. - Business logic categorized.
-- **Rendering**: BaseTileRenderer.js, ItemTileRenderer.js, StructureTileRenderer.js, WallTileRenderer.js, TileRenderer.js, RendererUtils.js, TextureLoader.js, TextureManager.js, TextureDetector.js - Modular rendering system.
-- **UI**: MiniMap.js, BarterWindow.js, StatueInfoWindow.js, PlayerStatsUI.js - Overlay windows.
-- **Enemy AI** (enemy/): BaseEnemy.js, EnemyMovement.js, EnemyAttack.js, EnemyChargeBehaviors.js, EnemyPathfinding.js, etc. - Enemy behaviors.
-- **Generators** (generators/): ZoneGenerator.js, ItemGenerator.js, FeatureGenerator.js, StructureGenerator.js, etc. - Procedural content.
-- **Tests** (tests/): \*.test.js files for Jest testing.
-- **Assets** (assets/, Sounds/, fonts/): Subdivided into fauna, items, floors, fx (effects), etc. Image assets for all visuals.
-- **Config**: todo_example/ - Example todo, can be ignored.
-
-Total Files: ~90+ including assets. Entry: game.js. Dependencies: Sentry for tracking, Rivescript for dialogues.
-
-## 4. Core Interaction Flow (Example: Player Moves)
-
-1. **Input:** `InputManager` detects keypress/tap, handles pathfinding.
-2. **Action:** Calls `player.move()`; checks walkability/attacks.
-3. **Transition:** If exit, `Game.js` calls `zoneManager.transitionToZone()` with `ConnectionManager` for consistent exits.
-4. **Enemy Turn:** `combatManager.handleEnemyMovements()`; enemies use pathfinding/AI.
-5. **UI Update:** `uiManager.updatePlayerStats()` for bars, positions.
-6. **Render:** `RenderManager` draws grid/Player via specialized renderers.
-
-## 5. Notes on recent refactor
-
-- A lightweight DI-style ServiceContainer was added at `core/ServiceContainer.js` to centralize creation and wiring of managers and services. This reduces the responsibilities of `core/Game.js` and makes it easier to test and swap services later.
-- To add a new manager/service, instantiate and attach it in `ServiceContainer.createCoreServices()` and pass `this.game` to constructors that need the game context.
+Last update: October 24, 2025 — updated to reflect current repository layout and manifest.

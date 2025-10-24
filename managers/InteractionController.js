@@ -584,7 +584,17 @@ export class InteractionController {
             });
         }
 
-        if (this.game.justEnteredZone) {
+        // If justEnteredZone is set, it may be a numeric counter (n free turns)
+        // or a boolean true flag from older code. Consume one free turn and
+        // skip enemy turns; otherwise start enemy turns as normal.
+        // Prefer a numeric counter if present; otherwise fall back to boolean.
+        if (typeof this.game.justEnteredZoneCount === 'number' && this.game.justEnteredZoneCount > 0) {
+            this.game.justEnteredZoneCount = Math.max(0, this.game.justEnteredZoneCount - 1);
+            if (this.game.justEnteredZoneCount === 0) {
+                this.game.justEnteredZone = false;
+                delete this.game.justEnteredZoneCount;
+            }
+        } else if (this.game.justEnteredZone) {
             this.game.justEnteredZone = false;
         } else {
             this.game.startEnemyTurns();

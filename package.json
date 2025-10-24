@@ -16,6 +16,7 @@
   "type": "module",
   "main": "index.html",
   "scripts": {
+    "start": "npm run dev",
     "dev": "live-server --port=3000 --host=0.0.0.0 --cors --open=/ --spa",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -23,7 +24,6 @@
   },
   "dependencies": {
     "@sentry/browser": "^10.19.0",
-    "rivescript": "^2.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",

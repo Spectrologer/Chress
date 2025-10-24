@@ -2179,83 +2179,30 @@ h1 {
     opacity: 1;
 }
 
-/* Stats panel furl-down animation: gently unfurl the panel downward into view */
-@keyframes stats-furl-down {
-    0% {
-        transform: translateY(-120%) rotateX(22deg) translateZ(0);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0) rotateX(0deg) translateZ(0);
-        opacity: 1;
-    }
-}
+/* Animations for stats/config panels removed — replaced with no-op versions
+   so panels show/hide instantly. These placeholders keep selectors stable for
+   any remaining code that may reference the classes. */
 
-/* Apply the furl animation to the inner stats panel when showing */
+@keyframes stats-furl-down { 0% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
+@keyframes stats-furl-up { 0% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
+
 .stats-panel-furling {
-    animation: stats-furl-down 520ms cubic-bezier(.22,.12,.28,1) forwards;
-    transform-origin: 50% 0%; /* pivot from top edge */
-    will-change: transform, opacity;
-    pointer-events: none; /* disable interactions while animating */
-}
-
-/* Closing furl (furl-up) to animate the stats panel curling away upwards */
-@keyframes stats-furl-up {
-    0% {
-        transform: translateY(0) rotateX(0deg) translateZ(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(-120%) rotateX(22deg) translateZ(0);
-        opacity: 0;
-    }
+    /* No animation — present to avoid layout shifts when code toggles this class */
+    animation: none !important;
+    pointer-events: auto;
 }
 
 .stats-panel-furling-up {
-    animation: stats-furl-up 520ms cubic-bezier(.22,.12,.28,1) forwards;
-    transform-origin: 50% 0%;
-    will-change: transform, opacity;
-    pointer-events: none;
+    animation: none !important;
+    pointer-events: auto;
 }
 
-/* Config panel: slide in from the left when opened, slide back out when closed.
-   These animations are applied to the inner .stats-panel element inside the
-   #configOverlay container. We keep them separate from the vertical furl
-   animations used by other overlays. */
-@keyframes slide-in-left {
-    0% {
-        transform: translateX(-110%);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
+@keyframes slide-in-left { 0% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
+@keyframes slide-out-left { 0% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
 
-@keyframes slide-out-left {
-    0% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(-110%);
-        opacity: 0;
-    }
-}
-
-/* Apply when the panel is entering */
-.stats-panel.slide-in-left {
-    animation: slide-in-left 320ms cubic-bezier(.22,.12,.28,1) forwards;
-    will-change: transform, opacity;
-    pointer-events: none; /* disable interactions during entry */
-}
-
-/* Apply when the panel is exiting */
-.stats-panel.slide-out-left {
-    animation: slide-out-left 240ms cubic-bezier(.22,.12,.28,1) forwards;
-    will-change: transform, opacity;
-    pointer-events: none; /* ensure no interaction while leaving */
+.stats-panel.slide-in-left, .stats-panel.slide-out-left {
+    animation: none !important;
+    pointer-events: auto;
 }
 
 /* Make overlay transparent: do not tint the player card behind it. */

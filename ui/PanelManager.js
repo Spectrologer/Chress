@@ -38,23 +38,15 @@ export class PanelManager {
         // Make overlay visible
         this.configOverlay.classList.add('show');
 
-        // Animate inner panel sliding in from the left
+        // Show inner panel immediately (animations removed)
         try {
             const inner = this.configOverlay.querySelector('.stats-panel');
             if (inner) {
-                // Ensure any exit class is removed, then trigger entry
-                inner.classList.remove('slide-out-left');
-                // Force a reflow to ensure the class removal is processed
-                // before adding the entry class (helps with rapid toggles).
-                void inner.offsetWidth;
-                inner.classList.add('slide-in-left');
-                // Remove the entry class after animation completes to allow pointer events
-                const onAnimEnd = (ev) => {
-                    if (ev && ev.target !== inner) return;
-                    inner.classList.remove('slide-in-left');
-                    inner.removeEventListener('animationend', onAnimEnd);
-                };
-                inner.addEventListener('animationend', onAnimEnd);
+                // Remove any animation-related classes so the panel appears instantly
+                inner.classList.remove('slide-out-left', 'slide-in-left', 'stats-panel-furling', 'stats-panel-furling-up');
+                // Clear any inline transform/opacities left from previous animations
+                try { inner.style.transform = ''; } catch (e) {}
+                try { inner.style.opacity = ''; } catch (e) {}
             }
         } catch (e) {}
 
@@ -244,24 +236,15 @@ export class PanelManager {
         if (!this.configOverlay) return;
         try {
             const inner = this.configOverlay.querySelector('.stats-panel');
+            // Hide immediately without running exit animations
+            try { this.configOverlay.classList.remove('show'); } catch (e) {}
             if (inner) {
-                // Start slide-out animation, then hide overlay when complete
-                inner.classList.remove('slide-in-left');
-                // Force reflow
-                void inner.offsetWidth;
-                inner.classList.add('slide-out-left');
-                const onEnd = (ev) => {
-                    if (ev && ev.target !== inner) return;
-                    try { this.configOverlay.classList.remove('show'); } catch (e) {}
-                    inner.classList.remove('slide-out-left');
-                    inner.removeEventListener('animationend', onEnd);
-                };
-                inner.addEventListener('animationend', onEnd);
-            } else {
-                this.configOverlay.classList.remove('show');
+                inner.classList.remove('slide-in-left', 'slide-out-left', 'stats-panel-furling', 'stats-panel-furling-up');
+                try { inner.style.transform = ''; } catch (e) {}
+                try { inner.style.opacity = ''; } catch (e) {}
             }
         } catch (e) {
-            this.configOverlay.classList.remove('show');
+            try { this.configOverlay.classList.remove('show'); } catch (e) {}
         }
         // Ensure overlay is not left visible in headless/test environments
         try { this.configOverlay.classList.remove('show'); } catch (e) {}
@@ -343,21 +326,14 @@ export class PanelManager {
             // Pathing toggle removed (no-op)
             this.setupAudioToggles();
 
-            // Make overlay visible and animate inner panel unfurling from top
+            // Make overlay visible immediately (furl animations removed)
             this.statsPanelOverlay.classList.add('show');
             try {
                 const inner = this.statsPanelOverlay.querySelector('.stats-panel');
                 if (inner) {
-                    // Remove any closing class and force reflow before adding entry class
-                    inner.classList.remove('stats-panel-furling-up');
-                    void inner.offsetWidth;
-                    inner.classList.add('stats-panel-furling');
-                    const onEnd = (ev) => {
-                        if (ev && ev.target !== inner) return;
-                        inner.classList.remove('stats-panel-furling');
-                        inner.removeEventListener('animationend', onEnd);
-                    };
-                    inner.addEventListener('animationend', onEnd);
+                    inner.classList.remove('stats-panel-furling-up', 'stats-panel-furling', 'slide-in-left', 'slide-out-left');
+                    try { inner.style.transform = ''; } catch (e) {}
+                    try { inner.style.opacity = ''; } catch (e) {}
                 }
             } catch (e) {}
             // Install a short-lived capturing blocker (300ms) to absorb any immediate
@@ -460,19 +436,13 @@ export class PanelManager {
             try {
                 const inner = this.statsPanelOverlay.querySelector('.stats-panel');
                 if (inner) {
-                    // Start closing furl animation, then hide overlay when complete
-                    inner.classList.remove('stats-panel-furling');
-                    void inner.offsetWidth;
-                    inner.classList.add('stats-panel-furling-up');
-                    const onEnd = (ev) => {
-                        if (ev && ev.target !== inner) return;
-                        try { this.statsPanelOverlay.classList.remove('show'); } catch (e) {}
-                        inner.classList.remove('stats-panel-furling-up');
-                        inner.removeEventListener('animationend', onEnd);
-                    };
-                    inner.addEventListener('animationend', onEnd);
+                    // Hide immediately without exit animation
+                    try { this.statsPanelOverlay.classList.remove('show'); } catch (e) {}
+                    inner.classList.remove('stats-panel-furling', 'stats-panel-furling-up', 'slide-in-left', 'slide-out-left');
+                    try { inner.style.transform = ''; } catch (e) {}
+                    try { inner.style.opacity = ''; } catch (e) {}
                 } else {
-                    this.statsPanelOverlay.classList.remove('show');
+                    try { this.statsPanelOverlay.classList.remove('show'); } catch (e) {}
                 }
             } catch (e) {
                 this.statsPanelOverlay.classList.remove('show');

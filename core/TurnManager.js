@@ -7,6 +7,25 @@ export class TurnManager {
     }
 
     startEnemyTurns() {
+        // If the player just entered a zone, give them one free turn: skip enemy turns
+        // and clear the one-time flag so enemies resume next turn.
+        // Prefer an explicit numeric counter (justEnteredZoneCount) if present.
+        if (typeof this.game.justEnteredZoneCount === 'number' && this.game.justEnteredZoneCount > 0) {
+            this.game.justEnteredZoneCount = Math.max(0, this.game.justEnteredZoneCount - 1);
+            if (this.game.justEnteredZoneCount === 0) {
+                // Clear boolean flag for compatibility
+                this.game.justEnteredZone = false;
+                delete this.game.justEnteredZoneCount;
+            }
+            return;
+        }
+
+        // Fallback to boolean justEnteredZone for backward compatibility
+        if (this.game.justEnteredZone) {
+            this.game.justEnteredZone = false;
+            return;
+        }
+
         // If the player just attacked and an attack has delay, enemy turns will
         // be started by the attack resolution elsewhere.
         if (this.game.playerJustAttacked) return;
