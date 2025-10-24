@@ -37,6 +37,13 @@ export class GameStateManager {
     }
 
     resetGame() {
+        // Preserve config settings
+        const prevConfig = {
+            musicEnabled: this.game.player.stats && typeof this.game.player.stats.musicEnabled !== 'undefined' ? this.game.player.stats.musicEnabled : true,
+            sfxEnabled: this.game.player.stats && typeof this.game.player.stats.sfxEnabled !== 'undefined' ? this.game.player.stats.sfxEnabled : true,
+            autoPathWithEnemies: this.game.player.stats && typeof this.game.player.stats.autoPathWithEnemies !== 'undefined' ? this.game.player.stats.autoPathWithEnemies : false
+        };
+
         // Clear saved state since game over should reset everything
         this.clearSavedState();
 
@@ -70,6 +77,12 @@ export class GameStateManager {
         // Set initial region
         const initialZone = this.game.player.getCurrentZone();
         this.game.currentRegion = this.game.uiManager.generateRegionName(initialZone.x, initialZone.y);
+
+        // Restore config settings
+        if (!this.game.player.stats) this.game.player.stats = {};
+        this.game.player.stats.musicEnabled = prevConfig.musicEnabled;
+        this.game.player.stats.sfxEnabled = prevConfig.sfxEnabled;
+        this.game.player.stats.autoPathWithEnemies = prevConfig.autoPathWithEnemies;
 
         // Update UI
         this.game.uiManager.updatePlayerPosition();

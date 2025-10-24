@@ -14,14 +14,20 @@ export class FeatureGenerator {
     }
 
     addRandomFeatures(zoneLevel, zoneX, zoneY, isUnderground = false) {
-        // Underground zones have fewer features and no mazes
+
+        // Underground: allow maze generation with higher probability, using rock walls
         if (isUnderground) {
-            this.addUndergroundFeatures(zoneLevel, zoneX, zoneY);
-            return;
+            if (this.shouldGenerateMaze(zoneLevel, true)) {
+                this.generateMaze();
+                return;
+            } else {
+                this.addUndergroundFeatures(zoneLevel, zoneX, zoneY);
+                return;
+            }
         }
 
-        // Check for maze zone generation
-        if (this.shouldGenerateMaze(zoneLevel)) {
+        // Surface: original maze logic
+        if (this.shouldGenerateMaze(zoneLevel, false)) {
             this.generateMaze();
             return;
         }
@@ -104,8 +110,13 @@ export class FeatureGenerator {
 
 
 
-    shouldGenerateMaze(zoneLevel) {
+    shouldGenerateMaze(zoneLevel, isUnderground = false) {
         // Home = 0%, Woods = 5%, Wilds = 8%, Frontier = 10%
+        // Underground: much higher probability (e.g. 40%)
+        if (isUnderground) {
+            // You can tune this value for more/less mazes underground
+            return Math.random() < 0.4;
+        }
         let probability = 0;
         switch (zoneLevel) {
             case 2: // Woods
@@ -186,8 +197,7 @@ export class FeatureGenerator {
             if (pos) {
                 const { x, y } = pos;
                 // Increase chance of rock (hard obstruction) with depth
-                const rockProb = Math.min(0.95, 0.5 * this.depthMultiplier);
-                this.grid[y][x] = Math.random() < rockProb ? TILE_TYPES.ROCK : TILE_TYPES.SHRUBBERY;
+                this.grid[y][x] = TILE_TYPES.ROCK;
             }
         }
     }

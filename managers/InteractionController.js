@@ -392,6 +392,11 @@ export class InteractionController {
     handleTap(screenX, screenY) {
         if (this.tapTimeout) { clearTimeout(this.tapTimeout); this.tapTimeout = null; }
         const gridCoords = this.convertScreenToGrid(screenX, screenY);
+        // Hide sign message on tap if displaying, similar to key handlers
+        if (this.game.displayingMessageForSign) {
+            Sign.hideMessageForSign(this.game);
+            return; // Consume the tap to hide the message
+        }
         try { if (this.game && this.game.renderManager && typeof this.game.renderManager.showTapFeedback === 'function') this.game.renderManager.showTapFeedback(gridCoords.x, gridCoords.y); } catch (e) {}
 
     const clickedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
