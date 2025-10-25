@@ -1,4 +1,6 @@
 import logger from './logger.js';
+import { eventBus } from './EventBus.js';
+import { EventTypes } from './EventTypes.js';
 
 export class SoundManager {
     constructor() {
@@ -9,6 +11,19 @@ export class SoundManager {
         this.currentMusicVolume = 0.0625; // default music volume (reduced)
         this.currentMusicTrack = null; // track file path intended to be playing
         this.loadSounds();
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Listen to music change events
+        eventBus.on(EventTypes.MUSIC_CHANGE, (data) => {
+            this.setMusicForZone({ dimension: data.dimension });
+        });
+
+        // Listen to zone changed events to update music
+        eventBus.on(EventTypes.ZONE_CHANGED, (data) => {
+            this.setMusicForZone({ dimension: data.dimension });
+        });
     }
 
     async loadSounds() {

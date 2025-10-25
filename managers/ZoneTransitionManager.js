@@ -1,7 +1,7 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { MultiTileHandler } from '../renderers/MultiTileHandler.js';
 import { getExitDirection } from '../core/utils/transitionUtils.js';
-import audioService from '../utils/AudioService.js';
+import audioManager from '../utils/AudioManager.js';
 
 export class ZoneTransitionManager {
     constructor(game, inputManager) {
@@ -64,7 +64,7 @@ export class ZoneTransitionManager {
             if (this.game.uiManager && typeof this.game.uiManager.showOverlayMessage === 'function') {
                 this.game.uiManager.showOverlayMessage(`You must survive ${turnsRemaining} more ${turnText} to escape!`);
             }
-            audioService.playSound('error', { game: this.game });
+            audioManager.playSound('error', { game: this.game });
             return;
         }
 

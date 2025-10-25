@@ -1,7 +1,7 @@
 import { Sign } from './Sign.js';
 import { FOOD_ASSETS, TILE_TYPES } from '../core/constants.js';
 import { fitTextToContainer } from './TextFitter.js';
-import audioService from '../utils/AudioService.js';
+import audioManager from '../utils/AudioManager.js';
 
 export class BarterWindow {
     constructor(game) {
@@ -324,7 +324,7 @@ export class BarterWindow {
             }
         }
 
-    audioService.playSound('point', { game: this.game });
+    audioManager.playSound('point', { game: this.game });
         this.game.updatePlayerStats();
         this.game.uiManager.updateZoneDisplay(); // Refresh discoveries count
         this.hideBarterWindow();

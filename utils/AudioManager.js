@@ -1,10 +1,10 @@
 /**
- * AudioService.js - Centralized audio playback wrapper
+ * AudioManager.js - Centralized audio playback wrapper
  *
  * Provides a clean API for playing sounds throughout the application,
  * handling all fallback logic internally to avoid repetitive defensive code.
  *
- * This service tries multiple fallback strategies in order:
+ * This manager tries multiple fallback strategies in order:
  * 1. game.soundManager (when available, e.g., in game context)
  * 2. window.soundManager (global fallback)
  * 3. Silent failure (graceful degradation)
@@ -12,7 +12,7 @@
 
 import logger from '../core/logger.js';
 
-class AudioService {
+class AudioManager {
     constructor() {
         this.game = null; // Will be set by GameInitializer or can be passed to methods
     }
@@ -34,7 +34,7 @@ class AudioService {
      */
     playSound(soundName, options = {}) {
         if (!soundName) {
-            logger.warn('[AudioService] playSound called without soundName');
+            logger.warn('[AudioManager] playSound called without soundName');
             return false;
         }
 
@@ -59,13 +59,13 @@ class AudioService {
 
             // Strategy 3: Silent failure - log in debug mode only
             if (logger.debug) {
-                logger.debug(`[AudioService] No sound manager available for sound: ${soundName}`);
+                logger.debug(`[AudioManager] No sound manager available for sound: ${soundName}`);
             }
             return false;
         } catch (error) {
             // Catch any errors from sound playback to prevent crashes
             if (logger.debug) {
-                logger.debug(`[AudioService] Error playing sound ${soundName}:`, error);
+                logger.debug(`[AudioManager] Error playing sound ${soundName}:`, error);
             }
             return false;
         }
@@ -108,5 +108,5 @@ class AudioService {
 }
 
 // Export a singleton instance
-const audioService = new AudioService();
-export default audioService;
+const audioManager = new AudioManager();
+export default audioManager;

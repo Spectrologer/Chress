@@ -6,39 +6,39 @@ export class Sign {
     // Area definitions for messages
     static messageSets = {
         home: [
-            "Tap to move.",
-            "Tap adjacent objects to interact.",
-            "Find food to survive.",
-            "The Club has lots of good info.",
-            "Double tap to exit quickly."
+            "Tap to move. Tap adjacent tiles to interact.",
+            "Manage your hunger and thirst to survive.",
+            "Find aguamelin to restore both hunger and thirst.",
+            "The Club has tutorials and helpful NPCs.",
+            "Double tap to quickly exit zones."
         ],
         woods: [
-            "Hammer for grey.",
-            "Beware the Knight. It moves in L-shapes.",
-            "Some foes leap.",
-            "The woods are deep.",
-            "Axe is for wood, not stone."
+            "Hammer breaks rocks. Axe clears grass and shrubbery.",
+            "The Lizord moves in L-shapes like a knight.",
+            "Watch your resources. Food and water are vital.",
+            "Some enemies charge in straight lines.",
+            "Defeating enemies earns you points."
         ],
         wilds: [
-            "Seek the Spear. It strikes from afar.",
-            "Hold down items in the inventory to disable them.",
-            "Bombs can clear paths... or send you flying.",
-            "Trade with the locals. They have their needs.",
-            "The rules are different out here."
+            "Tap yourself to open the radial menu for weapons.",
+            "Bombs blast walls and can launch you to new areas.",
+            "Trade discoveries with NPCs for useful items.",
+            "The bow fires arrows orthogonally. The spear charges diagonally.",
+            "Items stack in your 6-slot inventory."
         ],
         frontier: [
-            "Beware the Rook. It charges in straight lines.",
-            "The world frays at the edges.",
-            "Turn back.",
-            "The end is not the end.",
-            "Read between the lines."
+            "Weapons have limited charges. Use them carefully.",
+            "The shovel digs holes into the underground.",
+            "Map notes reveal distant unexplored zones.",
+            "The further you go, the harder it gets.",
+            "Some say there's no true end to the frontier."
         ],
         canyon: [
-            "Echoes of the past.",
-            "Ancient secrets.",
-            "The walls are watching.",
-            "Whose footsteps?",
-            "The wind whispers."
+            "The underground holds dangers and secrets.",
+            "Watch for cracks in the floor.",
+            "The hammer helps, but won't fix everything.",
+            "Tread carefully in the depths.",
+            "What you seek may not be what you find."
         ]
     };
 

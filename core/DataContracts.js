@@ -1,4 +1,6 @@
-import { TILE_SCHEMAS, ANIMATION_SCHEMAS, ENTITY_SCHEMAS, COMPONENT_TYPES } from './constants.js';
+import { ANIMATION_SCHEMAS } from './constants.js';
+import { eventBus } from './EventBus.js';
+import { EventTypes } from './EventTypes.js';
 
 /**
  * Data Contract Validation System
@@ -188,142 +190,6 @@ export class DataContractValidator {
 }
 
 /**
- * ECS Component Factory
- * Creates properly structured components
- */
-export class ComponentFactory {
-
-    /**
-     * Creates a position component
-     * @param {number} x - X coordinate
-     * @param {number} y - Y coordinate
-     * @returns {object} - Position component
-     */
-    static createPosition(x, y) {
-        return { x, y, type: COMPONENT_TYPES.POSITION };
-    }
-
-    /**
-     * Creates a render component for tiles
-     * @param {number|object} tileData - Tile data
-     * @returns {object} - Render component
-     */
-    static createTileRender(tileData) {
-        DataContractValidator.validateTile(tileData);
-        return {
-            type: COMPONENT_TYPES.RENDER,
-            tileData,
-            renderType: 'tile'
-        };
-    }
-
-    /**
-     * Creates a render component for entities
-     * @param {string} textureKey - Texture key
-     * @param {number} zIndex - Render z-index
-     * @returns {object} - Render component
-     */
-    static createEntityRender(textureKey, zIndex = 0) {
-        return {
-            type: COMPONENT_TYPES.RENDER,
-            textureKey,
-            zIndex,
-            renderType: 'entity'
-        };
-    }
-
-    /**
-     * Creates a health component
-     * @param {number} maxHealth - Maximum health value
-     * @param {number} currentHealth - Current health value
-     * @returns {object} - Health component
-     */
-    static createHealth(maxHealth, currentHealth = maxHealth) {
-        if (currentHealth > maxHealth || currentHealth < 0) {
-            throw new Error(`Invalid health values: current=${currentHealth}, max=${maxHealth}`);
-        }
-        return {
-            type: COMPONENT_TYPES.HEALTH,
-            max: maxHealth,
-            current: currentHealth
-        };
-    }
-
-    /**
-     * Creates an attack component
-     * @param {number} damage - Base damage
-     * @param {number} range - Attack range
-     * @returns {object} - Attack component
-     */
-    static createAttack(damage, range = 1) {
-        return {
-            type: COMPONENT_TYPES.ATTACK,
-            damage,
-            range,
-            lastAttacked: 0
-        };
-    }
-
-    /**
-     * Creates a movement component
-     * @param {number} speed - Movement speed
-     * @param {boolean} justAttackedFlag - Whether entity just attacked
-     * @returns {object} - Movement component
-     */
-    static createMovement(speed = 1, justAttackedFlag = false) {
-        return {
-            type: COMPONENT_TYPES.MOVEMENT,
-            speed,
-            lastX: 0,
-            lastY: 0,
-            justAttacked: justAttackedFlag
-        };
-    }
-
-    /**
-     * Creates an animation component
-     * @param {object} animationData - Animation data
-     * @returns {object} - Animation component
-     */
-    static createAnimation(animationData) {
-        return {
-            type: COMPONENT_TYPES.ANIMATION,
-            ...animationData
-        };
-    }
-
-    /**
-     * Creates a collision component
-     * @param {boolean} solid - Whether collision is solid/blocking
-     * @param {number} width - Collision width
-     * @param {number} height - Collision height
-     * @returns {object} - Collision component
-     */
-    static createCollision(solid = true, width = 1, height = 1) {
-        return {
-            type: COMPONENT_TYPES.COLLISION,
-            solid,
-            width,
-            height
-        };
-    }
-
-    /**
-     * Creates a lifecycle component
-     * @param {string} state - Current lifecycle state
-     * @param {object} metadata - Additional lifecycle metadata
-     * @returns {object} - Lifecycle component
-     */
-    static createLifecycle(state = 'active', metadata = {}) {
-        return {
-            type: COMPONENT_TYPES.LIFECYCLE,
-            state,
-            metadata
-        };
-    }
-}
-
-/**
  * Animation Manager for managing different animation collections
  */
 export class AnimationManager {
@@ -336,6 +202,32 @@ export class AnimationManager {
         this.liftAnimations = [];
         this.smokeAnimations = [];
         this.multiplierAnimations = [];
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Listen to animation requested events
+        eventBus.on(EventTypes.ANIMATION_REQUESTED, (data) => {
+            switch (data.type) {
+                case 'point':
+                    this.addPointAnimation(data.x, data.y, data.data.amount);
+                    break;
+                case 'multiplier':
+                    this.addMultiplierAnimation(data.x, data.y, data.data.multiplier);
+                    break;
+                case 'horseCharge':
+                    this.addHorseChargeAnimation(data.data);
+                    break;
+                case 'arrow':
+                    this.addArrowAnimation(data.data.startX, data.data.startY, data.data.endX, data.data.endY);
+                    break;
+            }
+        });
+
+        // Listen to combo achieved events
+        eventBus.on(EventTypes.COMBO_ACHIEVED, (data) => {
+            this.addMultiplierAnimation(data.x, data.y, data.comboCount);
+        });
     }
 
     /**

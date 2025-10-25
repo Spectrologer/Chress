@@ -7,7 +7,7 @@ import { TerrainInteractionManager } from './TerrainInteractionManager.js';
 import { ZoneTransitionManager } from './ZoneTransitionManager.js';
 import { EnvironmentalInteractionManager } from './EnvironmentalInteractionManager.js';
 import { TILE_TYPES } from '../core/constants.js';
-import audioService from '../utils/AudioService.js';
+import audioManager from '../utils/AudioManager.js';
 
 export class InteractionManager {
     constructor(game, inputManager) {
@@ -189,7 +189,7 @@ export class InteractionManager {
                         // and mark the enemy to suppress the generic 'attack' sound
                         // in CombatManager (prevents double-playing).
                         if (this.game.player.abilities && this.game.player.abilities.has && this.game.player.abilities.has('axe')) {
-                            audioService.playSound('slash', { game: this.game });
+                            audioManager.playSound('slash', { game: this.game });
                             enemyAtCoords._suppressAttackSound = true;
                         }
 

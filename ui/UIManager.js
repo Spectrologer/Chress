@@ -4,6 +4,8 @@ import { PanelManager } from './PanelManager.js';
 import { PlayerStatsUI } from './PlayerStatsUI.js';
 import { Sign } from './Sign.js';
 import { MiniMap } from './MiniMap.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 export class UIManager {
     constructor(game) {
@@ -18,6 +20,44 @@ export class UIManager {
 
         // Setup handlers
         this.messageManager.setupMessageLogButton();
+
+        // Setup event listeners
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Listen to player stats changes
+        eventBus.on(EventTypes.PLAYER_STATS_CHANGED, () => {
+            this.updatePlayerStats();
+        });
+
+        // Listen to enemy defeated events
+        eventBus.on(EventTypes.ENEMY_DEFEATED, () => {
+            this.updatePlayerStats();
+        });
+
+        // Listen to treasure found events
+        eventBus.on(EventTypes.TREASURE_FOUND, (data) => {
+            this.addMessageToLog(data.message);
+            this.updatePlayerStats();
+        });
+
+        // Listen to game reset events
+        eventBus.on(EventTypes.GAME_RESET, (data) => {
+            this.updatePlayerPosition();
+            this.updateZoneDisplay();
+            this.updatePlayerStats();
+        });
+
+        // Listen to zone changed events
+        eventBus.on(EventTypes.ZONE_CHANGED, () => {
+            this.updateZoneDisplay();
+        });
+
+        // Listen to player moved events
+        eventBus.on(EventTypes.PLAYER_MOVED, () => {
+            this.updatePlayerPosition();
+        });
     }
 
     setupMessageLogButton() {

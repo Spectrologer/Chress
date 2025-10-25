@@ -1,5 +1,7 @@
 import { CombatManager } from '../managers/CombatManager.js';
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 // Mock Game dependencies
 jest.mock('../core/SoundManager.js');
@@ -183,6 +185,9 @@ describe('CombatManager', () => {
   });
 
   test('checkCollisions awards points and removes dead enemies', () => {
+    const playerStatsEvents = [];
+    eventBus.on(EventTypes.PLAYER_STATS_CHANGED, (data) => playerStatsEvents.push(data));
+
     mockEnemy.health = 0; // Enemy is already dead
 
     combatManager.checkCollisions();
@@ -190,7 +195,13 @@ describe('CombatManager', () => {
     expect(mockPlayer.addPoints).toHaveBeenCalledWith(1);
     expect(mockGame.defeatedEnemies.has('enemy1')).toBeTruthy();
     expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('attack');
-    expect(mockUIManager.updatePlayerStats).toHaveBeenCalled();
+
+    // Verify PLAYER_STATS_CHANGED event was emitted instead of direct UI call
+    expect(playerStatsEvents.length).toBeGreaterThan(0);
+
     expect(mockGame.enemies.filter(e => e.id === 'enemy1')).toHaveLength(0);
+
+    // Clean up
+    eventBus.clear(EventTypes.PLAYER_STATS_CHANGED);
   });
 });

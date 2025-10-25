@@ -1,7 +1,7 @@
 import { ItemRepository } from './ItemRepository.js';
 import { ItemEffectStrategy } from './ItemEffectStrategy.js';
 import { ItemMetadata } from './ItemMetadata.js';
-import audioService from '../../utils/AudioService.js';
+import audioManager from '../../utils/AudioManager.js';
 
 /**
  * InventoryService - Business logic orchestration for inventory management
@@ -181,7 +181,7 @@ export class InventoryService {
      * @private
      */
     _playSound(soundName) {
-        audioService.playSound(soundName, { game: this.game });
+        audioManager.playSound(soundName, { game: this.game });
     }
 
     /**

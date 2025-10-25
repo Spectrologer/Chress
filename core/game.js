@@ -1,8 +1,6 @@
-import { GRID_SIZE, TILE_TYPES } from './constants.js';
+import { TILE_TYPES } from './constants.js';
 import { ServiceContainer } from './ServiceContainer.js';
-import { ECS, TileSystem, EnemySystem } from './ECS.js';
 import { AnimationManager } from './DataContracts.js';
-import { COMPONENT_TYPES } from './constants.js';
 
 // Game state
 class Game {
@@ -23,10 +21,7 @@ class Game {
         this.isPlayerTurn = true;
         this.playerJustAttacked = false;
 
-        // Initialize ECS and systems
-        this.ecs = new ECS();
-        this.tileSystem = new TileSystem(this.ecs, GRID_SIZE, GRID_SIZE);
-        this.enemySystem = new EnemySystem(this.ecs, this.tileSystem);
+        // Initialize animation manager
         this.animationManager = new AnimationManager();
 
         // Initialize animation scheduler

@@ -1,5 +1,7 @@
 import { ZoneManager } from '../managers/ZoneManager.js';
 import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 describe('ZoneManager', () => {
   let zoneManager;
@@ -114,12 +116,28 @@ describe('ZoneManager', () => {
       expect(mockGame.specialZones.has('1,0')).toBe(false);
     });
 
-    test('updates UI elements', () => {
+    test('emits zone changed and player moved events', () => {
+      const zoneChangedEvents = [];
+      const playerMovedEvents = [];
+
+      // Listen for events
+      eventBus.on(EventTypes.ZONE_CHANGED, (data) => zoneChangedEvents.push(data));
+      eventBus.on(EventTypes.PLAYER_MOVED, (data) => playerMovedEvents.push(data));
+
       zoneManager.transitionToZone(1, 0, 'right', 1, 0);
 
-      expect(mockUIManager.updateZoneDisplay).toHaveBeenCalled();
-      expect(mockUIManager.updatePlayerPosition).toHaveBeenCalled();
-      expect(mockUIManager.updatePlayerStats).toHaveBeenCalled();
+      // Verify ZONE_CHANGED event was emitted
+      expect(zoneChangedEvents.length).toBeGreaterThan(0);
+      expect(zoneChangedEvents[0].x).toBe(1);
+      expect(zoneChangedEvents[0].y).toBe(0);
+      expect(zoneChangedEvents[0].dimension).toBe(0);
+
+      // Verify PLAYER_MOVED event was emitted
+      expect(playerMovedEvents.length).toBeGreaterThan(0);
+
+      // Clean up listeners
+      eventBus.clear(EventTypes.ZONE_CHANGED);
+      eventBus.clear(EventTypes.PLAYER_MOVED);
     });
 
     test('saves game state', () => {

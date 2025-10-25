@@ -1,4 +1,4 @@
-import audioService from '../utils/AudioService.js';
+import audioManager from '../utils/AudioManager.js';
 
 export const EnemyAttackMixin = {
     performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation = false) {
@@ -67,7 +67,7 @@ export const EnemyAttackMixin = {
             this.startBump(playerX - this.x, playerY - this.y);
             this.justAttacked = true;
             this.attackAnimation = 15;
-            audioService.playSound('attack');
+            audioManager.playSound('attack');
 
             // Calculate knockback direction (away from enemy)
             const attackDx = playerX - this.x;
@@ -175,7 +175,7 @@ export const EnemyAttackMixin = {
             this.startBump(playerX - this.x, playerY - this.y);
             this.justAttacked = true;
             this.attackAnimation = 15;
-            audioService.playSound('attack');
+            audioManager.playSound('attack');
 
             // Knockback away in the attack direction
             let knockbackX = playerX;

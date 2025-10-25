@@ -9,7 +9,6 @@ import { PathGenerator } from '../generators/PathGenerator.js';
 import { initializeGrid, validateAndSetTile } from '../generators/GeneratorUtils.js';
 import { findValidPlayerSpawn as _findValidPlayerSpawn, isTileFree as _isTileFree, findOpenNpcSpawn as _findOpenNpcSpawn } from './zoneSpawnManager.js';
 import { generateExits as _generateExits, clearPathToExit as _clearPathToExit, clearPathToCenter as _clearPathToCenter, clearZoneForShackOnly as _clearZoneForShackOnly, forcePlaceShackInCenter as _forcePlaceShackInCenter } from './zoneMutators.js';
-import { sanitizeGrid as _sanitizeGrid } from './zoneSanitizer.js';
 import { addRegionNotes as _addRegionNotes } from './regionNotes.js';
 import { handleInterior } from './handlers/interiorHandler.js';
 import { handleUnderground } from './handlers/undergroundHandler.js';
@@ -87,9 +86,6 @@ export class ZoneGenerator {
         this.grid = initializeGrid();
         this.enemies = [];
         this.addWallBorders();
-
-        // Initial sanity check to prevent corruption from previous issues
-        this.sanitizeGrid();
     }
 
     addWallBorders() {
@@ -116,14 +112,6 @@ export class ZoneGenerator {
 
     clearPathToCenter(startX, startY) {
         return _clearPathToCenter(this, startX, startY);
-    }
-
-    /**
-     * Sanitizes the grid by replacing any null or undefined tiles with FLOOR tiles.
-     * This fixes corrupted save data or generation bugs.
-     */
-    sanitizeGrid() {
-        return _sanitizeGrid(this);
     }
 
     /**

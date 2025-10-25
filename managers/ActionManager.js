@@ -1,5 +1,5 @@
 import { TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants.js';
-import audioService from '../utils/AudioService.js';
+import audioManager from '../utils/AudioManager.js';
 
 export class ActionManager {
     constructor(game) {
@@ -66,7 +66,7 @@ export class ActionManager {
 
         this.game.player.setPosition(targetX, targetY);
         this.game.player.startSmokeAnimation();
-        audioService.playSound('whoosh', { game: this.game });
+        audioManager.playSound('whoosh', { game: this.game });
         this.game.startEnemyTurns();
         this.game.updatePlayerStats();
     }
@@ -156,7 +156,7 @@ export class ActionManager {
 
         this.game.player.setPosition(targetX, targetY);
         this.game.player.startSmokeAnimation();
-        audioService.playSound('whoosh', { game: this.game });
+        audioManager.playSound('whoosh', { game: this.game });
         this.game.startEnemyTurns();
         this.game.updatePlayerStats();
     }
@@ -193,7 +193,7 @@ export class ActionManager {
                 } catch (e) {}
 
                 // Play a distinct bow sound
-                audioService.playSound('bow_shot', { game: this.game });
+                audioManager.playSound('bow_shot', { game: this.game });
             })
             .wait(300) // 300ms delay for arrow to travel
             .then(() => {
@@ -213,7 +213,7 @@ export class ActionManager {
 
     explodeBomb(bx, by) {
         this.game.grid[by][bx] = TILE_TYPES.FLOOR;
-        audioService.playSound('splode', { game: this.game });
+        audioManager.playSound('splode', { game: this.game });
         this.game.player.startSplodeAnimation(bx, by);
 
         const directions = [

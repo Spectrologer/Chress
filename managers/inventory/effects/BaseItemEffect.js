@@ -1,4 +1,4 @@
-import audioService from '../../../utils/AudioService.js';
+import audioManager from '../../../utils/AudioManager.js';
 
 /**
  * BaseItemEffect - Abstract base class for all item effects
@@ -22,7 +22,7 @@ export class BaseItemEffect {
      * @protected
      */
     _playSound(game, soundName) {
-        audioService.playSound(soundName, { game });
+        audioManager.playSound(soundName, { game });
     }
 
     /**

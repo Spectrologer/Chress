@@ -2,6 +2,8 @@ import { GRID_SIZE, TILE_TYPES } from './constants.js';
 import logger from './logger.js';
 import { Sign } from '../ui/Sign.js';
 import { validateLoadedGrid } from '../generators/GeneratorUtils.js';
+import { eventBus } from './EventBus.js';
+import { EventTypes } from './EventTypes.js';
 
 const GAME_STATE_KEY = 'chress_game_state';
 const SAVE_VERSION = 2; // bump if save format changes
@@ -84,10 +86,11 @@ export class GameStateManager {
         this.game.player.stats.sfxEnabled = prevConfig.sfxEnabled;
         this.game.player.stats.autoPathWithEnemies = prevConfig.autoPathWithEnemies;
 
-        // Update UI
-        this.game.uiManager.updatePlayerPosition();
-        this.game.uiManager.updateZoneDisplay();
-        this.game.uiManager.updatePlayerStats();
+        // Emit game reset event instead of calling UI methods directly
+        eventBus.emit(EventTypes.GAME_RESET, {
+            zone: initialZone,
+            regionName: this.game.currentRegion
+        });
 
         // Ensure background music matches the new starting zone so any previous
         // underground track doesn't continue playing after a respawn/reset.
@@ -95,11 +98,8 @@ export class GameStateManager {
             const dimension = this.game.player.currentZone && typeof this.game.player.currentZone.dimension === 'number'
                 ? this.game.player.currentZone.dimension
                 : 0;
-            if (this.game.soundManager && typeof this.game.soundManager.setMusicForZone === 'function') {
-                this.game.soundManager.setMusicForZone({ dimension });
-            } else if (typeof window !== 'undefined' && window.soundManager && typeof window.soundManager.setMusicForZone === 'function') {
-                window.soundManager.setMusicForZone({ dimension });
-            }
+            // Emit music change event instead of calling soundManager directly
+            eventBus.emit(EventTypes.MUSIC_CHANGE, { dimension });
         } catch (e) { /* non-fatal */ }
     }
 
@@ -115,25 +115,50 @@ export class GameStateManager {
 
             if (randomType === 'bomb') {
                 this.game.player.inventory.push({ type: 'bomb' });
-                this.game.uiManager.addMessageToLog('Treasure Found: Bomb added to inventory.');
+                // Emit treasure found event instead of calling UIManager directly
+                eventBus.emit(EventTypes.TREASURE_FOUND, {
+                    itemType: 'bomb',
+                    quantity: 1,
+                    message: 'Treasure Found: Bomb added to inventory.'
+                });
             } else if (randomType === 'bishop_spear') {
                 this.game.player.inventory.push({ type: 'bishop_spear', uses: 3 });
-                this.game.uiManager.addMessageToLog('Treasure Found: Bishop Spear added to inventory.');
+                eventBus.emit(EventTypes.TREASURE_FOUND, {
+                    itemType: 'bishop_spear',
+                    quantity: 1,
+                    message: 'Treasure Found: Bishop Spear added to inventory.'
+                });
             } else if (randomType === 'food' && this.game.availableFoodAssets.length > 0) {
                 const randomFood = this.game.availableFoodAssets[Math.floor(Math.random() * this.game.availableFoodAssets.length)];
                 this.game.player.inventory.push({ type: 'food', foodType: randomFood });
-                this.game.uiManager.addMessageToLog('Treasure Found: Food added to inventory.');
+                eventBus.emit(EventTypes.TREASURE_FOUND, {
+                    itemType: 'food',
+                    quantity: 1,
+                    message: 'Treasure Found: Food added to inventory.'
+                });
             }
         }
 
-        this.game.uiManager.updatePlayerStats(); // Refresh UI
+        // Emit player stats changed event instead of calling UIManager directly
+        eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {
+            health: this.game.player.health,
+            points: this.game.player.points,
+            hunger: this.game.player.hunger,
+            thirst: this.game.player.thirst
+        });
     }
 
     // Console command to add bomb to inventory
     addBomb() {
         if (this.game.player.inventory.length < 6) {
             this.game.player.inventory.push({ type: 'bomb' });
-            this.game.uiManager.updatePlayerStats();
+            // Emit player stats changed event instead of calling UIManager directly
+            eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {
+                health: this.game.player.health,
+                points: this.game.player.points,
+                hunger: this.game.player.hunger,
+                thirst: this.game.player.thirst
+            });
         }
     }
 

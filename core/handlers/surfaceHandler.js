@@ -6,7 +6,6 @@ import { ItemGenerator } from '../../generators/ItemGenerator.js';
 import { StructureGenerator } from '../../generators/StructureGenerator.js';
 import { EnemyGenerator } from '../../generators/EnemyGenerator.js';
 import { PathGenerator } from '../../generators/PathGenerator.js';
-import { sanitizeGrid as _sanitizeGrid } from '../zoneSanitizer.js';
 
 export function handleSurface(zoneGen, zoneX, zoneY, zoneConnections, foodAssets) {
     const zoneLevel = ZoneStateManager.getZoneLevel(zoneX, zoneY);
@@ -74,7 +73,6 @@ export function handleSurface(zoneGen, zoneX, zoneY, zoneConnections, foodAssets
 
     pathGenerator.ensureExitAccess();
     zoneGen.playerSpawn = zoneGen.findValidPlayerSpawn();
-    _sanitizeGrid(zoneGen);
 
     return {
         grid: JSON.parse(JSON.stringify(zoneGen.grid)),

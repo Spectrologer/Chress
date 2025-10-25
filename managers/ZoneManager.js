@@ -2,6 +2,8 @@ import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { Sign } from '../ui/Sign.js';
 import { logger } from '../core/logger.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 export class ZoneManager {
     constructor(game) {
@@ -90,26 +92,23 @@ export class ZoneManager {
             this.game.specialZones.delete(zoneKey);
         }
 
-        // Update UI
-    this.game.uiManager.updateZoneDisplay();
-        this.game.uiManager.updatePlayerPosition();
-        this.game.uiManager.updatePlayerStats();
+        // Emit zone changed event instead of calling UI/Sound managers directly
+        const dimension = this.game.player.currentZone && typeof this.game.player.currentZone.dimension === 'number'
+            ? this.game.player.currentZone.dimension
+            : 0;
 
-        // Set background music based on zone dimension (0=surface,1=interior,2=underground)
-        try {
-            const dimension = this.game.player.currentZone && typeof this.game.player.currentZone.dimension === 'number'
-                ? this.game.player.currentZone.dimension
-                : 0;
-            if (this.game.soundManager && typeof this.game.soundmanager?.setMusicForZone === 'function') {
-                this.game.soundManager.setMusicForZone({ dimension });
-            } else if (this.game.soundManager && typeof this.game.soundManager.setMusicForZone === 'function') {
-                this.game.soundManager.setMusicForZone({ dimension });
-            } else if (typeof window !== 'undefined' && window.soundManager && typeof window.soundManager.setMusicForZone === 'function') {
-                window.soundManager.setMusicForZone({ dimension });
-            }
-        } catch (e) {
-            // Non-fatal if music can't be set
-        }
+        eventBus.emit(EventTypes.ZONE_CHANGED, {
+            x: newZoneX,
+            y: newZoneY,
+            dimension,
+            regionName: newRegion
+        });
+
+        // Emit player moved event
+        eventBus.emit(EventTypes.PLAYER_MOVED, {
+            x: this.game.player.x,
+            y: this.game.player.y
+        });
 
         // Save game state after zone transition
         this.game.gameStateManager.saveGameState();

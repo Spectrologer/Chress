@@ -1,7 +1,7 @@
 import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS, TILE_SIZE } from '../core/constants.js';
 import { getExitDirection } from '../core/utils/transitionUtils.js';
 import { Sign } from '../ui/Sign.js';
-import audioService from '../utils/AudioService.js';
+import audioManager from '../utils/AudioManager.js';
 
 /**
  * InputController - Unified input management system
@@ -159,7 +159,7 @@ export class InputController {
             ? this.game.enemies.find(en => en.x === gridCoords.x && en.y === gridCoords.y && en.health > 0)
             : null;
         if (!enemyAtInitial) {
-            audioService.playSound('bloop', { game: this.game });
+            audioManager.playSound('bloop', { game: this.game });
         }
     }
 
@@ -193,7 +193,7 @@ export class InputController {
         if (info.lastTile.x !== gc.x || info.lastTile.y !== gc.y) {
             const enemyOnGc = this.game.enemies.find(en => en.x === gc.x && en.y === gc.y && en.health > 0);
             if (!enemyOnGc) {
-                audioService.playSound('bloop', { game: this.game });
+                audioManager.playSound('bloop', { game: this.game });
             }
             info.lastTile = gc;
         }
@@ -335,11 +335,11 @@ export class InputController {
         // Play appropriate sound
         try {
             if (enemyAtTile) {
-                audioService.playSound('tap_enemy', { game: this.game });
+                audioManager.playSound('tap_enemy', { game: this.game });
             } else if (isDoubleTap) {
-                audioService.playSound('double_tap', { game: this.game });
+                audioManager.playSound('double_tap', { game: this.game });
             } else {
-                audioService.playSound('bloop', { game: this.game });
+                audioManager.playSound('bloop', { game: this.game });
             }
         } catch (e) {}
 
@@ -544,7 +544,7 @@ export class InputController {
                 if (this.game?.renderManager?.showTapFeedback) {
                     this.game.renderManager.showTapFeedback(newX, newY);
                 }
-                audioService.playSound('bloop', { game: this.game });
+                audioManager.playSound('bloop', { game: this.game });
             }
         } catch (e) {}
 
@@ -560,7 +560,7 @@ export class InputController {
 
             // Play axe slash sound if player has axe
             if (this.game.player.abilities?.has?.('axe')) {
-                audioService.playSound('slash', { game: this.game });
+                audioManager.playSound('slash', { game: this.game });
                 enemyAtTarget._suppressAttackSound = true;
             }
 

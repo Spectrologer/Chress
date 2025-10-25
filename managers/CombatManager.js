@@ -1,7 +1,9 @@
 import { TILE_TYPES } from '../core/constants.js';
 import { BombManager } from './BombManager.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import audioService from '../utils/AudioService.js';
+import audioManager from '../utils/AudioManager.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 export class CombatManager {
     constructor(game, occupiedTiles) {
@@ -22,8 +24,14 @@ export class CombatManager {
     }
 
     addPointAnimation(x, y, amount) {
-        this.game.animationManager.addPointAnimation(x, y, amount);
-        audioService.playSound('point', { game: this.game }); // Play a sound for getting points
+        // Emit event instead of directly calling animationManager
+        eventBus.emit(EventTypes.ANIMATION_REQUESTED, {
+            type: 'point',
+            x,
+            y,
+            data: { amount }
+        });
+        audioManager.playSound('point', { game: this.game }); // Play a sound for getting points
     }
 
     handleEnemyDefeated(enemy, currentZone) {
@@ -33,7 +41,7 @@ export class CombatManager {
         // Only play generic attack SFX if the event hasn't been suppressed by
         // the initiator (e.g., player played 'slash' when using an axe).
         if (!enemy._suppressAttackSound) {
-            audioService.playSound('attack', { game: this.game });
+            audioManager.playSound('attack', { game: this.game });
         }
 
         // Remove from zone data to prevent respawn
@@ -64,7 +72,7 @@ export class CombatManager {
     this.game.player.addPoints(enemy.getPoints());
     this.game.defeatedEnemies.add(`${enemy.id}`);
         if (!enemy._suppressAttackSound) {
-            audioService.playSound('attack', { game: this.game });
+            audioManager.playSound('attack', { game: this.game });
         }
         // Remove from zone data (enemy will be removed from game.enemies by checkCollisions)
         const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
@@ -91,9 +99,16 @@ export class CombatManager {
                 consecutive = player.consecutiveKills;
                 // If combo of 2 or more, show multiplier animation and play ding
                 try {
-                    if (consecutive >= 2 && this.game.animationManager) {
-                        this.game.animationManager.addMultiplierAnimation(enemyX, enemyY, consecutive);
-                        audioService.playSound('point', { game: this.game }); // reuse point sound as ding if specific ding asset missing
+                    if (consecutive >= 2) {
+                        // Emit combo achieved event
+                        eventBus.emit(EventTypes.COMBO_ACHIEVED, {
+                            comboCount: consecutive,
+                            x: enemyX,
+                            y: enemyY,
+                            bonusPoints: consecutive
+                        });
+
+                        audioManager.playSound('point', { game: this.game }); // reuse point sound as ding if specific ding asset missing
                         // Award combo bonus points equal to the combo multiplier (e.g., x2 -> +2)
                         try {
                             const bonus = consecutive;
@@ -120,7 +135,14 @@ export class CombatManager {
             }
         } catch (e) { /* non-fatal */ }
 
-        try { this.game.uiManager.updatePlayerStats(); } catch (e) {}
+        // Emit enemy defeated event
+        eventBus.emit(EventTypes.ENEMY_DEFEATED, {
+            enemy,
+            points: enemy.getPoints(),
+            x: enemyX,
+            y: enemyY,
+            isComboKill: consecutive >= 2
+        });
 
         return { defeated: true, consecutiveKills: consecutive };
     }
@@ -220,10 +242,16 @@ export class CombatManager {
                     midY = enemy.y;
                 }
 
-                this.game.animationManager.addHorseChargeAnimation({
-                    startPos: { x: enemy.lastX, y: enemy.lastY },
-                    midPos: { x: midX, y: midY },
-                    endPos: { x: enemy.x, y: enemy.y },
+                // Emit event instead of directly calling animationManager
+                eventBus.emit(EventTypes.ANIMATION_REQUESTED, {
+                    type: 'horseCharge',
+                    x: enemy.x,
+                    y: enemy.y,
+                    data: {
+                        startPos: { x: enemy.lastX, y: enemy.lastY },
+                        midPos: { x: midX, y: midY },
+                        endPos: { x: enemy.x, y: enemy.y }
+                    }
                 });
             }
         }
@@ -263,7 +291,14 @@ export class CombatManager {
         }
 
         this.game.enemies = remainingEnemies;
-        if (this.game.uiManager && typeof this.game.uiManager.updatePlayerStats === 'function') this.game.uiManager.updatePlayerStats();
+
+        // Emit event for player stats change instead of calling UIManager directly
+        eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {
+            health: this.game.player.health,
+            points: this.game.player.points,
+            hunger: this.game.player.hunger,
+            thirst: this.game.player.thirst
+        });
     }
 
 
