@@ -1,4 +1,5 @@
 import { TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants.js';
+import audioService from '../utils/AudioService.js';
 
 export class ActionManager {
     constructor(game) {
@@ -65,7 +66,7 @@ export class ActionManager {
 
         this.game.player.setPosition(targetX, targetY);
         this.game.player.startSmokeAnimation();
-        this.game.soundManager.playSound('whoosh');
+        audioService.playSound('whoosh', { game: this.game });
         this.game.startEnemyTurns();
         this.game.updatePlayerStats();
     }
@@ -155,7 +156,7 @@ export class ActionManager {
 
         this.game.player.setPosition(targetX, targetY);
         this.game.player.startSmokeAnimation();
-        this.game.soundManager.playSound('whoosh');
+        audioService.playSound('whoosh', { game: this.game });
         this.game.startEnemyTurns();
         this.game.updatePlayerStats();
     }
@@ -192,7 +193,7 @@ export class ActionManager {
                 } catch (e) {}
 
                 // Play a distinct bow sound
-                this.game.soundManager.playSound('bow_shot' );
+                audioService.playSound('bow_shot', { game: this.game });
             })
             .wait(300) // 300ms delay for arrow to travel
             .then(() => {
@@ -212,7 +213,7 @@ export class ActionManager {
 
     explodeBomb(bx, by) {
         this.game.grid[by][bx] = TILE_TYPES.FLOOR;
-        this.game.soundManager.playSound('splode');
+        audioService.playSound('splode', { game: this.game });
         this.game.player.startSplodeAnimation(bx, by);
 
         const directions = [

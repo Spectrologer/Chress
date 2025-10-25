@@ -58,7 +58,8 @@ export class SoundManager {
         try {
             if (this.backgroundAudio) {
                 try { this.backgroundAudio.pause(); } catch (e) {}
-                try { this.backgroundAudio.src = ''; } catch (e) {}
+                // Don't set src to empty string - causes "Invalid URI" console errors
+                // Just remove the reference and let garbage collection handle it
                 this.backgroundAudio = null;
             }
         } catch (e) {}
@@ -147,7 +148,8 @@ export class SoundManager {
                 const oldAudio = this.backgroundAudioElement;
                 setTimeout(() => {
                     try { oldAudio.pause(); } catch (e) {}
-                    try { oldAudio.src = ''; } catch (e) {}
+                    // Don't set src to empty string - causes "Invalid URI" console errors
+                    // Just pause and let garbage collection handle it
                 }, Math.ceil(fadeSec * 1000) + 50);
             }
 

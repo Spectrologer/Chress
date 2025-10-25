@@ -7,6 +7,7 @@ import { TerrainInteractionManager } from './TerrainInteractionManager.js';
 import { ZoneTransitionManager } from './ZoneTransitionManager.js';
 import { EnvironmentalInteractionManager } from './EnvironmentalInteractionManager.js';
 import { TILE_TYPES } from '../core/constants.js';
+import audioService from '../utils/AudioService.js';
 
 export class InteractionManager {
     constructor(game, inputManager) {
@@ -187,14 +188,10 @@ export class InteractionManager {
                         // If player has the axe, play the file-backed 'slash' SFX
                         // and mark the enemy to suppress the generic 'attack' sound
                         // in CombatManager (prevents double-playing).
-                        try {
-                            if (this.game.player.abilities && this.game.player.abilities.has && this.game.player.abilities.has('axe')) {
-                                if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
-                                    this.game.soundManager.playSound('slash');
-                                }
-                                enemyAtCoords._suppressAttackSound = true;
-                            }
-                        } catch (e) {}
+                        if (this.game.player.abilities && this.game.player.abilities.has && this.game.player.abilities.has('axe')) {
+                            audioService.playSound('slash', { game: this.game });
+                            enemyAtCoords._suppressAttackSound = true;
+                        }
 
                         // Mark that player performed an attack (may be the start of a combo)
                         try { this.game.player.setAction('attack'); } catch (e) {}

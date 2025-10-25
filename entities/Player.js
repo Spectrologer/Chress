@@ -2,6 +2,7 @@ import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANT
 import { PlayerStats } from './PlayerStats.js';
 import { PlayerAnimations } from './PlayerAnimations.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
+import audioService from '../utils/AudioService.js';
 
 export class Player {
     constructor() {
@@ -93,7 +94,7 @@ export class Player {
             }
 
             this.animations.liftFrames = ANIMATION_CONSTANTS.LIFT_FRAMES; // Start lift animation
-            window.soundManager?.playSound('move');
+            audioService.playSound('move');
 
             // Movement interrupts attack combos
             try { this.setAction('move'); } catch (e) {}
@@ -116,7 +117,7 @@ export class Player {
                     this.animations.startActionAnimation(); // Start action animation
                     this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
                     // Play the slash SFX (file-backed) when chopping shrubbery/grass
-                    window.soundManager?.playSound('slash');
+                    audioService.playSound('slash');
                     window.gameInstance.startEnemyTurns(); // Chopping takes a turn
                     return false; // Don't move, just attack
                 }
@@ -129,7 +130,7 @@ export class Player {
                     this.stats.decreaseHunger(2); // Breaking costs 2 hunger
                     this.animations.startActionAnimation(); // Start action animation
                     this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
-                    window.soundManager?.playSound('smash');
+                    audioService.playSound('smash');
                     window.gameInstance.startEnemyTurns(); // Smashing takes a turn
                     return false; // Don't move, just attack
                 }

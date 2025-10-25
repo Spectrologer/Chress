@@ -1,6 +1,7 @@
 import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS, TILE_SIZE } from '../core/constants.js';
 import { getExitDirection } from '../core/utils/transitionUtils.js';
 import { Sign } from '../ui/Sign.js';
+import audioService from '../utils/AudioService.js';
 
 export class InteractionController {
     constructor(game, inventoryService, keyHandler, exitHandler) {
@@ -430,13 +431,9 @@ export class InteractionController {
 
     const isDoubleTap = this.handleDoubleTapLogic(gridCoords, screenX, screenY);
     try { console.debug('[INT] handleTap gridCoords=', gridCoords, 'player=', playerPos, 'isDoubleTap=', isDoubleTap); } catch (e) {}
-        try {
-            if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
-                if (enemyAtTile) this.game.soundManager.playSound('tap_enemy');
-                else if (isDoubleTap) this.game.soundManager.playSound('double_tap');
-                else this.game.soundManager.playSound('bloop');
-            }
-        } catch (e) {}
+        if (enemyAtTile) audioService.playSound('tap_enemy', { game: this.game });
+        else if (isDoubleTap) audioService.playSound('double_tap', { game: this.game });
+        else audioService.playSound('bloop', { game: this.game });
 
     const tile = this.game.grid[gridCoords.y]?.[gridCoords.x];
         const tileType = (typeof tile === 'object' && tile?.type !== undefined) ? tile.type : tile;
@@ -562,7 +559,7 @@ export class InteractionController {
         try {
             if (!event._synthetic) {
                 if (this.game && this.game.renderManager && typeof this.game.renderManager.showTapFeedback === 'function') this.game.renderManager.showTapFeedback(newX, newY);
-                if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') this.game.soundManager.playSound('bloop');
+                audioService.playSound('bloop', { game: this.game });
             }
         } catch (e) {}
 
@@ -577,13 +574,11 @@ export class InteractionController {
             try { this.game.player.setAction('attack'); } catch (e) {}
             // If player has the axe, play the slash SFX (file-backed). Suppress the
             // default 'attack' sound in CombatManager to avoid double-playing.
-            try {
-                if (this.game.player.abilities.has('axe')) {
-                    this.game.soundManager.playSound('slash');
-                    // Mark the enemy so CombatManager knows not to play the generic attack SFX
-                    enemyAtTarget._suppressAttackSound = true;
-                }
-            } catch (e) {}
+            if (this.game.player.abilities.has('axe')) {
+                audioService.playSound('slash', { game: this.game });
+                // Mark the enemy so CombatManager knows not to play the generic attack SFX
+                enemyAtTarget._suppressAttackSound = true;
+            }
 
             const result = this.game.combatManager.defeatEnemy(enemyAtTarget, 'player');
             if (result && result.defeated) {

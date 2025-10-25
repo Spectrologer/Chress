@@ -1,6 +1,7 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { BombManager } from './BombManager.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
+import audioService from '../utils/AudioService.js';
 
 export class CombatManager {
     constructor(game, occupiedTiles) {
@@ -23,7 +24,7 @@ export class CombatManager {
 
     addPointAnimation(x, y, amount) {
         this.game.animationManager.addPointAnimation(x, y, amount);
-        this.game.soundManager.playSound('point'); // Play a sound for getting points
+        audioService.playSound('point', { game: this.game }); // Play a sound for getting points
     }
 
     handleEnemyDefeated(enemy, currentZone) {
@@ -32,9 +33,9 @@ export class CombatManager {
         this.game.defeatedEnemies.add(`${enemy.id}`);
         // Only play generic attack SFX if the event hasn't been suppressed by
         // the initiator (e.g., player played 'slash' when using an axe).
-        try {
-            if (!enemy._suppressAttackSound) this.game.soundManager.playSound('attack');
-        } catch (e) {}
+        if (!enemy._suppressAttackSound) {
+            audioService.playSound('attack', { game: this.game });
+        }
 
         // Remove from zone data to prevent respawn
         const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
@@ -63,9 +64,9 @@ export class CombatManager {
     this.addPointAnimation(enemyX, enemyY, enemy.getPoints());
     this.game.player.addPoints(enemy.getPoints());
     this.game.defeatedEnemies.add(`${enemy.id}`);
-        try {
-            if (!enemy._suppressAttackSound) this.game.soundManager.playSound('attack');
-        } catch (e) {}
+        if (!enemy._suppressAttackSound) {
+            audioService.playSound('attack', { game: this.game });
+        }
         // Remove from zone data (enemy will be removed from game.enemies by checkCollisions)
         const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
         const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, depth);
@@ -93,9 +94,7 @@ export class CombatManager {
                 try {
                     if (consecutive >= 2 && this.game.animationManager) {
                         this.game.animationManager.addMultiplierAnimation(enemyX, enemyY, consecutive);
-                        if (this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
-                            this.game.soundManager.playSound('point'); // reuse point sound as ding if specific ding asset missing
-                        }
+                        audioService.playSound('point', { game: this.game }); // reuse point sound as ding if specific ding asset missing
                         // Award combo bonus points equal to the combo multiplier (e.g., x2 -> +2)
                         try {
                             const bonus = consecutive;

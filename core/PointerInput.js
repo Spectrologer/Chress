@@ -1,4 +1,5 @@
 import { INPUT_CONSTANTS, TILE_TYPES } from './constants.js';
+import audioService from '../utils/AudioService.js';
 
 // Lightweight pointer normalization for the game canvas. Keeps behavior similar
 // to existing mouse/touch handlers: tap detection, hold-feedback updates, and
@@ -73,11 +74,9 @@ export class PointerInput {
             const t = this.activePointers.get(e.pointerId).lastTile;
             if (t) this.game.renderManager.startHoldFeedback(t.x, t.y);
         }
-        if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
-            const t = this.activePointers.get(e.pointerId).lastTile;
-            const enemyAtInitial = t ? this.game.enemies.find(en => en.x === t.x && en.y === t.y && en.health > 0) : null;
-            if (!enemyAtInitial) this.game.soundManager.playSound('bloop');
-        }
+        const t = this.activePointers.get(e.pointerId).lastTile;
+        const enemyAtInitial = t ? this.game.enemies.find(en => en.x === t.x && en.y === t.y && en.health > 0) : null;
+        if (!enemyAtInitial) audioService.playSound('bloop', { game: this.game });
     }
 
     _onPointerMove(e) {
@@ -105,10 +104,8 @@ export class PointerInput {
             this.game.renderManager.startHoldFeedback(gc.x, gc.y);
         }
         if (info.lastTile.x !== gc.x || info.lastTile.y !== gc.y) {
-            if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
-                const enemyOnGc = this.game.enemies.find(en => en.x === gc.x && en.y === gc.y && en.health > 0);
-                if (!enemyOnGc) this.game.soundManager.playSound('bloop');
-            }
+            const enemyOnGc = this.game.enemies.find(en => en.x === gc.x && en.y === gc.y && en.health > 0);
+            if (!enemyOnGc) audioService.playSound('bloop', { game: this.game });
             info.lastTile = gc;
         }
     }

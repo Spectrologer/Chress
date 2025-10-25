@@ -1,3 +1,5 @@
+import audioService from '../../../utils/AudioService.js';
+
 /**
  * BaseItemEffect - Abstract base class for all item effects
  *
@@ -20,11 +22,7 @@ export class BaseItemEffect {
      * @protected
      */
     _playSound(game, soundName) {
-        if (game && game.soundManager && typeof game.soundManager.playSound === 'function') {
-            game.soundManager.playSound(soundName);
-        } else if (typeof window !== 'undefined' && window.soundManager?.playSound) {
-            window.soundManager.playSound(soundName);
-        }
+        audioService.playSound(soundName, { game });
     }
 
     /**

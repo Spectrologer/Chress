@@ -1,5 +1,6 @@
 import { EnemyChargeBehaviors } from './EnemyChargeBehaviors.js';
 import { EnemyLineOfSight } from './EnemyLineOfSight.js';
+import audioService from '../utils/AudioService.js';
 
 export class EnemySpecialActions {
     // Execute charge move for Zard enemy type
@@ -55,7 +56,7 @@ export class EnemySpecialActions {
                     enemy.startBump(playerX - enemy.x, playerY - enemy.y);
                     enemy.justAttacked = true;
                     enemy.attackAnimation = 15;
-                    window.soundManager?.playSound('attack');
+                    audioService.playSound('attack');
                 }
                 return null; // All in one turn
             } else {
@@ -149,8 +150,8 @@ export class EnemySpecialActions {
                     enemy.startBump(playerX - enemy.x, playerY - enemy.y);
                     enemy.justAttacked = true;
                     enemy.attackAnimation = 15;
-                    window.soundManager?.playSound('attack');
-                    window.soundManager?.playSound('attack');
+                    audioService.playSound('attack');
+                    audioService.playSound('attack');
                     // Knockback away
                     const dx = playerX - enemy.x; // Since enemy is at charge position (adjacent), dx= +/-1 or 0
                     const dy = playerY - enemy.y;
