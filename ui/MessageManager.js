@@ -1,14 +1,24 @@
 import logger from '../core/logger.js';
 import { fitTextToContainer } from './TextFitter.js';
+import { Sign } from './Sign.js';
 
 export class MessageManager {
     constructor(game) {
         this.game = game;
 
         // UI elements
+        this.messageOverlay = document.getElementById('messageOverlay');
         this.messageLogOverlay = document.getElementById('messageLogOverlay');
         this.messageLogContent = document.getElementById('messageLogContent');
         this.closeMessageLogButton = document.getElementById('closeMessageLogButton');
+
+        // Add click listener to close overlay when tapped
+        this.messageOverlay.addEventListener('pointerdown', (e) => {
+            try { e.preventDefault(); } catch (err) {}
+            if (this.game.displayingMessageForSign) {
+                Sign.hideMessageForSign(this.game);
+            }
+        }, { passive: true });
 
         // UI state
         this.currentOverlayTimeout = null;
@@ -718,7 +728,10 @@ export class MessageManager {
                     <div class="barter-portrait-container large-portrait" style="margin: 0 auto 10px auto; text-align:center;">
                         <img src="${imageSrc}" class="barter-portrait">
                     </div>
-                    <div class="dialogue-text" style="text-align:center;">${text}</div>`;
+                    <div class="dialogue-text" style="text-align:center;">${text}</div>
+                    <div id="dialogue-button-container" style="text-align: center; margin-top: 20px; display: none;">
+                        <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">Okay...</button>
+                    </div>`;
             } else if (imageSrc) {
                 // Apply same bow-rotation logic for sign messages
                 let imgStyle = 'width: 128px; height: auto; max-height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;';
@@ -727,10 +740,26 @@ export class MessageManager {
                         imgStyle += ' transform: rotate(-90deg); transform-origin: center center;';
                     }
                 } catch (e) {}
-                messageElement.innerHTML = `<img src="${imageSrc}" style="${imgStyle}"><div class="dialogue-text" style="text-align:center;">${text}</div>`;
+                messageElement.innerHTML = `<img src="${imageSrc}" style="${imgStyle}"><div class="dialogue-text" style="text-align:center;">${text}</div>
+                    <div id="dialogue-button-container" style="text-align: center; margin-top: 20px;">
+                        <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">Okay...</button>
+                    </div>`;
             } else {
-                messageElement.innerHTML = `<div class="dialogue-text" style="text-align:center;">${text}</div>`;
+                messageElement.innerHTML = `<div class="dialogue-text" style="text-align:center;">${text}</div>
+                    <div id="dialogue-button-container" style="text-align: center; margin-top: 20px;">
+                        <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">Okay...</button>
+                    </div>`;
             }
+
+            // Attach event listener to the Okay button
+            try {
+                const closeButton = messageElement.querySelector('.dialogue-close-button');
+                if (closeButton) {
+                    closeButton.addEventListener('click', () => {
+                        Sign.hideMessageForSign(this.game);
+                    });
+                }
+            } catch (e) {}
 
             messageElement.classList.add('show');
             // Debug timing: log when the overlay is shown for sign messages
@@ -741,16 +770,37 @@ export class MessageManager {
                 logger.log(`Sign message shown: ${text}`);
             }
 
-            // Signs do not use the typewriter effect — show text immediately.
-            // Clear any existing typewriter so sign text isn't interleaved with
-            // a previous typing animation, but do NOT start a new one.
+            // For NPC dialogues (when name is provided), use typewriter effect. For signs, show immediately.
             try {
-                if (this.currentTypewriterInterval) {
-                    try { clearInterval(this.currentTypewriterInterval); } catch (e) {}
-                    try { cancelAnimationFrame(this.currentTypewriterInterval); } catch (e) {}
-                    this.currentTypewriterInterval = null;
+                if (name && this.typewriterSpeed > 0) {
+                    const hasCharacterName = !!messageElement.querySelector && !!messageElement.querySelector('.character-name');
+                    if (hasCharacterName) {
+                        this._typewriter(messageElement, this.typewriterSpeed, () => {
+                            // Show the button after typing completes
+                            const buttonContainer = messageElement.querySelector('#dialogue-button-container');
+                            if (buttonContainer) {
+                                buttonContainer.style.display = 'block';
+                            }
+                        });
+                    }
                 }
-            } catch (e) {}
+            } catch (e) {
+                // Fall back to showing immediately
+            }
+
+            // Clear any existing typewriter for signs or if condition not met
+            if (!name || !this.typewriterSpeed > 0) {
+                // Signs do not use the typewriter effect — show text immediately.
+                // Clear any existing typewriter so sign text isn't interleaved with
+                // a previous typing animation, but do NOT start a new one.
+                try {
+                    if (this.currentTypewriterInterval) {
+                        try { clearInterval(this.currentTypewriterInterval); } catch (e) {}
+                        try { cancelAnimationFrame(this.currentTypewriterInterval); } catch (e) {}
+                        this.currentTypewriterInterval = null;
+                    }
+                } catch (e) {}
+            }
         }
     }
 

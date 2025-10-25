@@ -392,10 +392,17 @@ export class InteractionController {
     handleTap(screenX, screenY) {
         if (this.tapTimeout) { clearTimeout(this.tapTimeout); this.tapTimeout = null; }
         const gridCoords = this.convertScreenToGrid(screenX, screenY);
-        // Hide sign message on tap if displaying, similar to key handlers
+        // Handle displaying message on tap
         if (this.game.displayingMessageForSign) {
-            Sign.hideMessageForSign(this.game);
-            return; // Consume the tap to hide the message
+            if (this.isTileInteractive(gridCoords.x, gridCoords.y)) {
+                // If tapping an interactive tile while displaying message, trigger interaction (for cycling)
+                this.game.interactionManager.triggerInteractAt(gridCoords);
+                return;
+            } else {
+                // Hide message for non-interactive taps
+                Sign.hideMessageForSign(this.game);
+                // continue to process tap for movement
+            }
         }
         try { if (this.game && this.game.renderManager && typeof this.game.renderManager.showTapFeedback === 'function') this.game.renderManager.showTapFeedback(gridCoords.x, gridCoords.y); } catch (e) {}
 

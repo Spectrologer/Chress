@@ -63,8 +63,10 @@ export class EnemyRenderer {
                 }
 
                 // For lazerd, draw it directly without scaling to avoid blurriness,
-                // unless it's doing a special animation (attack/move).
-                if (enemy.enemyType === 'lazerd' && scale === 1 && !flash && enemy.liftFrames === 0) {
+                // and lizord, draw them directly without scaling to avoid blurriness,
+                // unless they are doing a special animation (attack/move).
+                const isPixelPerfectEnemy = enemy.enemyType === 'lazerd' || enemy.enemyType === 'lizord';
+                if (isPixelPerfectEnemy && scale === 1 && !flash && enemy.liftFrames === 0) {
                     this.ctx.drawImage(
                         enemyImage,
                         pixelXBase,
@@ -72,7 +74,7 @@ export class EnemyRenderer {
                         TILE_SIZE,
                         TILE_SIZE
                     );
-                    continue; // Skip the rest of the logic for this enemy
+                    continue; // Skip the rest of the scaling/animation logic for this enemy
                 }
 
                 this.ctx.save();

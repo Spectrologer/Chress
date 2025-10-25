@@ -359,8 +359,8 @@ export class StructureTileRenderer {
     renderAxelotlTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-
-        renderOverlay(ctx, this.images, 'axolotl', pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.AXELOTL] || '#FF69B4', 'AXL', { font: '20px Arial', fillStyle: '#000000' });
+        
+        renderOverlay(ctx, this.images, 'axolotl', pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.AXELOTL] || '#FF69B4', 'AXL', { font: '20px Arial', fillStyle: '#000000' }, { fullTile: true });
     }
 
     renderGougeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {

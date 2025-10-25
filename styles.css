@@ -1445,6 +1445,11 @@ h1 {
     align-items: center !important;
 }
 
+/* Ensure buttons inside overlays are clickable */
+.message-overlay button, #messageOverlay button {
+    pointer-events: auto;
+}
+
 /* Constrain overlay content so long dialogue scrolls instead of overflowing the game area */
 #messageOverlay, .message-overlay {
     box-sizing: border-box;
