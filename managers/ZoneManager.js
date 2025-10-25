@@ -1,6 +1,7 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { Sign } from '../ui/Sign.js';
 import { logger } from '../core/logger.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 export class ZoneManager {
     constructor(game) {
@@ -151,7 +152,13 @@ export class ZoneManager {
             case 'port':
                 // For pitfalls, the player spawns at a random valid location, not on the entrance.
                 // The zoneData contains the correct spawn point.
-                const zoneData = this.game.zones.get(`${this.game.player.currentZone.x},${this.game.player.currentZone.y}:${this.game.player.currentZone.dimension}`);
+                const portZoneKey = createZoneKey(
+                    this.game.player.currentZone.x,
+                    this.game.player.currentZone.y,
+                    this.game.player.currentZone.dimension,
+                    this.game.player.currentZone.depth || (this.game.player.undergroundDepth || 1)
+                );
+                const zoneData = this.game.zones.get(portZoneKey);
 
                 if (this.game.portTransitionData?.from === 'pitfall') {
                     // Entering underground via pitfall: Use the zone's designated spawn point
@@ -177,7 +184,8 @@ export class ZoneManager {
                     let portY = exitY;
 
                     try {
-                        const undergroundZoneKey = `${this.game.player.currentZone.x},${this.game.player.currentZone.y}:2:z-${this.game.player.currentZone.depth || (this.game.player.undergroundDepth || 1)}`;
+                        const undergroundDepth = this.game.player.currentZone.depth || (this.game.player.undergroundDepth || 1);
+                        const undergroundZoneKey = createZoneKey(this.game.player.currentZone.x, this.game.player.currentZone.y, 2, undergroundDepth);
                         const undergroundData = this.game.zones.get(undergroundZoneKey);
                         if (undergroundData && undergroundData.returnToSurface) {
                             portX = undergroundData.returnToSurface.x;
@@ -194,7 +202,7 @@ export class ZoneManager {
                     this.game.player.setPosition(portX, portY);
                 } else if (this.game.player.currentZone.dimension === 0) {
                     // Exiting to the surface. Prefer the interior's recorded return coordinates if available.
-                    const interiorZoneKey = `${this.game.player.currentZone.x},${this.game.player.currentZone.y}:1`;
+                    const interiorZoneKey = createZoneKey(this.game.player.currentZone.x, this.game.player.currentZone.y, 1);
                     const interiorZoneData = this.game.zones.get(interiorZoneKey);
                     let placed = false;
 
@@ -272,10 +280,10 @@ export class ZoneManager {
     }
 
     generateZone() {
-    const currentZone = this.game.player.getCurrentZone();
-    // For underground zones (dimension 2), include the player's depth so each depth layer is stored separately
-    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
-    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
+        const currentZone = this.game.player.getCurrentZone();
+        // For underground zones (dimension 2), include the player's depth so each depth layer is stored separately
+        const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
+        const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, depth);
 
         // Generate chunk connections for current area
         this.game.connectionManager.generateChunkConnections(currentZone.x, currentZone.y);
@@ -416,9 +424,9 @@ export class ZoneManager {
 
     saveCurrentZoneState() {
         // Save the current zone's grid and enemies to the zones map
-    const currentZone = this.game.player.getCurrentZone();
-    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
-    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
+        const currentZone = this.game.player.getCurrentZone();
+        const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
+        const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, depth);
 
         // Save current zone state to preserve any changes made during gameplay
         this.game.zones.set(zoneKey, {

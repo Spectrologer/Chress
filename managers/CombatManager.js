@@ -1,5 +1,6 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { BombManager } from './BombManager.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 export class CombatManager {
     constructor(game, occupiedTiles) {
@@ -36,8 +37,8 @@ export class CombatManager {
         } catch (e) {}
 
         // Remove from zone data to prevent respawn
-    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
-    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
+        const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
+        const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, depth);
         if (this.game.zones.has(zoneKey)) {
             const zoneData = this.game.zones.get(zoneKey);
             zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
@@ -66,8 +67,8 @@ export class CombatManager {
             if (!enemy._suppressAttackSound) this.game.soundManager.playSound('attack');
         } catch (e) {}
         // Remove from zone data (enemy will be removed from game.enemies by checkCollisions)
-    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
-    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
+        const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
+        const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, depth);
         if (this.game.zones.has(zoneKey)) {
             const zoneData = this.game.zones.get(zoneKey);
             zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
@@ -163,7 +164,7 @@ export class CombatManager {
                 // Add the enemy to the corresponding underground zone's data
                 const currentZone = this.getCurrentZone();
                 const depth = this.game.player.undergroundDepth || 1;
-                const undergroundZoneKey = `${currentZone.x},${currentZone.y}:2:z-${depth}`;
+                const undergroundZoneKey = createZoneKey(currentZone.x, currentZone.y, 2, depth);
                 if (this.game.zones.has(undergroundZoneKey)) {
                     const undergroundZoneData = this.game.zones.get(undergroundZoneKey);
                     // Find a valid spawn point for the enemy in the pitfall zone

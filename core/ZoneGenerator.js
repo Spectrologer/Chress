@@ -14,6 +14,7 @@ import { addRegionNotes as _addRegionNotes } from './regionNotes.js';
 import { handleInterior } from './handlers/interiorHandler.js';
 import { handleUnderground } from './handlers/undergroundHandler.js';
 import { handleSurface } from './handlers/surfaceHandler.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 export class ZoneGenerator {
 
@@ -49,8 +50,8 @@ export class ZoneGenerator {
         this.currentDimension = dimension;
 
         // Check if this zone already exists (include dimension and depth for underground)
-        const depthSuffix = (dimension === 2) ? `:z-${this.game.player.currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
-        const zoneKey = `${zoneX},${zoneY}:${dimension}${depthSuffix}`;
+        const depth = this.game.player.currentZone.depth || (this.game.player.undergroundDepth || 1);
+        const zoneKey = createZoneKey(zoneX, zoneY, dimension, depth);
         if (existingZones.has(zoneKey)) {
             return existingZones.get(zoneKey);
         }

@@ -1,6 +1,7 @@
 import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANTS } from '../core/constants.js';
 import { PlayerStats } from './PlayerStats.js';
 import { PlayerAnimations } from './PlayerAnimations.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 export class Player {
     constructor() {
@@ -214,20 +215,19 @@ export class Player {
     markZoneVisited(x, y, dimension) {
         // For underground zones, include depth in the saved key so different depths are tracked separately
         const numericDim = Number(dimension);
-        if (numericDim === 2) {
-            const depth = this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1);
-            this.visitedZones.add(`${x},${y}:${numericDim}:z-${depth}`);
-        } else {
-            this.visitedZones.add(`${x},${y}:${numericDim}`);
-        }
+        const depth = (numericDim === 2)
+            ? (this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1))
+            : undefined;
+        const zoneKey = createZoneKey(x, y, numericDim, depth);
+        this.visitedZones.add(zoneKey);
     }
 
     hasVisitedZone(x, y, dimension) {
-        if (dimension === 2) {
-            const depth = this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1);
-            return this.visitedZones.has(`${x},${y}:${dimension}:z-${depth}`);
-        }
-        return this.visitedZones.has(`${x},${y}:${dimension}`);
+        const depth = (dimension === 2)
+            ? (this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1))
+            : undefined;
+        const zoneKey = createZoneKey(x, y, dimension, depth);
+        return this.visitedZones.has(zoneKey);
     }
 
     getVisitedZones() {

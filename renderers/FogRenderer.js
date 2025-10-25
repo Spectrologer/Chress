@@ -1,4 +1,5 @@
 import { TILE_SIZE, GRID_SIZE } from '../core/constants.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 // Scrolling tiled fog overlay using a preloaded texture (assets/fx/fog.png).
 // The TextureLoader registers this under the key 'fx/fog' by default.
@@ -29,12 +30,12 @@ export class FogRenderer {
     updateAndDrawFog() {
         const currentZone = this.game.player.getCurrentZone();
 
-    // Coerce dimension to number to tolerate loaded/serialized state that may
-    // have the value as a string (e.g. "2"). We only treat exact numeric 2
-    // as underground.
-    const isUnderground = Number(currentZone.dimension) === 2;
-    const depthSuffix = (isUnderground) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
-        const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
+        // Coerce dimension to number to tolerate loaded/serialized state that may
+        // have the value as a string (e.g. "2"). We only treat exact numeric 2
+        // as underground.
+        const isUnderground = Number(currentZone.dimension) === 2;
+        const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
+        const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, isUnderground ? depth : undefined);
         if (this.lastZoneKey !== zoneKey) {
             // Reset scroll when changing zone to avoid visible jumps
             this.offsetX = 0;
