@@ -56,11 +56,6 @@ class Game {
         this.isInPitfallZone = false; // True if player is in a zone entered via pitfall
         this.pitfallTurnsSurvived = 0; // Turns survived in a pitfall zone
 
-        // Legacy animation arrays (deprecated - use animationManager)
-        this.arrowAnimations = [];
-        this.pointAnimations = [];
-        this.horseChargeAnimations = [];
-
         // Load assets and start game
         this.gameInitializer.loadAssets();
 

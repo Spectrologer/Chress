@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
+import { TILE_TYPES } from '../core/constants.js';
 import { BombManager } from './BombManager.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 import audioService from '../utils/AudioService.js';
@@ -7,7 +7,6 @@ export class CombatManager {
     constructor(game, occupiedTiles) {
         this.game = game;
         this.occupiedTiles = occupiedTiles;
-        this.game.pointAnimations = this.game.pointAnimations || [];
         this.bombManager = new BombManager(game);
     }
 

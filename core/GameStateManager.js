@@ -67,7 +67,7 @@ export class GameStateManager {
         this.game.currentRegion = null; // Reset region tracking
         this.game.lastSignMessage = null; // Reset sign message tracking
         this.game.displayingMessageForSign = null; // Reset sign message display tracking
-        this.game.horseChargeAnimations = []; // Reset horse charge animations
+        this.game.animationManager.clearAll(); // Reset all animations
         this.game.player.spentDiscoveries = 0; // Reset spent discoveries
 
         // Generate starting zone

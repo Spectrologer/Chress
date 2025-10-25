@@ -7,7 +7,11 @@
       "Bash(timeout 5 bash:*)",
       "Bash(for f in *.js effects/*.js)",
       "Bash(done)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []

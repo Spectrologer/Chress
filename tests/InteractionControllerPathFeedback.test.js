@@ -1,4 +1,4 @@
-import { InteractionController } from '../managers/InteractionController.js';
+import { InputController } from '../controllers/InputController.js';
 
 // Minimal fake game/player to test executePath behavior
 function makeGame() {
@@ -42,12 +42,12 @@ function makeGame() {
     return game;
 }
 
-describe('InteractionController path feedback', () => {
+describe('InputController path feedback', () => {
     jest.useFakeTimers();
 
     test('startHoldFeedback is called with correct destination for simple path', () => {
         const game = makeGame();
-        const ic = new InteractionController(game, null, null, null);
+        const ic = new InputController(game, null, null, null);
 
         // Path: right, down -> destination should be (3,3)
         ic.executePath(['arrowright', 'arrowdown']);
@@ -60,7 +60,7 @@ describe('InteractionController path feedback', () => {
         const game = makeGame();
         // Use non-verbose path execution branch by disabling verbosePathAnimations
         game.player.stats = {};
-        const ic = new InteractionController(game, null, (ev) => {
+        const ic = new InputController(game, null, (ev) => {
             // Synthetic handler to apply movement synchronously so the runNextStep loop advances
             const moveMap = { arrowup: [0, -1], arrowdown: [0, 1], arrowleft: [-1, 0], arrowright: [1, 0] };
             const m = moveMap[(ev.key || '').toLowerCase()];
@@ -82,7 +82,7 @@ describe('InteractionController path feedback', () => {
 
     test('clearFeedback is called on cancelPathExecution', () => {
         const game = makeGame();
-        const ic = new InteractionController(game, null, null, null);
+        const ic = new InputController(game, null, null, null);
 
         ic.executePath(['arrowright','arrowright']);
         // Immediately cancel

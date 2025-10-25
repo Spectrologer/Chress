@@ -1,4 +1,4 @@
-import { InteractionController } from '../managers/InteractionController.js';
+import { InputController } from '../controllers/InputController.js';
 
 // Minimal fake game/player similar to other tests
 function makeGame() {
@@ -54,7 +54,7 @@ describe('Auto Path With Enemies setting', () => {
     // Use non-verbose animations to avoid Sequence/Promise handling in tests
     game.player.stats = { verbosePathAnimations: false, autoPathWithEnemies: false };
 
-        const ic = new InteractionController(game, null, (ev) => {
+        const ic = new InputController(game, null, (ev) => {
             // apply movement synchronously
             const map = { arrowup: [0, -1], arrowdown: [0, 1], arrowleft: [-1, 0], arrowright: [1, 0] };
             const m = map[(ev.key || '').toLowerCase()];
@@ -83,7 +83,7 @@ describe('Auto Path With Enemies setting', () => {
     // Use non-verbose animations to avoid Sequence/Promise handling in tests
     game.player.stats = { verbosePathAnimations: false, autoPathWithEnemies: true };
 
-        const ic = new InteractionController(game, null, (ev) => {
+        const ic = new InputController(game, null, (ev) => {
             const map = { arrowup: [0, -1], arrowdown: [0, 1], arrowleft: [-1, 0], arrowright: [1, 0] };
             const m = map[(ev.key || '').toLowerCase()];
             if (m) { game.player.x += m[0]; game.player.y += m[1]; }

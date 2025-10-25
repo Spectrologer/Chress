@@ -1,47 +1,72 @@
-import { InputBindings } from './InputBindings.js';
-import { InteractionController } from './InteractionController.js';
+import { InputController } from '../controllers/InputController.js';
 
-// Thin facade preserving the original InputManager public API while delegating
-// responsibilities to InputBindings (DOM + normalized events) and
-// InteractionController (pathfinding, movement, executing paths).
+/**
+ * InputManager - Thin facade for backward compatibility
+ *
+ * Previously delegated to three separate systems:
+ * - InputBindings (DOM event setup)
+ * - InteractionController (pathfinding, movement)
+ * - PointerInput (pointer event handling)
+ *
+ * Now delegates to a single unified InputController that handles all input
+ * responsibilities with pointer events as the primary input method.
+ */
 export class InputManager {
     constructor(game, inventoryService) {
         this.game = game;
         this.inventoryService = inventoryService;
 
-    // Pass a key handler so path execution and exit handling route through
-    // this InputManager.handleKeyPress (allows tests to spy on it). Also pass
-    // an exit handler so double-tap exit logic can call back into the facade
-    // and be observable by tests.
-    this.interaction = new InteractionController(game, inventoryService, (ev) => this.handleKeyPress(ev), (x, y) => this.handleExitTap(x, y));
-        this.bindings = new InputBindings(game, {
-            // Route input bindings through the facade so tests and callers
-            // spying on InputManager.handleTap/handleKeyPress observe events.
-            handleTap: (x, y) => this.handleTap(x, y),
-            handleKeyPress: (ev) => this.handleKeyPress(ev)
-        }, (sx, sy) => this.interaction.convertScreenToGrid(sx, sy));
+        // Create controller with callbacks that route through this facade
+        // This allows tests to spy on InputManager methods while avoiding recursion
+        this.controller = new InputController(
+            game,
+            inventoryService,
+            (ev) => this._internalHandleKeyPress(ev),
+            (x, y) => this._internalHandleExitTap(x, y)
+        );
     }
 
-    setupControls() { this.bindings.setupControls(); }
-    setupTouchControls() { this.bindings.setupTouchControls && this.bindings.setupTouchControls(); }
+    setupControls() { this.controller.setupControls(); }
+    setupTouchControls() { this.controller.setupTouchControls(); }
+    destroy() { this.controller.destroy(); }
 
-    // Re-export commonly-used methods/fields so other modules/tests keep working
-    handleTap(screenX, screenY) { return this.interaction.handleTap(screenX, screenY); }
-    handleKeyPress(event) { return this.interaction.handleKeyPress(event); }
-    findPath(startX, startY, targetX, targetY) { return this.interaction.findPath(startX, startY, targetX, targetY); }
-    executePath(path) { return this.interaction.executePath(path); }
-    cancelPathExecution() { return this.interaction.cancelPathExecution(); }
-    addShackAtPlayerPosition() { return this.interaction.addShackAtPlayerPosition && this.interaction.addShackAtPlayerPosition(); }
-    convertScreenToGrid(x, y) { return this.interaction.convertScreenToGrid(x, y); }
-    // Keep a facade method that tests can spy on. Delegate the actual
-    // behavior to the controller's performExitTap to avoid recursion.
-    handleExitTap(x, y) { this.interaction.performExitTap(x, y); return; }
+    // Public API methods that can be spied on by tests
+    handleTap(screenX, screenY) { return this.controller.handleTap(screenX, screenY); }
+
+    handleKeyPress(event) {
+        // Call the controller's actual implementation, not through the callback
+        return this.controller.handleKeyPress(event);
+    }
+
+    findPath(startX, startY, targetX, targetY) { return this.controller.findPath(startX, startY, targetX, targetY); }
+    executePath(path) { return this.controller.executePath(path); }
+    cancelPathExecution() { return this.controller.cancelPathExecution(); }
+    addShackAtPlayerPosition() { return this.controller.addShackAtPlayerPosition(); }
+    convertScreenToGrid(x, y) { return this.controller.convertScreenToGrid(x, y); }
+
+    handleExitTap(x, y) {
+        // Call the controller's actual implementation
+        return this.controller.handleExitTap(x, y);
+    }
+
+    // Internal methods called by controller callbacks (avoid infinite recursion)
+    _internalHandleKeyPress(event) {
+        // This is called by the controller when executing paths
+        // We want to route it back through handleKeyPress so spies work
+        return this.handleKeyPress(event);
+    }
+
+    _internalHandleExitTap(x, y) {
+        // This is called by the controller when handling exits
+        // We want to route it back through handleExitTap so spies work
+        return this.handleExitTap(x, y);
+    }
 
     // Expose some internal state used by tests/legacy code
-    get isExecutingPath() { return this.interaction.isExecutingPath; }
-    set isExecutingPath(v) { this.interaction.isExecutingPath = v; }
-    get currentPathSequence() { return this.interaction.currentPathSequence; }
-    set currentPathSequence(v) { this.interaction.currentPathSequence = v; }
-    get currentPathSequenceFallback() { return this.interaction.currentPathSequenceFallback; }
-    set currentPathSequenceFallback(v) { this.interaction.currentPathSequenceFallback = v; }
+    get isExecutingPath() { return this.controller.isExecutingPath; }
+    set isExecutingPath(v) { this.controller.isExecutingPath = v; }
+    get currentPathSequence() { return this.controller.currentPathSequence; }
+    set currentPathSequence(v) { this.controller.currentPathSequence = v; }
+    get currentPathSequenceFallback() { return this.controller.currentPathSequenceFallback; }
+    set currentPathSequenceFallback(v) { this.controller.currentPathSequenceFallback = v; }
 }
