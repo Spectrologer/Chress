@@ -28,6 +28,17 @@ Note: `npm start` is an alias for the dev server command (`live-server`) configu
 - Root: `index.html`, `styles.css`, `game.js`, `package.json`, `PROJECT_OVERVIEW.md` (this file).
 - Core (`core/`): initialization, `ServiceContainer.js`, `GameInitializer.js`, `GameStateManager.js`, `Game.js`, and central wiring.
 - Managers (`managers/`): `InputManager.js`, `ActionManager.js`, `CombatManager.js`, `InventoryManager.js`, `ZoneManager.js`, `ConnectionManager.js`, `RenderManager.js`, `UIManager.js`, etc. — each encapsulates gameplay responsibilities.
+  - **Inventory System (`managers/inventory/`)**: Consolidated inventory management using clean architecture:
+    - `ItemMetadata.js` - Static item data (tooltips, constants, type checks)
+    - `ItemRepository.js` - Data access layer (inventory CRUD operations)
+    - `InventoryService.js` - Business logic orchestration
+    - `ItemEffectStrategy.js` - Effect routing (strategy pattern)
+    - `effects/` - Individual effect implementations by category:
+      - `BaseItemEffect.js` - Abstract base class
+      - `ConsumableEffects.js` - Food, Water, Heart
+      - `ToolEffects.js` - Axe, Hammer
+      - `WeaponEffects.js` - Bomb, Bow, Bishop Spear, Horse Icon
+      - `SpecialEffects.js` - Shovel, Note, Book of Time Travel
 - Entities: `entities/` and `enemy/` contain `Player.js`, `Enemy.js`, `BaseEnemy.js`, and all specialized enemy behavior files.
 - Rendering: `renderers/` plus tile renderer classes (`BaseTileRenderer.js`, `ItemTileRenderer.js`, `StructureTileRenderer.js`, `WallTileRenderer.js`, `RendererUtils.js`) and texture loading (`TextureLoader.js`, `TextureManager.js`).
 - Generators: `generators/` (zone/item/feature/structure generators and helpers).
@@ -70,4 +81,4 @@ If you'd like, I can also add a short `README.md` with the run/test steps and a 
 
 ---
 
-Last update: October 24, 2025 — updated to reflect current repository layout and manifest.
+Last update: October 25, 2025 — updated to reflect inventory system refactoring and clean architecture implementation.

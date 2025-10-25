@@ -1,6 +1,5 @@
 import { RadialInventoryUI } from '../managers/RadialInventoryUI.js';
-import { ItemService } from '../managers/ItemService.js';
-import { ItemUsageHandler } from '../managers/ItemUsageHandler.js';
+import { InventoryService } from '../managers/inventory/InventoryService.js';
 
 function makeMockGame() {
   const mockGame = {
@@ -44,8 +43,7 @@ describe('RadialInventoryUI', () => {
     // Spy on saveRadialInventory by replacing the imported function in the module cache
     jest.spyOn(require('../managers/RadialPersistence.js'), 'saveRadialInventory').mockImplementation(() => {});
 
-    const handler = new ItemUsageHandler(game);
-    const service = new ItemService(game, handler);
+    const service = new InventoryService(game);
     const radial = new RadialInventoryUI(game, service);
 
     radial.openAtPlayer();
@@ -66,8 +64,7 @@ describe('RadialInventoryUI', () => {
     const horse = { type: 'horse_icon', uses: 2 };
     game.player.radialInventory = [horse];
 
-    const handler = new ItemUsageHandler(game);
-    const service = new ItemService(game, handler);
+    const service = new InventoryService(game);
     const radial = new RadialInventoryUI(game, service);
 
     radial.openAtPlayer();

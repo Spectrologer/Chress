@@ -1,10 +1,11 @@
 import { TILE_TYPES } from '../core/constants.js';
 import { logger } from '../core/logger.js';
+import { ItemMetadata } from './inventory/ItemMetadata.js';
 
 export class InventoryUI {
-    constructor(game, itemService) {
+    constructor(game, inventoryService) {
         this.game = game;
-        this.itemService = itemService;
+        this.inventoryService = inventoryService;
         this.tooltip = null;
         // WeakMap to track last-used timestamps per item object (survives DOM re-renders)
         this._itemLastUsed = new WeakMap();
@@ -35,7 +36,7 @@ export class InventoryUI {
         slot.style.cursor = this.game.player.isDead() ? 'not-allowed' : 'pointer';
 
         // Tooltip text
-    const tooltipText = this.itemService.getItemTooltipText(item);
+        const tooltipText = ItemMetadata.getTooltipText(item);
 
         // Visuals
         this.addItemVisuals(slot, item);
@@ -167,10 +168,10 @@ export class InventoryUI {
                 logger.debug('[INV.UI] useItem called', { idx, itemType: item.type, time: Date.now() });
                 try { throw new Error('INV.UI useItem stack'); } catch (e) { logger.debug(e.stack); }
             }
-            return this.itemService.useInventoryItem(item, idx);
+            return this.inventoryService.useItem(item, { fromRadial: false });
         };
         const toggleDisabled = () => {
-            this.itemService.toggleItemDisabled(item);
+            this.inventoryService.toggleItemDisabled(item);
             this.game.uiManager.updatePlayerStats();
             try { item._suppressTooltipUntil = Date.now() + 300; } catch (e) {}
             hideTooltip();
@@ -330,7 +331,7 @@ export class InventoryUI {
                         const now = Date.now();
                         if (now - last >= 600) {
                             this._itemLastUsed.set(bombItem, now);
-                            this.itemService.useInventoryItem(bombItem, this.game.player.inventory.indexOf(bombItem));
+                            this.inventoryService.useItem(bombItem, { fromRadial: false });
                         } else if (window.inventoryDebugMode) logger.debug('[INV.UI] suppressed duplicate bomb use', {idx});
                     }
                     this.game.uiManager.updatePlayerStats();

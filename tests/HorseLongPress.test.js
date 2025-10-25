@@ -1,6 +1,5 @@
 import { InventoryUI } from '../managers/InventoryUI.js';
-import { ItemService } from '../managers/ItemService.js';
-import { ItemUsageHandler } from '../managers/ItemUsageHandler.js';
+import { InventoryService } from '../managers/inventory/InventoryService.js';
 
 // Minimal mock game (similar to existing tests)
 function makeMockGame() {
@@ -48,8 +47,7 @@ describe('Horse long-press behavior', () => {
     const horse = { type: 'horse_icon', uses: 2, disabled: false };
     game.player.inventory = [horse];
 
-    const handler = new ItemUsageHandler(game);
-    const service = new ItemService(game, handler);
+    const service = new InventoryService(game);
     const ui = new InventoryUI(game, service);
 
     ui.updateInventoryDisplay();

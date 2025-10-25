@@ -3,7 +3,11 @@
     "allow": [
       "Bash(node --version:*)",
       "Bash(npm start)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(timeout 5 bash:*)",
+      "Bash(for f in *.js effects/*.js)",
+      "Bash(done)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []

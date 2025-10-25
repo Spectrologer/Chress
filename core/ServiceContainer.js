@@ -9,12 +9,10 @@ import { RenderManager } from '../renderers/RenderManager.js';
 import { CombatManager } from '../managers/CombatManager.js';
 import { InteractionManager } from '../managers/InteractionManager.js';
 import { ItemManager } from '../managers/ItemManager.js';
-import { ItemUsageManager } from '../managers/ItemUsageManager.js';
+import { InventoryService } from '../managers/inventory/InventoryService.js';
 import { ZoneManager } from '../managers/ZoneManager.js';
 import { ActionManager } from '../managers/ActionManager.js';
 import { TurnManager } from './TurnManager.js';
-import { ItemUsageHandler } from '../managers/ItemUsageHandler.js';
-import { ItemService } from '../managers/ItemService.js';
 import { InventoryUI } from '../managers/InventoryUI.js';
 import { RadialInventoryUI } from '../managers/RadialInventoryUI.js';
 import { loadRadialInventory } from '../managers/RadialPersistence.js';
@@ -44,18 +42,22 @@ export class ServiceContainer {
         this.game.Enemy = Enemy; // expose class for GameStateManager
 
         // Managers that depend on game reference
+        // NEW: Consolidated inventory system
+        this.game.inventoryService = new InventoryService(this.game);
         this.game.itemManager = new ItemManager(this.game);
-        // Item usage manager (positional uses like shovel)
-        this.game.itemUsageManager = new ItemUsageManager(this.game);
-        // New item usage handler (for item effects)
-        this.game.itemUsageHandler = new ItemUsageHandler(this.game);
-        this.game.itemService = new ItemService(this.game, this.game.itemUsageHandler);
-        this.game.inventoryUI = new InventoryUI(this.game, this.game.itemService);
-    this.game.radialInventoryUI = new RadialInventoryUI(this.game, this.game.itemService);
-    // Load persisted radial items (if any)
-    try { loadRadialInventory(this.game); } catch (e) {}
-        this.game.itemUsageHandler.game = this.game;
-        this.game.inputManager = new InputManager(this.game, this.game.itemUsageManager);
+
+        // Backward compatibility aliases
+        this.game.itemService = this.game.inventoryService;
+        this.game.itemUsageHandler = null; // Replaced by ItemEffectStrategy
+        this.game.itemUsageManager = null; // Replaced by ItemEffectStrategy
+
+        this.game.inventoryUI = new InventoryUI(this.game, this.game.inventoryService);
+        this.game.radialInventoryUI = new RadialInventoryUI(this.game, this.game.inventoryService);
+
+        // Load persisted radial items (if any)
+        try { loadRadialInventory(this.game); } catch (e) {}
+
+        this.game.inputManager = new InputManager(this.game, this.game.inventoryService);
     this.game.uiManager = new UIManager(this.game);
 
     // Construct GameInitializer early so it can configure canvas and ctx before

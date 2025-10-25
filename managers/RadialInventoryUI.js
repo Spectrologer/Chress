@@ -1,10 +1,11 @@
 import { TILE_SIZE, TILE_TYPES } from '../core/constants.js';
 import { saveRadialInventory } from './RadialPersistence.js';
+import { ItemMetadata } from './inventory/ItemMetadata.js';
 
 export class RadialInventoryUI {
-    constructor(game, itemService) {
+    constructor(game, inventoryService) {
         this.game = game;
-        this.itemService = itemService;
+        this.inventoryService = inventoryService;
         this.open = false;
         this.container = null; // DOM element
         // Map of slot elements to item indexes
@@ -61,11 +62,10 @@ export class RadialInventoryUI {
         } catch (e) {}
         // If radial inventory is empty, try to migrate eligible items from main inventory
         try {
-            const RADIAL_TYPES = ['bomb', 'horse_icon', 'bow', 'bishop_spear', 'book_of_time_travel'];
             if ((!player.radialInventory || player.radialInventory.length === 0) && player.inventory && player.inventory.length > 0) {
                 for (let i = player.inventory.length - 1; i >= 0 && (player.radialInventory.length || 0) < 8; i--) {
                     const it = player.inventory[i];
-                    if (it && RADIAL_TYPES.includes(it.type)) {
+                    if (it && ItemMetadata.RADIAL_TYPES.includes(it.type)) {
                         // Normalize book representation: prefer 'uses' for books
                         if (it.type === 'book_of_time_travel') {
                             if (typeof it.uses === 'undefined') it.uses = (typeof it.quantity !== 'undefined') ? it.quantity : 1;
@@ -197,7 +197,7 @@ export class RadialInventoryUI {
                     return;
                 }
 
-                this.itemService.useInventoryItem(item, this.game.player.radialInventory.indexOf(item), true);
+                this.inventoryService.useItem(item, { fromRadial: true });
                 this.close();
                 if (this.game.updatePlayerStats) this.game.updatePlayerStats();
             });

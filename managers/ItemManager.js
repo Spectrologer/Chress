@@ -1,154 +1,60 @@
 import { TILE_TYPES } from '../core/constants.js';
-import { saveRadialInventory } from './RadialPersistence.js';
+import { InventoryService } from './inventory/InventoryService.js';
+import { ItemMetadata } from './inventory/ItemMetadata.js';
 
-const STACKABLE_ITEMS = ['food', 'water', 'bomb', 'note', 'heart', 'bishop_spear', 'horse_icon', 'book_of_time_travel', 'bow', 'shovel'];
-// Type mapping for special object-based tiles
-const typeMap = {
-    [TILE_TYPES.BOW]: 'bow',
-    [TILE_TYPES.BISHOP_SPEAR]: 'bishop_spear',
-    [TILE_TYPES.HORSE_ICON]: 'horse_icon',
-    [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: 'book_of_time_travel',
-    [TILE_TYPES.SHOVEL]: 'shovel'
-};
-
+/**
+ * ItemManager - Public API facade for item/inventory operations
+ *
+ * This is the consolidated manager that replaces the old inventory system.
+ * - Provides backward-compatible API
+ *
+ * Responsibilities:
+ * - Simple public interface for other systems
+ * - Delegates to InventoryService for all operations
+ * - Maintains backward compatibility
+ *
+ * This class is VERY THIN - it's just a facade.
+ */
 export class ItemManager {
     constructor(game) {
         this.game = game;
+        this.service = new InventoryService(game);
     }
 
-    // Add an item to a player's inventory, merging with existing stacks when appropriate.
-    // Returns true if the item was added or merged, false if inventory was full and couldn't be added.
+    /**
+     * Add an item to player inventory with automatic stacking
+     * Backward-compatible with old ItemManager.addItemToInventory()
+     *
+     * @param {Object} player - Player object
+     * @param {Object} item - Item to add
+     * @param {string} sound - Sound effect to play
+     * @returns {boolean} - True if successfully added
+     */
     addItemToInventory(player, item, sound = 'pickup') {
-        if (!player || !item) return false;
-
-        const playSoundAndAnimate = (it) => {
-            try {
-                const key = this._getImageKeyForItem(it);
-                player.animations.pickupHover = { imageKey: key, frames: 60, totalFrames: 60, type: it.type, foodType: it.foodType };
-            } catch (e) {}
-            if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
-                this.game.soundManager.playSound(sound);
-            } else if (typeof window !== 'undefined' && window.soundManager?.playSound) {
-                window.soundManager.playSound(sound);
-            }
-        };
-
-        // Some items belong in the radial quick-actions inventory instead of the main player card inventory
-        const RADIAL_TYPES = ['bomb', 'horse_icon', 'bow', 'bishop_spear', 'book_of_time_travel'];
-
-        // Normalize certain item shapes: books should always use 'uses' not 'quantity'
-        if (item && item.type === 'book_of_time_travel') {
-            if (typeof item.uses === 'undefined') {
-                item.uses = (typeof item.quantity !== 'undefined') ? item.quantity : 1;
-            }
-            try { delete item.quantity; } catch (e) {}
-        }
-
-        if (RADIAL_TYPES.includes(item.type)) {
-            // Try to stack into existing radial slot when possible
-            const existing = player.radialInventory.find(i => i.type === item.type && (typeof item.foodType === 'undefined' || i.foodType === item.foodType));
-            if (existing) {
-                if (typeof item.uses !== 'undefined') existing.uses = (existing.uses || 0) + item.uses; else existing.quantity = (existing.quantity || 1) + (item.quantity || 1);
-                playSoundAndAnimate(item);
-                return true;
-            }
-            if (player.radialInventory.length < 8) {
-                if (item.type === 'bomb' || item.type === 'book_of_time_travel' || item.type === 'bow') {
-                    // Ensure these items have a quantity when represented as counts
-                    if (typeof item.quantity === 'undefined' && typeof item.uses === 'undefined') item.quantity = 1;
-                    // If book has quantity, promote to uses so consumption code decrements correctly
-                    if (item.type === 'book_of_time_travel' && typeof item.uses === 'undefined' && typeof item.quantity !== 'undefined') {
-                        item.uses = item.quantity; try { delete item.quantity; } catch(e){}
-                    }
-                }
-                player.radialInventory.push(item);
-                playSoundAndAnimate(item);
-                try { saveRadialInventory(this.game); } catch (e) {}
-                return true;
-            }
-            // Fall back to main inventory if radial is full
-        }
-
-        if (STACKABLE_ITEMS.includes(item.type)) {
-            const existingStack = player.inventory.find(i => i.type === item.type && (typeof item.foodType === 'undefined' || i.foodType === item.foodType));
-            if (existingStack) {
-                if (item.uses) {
-                    existingStack.uses = (existingStack.uses || 0) + item.uses;
-                } else {
-                    existingStack.quantity = (existingStack.quantity || 1) + (item.quantity || 1);
-                }
-                playSoundAndAnimate(item);
-                return true;
-            }
-        }
-
-        if (player.inventory.length < 6) {
-            // Initialize quantity for stackable consumables so stacks behave consistently
-            if (item.type === 'food' || item.type === 'water' || item.type === 'bomb' || item.type === 'note' || item.type === 'heart') {
-                if (typeof item.quantity === 'undefined') item.quantity = 1;
-            }
-            player.inventory.push(item);
-            playSoundAndAnimate(item);
-            return true;
-        }
-
-        return false; // Inventory full and no existing stack
+        return this.service.pickupItem(item, sound);
     }
 
+    /**
+     * Handle item pickup from grid tile
+     * Backward-compatible with old ItemManager.handleItemPickup()
+     *
+     * @param {Object} player - Player object
+     * @param {number} x - Grid X coordinate
+     * @param {number} y - Grid Y coordinate
+     * @param {Array} grid - Game grid
+     */
     handleItemPickup(player, x, y, grid) {
         const tile = grid[y][x];
         if (!tile) return;
 
         const pickup = (item, sound = 'pickup') => {
-            const success = this.addItemToInventory(player, item, sound);
+            const success = this.service.pickupItem(item, sound);
             if (success) {
                 grid[y][x] = TILE_TYPES.FLOOR;
             }
         };
 
-        const getImageKeyForItem = (item) => {
-            // Map item.type to texture keys used by TextureLoader
-            if (!item) return null;
-            if (item.type === 'food' && item.foodType) return item.foodType.replace('.png', '').replace('/', '_');
-            if (item.type === 'water') return 'water';
-            if (item.type === 'axe') return 'axe';
-            if (item.type === 'bomb') return 'bomb';
-            if (item.type === 'note') return 'note';
-            if (item.type === 'heart') return 'heart';
-            if (item.type === 'bishop_spear') return 'spear';
-            if (item.type === 'horse_icon') return 'horse';
-            if (item.type === 'book_of_time_travel') return 'book';
-            if (item.type === 'bow') return 'bow';
-            if (item.type === 'shovel') return 'shovel';
-            return null;
-        };
-
-        // Expose image key helper for other methods (used by addItemToInventory)
-        this._getImageKeyForItem = getImageKeyForItem;
-
-        const isStackableItem = (tile) => {
-            // Handle both object tiles (tile.type) and primitive tile constants
-            if (tile === TILE_TYPES.NOTE) return true;
-            if (tile === TILE_TYPES.WATER) return true;
-            if (tile === TILE_TYPES.HEART) return true;
-            if (tile === TILE_TYPES.BOMB) return true;
-            if (tile && tile.type) {
-                const itemType = typeMap[tile.type] || (tile.type === TILE_TYPES.FOOD ? 'food' : null);
-                return STACKABLE_ITEMS.includes(itemType);
-            }
-            return false;
-        };
-
-        const canPickup = player.inventory.length < 6;
-        const isStackable = isStackableItem(tile) || (tile.type && isStackableItem(tile));
-        const hasExistingStack = player.inventory.some(i => 
-            (i.type === 'water' && tile === TILE_TYPES.WATER) ||
-            (i.type === 'heart' && tile === TILE_TYPES.HEART) ||
-            (i.type === 'note' && tile === TILE_TYPES.NOTE) ||
-            (i.type === 'food' && tile.type === TILE_TYPES.FOOD && i.foodType === tile.foodType)
-        );
-
-        const canPickupOrStack = canPickup || (isStackable && hasExistingStack);
+        const canPickupOrStack = this._canPickupOrStackTile(player, tile);
 
         switch (tile) {
             case TILE_TYPES.WATER:
@@ -159,29 +65,33 @@ export class ItemManager {
                 }
                 grid[y][x] = TILE_TYPES.FLOOR;
                 break;
+
             case TILE_TYPES.HEART:
                 if (canPickupOrStack) {
                     pickup({ type: 'heart' });
                 } else {
-                    // If inventory is full and there's no stack, restore health directly
+                    // If inventory full, consume directly
                     player.setHealth((player.getHealth ? player.getHealth() : 0) + 1);
                 }
                 grid[y][x] = TILE_TYPES.FLOOR;
                 break;
+
             case TILE_TYPES.AXE:
                 pickup({ type: 'axe' });
                 break;
+
             case TILE_TYPES.HAMMER:
-                // Hammer is now an ability, not an inventory item.
-                // This case can be removed if hammer is never a pickup-able item.
-                // For now, let's assume it might be for backward compatibility.
+                // Hammer is now an ability, not a pickup item (legacy case)
                 break;
+
             case TILE_TYPES.BOMB:
                 pickup({ type: 'bomb' });
                 break;
+
             case TILE_TYPES.NOTE:
                 pickup({ type: 'note' });
                 break;
+
             default:
                 // Handle object-based tiles
                 if (tile.type) {
@@ -194,16 +104,43 @@ export class ItemManager {
                             }
                             grid[y][x] = TILE_TYPES.FLOOR;
                             break;
+
                         case TILE_TYPES.BISHOP_SPEAR:
                         case TILE_TYPES.HORSE_ICON:
                         case TILE_TYPES.BOOK_OF_TIME_TRAVEL:
                         case TILE_TYPES.BOW:
                         case TILE_TYPES.SHOVEL:
-                            pickup({ type: typeMap[tile.type] || 'unknown', uses: tile.uses });
+                            const itemType = ItemMetadata.TILE_TYPE_MAP[tile.type] || 'unknown';
+                            pickup({ type: itemType, uses: tile.uses });
                             break;
                     }
                 }
                 break;
         }
+    }
+
+    /**
+     * Private: Check if player can pickup or stack a tile
+     * @private
+     */
+    _canPickupOrStackTile(player, tile) {
+        const hasSpace = player.inventory.length < 6;
+        const isStackable = ItemMetadata.isStackableItem(tile);
+
+        // Check for existing stack based on tile type
+        let hasExistingStack = false;
+        if (tile === TILE_TYPES.WATER) {
+            hasExistingStack = player.inventory.some(i => i.type === 'water');
+        } else if (tile === TILE_TYPES.HEART) {
+            hasExistingStack = player.inventory.some(i => i.type === 'heart');
+        } else if (tile === TILE_TYPES.NOTE) {
+            hasExistingStack = player.inventory.some(i => i.type === 'note');
+        } else if (tile.type === TILE_TYPES.FOOD) {
+            hasExistingStack = player.inventory.some(i =>
+                i.type === 'food' && i.foodType === tile.foodType
+            );
+        }
+
+        return hasSpace || (isStackable && hasExistingStack);
     }
 }

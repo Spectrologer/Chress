@@ -1,12 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { ItemService } from '../managers/ItemService.js';
-import { ItemUsageHandler } from '../managers/ItemUsageHandler.js';
+import { InventoryService } from '../managers/inventory/InventoryService.js';
+import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
 import { TILE_TYPES } from '../core/constants.js';
 
-describe('ItemService', () => {
-  let itemService;
+describe('InventoryService', () => {
+  let inventoryService;
   let mockGame;
   let mockPlayer;
   let mockUIManager;
@@ -14,6 +14,7 @@ describe('ItemService', () => {
   beforeEach(() => {
     mockPlayer = {
       inventory: [],
+      radialInventory: [],
       isDead: jest.fn().mockReturnValue(false),
       x: 1,
       y: 1,
@@ -50,81 +51,79 @@ describe('ItemService', () => {
     document.getElementById = jest.fn().mockReturnValue({ classList: { add: jest.fn(), remove: jest.fn() }, textContent: '', style: {} });
     document.querySelector = jest.fn().mockReturnValue({ innerHTML: '', appendChild: jest.fn(), getBoundingClientRect: jest.fn().mockReturnValue({}), closest: jest.fn().mockReturnValue({ getBoundingClientRect: jest.fn().mockReturnValue({}) }) });
 
-  const handler = new ItemUsageHandler(mockGame);
-  itemService = new ItemService(mockGame, handler);
-  // Mirror runtime wiring: itemUsageHandler may call into game.itemService
-  mockGame.itemService = itemService;
+    inventoryService = new InventoryService(mockGame);
+    mockGame.inventoryService = inventoryService;
   });
 
   afterEach(() => jest.clearAllMocks());
 
-  test('getItemTooltipText returns correct text for food', () => {
+  test('ItemMetadata.getTooltipText returns correct text for food', () => {
     const foodItem = { type: 'food', foodType: 'food/meat/beaf.png' };
-    expect(itemService.getItemTooltipText(foodItem)).toBe('meat - Restores 10 hunger');
+    expect(ItemMetadata.getTooltipText(foodItem)).toBe('meat - Restores 10 hunger');
   });
 
-  test('getItemTooltipText returns correct text for water', () => {
+  test('ItemMetadata.getTooltipText returns correct text for water', () => {
     const waterItem = { type: 'water' };
-    expect(itemService.getItemTooltipText(waterItem)).toBe('Water - Restores 10 thirst');
+    expect(ItemMetadata.getTooltipText(waterItem)).toBe('Water - Restores 10 thirst');
   });
 
-  test('getItemTooltipText shows disabled state for bishop_spear', () => {
+  test('ItemMetadata.getTooltipText shows disabled state for bishop_spear', () => {
     const spearItem = { type: 'bishop_spear', uses: 3, disabled: true };
-    expect(itemService.getItemTooltipText(spearItem)).toBe('Bishop Spear (DISABLED) - Charge diagonally towards enemies, has 3 charges');
+    expect(ItemMetadata.getTooltipText(spearItem)).toBe('Bishop Spear (DISABLED) - Charge diagonally towards enemies, has 3 charges');
   });
 
-  test('getItemTooltipText shows disabled state for horse_icon', () => {
+  test('ItemMetadata.getTooltipText shows disabled state for horse_icon', () => {
     const horseItem = { type: 'horse_icon', uses: 2, disabled: true };
-    expect(itemService.getItemTooltipText(horseItem)).toBe('Horse Icon (DISABLED) - Charge in L-shape (knight moves) towards enemies, has 2 charges');
+    expect(ItemMetadata.getTooltipText(horseItem)).toBe('Horse Icon (DISABLED) - Charge in L-shape (knight moves) towards enemies, has 2 charges');
   });
 
-  test('useInventoryItem handles food consumption', () => {
+  test('useItem handles food consumption', () => {
     const foodItem = { type: 'food', foodType: 'food/meat/beaf.png' };
     mockPlayer.inventory = [foodItem];
 
-    itemService.useInventoryItem(foodItem, 0);
+    inventoryService.useItem(foodItem, { fromRadial: false });
 
     expect(mockPlayer.restoreHunger).toHaveBeenCalledWith(10);
     expect(mockPlayer.inventory).toHaveLength(0);
     expect(mockGame.updatePlayerStats).toHaveBeenCalled();
   });
 
-  test('useInventoryItem handles water consumption', () => {
+  test('useItem handles water consumption', () => {
     const waterItem = { type: 'water' };
     mockPlayer.inventory = [waterItem];
 
-    itemService.useInventoryItem(waterItem, 0);
+    inventoryService.useItem(waterItem, { fromRadial: false });
 
     expect(mockPlayer.restoreThirst).toHaveBeenCalledWith(10);
     expect(mockPlayer.inventory).toHaveLength(0);
   });
 
-  test('useInventoryItem handles heart consumption', () => {
+  test('useItem handles heart consumption', () => {
     const heartItem = { type: 'heart' };
     mockPlayer.inventory = [heartItem];
 
-    itemService.useInventoryItem(heartItem, 0);
+    inventoryService.useItem(heartItem, { fromRadial: false });
 
     expect(mockPlayer.setHealth).toHaveBeenCalledWith(3); // 2 + 1
     expect(mockPlayer.inventory).toHaveLength(0);
   });
 
-  test('useInventoryItem handles axe dropping', () => {
+  test('useItem handles axe dropping', () => {
     const axeItem = { type: 'axe' };
     mockPlayer.inventory = [axeItem];
 
-    itemService.useInventoryItem(axeItem, 0);
+    inventoryService.useItem(axeItem, { fromRadial: false });
 
     expect(mockGame.grid[1][1]).toBe(TILE_TYPES.AXE);
     expect(mockPlayer.inventory).toHaveLength(0);
   });
 
-  test('dropItem only drops on floor tiles', () => {
+  test('axe drop only works on floor tiles', () => {
     mockGame.grid[1][1] = TILE_TYPES.WALL; // Not floor
     const axeItem = { type: 'axe' };
     mockPlayer.inventory = [axeItem];
 
-    itemService.useInventoryItem(axeItem, 0);
+    inventoryService.useItem(axeItem, { fromRadial: false });
 
     expect(mockGame.grid[1][1]).toBe(TILE_TYPES.WALL); // Unchanged
     expect(mockPlayer.inventory).toHaveLength(1); // Still in inventory
@@ -134,18 +133,20 @@ describe('ItemService', () => {
     const spearItem = { type: 'bishop_spear', uses: 3, disabled: false };
     mockPlayer.inventory = [spearItem];
 
-    itemService.toggleItemDisabled(spearItem);
+    inventoryService.toggleItemDisabled(spearItem);
 
     expect(spearItem.disabled).toBe(true);
   });
 
-  test('useMapNote reveals undiscovered location', () => {
+  test('map note reveals undiscovered location', () => {
+    const noteItem = { type: 'note' };
+    mockPlayer.inventory = [noteItem];
     mockPlayer.getVisitedZones.mockReturnValue(new Set(['0,0']));
     mockPlayer.getCurrentZone.mockReturnValue({ x: 0, y: 0, dimension: 0 });
 
     jest.spyOn(Math, 'random').mockReturnValue(0.1);
 
-    itemService.useMapNote();
+    inventoryService.useItem(noteItem, { fromRadial: false });
 
     expect(mockPlayer.markZoneVisited).toHaveBeenCalled();
     expect(mockUIManager.addMessageToLog).toHaveBeenCalled();

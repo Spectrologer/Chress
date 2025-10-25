@@ -1,6 +1,5 @@
 import { InventoryUI } from '../managers/InventoryUI.js';
-import { ItemService } from '../managers/ItemService.js';
-import { ItemUsageHandler } from '../managers/ItemUsageHandler.js';
+import { InventoryService } from '../managers/inventory/InventoryService.js';
 
 function makeMockGame() {
   const mockGame = {
@@ -40,8 +39,7 @@ describe('InventoryUI integration', () => {
     const book = { type: 'book_of_time_travel', uses: 3 };
     game.player.inventory = [book];
 
-    const handler = new ItemUsageHandler(game);
-    const service = new ItemService(game, handler);
+    const service = new InventoryService(game);
     const ui = new InventoryUI(game, service);
 
     // Ensure debug mode off for test clarity

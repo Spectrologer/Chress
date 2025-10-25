@@ -3,9 +3,9 @@ import { getExitDirection } from '../core/utils/transitionUtils.js';
 import { Sign } from '../ui/Sign.js';
 
 export class InteractionController {
-    constructor(game, itemUsageManager, keyHandler, exitHandler) {
+    constructor(game, inventoryService, keyHandler, exitHandler) {
         this.game = game;
-        this.itemUsageManager = itemUsageManager;
+        this.inventoryService = inventoryService;
         this.keyHandler = keyHandler || null;
         this.exitHandler = exitHandler || null;
 
@@ -418,7 +418,7 @@ export class InteractionController {
             const dy = Math.abs(gridCoords.y - playerPos.y);
             const isAdjacent = dx <= 1 && dy <= 1 && !(dx === 0 && dy === 0);
             if (isAdjacent) {
-                const success = this.itemUsageManager.useItem(this.game.activeShovel, gridCoords.x, gridCoords.y);
+                const success = this.inventoryService.useItem(this.game.activeShovel, { targetX: gridCoords.x, targetY: gridCoords.y });
                 if (success) { this.game.shovelMode = false; this.game.activeShovel = null; this.game.hideOverlayMessage(); }
             } else {
                 this.game.shovelMode = false; this.game.activeShovel = null; this.game.hideOverlayMessage();

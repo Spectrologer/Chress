@@ -1,13 +1,15 @@
-import * as InventoryActions from '../managers/InventoryActions.js';
+import { InventoryService } from '../managers/inventory/InventoryService.js';
 import { TILE_TYPES } from '../core/constants.js';
 
-describe('InventoryActions', () => {
+describe('InventoryService', () => {
+  let inventoryService;
   let mockGame;
   let mockPlayer;
 
   beforeEach(() => {
     mockPlayer = {
       inventory: [],
+      radialInventory: [],
       x: 1,
       y: 1,
       getVisitedZones: jest.fn().mockReturnValue(new Set()),
@@ -22,42 +24,46 @@ describe('InventoryActions', () => {
     mockGame = {
       player: mockPlayer,
       grid: Array(9).fill().map(() => Array(9).fill(TILE_TYPES.FLOOR)),
-      uiManager: { addMessageToLog: jest.fn(), renderZoneMap: jest.fn() },
+      uiManager: { addMessageToLog: jest.fn(), renderZoneMap: jest.fn(), updatePlayerStats: jest.fn() },
       availableFoodAssets: ['food/meat/beaf.png'],
       specialZones: new Map(),
       hideOverlayMessage: jest.fn(),
       animationScheduler: { createSequence: () => ({ wait: () => ({ then: () => ({ start: () => {} }) }) }) },
       updatePlayerStats: jest.fn()
     };
+
+    inventoryService = new InventoryService(mockGame);
   });
 
-  test('useInventoryItem consumes food and restores hunger', () => {
+  test('useItem consumes food and restores hunger', () => {
     const foodItem = { type: 'food', foodType: 'food/meat/beaf.png' };
     mockPlayer.inventory = [foodItem];
-    InventoryActions.useInventoryItem(mockGame, foodItem, 0);
+    inventoryService.useItem(foodItem, { fromRadial: false });
     expect(mockPlayer.restoreHunger).toHaveBeenCalledWith(10);
     expect(mockPlayer.inventory.length).toBe(0);
   });
 
-  test('useInventoryItem consumes water and restores thirst', () => {
+  test('useItem consumes water and restores thirst', () => {
     const waterItem = { type: 'water' };
     mockPlayer.inventory = [waterItem];
-    InventoryActions.useInventoryItem(mockGame, waterItem, 0);
+    inventoryService.useItem(waterItem, { fromRadial: false });
     expect(mockPlayer.restoreThirst).toHaveBeenCalledWith(10);
     expect(mockPlayer.inventory.length).toBe(0);
   });
 
-  test('dropItem drops axe only on floor', () => {
+  test('useItem drops axe only on floor', () => {
     const axeItem = { type: 'axe' };
     mockPlayer.inventory = [axeItem];
-    InventoryActions.dropItem(mockGame, 'axe', TILE_TYPES.AXE);
+    inventoryService.useItem(axeItem, { fromRadial: false });
     expect(mockGame.grid[1][1]).toBe(TILE_TYPES.AXE);
     expect(mockPlayer.inventory.length).toBe(0);
   });
 
   test('useMapNote reveals location and registers special zone', () => {
+    const noteItem = { type: 'note' };
+    mockPlayer.inventory = [noteItem];
     jest.spyOn(Math, 'random').mockReturnValue(0.2);
-    InventoryActions.useMapNote(mockGame);
+    inventoryService.useItem(noteItem, { fromRadial: false });
     expect(mockPlayer.markZoneVisited).toHaveBeenCalled();
     expect(mockGame.uiManager.addMessageToLog).toHaveBeenCalled();
     expect(mockGame.uiManager.renderZoneMap).toHaveBeenCalled();

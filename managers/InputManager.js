@@ -5,15 +5,15 @@ import { InteractionController } from './InteractionController.js';
 // responsibilities to InputBindings (DOM + normalized events) and
 // InteractionController (pathfinding, movement, executing paths).
 export class InputManager {
-    constructor(game, itemUsageManager) {
+    constructor(game, inventoryService) {
         this.game = game;
-        this.itemUsageManager = itemUsageManager;
+        this.inventoryService = inventoryService;
 
     // Pass a key handler so path execution and exit handling route through
     // this InputManager.handleKeyPress (allows tests to spy on it). Also pass
     // an exit handler so double-tap exit logic can call back into the facade
     // and be observable by tests.
-    this.interaction = new InteractionController(game, itemUsageManager, (ev) => this.handleKeyPress(ev), (x, y) => this.handleExitTap(x, y));
+    this.interaction = new InteractionController(game, inventoryService, (ev) => this.handleKeyPress(ev), (x, y) => this.handleExitTap(x, y));
         this.bindings = new InputBindings(game, {
             // Route input bindings through the facade so tests and callers
             // spying on InputManager.handleTap/handleKeyPress observe events.
