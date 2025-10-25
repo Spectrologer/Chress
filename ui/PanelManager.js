@@ -135,6 +135,10 @@ export class PanelManager {
 
     showRecordsOverlay() {
         if (!this.recordsOverlay) return;
+
+        // Hide the stats panel when showing records
+        this.hideStatsPanel();
+
         this.recordsOpenTime = Date.now();
         // Populate record values from localStorage
         try {
@@ -193,6 +197,20 @@ export class PanelManager {
                     this.hideRecordsOverlay();
                 }
             });
+
+            // Wire up the back button
+            const backButton = this.recordsOverlay.querySelector('#records-back-button');
+            if (backButton) {
+                backButton.addEventListener('click', (e) => {
+                    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+                    this.hideRecordsOverlay();
+                    // Show stats panel again
+                    this.showStatsPanel();
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            }
+
             this._recordsHandlerAttached = true;
         }
 

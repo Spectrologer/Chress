@@ -18,7 +18,7 @@ export class ItemUsageHandler {
         switch (item.type) {
             case 'food':
                 item.quantity = (item.quantity || 1) - 1;
-                if (item.foodType === 'food/aquamelon.png') {
+                if (item.foodType === 'food/aguamelin.png') {
                     this.game.player.restoreHunger(5);
                     this.game.player.restoreThirst(5);
                 } else {

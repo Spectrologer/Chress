@@ -1,5 +1,6 @@
 import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS, TILE_SIZE } from '../core/constants.js';
 import { getExitDirection } from '../core/utils/transitionUtils.js';
+import { Sign } from '../ui/Sign.js';
 
 export class InteractionController {
     constructor(game, itemUsageManager, keyHandler, exitHandler) {

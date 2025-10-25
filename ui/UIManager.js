@@ -92,7 +92,7 @@ export class UIManager {
     }
 
     generateRegionName(zoneX, zoneY) {
-        return this.messageManager.generateRegionName(zoneX, zoneY);
+        return this.messageManager.regionNotification.generateRegionName(zoneX, zoneY);
     }
 
     addMessageToLog(message) {

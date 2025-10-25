@@ -9,6 +9,7 @@ beforeEach(() => {
     document.body.innerHTML = `
         <div id="recordsOverlay" class="stats-panel-overlay">
             <div class="stats-panel game-parchment">
+                <button id="records-back-button" class="config-back-button" aria-label="Back">◂ Back</button>
                 <div class="stats-main-content">
                     <div class="stats-info">
                         <h2>Records</h2>
@@ -20,6 +21,9 @@ beforeEach(() => {
                     </div>
                 </div>
             </div>
+        </div>
+        <div id="statsPanelOverlay" class="stats-panel-overlay">
+            <div class="stats-panel game-parchment"></div>
         </div>
     `;
 

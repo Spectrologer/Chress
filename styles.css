@@ -1608,6 +1608,7 @@ h1 {
 }
 
 /* Region Notification Overlay */
+/* Region Notification Overlay */
 .region-notification-overlay {
     position: fixed;
     top: 50%;
@@ -1646,6 +1647,7 @@ h1 {
 .region-notification-overlay.show {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+    pointer-events: none;
 }
 
 /* Game Over Overlay */

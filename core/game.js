@@ -126,8 +126,8 @@ class Game {
     }
 
     // Proxy to UIManager for sign messages
-    showSignMessage(message) {
-        this.uiManager.showSignMessage(message);
+    showSignMessage(text, imageSrc = null, name = null) {
+        this.uiManager.showSignMessage(text, imageSrc, name);
     }
 
     updatePlayerPosition() {

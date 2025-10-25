@@ -322,7 +322,11 @@ export class GameInitializer {
 
             // Set initial region (starting at 0,0 = "Home")
             const initialZone = this.game.player.getCurrentZone();
-            this.game.currentRegion = this.game.uiManager.generateRegionName(initialZone.x, initialZone.y);
+            try {
+                this.game.currentRegion = this.game.uiManager.generateRegionName(initialZone.x, initialZone.y);
+            } catch (error) {
+                this.game.currentRegion = 'Home'; // Fallback
+            }
         } else {
             // If loaded from save, make sure we're on a valid tile
             // But don't clear the grid since it was loaded from save
