@@ -130,9 +130,15 @@
 
         .asset-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .asset-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
         }
 
         .asset-card {
@@ -174,7 +180,9 @@
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
             padding: 20px;
             margin: 10px 0;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 4px;
             min-height: 80px;
             min-width: 80px;
@@ -545,7 +553,7 @@
             sprite.className = 'sprite';
             sprite.src = path;
             sprite.style.width = `${baseSize * currentScale}px`;
-            sprite.style.height = 'auto';
+            sprite.style.height = `${baseSize * currentScale}px`;
 
             sprite.onerror = () => {
                 sprite.style.display = 'none';
@@ -576,6 +584,20 @@
                 const isPortrait = img.src.includes('face');
                 const baseSize = isPortrait ? 32 : 16;
                 img.style.width = `${baseSize * scale}px`;
+                img.style.height = `${baseSize * scale}px`;
+            });
+
+            // Update container sizes to accommodate larger sprites
+            document.querySelectorAll('.sprite-container').forEach(container => {
+                const minSize = Math.max(80, 40 * scale);
+                container.style.minHeight = `${minSize}px`;
+                container.style.minWidth = `${minSize}px`;
+            });
+
+            // Update grid column size based on scale
+            const minCardWidth = Math.max(250, 180 + (scale * 30));
+            document.querySelectorAll('.asset-grid').forEach(grid => {
+                grid.style.gridTemplateColumns = `repeat(auto-fill, minmax(${minCardWidth}px, 1fr))`;
             });
         }
 
