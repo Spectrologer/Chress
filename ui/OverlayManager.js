@@ -1,4 +1,6 @@
 import logger from '../core/logger.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 /**
  * OverlayManager
@@ -287,9 +289,7 @@ export class OverlayManager {
     preRenderUIElements() {
         try {
             // Update player stats
-            if (this.game.uiManager && typeof this.game.uiManager.updatePlayerStats === 'function') {
-                this.game.uiManager.updatePlayerStats();
-            }
+            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
 
             // Render zone map
             if (this.game.uiManager && typeof this.game.uiManager.renderZoneMap === 'function') {

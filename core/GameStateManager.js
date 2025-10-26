@@ -74,7 +74,13 @@ export class GameStateManager {
 
         // Generate starting zone
         this.game.zoneManager.generateZone();
-        this.game.grid[this.game.player.y][this.game.player.x] = TILE_TYPES.FLOOR;
+
+        // Only set tile if player is within grid bounds (for new games, player may be off-screen)
+        const playerY = this.game.player.y;
+        const playerX = this.game.player.x;
+        if (playerY >= 0 && playerY < GRID_SIZE && playerX >= 0 && playerX < GRID_SIZE) {
+            this.game.grid[playerY][playerX] = TILE_TYPES.FLOOR;
+        }
 
         // Set initial region
         const initialZone = this.game.player.getCurrentZone();

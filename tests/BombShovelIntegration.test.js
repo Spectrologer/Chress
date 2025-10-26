@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { InventoryService } from '../managers/inventory/InventoryService.js';
-import { BombInteractionManager } from '../managers/BombInteractionManager.js';
+import { BombManager } from '../managers/BombManager.js';
 import { TILE_TYPES } from '../core/constants.js';
 
 describe('Bomb and Shovel integration', () => {
@@ -36,7 +36,7 @@ describe('Bomb and Shovel integration', () => {
     };
 
     inventoryService = new InventoryService(mockGame);
-    bombManager = new BombInteractionManager(mockGame);
+    bombManager = new BombManager(mockGame);
 
     // wire pieces like ServiceContainer would
     mockGame.inventoryService = inventoryService;

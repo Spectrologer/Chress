@@ -2,6 +2,8 @@ import { GRID_SIZE, CANVAS_SIZE, TILE_TYPES } from './constants.js';
 import logger from './logger.js';
 import { TextureManager } from '../renderers/TextureManager.js';
 import { ZoneStateManager } from '../generators/ZoneStateManager.js';
+import { eventBus } from './EventBus.js';
+import { EventTypes } from './EventTypes.js';
 
 /**
  * GameInitializer
@@ -22,47 +24,45 @@ export class GameInitializer {
     }
 
     setupCanvasSize() {
-        // Set internal canvas size to maintain pixel-perfect rendering
-        this.game.canvas = document.getElementById('gameCanvas');
-        this.game.ctx = this.game.canvas.getContext('2d');
-        this.game.mapCanvas = document.getElementById('zoneMap');
-        this.game.mapCtx = this.game.mapCanvas.getContext('2d');
+        // Internal canvas for pixel-perfect rendering
+        // Stored in GameUI
+        this.game.ui.initializeCanvas('gameCanvas', 'zoneMap');
 
-        // Set canvas sizes
+        // Canvas sizes
         this.game.canvas.width = CANVAS_SIZE;
         this.game.canvas.height = CANVAS_SIZE;
 
-        // Set map canvas size dynamically based on CSS
+        // Map canvas from CSS
         this.updateMapCanvasSize();
 
-        // Handle resize for responsive design
+        // Responsive resize
         window.addEventListener('resize', () => this.handleResize());
         this.handleResize();
     }
 
     updateMapCanvasSize() {
-        // Get the computed style to match CSS sizing
+        // Match CSS sizing
         const computedStyle = window.getComputedStyle(this.game.mapCanvas);
         const cssWidth = parseInt(computedStyle.width);
         const cssHeight = parseInt(computedStyle.height);
 
-        // Set canvas internal size to match CSS display size for crisp rendering
+        // Match CSS for crisp rendering
         this.game.mapCanvas.width = cssWidth;
         this.game.mapCanvas.height = cssHeight;
 
-        // Reapply canvas configuration for crisp rendering
+        // Crisp rendering config
         TextureManager.configureCanvas(this.game.mapCtx);
     }
 
     handleResize() {
-        // Update map canvas size on resize
+        // Update canvas on resize
         this.updateMapCanvasSize();
-        // Re-render the zone map with new size
+        // Re-render zone map
         if (this.game.gameStarted) {
             this.game.uiManager.renderZoneMap();
         }
-        // Let CSS handle the display size for responsiveness
-        // The main canvas internal size stays fixed for pixel-perfect rendering
+        // CSS handles display size
+        // Main canvas fixed for pixel-perfect
     }
 
     /**
@@ -71,26 +71,26 @@ export class GameInitializer {
      */
     async loadAssets() {
         try {
-            // Delegate asset loading to AssetLoader
+            // Delegate to AssetLoader
             await this.game.assetLoader.loadAssets();
 
-            // Show the start overlay (managed by OverlayManager)
+            // Show overlay
             this.game.overlayManager.showStartOverlay();
         } catch (error) {
             logger.error('Error loading assets:', error);
-            // Still show overlay even if assets fail
+            // Show overlay on failure
             this.game.overlayManager.showStartOverlay();
         }
 
-        // After assets are loaded, start a preview render loop.
-        // This will draw the board behind the start overlay.
+        // Preview render loop
+        // Draws board behind overlay
         if (!this.game.gameStarted) {
-            // Generate a temporary zone for the preview if no game state is loaded yet.
+            // Temp zone for preview
             if (!this.game.grid) {
                 this.game.generateZone();
             }
             this.game.previewMode = true;
-            // Start the game loop, which will respect previewMode.
+            // Start loop (respects preview)
             this.game.gameLoop();
         }
     }
@@ -101,7 +101,7 @@ export class GameInitializer {
      * Prevents multiple initializations and delegates to init().
      */
     startGame() {
-        if (this.game.gameStarted) return; // Prevent multiple initializations
+        if (this.game.gameStarted) return; // Prevent multiple inits
         this.game.gameStarted = true;
         this.init();
     }
@@ -110,27 +110,37 @@ export class GameInitializer {
      * Initializes the game state, event listeners, and UI.
      */
     init() {
-        // Bomb placement mode
+        // Bomb mode
         this.game.bombPlacementMode = false;
         this.game.bombPlacementPositions = [];
         this.game.pendingCharge = null;
 
-        // Try to load saved game state, or generate initial zone if no save exists
-        // Ensure food assets are available before generating any zones
+        // Load saved state or generate zone
+        // Food assets must be ready
         this.game.assetLoader.refreshFoodAssets();
 
         const loaded = this.game.gameStateManager.loadGameState();
+        let isNewGame = false;
         if (!loaded) {
-            // Generate initial zone if no saved state
+            // No save - generate zone
+            isNewGame = true;
             this.game.generateZone();
 
-            // Ensure player starts on a valid tile, but do not overwrite signs
-            const startTile = this.game.grid[this.game.player.y][this.game.player.x];
-            if (!startTile || (typeof startTile === 'string' && startTile !== TILE_TYPES.SIGN) || (typeof startTile === 'object' && startTile.type !== TILE_TYPES.SIGN)) {
-                this.game.grid[this.game.player.y][this.game.player.x] = TILE_TYPES.FLOOR;
+            // Valid start tile - preserve signs and exits
+            // Only check if player is within grid bounds (for new games, player may be off-screen)
+            const playerY = this.game.player.y;
+            const playerX = this.game.player.x;
+            if (playerY >= 0 && playerY < GRID_SIZE && playerX >= 0 && playerX < GRID_SIZE) {
+                const startTile = this.game.grid[playerY][playerX];
+                // Don't overwrite SIGN or EXIT tiles
+                if (!startTile ||
+                    (typeof startTile === 'string' && startTile !== TILE_TYPES.SIGN && startTile !== TILE_TYPES.EXIT) ||
+                    (typeof startTile === 'object' && startTile.type !== TILE_TYPES.SIGN)) {
+                    this.game.grid[playerY][playerX] = TILE_TYPES.FLOOR;
+                }
             }
 
-            // Set initial region (starting at 0,0 = "Home")
+            // Initial region (0,0 = Home)
             const initialZone = this.game.player.getCurrentZone();
             try {
                 this.game.currentRegion = this.game.uiManager.generateRegionName(initialZone.x, initialZone.y);
@@ -138,60 +148,190 @@ export class GameInitializer {
                 this.game.currentRegion = 'Home'; // Fallback
             }
         } else {
-            // If loaded from save, make sure we're on a valid tile
-            // But don't clear the grid since it was loaded from save
+            // Loaded save - validate tile
+            // Don't clear loaded grid
             if (this.game.grid) {
                 this.game.player.ensureValidPosition(this.game.grid);
                 const currentZone = this.game.player.getCurrentZone();
                 this.game.currentRegion = this.game.uiManager.generateRegionName(currentZone.x, currentZone.y);
-                // Ensure zoneGenerator.grid points to the loaded grid
+                // Point to loaded grid
                 this.game.zoneGenerator.grid = this.game.grid;
             } else {
-                // Fallback: generate zone if grid wasn't loaded properly
+                // Fallback if grid failed
                 this.game.generateZone();
-                this.game.grid[this.game.player.y][this.game.player.x] = TILE_TYPES.FLOOR;
+                // Only set tile if player is within grid bounds
+                const playerY = this.game.player.y;
+                const playerX = this.game.player.x;
+                if (playerY >= 0 && playerY < GRID_SIZE && playerX >= 0 && playerX < GRID_SIZE) {
+                    this.game.grid[playerY][playerX] = TILE_TYPES.FLOOR;
+                }
                 const initialZone = this.game.player.getCurrentZone();
                 this.game.currentRegion = this.game.uiManager.generateRegionName(initialZone.x, initialZone.y);
             }
         }
 
-        // Set up event listeners for UI and input
+        // Event listeners
         this.setupEventListeners();
 
-        // Set up audio and music for the current zone
+        // Audio setup
         this.setupAudio();
 
-        // Start the game loop
+        // Start loop
         this.game.gameLoop();
 
-        // Expose game instance to console for debugging
+        // Expose to console
         this.exposeToConsole();
 
-        // Update UI to reflect initial state
+        // Update initial UI
         this.game.uiManager.updatePlayerPosition();
         this.game.uiManager.updateZoneDisplay();
-        this.game.uiManager.updatePlayerStats();
+        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
+
+        // Trigger cinematic entrance for new games
+        if (isNewGame) {
+            this.triggerNewGameEntrance();
+        }
+    }
+
+    /**
+     * Triggers the cinematic entrance sequence for new games.
+     * Player hops from off-screen onto exit tile, then paths to club entrance.
+     */
+    triggerNewGameEntrance() {
+        // Disable input during entrance animation
+        this.game._entranceAnimationInProgress = true;
+
+        // Safety timeout - always re-enable input after max 10 seconds
+        const safetyTimeout = setTimeout(() => {
+            logger.log('[NEW GAME ENTRANCE] Safety timeout - re-enabling input');
+            this.game._entranceAnimationInProgress = false;
+        }, 10000);
+
+        // Delay slightly to ensure everything is rendered
+        setTimeout(() => {
+            try {
+                logger.log('[NEW GAME ENTRANCE] Starting entrance sequence');
+                const playerPos = this.game.player.getPosition();
+                const currentZone = this.game.player.getCurrentZone();
+
+                logger.log('[NEW GAME ENTRANCE] Player position:', playerPos);
+                logger.log('[NEW GAME ENTRANCE] Current zone:', currentZone);
+
+                // Only trigger for home surface zone (0,0,0,0)
+                if (currentZone.x === 0 && currentZone.y === 0 && currentZone.dimension === 0) {
+                    logger.log('[NEW GAME ENTRANCE] In home zone, calculating entrance path');
+
+                    // Get the stored spawn position (the exit tile)
+                    const exitSpawn = this.game._newGameSpawnPosition;
+
+                    if (!exitSpawn) {
+                        logger.log('[NEW GAME ENTRANCE] No spawn position stored, skipping entrance');
+                        clearTimeout(safetyTimeout);
+                        this.game._entranceAnimationInProgress = false;
+                        return;
+                    }
+
+                    // Find the house position - house starts at (3,3)
+                    const houseStartX = 3;
+                    const houseStartY = 3;
+                    // Final target is in front of the house
+                    const clubEntranceX = houseStartX + 1; // Middle of house width (4)
+                    const clubEntranceY = houseStartY + 3; // Front of house (6)
+
+                    logger.log('[NEW GAME ENTRANCE] Exit spawn position:', exitSpawn);
+                    logger.log('[NEW GAME ENTRANCE] Club entrance target:', { x: clubEntranceX, y: clubEntranceY });
+                    logger.log('[NEW GAME ENTRANCE] Player actual position:', playerPos);
+                    logger.log('[NEW GAME ENTRANCE] InputManager exists:', !!this.game.inputManager);
+
+                    // Stage 1: Path from off-screen to exit tile
+                    const pathToExit = this.game.inputManager?.findPath(
+                        playerPos.x,
+                        playerPos.y,
+                        exitSpawn.x,
+                        exitSpawn.y
+                    );
+
+                    logger.log('[NEW GAME ENTRANCE] Path to exit:', pathToExit);
+
+                    if (!pathToExit || pathToExit.length === 0) {
+                        logger.log('[NEW GAME ENTRANCE] Could not find path to exit tile');
+                        clearTimeout(safetyTimeout);
+                        this.game._entranceAnimationInProgress = false;
+                        return;
+                    }
+
+                    // Execute first hop onto exit tile
+                    logger.log('[NEW GAME ENTRANCE] Stage 1: Hopping onto exit tile');
+
+                    // Subscribe to completion of first hop
+                    const unsubscribeHop = eventBus.on(EventTypes.INPUT_PATH_COMPLETED, () => {
+                        unsubscribeHop();
+                        logger.log('[NEW GAME ENTRANCE] Stage 1 complete, player on exit tile');
+
+                        // Stage 2: Path from exit tile to club entrance
+                        const currentPos = this.game.player.getPosition();
+                        const pathToClub = this.game.inputManager?.findPath(
+                            currentPos.x,
+                            currentPos.y,
+                            clubEntranceX,
+                            clubEntranceY
+                        );
+
+                        logger.log('[NEW GAME ENTRANCE] Path to club:', pathToClub);
+
+                        if (!pathToClub || pathToClub.length === 0) {
+                            logger.log('[NEW GAME ENTRANCE] Could not find path to club');
+                            clearTimeout(safetyTimeout);
+                            this.game._entranceAnimationInProgress = false;
+                            return;
+                        }
+
+                        logger.log('[NEW GAME ENTRANCE] Stage 2: Walking to club entrance');
+
+                        // Subscribe to completion of walk to club
+                        const unsubscribeWalk = eventBus.on(EventTypes.INPUT_PATH_COMPLETED, () => {
+                            unsubscribeWalk();
+                            logger.log('[NEW GAME ENTRANCE] Entrance animation complete, re-enabling input');
+                            clearTimeout(safetyTimeout);
+                            this.game._entranceAnimationInProgress = false;
+                        });
+
+                        this.game.inputManager.executePath(pathToClub);
+                    });
+
+                    this.game.inputManager.executePath(pathToExit);
+                } else {
+                    logger.log('[NEW GAME ENTRANCE] Not in home zone, skipping entrance');
+                    clearTimeout(safetyTimeout);
+                    this.game._entranceAnimationInProgress = false;
+                }
+            } catch (error) {
+                logger.error('Error triggering new game entrance:', error);
+                clearTimeout(safetyTimeout);
+                this.game._entranceAnimationInProgress = false;
+            }
+        }, 500); // 500ms delay to ensure rendering is complete
     }
 
     /**
      * Sets up all event listeners for the game.
      */
     setupEventListeners() {
-        // Input controls
+        // Input
         this.game.inputManager.setupControls();
 
-        // UI handlers
+        // UI
         this.game.uiManager.setupGameOverHandler();
         this.game.uiManager.setupCloseMessageLogHandler();
         this.game.uiManager.setupMessageLogButton();
         this.game.uiManager.setupBarterHandlers();
 
-        // Start periodic autosave
+        // Autosave
         if (this.game.gameStateManager && typeof this.game.gameStateManager.startAutoSave === 'function') {
             this.game.gameStateManager.startAutoSave();
         }
 
-        // Save on page unload (fires reliably on mobile & refresh)
+        // Save on unload (mobile & refresh)
         window.addEventListener('pagehide', () => {
             if (this.game.gameStateManager && typeof this.game.gameStateManager.saveGameStateImmediate === 'function') {
                 this.game.gameStateManager.saveGameStateImmediate();
@@ -200,14 +340,14 @@ export class GameInitializer {
             }
         });
 
-        // Save when page becomes hidden (tab/app switching)
+        // Save on hide (tab/app switch)
         document.addEventListener('visibilitychange', () => {
             if (document.hidden && this.game.gameStateManager) {
                 this.game.gameStateManager.saveGameState();
             }
         });
 
-        // Detect cross-tab save events
+        // Cross-tab saves
         window.addEventListener('storage', (ev) => {
             if (ev.key === null) return;
             if (ev.key === 'chress_game_state') {
@@ -222,10 +362,10 @@ export class GameInitializer {
      * Sets up audio and music for the current zone.
      */
     setupAudio() {
-        // Make soundManager globally accessible
+        // Global soundManager
         window.soundManager = this.game.soundManager;
 
-        // Try to resume audio context (browser autoplay policies)
+        // Resume audio (autoplay policy)
         try {
             if (this.game.soundManager && typeof this.game.soundManager.resumeAudioContext === 'function') {
                 this.game.soundManager.resumeAudioContext().catch(() => {});
@@ -234,12 +374,12 @@ export class GameInitializer {
             logger.error('Error resuming audio context:', e);
         }
 
-        // Apply persisted audio settings and start zone music
+        // Apply audio settings
         try {
             const currentZone = this.game.player.getCurrentZone && this.game.player.getCurrentZone();
             const dimension = currentZone && typeof currentZone.dimension === 'number' ? currentZone.dimension : 0;
 
-            // Apply persisted player settings
+            // Apply player settings
             if (this.game.player && this.game.player.stats) {
                 if (this.game.soundManager && typeof this.game.soundManager.setMusicEnabled === 'function') {
                     this.game.soundManager.setMusicEnabled(!!this.game.player.stats.musicEnabled);
@@ -249,14 +389,14 @@ export class GameInitializer {
                 }
             }
 
-            // Debug logging
+            // Debug
             if (typeof console !== 'undefined' && console.debug) {
                 console.debug('[AUDIO STARTUP] restored player.stats.musicEnabled=', this.game.player && this.game.player.stats && this.game.player.stats.musicEnabled,
                               'soundManager.musicEnabled=', this.game.soundManager && this.game.soundManager.musicEnabled,
                               'soundManager.currentMusicTrack=', this.game.soundManager && this.game.soundManager.currentMusicTrack);
             }
 
-            // Set music for the current zone
+            // Zone music
             if (this.game.soundManager && typeof this.game.soundManager.setMusicForZone === 'function') {
                 this.game.soundManager.setMusicForZone({ dimension });
             }
@@ -272,7 +412,7 @@ export class GameInitializer {
         window.game = this.game;
         window.gameInstance = this.game;
 
-        // Import and expose console commands
+        // Console commands
         import('./consoleCommands.js').then(module => {
             window.consoleCommands = module.default;
             window.tp = (x, y) => module.default.tp(this.game, x, y);
@@ -302,7 +442,7 @@ export class GameInitializer {
      * Resets the entire game state.
      */
     resetGame() {
-        // Reset session-specific static data that doesn't get cleared on a soft reset.
+        // Reset session data
         ZoneStateManager.resetSessionData();
         this.game.gameStateManager.resetGame();
     }

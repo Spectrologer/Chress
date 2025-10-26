@@ -1,4 +1,8 @@
 import { TILE_TYPES } from '../core/constants.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
+import { TileRegistry } from '../core/TileRegistry.js';
+import { isAdjacent } from '../core/utils/DirectionUtils.js';
 
 export class TerrainInteractionManager {
     constructor(game) {
@@ -7,15 +11,15 @@ export class TerrainInteractionManager {
 
     handleChoppableTile(gridCoords, playerPos) {
         const tappedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        const isAdjacent = Math.abs(gridCoords.x - playerPos.x) <= 1 && Math.abs(gridCoords.y - playerPos.y) <= 1 &&
-                           !(gridCoords.x === playerPos.x && gridCoords.y === playerPos.y);
+        const dx = Math.abs(gridCoords.x - playerPos.x);
+        const dy = Math.abs(gridCoords.y - playerPos.y);
         const hasAxe = this.game.player.abilities.has('axe');
         const hasHammer = this.game.player.abilities.has('hammer');
 
-        if (!isAdjacent) return false;
+        if (!isAdjacent(dx, dy)) return false;
 
-        // Handle chopping grass/shrubbery
-        if ((tappedTile === TILE_TYPES.GRASS || tappedTile === TILE_TYPES.SHRUBBERY)) {
+        // Use TileRegistry to check tile properties
+        if (TileRegistry.isChoppable(tappedTile)) {
             if (hasAxe) {
                 // This will trigger the chop logic inside player.move, which now handles turn ending.
                 // The player won't actually move into the tile.
@@ -25,7 +29,7 @@ export class TerrainInteractionManager {
             }
         }
         // Handle breaking rocks
-        else if (tappedTile === TILE_TYPES.ROCK) {
+        else if (TileRegistry.isBreakable(tappedTile)) {
             if (hasHammer) {
                 // Perform breaking action
                 // This will trigger the smash logic inside player.move, which now handles turn ending.
@@ -43,7 +47,8 @@ export class TerrainInteractionManager {
         const hasAxe = this.game.player.abilities.has('axe');
         const hasHammer = this.game.player.abilities.has('hammer');
 
-        if ((tappedTile === TILE_TYPES.GRASS || tappedTile === TILE_TYPES.SHRUBBERY)) {
+        // Use TileRegistry to check tile properties
+        if (TileRegistry.isChoppable(tappedTile)) {
             if (hasAxe) {
                 // Perform chopping action - since player is adjacent, move to it and chop
                 this.game.handleEnemyMovements(); // Enemies move before player
@@ -53,9 +58,9 @@ export class TerrainInteractionManager {
                 this.game.checkCollisions();
                 this.game.checkItemPickup(); // Check for items after moving
                 this.game.updatePlayerPosition();
-                this.game.updatePlayerStats();
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             }
-        } else if (tappedTile === TILE_TYPES.ROCK) {
+        } else if (TileRegistry.isBreakable(tappedTile)) {
             if (hasHammer) {
                 // Perform breaking action
                 this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
@@ -65,7 +70,7 @@ export class TerrainInteractionManager {
                 this.game.checkCollisions();
                 this.game.checkItemPickup(); // Check for items after moving
                 this.game.updatePlayerPosition();
-                this.game.updatePlayerStats();
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             }
         }
     }

@@ -1,13 +1,15 @@
 
 import { NPCInteractionManager } from './NPCInteractionManager.js';
-import { ItemPickupManager } from './ItemPickupManager.js';
+import { ItemPickupManager } from './inventory/ItemPickupManager.js';
 import { CombatActionManager } from './CombatActionManager.js';
-import { BombInteractionManager } from './BombInteractionManager.js';
+import { BombManager } from './BombManager.js';
 import { TerrainInteractionManager } from './TerrainInteractionManager.js';
 import { ZoneTransitionManager } from './ZoneTransitionManager.js';
 import { EnvironmentalInteractionManager } from './EnvironmentalInteractionManager.js';
 import { TILE_TYPES } from '../core/constants.js';
 import audioManager from '../utils/AudioManager.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 export class InteractionManager {
     constructor(game, inputManager) {
@@ -18,7 +20,7 @@ export class InteractionManager {
         this.npcManager = new NPCInteractionManager(game);
         this.itemPickupManager = new ItemPickupManager(game);
         this.combatManager = new CombatActionManager(game);
-        this.bombManager = new BombInteractionManager(game);
+        this.bombManager = new BombManager(game);
         this.terrainManager = new TerrainInteractionManager(game);
         this.zoneManager = new ZoneTransitionManager(game, inputManager);
         this.environmentManager = new EnvironmentalInteractionManager(game);
@@ -228,7 +230,7 @@ export class InteractionManager {
 
                 // Update player visuals/stats after the attack
                 try { this.game.updatePlayerPosition(); } catch (e) {}
-                try { this.game.updatePlayerStats(); } catch (e) {}
+                try { eventBus.emit(EventTypes.UI_UPDATE_STATS, {}); } catch (e) {}
 
                 return true;
             }

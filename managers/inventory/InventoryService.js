@@ -1,7 +1,10 @@
 import { ItemRepository } from './ItemRepository.js';
 import { ItemEffectStrategy } from './ItemEffectStrategy.js';
 import { ItemMetadata } from './ItemMetadata.js';
+import { GRID_SIZE, TILE_TYPES } from '../../core/constants.js';
 import audioManager from '../../utils/AudioManager.js';
+import { eventBus } from '../../core/EventBus.js';
+import { EventTypes } from '../../core/EventTypes.js';
 
 /**
  * InventoryService - Business logic orchestration for inventory management
@@ -86,6 +89,12 @@ export class InventoryService {
     dropItem(itemType, tileType) {
         const px = this.game.player.x;
         const py = this.game.player.y;
+
+        // Check if player is within grid bounds
+        if (py < 0 || py >= GRID_SIZE || px < 0 || px >= GRID_SIZE) {
+            return false;
+        }
+
         const currentTile = this.game.grid[py][px];
 
         if (currentTile !== TILE_TYPES.FLOOR &&
@@ -189,8 +198,6 @@ export class InventoryService {
      * @private
      */
     _updateUI() {
-        if (this.game && typeof this.game.updatePlayerStats === 'function') {
-            this.game.updatePlayerStats();
-        }
+        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
     }
 }

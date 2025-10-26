@@ -1,4 +1,4 @@
-import { RadialInventoryUI } from '../managers/RadialInventoryUI.js';
+import { RadialInventoryUI } from '../ui/RadialInventoryUI.js';
 import { InventoryService } from '../managers/inventory/InventoryService.js';
 
 function makeMockGame() {

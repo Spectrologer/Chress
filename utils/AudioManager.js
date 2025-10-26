@@ -11,6 +11,7 @@
  */
 
 import logger from '../core/logger.js';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
 
 class AudioManager {
     constructor() {
@@ -64,9 +65,11 @@ class AudioManager {
             return false;
         } catch (error) {
             // Catch any errors from sound playback to prevent crashes
-            if (logger.debug) {
-                logger.debug(`[AudioManager] Error playing sound ${soundName}:`, error);
-            }
+            errorHandler.handle(error, ErrorSeverity.WARNING, {
+                component: 'AudioManager',
+                action: 'play sound',
+                soundName
+            });
             return false;
         }
     }

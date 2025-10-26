@@ -49,7 +49,7 @@
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 200; /* align with other player-card overlays */
+    z-index: 1; /* Lower z-index to allow clipping through game area when scrolling */
     background: rgba(0,0,0,0.55);
     backdrop-filter: blur(2px);
     padding: 0; /* let inner box control padding */
@@ -2206,6 +2206,7 @@ h1 {
 .stats-panel-overlay.show {
     display: flex;
     opacity: 1;
+    pointer-events: auto;
 }
 
 /* Animations for stats/config panels removed — replaced with no-op versions
@@ -2249,6 +2250,7 @@ h1 {
 }
 .stats-panel-overlay.show {
     display: flex;
+    pointer-events: auto;
 }
 
 

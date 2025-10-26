@@ -1,6 +1,8 @@
 import { TILE_SIZE, TILE_TYPES } from '../core/constants.js';
-import { saveRadialInventory } from './RadialPersistence.js';
-import { ItemMetadata } from './inventory/ItemMetadata.js';
+import { saveRadialInventory } from '../managers/RadialPersistence.js';
+import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 export class RadialInventoryUI {
     constructor(game, inventoryService) {
@@ -48,37 +50,25 @@ export class RadialInventoryUI {
         this.close(); // clear
     const canvasRect = this.game.canvas.getBoundingClientRect();
     const player = this.game.player;
-        // If player is standing on a stairdown, block opening radial so player must click to descend
-        try {
-            const tileUnder = this.game.grid[player.y] && this.game.grid[player.y][player.x];
-            // tileUnder can be a primitive TILE_TYPES.PORT number or an object { type: TILE_TYPES.PORT, portKind: 'stairdown' }
-            const tileType = (typeof tileUnder === 'object' && tileUnder?.type !== undefined) ? tileUnder.type : tileUnder;
-            const portKind = (tileUnder && typeof tileUnder === 'object') ? tileUnder.portKind : null;
-            // Don't open radial while standing on ANY port (stairdown/stairup/pitfall/cistern),
-            // because these should be actionable by tapping the player's tile.
-            if (tileType === TILE_TYPES.PORT || portKind === 'stairdown' || portKind === 'stairup') {
-                return; // Do not open radial
-            }
-        } catch (e) {}
+        // Note: Radial menu can now open even when standing on EXIT/PORT tiles.
+        // Transitions are triggered via double-tap on the player tile.
         // If radial inventory is empty, try to migrate eligible items from main inventory
-        try {
-            if ((!player.radialInventory || player.radialInventory.length === 0) && player.inventory && player.inventory.length > 0) {
-                for (let i = player.inventory.length - 1; i >= 0 && (player.radialInventory.length || 0) < 8; i--) {
-                    const it = player.inventory[i];
-                    if (it && ItemMetadata.RADIAL_TYPES.includes(it.type)) {
-                        // Normalize book representation: prefer 'uses' for books
-                        if (it.type === 'book_of_time_travel') {
-                            if (typeof it.uses === 'undefined') it.uses = (typeof it.quantity !== 'undefined') ? it.quantity : 1;
-                            try { delete it.quantity; } catch (e) {}
-                        }
-                        player.inventory.splice(i, 1);
-                        player.radialInventory = player.radialInventory || [];
-                        player.radialInventory.push(it);
+        if ((!player.radialInventory || player.radialInventory.length === 0) && player.inventory && player.inventory.length > 0) {
+            for (let i = player.inventory.length - 1; i >= 0 && (player.radialInventory.length || 0) < 8; i--) {
+                const it = player.inventory[i];
+                if (it && ItemMetadata.RADIAL_TYPES.includes(it.type)) {
+                    // Normalize book representation: prefer 'uses' for books
+                    if (it.type === 'book_of_time_travel') {
+                        if (typeof it.uses === 'undefined') it.uses = (typeof it.quantity !== 'undefined') ? it.quantity : 1;
+                        delete it.quantity;
                     }
+                    player.inventory.splice(i, 1);
+                    player.radialInventory = player.radialInventory || [];
+                    player.radialInventory.push(it);
                 }
-                try { saveRadialInventory(this.game); } catch (e) {}
             }
-        } catch (e) { try { console.warn('[RadialUI] migrate error', e); } catch (er) {} }
+            saveRadialInventory(this.game);
+        }
 
     // Compute screen scaling from canvas pixels -> CSS pixels
     const scaleX = canvasRect.width / (this.game.canvas.width || canvasRect.width);
@@ -192,14 +182,14 @@ export class RadialInventoryUI {
                         }
                     }
                     this.game.bombPlacementMode = true;
-                    try { if (this.game.uiManager) this.game.uiManager.showOverlayMessage('Tap a tile to place a bomb', null, true, true); } catch(e) {}
+                    this.game.uiManager?.showOverlayMessage?.('Tap a tile to place a bomb', null, true, true);
                     this.close();
                     return;
                 }
 
                 this.inventoryService.useItem(item, { fromRadial: true });
                 this.close();
-                if (this.game.updatePlayerStats) this.game.updatePlayerStats();
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             });
 
             this.container.appendChild(el);
@@ -216,39 +206,35 @@ export class RadialInventoryUI {
         // stop propagation. Ignore clicks that occur very shortly after
         // opening to avoid immediately closing from the same touch.
         this._bodyClickHandler = (ev) => {
-            try {
-                const now = Date.now();
-                // Ignore clicks that happen within 300ms of opening
-                if (this._openedAt && (now - this._openedAt) < 300) return;
-                // Convert screen coords to grid using the game's input manager
-                const conv = this.game.inputManager && this.game.inputManager.convertScreenToGrid ? this.game.inputManager.convertScreenToGrid(ev.clientX, ev.clientY) : null;
-                if (!conv) return;
-                const playerPos = (this.game.player && typeof this.game.player.getPosition === 'function') ? this.game.player.getPosition() : { x: this.game.player.x, y: this.game.player.y };
-                if (conv.x === playerPos.x && conv.y === playerPos.y) {
-                    // Close radial when clicking own tile
-                    this.close();
-                }
-            } catch (e) {}
+            const now = Date.now();
+            // Ignore clicks that happen within 300ms of opening
+            if (this._openedAt && (now - this._openedAt) < 300) return;
+            // Convert screen coords to grid using the game's input manager
+            const conv = this.game.inputManager?.convertScreenToGrid?.(ev.clientX, ev.clientY);
+            if (!conv) return;
+            const playerPos = this.game.player?.getPosition?.() ?? { x: this.game.player.x, y: this.game.player.y };
+            if (conv.x === playerPos.x && conv.y === playerPos.y) {
+                // Close radial when clicking own tile
+                this.close();
+            }
         };
-        try { document.addEventListener('click', this._bodyClickHandler, true); } catch (e) {}
+        document.addEventListener('click', this._bodyClickHandler, true);
 
         // Also listen for pointerdown on the game canvas directly. Pointer
         // events are more reliable on some platforms (they fire before click),
         // so this helps ensure a tap on the player's tile will close the radial.
         this._canvasPointerHandler = (ev) => {
-            try {
-                const now = Date.now();
-                if (this._openedAt && (now - this._openedAt) < 300) return;
-                if (!this.game || !this.game.inputManager) return;
-                const conv = this.game.inputManager.convertScreenToGrid(ev.clientX, ev.clientY);
-                if (!conv) return;
-                const playerPos = (this.game.player && typeof this.game.player.getPosition === 'function') ? this.game.player.getPosition() : { x: this.game.player.x, y: this.game.player.y };
-                if (conv.x === playerPos.x && conv.y === playerPos.y) {
-                    try { this.close(); } catch (e) {}
-                }
-            } catch (e) {}
+            const now = Date.now();
+            if (this._openedAt && (now - this._openedAt) < 300) return;
+            if (!this.game?.inputManager) return;
+            const conv = this.game.inputManager.convertScreenToGrid(ev.clientX, ev.clientY);
+            if (!conv) return;
+            const playerPos = this.game.player?.getPosition?.() ?? { x: this.game.player.x, y: this.game.player.y };
+            if (conv.x === playerPos.x && conv.y === playerPos.y) {
+                this.close();
+            }
         };
-        try { if (this.game && this.game.canvas) this.game.canvas.addEventListener('pointerdown', this._canvasPointerHandler, true); } catch (e) {}
+        this.game.canvas?.addEventListener('pointerdown', this._canvasPointerHandler, true);
 
         // Some environments may swallow 'click' events or other handlers may
         // stop propagation. Also listen for document-level pointerdown in the
@@ -256,18 +242,16 @@ export class RadialInventoryUI {
         // (this fires earlier than 'click'). Keep the small ignore window to
         // avoid immediately closing from the same interaction that opened it.
         this._bodyPointerDownHandler = (ev) => {
-            try {
-                const now = Date.now();
-                if (this._openedAt && (now - this._openedAt) < 300) return;
-                const conv = this.game.inputManager && this.game.inputManager.convertScreenToGrid ? this.game.inputManager.convertScreenToGrid(ev.clientX, ev.clientY) : null;
-                if (!conv) return;
-                const playerPos = (this.game.player && typeof this.game.player.getPosition === 'function') ? this.game.player.getPosition() : { x: this.game.player.x, y: this.game.player.y };
-                if (conv.x === playerPos.x && conv.y === playerPos.y) {
-                    this.close();
-                }
-            } catch (e) {}
+            const now = Date.now();
+            if (this._openedAt && (now - this._openedAt) < 300) return;
+            const conv = this.game.inputManager?.convertScreenToGrid?.(ev.clientX, ev.clientY);
+            if (!conv) return;
+            const playerPos = this.game.player?.getPosition?.() ?? { x: this.game.player.x, y: this.game.player.y };
+            if (conv.x === playerPos.x && conv.y === playerPos.y) {
+                this.close();
+            }
         };
-        try { document.addEventListener('pointerdown', this._bodyPointerDownHandler, true); } catch (e) {}
+        document.addEventListener('pointerdown', this._bodyPointerDownHandler, true);
 
         this.open = true;
     }
@@ -286,15 +270,19 @@ export class RadialInventoryUI {
 
     close() {
         if (!this.container) return;
-    // Remove the global click handler if present
-    try { if (this._bodyClickHandler) document.removeEventListener('click', this._bodyClickHandler, true); } catch (e) {}
-    this._bodyClickHandler = null;
-    // Remove canvas pointer handler if present
-    try { if (this._canvasPointerHandler && this.game && this.game.canvas) this.game.canvas.removeEventListener('pointerdown', this._canvasPointerHandler, true); } catch (e) {}
-    this._canvasPointerHandler = null;
-    this._openedAt = null;
+        // Remove the global click handler if present
+        if (this._bodyClickHandler) {
+            document.removeEventListener('click', this._bodyClickHandler, true);
+        }
+        this._bodyClickHandler = null;
+        // Remove canvas pointer handler if present
+        if (this._canvasPointerHandler) {
+            this.game.canvas?.removeEventListener('pointerdown', this._canvasPointerHandler, true);
+        }
+        this._canvasPointerHandler = null;
+        this._openedAt = null;
         // Clear the container fully (remove any notes/slots)
-        try { this.container.innerHTML = ''; } catch (e) {}
+        this.container.innerHTML = '';
         this._slotMap.clear();
         this.open = false;
     }

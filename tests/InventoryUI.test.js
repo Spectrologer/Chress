@@ -1,4 +1,4 @@
-import { InventoryUI } from '../managers/InventoryUI.js';
+import { InventoryUI } from '../ui/InventoryUI.js';
 import { InventoryService } from '../managers/inventory/InventoryService.js';
 
 function makeMockGame() {

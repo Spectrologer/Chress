@@ -340,6 +340,35 @@ export class ZoneManager {
         }
 
         this.game.grid = zoneData.grid;
+
+        // For new games (no lastExitSide), use the playerSpawn from zone generation
+        if (!this.game.lastExitSide && zoneData.playerSpawn) {
+            // Store the exit tile position for entrance animation
+            this.game._newGameSpawnPosition = { ...zoneData.playerSpawn };
+
+            // Position player off-screen (one tile beyond the exit) for entrance animation
+            let offScreenX = zoneData.playerSpawn.x;
+            let offScreenY = zoneData.playerSpawn.y;
+
+            // Determine off-screen position based on which edge the exit is on
+            if (zoneData.playerSpawn.y === 0) {
+                // Top edge exit - position player above the grid
+                offScreenY = -1;
+            } else if (zoneData.playerSpawn.y === GRID_SIZE - 1) {
+                // Bottom edge exit - position player below the grid
+                offScreenY = GRID_SIZE;
+            } else if (zoneData.playerSpawn.x === 0) {
+                // Left edge exit - position player to the left of the grid
+                offScreenX = -1;
+            } else if (zoneData.playerSpawn.x === GRID_SIZE - 1) {
+                // Right edge exit - position player to the right of the grid
+                offScreenX = GRID_SIZE;
+            }
+
+            this.game.player.setPosition(offScreenX, offScreenY);
+            logger.log('[ZONE GEN] New game detected, positioning player off-screen at:', { x: offScreenX, y: offScreenY }, 'exit tile at:', zoneData.playerSpawn);
+        }
+
         // If we generated this zone as the result of a port transition, ensure
         // the emergence tile reflects the correct port object (stairup/stairdown)
         try {

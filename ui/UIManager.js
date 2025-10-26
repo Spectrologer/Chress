@@ -11,52 +11,61 @@ export class UIManager {
     constructor(game) {
         this.game = game;
 
-        // Sub-managers
+        // Managers
         this.messageManager = new MessageManager(game);
         this.panelManager = new PanelManager(game);
         this.playerStatsUI = new PlayerStatsUI(game);
         this.miniMap = new MiniMap(game);
-        this.miniMap.setupEvents(); // Set up minimap expansion events
+        this.miniMap.setupEvents(); // Minimap expansion
 
-        // Setup handlers
+        // Handlers
         this.messageManager.setupMessageLogButton();
 
-        // Setup event listeners
+        // Event listeners
         this.setupEventListeners();
     }
 
     setupEventListeners() {
-        // Listen to player stats changes
+        // Player stats
         eventBus.on(EventTypes.PLAYER_STATS_CHANGED, () => {
-            this.updatePlayerStats();
+            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         });
 
-        // Listen to enemy defeated events
+        // Enemy defeated
         eventBus.on(EventTypes.ENEMY_DEFEATED, () => {
-            this.updatePlayerStats();
+            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         });
 
-        // Listen to treasure found events
+        // Treasure found
         eventBus.on(EventTypes.TREASURE_FOUND, (data) => {
             this.addMessageToLog(data.message);
-            this.updatePlayerStats();
+            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         });
 
-        // Listen to game reset events
+        // Game reset
         eventBus.on(EventTypes.GAME_RESET, (data) => {
             this.updatePlayerPosition();
             this.updateZoneDisplay();
-            this.updatePlayerStats();
+            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         });
 
-        // Listen to zone changed events
+        // Zone changed
         eventBus.on(EventTypes.ZONE_CHANGED, () => {
             this.updateZoneDisplay();
         });
 
-        // Listen to player moved events
+        // Player moved
         eventBus.on(EventTypes.PLAYER_MOVED, () => {
             this.updatePlayerPosition();
+        });
+
+        // Update points display
+        eventBus.on(EventTypes.UI_UPDATE_STATS, () => {
+            // Update player card points
+            const pointsValueElement = document.querySelector('.player-points .points-value');
+            if (pointsValueElement) {
+                pointsValueElement.textContent = this.game.player.getPoints();
+            }
         });
     }
 
@@ -68,10 +77,10 @@ export class UIManager {
         const pos = this.game.player.getPosition();
         // document.getElementById('player-pos').textContent = `${pos.x}, ${pos.y}`;
 
-        // When the player moves, close any open contextual windows.
+        // Close contextual windows on move
         this.panelManager.hideBarterWindow();
         this.panelManager.hideStatueInfoWindow();
-        Sign.hideMessageForSign(this.game); // Also hide sign messages
+        Sign.hideMessageForSign(this.game); // Hide signs too
     }
 
     updateZoneDisplay() {
@@ -79,15 +88,15 @@ export class UIManager {
         // document.getElementById('current-zone').textContent = `${zone.x}, ${zone.y}`;
         this.miniMap.renderZoneMap();
 
-        // Update map info below the minimap
+        // Map info below minimap
         const mapInfo = document.getElementById('map-info');
         if (mapInfo) {
             if (zone.x === 0 && zone.y === 0 && zone.dimension === 1) {
-                // Special case for the Woodcutter's Club
+                // Woodcutter's Club special case
                 mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Woodcutter's Club</span>`;
             } else if (zone.dimension === 2) {
-                // Underground dimension
-                // Display the numerical underground depth the player is at (z-1, z-2, ...)
+                // Underground
+                // Display depth (z-1, z-2, ...)
                 const depth = this.game.player.undergroundDepth || 1;
                 const totalDiscoveries = this.game.player.getVisitedZones().size;
                 const spentDiscoveries = this.game.player.getSpentDiscoveries() || 0;
@@ -108,13 +117,8 @@ export class UIManager {
     }
 
     updatePlayerStats() {
-        this.playerStatsUI.updatePlayerStats();
-
-        // Update points on the main player card
-        const pointsValueElement = document.querySelector('.player-points .points-value');
-        if (pointsValueElement) {
-            pointsValueElement.textContent = this.game.player.getPoints();
-        }
+        // Emit event
+        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
     }
 
 
@@ -123,8 +127,8 @@ export class UIManager {
         this.messageManager.hideOverlayMessage();
     }
 
-    showSignMessage(text, imageSrc, name = null) {
-        this.messageManager.showSignMessage(text, imageSrc, name);
+    showSignMessage(text, imageSrc, name = null, buttonText = null) {
+        this.messageManager.showSignMessage(text, imageSrc, name, buttonText);
     }
 
     showRegionNotification(zoneX, zoneY) {
@@ -173,7 +177,7 @@ export class UIManager {
         document.getElementById('restart-button').addEventListener('click', () => {
             this.hideGameOverScreen();
             this.game.resetGame();
-            // Restart the game loop since the player is no longer dead
+            // Restart loop (player alive)
             this.game.gameLoop();
         });
     }

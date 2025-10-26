@@ -2,6 +2,9 @@ import { BaseItemEffect } from './BaseItemEffect.js';
 import { TILE_TYPES } from '../../../core/constants.js';
 import { Sign } from '../../../ui/Sign.js';
 import { logger } from '../../../core/logger.js';
+import { eventBus } from '../../../core/EventBus.js';
+import { EventTypes } from '../../../core/EventTypes.js';
+import { isAdjacent } from '../../../core/utils/DirectionUtils.js';
 
 /**
  * Special effects - Shovel, Note, Book of Time Travel
@@ -23,9 +26,8 @@ export class ShovelEffect extends BaseItemEffect {
         const playerPos = game.player.getPosition();
         const dx = Math.abs(targetX - playerPos.x);
         const dy = Math.abs(targetY - playerPos.y);
-        const isAdjacent = dx <= 1 && dy <= 1 && !(dx === 0 && dy === 0);
 
-        if (!isAdjacent) {
+        if (!isAdjacent(dx, dy)) {
             this._showMessage(game, "You must dig in an adjacent tile!", null, false, false);
             return { consumed: false, success: false };
         }
@@ -129,9 +131,7 @@ export class NoteEffect extends BaseItemEffect {
             game.uiManager.addMessageToLog(`A distant location has been revealed on your map: (${selected.x}, ${selected.y})`);
         }
 
-        if (typeof game.updatePlayerStats === 'function') {
-            game.updatePlayerStats();
-        }
+        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
 
         if (game.uiManager && typeof game.uiManager.renderZoneMap === 'function') {
             game.uiManager.renderZoneMap();

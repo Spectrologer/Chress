@@ -1,4 +1,6 @@
-import { TILE_TYPES } from '../core/constants.js';
+import { TILE_TYPES } from '../../core/constants.js';
+import { eventBus } from '../../core/EventBus.js';
+import { EventTypes } from '../../core/EventTypes.js';
 
 export class ItemPickupManager {
     constructor(game) {
@@ -13,7 +15,7 @@ export class ItemPickupManager {
         const pick = (item) => {
             inv.push(item);
             this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
-            ui.updatePlayerStats();
+            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             // Trigger pickup hover on player for visual feedback
             try {
                 const key = getImageKeyForItem(item);
@@ -56,13 +58,13 @@ export class ItemPickupManager {
                 this.game.player.abilities.add('axe');
                 this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
                 ui.addMessageToLog('Gained axe ability! Can now chop grass and shrubbery.');
-                ui.updatePlayerStats();
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             }
             else if (tile === TILE_TYPES.HAMMER) {
                 this.game.player.abilities.add('hammer');
                 this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
                 ui.addMessageToLog('Gained hammer ability! Can now smash rocks.');
-                ui.updatePlayerStats();
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             }
             else if (tile?.type === TILE_TYPES.BISHOP_SPEAR) pick({ type: 'bishop_spear', uses: tile.uses });
             else if (tile?.type === TILE_TYPES.HORSE_ICON) pick({ type: 'horse_icon', uses: tile.uses });

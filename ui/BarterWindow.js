@@ -2,6 +2,8 @@ import { Sign } from './Sign.js';
 import { FOOD_ASSETS, TILE_TYPES } from '../core/constants.js';
 import { fitTextToContainer } from './TextFitter.js';
 import audioManager from '../utils/AudioManager.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 export class BarterWindow {
     constructor(game) {
@@ -325,7 +327,7 @@ export class BarterWindow {
         }
 
     audioManager.playSound('point', { game: this.game });
-        this.game.updatePlayerStats();
+        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         this.game.uiManager.updateZoneDisplay(); // Refresh discoveries count
         this.hideBarterWindow();
     }

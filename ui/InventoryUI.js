@@ -1,6 +1,8 @@
 import { TILE_TYPES } from '../core/constants.js';
 import { logger } from '../core/logger.js';
-import { ItemMetadata } from './inventory/ItemMetadata.js';
+import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 export class InventoryUI {
     constructor(game, inventoryService) {
@@ -125,7 +127,7 @@ export class InventoryUI {
 
     // Private helper: add a uses indicator element to parent
     _addUsesIndicator(parent, item) {
-        try { parent.style.position = parent.style.position || 'relative'; } catch (e) {}
+        parent.style.position = parent.style.position || 'relative';
         const usesText = document.createElement('div');
         usesText.classList.add('uses-indicator');
         usesText.textContent = `x${item.uses || item.quantity}`;
@@ -147,23 +149,20 @@ export class InventoryUI {
     // This survives DOM re-renders because the item object is preserved.
 
         const showTooltip = () => {
-            try {
-                if (item._suppressTooltipUntil && Date.now() < item._suppressTooltipUntil) return;
-            } catch (e) {}
+            if (item._suppressTooltipUntil && Date.now() < item._suppressTooltipUntil) return;
             this.showTooltip(slot, tooltipText);
         };
         const hideTooltip = () => this.hideTooltip();
         const useItem = () => {
             // Per-item guard to prevent duplicate uses within a short window
-            try {
-                const last = this._itemLastUsed.get(item) || 0;
-                const now = Date.now();
-                if (now - last < 600) {
-                    if (window.inventoryDebugMode) logger.debug('[INV.UI] suppressed duplicate use', { idx, itemType: item.type, delta: now - last });
-                    return;
-                }
-                this._itemLastUsed.set(item, now);
-            } catch (e) {}
+            const last = this._itemLastUsed.get(item) || 0;
+            const now = Date.now();
+            if (now - last < 600) {
+                if (window.inventoryDebugMode) logger.debug('[INV.UI] suppressed duplicate use', { idx, itemType: item.type, delta: now - last });
+                return;
+            }
+            this._itemLastUsed.set(item, now);
+
             if (window.inventoryDebugMode) {
                 logger.debug('[INV.UI] useItem called', { idx, itemType: item.type, time: Date.now() });
                 try { throw new Error('INV.UI useItem stack'); } catch (e) { logger.debug(e.stack); }
@@ -172,8 +171,8 @@ export class InventoryUI {
         };
         const toggleDisabled = () => {
             this.inventoryService.toggleItemDisabled(item);
-            this.game.uiManager.updatePlayerStats();
-            try { item._suppressTooltipUntil = Date.now() + 300; } catch (e) {}
+            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
+            item._suppressTooltipUntil = Date.now() + 300;
             hideTooltip();
         };
 
@@ -183,26 +182,22 @@ export class InventoryUI {
         if (isDisablable) {
             slot.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
-                try {
-                    if (item._suppressContextMenuUntil && Date.now() < item._suppressContextMenuUntil) {
-                        item._suppressContextMenuUntil = 0;
-                        // If a pending toggle exists, clear it and remove temp class
-                        if (item._pendingToggle) {
-                            delete item._pendingToggle;
-                            slot.classList.remove('item-disabled-temp');
-                        }
-                        return;
-                    }
-                } catch (err) {}
-                // If a pending toggle exists (unlikely here), commit it first
-                try {
+                if (item._suppressContextMenuUntil && Date.now() < item._suppressContextMenuUntil) {
+                    item._suppressContextMenuUntil = 0;
+                    // If a pending toggle exists, clear it and remove temp class
                     if (item._pendingToggle) {
                         delete item._pendingToggle;
                         slot.classList.remove('item-disabled-temp');
-                        toggleDisabled();
-                        return;
                     }
-                } catch (err) {}
+                    return;
+                }
+                // If a pending toggle exists (unlikely here), commit it first
+                if (item._pendingToggle) {
+                    delete item._pendingToggle;
+                    slot.classList.remove('item-disabled-temp');
+                    toggleDisabled();
+                    return;
+                }
                 toggleDisabled();
             });
         }
@@ -226,7 +221,7 @@ export class InventoryUI {
         const onPointerDown = (e) => {
             // only consider primary button for mouse
             if (e.pointerType === 'mouse' && e.button !== 0) return;
-            try { e.preventDefault(); } catch (err) {}
+            e?.preventDefault?.();
             isLongPress = false;
             // record pointer info to suppress the following click
             _lastPointerTime = Date.now();
@@ -239,15 +234,15 @@ export class InventoryUI {
                 isLongPress = true;
                 if (isDisablable) {
                     // mark intent to toggle and show temporary disabled visual while holding
-                    try { item._pendingToggle = true; } catch (e) {}
+                    item._pendingToggle = true;
                     slot.classList.add('item-disabled-temp');
-                    try { item._suppressContextMenuUntil = Date.now() + 1000; } catch (e) {}
+                    item._suppressContextMenuUntil = Date.now() + 1000;
                 } else {
                     showTooltip();
                     this.game.animationScheduler.createSequence().wait(2000).then(hideTooltip).start();
                 }
             }, 500);
-            try { e.target.setPointerCapture?.(e.pointerId); } catch (err) {}
+            e.target?.setPointerCapture?.(e.pointerId);
             // store start coords on the slot element so move handler can access them
             slot._pressStartX = startX;
             slot._pressStartY = startY;
@@ -264,7 +259,7 @@ export class InventoryUI {
             const threshold = 12 * 12; // 12px threshold squared
             if (distSq > threshold) {
                 if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; }
-                try { delete item._pendingToggle; } catch (err) {}
+                delete item._pendingToggle;
                 slot.classList.remove('item-disabled-temp');
             }
         };
@@ -272,7 +267,7 @@ export class InventoryUI {
         const onPointerCancel = (e) => {
             if (pressPointerId !== e.pointerId) return;
             if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; }
-            try { delete item._pendingToggle; } catch (err) {}
+            delete item._pendingToggle;
             slot.classList.remove('item-disabled-temp');
             pressPointerId = null;
             hideTooltip();
@@ -289,15 +284,13 @@ export class InventoryUI {
                     _lastPointerTriggeredUseTime = Date.now();
                 }
             }
-            try { e.target.releasePointerCapture?.(e.pointerId); } catch (err) {}
+            e.target?.releasePointerCapture?.(e.pointerId);
             // If a long-press created a pending toggle, commit it now (stable place to change data)
-            try {
-                if (item._pendingToggle) {
-                    delete item._pendingToggle;
-                    slot.classList.remove('item-disabled-temp');
-                    toggleDisabled();
-                }
-            } catch (err) {}
+            if (item._pendingToggle) {
+                delete item._pendingToggle;
+                slot.classList.remove('item-disabled-temp');
+                toggleDisabled();
+            }
             pressPointerId = null;
             // Ensure tooltip is hidden when pointer is released to avoid stuck tooltips
             hideTooltip();
@@ -334,7 +327,7 @@ export class InventoryUI {
                             this.inventoryService.useItem(bombItem, { fromRadial: false });
                         } else if (window.inventoryDebugMode) logger.debug('[INV.UI] suppressed duplicate bomb use', {idx});
                     }
-                    this.game.uiManager.updatePlayerStats();
+                    eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
                 } else {
                     const px = this.game.player.x, py = this.game.player.y;
                     this.game.bombPlacementPositions = [];

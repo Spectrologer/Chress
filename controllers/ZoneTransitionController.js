@@ -1,4 +1,5 @@
 import logger from '../core/logger.js';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
 
 /**
  * ZoneTransitionController
@@ -25,7 +26,13 @@ export class ZoneTransitionController {
             // Delegate to ZoneManager for the actual transition
             this.game.zoneManager.transitionToZone(newZoneX, newZoneY, exitSide, exitX, exitY);
         } catch (error) {
-            logger.error('Error during zone transition:', error);
+            errorHandler.handle(error, ErrorSeverity.CRITICAL, {
+                component: 'ZoneTransitionController',
+                action: 'transition to zone',
+                newZoneX,
+                newZoneY,
+                exitSide
+            });
             throw error;
         }
     }
@@ -37,7 +44,10 @@ export class ZoneTransitionController {
         try {
             this.game.zoneTransitionManager.handlePortTransition();
         } catch (error) {
-            logger.error('Error handling port transition:', error);
+            errorHandler.handle(error, ErrorSeverity.CRITICAL, {
+                component: 'ZoneTransitionController',
+                action: 'handle port transition'
+            });
             throw error;
         }
     }
@@ -51,7 +61,10 @@ export class ZoneTransitionController {
         try {
             this.game.zoneTransitionManager.handlePitfallTransition(x, y);
         } catch (error) {
-            logger.error('Error handling pitfall transition:', error);
+            errorHandler.handle(error, ErrorSeverity.CRITICAL, {
+                component: 'ZoneTransitionController',
+                action: 'handle pitfall transition'
+            });
             throw error;
         }
     }
@@ -66,7 +79,10 @@ export class ZoneTransitionController {
         try {
             return this.game.zoneTransitionManager.checkForZoneTransitionGesture(tapCoords, playerPos);
         } catch (error) {
-            logger.error('Error checking zone transition gesture:', error);
+            errorHandler.handle(error, ErrorSeverity.ERROR, {
+                component: 'ZoneTransitionController',
+                action: 'check zone transition gesture'
+            });
             return false;
         }
     }
@@ -81,7 +97,10 @@ export class ZoneTransitionController {
         try {
             return this.game.zoneTransitionManager.isTransitionEligible(gridCoords, playerPos);
         } catch (error) {
-            logger.error('Error checking transition eligibility:', error);
+            errorHandler.handle(error, ErrorSeverity.ERROR, {
+                component: 'ZoneTransitionController',
+                action: 'check transition eligibility'
+            });
             return false;
         }
     }
@@ -93,7 +112,10 @@ export class ZoneTransitionController {
         try {
             this.game.zoneManager.generateZone();
         } catch (error) {
-            logger.error('Error generating zone:', error);
+            errorHandler.handle(error, ErrorSeverity.CRITICAL, {
+                component: 'ZoneTransitionController',
+                action: 'generate zone'
+            });
             throw error;
         }
     }
@@ -105,7 +127,10 @@ export class ZoneTransitionController {
         try {
             this.game.zoneManager.saveCurrentZoneState();
         } catch (error) {
-            logger.error('Error saving zone state:', error);
+            errorHandler.handle(error, ErrorSeverity.ERROR, {
+                component: 'ZoneTransitionController',
+                action: 'save zone state'
+            });
             throw error;
         }
     }
@@ -118,7 +143,10 @@ export class ZoneTransitionController {
         try {
             this.game.zoneManager.spawnTreasuresOnGrid(treasures);
         } catch (error) {
-            logger.error('Error spawning treasures:', error);
+            errorHandler.handle(error, ErrorSeverity.ERROR, {
+                component: 'ZoneTransitionController',
+                action: 'spawn treasures on grid'
+            });
             throw error;
         }
     }

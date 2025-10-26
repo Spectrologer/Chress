@@ -35,14 +35,37 @@ export const EventTypes = {
   MESSAGE_LOGGED: 'ui:message:logged',
   PANEL_OPENED: 'ui:panel:opened',
   PANEL_CLOSED: 'ui:panel:closed',
+  UI_UPDATE_STATS: 'ui:update:stats',
+  UI_SHOW_MESSAGE: 'ui:show:message',
+  UI_CLOSE_PANEL: 'ui:close:panel',
+
+  // Inventory Events
+  INVENTORY_CHANGED: 'inventory:changed',
+  ITEM_USED: 'inventory:item:used',
+
+  // Input Events
+  INPUT_KEY_PRESS: 'input:key:press',
+  INPUT_PATH_STARTED: 'input:path:started',
+  INPUT_PATH_CANCELLED: 'input:path:cancelled',
+  INPUT_PATH_COMPLETED: 'input:path:completed',
+  INPUT_EXIT_REACHED: 'input:exit:reached',
 
   // Animation Events
   ANIMATION_REQUESTED: 'animation:requested',
   ANIMATION_COMPLETED: 'animation:completed',
+  ANIMATION_HORSE_CHARGE: 'animation:horse:charge',
+  ANIMATION_ARROW: 'animation:arrow',
+  ANIMATION_POINT: 'animation:point',
+  ANIMATION_MULTIPLIER: 'animation:multiplier',
 
   // Audio Events
   SOUND_PLAY: 'audio:sound:play',
   MUSIC_CHANGE: 'audio:music:change',
+
+  // Game Mode Events
+  GAME_EXIT_SHOVEL_MODE: 'game:exit:shovel_mode',
+  GAME_INCREMENT_BOMB_ACTIONS: 'game:increment:bomb_actions',
+  GAME_DECREMENT_ZONE_ENTRY_COUNT: 'game:decrement:zone_entry_count',
 };
 
 /**
@@ -102,4 +125,76 @@ export const EventTypes = {
  * @property {number} x - X position for animation
  * @property {number} y - Y position for animation
  * @property {*} data - Additional animation data
+ */
+
+/**
+ * @typedef {Object} UIShowMessageEvent
+ * @property {string} text - Message text (can include HTML)
+ * @property {string} [imageSrc] - Optional image source URL
+ * @property {boolean} [isPersistent] - Whether message stays until manually dismissed
+ * @property {boolean} [isLargeText] - Whether to use large text styling
+ * @property {boolean} [useTypewriter] - Whether to use typewriter animation
+ */
+
+/**
+ * @typedef {Object} InventoryChangedEvent
+ * @property {string} action - Type of change (add, remove, use, update)
+ * @property {Object} [item] - The affected item
+ * @property {number} [quantity] - Quantity changed
+ */
+
+/**
+ * @typedef {Object} ItemUsedEvent
+ * @property {Object} item - The item that was used
+ * @property {number} x - X position where used
+ * @property {number} y - Y position where used
+ * @property {*} [result] - Result of using the item
+ */
+
+/**
+ * @typedef {Object} AnimationHorseChargeEvent
+ * @property {Object} startPos - Starting position {x, y}
+ * @property {Object} midPos - Mid-point position {x, y}
+ * @property {Object} endPos - End position {x, y}
+ */
+
+/**
+ * @typedef {Object} AnimationArrowEvent
+ * @property {number} startX - Arrow starting X position
+ * @property {number} startY - Arrow starting Y position
+ * @property {number} endX - Arrow ending X position
+ * @property {number} endY - Arrow ending Y position
+ */
+
+/**
+ * @typedef {Object} AnimationPointEvent
+ * @property {number} x - X position for point animation
+ * @property {number} y - Y position for point animation
+ * @property {number} points - Number of points to display
+ * @property {string} [color] - Optional color for the animation
+ */
+
+/**
+ * @typedef {Object} AnimationMultiplierEvent
+ * @property {number} x - X position for multiplier animation
+ * @property {number} y - Y position for multiplier animation
+ * @property {number} multiplier - Multiplier value to display
+ */
+
+/**
+ * @typedef {Object} InputKeyPressEvent
+ * @property {string} key - The key that was pressed
+ * @property {Function} preventDefault - Function to prevent default behavior
+ * @property {boolean} [_synthetic] - Whether this is a synthetic event from path execution
+ */
+
+/**
+ * @typedef {Object} InputPathStartedEvent
+ * @property {number} pathLength - Number of steps in the path
+ */
+
+/**
+ * @typedef {Object} InputExitReachedEvent
+ * @property {number} x - X position of the exit
+ * @property {number} y - Y position of the exit
  */

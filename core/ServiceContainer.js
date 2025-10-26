@@ -14,8 +14,8 @@ import { ZoneManager } from '../managers/ZoneManager.js';
 import { ZoneTransitionManager } from '../managers/ZoneTransitionManager.js';
 import { ActionManager } from '../managers/ActionManager.js';
 import { TurnManager } from './TurnManager.js';
-import { InventoryUI } from '../managers/InventoryUI.js';
-import { RadialInventoryUI } from '../managers/RadialInventoryUI.js';
+import { InventoryUI } from '../ui/InventoryUI.js';
+import { RadialInventoryUI } from '../ui/RadialInventoryUI.js';
 import { loadRadialInventory } from '../managers/RadialPersistence.js';
 import { GameStateManager } from './GameStateManager.js';
 import { SoundManager } from './SoundManager.js';
@@ -25,83 +25,254 @@ import { GameInitializer } from './GameInitializer.js';
 import { AssetLoader } from './AssetLoader.js';
 import { OverlayManager } from '../ui/OverlayManager.js';
 import { ZoneTransitionController } from '../controllers/ZoneTransitionController.js';
+import { GlobalErrorHandler } from './GlobalErrorHandler.js';
 
 /**
- * Lightweight service container for centralizing creation and wiring of game services.
- * Keeps the existing constructors intact but moves instantiation out of Game.
+ * Lightweight service container with lazy initialization for better testability.
+ * Services are only instantiated when first accessed, allowing tests to mock
+ * or partially initialize the game without creating all 30+ dependencies.
  */
 export class ServiceContainer {
     constructor(game) {
         this.game = game;
+        this._instances = new Map();
     }
 
+    /**
+     * Get or create a service instance by name.
+     * @param {string} serviceName - Name of the service to retrieve
+     * @returns {*} The service instance
+     */
+    get(serviceName) {
+        if (!this._instances.has(serviceName)) {
+            this._instances.set(serviceName, this._createService(serviceName));
+        }
+        return this._instances.get(serviceName);
+    }
+
+    /**
+     * Set a service instance (useful for testing/mocking)
+     * @param {string} serviceName - Name of the service
+     * @param {*} instance - The service instance to set
+     */
+    set(serviceName, instance) {
+        this._instances.set(serviceName, instance);
+    }
+
+    /**
+     * Check if a service has been initialized
+     * @param {string} serviceName - Name of the service
+     * @returns {boolean} True if the service has been created
+     */
+    has(serviceName) {
+        return this._instances.has(serviceName);
+    }
+
+    /**
+     * Clear all service instances (useful for testing)
+     */
+    clear() {
+        this._instances.clear();
+    }
+
+    /**
+     * Factory method that creates services based on name.
+     * This maintains the same initialization order and dependencies as before.
+     */
+    _createService(serviceName) {
+        switch (serviceName) {
+            // Visual / external services
+            case 'textureManager':
+                return new TextureManager();
+
+            case 'connectionManager':
+                return new ConnectionManager();
+
+            case 'zoneGenerator':
+                return new ZoneGenerator(this.game);
+
+            // Entities
+            case 'player':
+                return new Player();
+
+            case 'Enemy':
+                return Enemy; // expose class for GameStateManager
+
+            // Consolidated inventory system
+            case 'inventoryService':
+                return new InventoryService(this.game);
+
+            case 'itemManager': {
+                const itemManager = new ItemManager(this.game);
+                // Cross-reference: player needs itemManager
+                const player = this.get('player');
+                if (player) {
+                    player.itemManager = itemManager;
+                }
+                return itemManager;
+            }
+
+            case 'itemService':
+                // Backward compatibility alias
+                return this.get('inventoryService');
+
+            case 'itemUsageHandler':
+                return null; // Replaced by ItemEffectStrategy
+
+            case 'itemUsageManager':
+                return null; // Replaced by ItemEffectStrategy
+
+            case 'inventoryUI':
+                return new InventoryUI(this.game, this.get('inventoryService'));
+
+            case 'radialInventoryUI':
+                return new RadialInventoryUI(this.game, this.get('inventoryService'));
+
+            case 'inputManager':
+                return new InputManager(this.game, this.get('inventoryService'));
+
+            case 'uiManager':
+                return new UIManager(this.game);
+
+            case 'assetLoader':
+                return new AssetLoader(this.game);
+
+            case 'overlayManager':
+                return new OverlayManager(this.game);
+
+            case 'gameInitializer':
+                return new GameInitializer(this.game);
+
+            case 'renderManager':
+                return new RenderManager(this.game);
+
+            case 'actionManager':
+                return new ActionManager(this.game);
+
+            case 'consentManager':
+                return new ConsentManager(this.game);
+
+            case 'animationScheduler':
+                return new AnimationScheduler();
+
+            case 'soundManager':
+                return new SoundManager();
+
+            case 'turnManager':
+                return new TurnManager(this.game);
+
+            case 'combatManager':
+                return new CombatManager(this.game, this.get('turnManager').occupiedTilesThisTurn);
+
+            case 'interactionManager':
+                return new InteractionManager(this.game, this.get('inputManager'));
+
+            case 'zoneManager':
+                return new ZoneManager(this.game);
+
+            case 'zoneTransitionManager':
+                return new ZoneTransitionManager(this.game, this.get('inputManager'));
+
+            case 'zoneTransitionController':
+                return new ZoneTransitionController(this.game);
+
+            case 'globalErrorHandler':
+                return new GlobalErrorHandler(this.game);
+
+            case 'gameStateManager':
+                return new GameStateManager(this.game);
+
+            case 'inventoryManager':
+                // Legacy reference for code expecting inventoryManager object
+                return this.get('inventoryUI');
+
+            default:
+                throw new Error(`Unknown service: ${serviceName}`);
+        }
+    }
+
+    /**
+     * Initialize all core services eagerly (maintains backward compatibility).
+     * This method creates all services at once, like the original implementation.
+     * Use this for production to ensure everything is initialized at startup.
+     */
     createCoreServices() {
-        // Visual / external services
-        this.game.textureManager = new TextureManager();
-        this.game.connectionManager = new ConnectionManager();
-        this.game.zoneGenerator = new ZoneGenerator(this.game);
+        // Define initialization order (some services depend on others)
+        const serviceNames = [
+            // Error handling (initialize first to catch errors during initialization)
+            'globalErrorHandler',
 
-        // Entities
-        this.game.player = new Player();
-        this.game.Enemy = Enemy; // expose class for GameStateManager
+            // External services first
+            'textureManager',
+            'connectionManager',
+            'zoneGenerator',
 
-        // Managers that depend on game reference
-        // NEW: Consolidated inventory system
-        this.game.inventoryService = new InventoryService(this.game);
-        this.game.itemManager = new ItemManager(this.game);
+            // Entities
+            'player',
+            'Enemy',
 
-        // Backward compatibility aliases
-        this.game.itemService = this.game.inventoryService;
-        this.game.itemUsageHandler = null; // Replaced by ItemEffectStrategy
-        this.game.itemUsageManager = null; // Replaced by ItemEffectStrategy
+            // Inventory system
+            'inventoryService',
+            'itemManager',
+            'itemService', // alias
+            'itemUsageHandler',
+            'itemUsageManager',
 
-        this.game.inventoryUI = new InventoryUI(this.game, this.game.inventoryService);
-        this.game.radialInventoryUI = new RadialInventoryUI(this.game, this.game.inventoryService);
+            // UI services
+            'inventoryUI',
+            'radialInventoryUI',
+            'uiManager',
+
+            // Asset management
+            'assetLoader',
+            'overlayManager',
+
+            // Game initialization (must be early for canvas/ctx setup)
+            'gameInitializer',
+
+            // Rendering
+            'renderManager',
+
+            // Core managers
+            'actionManager',
+            'consentManager',
+
+            // Systems / utilities
+            'animationScheduler',
+            'soundManager',
+
+            // Turn management
+            'turnManager',
+
+            // Managers with dependencies
+            'inputManager',
+            'combatManager',
+            'interactionManager',
+
+            // Zone management
+            'zoneManager',
+            'zoneTransitionManager',
+            'zoneTransitionController',
+
+            // State management
+            'gameStateManager',
+
+            // Legacy aliases
+            'inventoryManager'
+        ];
+
+        // Create all services
+        serviceNames.forEach(name => {
+            this.game[name] = this.get(name);
+        });
+
+        // Initialize global error handlers early (after service creation)
+        if (this.game.globalErrorHandler) {
+            this.game.globalErrorHandler.initialize();
+        }
 
         // Load persisted radial items (if any)
-        try { loadRadialInventory(this.game); } catch (e) {}
-
-        this.game.inputManager = new InputManager(this.game, this.game.inventoryService);
-        this.game.uiManager = new UIManager(this.game);
-
-        // NEW: Asset loading and overlay management
-        this.game.assetLoader = new AssetLoader(this.game);
-        this.game.overlayManager = new OverlayManager(this.game);
-
-        // Construct GameInitializer early so it can configure canvas and ctx before
-        // any renderer attempts to use game.ctx.
-        this.game.gameInitializer = new GameInitializer(this.game);
-
-        this.game.renderManager = new RenderManager(this.game);
-
-        this.game.actionManager = new ActionManager(this.game);
-        this.game.consentManager = new ConsentManager(this.game);
-
-        // Systems / utilities
-        this.game.animationScheduler = new AnimationScheduler();
-        this.game.soundManager = new SoundManager();
-
-        // Managers that may need extra args
-        // Create TurnManager to encapsulate enemy-turn state used by combat.
-        this.game.turnManager = new TurnManager(this.game);
-
-        this.game.combatManager = new CombatManager(this.game, this.game.turnManager.occupiedTilesThisTurn);
-        this.game.interactionManager = new InteractionManager(this.game, this.game.inputManager);
-
-        // Zone management - core managers
-        this.game.zoneManager = new ZoneManager(this.game);
-        this.game.zoneTransitionManager = new ZoneTransitionManager(this.game, this.game.inputManager);
-
-        // NEW: High-level zone transition controller
-        this.game.zoneTransitionController = new ZoneTransitionController(this.game);
-
-        this.game.gameStateManager = new GameStateManager(this.game);
-
-        // assign some cross references preserved from original code
-        this.game.player.itemManager = this.game.itemManager;
-
-        // Provide legacy reference for code expecting inventoryManager object, but prefer using itemService/inventoryUI
-        this.game.inventoryManager = this.game.inventoryUI; // keep UI reference for legacy callers
+        loadRadialInventory(this.game);
 
         return this;
     }

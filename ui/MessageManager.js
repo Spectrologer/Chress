@@ -6,6 +6,8 @@ import { TypewriterEffect } from './TypewriterEffect.js';
 import { getVoiceSettingsForName, ensureTypingAudio, playTypingBlip } from './VoiceSettings.js';
 import { NoteStack } from './NoteStack.js';
 import { RegionNotification } from './RegionNotification.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 export class MessageManager {
     constructor(game) {
@@ -17,9 +19,9 @@ export class MessageManager {
         this.messageLogContent = document.getElementById('messageLogContent');
         this.closeMessageLogButton = document.getElementById('closeMessageLogButton');
 
-        // Add click listener to close overlay when tapped
+        // Close overlay on tap
         this.messageOverlay.addEventListener('pointerdown', () => {
-            // Only handle when overlay is actually showing
+            // Only if showing
             if (!this.messageOverlay.classList.contains('show')) return;
 
             if (this.game.displayingMessageForSign) {
@@ -47,6 +49,17 @@ export class MessageManager {
     this.noteStack = new NoteStack();
     // Region notification
     this.regionNotification = new RegionNotification(this.game);
+
+    // Set up event listeners
+    this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Listen for UI show message events
+        eventBus.on(EventTypes.UI_SHOW_MESSAGE, (data) => {
+            const { text, imageSrc, isPersistent, isLargeText, useTypewriter } = data;
+            this.showOverlayMessage(text, imageSrc, isPersistent, isLargeText, useTypewriter);
+        });
     }
 
     setupMessageLogButton() {
@@ -285,13 +298,32 @@ export class MessageManager {
         }
     }
 
-    showSignMessage(text, imageSrc, name = null) {
+    showSignMessage(text, imageSrc, name = null, buttonText = null) {
         const messageElement = document.getElementById('messageOverlay');
         if (messageElement) {
             // Clear any existing overlay timeout to prevent auto-hiding sign messages
             if (this.currentOverlayTimeout) {
                 clearTimeout(this.currentOverlayTimeout);
                 this.currentOverlayTimeout = null;
+            }
+
+            // Determine button text based on NPC name or default
+            let btnText = buttonText;
+            if (!btnText) {
+                if (name) {
+                    // NPC-specific button text
+                    const nameLower = name.toLowerCase();
+                    if (nameLower === 'crayn') {
+                        btnText = 'Okay...';
+                    } else if (nameLower === 'forge') {
+                        btnText = 'Right...';
+                    } else {
+                        btnText = 'Got it';
+                    }
+                } else {
+                    // Signs get "True"
+                    btnText = 'True';
+                }
             }
 
             // Set content for sign message (persistent until clicked again)
@@ -304,7 +336,7 @@ export class MessageManager {
                     </div>
                     <div class="dialogue-text" style="text-align:center;">${text}</div>
                     <div id="dialogue-button-container" style="text-align: center; margin-top: 20px; display: none;">
-                        <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">Okay...</button>
+                        <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
                     </div>`;
             } else if (imageSrc) {
                 // Apply same bow-rotation logic for sign messages
@@ -316,12 +348,12 @@ export class MessageManager {
                 } catch (e) {}
                 messageElement.innerHTML = /*html*/`<img src="${imageSrc}" style="${imgStyle}"><div class="dialogue-text" style="text-align:center;">${text}</div>
                     <div id="dialogue-button-container" style="text-align: center; margin-top: 20px;">
-                        <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">Okay...</button>
+                        <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
                     </div>`;
             } else {
                 messageElement.innerHTML = /*html*/`<div class="dialogue-text" style="text-align:center;">${text}</div>
                     <div id="dialogue-button-container" style="text-align: center; margin-top: 20px;">
-                        <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">Okay...</button>
+                        <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
                     </div>`;
             }
 

@@ -1,5 +1,8 @@
 import { TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants.js';
 import audioManager from '../utils/AudioManager.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
 
 export class ActionManager {
     constructor(game) {
@@ -10,7 +13,7 @@ export class ActionManager {
     addBomb() {
         if (this.game.player.inventory.length < 6) {
             this.game.player.inventory.push({ type: 'bomb' });
-            this.game.uiManager.updatePlayerStats();
+            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         }
     }
 
@@ -45,30 +48,87 @@ export class ActionManager {
             if (pi !== -1) { this.game.player.inventory.splice(pi, 1); }
             else {
                 const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(i => i === item) : -1;
-                if (ri !== -1) { this.game.player.radialInventory.splice(ri, 1); try { import('../managers/RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){} }
+                if (ri !== -1) {
+                    this.game.player.radialInventory.splice(ri, 1);
+                    errorHandler.try(() => {
+                        import('../managers/RadialPersistence.js')
+                            .then(m => m.saveRadialInventory(this.game))
+                            .catch(err => {
+                                errorHandler.handle(err, ErrorSeverity.WARNING, {
+                                    component: 'ActionManager',
+                                    action: 'save radial inventory after item use'
+                                });
+                            });
+                    }, {
+                        component: 'ActionManager',
+                        action: 'import RadialPersistence',
+                        severity: ErrorSeverity.WARNING
+                    });
+                }
             }
         }
 
         // Add smoke animations along the diagonal charge path
-        for (let i = 1; i < Math.abs(dx); i++) {
-            const px = startX + i * Math.sign(dx);
-            const py = startY + i * Math.sign(dy);
-            this.game.player.animations.smokeAnimations.push({ x: px, y: py, frame: 18 });
+        try {
+            if (this.game.player.animations && this.game.player.animations.smokeAnimations) {
+                for (let i = 1; i < Math.abs(dx); i++) {
+                    const px = startX + i * Math.sign(dx);
+                    const py = startY + i * Math.sign(dy);
+                    this.game.player.animations.smokeAnimations.push({ x: px, y: py, frame: 18 });
+                }
+            }
+        } catch (e) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'ActionManager',
+                action: 'add smoke animations for bishop charge'
+            });
         }
 
         if (enemy) {
-            try { this.game.player.setAction('attack'); } catch (e) {}
+            try {
+                this.game.player.setAction('attack');
+            } catch (e) {
+                errorHandler.handle(e, ErrorSeverity.WARNING, {
+                    component: 'ActionManager',
+                    action: 'set player action to attack'
+                });
+            }
             const res = this.game.combatManager.defeatEnemy(enemy, 'player');
             if (res && res.defeated) {
                 if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(enemy.x - startX, enemy.y - startY);
             }
         }
 
-        this.game.player.setPosition(targetX, targetY);
-        this.game.player.startSmokeAnimation();
+        try {
+            this.game.player.setPosition(targetX, targetY);
+        } catch (e) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'ActionManager',
+                action: 'set player position after bishop charge'
+            });
+        }
+
+        try {
+            this.game.player.startSmokeAnimation();
+        } catch (e) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'ActionManager',
+                action: 'start smoke animation after bishop charge'
+            });
+        }
+
         audioManager.playSound('whoosh', { game: this.game });
-        this.game.startEnemyTurns();
-        this.game.updatePlayerStats();
+
+        try {
+            this.game.startEnemyTurns();
+        } catch (e) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'ActionManager',
+                action: 'start enemy turns after bishop charge'
+            });
+        }
+
+        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
     }
 
     performHorseIconCharge(item, targetX, targetY, enemy, dx, dy) {
@@ -78,7 +138,23 @@ export class ActionManager {
             if (pi !== -1) { this.game.player.inventory.splice(pi, 1); }
             else {
                 const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(i => i === item) : -1;
-                if (ri !== -1) { this.game.player.radialInventory.splice(ri, 1); try { import('../managers/RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){} }
+                if (ri !== -1) {
+                    this.game.player.radialInventory.splice(ri, 1);
+                    errorHandler.try(() => {
+                        import('../managers/RadialPersistence.js')
+                            .then(m => m.saveRadialInventory(this.game))
+                            .catch(err => {
+                                errorHandler.handle(err, ErrorSeverity.WARNING, {
+                                    component: 'ActionManager',
+                                    action: 'save radial inventory after item use'
+                                });
+                            });
+                    }, {
+                        component: 'ActionManager',
+                        action: 'import RadialPersistence',
+                        severity: ErrorSeverity.WARNING
+                    });
+                }
             }
         }
 
@@ -103,10 +179,20 @@ export class ActionManager {
             midY = startY + dy;
         }
 
-        // Add the L-shape charge animation using centralized manager (start/mid/end)
+        // Add the L-shape charge animation using event system
         try {
-            this.game.animationManager.addHorseChargeAnimation({ startPos: { x: startX, y: startY }, midPos: { x: midX, y: midY }, endPos: { x: endX, y: endY } });
-        } catch (e) { /* non-fatal */ }
+            eventBus.emit(EventTypes.ANIMATION_HORSE_CHARGE, {
+                startPos: { x: startX, y: startY },
+                midPos: { x: midX, y: midY },
+                endPos: { x: endX, y: endY }
+            });
+        } catch (e) {
+            // Event emission failure is non-fatal
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'ActionManager',
+                action: 'emit horse charge animation event'
+            });
+        }
 
         // Build ordered positions along the L path (start -> mid -> end)
         const smokePositions = [];
@@ -140,14 +226,28 @@ export class ActionManager {
                 }).wait(stepDelay);
             });
             // start sequence but don't block the rest of the logic
-            try { seq.start(); } catch (e) {}
+            try {
+                seq.start();
+            } catch (e) {
+                errorHandler.handle(e, ErrorSeverity.WARNING, {
+                    component: 'ActionManager',
+                    action: 'start smoke animation sequence'
+                });
+            }
         } catch (e) {
             // Fallback: if animationScheduler isn't available, add all at once
             smokePositions.forEach(pos => this.game.player.animations.smokeAnimations.push({ x: pos.x, y: pos.y, frame: 12 }));
         }
 
         if (enemy) {
-            try { this.game.player.setAction('attack'); } catch (e) {}
+            try {
+                this.game.player.setAction('attack');
+            } catch (e) {
+                errorHandler.handle(e, ErrorSeverity.WARNING, {
+                    component: 'ActionManager',
+                    action: 'set player action to attack'
+                });
+            }
             const res = this.game.combatManager.defeatEnemy(enemy, 'player');
             if (res && res.defeated) {
                 if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(enemy.x - startX, enemy.y - startY);
@@ -158,7 +258,7 @@ export class ActionManager {
         this.game.player.startSmokeAnimation();
         audioManager.playSound('whoosh', { game: this.game });
         this.game.startEnemyTurns();
-        this.game.updatePlayerStats();
+        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
     }
 
     performBowShot(item, targetX, targetY, enemy = null) {
@@ -168,7 +268,23 @@ export class ActionManager {
             if (pi !== -1) { this.game.player.inventory.splice(pi, 1); }
             else {
                 const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(i => i === item) : -1;
-                if (ri !== -1) { this.game.player.radialInventory.splice(ri, 1); try { import('../managers/RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{}); } catch(e){} }
+                if (ri !== -1) {
+                    this.game.player.radialInventory.splice(ri, 1);
+                    errorHandler.try(() => {
+                        import('../managers/RadialPersistence.js')
+                            .then(m => m.saveRadialInventory(this.game))
+                            .catch(err => {
+                                errorHandler.handle(err, ErrorSeverity.WARNING, {
+                                    component: 'ActionManager',
+                                    action: 'save radial inventory after item use'
+                                });
+                            });
+                    }, {
+                        component: 'ActionManager',
+                        action: 'import RadialPersistence',
+                        severity: ErrorSeverity.WARNING
+                    });
+                }
             }
         }
 
@@ -179,10 +295,13 @@ export class ActionManager {
         // Create animation sequence for bow shot
         this.game.animationScheduler.createSequence()
             .then(() => {
-                // Add arrow animation using centralized manager
-                this.game.animationManager.addArrowAnimation(
-                    playerPos.x, playerPos.y, targetX, targetY
-                );
+                // Add arrow animation using event system
+                eventBus.emit(EventTypes.ANIMATION_ARROW, {
+                    startX: playerPos.x,
+                    startY: playerPos.y,
+                    endX: targetX,
+                    endY: targetY
+                });
 
                 // Player has acted. Prevent enemies from moving until the action resolves.
                 this.game.playerJustAttacked = true;
@@ -190,7 +309,12 @@ export class ActionManager {
                 // Give player a pronounced bow-shot animation state for rendering
                 try {
                     this.game.player.animations.bowShot = { frames: 20, totalFrames: 20, power: 1.4 };
-                } catch (e) {}
+                } catch (e) {
+                    errorHandler.handle(e, ErrorSeverity.WARNING, {
+                        component: 'ActionManager',
+                        action: 'set bow shot animation'
+                    });
+                }
 
                 // Play a distinct bow sound
                 audioManager.playSound('bow_shot', { game: this.game });
@@ -198,7 +322,14 @@ export class ActionManager {
             .wait(300) // 300ms delay for arrow to travel
             .then(() => {
                     if (targetEnemy && this.game.enemies.includes(targetEnemy)) { // Check if enemy still exists
-                    try { this.game.player.setAction('attack'); } catch (e) {}
+                    try {
+                this.game.player.setAction('attack');
+            } catch (e) {
+                errorHandler.handle(e, ErrorSeverity.WARNING, {
+                    component: 'ActionManager',
+                    action: 'set player action to attack'
+                });
+            }
                     const res = this.game.combatManager.defeatEnemy(targetEnemy, 'player');
                     if (res && res.defeated) {
                         if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(targetEnemy.x - playerPos.x, targetEnemy.y - playerPos.y);

@@ -1,3 +1,6 @@
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
+
 // Attach event listeners for an inventory slot and map them to callbacks
 // Callbacks expected: { useItem, toggleDisabled, startBombPlacement, showTooltip, hideTooltip }
 export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap, game) {
@@ -173,7 +176,7 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
                         callbacks.useItem?.(bombItem, game.player.inventory.indexOf(bombItem));
                     }
                 }
-                game.uiManager.updatePlayerStats();
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             } else {
                 // single click: enter bomb placement mode
                 const px = game.player.x, py = game.player.y;

@@ -1,4 +1,6 @@
 import { InputController } from '../controllers/InputController.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 // Minimal fake game/player to test executePath behavior
 function makeGame() {
@@ -36,6 +38,7 @@ function makeGame() {
     game.incrementBombActions = jest.fn();
     game.updatePlayerPosition = jest.fn();
     game.updatePlayerStats = jest.fn();
+    game.turnManager = { handleTurnCompletion: jest.fn() };
 
     // Ensure requestAnimationFrame is available and deterministic in tests
     global.requestAnimationFrame = (cb) => cb();
@@ -47,7 +50,7 @@ describe('InputController path feedback', () => {
 
     test('startHoldFeedback is called with correct destination for simple path', () => {
         const game = makeGame();
-        const ic = new InputController(game, null, null, null);
+        const ic = new InputController(game, null);
 
         // Path: right, down -> destination should be (3,3)
         ic.executePath(['arrowright', 'arrowdown']);
@@ -60,7 +63,10 @@ describe('InputController path feedback', () => {
         const game = makeGame();
         // Use non-verbose path execution branch by disabling verbosePathAnimations
         game.player.stats = {};
-        const ic = new InputController(game, null, (ev) => {
+        const ic = new InputController(game, null);
+
+        // Set up event listener to apply movement synchronously (for testing)
+        eventBus.on(EventTypes.INPUT_KEY_PRESS, (ev) => {
             // Synthetic handler to apply movement synchronously so the runNextStep loop advances
             const moveMap = { arrowup: [0, -1], arrowdown: [0, 1], arrowleft: [-1, 0], arrowright: [1, 0] };
             const m = moveMap[(ev.key || '').toLowerCase()];
@@ -68,7 +74,7 @@ describe('InputController path feedback', () => {
                 game.player.x += m[0];
                 game.player.y += m[1];
             }
-        }, null);
+        });
 
         ic.executePath(['arrowright']);
 
@@ -82,7 +88,7 @@ describe('InputController path feedback', () => {
 
     test('clearFeedback is called on cancelPathExecution', () => {
         const game = makeGame();
-        const ic = new InputController(game, null, null, null);
+        const ic = new InputController(game, null);
 
         ic.executePath(['arrowright','arrowright']);
         // Immediately cancel

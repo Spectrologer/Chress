@@ -5,6 +5,8 @@ import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 import audioManager from '../utils/AudioManager.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { TileRegistry } from '../core/TileRegistry.js';
 
 export class Player {
     constructor() {
@@ -105,7 +107,14 @@ export class Player {
             audioManager.playSound('move');
 
             // Movement interrupts attack combos
-            try { this.setAction('move'); } catch (e) {}
+            try {
+                this.setAction('move');
+            } catch (e) {
+                errorHandler.handle(e, ErrorSeverity.WARNING, {
+                    component: 'Player',
+                    action: 'set action to move'
+                });
+            }
 
             return true;
         } else {
@@ -156,36 +165,8 @@ export class Player {
 
         const tile = grid[y][x];
 
-        // Signs are not walkable
-        if ((tile && tile.type === TILE_TYPES.SIGN) || tile === TILE_TYPES.SIGN) {
-            return false;
-        }
-
-        // Regular tiles
-        // Player can walk on floor, exit, water, food, axe, hammer, bishop spear, horse icon, bomb, note, heart, and port tiles
-        if (tile === TILE_TYPES.FLOOR ||
-            tile === TILE_TYPES.EXIT ||
-            tile === TILE_TYPES.WATER ||
-            tile === TILE_TYPES.AXE ||
-            tile === TILE_TYPES.HAMMER ||
-            (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) ||
-            (tile && tile.type === TILE_TYPES.HORSE_ICON) ||
-            tile === TILE_TYPES.BOMB ||
-            (tile && tile.type === TILE_TYPES.FOOD) || // Note items are just the tile type number
-            tile === TILE_TYPES.NOTE ||
-            tile === TILE_TYPES.HEART ||
-            (tile && tile.type === TILE_TYPES.BOOK_OF_TIME_TRAVEL) ||
-            (tile && tile.type === TILE_TYPES.BOW) ||
-            tile === TILE_TYPES.CISTERN ||
-            tile === TILE_TYPES.PITFALL ||
-            (tile && tile.type === TILE_TYPES.SHOVEL) ||
-            // Allow object PORT tiles (which carry metadata like portKind) as walkable
-            tile === TILE_TYPES.PORT ||
-            (tile && tile.type === TILE_TYPES.PORT)) {
-            return true;
-        }
-
-        return false;
+        // Use centralized TileRegistry for walkability checks
+        return TileRegistry.isWalkable(tile);
     }
 
     setPosition(x, y) {
@@ -314,7 +295,14 @@ export class Player {
 
     takeDamage(amount = 1) {
         // Taking damage cancels any consecutive-kill streak
-        try { this.consecutiveKills = 0; } catch (e) {}
+        try {
+            this.consecutiveKills = 0;
+        } catch (e) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'Player',
+                action: 'reset consecutive kills'
+            });
+        }
         this.stats.takeDamage(amount);
     }
 

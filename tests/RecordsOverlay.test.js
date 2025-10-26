@@ -42,9 +42,8 @@ test('showRecordsOverlay reads values from localStorage and populates DOM', () =
     localStorage.setItem('chress:record:combo', '7');
 
     const pm = new PanelManager(global.game);
-    pm.recordsOverlay = document.getElementById('recordsOverlay');
 
-    // Should not throw
+    // Should not throw (RecordsPanelManager gets the element in its constructor)
     expect(() => pm.showRecordsOverlay()).not.toThrow();
 
     const rz = document.getElementById('record-zones');

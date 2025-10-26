@@ -224,6 +224,23 @@ export class AnimationManager {
             }
         });
 
+        // Listen to specific animation event types
+        eventBus.on(EventTypes.ANIMATION_HORSE_CHARGE, (data) => {
+            this.addHorseChargeAnimation(data);
+        });
+
+        eventBus.on(EventTypes.ANIMATION_ARROW, (data) => {
+            this.addArrowAnimation(data.startX, data.startY, data.endX, data.endY);
+        });
+
+        eventBus.on(EventTypes.ANIMATION_POINT, (data) => {
+            this.addPointAnimation(data.x, data.y, data.points);
+        });
+
+        eventBus.on(EventTypes.ANIMATION_MULTIPLIER, (data) => {
+            this.addMultiplierAnimation(data.x, data.y, data.multiplier);
+        });
+
         // Listen to combo achieved events
         eventBus.on(EventTypes.COMBO_ACHIEVED, (data) => {
             this.addMultiplierAnimation(data.x, data.y, data.comboCount);

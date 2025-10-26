@@ -16,25 +16,19 @@ export class InputManager {
         this.game = game;
         this.inventoryService = inventoryService;
 
-        // Create controller with callbacks that route through this facade
-        // This allows tests to spy on InputManager methods while avoiding recursion
-        this.controller = new InputController(
-            game,
-            inventoryService,
-            (ev) => this._internalHandleKeyPress(ev),
-            (x, y) => this._internalHandleExitTap(x, y)
-        );
+        // Create InputController
+        this.controller = new InputController(game, inventoryService);
     }
 
     setupControls() { this.controller.setupControls(); }
     setupTouchControls() { this.controller.setupTouchControls(); }
     destroy() { this.controller.destroy(); }
 
-    // Public API methods that can be spied on by tests
+    // Public API for tests
     handleTap(screenX, screenY) { return this.controller.handleTap(screenX, screenY); }
 
     handleKeyPress(event) {
-        // Call the controller's actual implementation, not through the callback
+        // Direct controller call
         return this.controller.handleKeyPress(event);
     }
 
@@ -45,28 +39,15 @@ export class InputManager {
     convertScreenToGrid(x, y) { return this.controller.convertScreenToGrid(x, y); }
 
     handleExitTap(x, y) {
-        // Call the controller's actual implementation
+        // Direct controller call
         return this.controller.handleExitTap(x, y);
     }
 
-    // Internal methods called by controller callbacks (avoid infinite recursion)
-    _internalHandleKeyPress(event) {
-        // This is called by the controller when executing paths
-        // We want to route it back through handleKeyPress so spies work
-        return this.handleKeyPress(event);
-    }
-
-    _internalHandleExitTap(x, y) {
-        // This is called by the controller when handling exits
-        // We want to route it back through handleExitTap so spies work
-        return this.handleExitTap(x, y);
-    }
-
-    // Expose some internal state used by tests/legacy code
-    get isExecutingPath() { return this.controller.isExecutingPath; }
-    set isExecutingPath(v) { this.controller.isExecutingPath = v; }
-    get currentPathSequence() { return this.controller.currentPathSequence; }
-    set currentPathSequence(v) { this.controller.currentPathSequence = v; }
-    get currentPathSequenceFallback() { return this.controller.currentPathSequenceFallback; }
-    set currentPathSequenceFallback(v) { this.controller.currentPathSequenceFallback = v; }
+    // Expose state for tests/legacy
+    get isExecutingPath() { return this.controller.pathfindingController.isExecutingPath; }
+    set isExecutingPath(v) { this.controller.pathfindingController.isExecutingPath = v; }
+    get currentPathSequence() { return this.controller.pathfindingController.currentPathSequence; }
+    set currentPathSequence(v) { this.controller.pathfindingController.currentPathSequence = v; }
+    get currentPathSequenceFallback() { return this.controller.pathfindingController.currentPathSequenceFallback; }
+    set currentPathSequenceFallback(v) { this.controller.pathfindingController.currentPathSequenceFallback = v; }
 }

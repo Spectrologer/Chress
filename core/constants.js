@@ -43,6 +43,8 @@ export const INPUT_CONSTANTS = {
     // Time window for double-tap detection (ms). Kept reasonably short to
     // avoid perceived input lag while still being forgiving on mobile.
     DOUBLE_TAP_TIME: 250,
+    // Delay before executing single tap action (waiting for potential double-tap)
+    DOUBLE_TAP_DELAY: 300,
     // Pixel tolerance for double-tap detection. Sometimes subsequent
     // taps fall on slightly different client coordinates due to
     // devicePixelRatio / rounding; allow small movement to still count.

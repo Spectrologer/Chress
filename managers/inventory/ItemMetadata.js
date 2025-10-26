@@ -189,7 +189,7 @@ export class ItemMetadata {
             if (typeof item.uses === 'undefined') {
                 item.uses = (typeof item.quantity !== 'undefined') ? item.quantity : 1;
             }
-            try { delete item.quantity; } catch (e) {}
+            delete item.quantity;
         }
 
         // Initialize quantity for stackable consumables
