@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -130,15 +131,9 @@
 
         .asset-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .asset-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
         }
 
         .asset-card {
@@ -152,7 +147,7 @@
 
         .asset-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .asset-card h3 {
@@ -273,6 +268,7 @@
         }
     </style>
 </head>
+
 <body>
     <h1>Chress Asset Viewer - Dynamic</h1>
     <div class="stats" id="stats">Loading assets...</div>
@@ -337,7 +333,7 @@
             const contentsContainer = document.getElementById('tab-contents');
 
             const tabOrder = ['npcs', 'enemies', 'items', 'food', 'flora', 'doodads',
-                             'floors', 'effects', 'protag', 'ui', 'misc'];
+                'floors', 'effects', 'protag', 'ui', 'misc'];
 
             tabOrder.forEach(category => {
                 const items = categories[category];
@@ -696,7 +692,7 @@
             });
         }
 
-        window.clearSearch = function() {
+        window.clearSearch = function () {
             const searchResults = document.getElementById('search-results');
             if (searchResults) {
                 searchResults.remove();
@@ -714,4 +710,5 @@
         init();
     </script>
 </body>
+
 </html>
