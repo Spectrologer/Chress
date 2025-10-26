@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chress Asset Viewer</title>
+    <title>Chress Asset Viewer - Dynamic</title>
     <style>
         * {
             margin: 0;
@@ -20,8 +20,62 @@
 
         h1 {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             color: #ffffff;
+        }
+
+        .stats {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .scale-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scale-controls input[type="range"] {
+            width: 150px;
+        }
+
+        .search-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-controls input[type="text"] {
+            padding: 5px 10px;
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            border-radius: 4px;
+            width: 250px;
+        }
+
+        .search-controls button {
+            padding: 5px 15px;
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-controls button:hover {
+            background-color: #3a3a3a;
         }
 
         .tabs {
@@ -30,6 +84,8 @@
             margin-bottom: 30px;
             border-bottom: 2px solid #444;
             padding-bottom: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .tab-button {
@@ -39,6 +95,7 @@
             border: 1px solid #444;
             cursor: pointer;
             transition: background-color 0.2s;
+            position: relative;
         }
 
         .tab-button:hover {
@@ -48,6 +105,19 @@
         .tab-button.active {
             background-color: #444;
             color: #ffffff;
+        }
+
+        .tab-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #666;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 11px;
+            min-width: 18px;
+            text-align: center;
         }
 
         .tab-content {
@@ -60,7 +130,7 @@
 
         .asset-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -71,12 +141,26 @@
             border-radius: 4px;
             padding: 15px;
             text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
 
         .asset-card h3 {
             margin-bottom: 10px;
             color: #ffffff;
             font-size: 14px;
+            word-break: break-word;
+        }
+
+        .asset-type {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 10px;
+            text-transform: uppercase;
         }
 
         .sprite-container {
@@ -92,6 +176,8 @@
             margin: 10px 0;
             display: inline-block;
             border-radius: 4px;
+            min-height: 80px;
+            min-width: 80px;
         }
 
         .sprite {
@@ -102,151 +188,309 @@
         }
 
         .sprite-info {
-            font-size: 12px;
+            font-size: 11px;
             color: #aaa;
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
-        .scale-controls {
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .scale-controls label {
-            margin-right: 10px;
-        }
-
-        .scale-controls input[type="range"] {
-            width: 200px;
-            vertical-align: middle;
-        }
-
-        .scale-value {
-            display: inline-block;
-            width: 40px;
-            text-align: left;
-            margin-left: 10px;
+        .sprite-path {
+            font-size: 10px;
+            color: #666;
+            margin-top: 5px;
+            word-break: break-all;
         }
 
         .error {
             color: #ff6b6b;
             font-style: italic;
+            font-size: 12px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #888;
+        }
+
+        .search-results {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+
+        .search-results h3 {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .clear-search {
+            float: right;
+            color: #888;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .clear-search:hover {
+            color: #fff;
+        }
+
+        .npc-sprites {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .effect-sequence {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .effect-frame {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .frame-label {
+            font-size: 10px;
+            color: #666;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
-    <h1>Chress Asset Viewer</h1>
+    <h1>Chress Asset Viewer - Dynamic</h1>
+    <div class="stats" id="stats">Loading assets...</div>
 
-    <div class="scale-controls">
-        <label for="scale-slider">Scale:</label>
-        <input type="range" id="scale-slider" min="1" max="10" value="4">
-        <span class="scale-value" id="scale-value">4x</span>
+    <div class="controls">
+        <div class="scale-controls">
+            <label for="scale-slider">Scale:</label>
+            <input type="range" id="scale-slider" min="1" max="10" value="4">
+            <span id="scale-value">4x</span>
+        </div>
+
+        <div class="search-controls">
+            <input type="text" id="search-input" placeholder="Search assets...">
+            <button id="search-button">Search</button>
+        </div>
     </div>
 
-    <div class="tabs">
-        <button class="tab-button active" data-tab="npcs">NPCs</button>
-        <button class="tab-button" data-tab="enemies">Enemies</button>
-        <button class="tab-button" data-tab="items">Items</button>
-        <button class="tab-button" data-tab="food">Food</button>
-        <button class="tab-button" data-tab="ui">UI</button>
-    </div>
-
-    <div id="npcs" class="tab-content active">
-        <h2>NPC Portraits & Sprites</h2>
-        <div class="asset-grid" id="npc-grid"></div>
-    </div>
-
-    <div id="enemies" class="tab-content">
-        <h2>Enemy Sprites</h2>
-        <div class="asset-grid" id="enemy-grid"></div>
-    </div>
-
-    <div id="items" class="tab-content">
-        <h2>Item Sprites</h2>
-        <div class="asset-grid" id="item-grid"></div>
-    </div>
-
-    <div id="food" class="tab-content">
-        <h2>Food Sprites</h2>
-        <div class="asset-grid" id="food-grid"></div>
-    </div>
-
-    <div id="ui" class="tab-content">
-        <h2>UI Elements</h2>
-        <div class="asset-grid" id="ui-grid"></div>
-    </div>
+    <div class="tabs" id="tabs"></div>
+    <div id="tab-contents"></div>
 
     <script type="module">
-        import { Sign } from './ui/Sign.js';
+        import { assetScanner } from './asset-scanner.js';
 
         let currentScale = 4;
+        let categories = {};
+        let stats = {};
 
-        // NPC data from Sign.js
-        const npcAssets = [
-            // Dialogue NPCs
-            { name: 'Crayn', portrait: 'assets/fauna/craynface.png', sprite: 'assets/fauna/crayn.png' },
-            { name: 'Felt', portrait: 'assets/fauna/feltface.png', sprite: 'assets/fauna/felt.png' },
-            { name: 'Forge', portrait: 'assets/fauna/forgeface.png', sprite: 'assets/fauna/forge.png' },
+        async function init() {
+            try {
+                // Scan all assets
+                categories = await assetScanner.scanAssets();
+                stats = assetScanner.getStats();
 
-            // Barter NPCs
-            { name: 'Penne', portrait: 'assets/fauna/lionface.png', sprite: 'assets/fauna/lion.png' },
-            { name: 'Squig', portrait: 'assets/fauna/squigface.png', sprite: 'assets/fauna/squig.png' },
-            { name: 'Rune', portrait: 'assets/fauna/runeface.png', sprite: 'assets/fauna/rune.png' },
-            { name: 'Nib', portrait: 'assets/fauna/nibface.png', sprite: 'assets/fauna/nib.png' },
-            { name: 'Mark', portrait: 'assets/fauna/markface.png', sprite: 'assets/fauna/mark.png' },
-            { name: 'Axe-O-Lot\'l', portrait: 'assets/fauna/axolotlface.png', sprite: 'assets/fauna/axolotl.png' },
-            { name: 'Gouge', portrait: 'assets/fauna/gougeface.png', sprite: 'assets/fauna/gouge.png' },
+                // Update stats display
+                document.getElementById('stats').textContent =
+                    `Total Assets: ${stats.total} | ${Object.entries(stats.byCategory)
+                        .map(([cat, count]) => `${cat}: ${count}`)
+                        .join(' | ')}`;
 
-            // Enemy types from statues
-            { name: 'Lizardy', sprite: 'assets/fauna/lizardy.png' },
-            { name: 'Lizardo', sprite: 'assets/fauna/lizardo.png' },
-            { name: 'Lizardeaux', sprite: 'assets/fauna/lizardeaux.png' },
-            { name: 'Zard', sprite: 'assets/fauna/zard.png' },
-            { name: 'Lazerd', sprite: 'assets/fauna/lazerd.png' },
-            { name: 'Lizord', sprite: 'assets/fauna/lizord.png' }
-        ];
+                // Create tabs and content areas
+                createTabs();
 
-        // Enemy assets
-        const enemyAssets = [
-            { name: 'Lizardy', sprite: 'assets/fauna/lizardy.png' },
-            { name: 'Lizardo', sprite: 'assets/fauna/lizardo.png' },
-            { name: 'Lizardeaux', sprite: 'assets/fauna/lizardeaux.png' },
-            { name: 'Zard', sprite: 'assets/fauna/zard.png' },
-            { name: 'Lazerd', sprite: 'assets/fauna/lazerd.png' },
-            { name: 'Lizord', sprite: 'assets/fauna/lizord.png' }
-        ];
+                // Load content for all tabs
+                loadAllContent();
 
-        // Item assets
-        const itemAssets = [
-            { name: 'Bomb', sprite: 'assets/items/bomb.png' },
-            { name: 'Spear', sprite: 'assets/items/spear.png' },
-            { name: 'Bow', sprite: 'assets/items/bow.png' },
-            { name: 'Horse', sprite: 'assets/items/horse.png' },
-            { name: 'Book', sprite: 'assets/items/book.png' },
-            { name: 'Shovel', sprite: 'assets/items/shovel.png' },
-            { name: 'Axe', sprite: 'assets/items/axe.png' },
-            { name: 'Hammer', sprite: 'assets/items/hammer.png' },
-            { name: 'Water', sprite: 'assets/items/water.png' },
-            { name: 'Points', sprite: 'assets/items/points.png' },
-            { name: 'Chest', sprite: 'assets/items/chest.png' }
-        ];
+                // Set up event handlers
+                setupEventHandlers();
 
-        // Food assets
-        const foodAssets = [
-            { name: 'Meat', sprite: 'assets/food/meat/beaf.png' },
-            { name: 'Nut', sprite: 'assets/food/veg/nut.png' },
-            { name: 'Apple', sprite: 'assets/food/veg/apple.png' },
-            { name: 'Carrot', sprite: 'assets/food/veg/carrot.png' },
-            { name: 'Mushroom', sprite: 'assets/food/veg/shroom.png' }
-        ];
+                // Activate first tab
+                const firstTab = document.querySelector('.tab-button');
+                if (firstTab) {
+                    firstTab.click();
+                }
+            } catch (error) {
+                console.error('Error loading assets:', error);
+                document.getElementById('stats').textContent = 'Error loading assets: ' + error.message;
+            }
+        }
 
-        // UI assets
-        const uiAssets = [
-            { name: 'Sign', sprite: 'assets/sign.png' },
-            { name: 'Talk Icon', sprite: 'assets/ui/talk.png' },
-            { name: 'Heart', sprite: 'assets/ui/heart.png' },
-            { name: 'Empty Heart', sprite: 'assets/ui/heartEmpty.png' }
-        ];
+        function createTabs() {
+            const tabsContainer = document.getElementById('tabs');
+            const contentsContainer = document.getElementById('tab-contents');
+
+            const tabOrder = ['npcs', 'enemies', 'items', 'food', 'flora', 'doodads',
+                             'floors', 'effects', 'protag', 'ui', 'misc'];
+
+            tabOrder.forEach(category => {
+                const items = categories[category];
+                if (!items || items.length === 0) return;
+
+                // Create tab button
+                const button = document.createElement('button');
+                button.className = 'tab-button';
+                button.dataset.tab = category;
+                button.textContent = capitalize(category);
+
+                // Add count badge
+                const count = document.createElement('span');
+                count.className = 'tab-count';
+                count.textContent = items.length;
+                button.appendChild(count);
+
+                tabsContainer.appendChild(button);
+
+                // Create content area
+                const content = document.createElement('div');
+                content.id = category;
+                content.className = 'tab-content';
+                content.innerHTML = `
+                    <h2>${capitalize(category)} Assets</h2>
+                    <div class="asset-grid" id="${category}-grid"></div>
+                `;
+                contentsContainer.appendChild(content);
+            });
+        }
+
+        function loadAllContent() {
+            Object.entries(categories).forEach(([category, items]) => {
+                if (items.length > 0) {
+                    loadCategoryContent(category, items);
+                }
+            });
+        }
+
+        function loadCategoryContent(category, items) {
+            const grid = document.getElementById(`${category}-grid`);
+            if (!grid) return;
+
+            grid.innerHTML = '';
+
+            if (category === 'npcs') {
+                // Special handling for NPCs to show portrait and sprite together
+                items.forEach(npc => {
+                    grid.appendChild(createNPCCard(npc));
+                });
+            } else if (category === 'effects') {
+                // Group effects by type
+                const effectGroups = {};
+                items.forEach(effect => {
+                    const type = effect.effectType || 'general';
+                    if (!effectGroups[type]) {
+                        effectGroups[type] = [];
+                    }
+                    effectGroups[type].push(effect);
+                });
+
+                Object.entries(effectGroups).forEach(([type, effects]) => {
+                    grid.appendChild(createEffectGroupCard(type, effects));
+                });
+            } else {
+                // Standard asset display
+                items.forEach(asset => {
+                    grid.appendChild(createAssetCard(asset));
+                });
+            }
+        }
+
+        function createNPCCard(npc) {
+            const card = document.createElement('div');
+            card.className = 'asset-card';
+
+            const title = document.createElement('h3');
+            title.textContent = npc.name;
+            card.appendChild(title);
+
+            const type = document.createElement('div');
+            type.className = 'asset-type';
+            type.textContent = npc.type || 'NPC';
+            card.appendChild(type);
+
+            const spritesDiv = document.createElement('div');
+            spritesDiv.className = 'npc-sprites';
+
+            // Add portrait if available
+            if (npc.portrait) {
+                const portraitDiv = createSpriteElement(npc.portrait, 'Portrait', 32);
+                spritesDiv.appendChild(portraitDiv);
+            }
+
+            // Add sprite if available
+            if (npc.sprite) {
+                const spriteDiv = createSpriteElement(npc.sprite, 'Sprite', 16);
+                spritesDiv.appendChild(spriteDiv);
+            }
+
+            // If only path is available (for misc NPCs)
+            if (!npc.portrait && !npc.sprite && npc.path) {
+                const spriteDiv = createSpriteElement(npc.path, 'Sprite', 16);
+                spritesDiv.appendChild(spriteDiv);
+            }
+
+            card.appendChild(spritesDiv);
+
+            // Add trade info if available
+            if (npc.trades && npc.trades.length > 0) {
+                const tradeInfo = document.createElement('div');
+                tradeInfo.className = 'sprite-info';
+                tradeInfo.textContent = `Trades: ${npc.trades.length} item(s)`;
+                card.appendChild(tradeInfo);
+            }
+
+            return card;
+        }
+
+        function createEffectGroupCard(type, effects) {
+            const card = document.createElement('div');
+            card.className = 'asset-card';
+
+            const title = document.createElement('h3');
+            title.textContent = capitalize(type) + ' Effect';
+            card.appendChild(title);
+
+            const sequence = document.createElement('div');
+            sequence.className = 'effect-sequence';
+
+            // Sort effects by frame number
+            effects.sort((a, b) => {
+                const frameA = parseInt(a.frame) || 0;
+                const frameB = parseInt(b.frame) || 0;
+                return frameA - frameB;
+            });
+
+            effects.forEach(effect => {
+                const frameDiv = document.createElement('div');
+                frameDiv.className = 'effect-frame';
+
+                const spriteContainer = document.createElement('div');
+                spriteContainer.className = 'sprite-container';
+
+                const sprite = createSprite(effect.path, 16);
+                spriteContainer.appendChild(sprite);
+                frameDiv.appendChild(spriteContainer);
+
+                if (effect.frame) {
+                    const label = document.createElement('div');
+                    label.className = 'frame-label';
+                    label.textContent = `Frame ${effect.frame}`;
+                    frameDiv.appendChild(label);
+                }
+
+                sequence.appendChild(frameDiv);
+            });
+
+            card.appendChild(sequence);
+            return card;
+        }
 
         function createAssetCard(asset) {
             const card = document.createElement('div');
@@ -256,75 +500,74 @@
             title.textContent = asset.name;
             card.appendChild(title);
 
-            // Display portrait if available
-            if (asset.portrait) {
-                const portraitContainer = document.createElement('div');
-                portraitContainer.className = 'sprite-container';
-
-                const portrait = document.createElement('img');
-                portrait.className = 'sprite';
-                portrait.src = asset.portrait;
-                portrait.style.width = `${32 * currentScale}px`;
-                portrait.style.height = 'auto';
-
-                portrait.onerror = () => {
-                    portrait.style.display = 'none';
-                    const error = document.createElement('div');
-                    error.className = 'error';
-                    error.textContent = 'Portrait not found';
-                    portraitContainer.appendChild(error);
-                };
-
-                portrait.onload = () => {
-                    const info = document.createElement('div');
-                    info.className = 'sprite-info';
-                    info.textContent = `Portrait: ${portrait.naturalWidth}×${portrait.naturalHeight}px`;
-                    card.appendChild(info);
-                };
-
-                portraitContainer.appendChild(portrait);
-                card.appendChild(portraitContainer);
+            if (asset.foodType) {
+                const type = document.createElement('div');
+                type.className = 'asset-type';
+                type.textContent = asset.foodType;
+                card.appendChild(type);
             }
 
-            // Display sprite
-            if (asset.sprite) {
-                const spriteContainer = document.createElement('div');
-                spriteContainer.className = 'sprite-container';
-
-                const sprite = document.createElement('img');
-                sprite.className = 'sprite';
-                sprite.src = asset.sprite;
-                sprite.style.width = `${16 * currentScale}px`;
-                sprite.style.height = 'auto';
-
-                sprite.onerror = () => {
-                    sprite.style.display = 'none';
-                    const error = document.createElement('div');
-                    error.className = 'error';
-                    error.textContent = 'Sprite not found';
-                    spriteContainer.appendChild(error);
-                };
-
-                sprite.onload = () => {
-                    const info = document.createElement('div');
-                    info.className = 'sprite-info';
-                    info.textContent = `Sprite: ${sprite.naturalWidth}×${sprite.naturalHeight}px`;
-                    card.appendChild(info);
-                };
-
-                spriteContainer.appendChild(sprite);
-                card.appendChild(spriteContainer);
+            if (asset.floorType) {
+                const type = document.createElement('div');
+                type.className = 'asset-type';
+                type.textContent = `${asset.floorType} floor`;
+                card.appendChild(type);
             }
+
+            const spriteDiv = createSpriteElement(asset.path, null, 16);
+            card.appendChild(spriteDiv);
 
             return card;
         }
 
-        function loadAssets(assets, gridId) {
-            const grid = document.getElementById(gridId);
-            grid.innerHTML = '';
-            assets.forEach(asset => {
-                grid.appendChild(createAssetCard(asset));
-            });
+        function createSpriteElement(path, label, baseSize) {
+            const container = document.createElement('div');
+
+            if (label) {
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'sprite-info';
+                labelDiv.textContent = label;
+                container.appendChild(labelDiv);
+            }
+
+            const spriteContainer = document.createElement('div');
+            spriteContainer.className = 'sprite-container';
+
+            const sprite = createSprite(path, baseSize);
+            spriteContainer.appendChild(sprite);
+            container.appendChild(spriteContainer);
+
+            return container;
+        }
+
+        function createSprite(path, baseSize) {
+            const sprite = document.createElement('img');
+            sprite.className = 'sprite';
+            sprite.src = path;
+            sprite.style.width = `${baseSize * currentScale}px`;
+            sprite.style.height = 'auto';
+
+            sprite.onerror = () => {
+                sprite.style.display = 'none';
+                const error = document.createElement('div');
+                error.className = 'error';
+                error.textContent = 'Not found';
+                sprite.parentElement.appendChild(error);
+            };
+
+            sprite.onload = () => {
+                const info = document.createElement('div');
+                info.className = 'sprite-info';
+                info.textContent = `${sprite.naturalWidth}×${sprite.naturalHeight}px`;
+                sprite.parentElement.parentElement.appendChild(info);
+
+                const pathInfo = document.createElement('div');
+                pathInfo.className = 'sprite-path';
+                pathInfo.textContent = path;
+                sprite.parentElement.parentElement.appendChild(pathInfo);
+            };
+
+            return sprite;
         }
 
         function updateScale(scale) {
@@ -336,35 +579,117 @@
             });
         }
 
-        // Initialize
-        loadAssets(npcAssets, 'npc-grid');
-        loadAssets(enemyAssets, 'enemy-grid');
-        loadAssets(itemAssets, 'item-grid');
-        loadAssets(foodAssets, 'food-grid');
-        loadAssets(uiAssets, 'ui-grid');
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
 
-        // Tab switching
-        document.querySelectorAll('.tab-button').forEach(button => {
-            button.addEventListener('click', () => {
-                // Remove active class from all buttons and contents
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        function setupEventHandlers() {
+            // Tab switching
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all
+                    document.querySelectorAll('.tab-button').forEach(btn =>
+                        btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content =>
+                        content.classList.remove('active'));
 
-                // Add active class to clicked button and corresponding content
-                button.classList.add('active');
-                document.getElementById(button.dataset.tab).classList.add('active');
+                    // Add active class
+                    button.classList.add('active');
+                    const content = document.getElementById(button.dataset.tab);
+                    if (content) {
+                        content.classList.add('active');
+                    }
+                });
             });
-        });
 
-        // Scale slider
-        const scaleSlider = document.getElementById('scale-slider');
-        const scaleValue = document.getElementById('scale-value');
+            // Scale slider
+            const scaleSlider = document.getElementById('scale-slider');
+            scaleSlider.addEventListener('input', (e) => {
+                const scale = parseInt(e.target.value);
+                document.getElementById('scale-value').textContent = `${scale}x`;
+                updateScale(scale);
+            });
 
-        scaleSlider.addEventListener('input', (e) => {
-            const scale = parseInt(e.target.value);
-            scaleValue.textContent = `${scale}x`;
-            updateScale(scale);
-        });
+            // Search functionality
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+
+            function performSearch() {
+                const query = searchInput.value.trim();
+                if (!query) {
+                    clearSearch();
+                    return;
+                }
+
+                const results = assetScanner.searchAssets(query);
+                displaySearchResults(results, query);
+            }
+
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        }
+
+        function displaySearchResults(results, query) {
+            // Hide all tabs and show search results
+            document.querySelectorAll('.tab-content').forEach(content =>
+                content.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn =>
+                btn.classList.remove('active'));
+
+            // Remove existing search results if any
+            const existingResults = document.getElementById('search-results');
+            if (existingResults) {
+                existingResults.remove();
+            }
+
+            // Create search results container
+            const resultsDiv = document.createElement('div');
+            resultsDiv.id = 'search-results';
+            resultsDiv.className = 'tab-content active';
+            resultsDiv.innerHTML = `
+                <div class="search-results">
+                    <h3>Search Results for "${query}" (${results.length} found)
+                        <span class="clear-search" onclick="window.clearSearch()">Clear</span>
+                    </h3>
+                </div>
+                <div class="asset-grid" id="search-grid"></div>
+            `;
+
+            document.getElementById('tab-contents').appendChild(resultsDiv);
+
+            // Display results
+            const grid = document.getElementById('search-grid');
+            results.forEach(result => {
+                const card = createAssetCard(result);
+                // Add category label
+                const catLabel = document.createElement('div');
+                catLabel.className = 'asset-type';
+                catLabel.textContent = `Category: ${result.category}`;
+                card.insertBefore(catLabel, card.children[1]);
+                grid.appendChild(card);
+            });
+        }
+
+        window.clearSearch = function() {
+            const searchResults = document.getElementById('search-results');
+            if (searchResults) {
+                searchResults.remove();
+            }
+            document.getElementById('search-input').value = '';
+
+            // Show first tab
+            const firstTab = document.querySelector('.tab-button');
+            if (firstTab) {
+                firstTab.click();
+            }
+        };
+
+        // Initialize on load
+        init();
     </script>
 </body>
 </html>
