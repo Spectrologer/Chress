@@ -1,3 +1,6 @@
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
+
 // Attach event listeners for an inventory slot and map them to callbacks
 // Callbacks expected: { useItem, toggleDisabled, startBombPlacement, showTooltip, hideTooltip }
 export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap, game) {
@@ -150,6 +153,7 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
     slot.addEventListener('pointerup', onPointerUp);
 
     // Bomb special handling (separate click/tap flows)
+    // Delegate to unified InventoryInteractionHandler
     if (item.type === 'bomb') {
         let lastBombClickTime = 0;
         let _lastBombActionTime = 0;
@@ -160,32 +164,20 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
 
             const isDouble = (now - lastBombClickTime) < 300;
             lastBombClickTime = now;
-            if (isDouble) {
-                // drop bomb where player stands
-                const px = game.player.x, py = game.player.y;
-                game.grid[py][px] = { type: game.coreConstants?.BOMB || 'BOMB', actionsSincePlaced: 0, justPlaced: true };
-                const bombItem = game.player.inventory.find(it => it.type === 'bomb');
-                if (bombItem) {
-                    const last = itemLastUsedWeakMap.get(bombItem) || 0;
-                    const now2 = Date.now();
-                    if (now2 - last >= 600) {
-                        itemLastUsedWeakMap.set(bombItem, now2);
-                        callbacks.useItem?.(bombItem, game.player.inventory.indexOf(bombItem));
-                    }
+
+            const bombItem = game.player.inventory.find(it => it.type === 'bomb');
+            if (bombItem) {
+                const last = itemLastUsedWeakMap.get(bombItem) || 0;
+                const now2 = Date.now();
+                if (now2 - last >= 600) {
+                    itemLastUsedWeakMap.set(bombItem, now2);
+                    // Delegate to unified interaction handler
+                    game.inventoryInteractionHandler.handleBombInteraction(bombItem, {
+                        fromRadial: false,
+                        isDoubleClick: isDouble
+                    });
+                    eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
                 }
-                game.uiManager.updatePlayerStats();
-            } else {
-                // single click: enter bomb placement mode
-                const px = game.player.x, py = game.player.y;
-                game.bombPlacementPositions = [];
-                const directions = [ {dx:1,dy:0}, {dx:-1,dy:0}, {dx:0,dy:1}, {dx:0,dy:-1} ];
-                for (const dir of directions) {
-                    const nx = px + dir.dx, ny = py + dir.dy;
-                    if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9 && (game.grid[ny][nx] === game.coreConstants?.FLOOR || game.grid[ny][nx] === game.coreConstants?.EXIT)) {
-                        game.bombPlacementPositions.push({x: nx, y: ny});
-                    }
-                }
-                game.bombPlacementMode = true;
             }
         };
 

@@ -1,5 +1,6 @@
-import { GRID_SIZE, TILE_TYPES } from './constants.js';
+import { GRID_SIZE, TILE_TYPES, ZONE_CONSTANTS, GAMEPLAY_CONSTANTS } from './constants.js';
 import logger from './logger.js';
+import GridIterator from '../utils/GridIterator.js';
 
 export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel) {
     const zoneKey = `${zoneX},${zoneY}`;
@@ -14,10 +15,10 @@ export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGen
 
         let effectiveConnections = { ...connections };
         if (zoneGen.currentDimension === 2) {
-            effectiveConnections.north = connections.north !== null && Math.random() < 0.50 ? connections.north : null;
-            effectiveConnections.south = connections.south !== null && Math.random() < 0.50 ? connections.south : null;
-            effectiveConnections.west = connections.west !== null && Math.random() < 0.50 ? connections.west : null;
-            effectiveConnections.east = connections.east !== null && Math.random() < 0.50 ? connections.east : null;
+            effectiveConnections.north = connections.north !== null && Math.random() < GAMEPLAY_CONSTANTS.UNDERGROUND_CONNECTION_PROBABILITY ? connections.north : null;
+            effectiveConnections.south = connections.south !== null && Math.random() < GAMEPLAY_CONSTANTS.UNDERGROUND_CONNECTION_PROBABILITY ? connections.south : null;
+            effectiveConnections.west = connections.west !== null && Math.random() < GAMEPLAY_CONSTANTS.UNDERGROUND_CONNECTION_PROBABILITY ? connections.west : null;
+            effectiveConnections.east = connections.east !== null && Math.random() < GAMEPLAY_CONSTANTS.UNDERGROUND_CONNECTION_PROBABILITY ? connections.east : null;
         }
 
         if (effectiveConnections.north !== null && effectiveConnections.north >= 0 && effectiveConnections.north < GRID_SIZE) {
@@ -88,25 +89,22 @@ export function clearPathToCenter(zoneGen, startX, startY) {
 
 export function clearZoneForShackOnly(zoneGen) {
     logger.log('Clearing first wilds zone for shack-only placement');
-    for (let y = 0; y < GRID_SIZE; y++) {
-        for (let x = 0; x < GRID_SIZE; x++) {
-            const tile = zoneGen.grid[y][x];
-            if (tile !== TILE_TYPES.WALL && tile !== TILE_TYPES.EXIT && tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.GRASS) {
-                zoneGen.grid[y][x] = TILE_TYPES.FLOOR;
-            }
+    GridIterator.forEach(zoneGen.grid, (tile, x, y) => {
+        if (tile !== TILE_TYPES.WALL && tile !== TILE_TYPES.EXIT && tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.GRASS) {
+            zoneGen.grid[y][x] = TILE_TYPES.FLOOR;
         }
-    }
+    });
     zoneGen.enemies = [];
 }
 
 export function forcePlaceShackInCenter(zoneGen, zoneX, zoneY) {
-    const startX = 3;
-    const startY = 3;
-    for (let dy = 0; dy < 3; dy++) {
-        for (let dx = 0; dx < 3; dx++) {
+    const startX = ZONE_CONSTANTS.SHACK_START_POSITION.x;
+    const startY = ZONE_CONSTANTS.SHACK_START_POSITION.y;
+    for (let dy = 0; dy < ZONE_CONSTANTS.SHACK_SIZE; dy++) {
+        for (let dx = 0; dx < ZONE_CONSTANTS.SHACK_SIZE; dx++) {
             const tileX = startX + dx;
             const tileY = startY + dy;
-            if (dy === 2 && dx === 1) zoneGen.grid[tileY][tileX] = TILE_TYPES.PORT;
+            if (dy === ZONE_CONSTANTS.SHACK_PORT_OFFSET.y && dx === ZONE_CONSTANTS.SHACK_PORT_OFFSET.x) zoneGen.grid[tileY][tileX] = TILE_TYPES.PORT;
             else zoneGen.grid[tileY][tileX] = TILE_TYPES.SHACK;
         }
     }

@@ -1,5 +1,9 @@
 import { CombatManager } from '../managers/CombatManager.js';
+import { BombManager } from '../managers/BombManager.js';
+import { EnemyDefeatFlow } from '../managers/EnemyDefeatFlow.js';
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 // Mock Game dependencies
 jest.mock('../core/SoundManager.js');
@@ -17,6 +21,11 @@ const mockUIManager = {
 const mockAnimationManager = {
   addPointAnimation: jest.fn()
 };
+
+// We'll create real instances of BombManager and EnemyDefeatFlow
+// since they're lightweight and don't have heavy dependencies
+let mockBombManager;
+let mockDefeatFlow;
 
 describe('CombatManager', () => {
   let combatManager;
@@ -64,7 +73,12 @@ describe('CombatManager', () => {
     };
 
     occupiedTiles = new Set();
-    combatManager = new CombatManager(mockGame, occupiedTiles);
+
+    // Create real instances for proper behavior
+    mockBombManager = new BombManager(mockGame);
+    mockDefeatFlow = new EnemyDefeatFlow(mockGame);
+
+    combatManager = new CombatManager(mockGame, occupiedTiles, mockBombManager, mockDefeatFlow);
   });
 
   afterEach(() => {
@@ -183,6 +197,9 @@ describe('CombatManager', () => {
   });
 
   test('checkCollisions awards points and removes dead enemies', () => {
+    const playerStatsEvents = [];
+    eventBus.on(EventTypes.PLAYER_STATS_CHANGED, (data) => playerStatsEvents.push(data));
+
     mockEnemy.health = 0; // Enemy is already dead
 
     combatManager.checkCollisions();
@@ -190,7 +207,13 @@ describe('CombatManager', () => {
     expect(mockPlayer.addPoints).toHaveBeenCalledWith(1);
     expect(mockGame.defeatedEnemies.has('enemy1')).toBeTruthy();
     expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('attack');
-    expect(mockUIManager.updatePlayerStats).toHaveBeenCalled();
+
+    // Verify PLAYER_STATS_CHANGED event was emitted instead of direct UI call
+    expect(playerStatsEvents.length).toBeGreaterThan(0);
+
     expect(mockGame.enemies.filter(e => e.id === 'enemy1')).toHaveLength(0);
+
+    // Clean up
+    eventBus.clear(EventTypes.PLAYER_STATS_CHANGED);
   });
 });

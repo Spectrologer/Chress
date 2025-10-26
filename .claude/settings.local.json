@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --version:*)",
+      "Bash(npm start)",
+      "Bash(git add:*)",
+      "Bash(timeout 5 bash:*)",
+      "Bash(for f in *.js effects/*.js)",
+      "Bash(done)",
+      "Bash(npm test:*)",
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run:*)",
+      "Bash(node:*)",
+      "Bash(find:*)",
+      "Bash(git mv:*)",
+      "Bash(git rm:*)",
+      "Bash(rm:*)",
+      "Bash(for file in \"ui/PanelManager.js\" \"ui/MiniMap.js\" \"controllers/InputController.js\" \"managers/InteractionManager.js\" \"core/game.js\")",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(for file in \"core/handlers/undergroundHandler.js\" \"core/game.js\" \"managers/InteractionManager.js\" \"ui/BarterWindow.js\" \"managers/ActionManager.js\")",
+      "Bash(git restore:*)",
+      "Bash(git clean:*)",
+      "Read(//c/tmp/**)",
+      "Bash(while read f)",
+      "Bash(do wc -l \"$f\")",
+      "Bash(timeout 2 bash:*)",
+      "Bash(npx jest:*)",
+      "Bash(git checkout:*)",
+      "Bash(grep:*)",
+      "Bash(for file in \"ui/BarterWindow.js\" \"managers/EnemyDefeatFlow.js\" \"managers/CombatActionManager.js\" \"core/TurnManager.js\" \"ui/RecordsPanelManager.js\" \"ui/PanelEventHandler.js\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

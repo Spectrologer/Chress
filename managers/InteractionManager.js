@@ -1,26 +1,46 @@
 
-import { NPCInteractionManager } from './NPCInteractionManager.js';
-import { ItemPickupManager } from './ItemPickupManager.js';
-import { CombatActionManager } from './CombatActionManager.js';
-import { BombInteractionManager } from './BombInteractionManager.js';
-import { TerrainInteractionManager } from './TerrainInteractionManager.js';
-import { ZoneTransitionManager } from './ZoneTransitionManager.js';
-import { EnvironmentalInteractionManager } from './EnvironmentalInteractionManager.js';
 import { TILE_TYPES } from '../core/constants.js';
+import audioManager from '../utils/AudioManager.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 export class InteractionManager {
-    constructor(game, inputManager) {
+    /**
+     * InteractionManager coordinates all player interactions with the game world.
+     * Dependencies are injected to enable testing and avoid circular dependencies.
+     *
+     * @param {Object} game - The main game instance
+     * @param {Object} inputManager - Handles user input
+     * @param {Object} npcManager - Manages NPC interactions
+     * @param {Object} itemPickupManager - Handles item pickup logic
+     * @param {Object} combatActionManager - Manages combat actions (charges, bow shots)
+     * @param {Object} bombManager - Handles bomb placement and explosions
+     * @param {Object} terrainManager - Manages terrain interactions (chopping, etc)
+     * @param {Object} zoneManager - Handles zone transitions
+     * @param {Object} environmentManager - Manages environmental interactions (signs, statues)
+     */
+    constructor(
+        game,
+        inputManager,
+        npcManager,
+        itemPickupManager,
+        combatActionManager,
+        bombManager,
+        terrainManager,
+        zoneManager,
+        environmentManager
+    ) {
         this.game = game;
         this.inputManager = inputManager;
 
-        // Initialize specialized managers
-        this.npcManager = new NPCInteractionManager(game);
-        this.itemPickupManager = new ItemPickupManager(game);
-        this.combatManager = new CombatActionManager(game);
-        this.bombManager = new BombInteractionManager(game);
-        this.terrainManager = new TerrainInteractionManager(game);
-        this.zoneManager = new ZoneTransitionManager(game, inputManager);
-        this.environmentManager = new EnvironmentalInteractionManager(game);
+        // Injected specialized managers (no more internal instantiation!)
+        this.npcManager = npcManager;
+        this.itemPickupManager = itemPickupManager;
+        this.combatManager = combatActionManager;
+        this.bombManager = bombManager;
+        this.terrainManager = terrainManager;
+        this.zoneManager = zoneManager;
+        this.environmentManager = environmentManager;
 
         // Register interaction handlers for handleTap
         this.interactionHandlers = [
@@ -43,8 +63,15 @@ export class InteractionManager {
                 // Only auto-start a bishop charge if the item is present in the main inventory
                 if (bishopSpearCharge && this.game.player.inventory.indexOf(bishopSpearCharge.item) >= 0) {
                     this.game.pendingCharge = bishopSpearCharge;
-                    // Confirmation prompt - no typewriter
-                    this.game.uiManager.showOverlayMessage('Tap again to confirm Bishop Charge', null, true, true, false);
+                    // Emit event for confirmation prompt instead of direct UI call
+                    eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
+                        message: 'Tap again to confirm Bishop Charge',
+                        action: 'bishop_charge',
+                        data: bishopSpearCharge,
+                        persistent: true,
+                        largeText: true,
+                        useTypewriter: false
+                    });
                     return true;
                 }
                 return false;
@@ -54,8 +81,15 @@ export class InteractionManager {
                 // Only auto-start a knight charge if the item is present in the main inventory
                 if (horseIconCharge && this.game.player.inventory.indexOf(horseIconCharge.item) >= 0) {
                     this.game.pendingCharge = horseIconCharge;
-                    // Confirmation prompt - no typewriter
-                    this.game.uiManager.showOverlayMessage('Tap again to confirm Knight Charge', null, true, true, false);
+                    // Emit event for confirmation prompt instead of direct UI call
+                    eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
+                        message: 'Tap again to confirm Knight Charge',
+                        action: 'knight_charge',
+                        data: horseIconCharge,
+                        persistent: true,
+                        largeText: true,
+                        useTypewriter: false
+                    });
                     return true;
                 }
                 return false;
@@ -65,8 +99,15 @@ export class InteractionManager {
                 // Only auto-start a bow shot if the bow is in the main inventory
                 if (bowShot && this.game.player.inventory.indexOf(bowShot.item) >= 0) {
                     this.game.pendingCharge = bowShot;
-                    // Confirmation prompt - no typewriter
-                    this.game.uiManager.showOverlayMessage('Tap again to confirm Bow Shot', null, true, true, false);
+                    // Emit event for confirmation prompt instead of direct UI call
+                    eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
+                        message: 'Tap again to confirm Bow Shot',
+                        action: 'bow_shot',
+                        data: bowShot,
+                        persistent: true,
+                        largeText: true,
+                        useTypewriter: false
+                    });
                     return true;
                 }
                 return false;
@@ -151,15 +192,17 @@ export class InteractionManager {
                 const tileUnderPlayer = this.game.grid[playerPos.y]?.[playerPos.x];
                 const tileType = (typeof tileUnderPlayer === 'object' && tileUnderPlayer?.type !== undefined) ? tileUnderPlayer.type : tileUnderPlayer;
                 if (tileType === TILE_TYPES.PORT) {
-                    try { this.zoneManager.handlePortTransition(); } catch (e) {}
+                    console.log('[InteractionManager] PORT tile detected, calling handlePortTransition');
+                    try { this.zoneManager.handlePortTransition(); } catch (e) { console.error('[InteractionManager] PORT transition error:', e); }
                     return true;
                 }
                 if (tileType === TILE_TYPES.EXIT) {
-                    try { this.zoneManager.handleExitTap(playerPos.x, playerPos.y); } catch (e) {}
+                    console.log('[InteractionManager] EXIT tile detected, calling handleExitTap');
+                    try { this.zoneManager.handleExitTap(playerPos.x, playerPos.y); } catch (e) { console.error('[InteractionManager] EXIT transition error:', e); }
                     return true;
                 }
             }
-        } catch (e) {}
+        } catch (e) { console.error('[InteractionManager] Error checking port/exit:', e); }
 
     // If the tapped tile contains a live enemy, handle it here.
         // - If the player is adjacent, perform an immediate attack.
@@ -187,14 +230,10 @@ export class InteractionManager {
                         // If player has the axe, play the file-backed 'slash' SFX
                         // and mark the enemy to suppress the generic 'attack' sound
                         // in CombatManager (prevents double-playing).
-                        try {
-                            if (this.game.player.abilities && this.game.player.abilities.has && this.game.player.abilities.has('axe')) {
-                                if (this.game && this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
-                                    this.game.soundManager.playSound('slash');
-                                }
-                                enemyAtCoords._suppressAttackSound = true;
-                            }
-                        } catch (e) {}
+                        if (this.game.player.abilities && this.game.player.abilities.has && this.game.player.abilities.has('axe')) {
+                            audioManager.playSound('slash', { game: this.game });
+                            enemyAtCoords._suppressAttackSound = true;
+                        }
 
                         // Mark that player performed an attack (may be the start of a combo)
                         try { this.game.player.setAction('attack'); } catch (e) {}
@@ -231,7 +270,7 @@ export class InteractionManager {
 
                 // Update player visuals/stats after the attack
                 try { this.game.updatePlayerPosition(); } catch (e) {}
-                try { this.game.updatePlayerStats(); } catch (e) {}
+                try { eventBus.emit(EventTypes.UI_UPDATE_STATS, {}); } catch (e) {}
 
                 return true;
             }

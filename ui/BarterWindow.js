@@ -1,6 +1,10 @@
 import { Sign } from './Sign.js';
 import { FOOD_ASSETS, TILE_TYPES } from '../core/constants.js';
 import { fitTextToContainer } from './TextFitter.js';
+import audioManager from '../utils/AudioManager.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
+import { safeCall } from '../utils/SafeServiceCall.js';
 
 export class BarterWindow {
     constructor(game) {
@@ -24,6 +28,22 @@ export class BarterWindow {
         });
     }
 
+    // Helper method to emit trade success events
+    emitTradeSuccess(message, imageAsset) {
+        eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
+            text: message,
+            category: 'trade',
+            priority: 'info'
+        });
+        eventBus.emit(EventTypes.UI_OVERLAY_MESSAGE_SHOW, {
+            text: 'Trade successful!',
+            imageSrc: imageAsset,
+            persistent: false,
+            largeText: false,
+            useTypewriter: false
+        });
+    }
+
     showBarterWindow(npcType) {
         // If the player already has the ability granted by this NPC, show post-trade dialogue instead of trade.
         if ((npcType === 'axelotl' && this.game.player.abilities.has('axe')) ||
@@ -33,7 +53,13 @@ export class BarterWindow {
             if (npcData) {
                 const message = npcData.messages[npcData.currentMessageIndex];
                 this.game.displayingMessageForSign = { message: message, type: 'npc' };
-                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
+                // Use event instead of direct UIManager call
+                eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                    type: 'sign',
+                    message: message,
+                    portrait: npcData.portrait,
+                    name: npcData.name
+                });
                 npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
             }
             return;
@@ -75,15 +101,14 @@ export class BarterWindow {
             }
             // If we have a message manager, set its current voice settings so
             // merchant dialogue gets the per-letter blips tuned to this NPC.
-            if (mm && typeof mm._getVoiceSettingsForName === 'function') {
+            const voiceSettings = safeCall(mm, '_getVoiceSettingsForName', name);
+            if (voiceSettings && mm) {
                 try {
-                    mm._currentVoiceSettings = mm._getVoiceSettingsForName(name);
+                    mm._currentVoiceSettings = voiceSettings;
                     try { console.debug && console.debug(`BarterWindow: set merchant voice for ${name}`, mm._currentVoiceSettings); } catch (e) {}
                 } catch (e) {}
             }
-            if (mm && typeof mm._typewriter === 'function') {
-                mm._typewriter(this.barterNPCMessage, mm.typewriterSpeed, () => {});
-            }
+            safeCall(mm, '_typewriter', this.barterNPCMessage, mm?.typewriterSpeed, () => {});
         } catch (e) {}
 
         const barterOffersContainer = document.getElementById('barterOffers');
@@ -230,7 +255,11 @@ export class BarterWindow {
 
         // Re-check viability right before confirming the trade
         if (!this.checkTradeViability(tradeData)) {
-            this.game.uiManager.addMessageToLog('Cannot complete trade. Conditions not met.');
+            eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
+                text: 'Cannot complete trade. Conditions not met.',
+                category: 'trade',
+                priority: 'warning'
+            });
             this.hideBarterWindow();
             return;
         }
@@ -239,9 +268,7 @@ export class BarterWindow {
             const randomFood = FOOD_ASSETS[Math.floor(Math.random() * FOOD_ASSETS.length)];
             // Use ItemManager helper to merge into existing stacks when possible
             this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: randomFood });
-            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for food.`);
-            // Confirmation: do not use typewriter
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg, false, false, false);
+            this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} points for food.`, tradeData.receivedItemImg);
         } else if (tradeData.id === 'rune_item') {
             this.game.player.addPoints(-tradeData.requiredAmount);
             const items = [
@@ -263,49 +290,43 @@ export class BarterWindow {
                 else if (inventoryItem.type === 'bow') awardedImg = 'assets/items/bow.png';
                 else if (inventoryItem.type === 'bishop_spear') awardedImg = 'assets/items/spear.png';
             }
-            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for an item.`);
-            // Confirmation: do not use typewriter
-            this.game.uiManager.showOverlayMessage('Trade successful!', awardedImg, false, false, false);
+            this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} points for an item.`, awardedImg);
         } else if (tradeData.id === 'nib_item') {
             this.game.player.addPoints(-tradeData.requiredAmount);
             // Normalize to the canonical radial book type so ItemManager stacks it correctly
             const randomItem = Math.random() < 0.5 ? { type: 'book_of_time_travel', uses: 1 } : { type: 'horse_icon', uses: 3 };
             this.game.itemManager.addItemToInventory(this.game.player, randomItem);
             // Choose overlay image based on awarded item
-            const awardedImg = randomItem.type === 'book_of_time_travel' ? 'assets/items/book.png' : 'assets/items/horse.png';
-            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} points for a random trinket.`);
-            // Confirmation: do not use typewriter
-            this.game.uiManager.showOverlayMessage('Trade successful!', awardedImg, false, false, false);
+            const awardedImg2 = randomItem.type === 'book_of_time_travel' ? 'assets/items/book.png' : 'assets/items/horse.png';
+            this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} points for a random trinket.`, awardedImg2);
 
         } else if (tradeData.id === 'mark_meat') { // Trade discoveries for meat
             // Update spent discoveries via the Player API
             const cur = this.game.player.getSpentDiscoveries();
             this.game.player.setSpentDiscoveries(cur + tradeData.requiredAmount);
             this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: 'food/meat/beaf.png' });
-            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} Discoveries for meat.`);
-            // Confirmation: do not use typewriter
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg, false, false, false);
+            this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} Discoveries for meat.`, tradeData.receivedItemImg);
         } else if (tradeData.id === 'axelotl_axe') { // Trade discoveries for axe ability
             const cur2 = this.game.player.getSpentDiscoveries();
             this.game.player.setSpentDiscoveries(cur2 + tradeData.requiredAmount);
             this.game.player.abilities.add('axe');
-            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} discoveries for axe ability.`);
-            // Confirmation: do not use typewriter
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg, false, false, false);
+            this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} discoveries for axe ability.`, tradeData.receivedItemImg);
         } else if (tradeData.id === 'gouge_hammer') { // Trade discoveries for hammer ability
             const cur3 = this.game.player.getSpentDiscoveries();
             this.game.player.setSpentDiscoveries(cur3 + tradeData.requiredAmount);
             this.game.player.abilities.add('hammer');
-            this.game.uiManager.addMessageToLog(`Traded ${tradeData.requiredAmount} discoveries for hammer ability.`);
-            // Confirmation: do not use typewriter
-            this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg, false, false, false);
+            this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} discoveries for hammer ability.`, tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic
             const requiredItem = this.game.player.inventory.find(item => item.type === 'food' && item.foodType.startsWith(tradeData.requiredItem));
             if (requiredItem) {
                 const canReceiveWater = this.game.player.inventory.length < 6 || this.game.player.inventory.some(i => i.type === 'water');
                 if (!canReceiveWater) {
-                     this.game.uiManager.addMessageToLog('Inventory is full! Cannot complete trade.');
+                     eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
+                         text: 'Inventory is full! Cannot complete trade.',
+                         category: 'trade',
+                         priority: 'warning'
+                     });
                      this.hideBarterWindow();
                      return;
                 }
@@ -318,14 +339,17 @@ export class BarterWindow {
 
                 // Directly add the received item using ItemManager helper so stacking rules apply
                 this.game.itemManager.addItemToInventory(this.game.player, { type: 'water' });
-                // Confirmation: do not use typewriter
-                this.game.uiManager.showOverlayMessage('Trade successful!', tradeData.receivedItemImg, false, false, false);
+                this.emitTradeSuccess('Trade successful!', tradeData.receivedItemImg);
             }
         }
 
-    this.game.soundManager.playSound('point');
-        this.game.updatePlayerStats();
-        this.game.uiManager.updateZoneDisplay(); // Refresh discoveries count
+    audioManager.playSound('point', { game: this.game });
+        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
+        // updateZoneDisplay is still a direct call, but it's a read operation (renders zone map)
+        // This is acceptable as BarterWindow is itself a UI component
+        if (this.game.uiManager && this.game.uiManager.updateZoneDisplay) {
+            this.game.uiManager.updateZoneDisplay(); // Refresh discoveries count
+        }
         this.hideBarterWindow();
     }
 }

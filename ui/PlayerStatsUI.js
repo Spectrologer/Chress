@@ -1,6 +1,22 @@
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
+
 export class PlayerStatsUI {
     constructor(game) {
         this.game = game;
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Listen for UI update stats events
+        eventBus.on(EventTypes.UI_UPDATE_STATS, () => {
+            this.updatePlayerStats();
+        });
+
+        // Also listen for player stats changed events
+        eventBus.on(EventTypes.PLAYER_STATS_CHANGED, () => {
+            this.updatePlayerStats();
+        });
     }
 
     updateProgressBar(barId, currentValue, maxValue) {

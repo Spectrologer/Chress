@@ -2,10 +2,12 @@
  * @jest-environment jsdom
  */
 import { InventoryManager } from '../managers/InventoryManager.js';
+import { InventoryService } from '../managers/inventory/InventoryService.js';
 import { TILE_TYPES } from '../core/constants.js';
 
 describe('InventoryManager', () => {
   let inventoryManager;
+  let inventoryService;
   let mockGame;
   let mockPlayer;
   let mockUIManager;
@@ -13,6 +15,7 @@ describe('InventoryManager', () => {
   beforeEach(() => {
     mockPlayer = {
       inventory: [],
+      radialInventory: [],
       isDead: jest.fn().mockReturnValue(false),
       x: 1,
       y: 1,
@@ -58,6 +61,11 @@ describe('InventoryManager', () => {
         getBoundingClientRect: jest.fn().mockReturnValue({})
       })
     });
+
+    // Create inventory service and wire it like ServiceContainer does
+    inventoryService = new InventoryService(mockGame);
+    mockGame.inventoryService = inventoryService;
+    mockGame.itemService = inventoryService; // backward compat
 
     inventoryManager = new InventoryManager(mockGame);
   });
@@ -153,6 +161,10 @@ describe('InventoryManager', () => {
     // Mock visited zones to not include candidate zones in range
     mockPlayer.getVisitedZones.mockReturnValue(new Set(['0,0']));
     mockPlayer.getCurrentZone.mockReturnValue({ x: 0, y: 0, dimension: 0 });
+
+    // Add a note to inventory
+    const noteItem = { type: 'note' };
+    mockPlayer.inventory = [noteItem];
 
     // Mock random to select first candidate
     jest.spyOn(Math, 'random').mockReturnValue(0.1);

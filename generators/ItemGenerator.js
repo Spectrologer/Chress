@@ -19,9 +19,9 @@ export class ItemGenerator {
 
     addLevelBasedFoodAndWater() {
         if (this.dimension === 2) {
-            // Underground: Only aquamelon, 2% chance
+            // Underground: Only aguamelin, 2% chance
             if (Math.random() < 0.02) {
-                this._placeItemRandomly({ type: TILE_TYPES.FOOD, foodType: 'food/aquamelon.png' });
+                this._placeItemRandomly({ type: TILE_TYPES.FOOD, foodType: 'food/aguamelin.png' });
             }
             return;
         }

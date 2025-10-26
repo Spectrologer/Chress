@@ -43,6 +43,8 @@ export const INPUT_CONSTANTS = {
     // Time window for double-tap detection (ms). Kept reasonably short to
     // avoid perceived input lag while still being forgiving on mobile.
     DOUBLE_TAP_TIME: 250,
+    // Delay before executing single tap action (waiting for potential double-tap)
+    DOUBLE_TAP_DELAY: 300,
     // Pixel tolerance for double-tap detection. Sometimes subsequent
     // taps fall on slightly different client coordinates due to
     // devicePixelRatio / rounding; allow small movement to still count.
@@ -58,7 +60,140 @@ export const INPUT_CONSTANTS = {
 
 // Zone positioning constants
 export const ZONE_CONSTANTS = {
-    PLAYER_SPAWN_POSITION: { x: 4, y: 7 } // Default player spawn position
+    PLAYER_SPAWN_POSITION: { x: 4, y: 7 }, // Default player spawn position
+    HOUSE_START_POSITION: { x: 3, y: 3 }, // House center position
+    SHACK_START_POSITION: { x: 3, y: 3 }, // Shack center position
+    SHACK_SIZE: 3, // Shack is 3x3 tiles
+    SHACK_PORT_OFFSET: { x: 1, y: 2 }, // Port placement offset within shack (dx, dy)
+    ZONE_GENERATION_START: { x: 3, y: 3 } // Zone generation start position
+};
+
+// Inventory constants
+export const INVENTORY_CONSTANTS = {
+    MAX_INVENTORY_SIZE: 6, // Maximum items in player inventory
+    RADIAL_MAX_SIZE: 8 // Maximum items in radial inventory
+};
+
+// Timing constants for UI interactions
+export const TIMING_CONSTANTS = {
+    // Item use debounce timings
+    ITEM_USE_DEBOUNCE: 600, // Debounce time for item use (ms)
+    ITEM_TOOLTIP_SUPPRESS: 300, // Time to suppress tooltip after use (ms)
+    ITEM_CONTEXT_MENU_SUPPRESS: 1000, // Time to suppress context menu (ms)
+
+    // Pointer/touch interactions
+    POINTER_ACTION_DEBOUNCE: 500, // Debounce for pointer actions (ms)
+    TOUCH_DEBOUNCE: 500, // Debounce for touch actions (ms)
+    LONG_PRESS_TIMEOUT: 500, // Long press detection timeout (ms)
+    POINTER_MOVE_THRESHOLD_SQUARED: 144, // Pointer move threshold (12px squared)
+
+    // Bomb interactions
+    BOMB_ACTION_DEBOUNCE: 250, // Debounce for bomb actions (ms)
+    DOUBLE_CLICK_DETECTION: 300, // Double-click detection window (ms)
+
+    // Radial menu
+    RADIAL_MENU_OPEN_IGNORE_WINDOW: 300, // Ignore window after radial opens (ms)
+    RADIAL_PULSE_ANIMATION_DURATION: '1.6s', // Pulse animation duration
+
+    // Messages and typewriter
+    TYPEWRITER_SPEED_DEFAULT: 28, // Default typewriter speed (ms per char)
+    MESSAGE_AUTO_HIDE_TIMEOUT: 2000, // Auto-hide timeout for messages (ms)
+
+    // Action delays
+    SMOKE_SPAWN_DELAY: 40, // Delay between smoke spawn steps (ms)
+    ARROW_FLIGHT_TIME: 300, // Arrow flight time (ms)
+
+    // Animation frequency
+    FLASH_ANIMATION_FREQUENCY: 0.01 // Sine wave frequency for flash animations
+};
+
+// Dimension/depth constants
+export const DIMENSION_CONSTANTS = {
+    SURFACE: 0, // Surface dimension code
+    INTERIOR: 1, // Interior (houses, shacks) dimension code
+    UNDERGROUND: 2, // Underground dimension code
+    DEFAULT_SURFACE_DEPTH: 0, // Default depth for surface
+    DEFAULT_UNDERGROUND_DEPTH: 1 // Initial underground depth
+};
+
+// Gameplay mechanics constants
+export const GAMEPLAY_CONSTANTS = {
+    // Bomb mechanics
+    BOMB_EXPLOSION_THRESHOLD: 2, // Actions required before bomb explodes
+    BOMB_LAUNCH_MAX_STEPS: 8, // Maximum steps for bomb launch
+
+    // Pitfall mechanics
+    PITFALL_SURVIVAL_TURNS: 10, // Turns to survive in pitfall
+
+    // Zone generation
+    UNDERGROUND_CONNECTION_PROBABILITY: 0.50, // 50% chance for underground connections
+    MAX_PLACEMENT_ATTEMPTS: 50, // Max attempts for zone placement
+    CONNECTION_ATTEMPT_LIMIT: 20, // Max attempts for connection placement
+
+    // Item restoration amounts
+    WATER_RESTORATION_AMOUNT: 10, // Thirst restored by water
+    HEART_RESTORATION_AMOUNT: 1, // Health restored by heart
+    FOOD_RESTORATION_AMOUNT: 10, // Hunger restored by food
+
+    // Item starting uses
+    BOW_STARTING_USES: 3,
+    SPEAR_STARTING_USES: 3,
+    HORSE_STARTING_USES: 3,
+    BOOK_STARTING_USES: 1
+};
+
+// Voice/Audio generation constants
+export const VOICE_CONSTANTS = {
+    // Crayn voice settings
+    CRAYN_BASE_FREQUENCY: 120,
+    CRAYN_BAND_MUL: 1.6,
+    CRAYN_PEAK: 0.18,
+
+    // Merchant voice ranges
+    MERCHANT_BASE_MIN: 90,
+    MERCHANT_BASE_RANGE: 80, // 90 + (0-80) = 90-170
+    MERCHANT_BAND_MUL_BASE: 1.5,
+    MERCHANT_BAND_MUL_RANGE: 0.2, // 1.5 + (0-0.2) = 1.5-1.7
+    MERCHANT_PEAK_BASE: 0.16,
+    MERCHANT_PEAK_RANGE: 0.1, // 0.16 + (0-0.1) = 0.16-0.26
+
+    // Generic voice ranges
+    GENERIC_BASE_MIN: 80,
+    GENERIC_BASE_RANGE: 160, // 80 + (0-160) = 80-240
+    GENERIC_PEAK_BASE: 0.08,
+    GENERIC_PEAK_RANGE: 0.2, // 0.08 + (0-0.2) = 0.08-0.28
+    GENERIC_BAND_MUL_BASE: 1.4,
+    GENERIC_BAND_MUL_RANGE: 0.3, // 1.4 + (0-0.3) = 1.4-1.7
+
+    // Typing audio
+    TYPING_MASTER_GAIN: 1.6
+};
+
+// Rendering constants
+export const RENDERING_CONSTANTS = {
+    // Horse charge animation
+    HORSE_CHARGE_TURN_POINT: 0.5, // 50% through animation
+
+    // Damage number scaling
+    DAMAGE_SCALE_MAX: 0.6, // Maximum scale increase
+    DAMAGE_SCALE_COEFFICIENT: 0.12, // Scale per damage point
+
+    // Flash opacity ranges
+    FLASH_OPACITY_MIN: 0.4, // Min opacity (0.6 - 0.2)
+    FLASH_OPACITY_MAX: 0.8, // Max opacity (0.6 + 0.2)
+    FLASH_OPACITY_BASE: 0.6,
+    FLASH_OPACITY_VARIANCE: 0.2,
+
+    FLASH_OPACITY_ALT_MIN: 0.2, // Alt min (0.5 - 0.3)
+    FLASH_OPACITY_ALT_MAX: 0.8, // Alt max (0.5 + 0.3)
+    FLASH_OPACITY_ALT_BASE: 0.5,
+    FLASH_OPACITY_ALT_VARIANCE: 0.3,
+
+    // Tile tinting
+    DARK_TINT_OPACITY: 0.05,
+    LIGHT_TINT_OPACITY: 0.05,
+    DARK_TINT_COLOR: 'rgba(0, 0, 0, 0.05)',
+    LIGHT_TINT_COLOR: 'rgba(255, 255, 255, 0.05)'
 };
 
 // Game constants
@@ -278,39 +413,12 @@ export const IMAGE_ASSETS = [
 export const FOOD_ASSETS = [
     'food/meat/beaf.png',
     'food/veg/nut.png',
-    'food/aquamelon.png'
+    'food/aguamelin.png'
 ];
 
 export const TOTAL_IMAGES = IMAGE_ASSETS.length + FOOD_ASSETS.length;
 
-// Data contracts for ECS system
-export const COMPONENT_TYPES = {
-    POSITION: 'position',
-    RENDER: 'render',
-    HEALTH: 'health',
-    ATTACK: 'attack',
-    MOVEMENT: 'movement',
-    ANIMATION: 'animation',
-    COLLISION: 'collision',
-    LIFECYCLE: 'lifecycle'
-};
-
-// Tile component schemas
-export const TILE_SCHEMAS = {
-    PRIMITIVE: {
-        type: 'primitive',
-        value: 'number' // TILE_TYPES enum value
-    },
-    OBJECT: {
-        type: 'object',
-        properties: {
-            type: 'number', // TILE_TYPES enum value
-            // Additional properties vary by tile type
-        }
-    }
-};
-
-// Animation component schema
+// Animation schemas for validation
 export const ANIMATION_SCHEMAS = {
     POINT: {
         x: 'number',
@@ -352,21 +460,5 @@ export const ANIMATION_SCHEMAS = {
     },
     SMOKE: {
         frame: 'number'
-    }
-};
-
-// Entity state schema
-export const ENTITY_SCHEMAS = {
-    ENEMY: {
-        required: ['position', 'health', 'movement', 'render'],
-        optional: ['attack', 'animation', 'collision', 'lifecycle']
-    },
-    TILE: {
-        required: ['position', 'render'],
-        optional: ['collision', 'lifecycle']
-    },
-    ITEM: {
-        required: ['position', 'render'],
-        optional: ['collision', 'lifecycle']
     }
 };

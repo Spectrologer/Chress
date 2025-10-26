@@ -1,4 +1,5 @@
 import { GRID_SIZE } from '../core/constants.js';
+import { isWithinGrid } from '../utils/GridUtils.js';
 
 export class EnemyChargeBehaviors {
     // Helper for zard: find adjacent tile next to player along diagonal line of sight and charge there
@@ -24,7 +25,7 @@ export class EnemyChargeBehaviors {
     if (Math.abs(adjX - playerX) !== 1 || Math.abs(adjY - playerY) !== 1) return null;
 
         // Check if that tile is walkable and not occupied by another enemy
-        if (adjX >= 0 && adjX < GRID_SIZE && adjY >= 0 && adjY < GRID_SIZE &&
+        if (isWithinGrid(adjX, adjY) &&
             enemy.isWalkable(adjX, adjY, grid) &&
             !enemies.find(e => e.x === adjX && e.y === adjY)) {
             return { x: adjX, y: adjY };
@@ -67,7 +68,7 @@ export class EnemyChargeBehaviors {
         }
 
         // Check if that tile is walkable and not occupied by another enemy
-        if (adjX >= 0 && adjX < GRID_SIZE && adjY >= 0 && adjY < GRID_SIZE &&
+        if (isWithinGrid(adjX, adjY) &&
             enemy.isWalkable(adjX, adjY, grid) &&
             !enemies.find(e => e.x === adjX && e.y === adjY)) {
             return { x: adjX, y: adjY };
@@ -104,7 +105,7 @@ export class EnemyChargeBehaviors {
         let adjY = playerY - stepY;
 
         // Check if that tile is walkable and not occupied by another enemy
-        if (adjX >= 0 && adjX < GRID_SIZE && adjY >= 0 && adjY < GRID_SIZE &&
+        if (isWithinGrid(adjX, adjY) &&
             enemy.isWalkable(adjX, adjY, grid) &&
             !enemies.find(e => e.x === adjX && e.y === adjY)) {
             return { x: adjX, y: adjY };

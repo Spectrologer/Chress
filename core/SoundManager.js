@@ -1,4 +1,8 @@
 import logger from './logger.js';
+import { eventBus } from './EventBus.js';
+import { EventTypes } from './EventTypes.js';
+import { errorHandler, ErrorSeverity } from './ErrorHandler.js';
+import { safeCallAsync } from '../utils/SafeServiceCall.js';
 
 export class SoundManager {
     constructor() {
@@ -9,6 +13,19 @@ export class SoundManager {
         this.currentMusicVolume = 0.0625; // default music volume (reduced)
         this.currentMusicTrack = null; // track file path intended to be playing
         this.loadSounds();
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Listen to music change events
+        eventBus.on(EventTypes.MUSIC_CHANGE, (data) => {
+            this.setMusicForZone({ dimension: data.dimension });
+        });
+
+        // Listen to zone changed events to update music
+        eventBus.on(EventTypes.ZONE_CHANGED, (data) => {
+            this.setMusicForZone({ dimension: data.dimension });
+        });
     }
 
     async loadSounds() {
@@ -47,7 +64,13 @@ export class SoundManager {
             audio.loop = true;
             audio.volume = volume;
             this.currentMusicVolume = volume;
-            audio.play().catch(() => {});
+            audio.play().catch(err => {
+                errorHandler.handle(err, ErrorSeverity.WARNING, {
+                    component: 'SoundManager',
+                    action: 'play background music',
+                    filePath
+                });
+            });
             this.backgroundAudio = audio;
         } catch (e) {
             // ignore background play errors
@@ -58,7 +81,8 @@ export class SoundManager {
         try {
             if (this.backgroundAudio) {
                 try { this.backgroundAudio.pause(); } catch (e) {}
-                try { this.backgroundAudio.src = ''; } catch (e) {}
+                // Don't set src to empty string - causes "Invalid URI" console errors
+                // Just remove the reference and let garbage collection handle it
                 this.backgroundAudio = null;
             }
         } catch (e) {}
@@ -126,7 +150,13 @@ export class SoundManager {
             nextSource.connect(nextGain).connect(this.audioContext.destination);
 
             // Start playing the next track (may require user gesture to allow autoplay)
-            nextAudio.play().catch(() => {});
+            nextAudio.play().catch(err => {
+                errorHandler.handle(err, ErrorSeverity.WARNING, {
+                    component: 'SoundManager',
+                    action: 'play next background track',
+                    filePath
+                });
+            });
 
             const now = this.audioContext.currentTime;
             const fadeSec = Math.max(0.05, (crossfadeMs || 600) / 1000);
@@ -147,7 +177,8 @@ export class SoundManager {
                 const oldAudio = this.backgroundAudioElement;
                 setTimeout(() => {
                     try { oldAudio.pause(); } catch (e) {}
-                    try { oldAudio.src = ''; } catch (e) {}
+                    // Don't set src to empty string - causes "Invalid URI" console errors
+                    // Just pause and let garbage collection handle it
                 }, Math.ceil(fadeSec * 1000) + 50);
             }
 
@@ -337,9 +368,12 @@ export class SoundManager {
                 this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 return Promise.resolve();
             }
-            if (this.audioContext && typeof this.audioContext.resume === 'function') {
-                return this.audioContext.resume().catch(() => {});
-            }
+            return safeCallAsync(this.audioContext, 'resume')?.catch(err => {
+                errorHandler.handle(err, ErrorSeverity.WARNING, {
+                    component: 'SoundManager',
+                    action: 'resume audio context'
+                });
+            }) || Promise.resolve();
         } catch (e) {
             // ignore
         }

@@ -1,6 +1,7 @@
 import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from '../core/constants.js';
 import { RendererUtils } from './RendererUtils.js';
 import { logger } from '../core/logger.js';
+import { isBomb } from '../utils/TileUtils.js';
 
 export class ItemTileRenderer {
     constructor(images, tileSize) {
@@ -27,8 +28,8 @@ export class ItemTileRenderer {
 
         // Try to draw the food image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, foodKey)) {
-            if (foodAsset === 'food/aquamelon.png') {
-                // Draw aquamelon pixel-perfect, no scaling, aligned to tile
+            if (foodAsset === 'food/aguamelin.png') {
+                // Draw aguamelin pixel-perfect, no scaling, aligned to tile
                 ctx.drawImage(this.images[foodKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
                 // Scale other food to 70%
@@ -130,7 +131,8 @@ export class ItemTileRenderer {
     logger.debug('Bomb image loaded:', bombImage && bombImage.complete, 'naturalWidth:', bombImage?.naturalWidth);
 
         // Check if it's an object bomb (player-placed with animation timer)
-        if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
+        if (typeof tile === 'object' && isBomb(tile)) {
+            // Active bomb object - render with pulsation
             if (bombImage && bombImage.complete) {
                 ctx.save();
                 // Only animate if bomb is not just placed
@@ -144,12 +146,12 @@ export class ItemTileRenderer {
                 }
                 ctx.drawImage(bombImage, 0, 0, TILE_SIZE, TILE_SIZE);
                 ctx.restore();
-                } else {
+            } else {
                 this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BOMB], '💣');
                 logger.debug('Using fallback for object bomb');
             }
         } else if (bombImage && bombImage.complete) {
-            // Primitive bomb (randomly generated) - render normally without animation
+            // Primitive bomb (inactive pickup item) - render normally without animation
             ctx.drawImage(bombImage, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BOMB], '💣');

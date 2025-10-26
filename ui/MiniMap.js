@@ -24,10 +24,10 @@ export class MiniMap {
 
         // Expand on click/tap inside minimap
     // smallCanvas expand is handled via pointer events only
-    smallCanvas.addEventListener('pointerup', (e) => { try { e.preventDefault(); } catch (err) {} ; this.expand(); });
+    smallCanvas.addEventListener('pointerup', (e) => { e?.preventDefault?.(); this.expand(); });
 
         // Retract on click/tap outside expanded minimap
-    overlay.addEventListener('pointerup', (e) => { try { e.preventDefault(); } catch (err) {} ; this.retract(); });
+    overlay.addEventListener('pointerup', (e) => { e?.preventDefault?.(); this.retract(); });
 
         // Prevent retraction when clicking/tapping on the expanded minimap itself
     this.expandedCanvas.addEventListener('pointerdown', (e) => e.stopPropagation());
@@ -39,7 +39,7 @@ export class MiniMap {
             this.dragMoved = false;
             this.lastX = e.clientX;
             this.lastY = e.clientY;
-            try { e.target.setPointerCapture?.(e.pointerId); } catch (err) {}
+            e.target?.setPointerCapture?.(e.pointerId);
         });
 
         this.expandedCanvas.addEventListener('pointermove', (e) => {
@@ -64,11 +64,11 @@ export class MiniMap {
 
             // If this interaction was a drag, don't treat it as a click highlight
             if (!this.dragMoved) {
-                try { this.handleExpandedClick(e); } catch (err) {}
+                this.handleExpandedClick(e);
             }
 
             this.isDragging = false;
-            try { e.target.releasePointerCapture?.(e.pointerId); } catch (err) {}
+            e.target?.releasePointerCapture?.(e.pointerId);
         });
         this.expandedCanvas.addEventListener('pointerleave', () => {
             this.isDragging = false;
@@ -130,8 +130,8 @@ export class MiniMap {
         }
 
         // Re-render both expanded and small minimap so highlights appear immediately
-        try { this.renderExpanded(); } catch (err) {}
-        try { this.renderZoneMap(); } catch (err) {}
+        this.renderExpanded();
+        this.renderZoneMap();
     }
 
     retract() {
@@ -167,25 +167,20 @@ export class MiniMap {
                     // Draw the axe icon in the center of the map canvas
                     // Turn off image smoothing so the scaled-up icon remains crisp
                     // Preserve previous smoothing settings and restore after draw
-                    try {
-                        const prevSmoothing = ctx.imageSmoothingEnabled;
-                        const prevQuality = ctx.imageSmoothingQuality;
-                        ctx.imageSmoothingEnabled = false;
-                        // Some browsers support imageSmoothingQuality; set to 'low' when disabling smoothing
-                        if (typeof ctx.imageSmoothingQuality !== 'undefined') ctx.imageSmoothingQuality = 'low';
+                    const prevSmoothing = ctx.imageSmoothingEnabled;
+                    const prevQuality = ctx.imageSmoothingQuality;
+                    ctx.imageSmoothingEnabled = false;
+                    // Some browsers support imageSmoothingQuality; set to 'low' when disabling smoothing
+                    if (typeof ctx.imageSmoothingQuality !== 'undefined') ctx.imageSmoothingQuality = 'low';
 
-                        const iconSize = mapSize * 0.7; // Make it large
-                        const iconX = (mapSize - iconSize) / 2;
-                        const iconY = (mapSize - iconSize) / 2;
-                        ctx.drawImage(axeImage, iconX, iconY, iconSize, iconSize);
+                    const iconSize = mapSize * 0.7; // Make it large
+                    const iconX = (mapSize - iconSize) / 2;
+                    const iconY = (mapSize - iconSize) / 2;
+                    ctx.drawImage(axeImage, iconX, iconY, iconSize, iconSize);
 
-                        // Restore previous smoothing settings
-                        ctx.imageSmoothingEnabled = prevSmoothing;
-                        if (typeof prevQuality !== 'undefined' && typeof ctx.imageSmoothingQuality !== 'undefined') ctx.imageSmoothingQuality = prevQuality;
-                    } catch (err) {
-                        // If anything goes wrong, fallback to default draw
-                        ctx.drawImage(axeImage, (mapSize - mapSize * 0.7) / 2, (mapSize - mapSize * 0.7) / 2, mapSize * 0.7, mapSize * 0.7);
-                    }
+                    // Restore previous smoothing settings
+                    ctx.imageSmoothingEnabled = prevSmoothing;
+                    if (typeof prevQuality !== 'undefined' && typeof ctx.imageSmoothingQuality !== 'undefined') ctx.imageSmoothingQuality = prevQuality;
             } else {
                 // Fallback text if image isn't loaded
                 ctx.fillStyle = '#2F1B14';
@@ -284,40 +279,36 @@ export class MiniMap {
                 }
 
                 // Draw highlight marker if present (only meaningful for expanded map but harmless otherwise)
-                try {
-                    const hk = `${zoneX},${zoneY},${currentZone.dimension}`;
-                    const shape = this.highlights?.[hk];
-                    if (shape) {
-                        // Map shape names to text glyphs and colors for crisp scaling
-                        const glyphs = { circle: '●', triangle: '▲', star: '★', diamond: '◆', heart: '♥', club: '♣' };
-                        const colorMap = {
-                            // darker/muted, higher contrast against light gray/parchment
-                            circle: '#8B0000',   // deep red
-                            triangle: '#B45309', // dark orange/brown
-                            star: '#B87333',     // bronze/gold-brown
-                            diamond: '#5B21B6',  // deep purple
-                            heart: '#9D174D',    // deep magenta
-                            club: '#0F766E'      // dark teal
-                        };
-                        const glyph = glyphs[shape] || null;
-                        if (glyph) {
-                            // Draw a subtle dark outline then fill so glyphs remain legible on light backgrounds
-                            ctx.save();
-                            ctx.font = `bold ${zoneSize * 0.9}px serif`;
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'middle';
-                            // Stroke for contrast
-                            ctx.lineWidth = Math.max(1, Math.floor(zoneSize * 0.06));
-                            ctx.strokeStyle = 'rgba(0,0,0,0.65)';
-                            try { ctx.strokeText(glyph, mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1); } catch (err) {}
-                            // Fill with the shape color
-                            ctx.fillStyle = colorMap[shape] || '#111111';
-                            try { ctx.fillText(glyph, mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1); } catch (err) {}
-                            ctx.restore();
-                        }
+                const hk = `${zoneX},${zoneY},${currentZone.dimension}`;
+                const shape = this.highlights?.[hk];
+                if (shape) {
+                    // Map shape names to text glyphs and colors for crisp scaling
+                    const glyphs = { circle: '●', triangle: '▲', star: '★', diamond: '◆', heart: '♥', club: '♣' };
+                    const colorMap = {
+                        // darker/muted, higher contrast against light gray/parchment
+                        circle: '#8B0000',   // deep red
+                        triangle: '#B45309', // dark orange/brown
+                        star: '#B87333',     // bronze/gold-brown
+                        diamond: '#5B21B6',  // deep purple
+                        heart: '#9D174D',    // deep magenta
+                        club: '#0F766E'      // dark teal
+                    };
+                    const glyph = glyphs[shape] || null;
+                    if (glyph) {
+                        // Draw a subtle dark outline then fill so glyphs remain legible on light backgrounds
+                        ctx.save();
+                        ctx.font = `bold ${zoneSize * 0.9}px serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        // Stroke for contrast
+                        ctx.lineWidth = Math.max(1, Math.floor(zoneSize * 0.06));
+                        ctx.strokeStyle = 'rgba(0,0,0,0.65)';
+                        ctx.strokeText(glyph, mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
+                        // Fill with the shape color
+                        ctx.fillStyle = colorMap[shape] || '#111111';
+                        ctx.fillText(glyph, mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
+                        ctx.restore();
                     }
-                } catch (err) {
-                    // ignore rendering errors for highlights
                 }
 
 

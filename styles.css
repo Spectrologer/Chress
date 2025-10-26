@@ -49,7 +49,7 @@
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 200; /* align with other player-card overlays */
+    z-index: 1; /* Lower z-index to allow clipping through game area when scrolling */
     background: rgba(0,0,0,0.55);
     backdrop-filter: blur(2px);
     padding: 0; /* let inner box control padding */
@@ -1445,6 +1445,11 @@ h1 {
     align-items: center !important;
 }
 
+/* Ensure buttons inside overlays are clickable */
+.message-overlay button, #messageOverlay button {
+    pointer-events: auto;
+}
+
 /* Constrain overlay content so long dialogue scrolls instead of overflowing the game area */
 #messageOverlay, .message-overlay {
     box-sizing: border-box;
@@ -1603,6 +1608,7 @@ h1 {
 }
 
 /* Region Notification Overlay */
+/* Region Notification Overlay */
 .region-notification-overlay {
     position: fixed;
     top: 50%;
@@ -1641,6 +1647,7 @@ h1 {
 .region-notification-overlay.show {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+    pointer-events: none;
 }
 
 /* Game Over Overlay */
@@ -2199,6 +2206,7 @@ h1 {
 .stats-panel-overlay.show {
     display: flex;
     opacity: 1;
+    pointer-events: auto;
 }
 
 /* Animations for stats/config panels removed — replaced with no-op versions
@@ -2242,6 +2250,7 @@ h1 {
 }
 .stats-panel-overlay.show {
     display: flex;
+    pointer-events: auto;
 }
 
 

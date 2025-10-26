@@ -2,6 +2,10 @@ import { GRID_SIZE, TILE_TYPES } from './constants.js';
 import logger from './logger.js';
 import { Sign } from '../ui/Sign.js';
 import { validateLoadedGrid } from '../generators/GeneratorUtils.js';
+import { eventBus } from './EventBus.js';
+import { EventTypes } from './EventTypes.js';
+import { ZoneStateManager } from '../generators/ZoneStateManager.js';
+import { isWithinGrid } from '../utils/GridUtils.js';
 
 const GAME_STATE_KEY = 'chress_game_state';
 const SAVE_VERSION = 2; // bump if save format changes
@@ -50,14 +54,7 @@ export class GameStateManager {
         // Reset all game state
         this.game.zones.clear();
         this.game.connectionManager.clear();
-        this.game.zoneGenerator.constructor.zoneCounter = 0; // Reset zone counter for progressive difficulty
-        this.game.zoneGenerator.constructor.axeSpawned = false; // Reset axe spawn
-        this.game.zoneGenerator.constructor.hammerSpawned = false; // Reset hammer spawn
-        this.game.zoneGenerator.constructor.noteSpawned = false; // Reset note spawn
-        this.game.zoneGenerator.constructor.spearSpawned = false; // Reset spear spawn
-        this.game.zoneGenerator.constructor.lionSpawned = false; // Reset lion spawn
-        this.game.zoneGenerator.constructor.squigSpawned = false; // Reset squig spawn
-        this.game.zoneGenerator.constructor.foodWaterRoomSpawned = false; // Reset food/water room spawn
+        ZoneStateManager.resetSessionData(); // Reset all zone generation state
         Sign.spawnedMessages.clear(); // Reset spawned message tracking
         this.game.specialZones.clear(); // Reset special zones
         this.game.messageLog = []; // Reset message log
@@ -67,12 +64,18 @@ export class GameStateManager {
         this.game.currentRegion = null; // Reset region tracking
         this.game.lastSignMessage = null; // Reset sign message tracking
         this.game.displayingMessageForSign = null; // Reset sign message display tracking
-        this.game.horseChargeAnimations = []; // Reset horse charge animations
+        this.game.animationManager.clearAll(); // Reset all animations
         this.game.player.spentDiscoveries = 0; // Reset spent discoveries
 
         // Generate starting zone
         this.game.zoneManager.generateZone();
-        this.game.grid[this.game.player.y][this.game.player.x] = TILE_TYPES.FLOOR;
+
+        // Only set tile if player is within grid bounds (for new games, player may be off-screen)
+        const playerY = this.game.player.y;
+        const playerX = this.game.player.x;
+        if (isWithinGrid(playerX, playerY)) {
+            this.game.grid[playerY][playerX] = TILE_TYPES.FLOOR;
+        }
 
         // Set initial region
         const initialZone = this.game.player.getCurrentZone();
@@ -84,10 +87,11 @@ export class GameStateManager {
         this.game.player.stats.sfxEnabled = prevConfig.sfxEnabled;
         this.game.player.stats.autoPathWithEnemies = prevConfig.autoPathWithEnemies;
 
-        // Update UI
-        this.game.uiManager.updatePlayerPosition();
-        this.game.uiManager.updateZoneDisplay();
-        this.game.uiManager.updatePlayerStats();
+        // Emit game reset event instead of calling UI methods directly
+        eventBus.emit(EventTypes.GAME_RESET, {
+            zone: initialZone,
+            regionName: this.game.currentRegion
+        });
 
         // Ensure background music matches the new starting zone so any previous
         // underground track doesn't continue playing after a respawn/reset.
@@ -95,11 +99,8 @@ export class GameStateManager {
             const dimension = this.game.player.currentZone && typeof this.game.player.currentZone.dimension === 'number'
                 ? this.game.player.currentZone.dimension
                 : 0;
-            if (this.game.soundManager && typeof this.game.soundManager.setMusicForZone === 'function') {
-                this.game.soundManager.setMusicForZone({ dimension });
-            } else if (typeof window !== 'undefined' && window.soundManager && typeof window.soundManager.setMusicForZone === 'function') {
-                window.soundManager.setMusicForZone({ dimension });
-            }
+            // Emit music change event instead of calling soundManager directly
+            eventBus.emit(EventTypes.MUSIC_CHANGE, { dimension });
         } catch (e) { /* non-fatal */ }
     }
 
@@ -115,25 +116,50 @@ export class GameStateManager {
 
             if (randomType === 'bomb') {
                 this.game.player.inventory.push({ type: 'bomb' });
-                this.game.uiManager.addMessageToLog('Treasure Found: Bomb added to inventory.');
+                // Emit treasure found event instead of calling UIManager directly
+                eventBus.emit(EventTypes.TREASURE_FOUND, {
+                    itemType: 'bomb',
+                    quantity: 1,
+                    message: 'Treasure Found: Bomb added to inventory.'
+                });
             } else if (randomType === 'bishop_spear') {
                 this.game.player.inventory.push({ type: 'bishop_spear', uses: 3 });
-                this.game.uiManager.addMessageToLog('Treasure Found: Bishop Spear added to inventory.');
+                eventBus.emit(EventTypes.TREASURE_FOUND, {
+                    itemType: 'bishop_spear',
+                    quantity: 1,
+                    message: 'Treasure Found: Bishop Spear added to inventory.'
+                });
             } else if (randomType === 'food' && this.game.availableFoodAssets.length > 0) {
                 const randomFood = this.game.availableFoodAssets[Math.floor(Math.random() * this.game.availableFoodAssets.length)];
                 this.game.player.inventory.push({ type: 'food', foodType: randomFood });
-                this.game.uiManager.addMessageToLog('Treasure Found: Food added to inventory.');
+                eventBus.emit(EventTypes.TREASURE_FOUND, {
+                    itemType: 'food',
+                    quantity: 1,
+                    message: 'Treasure Found: Food added to inventory.'
+                });
             }
         }
 
-        this.game.uiManager.updatePlayerStats(); // Refresh UI
+        // Emit player stats changed event instead of calling UIManager directly
+        eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {
+            health: this.game.player.health,
+            points: this.game.player.points,
+            hunger: this.game.player.hunger,
+            thirst: this.game.player.thirst
+        });
     }
 
     // Console command to add bomb to inventory
     addBomb() {
         if (this.game.player.inventory.length < 6) {
             this.game.player.inventory.push({ type: 'bomb' });
-            this.game.uiManager.updatePlayerStats();
+            // Emit player stats changed event instead of calling UIManager directly
+            eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {
+                health: this.game.player.health,
+                points: this.game.player.points,
+                hunger: this.game.player.hunger,
+                thirst: this.game.player.thirst
+            });
         }
     }
 
@@ -198,25 +224,25 @@ export class GameStateManager {
                 isInPitfallZone: this.game.isInPitfallZone,
                 // Zone state manager counters and flags
                 zoneStateManager: {
-                    zoneCounter: this.game.zoneGenerator.constructor.zoneCounter,
-                    enemyCounter: this.game.zoneGenerator.constructor.enemyCounter,
-                    axeSpawned: this.game.zoneGenerator.constructor.axeSpawned,
-                    hammerSpawned: this.game.zoneGenerator.constructor.hammerSpawned,
-                    noteSpawned: this.game.zoneGenerator.constructor.noteSpawned,
-                    spearSpawned: this.game.zoneGenerator.constructor.spearSpawned,
-                    horseIconSpawned: this.game.zoneGenerator.constructor.horseIconSpawned,
-                    lionSpawned: this.game.zoneGenerator.constructor.lionSpawned,
-                    squigSpawned: this.game.zoneGenerator.constructor.squigSpawned,
-                    wellSpawned: this.game.zoneGenerator.constructor.wellSpawned,
-                    deadTreeSpawned: this.game.zoneGenerator.constructor.deadTreeSpawned,
-                    axeWarningSignPlaced: this.game.zoneGenerator.constructor.axeWarningSignPlaced,
-                    hammerWarningSignPlaced: this.game.zoneGenerator.constructor.hammerWarningSignPlaced,
-                    firstFrontierSignPlaced: this.game.zoneGenerator.constructor.firstFrontierSignPlaced,
-                    axeSpawnZone: this.game.zoneGenerator.constructor.axeSpawnZone,
-                    hammerSpawnZone: this.game.zoneGenerator.constructor.hammerSpawnZone,
-                    noteSpawnZone: this.game.zoneGenerator.constructor.noteSpawnZone,
-                    spearSpawnZone: this.game.zoneGenerator.constructor.spearSpawnZone,
-                    horseIconSpawnZone: this.game.zoneGenerator.constructor.horseIconSpawnZone
+                    zoneCounter: ZoneStateManager.zoneCounter,
+                    enemyCounter: ZoneStateManager.enemyCounter,
+                    axeSpawned: ZoneStateManager.axeSpawned,
+                    hammerSpawned: ZoneStateManager.hammerSpawned,
+                    noteSpawned: ZoneStateManager.noteSpawned,
+                    spearSpawned: ZoneStateManager.spearSpawned,
+                    horseIconSpawned: ZoneStateManager.horseIconSpawned,
+                    lionSpawned: ZoneStateManager.lionSpawned,
+                    squigSpawned: ZoneStateManager.squigSpawned,
+                    wellSpawned: ZoneStateManager.wellSpawned,
+                    deadTreeSpawned: ZoneStateManager.deadTreeSpawned,
+                    axeWarningSignPlaced: ZoneStateManager.axeWarningSignPlaced,
+                    hammerWarningSignPlaced: ZoneStateManager.hammerWarningSignPlaced,
+                    firstFrontierSignPlaced: ZoneStateManager.firstFrontierSignPlaced,
+                    axeSpawnZone: ZoneStateManager.axeSpawnZone,
+                    hammerSpawnZone: ZoneStateManager.hammerSpawnZone,
+                    noteSpawnZone: ZoneStateManager.noteSpawnZone,
+                    spearSpawnZone: ZoneStateManager.spearSpawnZone,
+                    horseIconSpawnZone: ZoneStateManager.horseIconSpawnZone
                 },
                 signSpawnedMessages: Array.from(Sign.spawnedMessages)
             };
@@ -303,25 +329,25 @@ export class GameStateManager {
 
             // Restore zone state manager statics
             if (gameState.zoneStateManager) {
-                this.game.zoneGenerator.constructor.zoneCounter = gameState.zoneStateManager.zoneCounter || 0;
-                this.game.zoneGenerator.constructor.enemyCounter = gameState.zoneStateManager.enemyCounter || 0;
-                this.game.zoneGenerator.constructor.axeSpawned = gameState.zoneStateManager.axeSpawned || false;
-                this.game.zoneGenerator.constructor.hammerSpawned = gameState.zoneStateManager.hammerSpawned || false;
-                this.game.zoneGenerator.constructor.noteSpawned = gameState.zoneStateManager.noteSpawned || false;
-                this.game.zoneGenerator.constructor.spearSpawned = gameState.zoneStateManager.spearSpawned || false;
-                this.game.zoneGenerator.constructor.horseIconSpawned = gameState.zoneStateManager.horseIconSpawned || false;
-                this.game.zoneGenerator.constructor.lionSpawned = gameState.zoneStateManager.lionSpawned || false;
-                this.game.zoneGenerator.constructor.squigSpawned = gameState.zoneStateManager.squigSpawned || false;
-                this.game.zoneGenerator.constructor.wellSpawned = gameState.zoneStateManager.wellSpawned || false;
-                this.game.zoneGenerator.constructor.deadTreeSpawned = gameState.zoneStateManager.deadTreeSpawned || false;
-                this.game.zoneGenerator.constructor.axeWarningSignPlaced = gameState.zoneStateManager.axeWarningSignPlaced || false;
-                this.game.zoneGenerator.constructor.hammerWarningSignPlaced = gameState.zoneStateManager.hammerWarningSignPlaced || false;
-                this.game.zoneGenerator.constructor.firstFrontierSignPlaced = gameState.zoneStateManager.firstFrontierSignPlaced || false;
-                this.game.zoneGenerator.constructor.axeSpawnZone = gameState.zoneStateManager.axeSpawnZone || null;
-                this.game.zoneGenerator.constructor.hammerSpawnZone = gameState.zoneStateManager.hammerSpawnZone || null;
-                this.game.zoneGenerator.constructor.noteSpawnZone = gameState.zoneStateManager.noteSpawnZone || null;
-                this.game.zoneGenerator.constructor.spearSpawnZone = gameState.zoneStateManager.spearSpawnZone || null;
-                this.game.zoneGenerator.constructor.horseIconSpawnZone = gameState.zoneStateManager.horseIconSpawnZone || null;
+                ZoneStateManager.zoneCounter = gameState.zoneStateManager.zoneCounter || 0;
+                ZoneStateManager.enemyCounter = gameState.zoneStateManager.enemyCounter || 0;
+                ZoneStateManager.axeSpawned = gameState.zoneStateManager.axeSpawned || false;
+                ZoneStateManager.hammerSpawned = gameState.zoneStateManager.hammerSpawned || false;
+                ZoneStateManager.noteSpawned = gameState.zoneStateManager.noteSpawned || false;
+                ZoneStateManager.spearSpawned = gameState.zoneStateManager.spearSpawned || false;
+                ZoneStateManager.horseIconSpawned = gameState.zoneStateManager.horseIconSpawned || false;
+                ZoneStateManager.lionSpawned = gameState.zoneStateManager.lionSpawned || false;
+                ZoneStateManager.squigSpawned = gameState.zoneStateManager.squigSpawned || false;
+                ZoneStateManager.wellSpawned = gameState.zoneStateManager.wellSpawned || false;
+                ZoneStateManager.deadTreeSpawned = gameState.zoneStateManager.deadTreeSpawned || false;
+                ZoneStateManager.axeWarningSignPlaced = gameState.zoneStateManager.axeWarningSignPlaced || false;
+                ZoneStateManager.hammerWarningSignPlaced = gameState.zoneStateManager.hammerWarningSignPlaced || false;
+                ZoneStateManager.firstFrontierSignPlaced = gameState.zoneStateManager.firstFrontierSignPlaced || false;
+                ZoneStateManager.axeSpawnZone = gameState.zoneStateManager.axeSpawnZone || null;
+                ZoneStateManager.hammerSpawnZone = gameState.zoneStateManager.hammerSpawnZone || null;
+                ZoneStateManager.noteSpawnZone = gameState.zoneStateManager.noteSpawnZone || null;
+                ZoneStateManager.spearSpawnZone = gameState.zoneStateManager.spearSpawnZone || null;
+                ZoneStateManager.horseIconSpawnZone = gameState.zoneStateManager.horseIconSpawnZone || null;
             }
 
             // Restore Sign spawned messages

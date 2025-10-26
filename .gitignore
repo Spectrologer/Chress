@@ -52,6 +52,10 @@ out/
 *.backup
 *.old
 
+# Refactoring backup directories
+managers/OLD_INVENTORY_BACKUP_*/
+**/OLD_*_BACKUP_*/
+
 # Temporary files
 *.temp
 *.temporary
@@ -70,3 +74,11 @@ out/
 unused_images/
 old_assets/
 backup_images/
+
+# Refactoring documentation (keep locally but don't commit)
+INVENTORY_REFACTOR_PLAN.md
+MIGRATION_GUIDE.md
+REFACTOR_SUMMARY.md
+QUICK_START.md
+MIGRATION_COMPLETE.md
+FINAL_SUMMARY.md

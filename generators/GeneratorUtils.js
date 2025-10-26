@@ -2,6 +2,7 @@
 // Shared utilities for random placement, attempts loops, and tile validation in generators
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import logger from '../core/logger.js';
+import GridIterator from '../utils/GridIterator.js';
 
 /**
  * Returns a random integer between min (inclusive) and max (exclusive)
@@ -75,11 +76,7 @@ export function validateAndSetTile(grid, x, y, tileType) {
  * Initializes grid safely with proper array allocation
  */
 export function initializeGrid() {
-    const grid = [];
-    for (let y = 0; y < GRID_SIZE; y++) {
-        grid[y] = new Array(GRID_SIZE).fill(TILE_TYPES.FLOOR);
-    }
-    return grid;
+    return GridIterator.initialize(TILE_TYPES.FLOOR);
 }
 
 /**
@@ -97,12 +94,12 @@ export function validateLoadedGrid(grid) {
             grid[y] = new Array(GRID_SIZE).fill(TILE_TYPES.FLOOR);
             corruptionFixed = true;
         } else {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                if (!grid[y][x] || grid[y][x] === null || grid[y][x] === undefined) {
+            GridIterator.forEach(grid, (tile, x, y) => {
+                if (!tile || tile === null || tile === undefined) {
                     grid[y][x] = TILE_TYPES.FLOOR;
                     corruptionFixed = true;
                 }
-            }
+            }, { startY: y, endY: y + 1 });
         }
     }
 

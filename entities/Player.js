@@ -1,6 +1,14 @@
 import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANTS } from '../core/constants.js';
 import { PlayerStats } from './PlayerStats.js';
 import { PlayerAnimations } from './PlayerAnimations.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils.js';
+import audioManager from '../utils/AudioManager.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { TileRegistry } from '../core/TileRegistry.js';
+import { isBomb } from '../utils/TileUtils.js';
+import GridIterator from '../utils/GridIterator.js';
 
 export class Player {
     constructor() {
@@ -67,9 +75,9 @@ export class Player {
 
         // Check if the new position is walkable
         if (this.isWalkable(newX, newY, grid, this.x, this.y)) {
-            // Check if moving to active player-set bomb
+            // Check if moving to active player-placed bomb (object bomb, not primitive pickup)
             const tile = grid[newY][newX];
-            if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
+            if (typeof tile === 'object' && isBomb(tile)) {
                 window.gameInstance.explodeBomb(newX, newY);
                 return false; // Explode and launch, don't move normally
             }
@@ -84,6 +92,12 @@ export class Player {
             this.x = newX;
             this.y = newY;
 
+            // Emit player moved event
+            eventBus.emit(EventTypes.PLAYER_MOVED, {
+                x: this.x,
+                y: this.y
+            });
+
             // Check for pitfall trap after moving
             const newTile = grid[this.y][this.x];
             if (newTile === TILE_TYPES.PITFALL) {
@@ -92,10 +106,17 @@ export class Player {
             }
 
             this.animations.liftFrames = ANIMATION_CONSTANTS.LIFT_FRAMES; // Start lift animation
-            window.soundManager?.playSound('move');
+            audioManager.playSound('move');
 
             // Movement interrupts attack combos
-            try { this.setAction('move'); } catch (e) {}
+            try {
+                this.setAction('move');
+            } catch (e) {
+                errorHandler.handle(e, ErrorSeverity.WARNING, {
+                    component: 'Player',
+                    action: 'set action to move'
+                });
+            }
 
             return true;
         } else {
@@ -115,7 +136,7 @@ export class Player {
                     this.animations.startActionAnimation(); // Start action animation
                     this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
                     // Play the slash SFX (file-backed) when chopping shrubbery/grass
-                    window.soundManager?.playSound('slash');
+                    audioManager.playSound('slash');
                     window.gameInstance.startEnemyTurns(); // Chopping takes a turn
                     return false; // Don't move, just attack
                 }
@@ -128,7 +149,7 @@ export class Player {
                     this.stats.decreaseHunger(2); // Breaking costs 2 hunger
                     this.animations.startActionAnimation(); // Start action animation
                     this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
-                    window.soundManager?.playSound('smash');
+                    audioManager.playSound('smash');
                     window.gameInstance.startEnemyTurns(); // Smashing takes a turn
                     return false; // Don't move, just attack
                 }
@@ -146,36 +167,8 @@ export class Player {
 
         const tile = grid[y][x];
 
-        // Signs are not walkable
-        if ((tile && tile.type === TILE_TYPES.SIGN) || tile === TILE_TYPES.SIGN) {
-            return false;
-        }
-
-        // Regular tiles
-        // Player can walk on floor, exit, water, food, axe, hammer, bishop spear, horse icon, bomb, note, heart, and port tiles
-        if (tile === TILE_TYPES.FLOOR ||
-            tile === TILE_TYPES.EXIT ||
-            tile === TILE_TYPES.WATER ||
-            tile === TILE_TYPES.AXE ||
-            tile === TILE_TYPES.HAMMER ||
-            (tile && tile.type === TILE_TYPES.BISHOP_SPEAR) ||
-            (tile && tile.type === TILE_TYPES.HORSE_ICON) ||
-            tile === TILE_TYPES.BOMB ||
-            (tile && tile.type === TILE_TYPES.FOOD) || // Note items are just the tile type number
-            tile === TILE_TYPES.NOTE ||
-            tile === TILE_TYPES.HEART ||
-            (tile && tile.type === TILE_TYPES.BOOK_OF_TIME_TRAVEL) ||
-            (tile && tile.type === TILE_TYPES.BOW) ||
-            tile === TILE_TYPES.CISTERN ||
-            tile === TILE_TYPES.PITFALL ||
-            (tile && tile.type === TILE_TYPES.SHOVEL) ||
-            // Allow object PORT tiles (which carry metadata like portKind) as walkable
-            tile === TILE_TYPES.PORT ||
-            (tile && tile.type === TILE_TYPES.PORT)) {
-            return true;
-        }
-
-        return false;
+        // Use centralized TileRegistry for walkability checks
+        return TileRegistry.isWalkable(tile);
     }
 
     setPosition(x, y) {
@@ -184,6 +177,12 @@ export class Player {
         this.lastY = this.y;
         this.x = x;
         this.y = y;
+
+        // Emit player moved event
+        eventBus.emit(EventTypes.PLAYER_MOVED, {
+            x: this.x,
+            y: this.y
+        });
     }
 
     getPosition() {
@@ -214,20 +213,19 @@ export class Player {
     markZoneVisited(x, y, dimension) {
         // For underground zones, include depth in the saved key so different depths are tracked separately
         const numericDim = Number(dimension);
-        if (numericDim === 2) {
-            const depth = this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1);
-            this.visitedZones.add(`${x},${y}:${numericDim}:z-${depth}`);
-        } else {
-            this.visitedZones.add(`${x},${y}:${numericDim}`);
-        }
+        const depth = (numericDim === 2)
+            ? (this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1))
+            : undefined;
+        const zoneKey = createZoneKey(x, y, numericDim, depth);
+        this.visitedZones.add(zoneKey);
     }
 
     hasVisitedZone(x, y, dimension) {
-        if (dimension === 2) {
-            const depth = this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1);
-            return this.visitedZones.has(`${x},${y}:${dimension}:z-${depth}`);
-        }
-        return this.visitedZones.has(`${x},${y}:${dimension}`);
+        const depth = (dimension === 2)
+            ? (this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1))
+            : undefined;
+        const zoneKey = createZoneKey(x, y, dimension, depth);
+        return this.visitedZones.has(zoneKey);
     }
 
     getVisitedZones() {
@@ -299,7 +297,14 @@ export class Player {
 
     takeDamage(amount = 1) {
         // Taking damage cancels any consecutive-kill streak
-        try { this.consecutiveKills = 0; } catch (e) {}
+        try {
+            this.consecutiveKills = 0;
+        } catch (e) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'Player',
+                action: 'reset consecutive kills'
+            });
+        }
         this.stats.takeDamage(amount);
     }
 
@@ -383,17 +388,14 @@ export class Player {
     }
 
     getValidSpawnPosition(game) {
-        const availableTiles = [];
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = game.grid[y][x];
-                const playerPos = this.getPosition();
-                const hasEnemy = game.enemies.some(e => e.x === x && e.y === y);
-                if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
-                    availableTiles.push({x, y});
-                }
-            }
-        }
+        const playerPos = this.getPosition();
+        const availableTiles = GridIterator.findTiles(game.grid, (tile, x, y) => {
+            const hasEnemy = game.enemies.some(e => e.x === x && e.y === y);
+            return (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) &&
+                   !hasEnemy &&
+                   !(x === playerPos.x && y === playerPos.y);
+        });
+
         if (availableTiles.length > 0) {
             return availableTiles[Math.floor(Math.random() * availableTiles.length)];
         }

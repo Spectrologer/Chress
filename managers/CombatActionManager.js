@@ -1,4 +1,5 @@
 import { TILE_TYPES } from '../core/constants.js';
+import { safeCall } from '../utils/SafeServiceCall.js';
 
 export class CombatActionManager {
     constructor(game) {
@@ -95,9 +96,7 @@ export class CombatActionManager {
 
         // Clear pending state and hide overlay immediately so UI doesn't persist after confirmation
         this.game.pendingCharge = null;
-        if (typeof this.game.hideOverlayMessage === 'function') {
-            this.game.hideOverlayMessage();
-        }
+        safeCall(this.game, 'hideOverlayMessage');
 
         if (chargeDetails.type === 'bishop_spear') {
             this.game.performBishopSpearCharge(chargeDetails.item, chargeDetails.target.x, chargeDetails.target.y, chargeDetails.enemy, chargeDetails.dx, chargeDetails.dy);

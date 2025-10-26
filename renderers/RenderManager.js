@@ -5,6 +5,7 @@ import { EnemyRenderer } from './EnemyRenderer.js';
 import { AnimationRenderer } from './AnimationRenderer.js';
 import { UIRenderer } from './UIRenderer.js';
 import { FogRenderer } from './FogRenderer.js';
+import GridIterator from '../utils/GridIterator.js';
 
 export class RenderManager {
     constructor(game) {
@@ -302,26 +303,23 @@ export class RenderManager {
             else zoneLevel = 4;
         }
 
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.game.grid[y][x];
-                try {
-                    // Handle bomb tiles specially
-                    if (tile === TILE_TYPES.BOMB) {
-                        // Primitive bomb (randomly generated) - render normally
-                        this.textureManager.renderTile(this.ctx, x, y, tile, this.game.grid, zoneLevel);
-                    } else if (tile && tile.type === 'food') {
-                        this.textureManager.renderTile(this.ctx, x, y, tile.type, this.game.grid, zoneLevel);
-                    } else {
-                        this.textureManager.renderTile(this.ctx, x, y, tile, this.game.grid, zoneLevel);
-                    }
-                } catch (error) {
-                    // Fallback rendering
-                    this.ctx.fillStyle = '#ffcb8d';
-                    this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        GridIterator.forEach(this.game.grid, (tile, x, y) => {
+            try {
+                // Handle bomb tiles specially
+                if (tile === TILE_TYPES.BOMB) {
+                    // Primitive bomb (randomly generated) - render normally
+                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.grid, zoneLevel);
+                } else if (tile && tile.type === 'food') {
+                    this.textureManager.renderTile(this.ctx, x, y, tile.type, this.game.grid, zoneLevel);
+                } else {
+                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.grid, zoneLevel);
                 }
+            } catch (error) {
+                // Fallback rendering
+                this.ctx.fillStyle = '#ffcb8d';
+                this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
-        }
+        });
     }
 
 

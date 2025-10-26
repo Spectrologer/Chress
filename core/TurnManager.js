@@ -6,23 +6,34 @@ export class TurnManager {
         this.initialEnemyTilesThisTurn = new Set();
     }
 
+    /**
+     * Handle turn completion after player action
+     * Manages zone entry free turns and pitfall tracking
+     * @returns {boolean} True if enemy turns were started
+     */
+    handleTurnCompletion() {
+        // Free turns after zone entry
+        const zoneEntryEnded = this.game.decrementZoneEntryCount();
+        if (!zoneEntryEnded && !this.game.justEnteredZone) {
+            this.startEnemyTurns();
+            if (this.game.isInPitfallZone) {
+                this.game.pitfallTurnsSurvived++;
+            }
+            return true;
+        } else if (this.game.justEnteredZone) {
+            this.game.justEnteredZone = false;
+        }
+        return false;
+    }
+
     startEnemyTurns() {
         // If the player just entered a zone, give them one free turn: skip enemy turns
         // and clear the one-time flag so enemies resume next turn.
-        // Prefer an explicit numeric counter (justEnteredZoneCount) if present.
-        if (typeof this.game.justEnteredZoneCount === 'number' && this.game.justEnteredZoneCount > 0) {
-            this.game.justEnteredZoneCount = Math.max(0, this.game.justEnteredZoneCount - 1);
-            if (this.game.justEnteredZoneCount === 0) {
-                // Clear boolean flag for compatibility
+        const zoneEntryEnded = this.game.decrementZoneEntryCount();
+        if (zoneEntryEnded || this.game.justEnteredZone) {
+            if (this.game.justEnteredZone) {
                 this.game.justEnteredZone = false;
-                delete this.game.justEnteredZoneCount;
             }
-            return;
-        }
-
-        // Fallback to boolean justEnteredZone for backward compatibility
-        if (this.game.justEnteredZone) {
-            this.game.justEnteredZone = false;
             return;
         }
 

@@ -32,7 +32,10 @@ describe('Input feedback integration', () => {
       width: 576,
       height: 576,
       getBoundingClientRect: jest.fn().mockReturnValue({ left: 0, top: 0, width: 576, height: 576 }),
-      addEventListener: jest.fn((name, fn) => { listeners[name] = fn; }),
+      addEventListener: jest.fn((name, fn, options) => { listeners[name] = fn; }),
+      removeEventListener: jest.fn((name, fn, options) => { delete listeners[name]; }),
+      setPointerCapture: jest.fn(),
+      releasePointerCapture: jest.fn(),
       __listeners: listeners
     };
 
@@ -103,7 +106,7 @@ describe('Input feedback integration', () => {
     const pointerdown = handlers['pointerdown'];
     expect(typeof pointerdown).toBe('function');
 
-    const spyHandleTap = jest.spyOn(inputManager, 'handleTap');
+    const spyHandleTap = jest.spyOn(inputManager.controller.coordinator, 'handleTap');
 
     // Simulate pointerdown at tile (1,1) -> pixel 96,96 (tile 1 index center approx 96)
     pointerdown({ clientX: 96, clientY: 96, pointerId: 1, pointerType: 'mouse', button: 0, target: mockGame.canvas });
@@ -137,7 +140,7 @@ describe('Input feedback integration', () => {
   expect(typeof pointerdownTouch).toBe('function');
   expect(typeof pointerupTouch).toBe('function');
 
-  const spyHandleTap = jest.spyOn(inputManager, 'handleTap');
+  const spyHandleTap = jest.spyOn(inputManager.controller.coordinator, 'handleTap');
 
   // Mock Date.now to simulate a long press
   let now = 1000;

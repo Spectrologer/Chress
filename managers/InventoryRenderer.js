@@ -1,4 +1,4 @@
-import { getItemTooltipText } from './ItemUtils.js';
+import { ItemMetadata } from './inventory/ItemMetadata.js';
 import { attachSlotEvents } from './InventoryEvents.js';
 
 export class InventoryRenderer {
@@ -36,7 +36,7 @@ export class InventoryRenderer {
         slot.className = 'inventory-slot';
         slot.style.cursor = this.game.player.isDead() ? 'not-allowed' : 'pointer';
 
-        const tooltipText = getItemTooltipText(item);
+        const tooltipText = ItemMetadata.getTooltipText(item);
         this.addItemVisuals(slot, item);
 
         const detachObj = attachSlotEvents(slot, item, idx, {

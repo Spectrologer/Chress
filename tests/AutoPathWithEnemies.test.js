@@ -1,4 +1,6 @@
-import { InteractionController } from '../managers/InteractionController.js';
+import { InputController } from '../controllers/InputController.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 // Minimal fake game/player similar to other tests
 function makeGame() {
@@ -39,6 +41,7 @@ function makeGame() {
     game.incrementBombActions = jest.fn();
     game.updatePlayerPosition = jest.fn();
     game.updatePlayerStats = jest.fn();
+    game.turnManager = { handleTurnCompletion: jest.fn() };
 
     global.requestAnimationFrame = (cb) => cb();
     return game;
@@ -54,15 +57,18 @@ describe('Auto Path With Enemies setting', () => {
     // Use non-verbose animations to avoid Sequence/Promise handling in tests
     game.player.stats = { verbosePathAnimations: false, autoPathWithEnemies: false };
 
-        const ic = new InteractionController(game, null, (ev) => {
+        const ic = new InputController(game, null);
+
+        // Set up event listener to handle key presses synchronously (for testing)
+        eventBus.on(EventTypes.INPUT_KEY_PRESS, (ev) => {
             // apply movement synchronously
             const map = { arrowup: [0, -1], arrowdown: [0, 1], arrowleft: [-1, 0], arrowright: [1, 0] };
             const m = map[(ev.key || '').toLowerCase()];
             if (m) { game.player.x += m[0]; game.player.y += m[1]; }
-        }, null);
+        });
 
         // spy on executePath to observe what is issued
-        const spy = jest.spyOn(ic, 'executePath');
+        const spy = jest.spyOn(ic.pathfindingController, 'executePath');
 
         // click on a far-away tile
         ic.executeMovementOrInteraction({ x: 8, y: 8 });
@@ -83,15 +89,18 @@ describe('Auto Path With Enemies setting', () => {
     // Use non-verbose animations to avoid Sequence/Promise handling in tests
     game.player.stats = { verbosePathAnimations: false, autoPathWithEnemies: true };
 
-        const ic = new InteractionController(game, null, (ev) => {
+        const ic = new InputController(game, null);
+
+        // Set up event listener to handle key presses synchronously (for testing)
+        eventBus.on(EventTypes.INPUT_KEY_PRESS, (ev) => {
             const map = { arrowup: [0, -1], arrowdown: [0, 1], arrowleft: [-1, 0], arrowright: [1, 0] };
             const m = map[(ev.key || '').toLowerCase()];
             if (m) { game.player.x += m[0]; game.player.y += m[1]; }
-        }, null);
+        });
 
         // spy on findPath and executePath
-        const findSpy = jest.spyOn(ic, 'findPath');
-        const execSpy = jest.spyOn(ic, 'executePath');
+        const findSpy = jest.spyOn(ic.pathfindingController, 'findPath');
+        const execSpy = jest.spyOn(ic.pathfindingController, 'executePath');
 
         // Click to a reachable distant tile - make sure target is walkable
         game.grid[8][8] = 0;

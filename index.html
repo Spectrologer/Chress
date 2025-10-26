@@ -33,17 +33,20 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         .barter-window button {
-            padding: 12px 24px;
-            font-size: 1.1em;
+            padding: clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px);
+            font-size: clamp(0.9em, 2.5vw, 1.1em);
         }
         .barter-window button:disabled {
-            background-color: #888;
-            color: #ccc;
+            background: #999 !important;
+            color: #ddd !important;
             cursor: not-allowed;
+            opacity: 0.6;
+            border-color: #666 !important;
+            box-shadow: none !important;
         }
         .large-portrait {
             /* Allow larger portraits but keep them responsive to the barter panel size */
-            width: clamp(96px, 32%, 220px);
+            width: clamp(90px, 30%, 180px);
             height: auto;
             aspect-ratio: 1 / 1;
             box-sizing: border-box;
@@ -87,6 +90,8 @@
                     <!-- Records overlay: trophy icon top-right -->
                     <div id="recordsOverlay" class="stats-panel-overlay">
                         <div class="stats-panel game-parchment">
+                            <!-- Small back button (top-left) to return to the stats panel -->
+                            <button id="records-back-button" class="config-back-button" aria-label="Back">◂ Back</button>
                             <div class="stats-main-content">
                                 <div class="stats-info">
                                     <h2>Records</h2>

@@ -1,5 +1,9 @@
 import { CombatManager } from '../managers/CombatManager.js';
+import { BombManager } from '../managers/BombManager.js';
+import { EnemyDefeatFlow } from '../managers/EnemyDefeatFlow.js';
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 describe('Combat combo bonuses', () => {
   let combatManager;
@@ -46,10 +50,20 @@ describe('Combat combo bonuses', () => {
       defeatedEnemies: new Set()
     };
 
-    combatManager = new CombatManager(mockGame, new Set());
+    // Use real instances for proper combo behavior
+    const mockBombManager = new BombManager(mockGame);
+    const mockDefeatFlow = new EnemyDefeatFlow(mockGame);
+    combatManager = new CombatManager(mockGame, new Set(), mockBombManager, mockDefeatFlow);
   });
 
   test('defeatEnemy awards combo bonus when previous action was an attack:kill', () => {
+    const comboEvents = [];
+    const animationEvents = [];
+
+    // Listen for events
+    eventBus.on(EventTypes.COMBO_ACHIEVED, (data) => comboEvents.push(data));
+    eventBus.on(EventTypes.ANIMATION_REQUESTED, (data) => animationEvents.push(data));
+
     // Simulate player had just performed an attack that resulted in a kill
     mockPlayer.lastActionType = 'attack';
     mockPlayer.lastActionResult = 'kill';
@@ -60,16 +74,23 @@ describe('Combat combo bonuses', () => {
     expect(res.defeated).toBe(true);
     expect(res.consecutiveKills).toBe(2);
 
-    // Multiplier animation should be created for x2
-    expect(mockGame.animationManager.addMultiplierAnimation).toHaveBeenCalledWith(mockEnemy.x, mockEnemy.y, 2);
+    // Verify COMBO_ACHIEVED event was emitted
+    expect(comboEvents.length).toBeGreaterThan(0);
+    expect(comboEvents[0].comboCount).toBe(2);
+    expect(comboEvents[0].x).toBe(mockEnemy.x);
+    expect(comboEvents[0].y).toBe(mockEnemy.y);
 
-    // Point animations should have been added for base points and bonus
-    expect(mockGame.animationManager.addPointAnimation).toHaveBeenCalledWith(mockEnemy.x, mockEnemy.y, 1);
-    expect(mockGame.animationManager.addPointAnimation).toHaveBeenCalledWith(mockEnemy.x, mockEnemy.y, 2);
+    // Verify animation events were emitted for point animations
+    const pointAnimations = animationEvents.filter(e => e.type === 'point');
+    expect(pointAnimations.length).toBeGreaterThan(0);
 
     // Player should receive both base points and bonus
     expect(mockPlayer.addPoints).toHaveBeenCalledWith(1);
     expect(mockPlayer.addPoints).toHaveBeenCalledWith(2);
+
+    // Clean up
+    eventBus.clear(EventTypes.COMBO_ACHIEVED);
+    eventBus.clear(EventTypes.ANIMATION_REQUESTED);
   });
 
   test('defeatEnemy resets streak for non-player initiators', () => {

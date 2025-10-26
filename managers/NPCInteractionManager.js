@@ -1,254 +1,131 @@
-import { TILE_TYPES } from '../core/constants.js';
 import { Sign } from '../ui/Sign.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
+import { isAdjacent } from '../core/utils/DirectionUtils.js';
+import { NPC_CONFIG } from '../config/NPCConfig.js';
 
 export class NPCInteractionManager {
     constructor(game) {
         this.game = game;
+        this.npcConfig = NPC_CONFIG;
     }
 
-    // Food/water trade logic (moved from interactWithNPC)
+    // Food/water trade
     tradeFoodForWater(foodType) {
         const index = this.game.player.inventory.findIndex(item => item.type === 'food' && item.foodType.includes(foodType));
         if (index >= 0 && this.game.player.inventory.length < 6) {
             this.game.player.inventory.splice(index, 1);
             this.game.player.inventory.push({ type: 'water' });
-            this.game.uiManager.updatePlayerStats();
+            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         } else if (index >= 0 && this.game.player.inventory.length >= 6) {
-            this.game.uiManager.addMessageToLog('Inventory is full! Cannot complete trade.');
+            // Use event instead of direct UIManager call
+            eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
+                text: 'Inventory is full! Cannot complete trade.',
+                category: 'trade',
+                priority: 'warning',
+                timestamp: Date.now()
+            });
         }
     }
 
-    // Interaction logic for each NPC type
-    interactWithPenne(gridCoords) {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (targetTile !== TILE_TYPES.PENNE) return false;
+    // Factory for NPC handlers
+    _createNPCInteractionHandler(npcName) {
+        const config = this.npcConfig[npcName];
+        if (!config) return null;
 
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (isAdjacent) {
-            this.game.uiManager.showBarterWindow('penne');
-            return true;
-        }
-        return false;
-    }
+        return (gridCoords) => {
+            const playerPos = this.game.player.getPosition();
+            const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+            if (targetTile !== config.tileType) return false;
 
-    interactWithSquig(gridCoords) {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (targetTile !== TILE_TYPES.SQUIG) return false;
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
 
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (isAdjacent) {
-            this.game.uiManager.showBarterWindow('squig');
-            return true;
-        }
-        return false;
-    }
-
-    interactWithRune(gridCoords) {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (targetTile !== TILE_TYPES.RUNE) return false;
-
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (isAdjacent) {
-            this.game.uiManager.showBarterWindow('rune');
-            return true;
-        }
-        return false;
-    }
-
-    interactWithNib(gridCoords) {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (targetTile !== TILE_TYPES.NIB) return false;
-
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (isAdjacent) {
-            this.game.uiManager.showBarterWindow('nib');
-            return true;
-        }
-        return false;
-    }
-
-    interactWithMark(gridCoords) {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (targetTile !== TILE_TYPES.MARK) return false;
-
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (isAdjacent) {
-            this.game.uiManager.showBarterWindow('mark');
-            return true;
-        }
-        return false;
-    }
-
-    interactWithAxelotl(gridCoords) {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (targetTile !== TILE_TYPES.AXELOTL) return false;
-
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (isAdjacent) {
-            this.game.uiManager.showBarterWindow('axelotl');
-            return true;
-        }
-        return false;
-    }
-
-    interactWithGouge(gridCoords) {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (targetTile !== TILE_TYPES.GOUGE) return false;
-
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (isAdjacent) {
-            this.game.uiManager.showBarterWindow('gouge');
-            return true;
-        }
-        return false;
-    }
-
-    interactWithCrayn(gridCoords) {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (targetTile !== TILE_TYPES.CRAYN) return false;
-
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (isAdjacent) {
-            const npcData = Sign.getDialogueNpcData('crayn');
-            if (npcData) {
-                const message = npcData.messages[npcData.currentMessageIndex];
-                this.game.displayingMessageForSign = { message: message, type: 'npc' };
-                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
-                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+            if (isAdjacent(dx, dy)) {
+                if (config.action === 'barter') {
+                    // Use event instead of direct UIManager call
+                    eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                        type: 'barter',
+                        npc: npcName,
+                        playerPos: playerPos,
+                        npcPos: gridCoords
+                    });
+                } else if (config.action === 'dialogue') {
+                    const npcData = Sign.getDialogueNpcData(npcName);
+                    if (npcData) {
+                        const message = npcData.messages[npcData.currentMessageIndex];
+                        this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                        // Use event instead of direct UIManager call
+                        eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                            type: 'sign',
+                            message: message,
+                            portrait: npcData.portrait,
+                            name: npcData.name
+                        });
+                        npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+                    }
+                }
+                return true;
             }
-            return true;
-        }
-        return false;
+            return false;
+        };
     }
 
-    interactWithFelt(gridCoords) {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (targetTile !== TILE_TYPES.FELT) return false;
-
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (isAdjacent) {
-            const npcData = Sign.getDialogueNpcData('felt');
-            if (npcData) {
-                const message = npcData.messages[npcData.currentMessageIndex];
-                this.game.displayingMessageForSign = { message: message, type: 'npc' };
-                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
-                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
-            }
-            return true;
-        }
-        return false;
+    // Check adjacency and interact
+    _interactWithNPC(gridCoords, npcName) {
+        const handler = this._createNPCInteractionHandler(npcName);
+        return handler ? handler(gridCoords) : false;
     }
 
-    interactWithForge(gridCoords) {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (targetTile !== TILE_TYPES.FORGE) return false;
+    // Factory pattern interactions
+    interactWithPenne(gridCoords) { return this._interactWithNPC(gridCoords, 'penne'); }
+    interactWithSquig(gridCoords) { return this._interactWithNPC(gridCoords, 'squig'); }
+    interactWithRune(gridCoords) { return this._interactWithNPC(gridCoords, 'rune'); }
+    interactWithNib(gridCoords) { return this._interactWithNPC(gridCoords, 'nib'); }
+    interactWithMark(gridCoords) { return this._interactWithNPC(gridCoords, 'mark'); }
+    interactWithAxelotl(gridCoords) { return this._interactWithNPC(gridCoords, 'axelotl'); }
+    interactWithGouge(gridCoords) { return this._interactWithNPC(gridCoords, 'gouge'); }
+    interactWithCrayn(gridCoords) { return this._interactWithNPC(gridCoords, 'crayn'); }
+    interactWithFelt(gridCoords) { return this._interactWithNPC(gridCoords, 'felt'); }
+    interactWithForge(gridCoords) { return this._interactWithNPC(gridCoords, 'forge'); }
 
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (isAdjacent) {
-            const npcData = Sign.getDialogueNpcData('forge');
-            if (npcData) {
-                const message = npcData.messages[npcData.currentMessageIndex];
-                this.game.displayingMessageForSign = { message: message, type: 'npc' };
-                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
-                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    // Force interaction for pathing adjacency (subset of triggerInteractAt logic)
+    // Force interaction for pathing
     forceInteractAt(gridCoords) {
         const playerPos = this.game.player.getPosition();
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);
-        const isAdjacent = (dx <= 1 && dy <= 1) && !(dx === 0 && dy === 0);
-        if (!isAdjacent) return;
+        if (!isAdjacent(dx, dy)) return;
 
-        // Check NPC types
-        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.PENNE) {
-            this.game.uiManager.showBarterWindow('penne');
-            return;
-        }
-        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.SQUIG) {
-            this.game.uiManager.showBarterWindow('squig');
-            return;
-        }
-        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.RUNE) {
-            this.game.uiManager.showBarterWindow('rune');
-            return;
-        }
-        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.NIB) {
-            this.game.uiManager.showBarterWindow('nib');
-            return;
-        }
-        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.CRAYN) {
-            const npcData = Sign.getDialogueNpcData('crayn');
-            if (npcData) {
-                const message = npcData.messages[npcData.currentMessageIndex];
-                this.game.displayingMessageForSign = { message: message, type: 'npc' };
-                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
-                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+
+        // Find and trigger NPC
+        for (const [npcName, config] of Object.entries(this.npcConfig)) {
+            if (targetTile === config.tileType) {
+                if (config.action === 'barter') {
+                    // Use event instead of direct UIManager call
+                    eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                        type: 'barter',
+                        npc: npcName,
+                        playerPos: playerPos,
+                        npcPos: gridCoords
+                    });
+                } else if (config.action === 'dialogue') {
+                    const npcData = Sign.getDialogueNpcData(npcName);
+                    if (npcData) {
+                        const message = npcData.messages[npcData.currentMessageIndex];
+                        this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                        // Use event instead of direct UIManager call
+                        eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                            type: 'sign',
+                            message: message,
+                            portrait: npcData.portrait,
+                            name: npcData.name
+                        });
+                        npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+                    }
+                }
+                return;
             }
-            return;
-        }
-        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FELT) {
-            const npcData = Sign.getDialogueNpcData('felt');
-            if (npcData) {
-                const message = npcData.messages[npcData.currentMessageIndex];
-                this.game.displayingMessageForSign = { message: message, type: 'npc' };
-                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
-                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
-            }
-            return;
-        }
-        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.FORGE) {
-            const npcData = Sign.getDialogueNpcData('forge');
-            if (npcData) {
-                const message = npcData.messages[npcData.currentMessageIndex];
-                this.game.displayingMessageForSign = { message: message, type: 'npc' };
-                this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
-                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
-            }
-            return;
-        }
-        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.AXELOTL) {
-            this.game.uiManager.showBarterWindow('axelotl');
-            return;
-        }
-        if (this.game.grid[gridCoords.y]?.[gridCoords.x] === TILE_TYPES.GOUGE) {
-            this.game.uiManager.showBarterWindow('gouge');
-            return;
         }
     }
 }

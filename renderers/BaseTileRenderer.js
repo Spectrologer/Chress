@@ -4,6 +4,7 @@ import { TextureDetector } from './TextureDetector.js';
 import { WallTileRenderer } from './WallTileRenderer.js';
 import { ItemTileRenderer } from './ItemTileRenderer.js';
 import { StructureTileRenderer } from './StructureTileRenderer.js';
+import { TileStrategyRegistry } from './strategies/TileStrategyRegistry.js';
 
 export class BaseTileRenderer {
     constructor(images, textureDetector, multiTileHandler, tileSize) {
@@ -15,6 +16,15 @@ export class BaseTileRenderer {
         this.wallRenderer = new WallTileRenderer(images, tileSize);
         this.itemRenderer = new ItemTileRenderer(images, tileSize);
         this.structureRenderer = new StructureTileRenderer(images, multiTileHandler, tileSize);
+
+        // Initialize the strategy registry
+        this.strategyRegistry = new TileStrategyRegistry(
+            images,
+            tileSize,
+            multiTileHandler,
+            this.wallRenderer,
+            this.structureRenderer
+        );
     }
 
     // Main tile rendering dispatcher for basic tiles
@@ -25,137 +35,12 @@ export class BaseTileRenderer {
         // Handle object tiles
         const actualType = tileType && tileType.type ? tileType.type : tileType;
 
-        if (actualType === TILE_TYPES.FLOOR) {
-            this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-        } else if (actualType === TILE_TYPES.EXIT) {
-            this.renderExitTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-        } else if (actualType === TILE_TYPES.WALL) {
-            this.wallRenderer.renderWallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-        } else if (actualType === TILE_TYPES.ROCK) {
-            this.wallRenderer.renderRockTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.GRASS || actualType === TILE_TYPES.SHRUBBERY) {
-            this.wallRenderer.renderGrassTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.WATER) {
-            this.renderWaterTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-        } else if (actualType === TILE_TYPES.FOOD) {
-            this.itemRenderer.renderFoodTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.AXE) {
-            this.itemRenderer.renderAxeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.HAMMER) {
-            this.itemRenderer.renderHammerTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.BISHOP_SPEAR) {
-            this.itemRenderer.renderSpearTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.HORSE_ICON) {
-            this.itemRenderer.renderHorseIconTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.BOMB) {
-            this.itemRenderer.renderBombTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.HEART) {
-            this.itemRenderer.renderHeartTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.NOTE) {
-            this.itemRenderer.renderNoteTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.SIGN) {
-            this.itemRenderer.renderSignTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.BOOK_OF_TIME_TRAVEL) {
-            this.itemRenderer.renderBookTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.BOW) {
-            this.itemRenderer.renderBowTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.HOUSE) {
-            this.structureRenderer.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.WELL) {
-            this.structureRenderer.renderWellTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.DEADTREE) {
-            this.structureRenderer.renderDeadTreeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.ENEMY) {
-            this.structureRenderer.renderEnemyTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.PENNE) {
-            this.structureRenderer.renderPenneTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.SQUIG) {
-            this.structureRenderer.renderSquigTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.RUNE) {
-            this.structureRenderer.renderRuneTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.NIB) {
-            this.structureRenderer.renderNibTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.MARK) {
-            this.structureRenderer.renderMarkTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.LIZARDY_STATUE ||
-                   actualType === TILE_TYPES.LIZARDO_STATUE ||
-                   actualType === TILE_TYPES.LIZARDEAUX_STATUE ||
-                   actualType === TILE_TYPES.ZARD_STATUE ||
-                   actualType === TILE_TYPES.LAZERD_STATUE ||
-                   actualType === TILE_TYPES.LIZORD_STATUE) {
-            this.structureRenderer.renderStatueTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this, actualType);
-         } else if (actualType === TILE_TYPES.BOMB_STATUE ||
-                 actualType === TILE_TYPES.SPEAR_STATUE ||
-                 actualType === TILE_TYPES.BOW_STATUE ||
-                 actualType === TILE_TYPES.HORSE_STATUE ||
-                 actualType === TILE_TYPES.BOOK_STATUE ||
-                 actualType === TILE_TYPES.SHOVEL_STATUE) {
-             this.structureRenderer.renderStatueTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this, actualType);
-        } else if (actualType === TILE_TYPES.CRAYN) {
-            this.structureRenderer.renderCraynTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.FELT) {
-            this.structureRenderer.renderFeltTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.FORGE) {
-            this.structureRenderer.renderForgeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.SHACK) {
-            this.structureRenderer.renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.AXELOTL) {
-            this.structureRenderer.renderAxelotlTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.GOUGE) {
-            this.structureRenderer.renderGougeTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.CISTERN) {
-            this.structureRenderer.renderCisternTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.SHOVEL) {
-            this.itemRenderer.renderShovelTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.PITFALL) {
-            this.structureRenderer.renderPitfallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-        } else if (actualType === TILE_TYPES.PORT) {
-            // PORT tiles are invisible overlays. Render the structure tile underneath them.
-            const cisternInfo = this.multiTileHandler.findCisternPosition(x, y, grid);
-            if (cisternInfo) {
-                // The PORT is the top part of the cistern.
-                this.structureRenderer.renderCisternTop(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-                return; // Return to avoid chessboard tinting on this tile
-            }
-
-            const shackInfo = this.multiTileHandler.findShackPosition(x, y, grid);
-            if (shackInfo) {
-                this.structureRenderer.renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-                return;
-            }
-
-            const houseInfo = this.multiTileHandler.findHousePosition(x, y, grid);
-            if (houseInfo) {
-                this.structureRenderer.renderHouseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
-                return;
-            }
-
-            // Interior zones use PORT as doors that transition back to surface; they are not holes.
-            // Zone level 5 corresponds to interior zones in RenderManager. Don't render hole sprite there.
-            if (zoneLevel === 5) {
-                // Render the underlying floor/house texture for interior tiles and return.
-                this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-                return;
-            }
-
-            // If it's not a door or cistern and not interior, it's a simple hole from a shovel
-            this.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-            // If this PORT has a portKind (stairdown/stairup), draw the corresponding doodad
-            if (tileType && tileType.portKind) {
-                if (tileType.portKind === 'stairdown' && RendererUtils.isImageLoaded(this.images, 'stairdown')) {
-                    ctx.drawImage(this.images.stairdown, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-                    return;
-                } else if (tileType.portKind === 'stairup' && RendererUtils.isImageLoaded(this.images, 'stairup')) {
-                    ctx.drawImage(this.images.stairup, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-                    return;
-                }
-            }
-            if (RendererUtils.isImageLoaded(this.images, 'hole')) {
-                ctx.drawImage(this.images.hole, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-            }
-        } else if (actualType === TILE_TYPES.TABLE) {
-            this.structureRenderer.renderTableTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this);
+        // Try to use strategy pattern
+        const strategy = this.strategyRegistry.getStrategy(actualType);
+        if (strategy) {
+            strategy.render(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this, tileType);
         } else {
+            // Fallback to floor tile for unknown types
             this.renderFloorTile(ctx, pixelX, pixelY, actualType);
         }
 

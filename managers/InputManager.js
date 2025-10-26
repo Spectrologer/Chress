@@ -1,47 +1,53 @@
-import { InputBindings } from './InputBindings.js';
-import { InteractionController } from './InteractionController.js';
+import { InputController } from '../controllers/InputController.js';
 
-// Thin facade preserving the original InputManager public API while delegating
-// responsibilities to InputBindings (DOM + normalized events) and
-// InteractionController (pathfinding, movement, executing paths).
+/**
+ * InputManager - Thin facade for backward compatibility
+ *
+ * Previously delegated to three separate systems:
+ * - InputBindings (DOM event setup)
+ * - InteractionController (pathfinding, movement)
+ * - PointerInput (pointer event handling)
+ *
+ * Now delegates to a single unified InputController that handles all input
+ * responsibilities with pointer events as the primary input method.
+ */
 export class InputManager {
-    constructor(game, itemUsageManager) {
+    constructor(game, inventoryService) {
         this.game = game;
-        this.itemUsageManager = itemUsageManager;
+        this.inventoryService = inventoryService;
 
-    // Pass a key handler so path execution and exit handling route through
-    // this InputManager.handleKeyPress (allows tests to spy on it). Also pass
-    // an exit handler so double-tap exit logic can call back into the facade
-    // and be observable by tests.
-    this.interaction = new InteractionController(game, itemUsageManager, (ev) => this.handleKeyPress(ev), (x, y) => this.handleExitTap(x, y));
-        this.bindings = new InputBindings(game, {
-            // Route input bindings through the facade so tests and callers
-            // spying on InputManager.handleTap/handleKeyPress observe events.
-            handleTap: (x, y) => this.handleTap(x, y),
-            handleKeyPress: (ev) => this.handleKeyPress(ev)
-        }, (sx, sy) => this.interaction.convertScreenToGrid(sx, sy));
+        // Create InputController
+        this.controller = new InputController(game, inventoryService);
     }
 
-    setupControls() { this.bindings.setupControls(); }
-    setupTouchControls() { this.bindings.setupTouchControls && this.bindings.setupTouchControls(); }
+    setupControls() { this.controller.setupControls(); }
+    setupTouchControls() { this.controller.setupTouchControls(); }
+    destroy() { this.controller.destroy(); }
 
-    // Re-export commonly-used methods/fields so other modules/tests keep working
-    handleTap(screenX, screenY) { return this.interaction.handleTap(screenX, screenY); }
-    handleKeyPress(event) { return this.interaction.handleKeyPress(event); }
-    findPath(startX, startY, targetX, targetY) { return this.interaction.findPath(startX, startY, targetX, targetY); }
-    executePath(path) { return this.interaction.executePath(path); }
-    cancelPathExecution() { return this.interaction.cancelPathExecution(); }
-    addShackAtPlayerPosition() { return this.interaction.addShackAtPlayerPosition && this.interaction.addShackAtPlayerPosition(); }
-    convertScreenToGrid(x, y) { return this.interaction.convertScreenToGrid(x, y); }
-    // Keep a facade method that tests can spy on. Delegate the actual
-    // behavior to the controller's performExitTap to avoid recursion.
-    handleExitTap(x, y) { this.interaction.performExitTap(x, y); return; }
+    // Public API for tests
+    handleTap(screenX, screenY) { return this.controller.handleTap(screenX, screenY); }
 
-    // Expose some internal state used by tests/legacy code
-    get isExecutingPath() { return this.interaction.isExecutingPath; }
-    set isExecutingPath(v) { this.interaction.isExecutingPath = v; }
-    get currentPathSequence() { return this.interaction.currentPathSequence; }
-    set currentPathSequence(v) { this.interaction.currentPathSequence = v; }
-    get currentPathSequenceFallback() { return this.interaction.currentPathSequenceFallback; }
-    set currentPathSequenceFallback(v) { this.interaction.currentPathSequenceFallback = v; }
+    handleKeyPress(event) {
+        // Direct controller call
+        return this.controller.handleKeyPress(event);
+    }
+
+    findPath(startX, startY, targetX, targetY) { return this.controller.findPath(startX, startY, targetX, targetY); }
+    executePath(path) { return this.controller.executePath(path); }
+    cancelPathExecution() { return this.controller.cancelPathExecution(); }
+    addShackAtPlayerPosition() { return this.controller.addShackAtPlayerPosition(); }
+    convertScreenToGrid(x, y) { return this.controller.convertScreenToGrid(x, y); }
+
+    handleExitTap(x, y) {
+        // Direct controller call
+        return this.controller.handleExitTap(x, y);
+    }
+
+    // Expose state for tests/legacy
+    get isExecutingPath() { return this.controller.pathfindingController.isExecutingPath; }
+    set isExecutingPath(v) { this.controller.pathfindingController.isExecutingPath = v; }
+    get currentPathSequence() { return this.controller.pathfindingController.currentPathSequence; }
+    set currentPathSequence(v) { this.controller.pathfindingController.currentPathSequence = v; }
+    get currentPathSequenceFallback() { return this.controller.pathfindingController.currentPathSequenceFallback; }
+    set currentPathSequenceFallback(v) { this.controller.pathfindingController.currentPathSequenceFallback = v; }
 }

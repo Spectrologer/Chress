@@ -3,6 +3,8 @@
  */
 
 import { CombatManager } from '../managers/CombatManager.js';
+import { BombManager } from '../managers/BombManager.js';
+import { EnemyDefeatFlow } from '../managers/EnemyDefeatFlow.js';
 
 // Create minimal mocks for game, player, enemy used by CombatManager.defeatEnemy
 function makeMockGame() {
@@ -37,7 +39,10 @@ afterEach(() => {
 
 test('CombatManager.defeatEnemy updates chress:record:combo when player achieves new highest combo', () => {
     const game = makeMockGame();
-    const cm = new CombatManager(game, new Set());
+    // Use real instances for proper combo tracking
+    const mockBombManager = new BombManager(game);
+    const mockDefeatFlow = new EnemyDefeatFlow(game);
+    const cm = new CombatManager(game, new Set(), mockBombManager, mockDefeatFlow);
 
     // Simulate an enemy object
     const enemy = {

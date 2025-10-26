@@ -1,129 +1,101 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
-import { BombManager } from './BombManager.js';
+import { TILE_TYPES } from '../core/constants.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils.js';
+import audioManager from '../utils/AudioManager.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { safeCall, safeGet } from '../utils/SafeServiceCall.js';
 
 export class CombatManager {
-    constructor(game, occupiedTiles) {
+    /**
+     * CombatManager handles all combat-related logic including enemy movements,
+     * collisions, and defeat flow. Dependencies are injected to enable testing
+     * and avoid circular dependencies.
+     *
+     * @param {Object} game - The main game instance
+     * @param {Set} occupiedTiles - Set of tiles occupied during enemy turns
+     * @param {Object} bombManager - Manages bomb timing and explosions
+     * @param {Object} defeatFlow - Handles enemy defeat logic and rewards
+     */
+    constructor(game, occupiedTiles, bombManager, defeatFlow) {
         this.game = game;
         this.occupiedTiles = occupiedTiles;
-        this.game.pointAnimations = this.game.pointAnimations || [];
-        this.bombManager = new BombManager(game);
+        this.bombManager = bombManager;
+        this.defeatFlow = defeatFlow;
     }
 
     // Safe accessor for player's current zone to support tests/mocks
     getCurrentZone() {
         try {
-            if (this.game && this.game.player) {
-                if (typeof this.game.player.getCurrentZone === 'function') return this.game.player.getCurrentZone();
-                if (this.game.player.currentZone) return this.game.player.currentZone;
-            }
-        } catch (e) { /* fall through */ }
+            const zone = safeCall(this.game.player, 'getCurrentZone');
+            if (zone) return zone;
+
+            const currentZone = safeGet(this.game, 'player.currentZone');
+            if (currentZone) return currentZone;
+        } catch (e) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'CombatManager',
+                action: 'get current zone'
+            });
+        }
         return { x: 0, y: 0, dimension: 0, depth: 0 };
     }
 
     addPointAnimation(x, y, amount) {
-        this.game.animationManager.addPointAnimation(x, y, amount);
-        this.game.soundManager.playSound('point'); // Play a sound for getting points
+        // Delegate to defeatFlow
+        this.defeatFlow.addPointAnimation(x, y, amount);
     }
 
     handleEnemyDefeated(enemy, currentZone) {
-        this.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
-        this.game.player.addPoints(enemy.getPoints());
-        this.game.defeatedEnemies.add(`${enemy.id}`);
-        // Only play generic attack SFX if the event hasn't been suppressed by
-        // the initiator (e.g., player played 'slash' when using an axe).
-        try {
-            if (!enemy._suppressAttackSound) this.game.soundManager.playSound('attack');
-        } catch (e) {}
-
-        // Remove from zone data to prevent respawn
-    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
-    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
-        if (this.game.zones.has(zoneKey)) {
-            const zoneData = this.game.zones.get(zoneKey);
-            zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
-            this.game.zones.set(zoneKey, zoneData);
-        }
+        // Delegate to defeatFlow without combo tracking (initiator=null)
+        this.defeatFlow.executeDefeat(enemy, currentZone, null);
     }
 
     // initiator: optional string e.g. 'player', 'bomb', null
     // Returns an object { defeated: bool, consecutiveKills: number }
     defeatEnemy(enemy, initiator = null) {
-        // Prevent double defeat/points by checking if already defeated
-        if (this.game.defeatedEnemies.has(`${enemy.id}`)) {
-            return { defeated: false, consecutiveKills: 0 };
+        const currentZone = this.getCurrentZone();
+        // Delegate to defeatFlow for all defeat logic including combo tracking
+        return this.defeatFlow.executeDefeat(enemy, currentZone, initiator);
+    }
+
+    /**
+     * Handle player attack on an enemy
+     * @param {Object} enemy - The enemy being attacked
+     * @param {Object} playerPos - Current player position {x, y}
+     * @returns {Object} Result of the attack including defeated status
+     */
+    handlePlayerAttack(enemy, playerPos) {
+        // Start player attack animation
+        this.game.player.startAttackAnimation();
+
+        // Enemy bump animation (pushed back from player)
+        enemy.startBump(playerPos.x - enemy.x, playerPos.y - enemy.y);
+
+        // Set player action state
+        this.game.player.setAction('attack');
+
+        // Play axe sound if player has the ability
+        if (this.game.player.abilities?.has?.('axe')) {
+            audioManager.playSound('slash', { game: this.game });
+            enemy._suppressAttackSound = true;
         }
-        if (enemy.health > 0) {
-            enemy.takeDamage(999);
-        }
-    const currentZone = this.getCurrentZone();
-        // Ensure enemy has valid coordinates
-        const enemyX = Number.isFinite(enemy.x) ? enemy.x : 0;
-        const enemyY = Number.isFinite(enemy.y) ? enemy.y : 0;
-    this.addPointAnimation(enemyX, enemyY, enemy.getPoints());
-    this.game.player.addPoints(enemy.getPoints());
-    this.game.defeatedEnemies.add(`${enemy.id}`);
-        try {
-            if (!enemy._suppressAttackSound) this.game.soundManager.playSound('attack');
-        } catch (e) {}
-        // Remove from zone data (enemy will be removed from game.enemies by checkCollisions)
-    const depthSuffix = (currentZone.dimension === 2) ? `:z-${currentZone.depth || (this.game.player.undergroundDepth || 1)}` : '';
-    const zoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}${depthSuffix}`;
-        if (this.game.zones.has(zoneKey)) {
-            const zoneData = this.game.zones.get(zoneKey);
-            zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
-            this.game.zones.set(zoneKey, zoneData);
-        }
-        // If the initiator was the player, increment their consecutive kill counter
-        let consecutive = 0;
-        try {
-            if (initiator === 'player' && this.game.player) {
-                // Only increment the consecutive kill counter when the previous
-                // action was an attack that resulted in a kill (combo: attack:kill attack:kill)
-                const player = this.game.player;
-                if (player.lastActionType === 'attack' && player.lastActionResult === 'kill') {
-                    player.consecutiveKills = (player.consecutiveKills || 0) + 1;
-                } else {
-                    // Start a new streak - this kill counts as 1
-                    player.consecutiveKills = 1;
-                }
-                player.lastActionResult = 'kill';
-                consecutive = player.consecutiveKills;
-                // If combo of 2 or more, show multiplier animation and play ding
-                try {
-                    if (consecutive >= 2 && this.game.animationManager) {
-                        this.game.animationManager.addMultiplierAnimation(enemyX, enemyY, consecutive);
-                        if (this.game.soundManager && typeof this.game.soundManager.playSound === 'function') {
-                            this.game.soundManager.playSound('point'); // reuse point sound as ding if specific ding asset missing
-                        }
-                        // Award combo bonus points equal to the combo multiplier (e.g., x2 -> +2)
-                        try {
-                            const bonus = consecutive;
-                            // Add a point animation for the bonus and increment player points
-                            this.addPointAnimation(enemyX, enemyY, bonus);
-                            if (this.game.player && typeof this.game.player.addPoints === 'function') {
-                                this.game.player.addPoints(bonus);
-                            }
-                            // Persist highest combo (consecutive kills) to localStorage if it exceeds previous record
-                            try {
-                                const prevCombo = parseInt(localStorage.getItem('chress:record:combo') || '0', 10) || 0;
-                                if (consecutive > prevCombo) {
-                                    localStorage.setItem('chress:record:combo', String(consecutive));
-                                }
-                            } catch (e) {}
-                        } catch (e) {}
-                    }
-                } catch (e) {}
-            } else if (this.game.player) {
-                // Non-player kills (bombs, environment) reset the streak
-                this.game.player.consecutiveKills = 0;
-                this.game.player.lastActionResult = null;
-                consecutive = 0;
+
+        // Defeat the enemy
+        const result = this.defeatEnemy(enemy, 'player');
+
+        // Handle post-defeat animations based on combo
+        if (result?.defeated) {
+            if (result.consecutiveKills >= 2) {
+                // Backflip on combo kills (2+)
+                this.game.player.startBackflip();
+            } else {
+                // Regular bump towards enemy on single kill
+                this.game.player.startBump(enemy.x - playerPos.x, enemy.y - playerPos.y);
             }
-        } catch (e) { /* non-fatal */ }
+        }
 
-        try { this.game.uiManager.updatePlayerStats(); } catch (e) {}
-
-        return { defeated: true, consecutiveKills: consecutive };
+        return result;
     }
 
     handleSingleEnemyMovement(enemy) {
@@ -163,7 +135,7 @@ export class CombatManager {
                 // Add the enemy to the corresponding underground zone's data
                 const currentZone = this.getCurrentZone();
                 const depth = this.game.player.undergroundDepth || 1;
-                const undergroundZoneKey = `${currentZone.x},${currentZone.y}:2:z-${depth}`;
+                const undergroundZoneKey = createZoneKey(currentZone.x, currentZone.y, 2, depth);
                 if (this.game.zones.has(undergroundZoneKey)) {
                     const undergroundZoneData = this.game.zones.get(undergroundZoneKey);
                     // Find a valid spawn point for the enemy in the pitfall zone
@@ -221,10 +193,16 @@ export class CombatManager {
                     midY = enemy.y;
                 }
 
-                this.game.animationManager.addHorseChargeAnimation({
-                    startPos: { x: enemy.lastX, y: enemy.lastY },
-                    midPos: { x: midX, y: midY },
-                    endPos: { x: enemy.x, y: enemy.y },
+                // Emit event instead of directly calling animationManager
+                eventBus.emit(EventTypes.ANIMATION_REQUESTED, {
+                    type: 'horseCharge',
+                    x: enemy.x,
+                    y: enemy.y,
+                    data: {
+                        startPos: { x: enemy.lastX, y: enemy.lastY },
+                        midPos: { x: midX, y: midY },
+                        endPos: { x: enemy.x, y: enemy.y }
+                    }
                 });
             }
         }
@@ -237,15 +215,13 @@ export class CombatManager {
 
     checkCollisions() {
         // Delegate bomb timing checks to BombManager
-        if (this.bombManager && typeof this.bombManager.tickBombsAndExplode === 'function') {
-            this.bombManager.tickBombsAndExplode();
-        }
+        safeCall(this.bombManager, 'tickBombsAndExplode');
 
         const playerPos = this.game.player.getPosition();
         const remainingEnemies = [];
 
         for (const enemy of this.game.enemies) {
-            const enemyIsDead = (typeof enemy.isDead === 'function') ? enemy.isDead() : (enemy.health <= 0);
+            const enemyIsDead = safeCall(enemy, 'isDead') ?? (enemy.health <= 0);
             if (enemyIsDead) {
                 this.defeatEnemy(enemy);
                 continue;
@@ -264,7 +240,14 @@ export class CombatManager {
         }
 
         this.game.enemies = remainingEnemies;
-        if (this.game.uiManager && typeof this.game.uiManager.updatePlayerStats === 'function') this.game.uiManager.updatePlayerStats();
+
+        // Emit event for player stats change instead of calling UIManager directly
+        eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {
+            health: this.game.player.health,
+            points: this.game.player.points,
+            hunger: this.game.player.hunger,
+            thirst: this.game.player.thirst
+        });
     }
 
 
