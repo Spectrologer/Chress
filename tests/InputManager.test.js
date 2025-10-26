@@ -58,6 +58,15 @@ describe('InputManager', () => {
       incrementBombActions: jest.fn(),
       combatManager: {
         addPointAnimation: jest.fn(),
+        handlePlayerAttack: jest.fn().mockImplementation((enemy, playerPos) => {
+          // Mock the behavior of handlePlayerAttack
+          mockPlayer.startAttackAnimation();
+          enemy.takeDamage(999);
+          mockGame.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
+          mockPlayer.addPoints(enemy.getPoints());
+          mockGame.defeatedEnemies.add(enemy.id);
+          mockGame.enemies = mockGame.enemies.filter(e => e !== enemy);
+        }),
         defeatEnemy: jest.fn().mockImplementation((enemy) => {
           enemy.takeDamage(999);
           mockGame.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
@@ -74,6 +83,18 @@ describe('InputManager', () => {
       },
       consentManager: {
         forceShowConsentBanner: jest.fn()
+      },
+      turnManager: {
+        handleTurnCompletion: jest.fn().mockImplementation(() => {
+          // Start enemy turns if not just entered zone
+          const shouldStartEnemyTurns = !mockGame.justEnteredZone;
+          // Reset justEnteredZone flag
+          mockGame.justEnteredZone = false;
+
+          if (shouldStartEnemyTurns) {
+            mockGame.startEnemyTurns();
+          }
+        })
       },
       animationScheduler: {
         createSequence: jest.fn(() => {
@@ -208,14 +229,14 @@ describe('InputManager', () => {
       mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
         left: 0, top: 0, width: 576, height: 576
       });
-      const handleExitTapSpy = jest.spyOn(inputManager, 'handleExitTap');
+      const performExitTapSpy = jest.spyOn(inputManager.controller.coordinator, 'performExitTap');
 
       // First tap (when player is at the exit) - center of tile 2: 160
       inputManager.handleTap(160, 160);
       // Second tap (double tap on same exit)
       inputManager.handleTap(160, 160);
 
-      expect(handleExitTapSpy).toHaveBeenCalledWith(2, 2);
+      expect(performExitTapSpy).toHaveBeenCalledWith(2, 2);
     });
 
     test('handles port double tap', () => {
@@ -244,7 +265,7 @@ describe('InputManager', () => {
   describe('handleExitTap', () => {
     test('triggers zone transition based on exit position', () => {
       mockGame.grid[1][0] = TILE_TYPES.EXIT; // Left edge
-      const handleKeyPressSpy = jest.spyOn(inputManager, 'handleKeyPress');
+      const handleKeyPressSpy = jest.spyOn(inputManager.controller.coordinator, 'handleKeyPress');
 
       inputManager.handleExitTap(0, 1);
 
@@ -307,7 +328,7 @@ describe('InputManager', () => {
   describe('executePath', () => {
     test('executes path with timing delays', () => {
       jest.useFakeTimers();
-      const handleKeyPressSpy = jest.spyOn(inputManager, 'handleKeyPress');
+      const handleKeyPressSpy = jest.spyOn(inputManager.controller.coordinator, 'handleKeyPress');
 
       inputManager.executePath(['arrowright', 'arrowdown']);
 
@@ -365,7 +386,7 @@ describe('InputManager', () => {
         // no-op for this test
       });
 
-      const handleKeyPressSpy = jest.spyOn(inputManager, 'handleKeyPress');
+      const handleKeyPressSpy = jest.spyOn(inputManager.controller.coordinator, 'handleKeyPress');
 
       inputManager.executePath(['arrowright', 'arrowdown']);
 

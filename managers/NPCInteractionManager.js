@@ -1,13 +1,13 @@
-import { TILE_TYPES } from '../core/constants.js';
 import { Sign } from '../ui/Sign.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { isAdjacent } from '../core/utils/DirectionUtils.js';
+import { NPC_CONFIG } from '../config/NPCConfig.js';
 
 export class NPCInteractionManager {
     constructor(game) {
         this.game = game;
-        this.npcConfig = this._initializeNPCConfig();
+        this.npcConfig = NPC_CONFIG;
     }
 
     // Food/water trade
@@ -18,24 +18,14 @@ export class NPCInteractionManager {
             this.game.player.inventory.push({ type: 'water' });
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         } else if (index >= 0 && this.game.player.inventory.length >= 6) {
-            this.game.uiManager.addMessageToLog('Inventory is full! Cannot complete trade.');
+            // Use event instead of direct UIManager call
+            eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
+                text: 'Inventory is full! Cannot complete trade.',
+                category: 'trade',
+                priority: 'warning',
+                timestamp: Date.now()
+            });
         }
-    }
-
-    // NPC config mapping
-    _initializeNPCConfig() {
-        return {
-            penne: { tileType: TILE_TYPES.PENNE, action: 'barter' },
-            squig: { tileType: TILE_TYPES.SQUIG, action: 'barter' },
-            rune: { tileType: TILE_TYPES.RUNE, action: 'barter' },
-            nib: { tileType: TILE_TYPES.NIB, action: 'barter' },
-            mark: { tileType: TILE_TYPES.MARK, action: 'barter' },
-            axelotl: { tileType: TILE_TYPES.AXELOTL, action: 'barter' },
-            gouge: { tileType: TILE_TYPES.GOUGE, action: 'barter' },
-            crayn: { tileType: TILE_TYPES.CRAYN, action: 'dialogue' },
-            felt: { tileType: TILE_TYPES.FELT, action: 'dialogue' },
-            forge: { tileType: TILE_TYPES.FORGE, action: 'dialogue' }
-        };
     }
 
     // Factory for NPC handlers
@@ -53,13 +43,25 @@ export class NPCInteractionManager {
 
             if (isAdjacent(dx, dy)) {
                 if (config.action === 'barter') {
-                    this.game.uiManager.showBarterWindow(npcName);
+                    // Use event instead of direct UIManager call
+                    eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                        type: 'barter',
+                        npc: npcName,
+                        playerPos: playerPos,
+                        npcPos: gridCoords
+                    });
                 } else if (config.action === 'dialogue') {
                     const npcData = Sign.getDialogueNpcData(npcName);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
                         this.game.displayingMessageForSign = { message: message, type: 'npc' };
-                        this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
+                        // Use event instead of direct UIManager call
+                        eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                            type: 'sign',
+                            message: message,
+                            portrait: npcData.portrait,
+                            name: npcData.name
+                        });
                         npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
                     }
                 }
@@ -100,13 +102,25 @@ export class NPCInteractionManager {
         for (const [npcName, config] of Object.entries(this.npcConfig)) {
             if (targetTile === config.tileType) {
                 if (config.action === 'barter') {
-                    this.game.uiManager.showBarterWindow(npcName);
+                    // Use event instead of direct UIManager call
+                    eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                        type: 'barter',
+                        npc: npcName,
+                        playerPos: playerPos,
+                        npcPos: gridCoords
+                    });
                 } else if (config.action === 'dialogue') {
                     const npcData = Sign.getDialogueNpcData(npcName);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
                         this.game.displayingMessageForSign = { message: message, type: 'npc' };
-                        this.game.uiManager.showSignMessage(message, npcData.portrait, npcData.name);
+                        // Use event instead of direct UIManager call
+                        eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                            type: 'sign',
+                            message: message,
+                            portrait: npcData.portrait,
+                            name: npcData.name
+                        });
                         npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
                     }
                 }

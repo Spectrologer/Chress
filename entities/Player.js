@@ -7,6 +7,8 @@ import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
 import { TileRegistry } from '../core/TileRegistry.js';
+import { isBomb } from '../utils/TileUtils.js';
+import GridIterator from '../utils/GridIterator.js';
 
 export class Player {
     constructor() {
@@ -73,9 +75,9 @@ export class Player {
 
         // Check if the new position is walkable
         if (this.isWalkable(newX, newY, grid, this.x, this.y)) {
-            // Check if moving to active player-set bomb
+            // Check if moving to active player-placed bomb (object bomb, not primitive pickup)
             const tile = grid[newY][newX];
-            if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
+            if (typeof tile === 'object' && isBomb(tile)) {
                 window.gameInstance.explodeBomb(newX, newY);
                 return false; // Explode and launch, don't move normally
             }
@@ -386,17 +388,14 @@ export class Player {
     }
 
     getValidSpawnPosition(game) {
-        const availableTiles = [];
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = game.grid[y][x];
-                const playerPos = this.getPosition();
-                const hasEnemy = game.enemies.some(e => e.x === x && e.y === y);
-                if ((tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) && !hasEnemy && !(x === playerPos.x && y === playerPos.y)) {
-                    availableTiles.push({x, y});
-                }
-            }
-        }
+        const playerPos = this.getPosition();
+        const availableTiles = GridIterator.findTiles(game.grid, (tile, x, y) => {
+            const hasEnemy = game.enemies.some(e => e.x === x && e.y === y);
+            return (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) &&
+                   !hasEnemy &&
+                   !(x === playerPos.x && y === playerPos.y);
+        });
+
         if (availableTiles.length > 0) {
             return availableTiles[Math.floor(Math.random() * availableTiles.length)];
         }

@@ -3,6 +3,7 @@ import logger from '../logger.js';
 import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
 import { BaseZoneHandler } from './BaseZoneHandler.js';
 import { findValidPlayerSpawn as _findValidPlayerSpawn } from '../zoneSpawnManager.js';
+import { isPort } from '../../utils/TileUtils.js';
 
 class UndergroundHandler extends BaseZoneHandler {
     constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets, exitSide) {
@@ -84,7 +85,7 @@ class UndergroundHandler extends BaseZoneHandler {
                     const tile = this.zoneGen.grid[sy][sx];
                     const isFloor = tile === TILE_TYPES.FLOOR || (tile && tile.type === TILE_TYPES.FLOOR);
                     const isExit = tile === TILE_TYPES.EXIT;
-                    const isObjectPort = tile && typeof tile === 'object' && tile.type === TILE_TYPES.PORT;
+                    const isObjectPort = isPort(tile);
 
                     // Only place on a plain floor tile
                     if (isFloor && !isExit && !isObjectPort) {

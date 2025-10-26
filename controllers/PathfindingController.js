@@ -1,6 +1,7 @@
 import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS } from '../core/constants.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
+import { isWithinGrid } from '../utils/GridUtils.js';
 
 /**
  * PathfindingController - Handles pathfinding and path execution
@@ -83,7 +84,7 @@ export class PathfindingController {
                 if (visited.has(key)) continue;
                 visited.add(key);
 
-                if (newX >= 0 && newX < GRID_SIZE && newY >= 0 && newY < GRID_SIZE &&
+                if (isWithinGrid(newX, newY) &&
                     this.game.player.isWalkable(newX, newY, this.game.grid, current.x, current.y)) {
                     const newPath = [...current.path, dir.key];
                     if (newX === targetX && newY === targetY) {
@@ -111,7 +112,7 @@ export class PathfindingController {
         for (const dir of directions) {
             const checkX = targetX + dir.dx;
             const checkY = targetY + dir.dy;
-            if (checkX >= 0 && checkX < GRID_SIZE && checkY >= 0 && checkY < GRID_SIZE) {
+            if (isWithinGrid(checkX, checkY)) {
                 if (this.game.player.isWalkable(checkX, checkY, this.game.grid, -1, -1)) {
                     return { x: checkX, y: checkY };
                 }

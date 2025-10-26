@@ -39,6 +39,24 @@ export const EventTypes = {
   UI_SHOW_MESSAGE: 'ui:show:message',
   UI_CLOSE_PANEL: 'ui:close:panel',
 
+  // UI Dialog Events (new)
+  UI_DIALOG_SHOW: 'ui:dialog:show',
+  UI_DIALOG_HIDE: 'ui:dialog:hide',
+  UI_CONFIRMATION_SHOW: 'ui:confirmation:show',
+  UI_CONFIRMATION_RESPONSE: 'ui:confirmation:response',
+  UI_OVERLAY_MESSAGE_SHOW: 'ui:overlay:message:show',
+  UI_OVERLAY_MESSAGE_HIDE: 'ui:overlay:message:hide',
+
+  // Specific UI Message Events (new)
+  UI_MESSAGE_LOG: 'ui:message:log',
+  UI_REGION_NOTIFICATION_SHOW: 'ui:region:notification:show',
+
+  // Specific Stats Events (new - to replace UI_UPDATE_STATS)
+  STATS_HEALTH_CHANGED: 'stats:health:changed',
+  STATS_POINTS_CHANGED: 'stats:points:changed',
+  STATS_HUNGER_CHANGED: 'stats:hunger:changed',
+  STATS_THIRST_CHANGED: 'stats:thirst:changed',
+
   // Inventory Events
   INVENTORY_CHANGED: 'inventory:changed',
   ITEM_USED: 'inventory:item:used',
@@ -49,6 +67,8 @@ export const EventTypes = {
   INPUT_PATH_CANCELLED: 'input:path:cancelled',
   INPUT_PATH_COMPLETED: 'input:path:completed',
   INPUT_EXIT_REACHED: 'input:exit:reached',
+  INPUT_TAP: 'input:tap',
+  INPUT_PLAYER_TILE_TAP: 'input:player:tile:tap',
 
   // Animation Events
   ANIMATION_REQUESTED: 'animation:requested',
@@ -197,4 +217,107 @@ export const EventTypes = {
  * @typedef {Object} InputExitReachedEvent
  * @property {number} x - X position of the exit
  * @property {number} y - Y position of the exit
+ */
+
+/**
+ * @typedef {Object} InputTapEvent
+ * @property {Object} gridCoords - Grid coordinates {x, y}
+ * @property {number} screenX - Screen X coordinate
+ * @property {number} screenY - Screen Y coordinate
+ * @property {boolean} handled - Whether the tap was handled by a UI component
+ */
+
+/**
+ * @typedef {Object} InputPlayerTileTapEvent
+ * @property {Object} gridCoords - Grid coordinates {x, y}
+ * @property {number} tileType - Type of tile the player is on
+ * @property {string|null} portKind - Port kind if on a port tile
+ */
+
+/**
+ * @typedef {Object} UIDialogShowEvent
+ * @property {string} type - Dialog type (barter, sign, statue, etc.)
+ * @property {string} [npc] - NPC name for barter dialogs
+ * @property {string} [message] - Message content for sign dialogs
+ * @property {string} [portrait] - Portrait image source
+ * @property {string} [name] - NPC or sign name
+ * @property {string} [buttonText] - Custom button text
+ * @property {Object} [playerPos] - Player position {x, y}
+ * @property {Object} [npcPos] - NPC position {x, y}
+ */
+
+/**
+ * @typedef {Object} UIDialogHideEvent
+ * @property {string} type - Dialog type to hide
+ */
+
+/**
+ * @typedef {Object} UIConfirmationShowEvent
+ * @property {string} message - Confirmation message to display
+ * @property {string} action - Action identifier (bishop_charge, knight_charge, bow_shot, etc.)
+ * @property {*} [data] - Additional data for the action
+ * @property {boolean} [persistent] - Whether message stays until manually dismissed
+ * @property {boolean} [largeText] - Whether to use large text styling
+ * @property {boolean} [useTypewriter] - Whether to use typewriter animation
+ */
+
+/**
+ * @typedef {Object} UIConfirmationResponseEvent
+ * @property {string} action - Action identifier that was confirmed/cancelled
+ * @property {boolean} confirmed - Whether the action was confirmed
+ * @property {*} [data] - Additional data from the confirmation
+ */
+
+/**
+ * @typedef {Object} UIOverlayMessageShowEvent
+ * @property {string} text - Message text (can include HTML)
+ * @property {string} [imageSrc] - Optional image source URL
+ * @property {boolean} [persistent] - Whether message stays until manually dismissed
+ * @property {boolean} [largeText] - Whether to use large text styling
+ * @property {boolean} [useTypewriter] - Whether to use typewriter animation
+ */
+
+/**
+ * @typedef {Object} UIMessageLogEvent
+ * @property {string} text - Message text to log
+ * @property {string} [category] - Message category (trade, treasure, combat, etc.)
+ * @property {string} [priority] - Message priority (info, warning, error)
+ * @property {number} [timestamp] - When the message was created
+ */
+
+/**
+ * @typedef {Object} UIRegionNotificationShowEvent
+ * @property {number} x - Zone x coordinate
+ * @property {number} y - Zone y coordinate
+ * @property {string} [regionName] - Pre-generated region name (optional)
+ */
+
+/**
+ * @typedef {Object} StatsHealthChangedEvent
+ * @property {number} oldValue - Previous health value
+ * @property {number} newValue - New health value
+ * @property {number} delta - Change in health (negative for damage)
+ * @property {string} [source] - Source of the change (combat, hunger, healing, etc.)
+ */
+
+/**
+ * @typedef {Object} StatsPointsChangedEvent
+ * @property {number} oldValue - Previous points value
+ * @property {number} newValue - New points value
+ * @property {number} delta - Change in points
+ * @property {string} [source] - Source of the change (enemy_defeat, treasure, combo, etc.)
+ */
+
+/**
+ * @typedef {Object} StatsHungerChangedEvent
+ * @property {number} oldValue - Previous hunger value
+ * @property {number} newValue - New hunger value
+ * @property {number} delta - Change in hunger
+ */
+
+/**
+ * @typedef {Object} StatsThirstChangedEvent
+ * @property {number} oldValue - Previous thirst value
+ * @property {number} newValue - New thirst value
+ * @property {number} delta - Change in thirst
  */

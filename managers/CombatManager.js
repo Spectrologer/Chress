@@ -1,27 +1,37 @@
 import { TILE_TYPES } from '../core/constants.js';
-import { BombManager } from './BombManager.js';
-import { EnemyDefeatFlow } from './EnemyDefeatFlow.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 import audioManager from '../utils/AudioManager.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { safeCall, safeGet } from '../utils/SafeServiceCall.js';
 
 export class CombatManager {
-    constructor(game, occupiedTiles) {
+    /**
+     * CombatManager handles all combat-related logic including enemy movements,
+     * collisions, and defeat flow. Dependencies are injected to enable testing
+     * and avoid circular dependencies.
+     *
+     * @param {Object} game - The main game instance
+     * @param {Set} occupiedTiles - Set of tiles occupied during enemy turns
+     * @param {Object} bombManager - Manages bomb timing and explosions
+     * @param {Object} defeatFlow - Handles enemy defeat logic and rewards
+     */
+    constructor(game, occupiedTiles, bombManager, defeatFlow) {
         this.game = game;
         this.occupiedTiles = occupiedTiles;
-        this.bombManager = new BombManager(game);
-        this.defeatFlow = new EnemyDefeatFlow(game);
+        this.bombManager = bombManager;
+        this.defeatFlow = defeatFlow;
     }
 
     // Safe accessor for player's current zone to support tests/mocks
     getCurrentZone() {
         try {
-            if (this.game && this.game.player) {
-                if (typeof this.game.player.getCurrentZone === 'function') return this.game.player.getCurrentZone();
-                if (this.game.player.currentZone) return this.game.player.currentZone;
-            }
+            const zone = safeCall(this.game.player, 'getCurrentZone');
+            if (zone) return zone;
+
+            const currentZone = safeGet(this.game, 'player.currentZone');
+            if (currentZone) return currentZone;
         } catch (e) {
             errorHandler.handle(e, ErrorSeverity.WARNING, {
                 component: 'CombatManager',
@@ -205,15 +215,13 @@ export class CombatManager {
 
     checkCollisions() {
         // Delegate bomb timing checks to BombManager
-        if (this.bombManager && typeof this.bombManager.tickBombsAndExplode === 'function') {
-            this.bombManager.tickBombsAndExplode();
-        }
+        safeCall(this.bombManager, 'tickBombsAndExplode');
 
         const playerPos = this.game.player.getPosition();
         const remainingEnemies = [];
 
         for (const enemy of this.game.enemies) {
-            const enemyIsDead = (typeof enemy.isDead === 'function') ? enemy.isDead() : (enemy.health <= 0);
+            const enemyIsDead = safeCall(enemy, 'isDead') ?? (enemy.health <= 0);
             if (enemyIsDead) {
                 this.defeatEnemy(enemy);
                 continue;

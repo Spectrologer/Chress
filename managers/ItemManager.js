@@ -1,4 +1,4 @@
-import { TILE_TYPES } from '../core/constants.js';
+import { TILE_TYPES, INVENTORY_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants.js';
 import { InventoryService } from './inventory/InventoryService.js';
 import { ItemMetadata } from './inventory/ItemMetadata.js';
 
@@ -61,7 +61,7 @@ export class ItemManager {
                 if (canPickupOrStack) {
                     pickup({ type: 'water' });
                 } else {
-                    player.restoreThirst(10);
+                    player.restoreThirst(GAMEPLAY_CONSTANTS.WATER_RESTORATION_AMOUNT);
                 }
                 grid[y][x] = TILE_TYPES.FLOOR;
                 break;
@@ -71,7 +71,7 @@ export class ItemManager {
                     pickup({ type: 'heart' });
                 } else {
                     // If inventory full, consume directly
-                    player.setHealth((player.getHealth ? player.getHealth() : 0) + 1);
+                    player.setHealth((player.getHealth ? player.getHealth() : 0) + GAMEPLAY_CONSTANTS.HEART_RESTORATION_AMOUNT);
                 }
                 grid[y][x] = TILE_TYPES.FLOOR;
                 break;
@@ -100,7 +100,7 @@ export class ItemManager {
                             if (canPickupOrStack) {
                                 pickup({ type: 'food', foodType: tile.foodType });
                             } else {
-                                player.restoreHunger(10);
+                                player.restoreHunger(GAMEPLAY_CONSTANTS.FOOD_RESTORATION_AMOUNT);
                             }
                             grid[y][x] = TILE_TYPES.FLOOR;
                             break;
@@ -124,7 +124,7 @@ export class ItemManager {
      * @private
      */
     _canPickupOrStackTile(player, tile) {
-        const hasSpace = player.inventory.length < 6;
+        const hasSpace = player.inventory.length < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE;
         const isStackable = ItemMetadata.isStackableItem(tile);
 
         // Check for existing stack based on tile type

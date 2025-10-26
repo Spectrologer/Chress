@@ -10,6 +10,7 @@ import { CombatManager } from '../managers/CombatManager.js';
 import { InteractionManager } from '../managers/InteractionManager.js';
 import { ItemManager } from '../managers/ItemManager.js';
 import { InventoryService } from '../managers/inventory/InventoryService.js';
+import { InventoryInteractionHandler } from '../managers/inventory/InventoryInteractionHandler.js';
 import { ZoneManager } from '../managers/ZoneManager.js';
 import { ZoneTransitionManager } from '../managers/ZoneTransitionManager.js';
 import { ActionManager } from '../managers/ActionManager.js';
@@ -26,6 +27,13 @@ import { AssetLoader } from './AssetLoader.js';
 import { OverlayManager } from '../ui/OverlayManager.js';
 import { ZoneTransitionController } from '../controllers/ZoneTransitionController.js';
 import { GlobalErrorHandler } from './GlobalErrorHandler.js';
+import { NPCInteractionManager } from '../managers/NPCInteractionManager.js';
+import { ItemPickupManager } from '../managers/inventory/ItemPickupManager.js';
+import { CombatActionManager } from '../managers/CombatActionManager.js';
+import { BombManager } from '../managers/BombManager.js';
+import { TerrainInteractionManager } from '../managers/TerrainInteractionManager.js';
+import { EnvironmentalInteractionManager } from '../managers/EnvironmentalInteractionManager.js';
+import { EnemyDefeatFlow } from '../managers/EnemyDefeatFlow.js';
 
 /**
  * Lightweight service container with lazy initialization for better testability.
@@ -122,6 +130,9 @@ export class ServiceContainer {
             case 'itemUsageManager':
                 return null; // Replaced by ItemEffectStrategy
 
+            case 'inventoryInteractionHandler':
+                return new InventoryInteractionHandler(this.game);
+
             case 'inventoryUI':
                 return new InventoryUI(this.game, this.get('inventoryService'));
 
@@ -161,11 +172,48 @@ export class ServiceContainer {
             case 'turnManager':
                 return new TurnManager(this.game);
 
+            // Sub-managers for InteractionManager
+            case 'npcInteractionManager':
+                return new NPCInteractionManager(this.game);
+
+            case 'itemPickupManager':
+                return new ItemPickupManager(this.game);
+
+            case 'combatActionManager':
+                return new CombatActionManager(this.game);
+
+            case 'bombManager':
+                return new BombManager(this.game);
+
+            case 'terrainInteractionManager':
+                return new TerrainInteractionManager(this.game);
+
+            case 'environmentalInteractionManager':
+                return new EnvironmentalInteractionManager(this.game);
+
+            case 'enemyDefeatFlow':
+                return new EnemyDefeatFlow(this.game);
+
             case 'combatManager':
-                return new CombatManager(this.game, this.get('turnManager').occupiedTilesThisTurn);
+                return new CombatManager(
+                    this.game,
+                    this.get('turnManager').occupiedTilesThisTurn,
+                    this.get('bombManager'),
+                    this.get('enemyDefeatFlow')
+                );
 
             case 'interactionManager':
-                return new InteractionManager(this.game, this.get('inputManager'));
+                return new InteractionManager(
+                    this.game,
+                    this.get('inputManager'),
+                    this.get('npcInteractionManager'),
+                    this.get('itemPickupManager'),
+                    this.get('combatActionManager'),
+                    this.get('bombManager'),
+                    this.get('terrainInteractionManager'),
+                    this.get('zoneTransitionManager'),
+                    this.get('environmentalInteractionManager')
+                );
 
             case 'zoneManager':
                 return new ZoneManager(this.game);
@@ -217,6 +265,7 @@ export class ServiceContainer {
             'itemService', // alias
             'itemUsageHandler',
             'itemUsageManager',
+            'inventoryInteractionHandler',
 
             // UI services
             'inventoryUI',
@@ -243,6 +292,15 @@ export class ServiceContainer {
 
             // Turn management
             'turnManager',
+
+            // Sub-managers (must be created before their parent managers)
+            'npcInteractionManager',
+            'itemPickupManager',
+            'combatActionManager',
+            'bombManager',
+            'terrainInteractionManager',
+            'environmentalInteractionManager',
+            'enemyDefeatFlow',
 
             // Managers with dependencies
             'inputManager',

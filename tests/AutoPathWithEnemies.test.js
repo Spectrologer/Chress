@@ -68,7 +68,7 @@ describe('Auto Path With Enemies setting', () => {
         });
 
         // spy on executePath to observe what is issued
-        const spy = jest.spyOn(ic, 'executePath');
+        const spy = jest.spyOn(ic.pathfindingController, 'executePath');
 
         // click on a far-away tile
         ic.executeMovementOrInteraction({ x: 8, y: 8 });
@@ -99,8 +99,8 @@ describe('Auto Path With Enemies setting', () => {
         });
 
         // spy on findPath and executePath
-        const findSpy = jest.spyOn(ic, 'findPath');
-        const execSpy = jest.spyOn(ic, 'executePath');
+        const findSpy = jest.spyOn(ic.pathfindingController, 'findPath');
+        const execSpy = jest.spyOn(ic.pathfindingController, 'executePath');
 
         // Click to a reachable distant tile - make sure target is walkable
         game.grid[8][8] = 0;

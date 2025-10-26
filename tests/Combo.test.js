@@ -1,4 +1,6 @@
 import { CombatManager } from '../managers/CombatManager.js';
+import { BombManager } from '../managers/BombManager.js';
+import { EnemyDefeatFlow } from '../managers/EnemyDefeatFlow.js';
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
@@ -48,7 +50,10 @@ describe('Combat combo bonuses', () => {
       defeatedEnemies: new Set()
     };
 
-    combatManager = new CombatManager(mockGame, new Set());
+    // Use real instances for proper combo behavior
+    const mockBombManager = new BombManager(mockGame);
+    const mockDefeatFlow = new EnemyDefeatFlow(mockGame);
+    combatManager = new CombatManager(mockGame, new Set(), mockBombManager, mockDefeatFlow);
   });
 
   test('defeatEnemy awards combo bonus when previous action was an attack:kill', () => {

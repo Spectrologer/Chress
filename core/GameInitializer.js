@@ -4,6 +4,9 @@ import { TextureManager } from '../renderers/TextureManager.js';
 import { ZoneStateManager } from '../generators/ZoneStateManager.js';
 import { eventBus } from './EventBus.js';
 import { EventTypes } from './EventTypes.js';
+import { errorHandler, ErrorSeverity } from './ErrorHandler.js';
+import { isWithinGrid } from '../utils/GridUtils.js';
+import { safeCall, safeCallAsync, safeGet } from '../utils/SafeServiceCall.js';
 
 /**
  * GameInitializer
@@ -130,7 +133,7 @@ export class GameInitializer {
             // Only check if player is within grid bounds (for new games, player may be off-screen)
             const playerY = this.game.player.y;
             const playerX = this.game.player.x;
-            if (playerY >= 0 && playerY < GRID_SIZE && playerX >= 0 && playerX < GRID_SIZE) {
+            if (isWithinGrid(playerX, playerY)) {
                 const startTile = this.game.grid[playerY][playerX];
                 // Don't overwrite SIGN or EXIT tiles
                 if (!startTile ||
@@ -162,7 +165,7 @@ export class GameInitializer {
                 // Only set tile if player is within grid bounds
                 const playerY = this.game.player.y;
                 const playerX = this.game.player.x;
-                if (playerY >= 0 && playerY < GRID_SIZE && playerX >= 0 && playerX < GRID_SIZE) {
+                if (isWithinGrid(playerX, playerY)) {
                     this.game.grid[playerY][playerX] = TILE_TYPES.FLOOR;
                 }
                 const initialZone = this.game.player.getCurrentZone();
@@ -327,23 +330,20 @@ export class GameInitializer {
         this.game.uiManager.setupBarterHandlers();
 
         // Autosave
-        if (this.game.gameStateManager && typeof this.game.gameStateManager.startAutoSave === 'function') {
-            this.game.gameStateManager.startAutoSave();
-        }
+        safeCall(this.game.gameStateManager, 'startAutoSave');
 
         // Save on unload (mobile & refresh)
         window.addEventListener('pagehide', () => {
-            if (this.game.gameStateManager && typeof this.game.gameStateManager.saveGameStateImmediate === 'function') {
-                this.game.gameStateManager.saveGameStateImmediate();
-            } else if (this.game.gameStateManager) {
-                this.game.gameStateManager.saveGameState();
+            const saved = safeCall(this.game.gameStateManager, 'saveGameStateImmediate');
+            if (!saved) {
+                safeCall(this.game.gameStateManager, 'saveGameState');
             }
         });
 
         // Save on hide (tab/app switch)
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden && this.game.gameStateManager) {
-                this.game.gameStateManager.saveGameState();
+            if (document.hidden) {
+                safeCall(this.game.gameStateManager, 'saveGameState');
             }
         });
 
@@ -351,9 +351,7 @@ export class GameInitializer {
         window.addEventListener('storage', (ev) => {
             if (ev.key === null) return;
             if (ev.key === 'chress_game_state') {
-                if (this.game.uiManager && typeof this.game.uiManager.addMessageToLog === 'function') {
-                    this.game.uiManager.addMessageToLog('Game state updated in another tab. Your session will keep running with current state.');
-                }
+                safeCall(this.game.uiManager, 'addMessageToLog', 'Game state updated in another tab. Your session will keep running with current state.');
             }
         });
     }
@@ -367,39 +365,42 @@ export class GameInitializer {
 
         // Resume audio (autoplay policy)
         try {
-            if (this.game.soundManager && typeof this.game.soundManager.resumeAudioContext === 'function') {
-                this.game.soundManager.resumeAudioContext().catch(() => {});
-            }
+            safeCallAsync(this.game.soundManager, 'resumeAudioContext').catch(err => {
+                if (err) {
+                    errorHandler.handle(err, ErrorSeverity.WARNING, {
+                        component: 'GameInitializer',
+                        action: 'resume audio context on startup'
+                    });
+                }
+            });
         } catch (e) {
-            logger.error('Error resuming audio context:', e);
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'GameInitializer',
+                action: 'setup audio context'
+            });
         }
 
         // Apply audio settings
         try {
-            const currentZone = this.game.player.getCurrentZone && this.game.player.getCurrentZone();
-            const dimension = currentZone && typeof currentZone.dimension === 'number' ? currentZone.dimension : 0;
+            const currentZone = safeCall(this.game.player, 'getCurrentZone');
+            const dimension = safeGet(currentZone, 'dimension', 0);
 
             // Apply player settings
-            if (this.game.player && this.game.player.stats) {
-                if (this.game.soundManager && typeof this.game.soundManager.setMusicEnabled === 'function') {
-                    this.game.soundManager.setMusicEnabled(!!this.game.player.stats.musicEnabled);
-                }
-                if (this.game.soundManager && typeof this.game.soundManager.setSfxEnabled === 'function') {
-                    this.game.soundManager.setSfxEnabled(!!this.game.player.stats.sfxEnabled);
-                }
-            }
+            const musicEnabled = safeGet(this.game, 'player.stats.musicEnabled', false);
+            const sfxEnabled = safeGet(this.game, 'player.stats.sfxEnabled', false);
+
+            safeCall(this.game.soundManager, 'setMusicEnabled', !!musicEnabled);
+            safeCall(this.game.soundManager, 'setSfxEnabled', !!sfxEnabled);
 
             // Debug
             if (typeof console !== 'undefined' && console.debug) {
-                console.debug('[AUDIO STARTUP] restored player.stats.musicEnabled=', this.game.player && this.game.player.stats && this.game.player.stats.musicEnabled,
-                              'soundManager.musicEnabled=', this.game.soundManager && this.game.soundManager.musicEnabled,
-                              'soundManager.currentMusicTrack=', this.game.soundManager && this.game.soundManager.currentMusicTrack);
+                console.debug('[AUDIO STARTUP] restored player.stats.musicEnabled=', musicEnabled,
+                              'soundManager.musicEnabled=', safeGet(this.game, 'soundManager.musicEnabled'),
+                              'soundManager.currentMusicTrack=', safeGet(this.game, 'soundManager.currentMusicTrack'));
             }
 
             // Zone music
-            if (this.game.soundManager && typeof this.game.soundManager.setMusicForZone === 'function') {
-                this.game.soundManager.setMusicForZone({ dimension });
-            }
+            safeCall(this.game.soundManager, 'setMusicForZone', { dimension });
         } catch (e) {
             logger.error('Error setting up zone music:', e);
         }
@@ -413,13 +414,26 @@ export class GameInitializer {
         window.gameInstance = this.game;
 
         // Console commands
-        import('./consoleCommands.js').then(module => {
-            window.consoleCommands = module.default;
-            window.tp = (x, y) => module.default.tp(this.game, x, y);
-            window.spawnHorseIcon = () => module.default.spawnHorseIcon(this.game);
-            window.gotoInterior = () => module.default.gotoInterior(this.game);
-            window.gotoWorld = () => module.default.gotoWorld(this.game);
-        }).catch(err => logger.error('Error loading console commands:', err));
+        errorHandler.try(() => {
+            import('./consoleCommands.js')
+                .then(module => {
+                    window.consoleCommands = module.default;
+                    window.tp = (x, y) => module.default.tp(this.game, x, y);
+                    window.spawnHorseIcon = () => module.default.spawnHorseIcon(this.game);
+                    window.gotoInterior = () => module.default.gotoInterior(this.game);
+                    window.gotoWorld = () => module.default.gotoWorld(this.game);
+                })
+                .catch(err => {
+                    errorHandler.handle(err, ErrorSeverity.WARNING, {
+                        component: 'GameInitializer',
+                        action: 'load console commands module'
+                    });
+                });
+        }, {
+            component: 'GameInitializer',
+            action: 'import consoleCommands',
+            severity: ErrorSeverity.WARNING
+        });
     }
 
     /**

@@ -1,6 +1,8 @@
 import logger from '../core/logger.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { safeCall, safeCallAsync, safeGet } from '../utils/SafeServiceCall.js';
 
 /**
  * OverlayManager
@@ -201,9 +203,7 @@ export class OverlayManager {
      */
     async resumeAudioContext() {
         try {
-            if (this.game.soundManager && typeof this.game.soundManager.resumeAudioContext === 'function') {
-                await this.game.soundManager.resumeAudioContext();
-            }
+            await safeCallAsync(this.game.soundManager, 'resumeAudioContext');
         } catch (e) {
             logger.error('Error resuming audio context:', e);
         }
@@ -214,19 +214,17 @@ export class OverlayManager {
      */
     applyMusicPreference() {
         try {
-            if (this.game.player && this.game.player.stats) {
-                this.game.player.stats.musicEnabled = !!this.overlayMusicPref;
+            const playerStats = safeGet(this.game, 'player.stats');
+            if (playerStats) {
+                playerStats.musicEnabled = !!this.overlayMusicPref;
             }
 
-            if (this.game.soundManager && typeof this.game.soundManager.setMusicEnabled === 'function') {
-                this.game.soundManager.setMusicEnabled(!!this.overlayMusicPref);
-            }
+            safeCall(this.game.soundManager, 'setMusicEnabled', !!this.overlayMusicPref);
 
             // Apply SFX preference if available
-            if (this.game.player && this.game.player.stats && typeof this.game.player.stats.sfxEnabled !== 'undefined') {
-                if (this.game.soundManager && typeof this.game.soundManager.setSfxEnabled === 'function') {
-                    this.game.soundManager.setSfxEnabled(!!this.game.player.stats.sfxEnabled);
-                }
+            const sfxEnabled = safeGet(this.game, 'player.stats.sfxEnabled');
+            if (sfxEnabled !== undefined) {
+                safeCall(this.game.soundManager, 'setSfxEnabled', !!sfxEnabled);
             }
         } catch (e) {
             logger.error('Error applying music preference:', e);
@@ -238,10 +236,9 @@ export class OverlayManager {
      */
     resetGameState() {
         try {
-            if (this.game.gameStateManager && typeof this.game.gameStateManager.resetGame === 'function') {
-                this.game.gameStateManager.resetGame();
-            } else if (this.game.gameStateManager && typeof this.game.gameStateManager.clearSavedState === 'function') {
-                this.game.gameStateManager.clearSavedState();
+            const reset = safeCall(this.game.gameStateManager, 'resetGame');
+            if (!reset) {
+                safeCall(this.game.gameStateManager, 'clearSavedState');
             }
         } catch (e) {
             logger.error('Error resetting game state:', e);
@@ -253,9 +250,7 @@ export class OverlayManager {
      */
     loadGameState() {
         try {
-            if (this.game.gameStateManager && typeof this.game.gameStateManager.loadGameState === 'function') {
-                this.game.gameStateManager.loadGameState();
-            }
+            safeCall(this.game.gameStateManager, 'loadGameState');
         } catch (e) {
             logger.error('Error loading game state:', e);
         }
@@ -292,14 +287,17 @@ export class OverlayManager {
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
 
             // Render zone map
-            if (this.game.uiManager && typeof this.game.uiManager.renderZoneMap === 'function') {
-                this.game.uiManager.renderZoneMap();
-            }
+            safeCall(this.game.uiManager, 'renderZoneMap');
 
             // Decode player portrait image
             const portraitImg = document.querySelector('.player-portrait');
-            if (portraitImg && typeof portraitImg.decode === 'function') {
-                portraitImg.decode().catch(() => {});
+            if (portraitImg) {
+                safeCallAsync(portraitImg, 'decode')?.catch(err => {
+                    errorHandler.handle(err, ErrorSeverity.WARNING, {
+                        component: 'OverlayManager',
+                        action: 'decode player portrait image'
+                    });
+                });
             }
         } catch (e) {
             logger.error('Error pre-rendering UI elements:', e);

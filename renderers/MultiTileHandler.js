@@ -1,4 +1,5 @@
 import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { isWithinGrid } from '../utils/GridUtils.js';
 
 export class MultiTileHandler {
     static findHousePosition(targetX, targetY, grid, isStrictCheck = false) {
@@ -39,7 +40,7 @@ export class MultiTileHandler {
                 let isStructure = true;
                 for (let y = startY; y < startY + 2 && isStructure; y++) {
                     for (let x = startX; x < startX + 2 && isStructure; x++) {
-                        if (y >= 0 && y < GRID_SIZE && x >= 0 && x < GRID_SIZE &&
+                        if (isWithinGrid(x, y) &&
                             grid[y][x] !== tileType) {
                             isStructure = false;
                         }

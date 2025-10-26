@@ -204,6 +204,47 @@ export class ItemRepository {
     }
 
     /**
+     * Decrement item quantity/uses by type (prefers main inventory)
+     * Consolidates duplicate removal logic from BombManager and ActionManager
+     *
+     * @param {Object} player - Player object
+     * @param {string} itemType - Type of item to decrement
+     * @param {number} amount - Amount to decrement (default 1)
+     * @returns {boolean} - True if successfully decremented
+     */
+    decrementItemByType(player, itemType, amount = 1) {
+        if (!player || !itemType) return false;
+
+        // Try main inventory first
+        const mainIdx = player.inventory.findIndex(item => item.type === itemType);
+        if (mainIdx !== -1) {
+            const item = player.inventory[mainIdx];
+            if (typeof item.quantity === 'number' && item.quantity > amount) {
+                item.quantity -= amount;
+                return true;
+            } else {
+                player.inventory.splice(mainIdx, 1);
+                return true;
+            }
+        }
+
+        // Fall back to radial inventory
+        const radialIdx = player.radialInventory ? player.radialInventory.findIndex(item => item.type === itemType) : -1;
+        if (radialIdx !== -1) {
+            const item = player.radialInventory[radialIdx];
+            if (typeof item.quantity === 'number' && item.quantity > amount) {
+                item.quantity -= amount;
+            } else {
+                player.radialInventory.splice(radialIdx, 1);
+            }
+            this._saveRadialInventory();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Private: Add to main inventory
      * @private
      */

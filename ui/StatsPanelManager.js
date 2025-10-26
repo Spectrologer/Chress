@@ -1,4 +1,5 @@
 import { PanelEventHandler } from './PanelEventHandler.js';
+import { safeCall } from '../utils/SafeServiceCall.js';
 
 /**
  * StatsPanelManager
@@ -227,14 +228,12 @@ export class StatsPanelManager {
      */
     _setupRestartButton(restartBtn) {
         const doRestart = (e) => {
-            if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+            safeCall(e, 'stopPropagation');
             if (confirm('Are you sure you want to restart the game? All progress will be lost.')) {
                 this.hideStatsPanel();
                 this.game.resetGame();
                 // If the main loop is paused, try to resume it
-                if (typeof this.game.gameLoop === 'function') {
-                    try { this.game.gameLoop(); } catch (err) { /* non-fatal */ }
-                }
+                try { safeCall(this.game, 'gameLoop'); } catch (err) { /* non-fatal */ }
             }
         };
 
@@ -265,7 +264,7 @@ export class StatsPanelManager {
         // Close panel when clicking outside (on overlay background)
         this.statsPanelOverlay.addEventListener('click', () => this.hideStatsPanel());
         this.statsPanelOverlay.addEventListener('pointerup', (e) => {
-            if (e && typeof e.preventDefault === 'function') e.preventDefault();
+            safeCall(e, 'preventDefault');
             this.hideStatsPanel();
         });
 

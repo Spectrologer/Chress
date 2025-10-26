@@ -1,4 +1,4 @@
-import { TILE_SIZE, TILE_TYPES } from '../core/constants.js';
+import { TILE_SIZE, TILE_TYPES, UI_CONSTANTS, TIMING_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants.js';
 import { saveRadialInventory } from '../managers/RadialPersistence.js';
 import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
 import { eventBus } from '../core/EventBus.js';
@@ -25,7 +25,7 @@ export class RadialInventoryUI {
         div.style.width = '100%';
     div.style.height = '100%';
     // Ensure radial overlay is above most UI
-    div.style.zIndex = 9999;
+    div.style.zIndex = UI_CONSTANTS.Z_INDEX_RADIAL_OVERLAY;
         // Inject minimal CSS for pulsating background (once per page)
         if (!document.getElementById('radial-inventory-ui-styles')) {
             const style = document.createElement('style');
@@ -54,7 +54,7 @@ export class RadialInventoryUI {
         // Transitions are triggered via double-tap on the player tile.
         // If radial inventory is empty, try to migrate eligible items from main inventory
         if ((!player.radialInventory || player.radialInventory.length === 0) && player.inventory && player.inventory.length > 0) {
-            for (let i = player.inventory.length - 1; i >= 0 && (player.radialInventory.length || 0) < 8; i--) {
+            for (let i = player.inventory.length - 1; i >= 0 && (player.radialInventory.length || 0) < UI_CONSTANTS.RADIAL_INVENTORY_MAX_SIZE; i--) {
                 const it = player.inventory[i];
                 if (it && ItemMetadata.RADIAL_TYPES.includes(it.type)) {
                     // Normalize book representation: prefer 'uses' for books
@@ -167,27 +167,13 @@ export class RadialInventoryUI {
             el.addEventListener('click', (ev) => {
                 ev.stopPropagation();
                 if (this.game.player.isDead()) return;
-                // If this is a bomb in the radial, explicitly enter bomb placement mode here
-                if (item.type === 'bomb' && this.game.player.radialInventory && this.game.player.radialInventory.indexOf(item) >= 0) {
-                    const px = this.game.player.x, py = this.game.player.y;
-                    this.game.bombPlacementPositions = [];
-                    const directions = [{dx:1,dy:0},{dx:-1,dy:0},{dx:0,dy:1},{dx:0,dy:-1}];
-                    for (const dir of directions) {
-                        const nx = px + dir.dx, ny = py + dir.dy;
-                        if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9) {
-                            const tile = this.game.grid[ny][nx];
-                            if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) {
-                                this.game.bombPlacementPositions.push({x: nx, y: ny});
-                            }
-                        }
-                    }
-                    this.game.bombPlacementMode = true;
-                    this.game.uiManager?.showOverlayMessage?.('Tap a tile to place a bomb', null, true, true);
-                    this.close();
-                    return;
-                }
 
-                this.inventoryService.useItem(item, { fromRadial: true });
+                // Delegate to unified interaction handler
+                this.game.inventoryInteractionHandler.handleItemUse(item, {
+                    fromRadial: true,
+                    isDoubleClick: false
+                });
+
                 this.close();
                 eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             });
@@ -208,7 +194,7 @@ export class RadialInventoryUI {
         this._bodyClickHandler = (ev) => {
             const now = Date.now();
             // Ignore clicks that happen within 300ms of opening
-            if (this._openedAt && (now - this._openedAt) < 300) return;
+            if (this._openedAt && (now - this._openedAt) < TIMING_CONSTANTS.RADIAL_MENU_OPEN_IGNORE_WINDOW) return;
             // Convert screen coords to grid using the game's input manager
             const conv = this.game.inputManager?.convertScreenToGrid?.(ev.clientX, ev.clientY);
             if (!conv) return;
@@ -225,7 +211,7 @@ export class RadialInventoryUI {
         // so this helps ensure a tap on the player's tile will close the radial.
         this._canvasPointerHandler = (ev) => {
             const now = Date.now();
-            if (this._openedAt && (now - this._openedAt) < 300) return;
+            if (this._openedAt && (now - this._openedAt) < TIMING_CONSTANTS.RADIAL_MENU_OPEN_IGNORE_WINDOW) return;
             if (!this.game?.inputManager) return;
             const conv = this.game.inputManager.convertScreenToGrid(ev.clientX, ev.clientY);
             if (!conv) return;
@@ -243,7 +229,7 @@ export class RadialInventoryUI {
         // avoid immediately closing from the same interaction that opened it.
         this._bodyPointerDownHandler = (ev) => {
             const now = Date.now();
-            if (this._openedAt && (now - this._openedAt) < 300) return;
+            if (this._openedAt && (now - this._openedAt) < TIMING_CONSTANTS.RADIAL_MENU_OPEN_IGNORE_WINDOW) return;
             const conv = this.game.inputManager?.convertScreenToGrid?.(ev.clientX, ev.clientY);
             if (!conv) return;
             const playerPos = this.game.player?.getPosition?.() ?? { x: this.game.player.x, y: this.game.player.y };

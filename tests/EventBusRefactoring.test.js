@@ -123,7 +123,7 @@ describe('Event Bus Refactoring', () => {
     describe('InputController event subscription', () => {
         test('subscribes to INPUT_KEY_PRESS and handles it', () => {
             const inputController = new InputController(mockGame, mockInventoryService);
-            const handleKeyPressSpy = jest.spyOn(inputController, 'handleKeyPress');
+            const handleKeyPressSpy = jest.spyOn(inputController.coordinator, 'handleKeyPress');
 
             const event = { key: 'arrowup', preventDefault: () => {} };
             eventBus.emit(EventTypes.INPUT_KEY_PRESS, event);
@@ -133,7 +133,7 @@ describe('Event Bus Refactoring', () => {
 
         test('subscribes to INPUT_EXIT_REACHED and handles it', () => {
             const inputController = new InputController(mockGame, mockInventoryService);
-            const performExitTapSpy = jest.spyOn(inputController, 'performExitTap');
+            const performExitTapSpy = jest.spyOn(inputController.coordinator, 'performExitTap');
 
             eventBus.emit(EventTypes.INPUT_EXIT_REACHED, { x: 5, y: 5 });
 
@@ -142,7 +142,7 @@ describe('Event Bus Refactoring', () => {
 
         test('unsubscribes from events on destroy', () => {
             const inputController = new InputController(mockGame, mockInventoryService);
-            const handleKeyPressSpy = jest.spyOn(inputController, 'handleKeyPress');
+            const handleKeyPressSpy = jest.spyOn(inputController.coordinator, 'handleKeyPress');
 
             inputController.destroy();
 
@@ -192,7 +192,7 @@ describe('Event Bus Refactoring', () => {
         test('PathfindingController -> InputController via events', () => {
             const inputController = new InputController(mockGame, mockInventoryService);
             const pathfindingController = inputController.pathfindingController;
-            const handleKeyPressSpy = jest.spyOn(inputController, 'handleKeyPress');
+            const handleKeyPressSpy = jest.spyOn(inputController.coordinator, 'handleKeyPress');
 
             // Trigger key press via event
             pathfindingController._triggerKeyPress({

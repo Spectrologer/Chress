@@ -12,6 +12,7 @@
 
 import logger from '../core/logger.js';
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import MethodChecker from './MethodChecker.js';
 
 class AudioManager {
     constructor() {
@@ -43,18 +44,12 @@ class AudioManager {
 
         try {
             // Strategy 1: Try game.soundManager (preferred, respects user settings)
-            if (gameInstance &&
-                gameInstance.soundManager &&
-                typeof gameInstance.soundManager.playSound === 'function') {
-                gameInstance.soundManager.playSound(soundName);
+            if (MethodChecker.call(gameInstance?.soundManager, 'playSound', [soundName])) {
                 return true;
             }
 
             // Strategy 2: Try window.soundManager (global fallback)
-            if (typeof window !== 'undefined' &&
-                window.soundManager &&
-                typeof window.soundManager.playSound === 'function') {
-                window.soundManager.playSound(soundName);
+            if (typeof window !== 'undefined' && MethodChecker.call(window.soundManager, 'playSound', [soundName])) {
                 return true;
             }
 
@@ -93,16 +88,12 @@ class AudioManager {
         const gameInstance = options.game || this.game;
 
         // Check game.soundManager
-        if (gameInstance &&
-            gameInstance.soundManager &&
-            typeof gameInstance.soundManager.playSound === 'function') {
+        if (MethodChecker.exists(gameInstance?.soundManager, 'playSound')) {
             return true;
         }
 
         // Check window.soundManager
-        if (typeof window !== 'undefined' &&
-            window.soundManager &&
-            typeof window.soundManager.playSound === 'function') {
+        if (typeof window !== 'undefined' && MethodChecker.exists(window.soundManager, 'playSound')) {
             return true;
         }
 

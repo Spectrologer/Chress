@@ -2,6 +2,8 @@ import { TILE_TYPES } from '../core/constants.js';
 import { Sign } from '../ui/Sign.js';
 import { TileRegistry } from '../core/TileRegistry.js';
 import { isAdjacent } from '../core/utils/DirectionUtils.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
 export class EnvironmentalInteractionManager {
     constructor(game) {
@@ -28,7 +30,11 @@ export class EnvironmentalInteractionManager {
 
             // Add to log only when first showing the message
             if (showingNewMessage && signTile.message !== this.game.lastSignMessage) {
-                this.game.uiManager.addMessageToLog(`A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`);
+                eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
+                    text: `A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`,
+                    category: 'environment',
+                    priority: 'info'
+                });
                 this.game.lastSignMessage = signTile.message;
             }
             return true; // Interaction handled
@@ -50,7 +56,10 @@ export class EnvironmentalInteractionManager {
             const dy = Math.abs(gridCoords.y - playerPos.y);
 
             if (isAdjacent(dx, dy)) {
-                this.game.uiManager.showStatueInfo(statueNpcType);
+                eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                    type: 'statue',
+                    npc: statueNpcType
+                });
             }
             return true; // Interaction handled
         }
@@ -72,7 +81,11 @@ export class EnvironmentalInteractionManager {
                                       this.game.displayingMessageForSign.message === signTile.message;
             const showingNewMessage = !isAlreadyDisplayed;
             if (showingNewMessage && signTile.message !== this.game.lastSignMessage) {
-                this.game.uiManager.addMessageToLog(`A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`);
+                eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
+                    text: `A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`,
+                    category: 'environment',
+                    priority: 'info'
+                });
                 this.game.lastSignMessage = signTile.message;
             }
             return;
@@ -83,7 +96,10 @@ export class EnvironmentalInteractionManager {
         const statueNpcType = TileRegistry.getStatueNPCType(statueTile);
 
         if (statueNpcType) {
-            this.game.uiManager.showStatueInfo(statueNpcType);
+            eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                type: 'statue',
+                npc: statueNpcType
+            });
             return;
         }
     }

@@ -1,4 +1,6 @@
 import { CombatManager } from '../managers/CombatManager.js';
+import { BombManager } from '../managers/BombManager.js';
+import { EnemyDefeatFlow } from '../managers/EnemyDefeatFlow.js';
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
@@ -19,6 +21,11 @@ const mockUIManager = {
 const mockAnimationManager = {
   addPointAnimation: jest.fn()
 };
+
+// We'll create real instances of BombManager and EnemyDefeatFlow
+// since they're lightweight and don't have heavy dependencies
+let mockBombManager;
+let mockDefeatFlow;
 
 describe('CombatManager', () => {
   let combatManager;
@@ -66,7 +73,12 @@ describe('CombatManager', () => {
     };
 
     occupiedTiles = new Set();
-    combatManager = new CombatManager(mockGame, occupiedTiles);
+
+    // Create real instances for proper behavior
+    mockBombManager = new BombManager(mockGame);
+    mockDefeatFlow = new EnemyDefeatFlow(mockGame);
+
+    combatManager = new CombatManager(mockGame, occupiedTiles, mockBombManager, mockDefeatFlow);
   });
 
   afterEach(() => {

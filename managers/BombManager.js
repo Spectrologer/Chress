@@ -2,6 +2,10 @@ import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { isAdjacent } from '../core/utils/DirectionUtils.js';
+import { ItemRepository } from './inventory/ItemRepository.js';
+import { isBomb } from '../utils/TileUtils.js';
+import GridIterator from '../utils/GridIterator.js';
+import { safeCall } from '../utils/SafeServiceCall.js';
 
 /**
  * BombManager - Consolidated bomb management system
@@ -14,6 +18,7 @@ import { isAdjacent } from '../core/utils/DirectionUtils.js';
 export class BombManager {
     constructor(game) {
         this.game = game;
+        this.itemRepository = new ItemRepository(game);
     }
 
     // ========================================
@@ -25,16 +30,14 @@ export class BombManager {
      * Called each turn from CombatManager
      */
     tickBombsAndExplode() {
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.game.grid[y][x];
-                if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
-                    if (tile.actionsSincePlaced >= 2) {
-                        if (typeof this.game.explodeBomb === 'function') this.game.explodeBomb(x, y);
-                    }
-                }
+        GridIterator.findTiles(this.game.grid, isBomb).forEach(({ tile, x, y }) => {
+            // Skip primitive bombs - they're inactive pickup items
+            if (typeof tile !== 'object') return;
+
+            if (tile.actionsSincePlaced >= 2) {
+                safeCall(this.game, 'explodeBomb', x, y);
             }
-        }
+        });
     }
 
     // ========================================
@@ -58,26 +61,7 @@ export class BombManager {
         this.game.grid[placed.y][placed.x] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true };
 
         // Remove one bomb from either inventory (prefer main inventory)
-        const bombIndex = this.game.player.inventory.findIndex(item => item.type === 'bomb');
-        if (bombIndex !== -1) {
-            const bombItem = this.game.player.inventory[bombIndex];
-            if (typeof bombItem.quantity === 'number' && bombItem.quantity > 1) {
-                bombItem.quantity = bombItem.quantity - 1;
-            } else {
-                this.game.player.inventory.splice(bombIndex, 1);
-            }
-        } else {
-            const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(item => item.type === 'bomb') : -1;
-            if (ri !== -1) {
-                const bombItem = this.game.player.radialInventory[ri];
-                if (typeof bombItem.quantity === 'number' && bombItem.quantity > 1) {
-                    bombItem.quantity = bombItem.quantity - 1;
-                } else {
-                    this.game.player.radialInventory.splice(ri, 1);
-                }
-                import('../managers/RadialPersistence.js').then(m=>m.saveRadialInventory(this.game)).catch(()=>{});
-            }
-        }
+        this.itemRepository.decrementItemByType(this.game.player, 'bomb');
 
         eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
 

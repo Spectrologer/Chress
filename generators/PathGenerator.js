@@ -1,4 +1,6 @@
 import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { isPort } from '../utils/TileUtils.js';
+import GridIterator from '../utils/GridIterator.js';
 
 export class PathGenerator {
     constructor(grid) {
@@ -7,29 +9,17 @@ export class PathGenerator {
 
     ensureExitAccess() {
         // Find all exit tiles and PORT tiles (for escape routes) and ensure they have clear paths
-        const exits = [];
-        const ports = [];
-
-        // Collect all exits and ports
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.grid[y][x];
-                if (tile === TILE_TYPES.EXIT) {
-                    exits.push({ x, y });
-                } else if (tile === TILE_TYPES.PORT || (tile && typeof tile === 'object' && tile.type === TILE_TYPES.PORT)) {
-                    ports.push({ x, y });
-                }
-            }
-        }
+        const exits = GridIterator.findTiles(this.grid, tile => tile === TILE_TYPES.EXIT);
+        const ports = GridIterator.findTiles(this.grid, isPort);
 
         // For each exit, ensure there's a clear path inward
-        exits.forEach(exit => {
-            this.clearPathToExit(exit.x, exit.y);
+        exits.forEach(({ x, y }) => {
+            this.clearPathToExit(x, y);
         });
 
         // For each port, ensure there's a clear path to the center
-        ports.forEach(port => {
-            this.clearPathToCenter(port.x, port.y);
+        ports.forEach(({ x, y }) => {
+            this.clearPathToCenter(x, y);
         });
     }
 
@@ -94,9 +84,9 @@ export class PathGenerator {
                 if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
                     const tile = this.grid[ny][nx];
                     // Don't overwrite PORTs, EXITs, or other important tiles
-                    const isPort = tile === TILE_TYPES.PORT || (tile && typeof tile === 'object' && tile.type === TILE_TYPES.PORT);
+                    const isPortTile = isPort(tile);
                     const isExit = tile === TILE_TYPES.EXIT;
-                    if (!isPort && !isExit && (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY)) {
+                    if (!isPortTile && !isExit && (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY)) {
                         this.grid[ny][nx] = TILE_TYPES.FLOOR;
                     }
                 }
@@ -118,9 +108,9 @@ export class PathGenerator {
 
             // Clear this tile if it's not already floor, exit, or port
             const tile = this.grid[currentY][currentX];
-            const isPort = tile === TILE_TYPES.PORT || (tile && typeof tile === 'object' && tile.type === TILE_TYPES.PORT);
+            const isPortTile = isPort(tile);
             const isExit = tile === TILE_TYPES.EXIT;
-            if (!isPort && !isExit && (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY)) {
+            if (!isPortTile && !isExit && (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY)) {
                 this.grid[currentY][currentX] = TILE_TYPES.FLOOR;
             }
 

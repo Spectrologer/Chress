@@ -1,4 +1,4 @@
-import { TILE_TYPES } from '../core/constants.js';
+import { TILE_TYPES, INVENTORY_CONSTANTS, TIMING_CONSTANTS, UI_CONSTANTS, GRID_SIZE } from '../core/constants.js';
 import { logger } from '../core/logger.js';
 import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
 import { eventBus } from '../core/EventBus.js';
@@ -24,7 +24,7 @@ export class InventoryUI {
                 const slot = this.createInventorySlot(item, idx);
                 inventoryGrid.appendChild(slot);
             });
-            for (let i = this.game.player.inventory.length; i < 6; i++) {
+            for (let i = this.game.player.inventory.length; i < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE; i++) {
                 const slot = document.createElement('div');
                 slot.className = 'inventory-slot';
                 inventoryGrid.appendChild(slot);
@@ -157,7 +157,7 @@ export class InventoryUI {
             // Per-item guard to prevent duplicate uses within a short window
             const last = this._itemLastUsed.get(item) || 0;
             const now = Date.now();
-            if (now - last < 600) {
+            if (now - last < TIMING_CONSTANTS.ITEM_USE_DEBOUNCE) {
                 if (window.inventoryDebugMode) logger.debug('[INV.UI] suppressed duplicate use', { idx, itemType: item.type, delta: now - last });
                 return;
             }
@@ -172,7 +172,7 @@ export class InventoryUI {
         const toggleDisabled = () => {
             this.inventoryService.toggleItemDisabled(item);
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-            item._suppressTooltipUntil = Date.now() + 300;
+            item._suppressTooltipUntil = Date.now() + TIMING_CONSTANTS.ITEM_TOOLTIP_SUPPRESS;
             hideTooltip();
         };
 
@@ -205,9 +205,9 @@ export class InventoryUI {
         slot.addEventListener('click', (ev) => {
             // Ignore click if it immediately follows a pointer handler that already triggered use
             const now = Date.now();
-            if (_lastPointerTriggeredUseTime && (now - _lastPointerTriggeredUseTime) < 500) return;
+            if (_lastPointerTriggeredUseTime && (now - _lastPointerTriggeredUseTime) < TIMING_CONSTANTS.POINTER_ACTION_DEBOUNCE) return;
             // Also ignore click if it follows a touch pointer (legacy behavior)
-            if (_lastPointerWasTouch && (now - _lastPointerTime) < 500) return;
+            if (_lastPointerWasTouch && (now - _lastPointerTime) < TIMING_CONSTANTS.TOUCH_DEBOUNCE) return;
             if (this.game.player.isDead()) return;
             if (item.type === 'bomb') return; // bomb handled differently
             if (!isDisablable || !item.disabled) {
@@ -236,12 +236,12 @@ export class InventoryUI {
                     // mark intent to toggle and show temporary disabled visual while holding
                     item._pendingToggle = true;
                     slot.classList.add('item-disabled-temp');
-                    item._suppressContextMenuUntil = Date.now() + 1000;
+                    item._suppressContextMenuUntil = Date.now() + TIMING_CONSTANTS.ITEM_CONTEXT_MENU_SUPPRESS;
                 } else {
                     showTooltip();
-                    this.game.animationScheduler.createSequence().wait(2000).then(hideTooltip).start();
+                    this.game.animationScheduler.createSequence().wait(TIMING_CONSTANTS.MESSAGE_AUTO_HIDE_TIMEOUT).then(hideTooltip).start();
                 }
-            }, 500);
+            }, TIMING_CONSTANTS.LONG_PRESS_TIMEOUT);
             e.target?.setPointerCapture?.(e.pointerId);
             // store start coords on the slot element so move handler can access them
             slot._pressStartX = startX;
@@ -256,8 +256,7 @@ export class InventoryUI {
             const dx = (e.clientX || 0) - sx;
             const dy = (e.clientY || 0) - sy;
             const distSq = dx * dx + dy * dy;
-            const threshold = 12 * 12; // 12px threshold squared
-            if (distSq > threshold) {
+            if (distSq > TIMING_CONSTANTS.POINTER_MOVE_THRESHOLD_SQUARED) {
                 if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; }
                 delete item._pendingToggle;
                 slot.classList.remove('item-disabled-temp');
@@ -301,7 +300,7 @@ export class InventoryUI {
     slot.addEventListener('pointercancel', onPointerCancel);
     slot.addEventListener('pointerup', onPointerUp);
 
-    // Bomb handling delegated to ItemUsageHandler via ItemService
+    // Bomb handling via unified InventoryInteractionHandler
         if (item.type === 'bomb') {
             let lastBombClickTime = 0;
             // Prevent back-to-back duplicate invocations (e.g., pointerup + synthetic click)
@@ -309,36 +308,27 @@ export class InventoryUI {
             const bombClick = () => {
                 const now = Date.now();
                 // debounce duplicate immediate calls
-                if (now - _lastBombActionTime < 250) return;
+                if (now - _lastBombActionTime < TIMING_CONSTANTS.BOMB_ACTION_DEBOUNCE) return;
                 _lastBombActionTime = now;
 
-                const isDouble = (now - lastBombClickTime) < 300;
+                const isDouble = (now - lastBombClickTime) < TIMING_CONSTANTS.DOUBLE_CLICK_DETECTION;
                 lastBombClickTime = now;
-                if (isDouble) {
-                    const px = this.game.player.x, py = this.game.player.y;
-                    this.game.grid[py][px] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true };
-                    const bombItem = this.game.player.inventory.find(i => i.type === 'bomb');
-                    if (bombItem) {
-                        // respect per-item guard to avoid double consumption
-                        const last = this._itemLastUsed.get(bombItem) || 0;
-                        const now = Date.now();
-                        if (now - last >= 600) {
-                            this._itemLastUsed.set(bombItem, now);
-                            this.inventoryService.useItem(bombItem, { fromRadial: false });
-                        } else if (window.inventoryDebugMode) logger.debug('[INV.UI] suppressed duplicate bomb use', {idx});
+
+                // Delegate to unified interaction handler
+                const bombItem = this.game.player.inventory.find(i => i.type === 'bomb');
+                if (bombItem) {
+                    const last = this._itemLastUsed.get(bombItem) || 0;
+                    const now = Date.now();
+                    if (now - last >= TIMING_CONSTANTS.ITEM_USE_DEBOUNCE) {
+                        this._itemLastUsed.set(bombItem, now);
+                        this.game.inventoryInteractionHandler.handleBombInteraction(bombItem, {
+                            fromRadial: false,
+                            isDoubleClick: isDouble
+                        });
+                        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
+                    } else if (window.inventoryDebugMode) {
+                        logger.debug('[INV.UI] suppressed duplicate bomb use', { idx });
                     }
-                    eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-                } else {
-                    const px = this.game.player.x, py = this.game.player.y;
-                    this.game.bombPlacementPositions = [];
-                    const directions = [{dx:1,dy:0},{dx:-1,dy:0},{dx:0,dy:1},{dx:0,dy:-1}];
-                    for (const dir of directions) {
-                        const nx = px + dir.dx, ny = py + dir.dy;
-                        if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9 && (this.game.grid[ny][nx] === TILE_TYPES.FLOOR || this.game.grid[ny][nx] === TILE_TYPES.EXIT)) {
-                            this.game.bombPlacementPositions.push({x: nx, y: ny});
-                        }
-                    }
-                    this.game.bombPlacementMode = true;
                 }
             };
             slot.addEventListener('click', bombClick);
@@ -348,12 +338,16 @@ export class InventoryUI {
 
     showTooltip(slot, text) {
         if (!this.tooltip) return;
+
+        // Check if slot is still in the DOM (might have been removed during re-render)
+        const inventoryContainer = slot.closest('.player-inventory');
+        if (!inventoryContainer) return;
+
         this.tooltip.textContent = text;
         const rect = slot.getBoundingClientRect();
-        const inventoryRect = slot.closest('.player-inventory').getBoundingClientRect();
-        const tooltipWidth = 200;
-        this.tooltip.style.left = `${rect.left - inventoryRect.left + (rect.width / 2) - (tooltipWidth / 2)}px`;
-        this.tooltip.style.top = `${rect.top - inventoryRect.top - 40}px`;
+        const inventoryRect = inventoryContainer.getBoundingClientRect();
+        this.tooltip.style.left = `${rect.left - inventoryRect.left + (rect.width / 2) - (UI_CONSTANTS.TOOLTIP_WIDTH / 2)}px`;
+        this.tooltip.style.top = `${rect.top - inventoryRect.top - UI_CONSTANTS.TOOLTIP_VERTICAL_OFFSET}px`;
         this.tooltip.classList.add('show');
     }
 

@@ -8,6 +8,7 @@ import { NoteStack } from './NoteStack.js';
 import { RegionNotification } from './RegionNotification.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
+import { safeCall } from '../utils/SafeServiceCall.js';
 
 export class MessageManager {
     constructor(game) {
@@ -234,9 +235,8 @@ export class MessageManager {
             }
             // Stop any previous interval
             if (this.currentTypewriterInterval) {
-                if (typeof this.currentTypewriterInterval.stop === 'function') {
-                    this.currentTypewriterInterval.stop();
-                } else {
+                const stopped = safeCall(this.currentTypewriterInterval, 'stop');
+                if (!stopped) {
                     clearInterval(this.currentTypewriterInterval);
                 }
                 this.currentTypewriterInterval = null;

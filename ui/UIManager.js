@@ -4,6 +4,7 @@ import { PanelManager } from './PanelManager.js';
 import { PlayerStatsUI } from './PlayerStatsUI.js';
 import { Sign } from './Sign.js';
 import { MiniMap } from './MiniMap.js';
+import { UIEventCoordinator } from './UIEventCoordinator.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 
@@ -17,6 +18,9 @@ export class UIManager {
         this.playerStatsUI = new PlayerStatsUI(game);
         this.miniMap = new MiniMap(game);
         this.miniMap.setupEvents(); // Minimap expansion
+
+        // UI Event Coordinator - centralizes event-driven UI updates
+        this.eventCoordinator = new UIEventCoordinator(game, this.messageManager, this.panelManager);
 
         // Handlers
         this.messageManager.setupMessageLogButton();

@@ -1,6 +1,8 @@
 import logger from './logger.js';
 import { eventBus } from './EventBus.js';
 import { EventTypes } from './EventTypes.js';
+import { errorHandler, ErrorSeverity } from './ErrorHandler.js';
+import { safeCallAsync } from '../utils/SafeServiceCall.js';
 
 export class SoundManager {
     constructor() {
@@ -62,7 +64,13 @@ export class SoundManager {
             audio.loop = true;
             audio.volume = volume;
             this.currentMusicVolume = volume;
-            audio.play().catch(() => {});
+            audio.play().catch(err => {
+                errorHandler.handle(err, ErrorSeverity.WARNING, {
+                    component: 'SoundManager',
+                    action: 'play background music',
+                    filePath
+                });
+            });
             this.backgroundAudio = audio;
         } catch (e) {
             // ignore background play errors
@@ -142,7 +150,13 @@ export class SoundManager {
             nextSource.connect(nextGain).connect(this.audioContext.destination);
 
             // Start playing the next track (may require user gesture to allow autoplay)
-            nextAudio.play().catch(() => {});
+            nextAudio.play().catch(err => {
+                errorHandler.handle(err, ErrorSeverity.WARNING, {
+                    component: 'SoundManager',
+                    action: 'play next background track',
+                    filePath
+                });
+            });
 
             const now = this.audioContext.currentTime;
             const fadeSec = Math.max(0.05, (crossfadeMs || 600) / 1000);
@@ -354,9 +368,12 @@ export class SoundManager {
                 this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 return Promise.resolve();
             }
-            if (this.audioContext && typeof this.audioContext.resume === 'function') {
-                return this.audioContext.resume().catch(() => {});
-            }
+            return safeCallAsync(this.audioContext, 'resume')?.catch(err => {
+                errorHandler.handle(err, ErrorSeverity.WARNING, {
+                    component: 'SoundManager',
+                    action: 'resume audio context'
+                });
+            }) || Promise.resolve();
         } catch (e) {
             // ignore
         }

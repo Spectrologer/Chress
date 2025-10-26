@@ -26,7 +26,9 @@
       "Bash(do wc -l \"$f\")",
       "Bash(timeout 2 bash:*)",
       "Bash(npx jest:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(grep:*)",
+      "Bash(for file in \"ui/BarterWindow.js\" \"managers/EnemyDefeatFlow.js\" \"managers/CombatActionManager.js\" \"core/TurnManager.js\" \"ui/RecordsPanelManager.js\" \"ui/PanelEventHandler.js\")"
     ],
     "deny": [],
     "ask": []

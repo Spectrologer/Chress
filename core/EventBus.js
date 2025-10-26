@@ -165,3 +165,14 @@ export class EventBus {
 
 // Create and export a singleton instance
 export const eventBus = new EventBus();
+
+// Wrap with validation in development mode
+// Note: Import is done dynamically to avoid circular dependencies
+if (typeof window !== 'undefined' && window.location?.hostname === 'localhost') {
+  import('./EventValidator.js').then(({ wrapEventBusWithValidation }) => {
+    wrapEventBusWithValidation(eventBus);
+    console.log('[EventBus] Event validation enabled (development mode)');
+  }).catch(err => {
+    console.warn('[EventBus] Could not load event validation:', err);
+  });
+}

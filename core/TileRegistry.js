@@ -1,4 +1,5 @@
 import { TILE_TYPES } from './constants.js';
+import { getTileType } from '../utils/TileUtils.js';
 
 /**
  * Centralized registry for tile properties and metadata.
@@ -153,9 +154,7 @@ export class TileRegistry {
      * @returns {boolean}
      */
     static isWalkable(tile) {
-        const tileType = (typeof tile === 'object' && tile !== null && tile.type !== undefined)
-            ? tile.type
-            : tile;
+        const tileType = getTileType(tile);
 
         // Signs are explicitly not walkable
         if (tileType === TILE_TYPES.SIGN) {

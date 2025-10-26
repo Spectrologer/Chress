@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
+import { GRID_SIZE, TILE_TYPES, DIMENSION_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants.js';
 import { MultiTileHandler } from '../renderers/MultiTileHandler.js';
 import { getExitDirection } from '../core/utils/transitionUtils.js';
 import audioManager from '../utils/AudioManager.js';
@@ -57,42 +57,46 @@ export class ZoneTransitionManager {
         const playerPos = this.game.player.getPosition();
         const currentDim = this.game.player.currentZone.dimension;
 
-        // Check if player is in a pitfall zone and hasn't survived 10 turns yet
-        if (this.game.isInPitfallZone && this.game.pitfallTurnsSurvived < 10) {
-            const turnsRemaining = 10 - this.game.pitfallTurnsSurvived;
+        // Check if player is in a pitfall zone and hasn't survived required turns yet
+        if (this.game.isInPitfallZone && this.game.pitfallTurnsSurvived < GAMEPLAY_CONSTANTS.PITFALL_SURVIVAL_TURNS) {
+            const turnsRemaining = GAMEPLAY_CONSTANTS.PITFALL_SURVIVAL_TURNS - this.game.pitfallTurnsSurvived;
             const turnText = turnsRemaining === 1 ? 'turn' : 'turns';
-            if (this.game.uiManager && typeof this.game.uiManager.showOverlayMessage === 'function') {
-                this.game.uiManager.showOverlayMessage(`You must survive ${turnsRemaining} more ${turnText} to escape!`);
-            }
+            // Use event instead of direct UIManager call
+            eventBus.emit(EventTypes.UI_OVERLAY_MESSAGE_SHOW, {
+                text: `You must survive ${turnsRemaining} more ${turnText} to escape!`,
+                persistent: false,
+                largeText: false,
+                useTypewriter: true
+            });
             audioManager.playSound('error', { game: this.game });
             return;
         }
 
         let targetDim, portType;
-    if (currentDim === 0) {
+    if (currentDim === DIMENSION_CONSTANTS.SURFACE) {
             // On the surface, determine where the PORT leads
             const cisternPos = MultiTileHandler.findCisternPosition(playerPos.x, playerPos.y, this.game.grid);
             const isHole = MultiTileHandler.isHole(playerPos.x, playerPos.y, this.game.grid);
 
             if (cisternPos) {
                 // Entering underground via cistern
-                targetDim = 2;
+                targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                 portType = 'underground';
                 this.game.portTransitionData = { from: 'cistern', x: playerPos.x, y: playerPos.y };
                 // Ensure player's underground depth is initialized to 1 (first underground level)
-                this.game.player.undergroundDepth = 1;
-                this.game.player.currentZone.depth = 1;
+                this.game.player.undergroundDepth = DIMENSION_CONSTANTS.DEFAULT_UNDERGROUND_DEPTH;
+                this.game.player.currentZone.depth = DIMENSION_CONSTANTS.DEFAULT_UNDERGROUND_DEPTH;
             } else if (isHole) {
-                targetDim = 2;
+                targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                 portType = 'underground';
                 this.game.portTransitionData = { from: 'hole', x: playerPos.x, y: playerPos.y };
                 // Ensure player's underground depth is initialized to 1 (first underground level)
-                this.game.player.undergroundDepth = 1;
-                this.game.player.currentZone.depth = 1;
+                this.game.player.undergroundDepth = DIMENSION_CONSTANTS.DEFAULT_UNDERGROUND_DEPTH;
+                this.game.player.currentZone.depth = DIMENSION_CONSTANTS.DEFAULT_UNDERGROUND_DEPTH;
             } else if (this.game.grid[playerPos.y]?.[playerPos.x] && this.game.grid[playerPos.y][playerPos.x].portKind === 'stairdown') {
                 // Descend via stairdown into a deeper underground level
                 // We represent deeper underground layers by keeping dimension=2 and tracking depth via player.undergroundDepth
-                targetDim = 2;
+                targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                 portType = 'underground';
                 // Mark transition as from stairdown so the new zone can place a stairup at emergence point
                 this.game.portTransitionData = { from: 'stairdown', x: playerPos.x, y: playerPos.y };
@@ -106,7 +110,7 @@ export class ZoneTransitionManager {
                 const prevDepth = Number.isInteger(this.game.player.undergroundDepth) ? this.game.player.undergroundDepth : 0;
                 // Decrease depth; if we were at depth 1, ascending returns to surface (depth 0)
                 if (prevDepth > 1) {
-                    targetDim = 2;
+                    targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                     portType = 'underground';
                     this.game.portTransitionData = { from: 'stairup', x: playerPos.x, y: playerPos.y };
                         try { logger && logger.debug && logger.debug(`Port transition set: stairup at (${playerPos.x},${playerPos.y}), newDepth=${this.game.player.undergroundDepth}`); } catch (e) {}
@@ -114,17 +118,17 @@ export class ZoneTransitionManager {
                     this.game.player.currentZone.depth = this.game.player.undergroundDepth;
                 } else {
                     // prevDepth is 0 or 1 -> return to surface
-                    targetDim = 0;
+                    targetDim = DIMENSION_CONSTANTS.SURFACE;
                     portType = this.game.player.currentZone.portType;
                     // Mark transition so the surface emergence will get the matching stairdown
                     this.game.portTransitionData = { from: 'stairup', x: playerPos.x, y: playerPos.y };
                         try { logger && logger.debug && logger.debug(`Port transition set: stairup->surface at (${playerPos.x},${playerPos.y})`); } catch (e) {}
-                    this.game.player.undergroundDepth = 0;
-                    this.game.player.currentZone.depth = 0;
+                    this.game.player.undergroundDepth = DIMENSION_CONSTANTS.DEFAULT_SURFACE_DEPTH;
+                    this.game.player.currentZone.depth = DIMENSION_CONSTANTS.DEFAULT_SURFACE_DEPTH;
                 }
             } else {
                 // Entering interior via house/shack door
-                targetDim = 1;
+                targetDim = DIMENSION_CONSTANTS.INTERIOR;
                 portType = 'interior';
                 // Record the surface port coords so we can return the player to this exact port when exiting the interior
                 this.game.portTransitionData = { from: 'interior', x: playerPos.x, y: playerPos.y };
@@ -132,12 +136,12 @@ export class ZoneTransitionManager {
         } else {
             // Exiting to surface or handling stair transitions while underground
             // If currently in underground, check for stair portals that should change depth rather than exit to surface
-            if (currentDim === 2) {
+            if (currentDim === DIMENSION_CONSTANTS.UNDERGROUND) {
                 const tileUnderPlayer = this.game.grid[playerPos.y]?.[playerPos.x];
                 const portKind = tileUnderPlayer && tileUnderPlayer.portKind;
                 if (portKind === 'stairdown') {
                     // Descend further: keep dimension=2 but increase player's underground depth and mark transition
-                    targetDim = 2;
+                    targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                     portType = 'underground';
                     this.game.portTransitionData = { from: 'stairdown', x: playerPos.x, y: playerPos.y };
                     const prevDepth2 = Number.isInteger(this.game.player.undergroundDepth) ? this.game.player.undergroundDepth : 0;
@@ -147,28 +151,28 @@ export class ZoneTransitionManager {
                     // Ascend one level: if depth > 1, stay in underground with decreased depth; if depth == 1, go to surface
                     const currentDepth = Number.isInteger(this.game.player.undergroundDepth) ? this.game.player.undergroundDepth : 0;
                     if (currentDepth > 1) {
-                        targetDim = 2;
+                        targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                         portType = 'underground';
                         this.game.portTransitionData = { from: 'stairup', x: playerPos.x, y: playerPos.y };
                         this.game.player.undergroundDepth = currentDepth - 1;
                         this.game.player.currentZone.depth = this.game.player.undergroundDepth;
                     } else {
                         // Depth 1 (or 0) -> surface
-                        targetDim = 0;
+                        targetDim = DIMENSION_CONSTANTS.SURFACE;
                         portType = this.game.player.currentZone.portType;
                         // Ensure we mark a stairup->surface transition so surface gets a stairdown
                         this.game.portTransitionData = { from: 'stairup', x: playerPos.x, y: playerPos.y };
-                        this.game.player.undergroundDepth = 0;
-                        this.game.player.currentZone.depth = 0;
+                        this.game.player.undergroundDepth = DIMENSION_CONSTANTS.DEFAULT_SURFACE_DEPTH;
+                        this.game.player.currentZone.depth = DIMENSION_CONSTANTS.DEFAULT_SURFACE_DEPTH;
                     }
                 } else {
                     // Regular port: surface exit
-                    targetDim = 0;
+                    targetDim = DIMENSION_CONSTANTS.SURFACE;
                     portType = this.game.player.currentZone.portType;
                 }
             } else {
                 // Exiting to surface from interior (non-underground)
-                targetDim = 0;
+                targetDim = DIMENSION_CONSTANTS.SURFACE;
                 portType = this.game.player.currentZone.portType;
             }
         }

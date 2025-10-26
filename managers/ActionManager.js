@@ -1,40 +1,43 @@
-import { TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, TILE_SIZE, GRID_SIZE, ANIMATION_CONSTANTS, TIMING_CONSTANTS, GAMEPLAY_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants.js';
 import audioManager from '../utils/AudioManager.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { isWithinGrid } from '../utils/GridUtils.js';
+import { ItemRepository } from './inventory/ItemRepository.js';
+import { isBomb } from '../utils/TileUtils.js';
+import GridIterator from '../utils/GridIterator.js';
 
 export class ActionManager {
     constructor(game) {
         this.game = game;
         this.bombActionCounter = 0;
+        this.itemRepository = new ItemRepository(game);
     }
 
     addBomb() {
-        if (this.game.player.inventory.length < 6) {
+        if (this.game.player.inventory.length < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE) {
             this.game.player.inventory.push({ type: 'bomb' });
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         }
     }
 
     incrementBombActions() {
-        // Find any bombs on the grid and increment their timer
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.game.grid[y][x];
-                if (tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB) {
-                    if (tile.justPlaced) {
-                        // This is the turn the bomb was placed, don't increment the timer yet.
-                        tile.justPlaced = false;
-                        continue;
-                    }
-                    tile.actionsSincePlaced = (tile.actionsSincePlaced || 0) + 1; // Increment on subsequent actions
-                    if (tile.actionsSincePlaced >= 2) {
-                        this.explodeBomb(x, y);
-                    }
-                }
+        // Find any placed bombs (objects with timers) on the grid and increment their timer
+        // Primitive bombs (just the number TILE_TYPES.BOMB) are inactive pickup items
+        GridIterator.findTiles(this.game.grid, isBomb).forEach(({ tile, x, y }) => {
+            // Skip primitive bombs - they're inactive until placed by player
+            if (typeof tile !== 'object') return;
+
+            if (tile.justPlaced) {
+                // This is the turn the bomb was placed, don't increment the timer yet.
+                tile.justPlaced = false;
+                return;
             }
-        }
+            tile.actionsSincePlaced = (tile.actionsSincePlaced || 0) + 1; // Increment on subsequent actions
+            if (tile.actionsSincePlaced >= 2) {
+                this.explodeBomb(x, y);
+            }
+        });
     }
 
     performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy) {
@@ -44,89 +47,30 @@ export class ActionManager {
 
         item.uses--;
         if (item.uses <= 0) {
-            const pi = this.game.player.inventory.findIndex(i => i === item);
-            if (pi !== -1) { this.game.player.inventory.splice(pi, 1); }
-            else {
-                const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(i => i === item) : -1;
-                if (ri !== -1) {
-                    this.game.player.radialInventory.splice(ri, 1);
-                    errorHandler.try(() => {
-                        import('../managers/RadialPersistence.js')
-                            .then(m => m.saveRadialInventory(this.game))
-                            .catch(err => {
-                                errorHandler.handle(err, ErrorSeverity.WARNING, {
-                                    component: 'ActionManager',
-                                    action: 'save radial inventory after item use'
-                                });
-                            });
-                    }, {
-                        component: 'ActionManager',
-                        action: 'import RadialPersistence',
-                        severity: ErrorSeverity.WARNING
-                    });
-                }
-            }
+            this.itemRepository.removeItem(this.game.player, item);
         }
 
         // Add smoke animations along the diagonal charge path
-        try {
-            if (this.game.player.animations && this.game.player.animations.smokeAnimations) {
-                for (let i = 1; i < Math.abs(dx); i++) {
-                    const px = startX + i * Math.sign(dx);
-                    const py = startY + i * Math.sign(dy);
-                    this.game.player.animations.smokeAnimations.push({ x: px, y: py, frame: 18 });
-                }
+        if (this.game.player.animations?.smokeAnimations) {
+            for (let i = 1; i < Math.abs(dx); i++) {
+                const px = startX + i * Math.sign(dx);
+                const py = startY + i * Math.sign(dy);
+                this.game.player.animations.smokeAnimations.push({ x: px, y: py, frame: ANIMATION_CONSTANTS.SMOKE_ANIMATION_FRAMES });
             }
-        } catch (e) {
-            errorHandler.handle(e, ErrorSeverity.WARNING, {
-                component: 'ActionManager',
-                action: 'add smoke animations for bishop charge'
-            });
         }
 
         if (enemy) {
-            try {
-                this.game.player.setAction('attack');
-            } catch (e) {
-                errorHandler.handle(e, ErrorSeverity.WARNING, {
-                    component: 'ActionManager',
-                    action: 'set player action to attack'
-                });
-            }
+            this.game.player.setAction?.('attack');
             const res = this.game.combatManager.defeatEnemy(enemy, 'player');
             if (res && res.defeated) {
                 if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(enemy.x - startX, enemy.y - startY);
             }
         }
 
-        try {
-            this.game.player.setPosition(targetX, targetY);
-        } catch (e) {
-            errorHandler.handle(e, ErrorSeverity.WARNING, {
-                component: 'ActionManager',
-                action: 'set player position after bishop charge'
-            });
-        }
-
-        try {
-            this.game.player.startSmokeAnimation();
-        } catch (e) {
-            errorHandler.handle(e, ErrorSeverity.WARNING, {
-                component: 'ActionManager',
-                action: 'start smoke animation after bishop charge'
-            });
-        }
-
+        this.game.player.setPosition?.(targetX, targetY);
+        this.game.player.startSmokeAnimation?.();
         audioManager.playSound('whoosh', { game: this.game });
-
-        try {
-            this.game.startEnemyTurns();
-        } catch (e) {
-            errorHandler.handle(e, ErrorSeverity.WARNING, {
-                component: 'ActionManager',
-                action: 'start enemy turns after bishop charge'
-            });
-        }
+        this.game.startEnemyTurns?.();
 
         eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
     }
@@ -134,28 +78,7 @@ export class ActionManager {
     performHorseIconCharge(item, targetX, targetY, enemy, dx, dy) {
         item.uses--;
         if (item.uses <= 0) {
-            const pi = this.game.player.inventory.findIndex(i => i === item);
-            if (pi !== -1) { this.game.player.inventory.splice(pi, 1); }
-            else {
-                const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(i => i === item) : -1;
-                if (ri !== -1) {
-                    this.game.player.radialInventory.splice(ri, 1);
-                    errorHandler.try(() => {
-                        import('../managers/RadialPersistence.js')
-                            .then(m => m.saveRadialInventory(this.game))
-                            .catch(err => {
-                                errorHandler.handle(err, ErrorSeverity.WARNING, {
-                                    component: 'ActionManager',
-                                    action: 'save radial inventory after item use'
-                                });
-                            });
-                    }, {
-                        component: 'ActionManager',
-                        action: 'import RadialPersistence',
-                        severity: ErrorSeverity.WARNING
-                    });
-                }
-            }
+            this.itemRepository.removeItem(this.game.player, item);
         }
 
         // Get current player position
@@ -180,19 +103,11 @@ export class ActionManager {
         }
 
         // Add the L-shape charge animation using event system
-        try {
-            eventBus.emit(EventTypes.ANIMATION_HORSE_CHARGE, {
-                startPos: { x: startX, y: startY },
-                midPos: { x: midX, y: midY },
-                endPos: { x: endX, y: endY }
-            });
-        } catch (e) {
-            // Event emission failure is non-fatal
-            errorHandler.handle(e, ErrorSeverity.WARNING, {
-                component: 'ActionManager',
-                action: 'emit horse charge animation event'
-            });
-        }
+        eventBus.emit(EventTypes.ANIMATION_HORSE_CHARGE, {
+            startPos: { x: startX, y: startY },
+            midPos: { x: midX, y: midY },
+            endPos: { x: endX, y: endY }
+        });
 
         // Build ordered positions along the L path (start -> mid -> end)
         const smokePositions = [];
@@ -216,76 +131,40 @@ export class ActionManager {
         }
 
         // Use animationScheduler to add smoke sequentially for a snappier trail
-        try {
+        if (this.game.animationScheduler?.createSequence) {
             const seq = this.game.animationScheduler.createSequence();
             const smokeFrameLifetime = 12; // shorter lifetime for snappier trail
-            const stepDelay = 40; // ms between smoke spawns
+            const stepDelay = TIMING_CONSTANTS.SMOKE_SPAWN_DELAY; // ms between smoke spawns
             smokePositions.forEach((pos, idx) => {
                 seq.then(() => {
                     this.game.player.animations.smokeAnimations.push({ x: pos.x, y: pos.y, frame: smokeFrameLifetime });
                 }).wait(stepDelay);
             });
-            // start sequence but don't block the rest of the logic
-            try {
-                seq.start();
-            } catch (e) {
-                errorHandler.handle(e, ErrorSeverity.WARNING, {
-                    component: 'ActionManager',
-                    action: 'start smoke animation sequence'
-                });
-            }
-        } catch (e) {
+            seq.start?.();
+        } else {
             // Fallback: if animationScheduler isn't available, add all at once
-            smokePositions.forEach(pos => this.game.player.animations.smokeAnimations.push({ x: pos.x, y: pos.y, frame: 12 }));
+            smokePositions.forEach(pos => this.game.player.animations.smokeAnimations.push({ x: pos.x, y: pos.y, frame: ANIMATION_CONSTANTS.SMOKE_SHORT_LIFETIME }));
         }
 
         if (enemy) {
-            try {
-                this.game.player.setAction('attack');
-            } catch (e) {
-                errorHandler.handle(e, ErrorSeverity.WARNING, {
-                    component: 'ActionManager',
-                    action: 'set player action to attack'
-                });
-            }
+            this.game.player.setAction?.('attack');
             const res = this.game.combatManager.defeatEnemy(enemy, 'player');
             if (res && res.defeated) {
                 if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(enemy.x - startX, enemy.y - startY);
             }
         }
 
-        this.game.player.setPosition(targetX, targetY);
-        this.game.player.startSmokeAnimation();
+        this.game.player.setPosition?.(targetX, targetY);
+        this.game.player.startSmokeAnimation?.();
         audioManager.playSound('whoosh', { game: this.game });
-        this.game.startEnemyTurns();
+        this.game.startEnemyTurns?.();
         eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
     }
 
     performBowShot(item, targetX, targetY, enemy = null) {
         item.uses--;
         if (item.uses <= 0) {
-            const pi = this.game.player.inventory.findIndex(i => i === item);
-            if (pi !== -1) { this.game.player.inventory.splice(pi, 1); }
-            else {
-                const ri = this.game.player.radialInventory ? this.game.player.radialInventory.findIndex(i => i === item) : -1;
-                if (ri !== -1) {
-                    this.game.player.radialInventory.splice(ri, 1);
-                    errorHandler.try(() => {
-                        import('../managers/RadialPersistence.js')
-                            .then(m => m.saveRadialInventory(this.game))
-                            .catch(err => {
-                                errorHandler.handle(err, ErrorSeverity.WARNING, {
-                                    component: 'ActionManager',
-                                    action: 'save radial inventory after item use'
-                                });
-                            });
-                    }, {
-                        component: 'ActionManager',
-                        action: 'import RadialPersistence',
-                        severity: ErrorSeverity.WARNING
-                    });
-                }
-            }
+            this.itemRepository.removeItem(this.game.player, item);
         }
 
         const playerPos = this.game.player.getPosition();
@@ -307,29 +186,17 @@ export class ActionManager {
                 this.game.playerJustAttacked = true;
 
                 // Give player a pronounced bow-shot animation state for rendering
-                try {
-                    this.game.player.animations.bowShot = { frames: 20, totalFrames: 20, power: 1.4 };
-                } catch (e) {
-                    errorHandler.handle(e, ErrorSeverity.WARNING, {
-                        component: 'ActionManager',
-                        action: 'set bow shot animation'
-                    });
+                if (this.game.player.animations) {
+                    this.game.player.animations.bowShot = { frames: ANIMATION_CONSTANTS.BOW_SHOT_FRAMES, totalFrames: ANIMATION_CONSTANTS.BOW_SHOT_FRAMES, power: 1.4 };
                 }
 
                 // Play a distinct bow sound
                 audioManager.playSound('bow_shot', { game: this.game });
             })
-            .wait(300) // 300ms delay for arrow to travel
+            .wait(TIMING_CONSTANTS.ARROW_FLIGHT_TIME) // delay for arrow to travel
             .then(() => {
-                    if (targetEnemy && this.game.enemies.includes(targetEnemy)) { // Check if enemy still exists
-                    try {
-                this.game.player.setAction('attack');
-            } catch (e) {
-                errorHandler.handle(e, ErrorSeverity.WARNING, {
-                    component: 'ActionManager',
-                    action: 'set player action to attack'
-                });
-            }
+                if (targetEnemy && this.game.enemies.includes(targetEnemy)) { // Check if enemy still exists
+                    this.game.player.setAction?.('attack');
                     const res = this.game.combatManager.defeatEnemy(targetEnemy, 'player');
                     if (res && res.defeated) {
                         if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(targetEnemy.x - playerPos.x, targetEnemy.y - playerPos.y);
@@ -337,7 +204,7 @@ export class ActionManager {
                 }
                 // Now that the arrow has hit, enemies can take their turn.
                 this.game.playerJustAttacked = false;
-                this.game.startEnemyTurns();
+                this.game.startEnemyTurns?.();
             })
             .start();
     }
@@ -356,7 +223,7 @@ export class ActionManager {
         for (const dir of directions) {
             const nx = bx + dir.dx;
             const ny = by + dir.dy;
-            if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
+            if (isWithinGrid(nx, ny)) {
                 const tile = this.game.grid[ny][nx];
                 if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.GRASS) {
                     this.game.grid[ny][nx] = (nx === 0 || nx === GRID_SIZE - 1 || ny === 0 || ny === GRID_SIZE - 1) ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
@@ -372,14 +239,14 @@ export class ActionManager {
                     // Launch player away from bomb - direction away is continuing in the dir.dx, dir.dy direction from player position
                     let launchX = nx;
                     let launchY = ny;
-                    const maxSteps = 8; // Prevent infinite loop
+                    const maxSteps = GAMEPLAY_CONSTANTS.BOMB_LAUNCH_MAX_STEPS; // Prevent infinite loop
                     let steps = 0;
                     let intermediatePositions = []; // To collect positions for smoke
 
                     while (steps < maxSteps) {
                         launchX += dir.dx;
                         launchY += dir.dy;
-                        if (launchX >= 0 && launchX < GRID_SIZE && launchY >= 0 && launchY < GRID_SIZE &&
+                        if (isWithinGrid(launchX, launchY) &&
                             this.game.player.isWalkable(launchX, launchY, this.game.grid, this.game.player.x, this.game.player.y)) {
                             // Check if enemy at this position - if so, damage it and stop launch
                             const enemy = this.game.enemies.find(e => e.x === launchX && e.y === launchY);
@@ -401,7 +268,7 @@ export class ActionManager {
                     if (launchX !== this.game.player.x || launchY !== this.game.player.y) {
                         // Add smoke at each intermediate position (not at original or final for trail effect)
                         intermediatePositions.forEach(pos => {
-                            this.game.player.animations.smokeAnimations.push({ x: pos.x, y: pos.y, frame: 18 });
+                            this.game.player.animations.smokeAnimations.push({ x: pos.x, y: pos.y, frame: ANIMATION_CONSTANTS.SMOKE_ANIMATION_FRAMES });
                         });
                         this.game.player.setPosition(launchX, launchY);
                         this.game.player.startBump(dir.dx, dir.dy); // Bump in the launch direction
