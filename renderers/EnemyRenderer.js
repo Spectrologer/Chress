@@ -9,7 +9,8 @@ export class EnemyRenderer {
     }
 
     drawEnemies() {
-        for (let enemy of this.game.enemies) {
+        for (let i = 0; i < this.game.enemies.length; i++) {
+            const enemy = this.game.enemies[i];
             let enemyKey;
             if (enemy.enemyType === 'lizardo') {
                 enemyKey = 'lizardo';
@@ -34,15 +35,17 @@ export class EnemyRenderer {
             let scale = 1;
             let flash = false;
             let shakeX = 0, shakeY = 0;
+
+            // Attack animation (during/after hit)
             if (enemy.attackAnimation > 0) {
                 // Scale up and flash red for first half, shake for second half
                 if (enemy.attackAnimation > 7) {
-                    scale = 1.35;
+                    scale = 1.6; // Increased from 1.35 for more dramatic effect
                     flash = true;
                 } else {
-                    scale = 1.15;
-                    shakeX = (Math.random() - 0.5) * 8;
-                    shakeY = (Math.random() - 0.5) * 8;
+                    scale = 1.3; // Increased from 1.15
+                    shakeX = (Math.random() - 0.5) * 16; // Doubled shake intensity
+                    shakeY = (Math.random() - 0.5) * 16;
                 }
             }
 
@@ -64,9 +67,9 @@ export class EnemyRenderer {
 
                 // For lazerd, draw it directly without scaling to avoid blurriness,
                 // and lizord, draw them directly without scaling to avoid blurriness,
-                // unless they are doing a special animation (attack/move).
+                // unless they are doing a special animation (attack/move) or frozen.
                 const isPixelPerfectEnemy = enemy.enemyType === 'lazerd' || enemy.enemyType === 'lizord';
-                if (isPixelPerfectEnemy && scale === 1 && !flash && enemy.liftFrames === 0) {
+                if (isPixelPerfectEnemy && scale === 1 && !flash && enemy.liftFrames === 0 && !enemy.isFrozen) {
                     this.ctx.drawImage(
                         enemyImage,
                         pixelXBase,
@@ -75,6 +78,24 @@ export class EnemyRenderer {
                         TILE_SIZE
                     );
                     continue; // Skip the rest of the scaling/animation logic for this enemy
+                }
+
+                // Handle frozen pixel-perfect enemies separately
+                if (isPixelPerfectEnemy && enemy.isFrozen && scale === 1 && !flash && enemy.liftFrames === 0) {
+                    this.ctx.save();
+                    this.ctx.filter = 'grayscale(1) brightness(0.8)';
+                    this.ctx.globalAlpha = 0.9;
+                    this.ctx.drawImage(
+                        enemyImage,
+                        pixelXBase,
+                        pixelYBase,
+                        TILE_SIZE,
+                        TILE_SIZE
+                    );
+                    this.ctx.filter = 'none';
+                    this.ctx.globalAlpha = 1.0;
+                    this.ctx.restore();
+                    continue;
                 }
 
                 this.ctx.save();
@@ -90,8 +111,11 @@ export class EnemyRenderer {
                 this.ctx.scale(scale, scale);
                 this.ctx.translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
                 if (flash) {
-                    this.ctx.globalAlpha = 0.7;
-                    this.ctx.filter = 'brightness(1.5) drop-shadow(0 0 8px red)';
+                    // Much more dramatic red flash for attacking enemies
+                    this.ctx.filter = 'brightness(2.0) saturate(2) hue-rotate(340deg) drop-shadow(0 0 16px red) drop-shadow(0 0 8px red)';
+                } else if (enemy.isFrozen) {
+                    this.ctx.filter = 'grayscale(1) brightness(0.8)';
+                    this.ctx.globalAlpha = 0.9;
                 }
 
                 // For 'lizardy', handle horizontal flipping with animation centered in the tile.
@@ -139,6 +163,60 @@ export class EnemyRenderer {
                     TILE_SIZE - 4,
                     TILE_SIZE - 4
                 );
+            }
+
+            // Draw turn order number if enemy is alive
+            if (enemy.health > 0 && this.game.turnManager) {
+                // During enemy turns, show position in turnQueue
+                // During player turn, show position based on all enemies (upcoming order)
+                let turnNumber = null;
+
+                if (!this.game.isPlayerTurn && this.game.turnManager.turnQueue.length > 0) {
+                    // Enemy turn phase - show actual queue position
+                    const turnOrderIndex = this.game.turnManager.turnQueue.indexOf(enemy);
+                    if (turnOrderIndex !== -1) {
+                        turnNumber = turnOrderIndex + 1;
+                    }
+                } else if (this.game.isPlayerTurn) {
+                    // Player turn phase - show predicted order (based on current enemy list)
+                    const enemyIndex = this.game.enemies.indexOf(enemy);
+                    if (enemyIndex !== -1) {
+                        turnNumber = enemyIndex + 1;
+                    }
+                }
+
+                if (turnNumber !== null) {
+
+                    // Calculate position above enemy
+                    let pixelX, pixelY;
+                    if (enemy.liftFrames > 0 && enemy.lastX !== undefined && enemy.lastY !== undefined) {
+                        const remaining = enemy.liftFrames;
+                        const totalFrames = ANIMATION_CONSTANTS.LIFT_FRAMES || 15;
+                        const progress = 1 - (remaining / totalFrames);
+                        pixelX = (enemy.lastX + (enemy.x - enemy.lastX) * progress) * TILE_SIZE + enemy.bumpOffsetX;
+                        pixelY = (enemy.lastY + (enemy.y - enemy.lastY) * progress) * TILE_SIZE + enemy.bumpOffsetY + enemy.liftOffsetY;
+                    } else {
+                        pixelX = enemy.x * TILE_SIZE + enemy.bumpOffsetX;
+                        pixelY = enemy.y * TILE_SIZE + enemy.bumpOffsetY + enemy.liftOffsetY;
+                    }
+
+                    // Draw number above the enemy
+                    this.ctx.save();
+                    this.ctx.font = 'bold 20px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'bottom';
+
+                    // Draw black outline
+                    this.ctx.strokeStyle = '#000000';
+                    this.ctx.lineWidth = 4;
+                    this.ctx.strokeText(turnNumber, pixelX + TILE_SIZE / 2, pixelY - 4);
+
+                    // Draw white fill
+                    this.ctx.fillStyle = '#FFFFFF';
+                    this.ctx.fillText(turnNumber, pixelX + TILE_SIZE / 2, pixelY - 4);
+
+                    this.ctx.restore();
+                }
             }
         }
     }

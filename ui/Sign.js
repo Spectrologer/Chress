@@ -90,7 +90,7 @@ export class Sign {
     static barterNpcData = {
         penne: {
             name: 'Penne',
-            portrait: 'assets/fauna/lionface.png',
+            portrait: 'assets/fauna/penneface.png',
             message: 'Give me meat!',
             subclass: 'merchant',
             trades: [

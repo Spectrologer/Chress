@@ -147,8 +147,8 @@ export class UIManager {
         this.messageManager.addMessageToLog(message);
     }
 
-    handleLionInteractionMessage() {
-        this.messageManager.handleLionInteractionMessage();
+    handlePenneInteractionMessage() {
+        this.messageManager.handlePenneInteractionMessage();
     }
 
     hidePenneInteractionMessage() {

@@ -10,6 +10,11 @@ export class ZoneTransitionManager {
     }
 
     checkForZoneTransitionGesture(tapCoords, playerPos) {
+        // Validate that grid and player position are valid before checking
+        if (!this.game.grid || !Array.isArray(this.game.grid)) return false;
+        if (playerPos.y < 0 || playerPos.y >= GRID_SIZE || playerPos.x < 0 || playerPos.x >= GRID_SIZE) return false;
+        if (!this.game.grid[playerPos.y]) return false;
+
         // If player is on an exit tile and taps outside the grid or on the same edge, trigger transition
         const isOnExit = this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.EXIT;
         if (!isOnExit) return false;
@@ -187,7 +192,9 @@ export class ZoneTransitionManager {
         // Player fell through a pitfall. Keep the surface tile as a primitive PITFALL
         // (do not place an object-style 'stairup' on the surface). The underground
         // generator will handle any emergence metadata.
-        this.game.grid[y][x] = TILE_TYPES.PITFALL;
+        if (this.game.grid && this.game.grid[y]) {
+            this.game.grid[y][x] = TILE_TYPES.PITFALL;
+        }
 
         // Set data for the transition
         this.game.portTransitionData = { from: 'pitfall', x, y };

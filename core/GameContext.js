@@ -24,6 +24,7 @@ export class GameContext {
         // Turn-based system state
         this.isPlayerTurn = true;
         this.playerJustAttacked = false;
+        this.justLeftExitTile = false; // Track if player just stepped off exit tile
 
         // Item usage modes
         this.shovelMode = false;
@@ -156,19 +157,15 @@ export class GameContext {
     }
 
     /**
-     * Decrement zone entry count - handles free turns after zone transition
-     * @returns {boolean} True if zone entry state changed to false
+     * Check if player is on an exit tile
+     * @returns {boolean} True if player is on an exit tile
      */
-    decrementZoneEntryCount() {
-        if (typeof this.justEnteredZoneCount === 'number' && this.justEnteredZoneCount > 0) {
-            this.justEnteredZoneCount = Math.max(0, this.justEnteredZoneCount - 1);
-            if (this.justEnteredZoneCount === 0) {
-                this.justEnteredZone = false;
-                delete this.justEnteredZoneCount;
-                return true;
-            }
-        }
-        return false;
+    isPlayerOnExitTile() {
+        if (!this.player || !this.grid) return false;
+        const pos = this.player.getPosition();
+        const tile = this.grid[pos.y] && this.grid[pos.y][pos.x];
+        const tileType = tile && tile.type ? tile.type : tile;
+        return tileType === 3; // TILE_TYPES.EXIT = 3
     }
 
     // ========================================
@@ -199,8 +196,8 @@ export class GameContext {
         this.combatManager.checkCollisions();
     }
 
-    checkLionInteraction() {
-        this.interactionManager.checkLionInteraction();
+    checkPenneInteraction() {
+        this.interactionManager.checkPenneInteraction();
     }
 
     checkSquigInteraction() {
@@ -311,11 +308,24 @@ export class GameContext {
         this.enemies = this.enemies.filter(enemy => !enemy.isDead() || enemy.deathAnimation > 0);
 
         if (this.player.isDead()) {
-            this.uiManager.showGameOverScreen();
-            // Don't continue the game loop logic if dead, just wait for restart.
-            // We still need to render to see the final state.
-            this.render();
-            return;
+            // If player just died, start death animation timer and keep rendering
+            if (!this.playerDeathTimer) {
+                this.playerDeathTimer = 60; // frames to show death animation (~1 second at 60fps)
+            }
+
+            this.playerDeathTimer--;
+
+            // Show game over screen after death animation has played
+            if (this.playerDeathTimer <= 0) {
+                this.uiManager.showGameOverScreen();
+                // Don't continue the game loop logic if dead, just wait for restart.
+                // We still need to render to see the final state.
+                this.render();
+                return;
+            }
+        } else {
+            // Reset death timer if player is alive
+            this.playerDeathTimer = null;
         }
 
         this.render();

@@ -295,6 +295,16 @@ export class SoundManager {
                     oscillator.stop(audioContext.currentTime + 0.25);
                     break;
 
+                case 'hurt':
+                    // Hurt sound: low descending tone with slight warble for pain effect
+                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.15);
+                    gainNode.gain.setValueAtTime(0.12, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.008, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                    break;
+
                 case 'move':
                     // Very subtle movement sound
                     oscillator.frequency.setValueAtTime(120, audioContext.currentTime);

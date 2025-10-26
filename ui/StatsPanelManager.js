@@ -56,15 +56,17 @@ export class StatsPanelManager {
         // Update persistent records
         this._updatePersistentRecords();
 
-        // Wire up action buttons (config, records, restart) using stored callbacks
-        // IMPORTANT: Do this BEFORE installing capture blocker so handlers are in place
-        this._wireActionButtons(this._showConfigCallback, this._showRecordsCallback);
-        console.log('[StatsPanelManager] Action buttons wired');
+        // Install capture blocker FIRST to prevent immediate clickthrough from portrait tap
+        // This blocks ALL events for 400ms to prevent the portrait tap from triggering buttons
+        PanelEventHandler.installCaptureBlocker(400, null);
+        console.log('[StatsPanelManager] Initial capture blocker installed');
 
-        // Install capture blocker to prevent immediate re-clicks, but allow clicks within the stats panel
-        // Do this AFTER wiring buttons so event listeners are attached first
-        PanelEventHandler.installCaptureBlocker(300, inner);
-        console.log('[StatsPanelManager] Capture blocker installed');
+        // Wire up action buttons AFTER a delay to ensure the capture blocker is active
+        // This prevents the portrait tap from immediately triggering the config button
+        setTimeout(() => {
+            this._wireActionButtons(this._showConfigCallback, this._showRecordsCallback);
+            console.log('[StatsPanelManager] Action buttons wired after delay');
+        }, 50);
     }
 
     /**

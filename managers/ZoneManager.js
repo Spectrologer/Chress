@@ -16,13 +16,6 @@ export class ZoneManager {
         // Set flag to skip enemy movements this turn since player just entered zone
         this.game.lastExitSide = exitSide; // Store how we entered for generation logic
 
-    // Give the player two free turns on zone entry: enemies won't start moving
-    // for the next two opportunities. Keep the boolean `justEnteredZone` for
-    // existing tests/consumers, and maintain a numeric counter to track
-    // multiple free turns without breaking older checks.
-    this.game.justEnteredZone = true;
-    this.game.justEnteredZoneCount = 2;
-
         // Reset sign message tracking for the new zone
         this.game.lastSignMessage = null;
         this.game.displayingMessageForSign = null;

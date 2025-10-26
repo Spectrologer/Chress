@@ -119,9 +119,9 @@ export class InteractionManager {
     }
 
     // Consolidated interaction delegation methods
-    checkLionInteraction() {
+    checkPenneInteraction() {
         // Example: delegate to NPC manager or handle directly
-        // (Assuming lion is a type of NPC or tile)
+        // (Penne is a type of NPC or tile)
         // You may want to refactor this to a more generic handler if needed
         return this.npcManager.interactWithPenne({ x: this.game.player.getPosition().x + 1, y: this.game.player.getPosition().y });
     }

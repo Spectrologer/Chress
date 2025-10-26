@@ -84,12 +84,11 @@ export class ItemGenerator {
 
         // AI Note: "Activated Items" are items that require player interaction to use, such as Bombs, Spears, Bows, etc.
         const specialItems = [
-            { name: 'Lion', tile: TILE_TYPES.LION, chance: 0.02, dimension: 0 },
-            { name: 'Squig', tile: TILE_TYPES.SQUIG, chance: 0.02, dimension: 0 },
-            { name: 'Penne', tile: TILE_TYPES.PENNE, chance: 0.02, dimension: 0 },
-            { name: 'Nib', tile: TILE_TYPES.NIB, chance: 0.02, dimension: 2 },
-            { name: 'Mark', tile: TILE_TYPES.MARK, chance: 0.02, dimension: 0 },
-            { name: 'Rune', tile: TILE_TYPES.RUNE, chance: 0.02, dimension: 2 },
+            { name: 'Squig', tile: TILE_TYPES.SQUIG, chance: 0.03, dimension: 0 },
+            { name: 'Penne', tile: TILE_TYPES.PENNE, chance: 0.03, dimension: 0 },
+            { name: 'Nib', tile: TILE_TYPES.NIB, chance: 0.05, dimension: 2 },
+            { name: 'Mark', tile: TILE_TYPES.MARK, chance: 0.03, dimension: 0 },
+            { name: 'Rune', tile: TILE_TYPES.RUNE, chance: 0.05, dimension: 2 },
             { name: 'Note', tile: TILE_TYPES.NOTE, chance: 0.04, dimension: 'any' }, // Activated Item
             { name: 'Bishop Spear', tile: { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
             { name: 'Horse Icon', tile: { type: TILE_TYPES.HORSE_ICON, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
@@ -125,7 +124,7 @@ export class ItemGenerator {
     }
 
     _placeItem(item) {
-        const loggableItems = ['Lion', 'Squig', 'Nib', 'Mark', 'Rune', 'Pitfall'];
+        const loggableItems = ['Penne', 'Squig', 'Nib', 'Mark', 'Rune', 'Pitfall'];
         let onPlacedCallback = null;
 
         if (loggableItems.includes(item.name)) {

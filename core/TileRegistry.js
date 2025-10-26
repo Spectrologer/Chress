@@ -100,8 +100,7 @@ export class TileRegistry {
      */
     static SPECIAL_INTERACTIVE_TYPES = [
         TILE_TYPES.SIGN,
-        TILE_TYPES.TABLE,
-        TILE_TYPES.LION
+        TILE_TYPES.TABLE
     ];
 
     // ========================================

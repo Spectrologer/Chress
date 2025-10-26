@@ -231,7 +231,7 @@ export class GameStateManager {
                     noteSpawned: ZoneStateManager.noteSpawned,
                     spearSpawned: ZoneStateManager.spearSpawned,
                     horseIconSpawned: ZoneStateManager.horseIconSpawned,
-                    lionSpawned: ZoneStateManager.lionSpawned,
+                    penneSpawned: ZoneStateManager.penneSpawned,
                     squigSpawned: ZoneStateManager.squigSpawned,
                     wellSpawned: ZoneStateManager.wellSpawned,
                     deadTreeSpawned: ZoneStateManager.deadTreeSpawned,
@@ -336,7 +336,7 @@ export class GameStateManager {
                 ZoneStateManager.noteSpawned = gameState.zoneStateManager.noteSpawned || false;
                 ZoneStateManager.spearSpawned = gameState.zoneStateManager.spearSpawned || false;
                 ZoneStateManager.horseIconSpawned = gameState.zoneStateManager.horseIconSpawned || false;
-                ZoneStateManager.lionSpawned = gameState.zoneStateManager.lionSpawned || false;
+                ZoneStateManager.penneSpawned = gameState.zoneStateManager.penneSpawned || false;
                 ZoneStateManager.squigSpawned = gameState.zoneStateManager.squigSpawned || false;
                 ZoneStateManager.wellSpawned = gameState.zoneStateManager.wellSpawned || false;
                 ZoneStateManager.deadTreeSpawned = gameState.zoneStateManager.deadTreeSpawned || false;

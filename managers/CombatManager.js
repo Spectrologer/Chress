@@ -219,6 +219,7 @@ export class CombatManager {
 
         const playerPos = this.game.player.getPosition();
         const remainingEnemies = [];
+        let playerWasAttacked = false;
 
         for (const enemy of this.game.enemies) {
             const enemyIsDead = safeCall(enemy, 'isDead') ?? (enemy.health <= 0);
@@ -229,6 +230,31 @@ export class CombatManager {
 
             let isDefeated = false;
             if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked && enemy.enemyType !== 'lizardy') {
+                // Player is being attacked!
+                playerWasAttacked = true;
+
+                // Visual feedback on player
+                this.game.player.animations.startDamageAnimation();
+
+                // Knockback: Use enemy's last position to determine direction
+                // Enemy moved from (lastX, lastY) to current position (x, y)
+                const enemyMoveX = enemy.x - (enemy.lastX !== undefined ? enemy.lastX : enemy.x);
+                const enemyMoveY = enemy.y - (enemy.lastY !== undefined ? enemy.lastY : enemy.y);
+
+                // Push player in the direction the enemy was moving
+                // If enemy didn't move, use a default bump
+                const knockbackX = enemyMoveX !== 0 ? Math.sign(enemyMoveX) : 1;
+                const knockbackY = enemyMoveY !== 0 ? Math.sign(enemyMoveY) : 0;
+                this.game.player.startBump(knockbackX, knockbackY);
+
+                // Enemy attack animation (bump towards player - opposite of knockback)
+                enemy.attackAnimation = 15;
+                enemy.startBump(knockbackX, knockbackY);
+
+                // Play hurt sound
+                audioManager.playSound('hurt', { game: this.game });
+
+                // Deal damage
                 this.game.player.takeDamage(enemy.attack);
                 enemy.takeDamage(enemy.health);
                 isDefeated = true;
@@ -248,6 +274,12 @@ export class CombatManager {
             hunger: this.game.player.hunger,
             thirst: this.game.player.thirst
         });
+
+        // If player was attacked, add a pause for dramatic effect
+        if (playerWasAttacked) {
+            return true; // Signal that we need a pause
+        }
+        return false;
     }
 
 

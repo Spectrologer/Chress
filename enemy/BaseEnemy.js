@@ -19,6 +19,7 @@ export class BaseEnemy {
         this.liftOffsetY = 0;
         this.liftFrames = 0;
         this.smokeAnimations = [];
+        this.isFrozen = false; // Frozen when player is on exit tile
 
         // Add a small scaling factor for lizardy to prevent clipping
         if (this.enemyType === 'lizardy') {
@@ -75,8 +76,9 @@ export class BaseEnemy {
 
     startBump(deltaX, deltaY) {
         // Set initial bump offset (towards the other entity)
-        this.bumpOffsetX = deltaX * 24; // Increased from 16 for more impact
-        this.bumpOffsetY = deltaY * 24;
+        // Increased from 24 to 48 for much more visible attack animation
+        this.bumpOffsetX = deltaX * 48;
+        this.bumpOffsetY = deltaY * 48;
         this.bumpFrames = ANIMATION_CONSTANTS.BUMP_ANIMATION_FRAMES;
     }
 

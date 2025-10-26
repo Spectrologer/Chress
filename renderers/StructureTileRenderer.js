@@ -186,7 +186,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
     // Try to draw the Penne image if loaded, otherwise use fallback
-    renderOverlay(ctx, this.images, 'lion', pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.PENNE], '🦁', { font: '32px Arial', fillStyle: '#FFD700' }, { fullTile: true });
+    renderOverlay(ctx, this.images, 'penne', pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.PENNE], '🍝', { font: '32px Arial', fillStyle: '#FFD700' }, { fullTile: true });
     }
 
     renderSquigTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {

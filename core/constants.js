@@ -363,7 +363,7 @@ export const IMAGE_ASSETS = [
     'doodads/hole.png',
     'doodads/deadtree.png',
     'doodads/pitfall.png',
-    'fauna/lion.png',
+    'fauna/penne.png',
     'fauna/squig.png',
     'fauna/nib.png',
     'fauna/rune.png',

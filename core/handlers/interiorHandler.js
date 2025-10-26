@@ -37,9 +37,9 @@ class InteriorHandler extends BaseZoneHandler {
         this.zoneGen.grid[6][3] = TILE_TYPES.FELT;
         this.zoneGen.grid[3][3] = TILE_TYPES.FORGE;
 
-        if (Math.random() < 0.1) {
+        if (Math.random() < 0.2) {
             const pos = _findOpenNpcSpawn(this.zoneGen, 2);
-            if (pos) this.zoneGen.grid[pos.y][pos.x] = TILE_TYPES.LION;
+            if (pos) this.zoneGen.grid[pos.y][pos.x] = TILE_TYPES.PENNE;
         }
         if (Math.random() < 0.1) {
             const pos = _findOpenNpcSpawn(this.zoneGen, 2);

@@ -56,17 +56,33 @@ export class PlayerRenderer {
 
         // If a backflip rotation is active, draw rotated around sprite center
         if (playerImage && playerImage.complete) {
+            this.ctx.save();
+
+            // Apply damage flash effect if taking damage
+            if (anim.damageAnimation > 0) {
+                // Flash red for first half, then fade
+                if (anim.damageAnimation > 15) {
+                    // Strong red flash with glow (first half)
+                    this.ctx.filter = 'brightness(2.0) saturate(2) hue-rotate(340deg) drop-shadow(0 0 16px red) drop-shadow(0 0 8px red)';
+                } else {
+                    // Dimmer red glow as it fades (second half)
+                    this.ctx.filter = 'brightness(1.5) saturate(1.5) hue-rotate(340deg) drop-shadow(0 0 4px red)';
+                }
+            }
+
             if (anim.backflipAngle && anim.backflipAngle !== 0) {
-                this.ctx.save();
                 const cx = pixelXBase + TILE_SIZE / 2;
                 const cy = pixelYBase + TILE_SIZE / 2;
                 this.ctx.translate(cx, cy);
                 this.ctx.rotate(anim.backflipAngle);
                 this.ctx.drawImage(playerImage, -TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
-                this.ctx.restore();
             } else {
                 this.ctx.drawImage(playerImage, pixelXBase, pixelYBase, TILE_SIZE, TILE_SIZE);
             }
+
+            this.ctx.filter = 'none';
+            this.ctx.globalAlpha = 1.0;
+            this.ctx.restore();
         } else {
             this.ctx.fillStyle = '#ff4444';
             if (anim.backflipAngle && anim.backflipAngle !== 0) {

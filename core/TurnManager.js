@@ -4,42 +4,29 @@ export class TurnManager {
         this.turnQueue = [];
         this.occupiedTilesThisTurn = new Set();
         this.initialEnemyTilesThisTurn = new Set();
+        this.wasPlayerOnExitLastTurn = false; // Track player's previous exit tile state
     }
 
     /**
      * Handle turn completion after player action
-     * Manages zone entry free turns and pitfall tracking
+     * Manages pitfall tracking
      * @returns {boolean} True if enemy turns were started
      */
     handleTurnCompletion() {
-        // Free turns after zone entry
-        const zoneEntryEnded = this.game.decrementZoneEntryCount();
-        if (!zoneEntryEnded && !this.game.justEnteredZone) {
-            this.startEnemyTurns();
-            if (this.game.isInPitfallZone) {
-                this.game.pitfallTurnsSurvived++;
-            }
-            return true;
-        } else if (this.game.justEnteredZone) {
-            this.game.justEnteredZone = false;
+        this.startEnemyTurns();
+        if (this.game.isInPitfallZone) {
+            this.game.pitfallTurnsSurvived++;
         }
-        return false;
+        return true;
     }
 
     startEnemyTurns() {
-        // If the player just entered a zone, give them one free turn: skip enemy turns
-        // and clear the one-time flag so enemies resume next turn.
-        const zoneEntryEnded = this.game.decrementZoneEntryCount();
-        if (zoneEntryEnded || this.game.justEnteredZone) {
-            if (this.game.justEnteredZone) {
-                this.game.justEnteredZone = false;
-            }
-            return;
-        }
-
         // If the player just attacked and an attack has delay, enemy turns will
         // be started by the attack resolution elsewhere.
         if (this.game.playerJustAttacked) return;
+
+        // Check if player is on exit tile - if so, freeze all enemies
+        const playerOnExit = this.game.isPlayerOnExitTile();
 
         this.game.isPlayerTurn = false;
         this.occupiedTilesThisTurn.clear();
@@ -47,6 +34,29 @@ export class TurnManager {
 
         const playerPos = this.game.player.getPosition();
         this.occupiedTilesThisTurn.add(`${playerPos.x},${playerPos.y}`);
+
+        // Detect if player just stepped off exit tile
+        if (this.wasPlayerOnExitLastTurn && !playerOnExit) {
+            // Player just left the exit tile - set flag for 1-turn grace period
+            this.game.justLeftExitTile = true;
+        }
+
+        // Set freeze state on all enemies based on player position
+        // Enemies stay frozen for 1 turn after leaving exit tile
+        if (this.game.enemies) {
+            const shouldFreeze = playerOnExit || this.game.justLeftExitTile;
+            this.game.enemies.forEach(enemy => {
+                enemy.isFrozen = shouldFreeze;
+            });
+        }
+
+        // Clear the grace period flag after it's been used for one turn
+        if (this.game.justLeftExitTile && !playerOnExit) {
+            this.game.justLeftExitTile = false;
+        }
+
+        // Update the tracking variable for next turn
+        this.wasPlayerOnExitLastTurn = playerOnExit;
 
         this.turnQueue = [...this.game.enemies];
         this.processTurnQueue();
@@ -57,11 +67,19 @@ export class TurnManager {
             this.game.isPlayerTurn = true;
             this.game.playerJustAttacked = false;
             // After all enemy moves, run collision and pickup checks
+            let playerWasAttacked = false;
             if (this.game.combatManager && typeof this.game.combatManager.checkCollisions === 'function') {
-                this.game.combatManager.checkCollisions();
+                playerWasAttacked = this.game.combatManager.checkCollisions();
             }
             if (this.game.interactionManager && typeof this.game.interactionManager.checkItemPickup === 'function') {
                 this.game.interactionManager.checkItemPickup();
+            }
+            // Add a pause if player was attacked for dramatic effect
+            if (playerWasAttacked) {
+                // Use animation scheduler to actually pause the game
+                this.game.animationScheduler.createSequence()
+                    .wait(500)
+                    .start();
             }
             return;
         }
@@ -69,13 +87,16 @@ export class TurnManager {
         const enemy = this.turnQueue.shift();
         const isStillValid = enemy && !enemy.isDead() && this.game.enemies.includes(enemy);
 
+        // Frozen enemies process faster since they don't actually move
+        const waitTime = (isStillValid && enemy.isFrozen) ? 50 : 400;
+
         this.game.animationScheduler.createSequence()
             .then(() => {
-                if (isStillValid) {
+                if (isStillValid && !enemy.isFrozen) {
                     this.game.combatManager.handleSingleEnemyMovement(enemy);
                 }
             })
-            .wait(150)
+            .wait(waitTime)
             .then(() => this.processTurnQueue())
             .start();
     }

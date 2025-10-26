@@ -9,7 +9,7 @@ export class ZoneStateManager {
     static spearSpawned = false;
     static horseIconSpawned = false;
     static noteSpawned = false;
-    static lionSpawned = false;
+    static penneSpawned = false;
     static squigSpawned = false;
 // Flag to ensure at least one shack spawns in level 1 per session
 static shackSpawned = false;
@@ -94,7 +94,7 @@ static hammerWarningSignPlaced = false;
         this.hammerSpawned = false;
         this.spearSpawned = false;
         this.noteSpawned = false;
-        this.lionSpawned = false;
+        this.penneSpawned = false;
         this.shackSpawned = false;
         this.wildsShackSpawned = false;
         this.firstWildsZonePlaced = false;

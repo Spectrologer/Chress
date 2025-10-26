@@ -9,6 +9,7 @@ export class PlayerAnimations {
     reset() {
         this.attackAnimation = 0;
         this.actionAnimation = 0;
+        this.damageAnimation = 0; // frames remaining for damage flash
         this.smokeAnimations = [];
         this.splodeAnimations = [];
         this.bumpOffsetX = 0;
@@ -27,9 +28,9 @@ export class PlayerAnimations {
     }
 
     startBump(deltaX, deltaY) {
-        // Keep consistency with enemies (stronger visual bump)
-        this.bumpOffsetX = deltaX * 24;
-        this.bumpOffsetY = deltaY * 24;
+        // Strong visual bump for damage feedback (increased from 24 to 48)
+        this.bumpOffsetX = deltaX * 48;
+        this.bumpOffsetY = deltaY * 48;
         this.bumpFrames = ANIMATION_CONSTANTS.BUMP_ANIMATION_FRAMES;
     }
 
@@ -60,6 +61,10 @@ export class PlayerAnimations {
 
     startActionAnimation() {
         this.actionAnimation = ANIMATION_CONSTANTS.ATTACK_ANIMATION_FRAMES;
+    }
+
+    startDamageAnimation() {
+        this.damageAnimation = 30; // 30 frames of red flash (~0.5 seconds at 60fps)
     }
 
     startSmokeAnimation() {
@@ -117,6 +122,9 @@ export class PlayerAnimations {
         }
         if (this.actionAnimation > 0) {
             this.actionAnimation--;
+        }
+        if (this.damageAnimation > 0) {
+            this.damageAnimation--;
         }
         if (this.liftFrames > 0) {
             // Use animation constant for consistent timing

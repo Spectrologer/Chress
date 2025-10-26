@@ -75,7 +75,7 @@ export class TileStrategyRegistry {
             this.images, this.tileSize, 'lizardy', TILE_TYPES.ENEMY, '🦎', { font: '32px Arial', fillStyle: '#FF1493' }
         ));
         this.register(TILE_TYPES.PENNE, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'lion', TILE_TYPES.PENNE, '🦁', { font: '32px Arial', fillStyle: '#FFD700' }
+            this.images, this.tileSize, 'penne', TILE_TYPES.PENNE, '🍝', { font: '32px Arial', fillStyle: '#FFD700' }
         ));
         this.register(TILE_TYPES.SQUIG, new SimpleOverlayRenderStrategy(
             this.images, this.tileSize, 'squig', TILE_TYPES.SQUIG, '🐸', null
