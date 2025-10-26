@@ -80,10 +80,10 @@ export class EnemyDefeatFlow {
         const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
         const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, depth);
 
-        if (this.game.zones.has(zoneKey)) {
-            const zoneData = this.game.zones.get(zoneKey);
+        if (this.game.zoneRepository.hasByKey(zoneKey)) {
+            const zoneData = this.game.zoneRepository.getByKey(zoneKey);
             zoneData.enemies = zoneData.enemies.filter(data => data.id !== enemy.id);
-            this.game.zones.set(zoneKey, zoneData);
+            this.game.zoneRepository.setByKey(zoneKey, zoneData);
         }
     }
 

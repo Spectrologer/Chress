@@ -61,6 +61,13 @@ export class MessageManager {
             const { text, imageSrc, isPersistent, isLargeText, useTypewriter } = data;
             this.showOverlayMessage(text, imageSrc, isPersistent, isLargeText, useTypewriter);
         });
+
+        // Hide persistent messages when player moves (unless it's a sign message)
+        eventBus.on(EventTypes.PLAYER_MOVED, () => {
+            if (!this.game.displayingMessageForSign) {
+                this.hideOverlayMessage();
+            }
+        });
     }
 
     setupMessageLogButton() {

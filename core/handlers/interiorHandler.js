@@ -1,4 +1,4 @@
-import { TILE_TYPES, GRID_SIZE } from '../constants.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../constants.js';
 import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
 import { validateAndSetTile } from '../../generators/GeneratorUtils.js';
 import { findOpenNpcSpawn as _findOpenNpcSpawn } from '../zoneSpawnManager.js';
@@ -37,11 +37,11 @@ class InteriorHandler extends BaseZoneHandler {
         this.zoneGen.grid[6][3] = TILE_TYPES.FELT;
         this.zoneGen.grid[3][3] = TILE_TYPES.FORGE;
 
-        if (Math.random() < 0.2) {
+        if (Math.random() < SPAWN_PROBABILITIES.INTERIOR.HOME_PENNE_NPC) {
             const pos = _findOpenNpcSpawn(this.zoneGen, 2);
             if (pos) this.zoneGen.grid[pos.y][pos.x] = TILE_TYPES.PENNE;
         }
-        if (Math.random() < 0.1) {
+        if (Math.random() < SPAWN_PROBABILITIES.INTERIOR.HOME_SQUIG_NPC) {
             const pos = _findOpenNpcSpawn(this.zoneGen, 2);
             if (pos) this.zoneGen.grid[pos.y][pos.x] = TILE_TYPES.SQUIG;
         }
@@ -140,11 +140,11 @@ class InteriorHandler extends BaseZoneHandler {
 
     placeShackItems() {
         let additionalItems = 0;
-        if (Math.random() < 0.25) additionalItems++;
-        if (additionalItems >= 1 && Math.random() < 0.20) additionalItems++;
-        if (additionalItems >= 2 && Math.random() < 0.15) additionalItems++;
-        if (additionalItems >= 3 && Math.random() < 0.10) additionalItems++;
-        if (additionalItems >= 4 && Math.random() < 0.05) additionalItems++;
+        if (Math.random() < SPAWN_PROBABILITIES.INTERIOR.SHACK_ITEM_1) additionalItems++;
+        if (additionalItems >= 1 && Math.random() < SPAWN_PROBABILITIES.INTERIOR.SHACK_ITEM_2) additionalItems++;
+        if (additionalItems >= 2 && Math.random() < SPAWN_PROBABILITIES.INTERIOR.SHACK_ITEM_3) additionalItems++;
+        if (additionalItems >= 3 && Math.random() < SPAWN_PROBABILITIES.INTERIOR.SHACK_ITEM_4) additionalItems++;
+        if (additionalItems >= 4 && Math.random() < SPAWN_PROBABILITIES.INTERIOR.SHACK_ITEM_5) additionalItems++;
         const totalItems = 2 + additionalItems;
 
         for (let i = 0; i < totalItems; i++) {

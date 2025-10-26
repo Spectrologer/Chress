@@ -1,5 +1,5 @@
 import { Sign } from '../ui/Sign.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants.js';
 import { randomInt, findValidPlacement, getGridCenter, isWithinBounds } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import { PathGenerator } from './PathGenerator.js';
@@ -19,8 +19,8 @@ export class ItemGenerator {
 
     addLevelBasedFoodAndWater() {
         if (this.dimension === 2) {
-            // Underground: Only aguamelin, 2% chance
-            if (Math.random() < 0.02) {
+            // Underground: Only aguamelin
+            if (Math.random() < SPAWN_PROBABILITIES.FOOD_WATER.UNDERGROUND_AGUAMELIN) {
                 this._placeItemRandomly({ type: TILE_TYPES.FOOD, foodType: 'food/aguamelin.png' });
             }
             return;
@@ -28,10 +28,10 @@ export class ItemGenerator {
         // Surface/other: normal logic
         let spawnChance = 0;
         switch (this.zoneLevel) {
-            case 1: spawnChance = 0.40; break;
-            case 2: spawnChance = 0.25; break;
-            case 3: spawnChance = 0.15; break;
-            case 4: spawnChance = 0.05; break;
+            case 1: spawnChance = SPAWN_PROBABILITIES.FOOD_WATER.HOME; break;
+            case 2: spawnChance = SPAWN_PROBABILITIES.FOOD_WATER.WOODS; break;
+            case 3: spawnChance = SPAWN_PROBABILITIES.FOOD_WATER.WILDS; break;
+            case 4: spawnChance = SPAWN_PROBABILITIES.FOOD_WATER.FRONTIER; break;
         }
         if (Math.random() < spawnChance) {
             this.addRandomItem();
@@ -84,19 +84,19 @@ export class ItemGenerator {
 
         // AI Note: "Activated Items" are items that require player interaction to use, such as Bombs, Spears, Bows, etc.
         const specialItems = [
-            { name: 'Squig', tile: TILE_TYPES.SQUIG, chance: 0.03, dimension: 0 },
-            { name: 'Penne', tile: TILE_TYPES.PENNE, chance: 0.03, dimension: 0 },
-            { name: 'Nib', tile: TILE_TYPES.NIB, chance: 0.05, dimension: 2 },
-            { name: 'Mark', tile: TILE_TYPES.MARK, chance: 0.03, dimension: 0 },
-            { name: 'Rune', tile: TILE_TYPES.RUNE, chance: 0.05, dimension: 2 },
-            { name: 'Note', tile: TILE_TYPES.NOTE, chance: 0.04, dimension: 'any' }, // Activated Item
-            { name: 'Bishop Spear', tile: { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Horse Icon', tile: { type: TILE_TYPES.HORSE_ICON, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Bomb', tile: TILE_TYPES.BOMB, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Heart', tile: TILE_TYPES.HEART, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any' },
-            { name: 'Bow', tile: { type: TILE_TYPES.BOW, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Shovel', tile: { type: TILE_TYPES.SHOVEL, uses: 3 }, chance: 0.04, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Pitfall', tile: TILE_TYPES.PITFALL, chance: 0.03, minLevel: 2, maxLevel: 4, dimension: 0 }, // 3% chance on surface in Woods, Wilds, Frontier
+            { name: 'Squig', tile: TILE_TYPES.SQUIG, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.SQUIG, dimension: 0 },
+            { name: 'Penne', tile: TILE_TYPES.PENNE, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.PENNE, dimension: 0 },
+            { name: 'Nib', tile: TILE_TYPES.NIB, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.NIB, dimension: 2 },
+            { name: 'Mark', tile: TILE_TYPES.MARK, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.MARK, dimension: 0 },
+            { name: 'Rune', tile: TILE_TYPES.RUNE, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.RUNE, dimension: 2 },
+            { name: 'Note', tile: TILE_TYPES.NOTE, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.NOTE, dimension: 'any' }, // Activated Item
+            { name: 'Bishop Spear', tile: { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.BISHOP_SPEAR, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
+            { name: 'Horse Icon', tile: { type: TILE_TYPES.HORSE_ICON, uses: 3 }, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.HORSE_ICON, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
+            { name: 'Bomb', tile: TILE_TYPES.BOMB, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.BOMB, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
+            { name: 'Heart', tile: TILE_TYPES.HEART, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.HEART, minLevel: 1, maxLevel: 4, dimension: 'any' },
+            { name: 'Bow', tile: { type: TILE_TYPES.BOW, uses: 3 }, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.BOW, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
+            { name: 'Shovel', tile: { type: TILE_TYPES.SHOVEL, uses: 3 }, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.SHOVEL, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
+            { name: 'Pitfall', tile: TILE_TYPES.PITFALL, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.PITFALL, minLevel: 2, maxLevel: 4, dimension: 0 },
         ];
 
         specialItems.forEach(item => {
@@ -159,7 +159,9 @@ export class ItemGenerator {
 
     addAxelotlItem() {
         // Try to place the axelotl near the cistern (around center area)
-        const { centerX, centerY } = getGridCenter();
+        const center = getGridCenter();
+        const centerX = center.x;
+        const centerY = center.y;
         for (let r = 0; r < 5; r++) { // Radius around center
             for (let dx = -r; dx <= r; dx++) {
                 for (let dy = -r; dy <= r; dy++) {

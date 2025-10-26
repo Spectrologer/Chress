@@ -145,7 +145,7 @@ export class ZoneManager {
                     this.game.player.currentZone.dimension,
                     this.game.player.currentZone.depth || (this.game.player.undergroundDepth || 1)
                 );
-                const zoneData = this.game.zones.get(portZoneKey);
+                const zoneData = this.game.zoneRepository.getByKey(portZoneKey);
 
                 if (this.game.portTransitionData?.from === 'pitfall') {
                     // Entering underground via pitfall: Use the zone's designated spawn point
@@ -173,7 +173,7 @@ export class ZoneManager {
                     try {
                         const undergroundDepth = this.game.player.currentZone.depth || (this.game.player.undergroundDepth || 1);
                         const undergroundZoneKey = createZoneKey(this.game.player.currentZone.x, this.game.player.currentZone.y, 2, undergroundDepth);
-                        const undergroundData = this.game.zones.get(undergroundZoneKey);
+                        const undergroundData = this.game.zoneRepository.getByKey(undergroundZoneKey);
                         if (undergroundData && undergroundData.returnToSurface) {
                             portX = undergroundData.returnToSurface.x;
                             portY = undergroundData.returnToSurface.y;
@@ -190,7 +190,7 @@ export class ZoneManager {
                 } else if (this.game.player.currentZone.dimension === 0) {
                     // Exiting to the surface. Prefer the interior's recorded return coordinates if available.
                     const interiorZoneKey = createZoneKey(this.game.player.currentZone.x, this.game.player.currentZone.y, 1);
-                    const interiorZoneData = this.game.zones.get(interiorZoneKey);
+                    const interiorZoneData = this.game.zoneRepository.getByKey(interiorZoneKey);
                     let placed = false;
 
                     if (interiorZoneData && interiorZoneData.returnToSurface) {
@@ -281,14 +281,14 @@ export class ZoneManager {
         // This handles cases where a zone was generated without a port, but now needs one.
         const isPortTransition = this.game.lastExitSide === 'port';
 
-        if (this.game.zones.has(zoneKey)) {
+        if (this.game.zoneRepository.hasByKey(zoneKey)) {
             // Use existing zone data (loaded from save or previously generated).
             // Previously we forced regeneration for port transitions which could
             // overwrite saved returnToSurface data (e.g. the surface hole where a
             // player fell through). Prefer reusing saved data to preserve that
             // mapping; generators will still patch emergence tiles below when
             // portTransitionData is present.
-            zoneData = this.game.zones.get(zoneKey);
+            zoneData = this.game.zoneRepository.getByKey(zoneKey);
         } else {
             // Generate new zone
             zoneData = this.game.zoneGenerator.generateZone(
@@ -324,7 +324,7 @@ export class ZoneManager {
                     zoneData.returnToSurface = { x: this.game.portTransitionData.x, y: this.game.portTransitionData.y };
                 }
             }
-            this.game.zones.set(zoneKey, zoneData);
+            this.game.zoneRepository.setByKey(zoneKey, zoneData);
         }
 
         this.game.grid = zoneData.grid;
@@ -449,7 +449,7 @@ export class ZoneManager {
         const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, depth);
 
         // Save current zone state to preserve any changes made during gameplay
-        this.game.zones.set(zoneKey, {
+        this.game.zoneRepository.setByKey(zoneKey, {
             grid: JSON.parse(JSON.stringify(this.game.grid)),
             enemies: [...this.game.enemies.map(enemy => ({
                 x: enemy.x,

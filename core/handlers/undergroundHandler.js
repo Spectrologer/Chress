@@ -1,4 +1,4 @@
-import { TILE_TYPES, GRID_SIZE } from '../constants.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../constants.js';
 import logger from '../logger.js';
 import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
 import { BaseZoneHandler } from './BaseZoneHandler.js';
@@ -42,33 +42,28 @@ class UndergroundHandler extends BaseZoneHandler {
         if (!this.zoneGen.game.portTransitionData) return;
 
         const { from, x, y } = this.zoneGen.game.portTransitionData;
-        const isFromHole = from === 'hole';
-        const isFromCistern = from === 'cistern';
-        const isFromPitfall = from === 'pitfall';
-        const isFromStairDown = from === 'stairdown';
-        const isFromStairUp = from === 'stairup';
+        const handlers = {
+            cistern: () => {
+                this.structureGenerator.addCistern(this.zoneX, this.zoneY, true, x, y);
+                this.zoneGen.grid[y + 1][x] = TILE_TYPES.CISTERN;
+            },
+            hole: () => this.placeStairPort(x, y, 'stairup', from),
+            pitfall: () => this.placeStairPort(x, y, 'stairup', from),
+            stairdown: () => this.placeStairPort(x, y, 'stairup', from),
+            stairup: () => this.placeStairPort(x, y, 'stairdown', from)
+        };
 
-        if (isFromCistern) {
-            this.structureGenerator.addCistern(this.zoneX, this.zoneY, true, x, y);
-            this.zoneGen.grid[y + 1][x] = TILE_TYPES.CISTERN;
-        } else if (isFromHole || isFromPitfall) {
-            // Represent surface emergence as an up-stair object port
-            this.zoneGen.grid[y][x] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
-            try { logger?.debug?.(`undergroundHandler: placed stairup at (${x},${y}) from ${from}`); } catch (e) {}
-        } else if (isFromStairDown) {
-            // Player descended using a stairdown: place a stairup at the emergence point
-            this.zoneGen.grid[y][x] = { type: TILE_TYPES.PORT, portKind: 'stairup' };
-            try { logger?.debug?.(`undergroundHandler: placed stairup at (${x},${y}) from stairdown`); } catch (e) {}
-        } else if (isFromStairUp) {
-            // Player ascended using a stairup: place a stairdown at the emergence point
-            this.zoneGen.grid[y][x] = { type: TILE_TYPES.PORT, portKind: 'stairdown' };
-            try { logger?.debug?.(`undergroundHandler: placed stairdown at (${x},${y}) from stairup`); } catch (e) {}
-        }
+        handlers[from]?.();
+    }
+
+    placeStairPort(x, y, portKind, from) {
+        this.zoneGen.grid[y][x] = { type: TILE_TYPES.PORT, portKind };
+        try { logger?.debug?.(`undergroundHandler: placed ${portKind} at (${x},${y}) from ${from}`); } catch (e) {}
     }
 
     handleRandomStairdownPlacement() {
         try {
-            if (!this.isHomeZone && Math.random() < 0.15) {
+            if (!this.isHomeZone && Math.random() < SPAWN_PROBABILITIES.STAIRS_DOWN) {
                 const avoidX = this.zoneGen.game?.portTransitionData?.x;
                 const avoidY = this.zoneGen.game?.portTransitionData?.y;
 
@@ -102,8 +97,13 @@ class UndergroundHandler extends BaseZoneHandler {
 
     handleEnemySpawning() {
         const isFromPitfall = this.zoneGen.game.portTransitionData?.from === 'pitfall';
-        const baseProbabilities = { 1: 0.15, 2: 0.20, 3: 0.22, 4: 0.27 };
-        const multiplier = isFromPitfall ? 2.5 : 1;
+        const baseProbabilities = {
+            1: SPAWN_PROBABILITIES.UNDERGROUND_ENEMY.HOME,
+            2: SPAWN_PROBABILITIES.UNDERGROUND_ENEMY.WOODS,
+            3: SPAWN_PROBABILITIES.UNDERGROUND_ENEMY.WILDS,
+            4: SPAWN_PROBABILITIES.UNDERGROUND_ENEMY.FRONTIER
+        };
+        const multiplier = isFromPitfall ? SPAWN_PROBABILITIES.UNDERGROUND_ENEMY.PITFALL_MULTIPLIER : 1;
         const enemyProbability = this.calculateEnemyProbability(baseProbabilities, multiplier);
         this.spawnEnemyIfProbable(enemyProbability);
     }

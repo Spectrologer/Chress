@@ -6,6 +6,10 @@ import { eventBus } from './EventBus.js';
 import { EventTypes } from './EventTypes.js';
 import { ZoneStateManager } from '../generators/ZoneStateManager.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
+import { SaveSerializer } from './SaveSerializer.js';
+import { SaveDeserializer } from './SaveDeserializer.js';
+import { ZoneStateRestorer } from './ZoneStateRestorer.js';
+import { ZoneRepository } from '../repositories/ZoneRepository.js';
 
 const GAME_STATE_KEY = 'chress_game_state';
 const SAVE_VERSION = 2; // bump if save format changes
@@ -23,7 +27,8 @@ export class GameStateManager {
 
     initializeState() {
         // Zone management
-        this.game.zones = new Map(); // Stores generated zones by coordinate key
+        this.game.zoneRepository = new ZoneRepository(); // Centralized zone caching
+        this.game.zones = this.game.zoneRepository.getMap(); // Backward compatibility - provides direct Map access (deprecated)
         this.game.grid = null; // Current zone grid
         this.game.enemies = []; // Current zone enemies
         this.game.defeatedEnemies = new Set(); // Tracks defeated enemy positions: "zoneX,zoneY,enemyX,enemyY"
@@ -52,7 +57,7 @@ export class GameStateManager {
         this.clearSavedState();
 
         // Reset all game state
-        this.game.zones.clear();
+        this.game.zoneRepository.clear();
         this.game.connectionManager.clear();
         ZoneStateManager.resetSessionData(); // Reset all zone generation state
         Sign.spawnedMessages.clear(); // Reset spawned message tracking
@@ -182,70 +187,8 @@ export class GameStateManager {
         }
 
         try {
-            const gameState = {
-                // Player state
-                player: {
-                    x: this.game.player.x,
-                    y: this.game.player.y,
-                    currentZone: this.game.player.currentZone,
-                    thirst: this.game.player.getThirst(),
-                    hunger: this.game.player.getHunger(),
-                    inventory: this.game.player.inventory,
-                    abilities: Array.from(this.game.player.abilities),
-                    health: this.game.player.getHealth(),
-                    dead: this.game.player.dead,
-                    sprite: this.game.player.sprite,
-                    points: this.game.player.getPoints(),
-                    visitedZones: Array.from(this.game.player.visitedZones),
-                    spentDiscoveries: this.game.player.getSpentDiscoveries()
-                },
-                // Player UI/settings (persist toggles - music/sfx)
-                playerStats: {
-                    musicEnabled: (this.game.player.stats && typeof this.game.player.stats.musicEnabled !== 'undefined') ? !!this.game.player.stats.musicEnabled : true,
-                    sfxEnabled: (this.game.player.stats && typeof this.game.player.stats.sfxEnabled !== 'undefined') ? !!this.game.player.stats.sfxEnabled : true,
-                    autoPathWithEnemies: (this.game.player.stats && typeof this.game.player.stats.autoPathWithEnemies !== 'undefined') ? !!this.game.player.stats.autoPathWithEnemies : false
-                },
-                // Game state - save all zones across all dimensions
-                zones: Array.from(this.game.zones.entries()),
-                grid: this.game.grid,
-                enemies: this.game.enemies.map(enemy => ({
-                    x: enemy.x,
-                    y: enemy.y,
-                    enemyType: enemy.enemyType, // Use enemyType property instead of type
-                    health: enemy.health,
-                    id: enemy.id
-                })),
-                defeatedEnemies: Array.from(this.game.defeatedEnemies),
-                specialZones: Array.from(this.game.specialZones.entries()),
-                messageLog: this.game.messageLog,
-                currentRegion: this.game.currentRegion,
-                bombPlacementMode: this.game.bombPlacementMode,
-                bombPlacementPositions: this.game.bombPlacementPositions,
-                isInPitfallZone: this.game.isInPitfallZone,
-                // Zone state manager counters and flags
-                zoneStateManager: {
-                    zoneCounter: ZoneStateManager.zoneCounter,
-                    enemyCounter: ZoneStateManager.enemyCounter,
-                    axeSpawned: ZoneStateManager.axeSpawned,
-                    hammerSpawned: ZoneStateManager.hammerSpawned,
-                    noteSpawned: ZoneStateManager.noteSpawned,
-                    spearSpawned: ZoneStateManager.spearSpawned,
-                    horseIconSpawned: ZoneStateManager.horseIconSpawned,
-                    penneSpawned: ZoneStateManager.penneSpawned,
-                    squigSpawned: ZoneStateManager.squigSpawned,
-                    wellSpawned: ZoneStateManager.wellSpawned,
-                    deadTreeSpawned: ZoneStateManager.deadTreeSpawned,
-                    axeWarningSignPlaced: ZoneStateManager.axeWarningSignPlaced,
-                    hammerWarningSignPlaced: ZoneStateManager.hammerWarningSignPlaced,
-                    firstFrontierSignPlaced: ZoneStateManager.firstFrontierSignPlaced,
-                    axeSpawnZone: ZoneStateManager.axeSpawnZone,
-                    hammerSpawnZone: ZoneStateManager.hammerSpawnZone,
-                    noteSpawnZone: ZoneStateManager.noteSpawnZone,
-                    spearSpawnZone: ZoneStateManager.spearSpawnZone,
-                    horseIconSpawnZone: ZoneStateManager.horseIconSpawnZone
-                },
-                signSpawnedMessages: Array.from(Sign.spawnedMessages)
-            };
+            const gameState = SaveSerializer.serializeGameState(this.game);
+
             // add metadata
             const payload = {
                 version: SAVE_VERSION,
@@ -283,75 +226,19 @@ export class GameStateManager {
             }
 
             // Restore player state
-            if (gameState.player) {
-                this.game.player.x = gameState.player.x;
-                this.game.player.y = gameState.player.y;
-                this.game.player.currentZone = gameState.player.currentZone;
-                this.game.player.setThirst(gameState.player.thirst);
-                this.game.player.setHunger(gameState.player.hunger);
-                this.game.player.inventory = gameState.player.inventory;
-                this.game.player.abilities = new Set(gameState.player.abilities || []);
-                this.game.player.setHealth(gameState.player.health);
-                this.game.player.dead = gameState.player.dead;
-                this.game.player.sprite = gameState.player.sprite;
-                this.game.player.setPoints(gameState.player.points);
-                this.game.player.visitedZones = new Set(gameState.player.visitedZones);
-                this.game.player.setSpentDiscoveries(gameState.player.spentDiscoveries);
-            }
+            SaveDeserializer.deserializePlayer(this.game, gameState.player);
 
             // Restore persisted player settings (music/sfx)
-            if (gameState.playerStats) {
-                try {
-                    this.game.player.stats = this.game.player.stats || {};
-                    this.game.player.stats.musicEnabled = typeof gameState.playerStats.musicEnabled !== 'undefined' ? !!gameState.playerStats.musicEnabled : true;
-                    this.game.player.stats.sfxEnabled = typeof gameState.playerStats.sfxEnabled !== 'undefined' ? !!gameState.playerStats.sfxEnabled : true;
-                    this.game.player.stats.autoPathWithEnemies = typeof gameState.playerStats.autoPathWithEnemies !== 'undefined' ? !!gameState.playerStats.autoPathWithEnemies : false;
-
-                    // Do NOT call into SoundManager here. Applying audio settings may start
-                    // playback or create/resume an AudioContext before a user gesture which
-                    // violates autoplay policies. The overlay Start/Continue handlers will
-                    // resume the audio context and apply these saved preferences after a
-                    // user gesture.
-                } catch (e) {}
-            }
+            SaveDeserializer.deserializePlayerStats(this.game, gameState.playerStats);
 
             // Restore game state with validation for grid data
-            this.game.zones = new Map(gameState.zones || []);
-            this.game.grid = validateLoadedGrid(gameState.grid);
-            this.game.enemies = (gameState.enemies || []).map(e => new this.game.Enemy(e));
-            this.game.defeatedEnemies = new Set(gameState.defeatedEnemies || []);
-            this.game.specialZones = new Map(gameState.specialZones || []);
-            this.game.messageLog = gameState.messageLog || [];
-            this.game.currentRegion = gameState.currentRegion || null;
-            this.game.bombPlacementMode = gameState.bombPlacementMode || false;
-            this.game.bombPlacementPositions = gameState.bombPlacementPositions || [];
-            this.game.isInPitfallZone = gameState.isInPitfallZone || false;
+            SaveDeserializer.deserializeGameState(this.game, gameState);
 
             // Restore zone state manager statics
-            if (gameState.zoneStateManager) {
-                ZoneStateManager.zoneCounter = gameState.zoneStateManager.zoneCounter || 0;
-                ZoneStateManager.enemyCounter = gameState.zoneStateManager.enemyCounter || 0;
-                ZoneStateManager.axeSpawned = gameState.zoneStateManager.axeSpawned || false;
-                ZoneStateManager.hammerSpawned = gameState.zoneStateManager.hammerSpawned || false;
-                ZoneStateManager.noteSpawned = gameState.zoneStateManager.noteSpawned || false;
-                ZoneStateManager.spearSpawned = gameState.zoneStateManager.spearSpawned || false;
-                ZoneStateManager.horseIconSpawned = gameState.zoneStateManager.horseIconSpawned || false;
-                ZoneStateManager.penneSpawned = gameState.zoneStateManager.penneSpawned || false;
-                ZoneStateManager.squigSpawned = gameState.zoneStateManager.squigSpawned || false;
-                ZoneStateManager.wellSpawned = gameState.zoneStateManager.wellSpawned || false;
-                ZoneStateManager.deadTreeSpawned = gameState.zoneStateManager.deadTreeSpawned || false;
-                ZoneStateManager.axeWarningSignPlaced = gameState.zoneStateManager.axeWarningSignPlaced || false;
-                ZoneStateManager.hammerWarningSignPlaced = gameState.zoneStateManager.hammerWarningSignPlaced || false;
-                ZoneStateManager.firstFrontierSignPlaced = gameState.zoneStateManager.firstFrontierSignPlaced || false;
-                ZoneStateManager.axeSpawnZone = gameState.zoneStateManager.axeSpawnZone || null;
-                ZoneStateManager.hammerSpawnZone = gameState.zoneStateManager.hammerSpawnZone || null;
-                ZoneStateManager.noteSpawnZone = gameState.zoneStateManager.noteSpawnZone || null;
-                ZoneStateManager.spearSpawnZone = gameState.zoneStateManager.spearSpawnZone || null;
-                ZoneStateManager.horseIconSpawnZone = gameState.zoneStateManager.horseIconSpawnZone || null;
-            }
+            ZoneStateRestorer.restoreZoneState(gameState.zoneStateManager);
 
             // Restore Sign spawned messages
-            Sign.spawnedMessages = new Set(gameState.signSpawnedMessages || []);
+            SaveDeserializer.deserializeSignMessages(gameState.signSpawnedMessages);
 
             return true;
         } catch (error) {

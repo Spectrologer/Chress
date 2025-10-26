@@ -1,5 +1,5 @@
 import { Sign } from '../ui/Sign.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants.js';
 import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import logger from '../core/logger.js';
@@ -71,7 +71,7 @@ export class FeatureGenerator {
         }
 
         // Add chance tiles past the frontier (zone level 3)
-        if (zoneLevel === 3 && Math.random() < 0.15 * this.depthMultiplier) { // 15% base chance scaled by depth
+        if (zoneLevel === 3 && Math.random() < SPAWN_PROBABILITIES.CHANCE_TILES.BASE_CHANCE * this.depthMultiplier) {
             this.addChanceTile(zoneX, zoneY);
         }
 
@@ -79,7 +79,7 @@ export class FeatureGenerator {
     }
 
     addChanceTile(zoneX, zoneY) {
-        // Add a chance tile: could be an extra water, food, or note (5% chance)
+        // Add a chance tile: could be an extra water, food, or sign
         const pos = findValidPlacement({
             maxAttempts: 20,
             validate: (x, y) => this.grid[y][x] === TILE_TYPES.FLOOR
@@ -88,7 +88,7 @@ export class FeatureGenerator {
         const { x, y } = pos;
         const chanceType = Math.random();
         let tilePlaced = false;
-        if (chanceType < 0.05) {
+        if (chanceType < SPAWN_PROBABILITIES.CHANCE_TILES.SIGN) {
             if (!this.checkSignExists()) {
                 const message = Sign.getProceduralMessage(zoneX, zoneY);
                 Sign.spawnedMessages.add(message);
@@ -97,7 +97,7 @@ export class FeatureGenerator {
             }
         }
         if (!tilePlaced) {
-            if (chanceType < 0.35) {
+            if (chanceType < SPAWN_PROBABILITIES.CHANCE_TILES.WATER) {
                 this.grid[y][x] = TILE_TYPES.WATER;
             } else {
                 const zoneKey = `${zoneX},${zoneY}`;
@@ -112,21 +112,20 @@ export class FeatureGenerator {
 
     shouldGenerateMaze(zoneLevel, isUnderground = false) {
         // Home = 0%, Woods = 5%, Wilds = 8%, Frontier = 10%
-        // Underground: much higher probability (e.g. 40%)
+        // Underground: much higher probability (40%)
         if (isUnderground) {
-            // You can tune this value for more/less mazes underground
-            return Math.random() < 0.4;
+            return Math.random() < SPAWN_PROBABILITIES.MAZE.UNDERGROUND;
         }
         let probability = 0;
         switch (zoneLevel) {
             case 2: // Woods
-                probability = 0.05;
+                probability = SPAWN_PROBABILITIES.MAZE.WOODS;
                 break;
             case 3: // Wilds
-                probability = 0.08;
+                probability = SPAWN_PROBABILITIES.MAZE.WILDS;
                 break;
             case 4: // Frontier
-                probability = 0.10;
+                probability = SPAWN_PROBABILITIES.MAZE.FRONTIER;
                 break;
             default:
                 return false; // No mazes in home zones

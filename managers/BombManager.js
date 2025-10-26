@@ -6,6 +6,7 @@ import { ItemRepository } from './inventory/ItemRepository.js';
 import { isBomb } from '../utils/TileUtils.js';
 import GridIterator from '../utils/GridIterator.js';
 import { safeCall } from '../utils/SafeServiceCall.js';
+import { Position } from '../core/Position.js';
 
 /**
  * BombManager - Consolidated bomb management system
@@ -54,11 +55,13 @@ export class BombManager {
     handleBombPlacement(gridCoords) {
         if (!this.game.bombPlacementMode) return false;
 
-        const placed = this.game.bombPlacementPositions.find(p => p.x === gridCoords.x && p.y === gridCoords.y);
+        const clickedPos = Position.from(gridCoords);
+        const placed = this.game.bombPlacementPositions.find(p => clickedPos.equals(p));
         if (!placed) return false;
 
         // Place timed bomb here
-        this.game.grid[placed.y][placed.x] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true };
+        const placedPos = Position.from(placed);
+        placedPos.setTile(this.game.grid, { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true });
 
         // Remove one bomb from either inventory (prefer main inventory)
         this.itemRepository.decrementItemByType(this.game.player, 'bomb');
@@ -82,12 +85,12 @@ export class BombManager {
      * @returns {boolean} - True if bomb was triggered
      */
     triggerBombExplosion(gridCoords, playerPos) {
-        const tapTile = this.game.grid[gridCoords.y][gridCoords.x];
+        const clickedPos = Position.from(gridCoords);
+        const tapTile = clickedPos.getTile(this.game.grid);
         if (!(tapTile && typeof tapTile === 'object' && tapTile.type === TILE_TYPES.BOMB)) return false;
 
-        const dx = Math.abs(gridCoords.x - playerPos.x);
-        const dy = Math.abs(gridCoords.y - playerPos.y);
-        if (!isAdjacent(dx, dy)) return false;
+        const playerPosition = Position.from(playerPos);
+        if (!playerPosition.isAdjacentTo(clickedPos)) return false;
 
         // Activating bomb counts as an action - increment bomb timers and start enemy turns
         this.game.incrementBombActions();
@@ -103,7 +106,8 @@ export class BombManager {
      * @param {Object} gridCoords - {x, y} grid position
      */
     forceBombTrigger(gridCoords) {
-        const tapTile = this.game.grid[gridCoords.y][gridCoords.x];
+        const clickedPos = Position.from(gridCoords);
+        const tapTile = clickedPos.getTile(this.game.grid);
         if (!(tapTile && typeof tapTile === 'object' && tapTile.type === TILE_TYPES.BOMB)) return;
 
         // Force immediate explosion without action count

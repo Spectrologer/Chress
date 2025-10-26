@@ -1,11 +1,30 @@
 import { TILE_TYPES, ANIMATION_CONSTANTS } from '../core/constants.js';
+import { Position } from '../core/Position.js';
 
 export class BaseEnemy {
     constructor(data) {
-        this.x = data.x;
-        this.y = data.y;
-        this.lastX = this.x;
-        this.lastY = this.y;
+        // Internal position tracking using Position class
+        this._position = new Position(data.x, data.y);
+        this._lastPosition = this._position.clone();
+
+        // Maintain x, y properties for backward compatibility
+        Object.defineProperty(this, 'x', {
+            get() { return this._position.x; },
+            set(value) { this._position.x = value; }
+        });
+        Object.defineProperty(this, 'y', {
+            get() { return this._position.y; },
+            set(value) { this._position.y = value; }
+        });
+        Object.defineProperty(this, 'lastX', {
+            get() { return this._lastPosition.x; },
+            set(value) { this._lastPosition.x = value; }
+        });
+        Object.defineProperty(this, 'lastY', {
+            get() { return this._lastPosition.y; },
+            set(value) { this._lastPosition.y = value; }
+        });
+
         this.enemyType = data.enemyType || 'lizard';
         this.id = data.id;
         this.health = 1;
@@ -58,12 +77,20 @@ export class BaseEnemy {
     }
 
     setPosition(x, y) {
-        this.x = x;
-        this.y = y;
+        this._lastPosition = this._position.clone();
+        this._position = new Position(x, y);
     }
 
     getPosition() {
-        return { x: this.x, y: this.y };
+        return this._position.toObject();
+    }
+
+    /**
+     * Gets the internal Position object (useful for Position methods)
+     * @returns {Position}
+     */
+    getPositionObject() {
+        return this._position;
     }
 
     isDead() {
@@ -109,13 +136,15 @@ export class BaseEnemy {
     }
 
     isWalkable(x, y, grid) {
+        const pos = new Position(x, y);
+
         // Enemies should respect the same general walkability rules as the player.
         // This check is modeled after the player's isWalkable method for consistency.
-        if (x < 0 || x >= grid.length || y < 0 || y >= grid.length) {
+        if (!pos.isInBounds(grid.length)) {
             return false;
         }
 
-        const tile = grid[y][x];
+        const tile = pos.getTile(grid);
         const tileType = tile && tile.type ? tile.type : tile;
 
         // List of generally walkable tile types for any character

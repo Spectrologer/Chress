@@ -1,5 +1,5 @@
 import { Enemy } from '../entities/Enemy.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants.js';
 import { findValidPlacement } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 
@@ -21,31 +21,31 @@ const MAX_WEIGHT_PER_LEVEL = {
 
 const ENEMY_SPAWN_PROBS = {
     1: [
-        { type: 'lizardy', prob: 0.8 },
-        { type: 'lizardo', prob: 0.15 },
-        { type: 'lizardeaux', prob: 0.05 }
+        { type: 'lizardy', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_1_HOME.LIZARDY },
+        { type: 'lizardo', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_1_HOME.LIZARDO },
+        { type: 'lizardeaux', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_1_HOME.LIZARDEAUX }
     ],
     2: [
-        { type: 'lizardy', prob: 0.5 },
-        { type: 'lizardo', prob: 0.25 },
-        { type: 'lizardeaux', prob: 0.1 },
-        { type: 'zard', prob: 0.1 },
-        { type: 'lizord', prob: 0.05 }
+        { type: 'lizardy', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_2_WOODS.LIZARDY },
+        { type: 'lizardo', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_2_WOODS.LIZARDO },
+        { type: 'lizardeaux', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_2_WOODS.LIZARDEAUX },
+        { type: 'zard', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_2_WOODS.ZARD },
+        { type: 'lizord', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_2_WOODS.LIZORD }
     ],
     3: [
-        { type: 'lizardy', prob: 0.2 },
-        { type: 'lizardo', prob: 0.2 },
-        { type: 'lizardeaux', prob: 0.2 },
-        { type: 'zard', prob: 0.2 },
-        { type: 'lizord', prob: 0.1 },
-        { type: 'lazerd', prob: 0.1 }
+        { type: 'lizardy', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.LIZARDY },
+        { type: 'lizardo', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.LIZARDO },
+        { type: 'lizardeaux', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.LIZARDEAUX },
+        { type: 'zard', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.ZARD },
+        { type: 'lizord', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.LIZORD },
+        { type: 'lazerd', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.LAZERD }
     ],
     4: [
-        { type: 'lizardeaux', prob: 0.25 },
-        { type: 'lizardy', prob: 0.25 },
-        { type: 'lizord', prob: 0.25 },
-        { type: 'lazerd', prob: 0.15 },
-        { type: 'zard', prob: 0.10 }
+        { type: 'lizardeaux', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_4_FRONTIER.LIZARDEAUX },
+        { type: 'lizardy', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_4_FRONTIER.LIZARDY },
+        { type: 'lizord', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_4_FRONTIER.LIZORD },
+        { type: 'lazerd', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_4_FRONTIER.LAZERD },
+        { type: 'zard', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_4_FRONTIER.ZARD }
     ]
 };
 

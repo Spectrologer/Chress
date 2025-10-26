@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../core/constants.js';
+import { GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants.js';
 
 export class ConnectionManager {
     constructor() {
@@ -49,7 +49,7 @@ export class ConnectionManager {
         // Special case: randomize exits for the starting zone (0,0) to add variation
         if (zoneX === 0 && zoneY === 0) {
             // Use random chance for exits instead of deterministic
-            if (Math.random() < 0.95) { // Increased chance for more interconnected home
+            if (Math.random() < SPAWN_PROBABILITIES.INTERCONNECTED_HOME) {
                 // Convert to valid exit position (avoiding corners and edges)
                 const validRange = GRID_SIZE - 6; // Avoid 3 tiles from each edge
                 // Use zone coordinates for some determinacy in position while still randomizing existence

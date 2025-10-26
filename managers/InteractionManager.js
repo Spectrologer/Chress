@@ -3,6 +3,7 @@ import { TILE_TYPES } from '../core/constants.js';
 import audioManager from '../utils/AudioManager.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
+import { Position } from '../core/Position.js';
 
 export class InteractionManager {
     /**
@@ -141,6 +142,8 @@ export class InteractionManager {
     }
 
     handleTap(gridCoords) {
+        const clickedPos = Position.from(gridCoords);
+
         // Handle pending charge confirmation or cancellation
         if (this.game.pendingCharge) {
             const pending = this.game.pendingCharge;
@@ -163,7 +166,8 @@ export class InteractionManager {
 
             // If we have valid chargeDetails with a target, confirm/cancel based on equality.
             if (chargeDetails && chargeDetails.target) {
-                if (gridCoords.x === chargeDetails.target.x && gridCoords.y === chargeDetails.target.y) {
+                const targetPos = Position.from(chargeDetails.target);
+                if (clickedPos.equals(targetPos)) {
                     this.combatManager.confirmPendingCharge(chargeDetails);
                 } else {
                     this.combatManager.cancelPendingCharge();
@@ -175,11 +179,11 @@ export class InteractionManager {
             return true;
         }
 
-        const playerPos = this.game.player.getPosition();
+        const playerPos = this.game.player.getPositionObject();
 
         // Delegate to specialized managers based on tile type and context
         for (const handler of this.interactionHandlers) {
-            if (handler(gridCoords, playerPos)) return true;
+            if (handler(gridCoords, playerPos.toObject())) return true;
         }
 
         // Fallback: if the player tapped their own tile and it's an exit/port,
@@ -188,8 +192,8 @@ export class InteractionManager {
         // in the controller (touch/mouse edge-cases). Keep best-effort try/catch
         // to avoid throwing during interaction processing.
         try {
-            if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
-                const tileUnderPlayer = this.game.grid[playerPos.y]?.[playerPos.x];
+            if (playerPos.equals(clickedPos)) {
+                const tileUnderPlayer = playerPos.getTile(this.game.grid);
                 const tileType = (typeof tileUnderPlayer === 'object' && tileUnderPlayer?.type !== undefined) ? tileUnderPlayer.type : tileUnderPlayer;
                 if (tileType === TILE_TYPES.PORT) {
                     console.log('[InteractionManager] PORT tile detected, calling handlePortTransition');

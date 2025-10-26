@@ -151,6 +151,15 @@ export class BookOfTimeTravelEffect extends BaseItemEffect {
             }
         }
 
+        // Show visual feedback
+        eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
+            text: 'Reading from the Book of Time Travel...<br>Time passes.',
+            imageSrc: 'assets/items/book.png',
+            isPersistent: true,
+            isLargeText: false,
+            useTypewriter: false
+        });
+
         // Pass one turn (allow enemies to move)
         if (typeof game.startEnemyTurns === 'function') {
             game.startEnemyTurns();

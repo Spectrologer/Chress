@@ -3,6 +3,7 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
 import logger from '../core/logger.js';
 import GridIterator from '../utils/GridIterator.js';
+import { Position } from '../core/Position.js';
 
 /**
  * Returns a random integer between min (inclusive) and max (exclusive)
@@ -13,7 +14,7 @@ export function randomInt(min, max) {
 
 /**
  * Attempts to find a valid (x, y) coordinate within the grid, using a validation callback.
- * Tries up to `maxAttempts` times. Returns {x, y} or null if not found.
+ * Tries up to `maxAttempts` times. Returns Position or null if not found.
  */
 export function findValidPlacement({
     maxAttempts = 50,
@@ -27,17 +28,22 @@ export function findValidPlacement({
         const x = randomInt(minX, maxX);
         const y = randomInt(minY, maxY);
         if (validate(x, y)) {
-            return { x, y };
+            return new Position(x, y);
         }
     }
     return null;
 }
 
 /**
- * Checks if a tile is within grid bounds (excluding border)
+ * Checks if a position is within grid bounds (excluding border)
+ * Accepts either Position object or separate x, y coordinates
  */
-export function isWithinBounds(x, y) {
-    return x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1;
+export function isWithinBounds(xOrPos, y) {
+    if (xOrPos instanceof Position) {
+        return xOrPos.isInInnerBounds(GRID_SIZE);
+    }
+    const pos = new Position(xOrPos, y);
+    return pos.isInInnerBounds(GRID_SIZE);
 }
 
 /**
@@ -48,27 +54,36 @@ export function isAllowedTile(tile, allowedTiles) {
 }
 
 /**
- * Returns the center coordinates of the grid
+ * Returns the center coordinates of the grid as a Position
  */
 export function getGridCenter() {
-    const centerX = Math.floor(GRID_SIZE / 2);
-    const centerY = Math.floor(GRID_SIZE / 2);
-    return { centerX, centerY };
+    return Position.center(GRID_SIZE);
 }
 
 /**
  * Safely sets a tile with validation to prevent corruption
+ * Accepts either Position object or separate x, y coordinates
  */
-export function validateAndSetTile(grid, x, y, tileType) {
-    if (grid[y]?.[x] === undefined) {
-        grid[y] = grid[y] || [];
+export function validateAndSetTile(grid, xOrPos, yOrTileType, tileType) {
+    let pos, tile;
+
+    if (xOrPos instanceof Position) {
+        pos = xOrPos;
+        tile = yOrTileType;
+    } else {
+        pos = new Position(xOrPos, yOrTileType);
+        tile = tileType;
+    }
+
+    if (grid[pos.y]?.[pos.x] === undefined) {
+        grid[pos.y] = grid[pos.y] || [];
     }
     // Allow valid tile types only - reject null/undefined
-    if (tileType !== null && tileType !== undefined) {
-        grid[y][x] = tileType;
+    if (tile !== null && tile !== undefined) {
+        pos.setTile(grid, tile);
     } else {
-        grid[y][x] = TILE_TYPES.FLOOR;
-        logger.warn(`Attempted to set invalid tile at (${x}, ${y}), defaulting to FLOOR`);
+        pos.setTile(grid, TILE_TYPES.FLOOR);
+        logger.warn(`Attempted to set invalid tile at ${pos.toString()}, defaulting to FLOOR`);
     }
 }
 

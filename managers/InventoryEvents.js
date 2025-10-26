@@ -11,27 +11,31 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
     let _lastPointerWasTouch = false;
     let _lastPointerTriggeredUseTime = 0;
 
-    const showTooltip = () => {
-        try {
-            if (item._suppressTooltipUntil && Date.now() < item._suppressTooltipUntil) return;
-        } catch (e) {}
-        callbacks.showTooltip?.(slot);
-    };
-    const hideTooltip = () => callbacks.hideTooltip?.();
+    // Store the item reference at the start of the interaction to prevent
+    // clicking on repositioned items after the original item is consumed
+    let clickedItem = null;
 
-    const useItem = () => {
+    const useItem = (itemToUse) => {
+        // Only use the item that was clicked, not whatever might be in this slot now
+        if (!itemToUse) return;
+
+        // Verify the item is still in the inventory
+        const stillInInventory = game.player.inventory.includes(itemToUse) ||
+                                 (game.player.radialInventory && game.player.radialInventory.includes(itemToUse));
+        if (!stillInInventory) {
+            return;
+        }
+
         try {
-            const last = itemLastUsedWeakMap.get(item) || 0;
+            const last = itemLastUsedWeakMap.get(itemToUse) || 0;
             const now = Date.now();
             if (now - last < 600) return;
-            itemLastUsedWeakMap.set(item, now);
+            itemLastUsedWeakMap.set(itemToUse, now);
         } catch (e) {}
-        return callbacks.useItem?.(item, idx);
+        return callbacks.useItem?.(itemToUse, idx);
     };
     const toggleDisabled = () => {
         callbacks.toggleDisabled?.(item, idx);
-        try { item._suppressTooltipUntil = Date.now() + 300; } catch (e) {}
-        hideTooltip();
     };
 
     const onContextMenu = (e) => {
@@ -64,7 +68,7 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
         if (game.player.isDead()) return;
         if (item.type === 'bomb') return; // bomb handled separately
         if (!isDisablable || !item.disabled) {
-            useItem();
+            useItem(item);
             _lastPointerTriggeredUseTime = Date.now();
         }
     };
@@ -78,6 +82,8 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
         _lastPointerWasTouch = e.pointerType !== 'mouse';
         isLongPress = false;
         pressPointerId = e.pointerId;
+        // Capture the item at the start of the interaction
+        clickedItem = item;
         const startX = e.clientX || 0;
         const startY = e.clientY || 0;
         pressTimeout = setTimeout(() => {
@@ -86,9 +92,6 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
                 try { item._pendingToggle = true; } catch (e) {}
                 slot.classList.add('item-disabled-temp');
                 try { item._suppressContextMenuUntil = Date.now() + 1000; } catch (e) {}
-            } else {
-                showTooltip();
-                game.animationScheduler.createSequence().wait(2000).then(hideTooltip).start();
             }
         }, 500);
         try { e.target.setPointerCapture?.(e.pointerId); } catch (err) {}
@@ -117,7 +120,7 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
         try { delete item._pendingToggle; } catch (err) {}
         slot.classList.remove('item-disabled-temp');
         pressPointerId = null;
-        hideTooltip();
+        clickedItem = null;
     };
 
     const onPointerUp = (e) => {
@@ -125,9 +128,9 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
         if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; }
         if (!isLongPress) {
             if (game.player.isDead()) return;
-            if (item.type === 'bomb') return;
-            if (!isDisablable || !item.disabled) {
-                useItem();
+            if (clickedItem && clickedItem.type === 'bomb') return;
+            if (clickedItem && (!isDisablable || !clickedItem.disabled)) {
+                useItem(clickedItem);
                 _lastPointerTriggeredUseTime = Date.now();
             }
         }
@@ -140,11 +143,9 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
             }
         } catch (err) {}
         pressPointerId = null;
-        hideTooltip();
+        clickedItem = null;
     };
 
-    slot.addEventListener('mouseover', showTooltip);
-    slot.addEventListener('mouseout', hideTooltip);
     if (isDisablable) slot.addEventListener('contextmenu', onContextMenu);
     slot.addEventListener('click', onClick);
     slot.addEventListener('pointerdown', onPointerDown, { passive: false });
@@ -189,8 +190,6 @@ export function attachSlotEvents(slot, item, idx, callbacks, itemLastUsedWeakMap
 
     return {
         detach() {
-            slot.removeEventListener('mouseover', showTooltip);
-            slot.removeEventListener('mouseout', hideTooltip);
             if (isDisablable) slot.removeEventListener('contextmenu', onContextMenu);
             slot.removeEventListener('click', onClick);
             slot.removeEventListener('pointerdown', onPointerDown);

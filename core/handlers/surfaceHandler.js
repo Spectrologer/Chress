@@ -1,6 +1,7 @@
 import logger from '../logger.js';
 import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
 import { BaseZoneHandler } from './BaseZoneHandler.js';
+import { SPAWN_PROBABILITIES } from '../constants.js';
 
 class SurfaceHandler extends BaseZoneHandler {
     constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets) {
@@ -88,13 +89,18 @@ class SurfaceHandler extends BaseZoneHandler {
     }
 
     handleRandomCistern() {
-        if (Math.random() < 0.07) {
+        if (Math.random() < SPAWN_PROBABILITIES.CISTERN) {
             this.structureGenerator.addCistern(this.zoneX, this.zoneY, false);
         }
     }
 
     handleEnemySpawning() {
-        const baseProbabilities = { 1: 0.11, 2: 0.15, 3: 0.17, 4: 0.22 };
+        const baseProbabilities = {
+            1: SPAWN_PROBABILITIES.SURFACE_ENEMY.HOME,
+            2: SPAWN_PROBABILITIES.SURFACE_ENEMY.WOODS,
+            3: SPAWN_PROBABILITIES.SURFACE_ENEMY.WILDS,
+            4: SPAWN_PROBABILITIES.SURFACE_ENEMY.FRONTIER
+        };
         const enemyProbability = this.calculateEnemyProbability(baseProbabilities);
         this.spawnEnemyIfProbable(enemyProbability);
     }

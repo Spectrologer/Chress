@@ -2,6 +2,7 @@ import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS } from '../core/constants.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
+import { Position } from '../core/Position.js';
 
 /**
  * PathfindingController - Handles pathfinding and path execution
@@ -38,18 +39,21 @@ export class PathfindingController {
      * @returns {Array|null} Array of direction keys, or null if no path found
      */
     findPath(startX, startY, targetX, targetY) {
-        if (targetX < 0 || targetX >= GRID_SIZE || targetY < 0 || targetY >= GRID_SIZE) {
+        const startPos = new Position(startX, startY);
+        const targetPos = new Position(targetX, targetY);
+
+        if (!targetPos.isInBounds(GRID_SIZE)) {
             return null;
         }
 
-        const targetTile = this.game.grid[targetY]?.[targetX];
+        const targetTile = targetPos.getTile(this.game.grid);
         if ((targetTile && typeof targetTile === 'object' && targetTile.type === TILE_TYPES.SIGN) ||
             targetTile === TILE_TYPES.SIGN) {
             return null;
         }
 
         // Enemy at target
-        const enemyAtTarget = this.game.enemies?.find(e => e.x === targetX && e.y === targetY && e.health > 0);
+        const enemyAtTarget = this.game.enemies?.find(e => e.getPositionObject().equals(targetPos) && e.health > 0);
         if (enemyAtTarget) {
             if (!(this.game.player.stats?.autoPathWithEnemies)) {
                 return null;
@@ -60,13 +64,13 @@ export class PathfindingController {
             }
         }
 
-        if (startX === targetX && startY === targetY) {
+        if (startPos.equals(targetPos)) {
             return [];
         }
 
         // BFS
-        const queue = [{ x: startX, y: startY, path: [] }];
-        const visited = new Set([`${startX},${startY}`]);
+        const queue = [{ pos: startPos, path: [] }];
+        const visited = new Set([startPos.toKey()]);
         const directions = [
             { dx: 0, dy: -1, key: 'arrowup' },
             { dx: 0, dy: 1, key: 'arrowdown' },
@@ -77,20 +81,19 @@ export class PathfindingController {
         while (queue.length > 0) {
             const current = queue.shift();
             for (const dir of directions) {
-                const newX = current.x + dir.dx;
-                const newY = current.y + dir.dy;
-                const key = `${newX},${newY}`;
+                const newPos = current.pos.add(dir.dx, dir.dy);
+                const key = newPos.toKey();
 
                 if (visited.has(key)) continue;
                 visited.add(key);
 
-                if (isWithinGrid(newX, newY) &&
-                    this.game.player.isWalkable(newX, newY, this.game.grid, current.x, current.y)) {
+                if (isWithinGrid(newPos.x, newPos.y) &&
+                    this.game.player.isWalkable(newPos.x, newPos.y, this.game.grid, current.pos.x, current.pos.y)) {
                     const newPath = [...current.path, dir.key];
-                    if (newX === targetX && newY === targetY) {
+                    if (newPos.equals(targetPos)) {
                         return newPath;
                     }
-                    queue.push({ x: newX, y: newY, path: newPath });
+                    queue.push({ pos: newPos, path: newPath });
                 }
             }
         }
@@ -102,19 +105,13 @@ export class PathfindingController {
      * Find the nearest walkable tile adjacent to the target
      */
     findNearestWalkableAdjacent(targetX, targetY) {
-        const directions = [
-            { dx: 0, dy: -1 },
-            { dx: 1, dy: 0 },
-            { dx: 0, dy: 1 },
-            { dx: -1, dy: 0 }
-        ];
+        const targetPos = new Position(targetX, targetY);
+        const neighbors = targetPos.getNeighbors(false); // 4-way only
 
-        for (const dir of directions) {
-            const checkX = targetX + dir.dx;
-            const checkY = targetY + dir.dy;
-            if (isWithinGrid(checkX, checkY)) {
-                if (this.game.player.isWalkable(checkX, checkY, this.game.grid, -1, -1)) {
-                    return { x: checkX, y: checkY };
+        for (const neighbor of neighbors) {
+            if (isWithinGrid(neighbor.x, neighbor.y)) {
+                if (this.game.player.isWalkable(neighbor.x, neighbor.y, this.game.grid, -1, -1)) {
+                    return neighbor.toObject();
                 }
             }
         }

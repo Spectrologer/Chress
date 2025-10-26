@@ -1,11 +1,47 @@
-export function adjacentTiles(x,y, allowDiagonal = true) {
-    const dirs = allowDiagonal ? [
-        {x:0,y:-1},{x:0,y:1},{x:-1,y:0},{x:1,y:0},{x:-1,y:-1},{x:1,y:-1},{x:-1,y:1},{x:1,y:1}
-    ] : [ {x:0,y:-1},{x:0,y:1},{x:-1,y:0},{x:1,y:0} ];
-    return dirs.map(d => ({ x: x + d.x, y: y + d.y }));
+import { Position } from '../../core/Position.js';
+
+/**
+ * Gets adjacent tiles around a position
+ * Accepts either Position object or separate x, y coordinates
+ * Returns array of Position objects
+ */
+export function adjacentTiles(xOrPos, yOrAllowDiagonal, allowDiagonal = true) {
+    let pos;
+    let diagonal;
+
+    if (xOrPos instanceof Position) {
+        pos = xOrPos;
+        diagonal = yOrAllowDiagonal !== undefined ? yOrAllowDiagonal : true;
+    } else {
+        pos = new Position(xOrPos, yOrAllowDiagonal);
+        diagonal = allowDiagonal;
+    }
+
+    return pos.getNeighbors(diagonal);
 }
 
-export function neighborsFiltered(x,y,grid,entity,allowDiagonal = true) {
-    const candidates = adjacentTiles(x,y,allowDiagonal);
-    return candidates.filter(pos => pos.y >= 0 && pos.y < grid.length && pos.x >= 0 && pos.x < grid[0].length && entity.isWalkable(pos.x,pos.y,grid));
+/**
+ * Gets adjacent tiles filtered by walkability
+ * Accepts either Position object or separate x, y coordinates
+ * Returns array of Position objects that are walkable
+ */
+export function neighborsFiltered(xOrPos, yOrGrid, gridOrEntity, entityOrAllowDiagonal, allowDiagonal = true) {
+    let pos, grid, entity, diagonal;
+
+    if (xOrPos instanceof Position) {
+        pos = xOrPos;
+        grid = yOrGrid;
+        entity = gridOrEntity;
+        diagonal = entityOrAllowDiagonal !== undefined ? entityOrAllowDiagonal : true;
+    } else {
+        pos = new Position(xOrPos, yOrGrid);
+        grid = gridOrEntity;
+        entity = entityOrAllowDiagonal;
+        diagonal = allowDiagonal;
+    }
+
+    return pos.getValidNeighbors(
+        p => p.isInBounds(grid.length) && entity.isWalkable(p.x, p.y, grid),
+        diagonal
+    );
 }

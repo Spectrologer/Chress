@@ -136,8 +136,8 @@ export class CombatManager {
                 const currentZone = this.getCurrentZone();
                 const depth = this.game.player.undergroundDepth || 1;
                 const undergroundZoneKey = createZoneKey(currentZone.x, currentZone.y, 2, depth);
-                if (this.game.zones.has(undergroundZoneKey)) {
-                    const undergroundZoneData = this.game.zones.get(undergroundZoneKey);
+                if (this.game.zoneRepository.hasByKey(undergroundZoneKey)) {
+                    const undergroundZoneData = this.game.zoneRepository.getByKey(undergroundZoneKey);
                     // Find a valid spawn point for the enemy in the pitfall zone
                     const spawnPos = this.game.player.getValidSpawnPosition(this.game);
                     enemy.x = spawnPos.x;

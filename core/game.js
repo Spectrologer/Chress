@@ -2,6 +2,7 @@ import { TILE_TYPES } from './constants.js';
 import { ServiceContainer } from './ServiceContainer.js';
 import { AnimationManager } from './DataContracts.js';
 import { GameContext } from './GameContext.js';
+import { isFloor } from '../utils/TileUtils.js';
 
 // Game state - now extends GameContext for better organization
 class Game extends GameContext {
@@ -50,7 +51,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 const { x, y } = game.player;
                 const grid = game.zoneManager.game.grid;
                 // Floor only
-                if (grid[y][x] === TILE_TYPES.FLOOR || (typeof grid[y][x] === 'object' && grid[y][x].type === TILE_TYPES.FLOOR)) {
+                if (isFloor(grid[y][x])) {
                     grid[y][x] = { type: TILE_TYPES.FOOD, foodType: 'food/aguamelin.png' };
                     if (game.render) game.render();
                 }

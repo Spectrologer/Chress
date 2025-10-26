@@ -260,6 +260,54 @@ const consoleCommands = {
     }
   },
 
+  // Teleport command
+  tp: function(game, x, y) {
+    if (typeof x !== 'number' || typeof y !== 'number') {
+      logger.log('Usage: tp(x, y) - teleport player to position');
+      return;
+    }
+    if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) {
+      logger.log('Position out of bounds. Valid range: 0 to', GRID_SIZE - 1);
+      return;
+    }
+    game.player.x = x;
+    game.player.y = y;
+    logger.log('Teleported player to', { x, y });
+    game.uiManager.updatePlayerPosition();
+  },
+
+  // Go to interior dimension
+  gotoInterior: function(game) {
+    const currentZone = game.player.getCurrentZone();
+    if (currentZone.dimension !== 0) {
+      logger.log('Already in a non-surface dimension:', currentZone.dimension);
+      return;
+    }
+    // Find an interior port or create one
+    const playerPos = game.player.getPosition();
+    game.grid[playerPos.y][playerPos.x] = { type: TILE_TYPES.PORT, portKind: 'interior' };
+    logger.log('Created interior port at player position. Use it to enter.');
+  },
+
+  // Return to world surface
+  gotoWorld: function(game) {
+    const currentZone = game.player.getCurrentZone();
+    if (currentZone.dimension === 0) {
+      logger.log('Already on surface world');
+      return;
+    }
+    // Transition back to surface
+    game.zoneTransitionController.transitionToZone(
+      currentZone.x,
+      currentZone.y,
+      'center',
+      Math.floor(GRID_SIZE / 2),
+      Math.floor(GRID_SIZE / 2),
+      0 // dimension 0 = surface
+    );
+    logger.log('Returned to surface world');
+  },
+
 
   // Enemy spawn commands (additional)
   spawnLizardeaux: function(game) {

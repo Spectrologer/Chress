@@ -5,6 +5,7 @@ import { GRID_SIZE, TILE_TYPES } from '../../core/constants.js';
 import audioManager from '../../utils/AudioManager.js';
 import { eventBus } from '../../core/EventBus.js';
 import { EventTypes } from '../../core/EventTypes.js';
+import { isFloor } from '../../utils/TileUtils.js';
 
 /**
  * InventoryService - Business logic orchestration for inventory management
@@ -97,8 +98,7 @@ export class InventoryService {
 
         const currentTile = this.game.grid[py][px];
 
-        if (currentTile !== TILE_TYPES.FLOOR &&
-            !(typeof currentTile === 'object' && currentTile.type === TILE_TYPES.FLOOR)) {
+        if (!isFloor(currentTile)) {
             return false;
         }
 
