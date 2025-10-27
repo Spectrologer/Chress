@@ -63,7 +63,7 @@ export class InteractionManager {
                 const bishopSpearCharge = this.combatManager.isValidBishopSpearCharge(gridCoords, playerPos);
                 // Only auto-start a bishop charge if the item is present in the main inventory
                 if (bishopSpearCharge && this.game.player.inventory.indexOf(bishopSpearCharge.item) >= 0) {
-                    this.game.pendingCharge = bishopSpearCharge;
+                    this.game.transientGameState.setPendingCharge(bishopSpearCharge);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
                         message: 'Tap again to confirm Bishop Charge',
@@ -81,7 +81,7 @@ export class InteractionManager {
                 const horseIconCharge = this.combatManager.isValidHorseIconCharge(gridCoords, playerPos);
                 // Only auto-start a knight charge if the item is present in the main inventory
                 if (horseIconCharge && this.game.player.inventory.indexOf(horseIconCharge.item) >= 0) {
-                    this.game.pendingCharge = horseIconCharge;
+                    this.game.transientGameState.setPendingCharge(horseIconCharge);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
                         message: 'Tap again to confirm Knight Charge',
@@ -99,7 +99,7 @@ export class InteractionManager {
                 const bowShot = this.combatManager.isValidBowShot(gridCoords, playerPos);
                 // Only auto-start a bow shot if the bow is in the main inventory
                 if (bowShot && this.game.player.inventory.indexOf(bowShot.item) >= 0) {
-                    this.game.pendingCharge = bowShot;
+                    this.game.transientGameState.setPendingCharge(bowShot);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
                         message: 'Tap again to confirm Bow Shot',
@@ -143,10 +143,11 @@ export class InteractionManager {
 
     handleTap(gridCoords) {
         const clickedPos = Position.from(gridCoords);
+        const transientState = this.game.transientGameState;
 
         // Handle pending charge confirmation or cancellation
-        if (this.game.pendingCharge) {
-            const pending = this.game.pendingCharge;
+        if (transientState.hasPendingCharge()) {
+            const pending = transientState.getPendingCharge();
             let chargeDetails = null;
 
             // If pending was initiated from the radial UI it will contain a
@@ -211,7 +212,8 @@ export class InteractionManager {
     // If the tapped tile contains a live enemy, handle it here.
         // - If the player is adjacent, perform an immediate attack.
         // - Otherwise, mark the tap handled to prevent auto-pathing onto the enemy.
-        const enemyAtCoords = this.game.enemies.find(e => e.x === gridCoords.x && e.y === gridCoords.y && e.health > 0);
+        const enemyCollection = this.game.enemyCollection;
+        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y, true); // aliveOnly=true
         if (enemyAtCoords) {
             const dx = Math.abs(gridCoords.x - playerPos.x);
                 const dy = Math.abs(gridCoords.y - playerPos.y);
@@ -275,6 +277,9 @@ export class InteractionManager {
                 // Update player visuals/stats after the attack
                 try { this.game.updatePlayerPosition(); } catch (e) {}
                 try { eventBus.emit(EventTypes.UI_UPDATE_STATS, {}); } catch (e) {}
+
+                // Clear the hold feedback so enemy range indicator disappears after attack
+                try { this.game.renderManager?.clearFeedback?.(); } catch (e) {}
 
                 return true;
             }

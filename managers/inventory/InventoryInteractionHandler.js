@@ -113,8 +113,11 @@ export class InventoryInteractionHandler {
         const px = this.game.player.x;
         const py = this.game.player.y;
 
+        // Use transientGameState for bomb placement
+        const transientState = this.game.transientGameState;
+        transientState.enterBombPlacementMode();
+
         // Calculate valid adjacent positions
-        this.game.bombPlacementPositions = [];
         const directions = [
             { dx: 1, dy: 0 },
             { dx: -1, dy: 0 },
@@ -129,13 +132,10 @@ export class InventoryInteractionHandler {
             if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9) {
                 const tile = this.game.grid[ny][nx];
                 if (isTileType(tile, TILE_TYPES.FLOOR) || isTileType(tile, TILE_TYPES.EXIT)) {
-                    this.game.bombPlacementPositions.push({ x: nx, y: ny });
+                    transientState.addBombPlacementPosition({ x: nx, y: ny });
                 }
             }
         }
-
-        // Enter placement mode
-        this.game.bombPlacementMode = true;
 
         // Show UI message
         if (this.game.uiManager?.showOverlayMessage) {

@@ -133,6 +133,7 @@ export class StatsPanelManager {
             <hr class="stats-divider">
             <div class="stats-footer">
                 <button id="stats-restart-button" class="stats-restart-button" title="Reset game" aria-label="Reset game">Reset</button>
+                <button id="stats-menu-button" class="stats-menu-button" title="Return to start menu" aria-label="Return to start menu">Return to Menu</button>
             </div>
         `;
     }
@@ -221,6 +222,12 @@ export class StatsPanelManager {
         if (statsRestartBtn) {
             this._setupRestartButton(statsRestartBtn);
         }
+
+        // Menu button
+        const statsMenuBtn = this.statsPanelOverlay.querySelector('#stats-menu-button');
+        if (statsMenuBtn) {
+            this._setupMenuButton(statsMenuBtn);
+        }
     }
 
     /**
@@ -252,6 +259,40 @@ export class StatsPanelManager {
         restartBtn.addEventListener('pointerup', (e) => {
             e?.preventDefault?.();
             doRestart(e);
+            e.target?.releasePointerCapture?.(e.pointerId);
+        });
+    }
+
+    /**
+     * Sets up the menu button with proper event handling
+     * @param {HTMLElement} menuBtn - The menu button element
+     * @private
+     */
+    _setupMenuButton(menuBtn) {
+        const doReturnToMenu = (e) => {
+            safeCall(e, 'stopPropagation');
+            if (confirm('Return to start menu? Current game progress will be saved.')) {
+                this.hideStatsPanel();
+                // Show the start overlay
+                if (this.game.overlayManager) {
+                    this.game.overlayManager.showStartOverlay();
+                }
+            }
+        };
+
+        // Click handler for mouse/keyboard
+        menuBtn.addEventListener('click', doReturnToMenu);
+
+        // Pointer handlers for touch devices
+        menuBtn.addEventListener('pointerdown', (e) => {
+            e?.preventDefault?.();
+            e?.stopPropagation?.();
+            e.target?.setPointerCapture?.(e.pointerId);
+        }, { passive: false });
+
+        menuBtn.addEventListener('pointerup', (e) => {
+            e?.preventDefault?.();
+            doReturnToMenu(e);
             e.target?.releasePointerCapture?.(e.pointerId);
         });
     }

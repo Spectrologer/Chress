@@ -10,7 +10,8 @@ export class TerrainInteractionManager {
     }
 
     handleChoppableTile(gridCoords, playerPos) {
-        const tappedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        const gridManager = this.game.gridManager;
+        const tappedTile = gridManager.getTile(gridCoords.x, gridCoords.y);
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);
         const hasAxe = this.game.player.abilities.has('axe');
@@ -43,7 +44,8 @@ export class TerrainInteractionManager {
 
     forceChoppableAction(gridCoords, playerPos) {
         // For forced interactions when arriving adjacent via pathing
-        const tappedTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        const gridManager = this.game.gridManager;
+        const tappedTile = gridManager.getTile(gridCoords.x, gridCoords.y);
         const hasAxe = this.game.player.abilities.has('axe');
         const hasHammer = this.game.player.abilities.has('hammer');
 

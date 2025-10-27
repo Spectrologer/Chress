@@ -2,6 +2,7 @@ import { INPUT_CONSTANTS, TILE_TYPES, TILE_SIZE } from '../core/constants/index.
 import { getDeltaToDirection } from '../core/utils/DirectionUtils.js';
 import audioManager from '../utils/AudioManager.js';
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { getTileType, isTileObject } from '../utils/TypeChecks.js';
 
 /**
  * GestureDetector - Handles pointer event tracking, tap/hold detection, and double-tap logic
@@ -108,10 +109,8 @@ export class GestureDetector {
                 if (t.x === playerPos.x && t.y === playerPos.y && this.game.radialInventoryUI) {
                     // Normalize tile
                     const currentTile = this.game.grid[playerPos.y]?.[playerPos.x];
-                    const currentTileType = (typeof currentTile === 'object' && currentTile?.type !== undefined)
-                        ? currentTile.type
-                        : currentTile;
-                    const portKind = (currentTile && typeof currentTile === 'object') ? currentTile.portKind : null;
+                    const currentTileType = getTileType(currentTile);
+                    const portKind = isTileObject(currentTile) ? currentTile.portKind : null;
 
                     // No radial on exit/port
                     if (currentTileType === TILE_TYPES.EXIT ||
@@ -160,7 +159,7 @@ export class GestureDetector {
 
         // Bloop if not on enemy
         const enemyAtInitial = gridCoords
-            ? this.game.enemies.find(en => en.x === gridCoords.x && en.y === gridCoords.y && en.health > 0)
+            ? this.game.enemyCollection?.findAt(gridCoords.x, gridCoords.y, true)
             : null;
         if (!enemyAtInitial) {
             audioManager.playSound('bloop', { game: this.game });
@@ -207,7 +206,7 @@ export class GestureDetector {
 
         // Bloop on tile change (not on enemy)
         if (info.lastTile.x !== gc.x || info.lastTile.y !== gc.y) {
-            const enemyOnGc = this.game.enemies.find(en => en.x === gc.x && en.y === gc.y && en.health > 0);
+            const enemyOnGc = this.game.enemyCollection?.findAt(gc.x, gc.y, true);
             if (!enemyOnGc) {
                 audioManager.playSound('bloop', { game: this.game });
             }
@@ -229,8 +228,14 @@ export class GestureDetector {
             });
         }
 
-        // Clear hold feedback
-        if (this.game?.renderManager?.clearFeedback) {
+        // Check if we're releasing on an enemy - if so, keep the hold feedback to show attack range
+        const gc = this._safeConvert(e.clientX, e.clientY);
+        const enemyAtRelease = gc
+            ? this.game.enemyCollection?.findAt(gc.x, gc.y, true)
+            : null;
+
+        // Clear hold feedback only if not on an enemy
+        if (!enemyAtRelease && this.game?.renderManager?.clearFeedback) {
             this.game.renderManager.clearFeedback();
         }
 

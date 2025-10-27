@@ -1,6 +1,7 @@
 // NoteStack.js
 // Handles the UI logic for the note stack (add/remove notes)
 import { logger } from '../core/logger.js';
+import { UI_CONSTANTS } from '../core/constants/index.js';
 
 export class NoteStack {
     constructor() {
@@ -71,7 +72,7 @@ export class NoteStack {
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('show');
-            setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 260);
+            setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, UI_CONSTANTS.CSS_TRANSITION_DURATION);
         }
         this.activeNotes.delete(id);
     }

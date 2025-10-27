@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chress Zone Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #8B7355;
+            color: #3a2a1a;
+            padding: 10px;
+            max-width: 100vw;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .main-panel {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fffbe9;
+            border: 3px solid #e2cfa2;
+            border-radius: 0;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 0 #e2cfa2;
+            padding: 18px;
+            position: relative;
+        }
+
+        /* Frayed parchment edges */
+        .main-panel::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: inherit;
+            z-index: -1;
+            clip-path: polygon(
+                0% 3%, 2% 0%, 8% 2%, 12% 0%, 18% 3%, 25% 1%,
+                32% 4%, 38% 1%, 45% 2%, 52% 0%, 58% 3%, 65% 1%,
+                72% 3%, 78% 0%, 85% 2%, 92% 0%, 98% 3%, 100% 8%,
+                98% 15%, 100% 22%, 97% 28%, 100% 35%, 98% 42%,
+                100% 48%, 97% 55%, 100% 62%, 98% 68%, 100% 75%,
+                97% 82%, 100% 88%, 98% 95%, 92% 100%, 85% 98%,
+                78% 100%, 72% 97%, 65% 100%, 58% 98%, 52% 100%,
+                45% 97%, 38% 100%, 32% 98%, 25% 100%, 18% 97%,
+                12% 100%, 8% 98%, 2% 100%, 0% 97%, 3% 88%,
+                0% 82%, 2% 75%, 0% 68%, 3% 62%, 0% 55%,
+                2% 48%, 0% 42%, 3% 35%, 0% 28%, 2% 22%, 0% 15%, 3% 8%
+            );
+        }
+
+        h1 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            font-size: 22px;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+        }
+
+        .grid-container {
+            background: #e6d3a3;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 2px 12px rgba(139, 69, 19, 0.18);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            grid-template-rows: repeat(9, 1fr);
+            gap: 1px;
+            background: #8B7355;
+            padding: 1px;
+            max-width: 100%;
+            width: 100%;
+            aspect-ratio: 1;
+            margin: 0 auto;
+        }
+
+        .cell {
+            background: #d4c4a0;
+            border: 1px solid #a89968;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            text-align: center;
+            padding: 1px;
+            word-break: break-word;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+            transition: all 0.1s;
+        }
+
+        .cell:hover {
+            border-color: #8B4513;
+            background: #e6d3a3;
+        }
+
+        .cell.active {
+            border-color: #8B4513;
+        }
+
+        .cell-feature {
+            width: 100%;
+            height: 100%;
+            line-height: 1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .controls {
+            background: rgba(230, 211, 163, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(226, 207, 162, 0.5);
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .control-group {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            color: #8B4513;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 8px;
+            background: #fffef5;
+            border: 2px solid #d4c4a0;
+            color: #3a2a1a;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #8B4513;
+            background: #ffffff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        button {
+            background: #d4a574;
+            color: #3a2a1a;
+            border: 2px solid #a89968;
+            padding: 12px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            font-weight: bold;
+            touch-action: manipulation;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(139, 69, 19, 0.2);
+        }
+
+        button:hover {
+            background: #e6b786;
+            border-color: #8B4513;
+        }
+
+        button:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 2px rgba(139, 69, 19, 0.3);
+        }
+
+        button.secondary {
+            background: #c4b49a;
+            border-color: #a89968;
+        }
+
+        button.secondary:hover {
+            background: #d4c4aa;
+        }
+
+        button.danger {
+            background: #d9a574;
+            border-color: #b8855a;
+        }
+
+        button.danger:hover {
+            background: #e6b786;
+        }
+
+        .palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .palette-item {
+            padding: 4px;
+            background: #fffef5;
+            border: 2px solid #d4c4a0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+            min-width: 44px;
+            min-height: 44px;
+            width: 44px;
+            height: 44px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            box-shadow: 0 1px 3px rgba(139, 69, 19, 0.1);
+        }
+
+        .palette-item:hover {
+            border-color: #8B4513;
+            background: #ffffff;
+            transform: scale(1.05);
+        }
+
+        .palette-item.selected {
+            background: #d4a574;
+            border-color: #8B4513;
+            color: #3a2a1a;
+            box-shadow: 0 2px 6px rgba(139, 69, 19, 0.3);
+        }
+
+        .layer-toggle {
+            display: flex;
+            gap: 0;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #a89968;
+            flex-wrap: wrap;
+        }
+
+        .layer-button {
+            padding: 10px 16px;
+            border: 2px solid #b8a888;
+            border-bottom: none;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            white-space: nowrap;
+            border-radius: 6px 6px 0 0;
+            margin-right: -8px;
+            position: relative;
+            z-index: 1;
+            color: #5a4a3a;
+        }
+
+        .layer-button:last-child {
+            margin-right: 0;
+        }
+
+        .layer-button:hover {
+            z-index: 2;
+        }
+
+        /* TILE - light sandy beige */
+        .layer-button[data-category="TILE"] {
+            background: #d9cdb3;
+            border-color: #c4b8a0;
+        }
+        .layer-button[data-category="TILE"]:hover {
+            background: #e6dac0;
+        }
+        .layer-button[data-category="TILE"].active {
+            background: #d9cdb3;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        /* STRUCTURE - warm tan */
+        .layer-button[data-category="STRUCTURE"] {
+            background: #d4a574;
+            border-color: #c09560;
+        }
+        .layer-button[data-category="STRUCTURE"]:hover {
+            background: #e0b586;
+        }
+        .layer-button[data-category="STRUCTURE"].active {
+            background: #d4a574;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        /* PORT - muted bronze */
+        .layer-button[data-category="PORT"] {
+            background: #c9b08a;
+            border-color: #b5a078;
+        }
+        .layer-button[data-category="PORT"]:hover {
+            background: #d6bd97;
+        }
+        .layer-button[data-category="PORT"].active {
+            background: #c9b08a;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        /* ITEM - golden sand */
+        .layer-button[data-category="ITEM"] {
+            background: #dbb876;
+            border-color: #c7a564;
+        }
+        .layer-button[data-category="ITEM"]:hover {
+            background: #e8c583;
+        }
+        .layer-button[data-category="ITEM"].active {
+            background: #dbb876;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        /* ENEMY - dusty rose tan */
+        .layer-button[data-category="ENEMY"] {
+            background: #c9a89a;
+            border-color: #b59888;
+        }
+        .layer-button[data-category="ENEMY"]:hover {
+            background: #d6b5a7;
+        }
+        .layer-button[data-category="ENEMY"].active {
+            background: #c9a89a;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        /* NPC - cool sand */
+        .layer-button[data-category="NPC"] {
+            background: #bfc4b8;
+            border-color: #adb2a6;
+        }
+        .layer-button[data-category="NPC"]:hover {
+            background: #ccd1c5;
+        }
+        .layer-button[data-category="NPC"].active {
+            background: #bfc4b8;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        /* STATUE - stone gray-tan */
+        .layer-button[data-category="STATUE"] {
+            background: #b8b0a0;
+            border-color: #a6a090;
+        }
+        .layer-button[data-category="STATUE"]:hover {
+            background: #c5bdad;
+        }
+        .layer-button[data-category="STATUE"].active {
+            background: #b8b0a0;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        .info {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #aaa;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        @media (min-width: 600px) {
+            .action-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .action-buttons button {
+            width: 100%;
+            margin: 0;
+        }
+
+        .custom-value-input {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .custom-value-input input {
+            flex: 1;
+        }
+
+        .custom-value-input button {
+            margin: 0;
+            white-space: nowrap;
+            padding: 8px 12px;
+        }
+
+        #coordDisplay {
+            color: #6ab7ff;
+            font-size: 11px;
+            margin-top: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-panel">
+        <h1>Chress Zone Editor</h1>
+
+        <div class="controls">
+            <div class="control-grid">
+                <div class="control-group">
+                    <label>Zone Name:</label>
+                    <input type="text" id="zoneName" placeholder="my_custom_zone" value="custom_zone_1">
+                </div>
+
+                <div class="control-group">
+                    <label>Dimension:</label>
+                    <select id="zoneDimension">
+                        <option value="0">Surface</option>
+                        <option value="1">Interior</option>
+                        <option value="2">Underground</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Description (optional):</label>
+                    <textarea id="zoneDescription" placeholder="Add notes..."></textarea>
+                </div>
+
+                <div class="control-group">
+                    <label>Level:</label>
+                    <select id="zoneLevel">
+                        <option value="home">Home</option>
+                        <option value="woods">Woods</option>
+                        <option value="wilds">Wilds</option>
+                        <option value="frontier">Frontier</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Tags (comma-separated):</label>
+                    <input type="text" id="zoneTags" placeholder="puzzle, underground">
+                </div>
+
+                <div class="control-group">
+                    <label>Rarity:</label>
+                    <select id="zoneRarity">
+                        <option value="1">1 - Very Common</option>
+                        <option value="2">2 - Common</option>
+                        <option value="3">3 - Uncommon</option>
+                        <option value="4">4 - Semi-Rare</option>
+                        <option value="5" selected>5 - Rare</option>
+                        <option value="6">6 - Very Rare</option>
+                        <option value="7">7 - Epic</option>
+                        <option value="8">8 - Legendary</option>
+                        <option value="9">9 - Mythic</option>
+                        <option value="10">10 - Unique</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="layer-toggle">
+                <button class="layer-button active" data-category="TILE">TILE</button>
+                <button class="layer-button" data-category="STRUCTURE">STRUCTURE</button>
+                <button class="layer-button" data-category="PORT">PORT</button>
+                <button class="layer-button" data-category="ITEM">ITEM</button>
+                <button class="layer-button" data-category="ENEMY">ENEMY</button>
+                <button class="layer-button" data-category="NPC">NPC</button>
+                <button class="layer-button" data-category="STATUE">STATUE</button>
+            </div>
+
+            <div id="paletteContainer"></div>
+
+            <div class="custom-value-input">
+                <input type="text" id="customValue" placeholder="Type custom value (e.g., tombstone, puddle)">
+                <button onclick="addCustomValue()">Add to Current Category</button>
+            </div>
+
+            <div id="coordDisplay">Hover over grid to see coordinates</div>
+        </div>
+
+        <div class="grid-container">
+            <div class="grid" id="grid"></div>
+        </div>
+
+        <div class="controls">
+            <div class="action-buttons">
+                <button onclick="exportZone()">Export Zone (JSON)</button>
+                <button onclick="clearGrid()" class="secondary">Clear Grid</button>
+                <button onclick="fillAll()" class="secondary">Fill All with Selection</button>
+                <button onclick="importZone()" class="secondary">Import Zone</button>
+                <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="handleFileImport(event)">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GRID_SIZE = 9;
+        let currentLayer = 'terrain';
+        let isPainting = false;
+        let gridData = Array(GRID_SIZE * GRID_SIZE).fill(null);
+
+        // Store selected value and current category
+        let selectedValue = null;
+        let currentCategory = 'TILE';
+
+        // Multi-tile structure definitions (width, height)
+        const multiTileStructures = {
+            'house': { width: 4, height: 3 },    // 4x3 club structure
+            'shack': { width: 3, height: 3 },    // 3x3 shack
+            'deadtree': { width: 2, height: 2 }, // 2x2 dead tree
+            'well': { width: 2, height: 2 },     // 2x2 well
+            'cistern': { width: 1, height: 2 }   // 1x2 cistern (vertical)
+        };
+
+        // Asset path mappings for tiles
+        const tileAssets = {
+            // TILE
+            'floor': '../assets/floors/dirt/dirt.png',
+            'grass': '../assets/floors/dirt/dirt.png',
+            'pitfall': '../assets/doodads/pitfall.png',
+            'rock': '../assets/rock.png',
+            'shrubbery': '../assets/shrubbery.png',
+            'wall': '../assets/bush.png',
+
+            // STRUCTURE
+            'cistern': '../assets/doodads/cistern.png',
+            'deadtree': '../assets/doodads/deadtree.png',
+            'house': '../assets/doodads/club.png',
+            'shack': '../assets/doodads/shack.png',
+            'sign': '../assets/sign.png',
+            'table': '../assets/doodads/table.png',
+            'well': '../assets/doodads/well.png',
+
+            // PORT (exits with directional arrows)
+            'exit_down': '../assets/ui/arrow.png',
+            'exit_left': '../assets/ui/arrow.png',
+            'exit_right': '../assets/ui/arrow.png',
+            'exit_up': '../assets/ui/arrow.png',
+            'port_cistern': '../assets/doodads/cistern.png',
+            'port_interior': '../assets/doodads/stairdown.png',
+            'port_stairdown': '../assets/doodads/stairdown.png',
+            'port_stairup': '../assets/doodads/stairup.png',
+
+            // ITEM
+            'axe': '../assets/items/axe.png',
+            'bishop_spear': '../assets/items/spear.png',
+            'bomb': '../assets/items/bomb.png',
+            'book_of_time_travel': '../assets/items/book.png',
+            'bow': '../assets/items/bow.png',
+            'food': '../assets/food/meat/beaf.png',
+            'hammer': '../assets/items/hammer.png',
+            'heart': '../assets/items/heart.png',
+            'horse_icon': '../assets/items/horse.png',
+            'note': '../assets/items/note.png',
+            'shovel': '../assets/items/shovel.png',
+            'water': '../assets/items/water.png',
+
+            // ENEMY
+            'lazerd': '../assets/fauna/lazerd.png',
+            'lizardeaux': '../assets/fauna/lizardeaux.png',
+            'lizardo': '../assets/fauna/lizardo.png',
+            'lizardy': '../assets/fauna/lizardy.png',
+            'lizord': '../assets/fauna/lizord.png',
+            'zard': '../assets/fauna/zard.png',
+
+            // NPC
+            'axelotl': '../assets/fauna/axolotl.png',
+            'crayn': '../assets/fauna/crayn.png',
+            'felt': '../assets/fauna/felt.png',
+            'forge': '../assets/fauna/forge.png',
+            'gouge': '../assets/fauna/gouge.png',
+            'mark': '../assets/fauna/mark.png',
+            'nib': '../assets/fauna/nib.png',
+            'penne': '../assets/fauna/penne.png',
+            'rune': '../assets/fauna/rune.png',
+            'squig': '../assets/fauna/squig.png',
+
+            // STATUE (using same assets with overlay indicator)
+            'bomb_statue': '../assets/items/bomb.png',
+            'book_statue': '../assets/items/book.png',
+            'bow_statue': '../assets/items/bow.png',
+            'horse_statue': '../assets/items/horse.png',
+            'shovel_statue': '../assets/items/shovel.png',
+            'spear_statue': '../assets/items/spear.png',
+            'lazerd_statue': '../assets/fauna/lazerd.png',
+            'lizardeaux_statue': '../assets/fauna/lizardeaux.png',
+            'lizardo_statue': '../assets/fauna/lizardo.png',
+            'lizardy_statue': '../assets/fauna/lizardy.png',
+            'lizord_statue': '../assets/fauna/lizord.png',
+            'zard_statue': '../assets/fauna/zard.png'
+        };
+
+        // Store loaded images
+        const loadedImages = {};
+
+        function preloadImages() {
+            Object.entries(tileAssets).forEach(([key, path]) => {
+                const img = new Image();
+                img.src = path;
+                loadedImages[key] = img;
+            });
+        }
+
+        function getAssetPath(value) {
+            return tileAssets[value] || null;
+        }
+
+        const defaultPalettes = {
+            TILE: [
+                'floor', 'pitfall', 'rock', 'shrubbery', 'wall',
+                null
+            ],
+            STRUCTURE: [
+                'cistern', 'deadtree', 'house', 'shack', 'sign', 'table', 'well',
+                null
+            ],
+            PORT: [
+                'exit_down', 'exit_left', 'exit_right', 'exit_up',
+                'port_cistern', 'port_interior', 'port_stairdown', 'port_stairup',
+                null
+            ],
+            ITEM: [
+                'axe', 'bishop_spear', 'bomb', 'book_of_time_travel', 'bow', 'food', 'hammer',
+                'heart', 'horse_icon', 'note', 'shovel', 'water',
+                null
+            ],
+            ENEMY: [
+                'lazerd', 'lizardeaux', 'lizardo', 'lizardy', 'lizord', 'zard',
+                null
+            ],
+            NPC: [
+                'axelotl', 'crayn', 'felt', 'forge', 'gouge', 'mark', 'nib', 'penne', 'rune', 'squig',
+                null
+            ],
+            STATUE: [
+                'bomb_statue', 'book_statue', 'bow_statue', 'horse_statue', 'shovel_statue', 'spear_statue',
+                'lazerd_statue', 'lizardeaux_statue', 'lizardo_statue', 'lizardy_statue', 'lizord_statue', 'zard_statue',
+                null
+            ]
+        };
+
+        let customPalettes = {
+            TILE: [],
+            STRUCTURE: [],
+            PORT: [],
+            ITEM: [],
+            ENEMY: [],
+            NPC: [],
+            STATUE: []
+        };
+
+        function initGrid() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            for (let row = 0; row < GRID_SIZE; row++) {
+                for (let col = 0; col < GRID_SIZE; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    cell.dataset.index = row * GRID_SIZE + col;
+
+                    cell.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        isPainting = true;
+                        paintCell(cell);
+                    });
+
+                    cell.addEventListener('mouseenter', (e) => {
+                        if (isPainting) {
+                            paintCell(cell);
+                        }
+                        updateCoordDisplay(row, col);
+                    });
+
+                    cell.addEventListener('mouseleave', () => {
+                        updateCoordDisplay(row, col);
+                    });
+
+                    // Touch support for mobile drag-painting
+                    cell.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        isPainting = true;
+                        paintCell(cell);
+                    });
+
+                    cell.addEventListener('touchmove', (e) => {
+                        e.preventDefault();
+                        if (isPainting) {
+                            const touch = e.touches[0];
+                            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                            if (element && element.classList.contains('cell')) {
+                                paintCell(element);
+                            }
+                        }
+                    });
+
+                    cell.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        isPainting = false;
+                    });
+
+                    grid.appendChild(cell);
+                }
+            }
+            updateGrid();
+        }
+
+        // Stop painting when mouse/touch is released anywhere
+        document.addEventListener('mouseup', () => {
+            isPainting = false;
+        });
+
+        document.addEventListener('touchend', () => {
+            isPainting = false;
+        });
+
+        document.addEventListener('touchcancel', () => {
+            isPainting = false;
+        });
+
+        function updateCoordDisplay(row, col) {
+            document.getElementById('coordDisplay').textContent = `Coordinate: [${col}, ${row}]`;
+        }
+
+        function paintCell(cell) {
+            const index = parseInt(cell.dataset.index);
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+
+            console.log(`Painting cell [${col},${row}] with value: "${selectedValue}" from ${currentCategory}`);
+
+            // Check if this is a multi-tile structure
+            if (selectedValue && multiTileStructures[selectedValue]) {
+                const structure = multiTileStructures[selectedValue];
+
+                // Check if structure fits in grid
+                if (col + structure.width > GRID_SIZE || row + structure.height > GRID_SIZE) {
+                    console.warn(`Structure ${selectedValue} doesn't fit at [${col},${row}]`);
+                    return;
+                }
+
+                // Paint all cells for this structure
+                for (let dy = 0; dy < structure.height; dy++) {
+                    for (let dx = 0; dx < structure.width; dx++) {
+                        const cellIndex = (row + dy) * GRID_SIZE + (col + dx);
+                        gridData[cellIndex] = selectedValue;
+                    }
+                }
+            } else {
+                // Single-tile placement
+                gridData[index] = selectedValue;
+            }
+
+            updateGrid();
+        }
+
+        function updateGrid() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, index) => {
+                const value = gridData[index];
+                const row = Math.floor(index / GRID_SIZE);
+                const col = index % GRID_SIZE;
+                cell.innerHTML = '';
+
+                if (value) {
+                    const assetPath = getAssetPath(value);
+                    if (assetPath && loadedImages[value]) {
+                        // Check if this is a multi-tile structure
+                        const structure = multiTileStructures[value];
+
+                        if (structure) {
+                            // Find the top-left corner of this structure
+                            const topLeftCol = findStructureTopLeft(col, row, value, structure).col;
+                            const topLeftRow = findStructureTopLeft(col, row, value, structure).row;
+
+                            // Calculate this cell's position within the structure
+                            const offsetX = col - topLeftCol;
+                            const offsetY = row - topLeftRow;
+
+                            // Create a container div for the sliced sprite
+                            const container = document.createElement('div');
+                            container.className = 'cell-feature';
+                            container.style.width = '100%';
+                            container.style.height = '100%';
+                            container.style.overflow = 'hidden';
+                            container.style.position = 'relative';
+                            container.title = value;
+
+                            // Create the image and position it to show only the relevant slice
+                            const img = document.createElement('img');
+                            img.src = assetPath;
+                            img.style.position = 'absolute';
+                            img.style.imageRendering = 'pixelated';
+
+                            // Scale the image to be structure.width times the cell width
+                            img.style.width = `${structure.width * 100}%`;
+                            img.style.height = `${structure.height * 100}%`;
+
+                            // Offset to show the correct slice
+                            img.style.left = `${-offsetX * 100}%`;
+                            img.style.top = `${-offsetY * 100}%`;
+
+                            container.appendChild(img);
+                            cell.appendChild(container);
+                        } else {
+                            // Single-tile rendering
+                            const img = document.createElement('img');
+                            img.src = assetPath;
+                            img.className = 'cell-feature';
+                            img.title = value;
+                            img.style.width = '100%';
+                            img.style.height = '100%';
+                            img.style.objectFit = 'contain';
+                            img.style.imageRendering = 'pixelated';
+
+                            // Rotate arrow for directional exits
+                            if (value === 'exit_left') img.style.transform = 'rotate(-90deg)';
+                            else if (value === 'exit_up') img.style.transform = 'rotate(180deg)';
+                            else if (value === 'exit_right') img.style.transform = 'rotate(90deg)';
+                            // exit_down is default (0deg)
+
+                            cell.appendChild(img);
+                        }
+                    } else {
+                        // Fallback to text if no asset
+                        const valueDiv = document.createElement('div');
+                        valueDiv.className = 'cell-feature';
+                        valueDiv.textContent = value;
+                        valueDiv.title = value;
+                        valueDiv.style.fontSize = '8px';
+                        valueDiv.style.wordBreak = 'break-all';
+                        cell.appendChild(valueDiv);
+                    }
+                }
+            });
+        }
+
+        // Helper function to find the top-left corner of a multi-tile structure
+        function findStructureTopLeft(col, row, value, structure) {
+            // Search backwards to find where this structure starts
+            for (let testRow = Math.max(0, row - structure.height + 1); testRow <= row; testRow++) {
+                for (let testCol = Math.max(0, col - structure.width + 1); testCol <= col; testCol++) {
+                    // Check if all cells of the structure from this position match
+                    let allMatch = true;
+                    for (let dy = 0; dy < structure.height; dy++) {
+                        for (let dx = 0; dx < structure.width; dx++) {
+                            const checkIndex = (testRow + dy) * GRID_SIZE + (testCol + dx);
+                            if (gridData[checkIndex] !== value) {
+                                allMatch = false;
+                                break;
+                            }
+                        }
+                        if (!allMatch) break;
+                    }
+                    if (allMatch) {
+                        return { col: testCol, row: testRow };
+                    }
+                }
+            }
+            return { col, row }; // Fallback to current position
+        }
+
+        function renderPalette() {
+            const container = document.getElementById('paletteContainer');
+            const palette = [...defaultPalettes[currentCategory], ...customPalettes[currentCategory]];
+
+            container.innerHTML = `<label>Select ${currentCategory}:</label><div class="palette"></div>`;
+            const paletteDiv = container.querySelector('.palette');
+
+            palette.forEach(value => {
+                const item = document.createElement('div');
+                item.className = 'palette-item';
+                item.title = value === null ? 'Eraser' : value;
+                if (value === selectedValue) item.classList.add('selected');
+
+                if (value === null) {
+                    item.textContent = '🚫';
+                } else {
+                    const assetPath = getAssetPath(value);
+                    if (assetPath && loadedImages[value]) {
+                        const img = document.createElement('img');
+                        img.src = assetPath;
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.objectFit = 'contain';
+                        img.style.imageRendering = 'pixelated';
+
+                        // Rotate arrow for directional exits
+                        if (value === 'exit_left') img.style.transform = 'rotate(-90deg)';
+                        else if (value === 'exit_up') img.style.transform = 'rotate(180deg)';
+                        else if (value === 'exit_right') img.style.transform = 'rotate(90deg)';
+                        // exit_down is default (0deg)
+
+                        item.appendChild(img);
+                    } else {
+                        // Fallback to text
+                        item.textContent = value.substring(0, 4);
+                        item.style.fontSize = '10px';
+                    }
+                }
+
+                item.addEventListener('click', () => {
+                    selectedValue = value;
+                    console.log(`Selected "${value}" from ${currentCategory}`);
+                    renderPalette();
+                });
+
+                paletteDiv.appendChild(item);
+            });
+        }
+
+        function addCustomValue() {
+            const input = document.getElementById('customValue');
+            const value = input.value.trim();
+
+            if (value && !defaultPalettes[currentCategory].includes(value) && !customPalettes[currentCategory].includes(value)) {
+                customPalettes[currentCategory].push(value);
+                input.value = '';
+                renderPalette();
+            }
+        }
+
+        function switchCategory(category) {
+            currentCategory = category;
+
+            document.querySelectorAll('.layer-button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.category === category);
+            });
+
+            console.log(`Switched to ${category} category`);
+            renderPalette();
+        }
+
+        function clearGrid() {
+            if (confirm('Clear entire grid? This cannot be undone.')) {
+                gridData = Array(GRID_SIZE * GRID_SIZE).fill(null);
+                updateGrid();
+            }
+        }
+
+        function fillAll() {
+            if (selectedValue) {
+                gridData = Array(GRID_SIZE * GRID_SIZE).fill(selectedValue);
+                updateGrid();
+            } else {
+                alert('Select a value first!');
+            }
+        }
+
+        function exportZone() {
+            const zoneName = document.getElementById('zoneName').value.trim() || 'unnamed_zone';
+            const description = document.getElementById('zoneDescription').value.trim();
+            const tags = document.getElementById('zoneTags').value.split(',').map(t => t.trim()).filter(t => t);
+            const dimension = parseInt(document.getElementById('zoneDimension').value);
+            const level = document.getElementById('zoneLevel').value; // String: home, woods, wilds, frontier
+            const rarity = parseInt(document.getElementById('zoneRarity').value);
+
+            // Separate terrain and features based on tile types
+            const terrain = [];
+            const features = {};
+
+            gridData.forEach((value, index) => {
+                const row = Math.floor(index / GRID_SIZE);
+                const col = index % GRID_SIZE;
+
+                // Terrain types that go in terrain array
+                const terrainTypes = ['floor', 'grass', 'water'];
+
+                if (!value) {
+                    terrain.push(null);
+                } else if (terrainTypes.includes(value)) {
+                    terrain.push(value);
+                } else {
+                    // Everything else is a feature
+                    terrain.push('floor'); // Default terrain under features
+                    features[`${col},${row}`] = value;
+                }
+            });
+
+            const zoneData = {
+                name: zoneName,
+                size: [GRID_SIZE, GRID_SIZE],
+                terrain: terrain,
+                features: features,
+                metadata: {
+                    description: description || undefined,
+                    tags: tags.length > 0 ? tags : undefined,
+                    dimension: dimension,
+                    level: level,
+                    rarity: rarity,
+                    created: new Date().toISOString()
+                }
+            };
+
+            // Remove undefined metadata fields
+            Object.keys(zoneData.metadata).forEach(key => {
+                if (zoneData.metadata[key] === undefined) delete zoneData.metadata[key];
+            });
+
+            const json = JSON.stringify(zoneData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${zoneName}.json`;
+            a.click();
+
+            URL.revokeObjectURL(url);
+        }
+
+        function importZone() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const zoneData = JSON.parse(e.target.result);
+
+                    // Load zone data
+                    document.getElementById('zoneName').value = zoneData.name || '';
+                    document.getElementById('zoneDescription').value = zoneData.metadata?.description || '';
+                    document.getElementById('zoneTags').value = zoneData.metadata?.tags?.join(', ') || '';
+                    document.getElementById('zoneDimension').value = zoneData.metadata?.dimension || 0;
+                    document.getElementById('zoneLevel').value = zoneData.metadata?.level || 'home';
+                    document.getElementById('zoneRarity').value = zoneData.metadata?.rarity || 5;
+
+                    // Merge terrain and features into single grid
+                    gridData = Array(GRID_SIZE * GRID_SIZE).fill(null);
+
+                    // First apply terrain
+                    (zoneData.terrain || []).forEach((terrain, index) => {
+                        if (terrain) {
+                            gridData[index] = terrain;
+                        }
+                    });
+
+                    // Then overlay features
+                    Object.entries(zoneData.features || {}).forEach(([coord, feature]) => {
+                        const [col, row] = coord.split(',').map(Number);
+                        const index = row * GRID_SIZE + col;
+                        gridData[index] = feature; // Features override terrain
+                    });
+
+                    updateGrid();
+                    alert('Zone imported successfully!');
+                } catch (err) {
+                    alert('Error importing zone: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+
+            // Reset file input
+            event.target.value = '';
+        }
+
+        // Category toggle event listeners
+        document.querySelectorAll('.layer-button').forEach(btn => {
+            btn.addEventListener('click', () => switchCategory(btn.dataset.category));
+        });
+
+        // Custom value input - allow Enter key
+        document.getElementById('customValue').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addCustomValue();
+        });
+
+        // Initialize
+        preloadImages();
+        initGrid();
+        renderPalette();
+    </script>
+</body>
+</html>

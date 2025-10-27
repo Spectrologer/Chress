@@ -13,7 +13,8 @@ export class CombatActionManager {
         const bishopSpearItem = allItems.find(item => item.type === 'bishop_spear' && item.uses > 0 && !item.disabled);
         if (!bishopSpearItem) return null;
 
-        const enemyAtCoords = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
+        const enemyCollection = this.game.enemyCollection;
+        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y);
         const targetTile = this.game.grid[gridCoords.y][gridCoords.x];
         const isEmptyTile = !enemyAtCoords && this.game.player.isWalkable(gridCoords.x, gridCoords.y, this.game.grid, playerPos.x, playerPos.y);
 
@@ -35,7 +36,8 @@ export class CombatActionManager {
         const horseIconItem = allItems.find(item => item.type === 'horse_icon' && item.uses > 0 && !item.disabled);
         if (!horseIconItem) return null;
 
-        const enemyAtCoords = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
+        const enemyCollection = this.game.enemyCollection;
+        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y);
         const targetTile = this.game.grid[gridCoords.y][gridCoords.x];
         const isEmptyTile = !enemyAtCoords && this.game.player.isWalkable(gridCoords.x, gridCoords.y, this.game.grid, playerPos.x, playerPos.y);
 
@@ -59,7 +61,8 @@ export class CombatActionManager {
         const bowItem = allItems.find(item => item.type === 'bow' && item.uses > 0 && !item.disabled);
         if (!bowItem) return null;
 
-        const enemyAtCoords = this.game.enemies.find(enemy => enemy.x === gridCoords.x && enemy.y === gridCoords.y);
+        const enemyCollection = this.game.enemyCollection;
+        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y);
         if (!enemyAtCoords) return null;
 
         const dx = gridCoords.x - playerPos.x;
@@ -95,7 +98,7 @@ export class CombatActionManager {
         const enemyRef = chargeDetails.enemy;
 
         // Clear pending state and hide overlay immediately so UI doesn't persist after confirmation
-        this.game.pendingCharge = null;
+        this.game.transientGameState.clearPendingCharge();
         safeCall(this.game, 'hideOverlayMessage');
 
         if (chargeDetails.type === 'bishop_spear') {
@@ -109,7 +112,7 @@ export class CombatActionManager {
     }
 
     cancelPendingCharge() {
-        this.game.pendingCharge = null;
+        this.game.transientGameState.clearPendingCharge();
         this.game.hideOverlayMessage();
     }
 }

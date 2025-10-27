@@ -3,6 +3,7 @@ import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/in
 import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import { logger } from '../core/logger.js';
+import { isFloor, isWall } from '../utils/TypeChecks.js';
 
 export class FeatureGenerator {
     constructor(grid, foodAssets, depth = 0) {
@@ -82,7 +83,7 @@ export class FeatureGenerator {
         // Add a chance tile: could be an extra water, food, or sign
         const pos = findValidPlacement({
             maxAttempts: 20,
-            validate: (x, y) => this.grid[y][x] === TILE_TYPES.FLOOR
+            validate: (x, y) => isFloor(this.grid[y][x])
         });
         if (!pos) return;
         const { x, y } = pos;
@@ -175,7 +176,7 @@ export class FeatureGenerator {
             const ny = y + dir.dy;
 
             if (nx > 0 && nx < GRID_SIZE - 1 && ny > 0 && ny < GRID_SIZE - 1 &&
-                this.grid[ny][nx] === TILE_TYPES.WALL) {
+                isWall(this.grid[ny][nx])) {
                 // Carve the wall between current and neighbor
                 this.grid[y + dir.dy / 2][x + dir.dx / 2] = TILE_TYPES.FLOOR;
                 this.carveMaze(nx, ny);
@@ -191,7 +192,7 @@ export class FeatureGenerator {
         for (let i = 0; i < blockages; i++) {
             const pos = findValidPlacement({
                 maxAttempts: 20,
-                validate: (x, y) => this.grid[y][x] === TILE_TYPES.FLOOR
+                validate: (x, y) => isFloor(this.grid[y][x])
             });
             if (pos) {
                 const { x, y } = pos;

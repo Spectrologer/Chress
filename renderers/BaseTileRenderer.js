@@ -1,4 +1,4 @@
-import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from '../core/constants/index.js';
+import { TILE_COLORS, TILE_TYPES, TILE_SIZE, STROKE_CONSTANTS } from '../core/constants/index.js';
 import { RendererUtils } from './RendererUtils.js';
 import { TextureDetector } from './TextureDetector.js';
 import { WallTileRenderer } from './WallTileRenderer.js';
@@ -179,8 +179,9 @@ export class BaseTileRenderer {
             ctx.drawImage(this.images.water, pixelX + offsetX, pixelY + offsetY, scaledSize, scaledSize);
         } else {
             // Fallback to colored square with emoji
+            const padding = STROKE_CONSTANTS.FALLBACK_TILE_PADDING;
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.WATER];
-            ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+            ctx.fillRect(pixelX + padding, pixelY + padding, TILE_SIZE - padding * 2, TILE_SIZE - padding * 2);
 
             ctx.fillStyle = '#87CEEB';
             ctx.font = '32px Arial';

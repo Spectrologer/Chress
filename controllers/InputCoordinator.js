@@ -149,13 +149,19 @@ export class InputCoordinator {
             return;
         }
 
-        // Show tap feedback
-        this.game?.renderManager?.showTapFeedback?.(gridCoords.x, gridCoords.y);
-
         const clickedPos = Position.from(gridCoords);
         const clickedTile = clickedPos.getTile(this.game.grid);
         const clickedTileType = this.getTileType(clickedTile);
-        const enemyAtTile = this.game.enemies.find(enemy => enemy.getPositionObject().equals(clickedPos));
+
+        // Use enemyCollection to find enemies
+        const enemyAtTile = this.game.enemyCollection?.findAt(gridCoords.x, gridCoords.y, true);
+
+        // Show tap feedback - if not on enemy, clear any hold feedback and show transient feedback
+        if (!enemyAtTile) {
+            this.game?.renderManager?.clearFeedback?.();
+            this.game?.renderManager?.showTapFeedback?.(gridCoords.x, gridCoords.y);
+        }
+        // If on enemy, hold feedback is already set from pointer down, leave it as is to show attack range
 
         // Check double tap
         const isDoubleTap = this.gestureDetector.handleDoubleTapLogic(gridCoords, screenX, screenY);

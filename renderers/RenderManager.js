@@ -113,9 +113,9 @@ export class RenderManager {
     this.ctx.setLineDash([]);
     this.ctx.restore();
     // If this is a hold feedback on an enemy, draw that enemy's attack range overlay
-    if (tf.hold && this.game && Array.isArray(this.game.enemies)) {
+    if (tf.hold && this.game) {
         try {
-            const enemy = this.game.enemies.find(en => en.x === tf.x && en.y === tf.y && en.health > 0);
+            const enemy = this.game.enemyCollection?.findAt(tf.x, tf.y, true);
             if (enemy) {
                 this.drawEnemyAttackRange(enemy);
             }
@@ -131,7 +131,7 @@ export class RenderManager {
     drawEnemyAttackRange(enemy) {
         if (!enemy || !this.game || !this.game.grid) return;
         const grid = this.game.grid;
-        const enemies = this.game.enemies || [];
+        const enemies = this.game.enemyCollection?.getAll() || [];
         const tiles = new Set();
         const push = (x, y) => { if (x >= 0 && y >= 0 && y < grid.length && x < grid[0].length) tiles.add(`${x},${y}`); };
 

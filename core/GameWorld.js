@@ -20,13 +20,6 @@ export class GameWorld {
         this.player = null; // Set by ServiceContainer
         this.enemies = []; // Current zone enemies
         this.defeatedEnemies = new Set(); // Tracks defeated enemy positions: "zoneX,zoneY,enemyX,enemyY"
-
-        // Pitfall zone state
-        this.isInPitfallZone = false; // True if player is in a zone entered via pitfall
-        this.pitfallTurnsSurvived = 0; // Turns survived in a pitfall zone
-
-        // Port transition data (for hole -> cistern, etc.)
-        this.portTransitionData = null; // { from: string, x: number, y: number }
     }
 
     /**
@@ -37,11 +30,9 @@ export class GameWorld {
         this.zones.clear();
         this.specialZones.clear();
         this.currentRegion = null;
-        this.enemies = [];
+        // IMPORTANT: Clear array in place to preserve EnemyCollection reference
+        this.enemies.length = 0;
         this.defeatedEnemies.clear();
-        this.isInPitfallZone = false;
-        this.pitfallTurnsSurvived = 0;
-        this.portTransitionData = null;
     }
 
     /**
@@ -54,9 +45,8 @@ export class GameWorld {
             specialZones: Array.from(this.specialZones.entries()),
             currentRegion: this.currentRegion,
             enemies: this.enemies.map(e => e.serialize ? e.serialize() : e),
-            defeatedEnemies: Array.from(this.defeatedEnemies),
-            isInPitfallZone: this.isInPitfallZone,
-            pitfallTurnsSurvived: this.pitfallTurnsSurvived
+            defeatedEnemies: Array.from(this.defeatedEnemies)
+            // Note: Transient state (pitfall, portTransition, etc.) is NOT persisted - managed by TransientGameState
         };
     }
 
@@ -68,9 +58,11 @@ export class GameWorld {
         this.zones = new Map(state.zones || []);
         this.specialZones = new Map(state.specialZones || []);
         this.currentRegion = state.currentRegion || null;
-        this.enemies = (state.enemies || []).map(e => new EnemyClass(e));
+        // IMPORTANT: Clear and repopulate array in place to preserve EnemyCollection reference
+        this.enemies.length = 0;
+        const newEnemies = (state.enemies || []).map(e => new EnemyClass(e));
+        this.enemies.push(...newEnemies);
         this.defeatedEnemies = new Set(state.defeatedEnemies || []);
-        this.isInPitfallZone = state.isInPitfallZone || false;
-        this.pitfallTurnsSurvived = state.pitfallTurnsSurvived || 0;
+        // Note: Transient state is reset on load by TransientGameState, not persisted
     }
 }

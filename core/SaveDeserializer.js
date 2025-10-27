@@ -81,9 +81,7 @@ export class SaveDeserializer {
         game.specialZones = new Map(gameStateData.specialZones || []);
         game.messageLog = gameStateData.messageLog || [];
         game.currentRegion = gameStateData.currentRegion || null;
-        game.bombPlacementMode = gameStateData.bombPlacementMode || false;
-        game.bombPlacementPositions = gameStateData.bombPlacementPositions || [];
-        game.isInPitfallZone = gameStateData.isInPitfallZone || false;
+        // Note: Transient state is reset on load by TransientGameState.resetAll(), not loaded from saves
     }
 
     /**

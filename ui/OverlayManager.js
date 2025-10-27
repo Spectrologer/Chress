@@ -119,6 +119,7 @@ export class OverlayManager {
     setupButtonHandlers(overlay, hasSaved) {
         const startBtn = overlay.querySelector('#startButton');
         const continueBtn = overlay.querySelector('#continueButton');
+        const zoneEditorBtn = overlay.querySelector('#zoneEditorButton');
 
         if (startBtn) {
             startBtn.addEventListener('click', () => this.handleStartGame(overlay), { once: true });
@@ -126,6 +127,11 @@ export class OverlayManager {
 
         if (continueBtn && hasSaved) {
             continueBtn.addEventListener('click', () => this.handleContinueGame(overlay), { once: true });
+        }
+
+        if (zoneEditorBtn) {
+            // Don't use { once: true } for zone editor since it doesn't close the start menu
+            zoneEditorBtn.addEventListener('click', () => this.handleZoneEditor());
         }
     }
 
@@ -194,6 +200,61 @@ export class OverlayManager {
             } catch (e) {
                 logger.error('Fatal error continuing game:', e);
             }
+        }
+    }
+
+    /**
+     * Handles opening the zone editor in-app overlay.
+     */
+    handleZoneEditor() {
+        try {
+            const overlay = document.getElementById('zoneEditorOverlay');
+            const iframe = document.getElementById('zoneEditorFrame');
+            const closeButton = document.getElementById('closeZoneEditor');
+
+            if (!overlay || !iframe) {
+                logger.error('Zone editor overlay elements not found');
+                return;
+            }
+
+            // Get base path for GitHub Pages or local
+            const basePath = document.querySelector('base')?.href || window.location.origin + '/';
+            const editorPath = 'tools/zone-editor.html';
+
+            // Set iframe source
+            iframe.src = new URL(editorPath, basePath).href;
+
+            // Show the overlay
+            overlay.style.display = 'flex';
+
+            // Close handler function
+            const closeEditor = () => {
+                overlay.style.display = 'none';
+                iframe.src = ''; // Clear iframe to stop any running scripts
+                // Clean up event listeners
+                if (closeButton) {
+                    closeButton.removeEventListener('click', closeEditor);
+                }
+                overlay.removeEventListener('click', overlayClickHandler);
+            };
+
+            // Overlay click handler
+            const overlayClickHandler = (e) => {
+                // Only close if clicking directly on the overlay background, not its children
+                if (e.target === overlay) {
+                    closeEditor();
+                }
+            };
+
+            // Set up close button handler
+            if (closeButton) {
+                closeButton.addEventListener('click', closeEditor);
+            }
+
+            // Close on overlay background click
+            overlay.addEventListener('click', overlayClickHandler);
+        } catch (error) {
+            logger.error('Error opening zone editor:', error);
         }
     }
 

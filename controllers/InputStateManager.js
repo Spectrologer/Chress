@@ -53,14 +53,20 @@ export class InputStateManager {
      * Check if there's a pending charge selection
      */
     hasPendingCharge() {
-        return !!(this.game.pendingCharge?.selectionType);
+        if (this.game.transientGameState) {
+            return this.game.transientGameState.hasPendingCharge();
+        }
+        return false;
     }
 
     /**
      * Get pending charge details
      */
     getPendingCharge() {
-        return this.game.pendingCharge;
+        if (this.game.transientGameState) {
+            return this.game.transientGameState.getPendingCharge();
+        }
+        return null;
     }
 
     /**

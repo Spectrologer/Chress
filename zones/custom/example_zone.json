@@ -1,0 +1,29 @@
+{
+  "name": "example_zone",
+  "size": [8, 8],
+  "terrain": [
+    "grass", "grass", "grass", "grass", "grass", "grass", "grass", "grass",
+    "grass", "grass", "grass", "grass", "grass", "grass", "grass", "grass",
+    "grass", "grass", "water", "water", "water", "water", "grass", "grass",
+    "grass", "grass", "water", "water", "water", "water", "grass", "grass",
+    "grass", "grass", "water", "water", "water", "water", "grass", "grass",
+    "grass", "grass", "water", "water", "water", "water", "grass", "grass",
+    "grass", "grass", "grass", "grass", "grass", "grass", "grass", "grass",
+    "grass", "grass", "grass", "grass", "grass", "grass", "grass", "grass"
+  ],
+  "features": {
+    "0,0": "wall",
+    "7,0": "wall",
+    "0,7": "wall",
+    "7,7": "wall",
+    "3,7": "exit"
+  },
+  "metadata": {
+    "description": "Example zone with water pool in center and walls at corners",
+    "tags": [
+      "example",
+      "tutorial"
+    ],
+    "created": "2025-10-26T00:00:00.000Z"
+  }
+}

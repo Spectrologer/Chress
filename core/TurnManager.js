@@ -14,23 +14,27 @@ export class TurnManager {
      */
     handleTurnCompletion() {
         this.startEnemyTurns();
-        if (this.game.isInPitfallZone) {
-            this.game.pitfallTurnsSurvived++;
+        const transientState = this.game.transientGameState;
+        if (transientState.isInPitfallZone()) {
+            transientState.incrementPitfallTurnsSurvived();
         }
         return true;
     }
 
     startEnemyTurns() {
+        const transientState = this.game.transientGameState;
         // If the player just attacked and an attack has delay, enemy turns will
         // be started by the attack resolution elsewhere.
-        if (this.game.playerJustAttacked) return;
+        if (transientState.didPlayerJustAttack()) return;
 
         // Check if player is on exit tile - if so, freeze all enemies
         const playerOnExit = this.game.isPlayerOnExitTile();
 
+        const enemyCollection = this.game.enemyCollection;
+
         this.game.isPlayerTurn = false;
         this.occupiedTilesThisTurn.clear();
-        this.initialEnemyTilesThisTurn = new Set((this.game.enemies || []).map(e => `${e.x},${e.y}`));
+        this.initialEnemyTilesThisTurn = enemyCollection.getPositionsSet();
 
         const playerPos = this.game.player.getPosition();
         this.occupiedTilesThisTurn.add(`${playerPos.x},${playerPos.y}`);
@@ -43,12 +47,10 @@ export class TurnManager {
 
         // Set freeze state on all enemies based on player position
         // Enemies stay frozen for 1 turn after leaving exit tile
-        if (this.game.enemies) {
-            const shouldFreeze = playerOnExit || this.game.justLeftExitTile;
-            this.game.enemies.forEach(enemy => {
-                enemy.isFrozen = shouldFreeze;
-            });
-        }
+        const shouldFreeze = playerOnExit || this.game.justLeftExitTile;
+        enemyCollection.forEach(enemy => {
+            enemy.isFrozen = shouldFreeze;
+        });
 
         // Clear the grace period flag after it's been used for one turn
         if (this.game.justLeftExitTile && !playerOnExit) {
@@ -58,7 +60,7 @@ export class TurnManager {
         // Update the tracking variable for next turn
         this.wasPlayerOnExitLastTurn = playerOnExit;
 
-        this.turnQueue = [...this.game.enemies];
+        this.turnQueue = enemyCollection.getAll();
         this.processTurnQueue();
     }
 
@@ -85,7 +87,8 @@ export class TurnManager {
         }
 
         const enemy = this.turnQueue.shift();
-        const isStillValid = enemy && !enemy.isDead() && this.game.enemies.includes(enemy);
+        const enemyCollection = this.game.enemyCollection;
+        const isStillValid = enemy && !enemy.isDead() && enemyCollection.includes(enemy);
 
         // Frozen enemies process faster since they don't actually move
         const waitTime = (isStillValid && enemy.isFrozen) ? 50 : 400;

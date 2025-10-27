@@ -23,15 +23,11 @@ export class GameContext {
 
         // Turn-based system state
         this.isPlayerTurn = true;
-        this.playerJustAttacked = false;
         this.justLeftExitTile = false; // Track if player just stepped off exit tile
 
-        // Item usage modes
+        // Item usage modes (shovel is not yet migrated to TransientGameState)
         this.shovelMode = false;
         this.activeShovel = null;
-        this.bombPlacementMode = false;
-        this.bombPlacementPositions = [];
-        this.pendingCharge = null;
 
         // Assets
         this.availableFoodAssets = [];
@@ -94,15 +90,6 @@ export class GameContext {
 
     get currentRegion() { return this.world.currentRegion; }
     set currentRegion(value) { this.world.currentRegion = value; }
-
-    get isInPitfallZone() { return this.world.isInPitfallZone; }
-    set isInPitfallZone(value) { this.world.isInPitfallZone = value; }
-
-    get pitfallTurnsSurvived() { return this.world.pitfallTurnsSurvived; }
-    set pitfallTurnsSurvived(value) { this.world.pitfallTurnsSurvived = value; }
-
-    get portTransitionData() { return this.world.portTransitionData; }
-    set portTransitionData(value) { this.world.portTransitionData = value; }
 
     get canvas() { return this.ui.canvas; }
     set canvas(value) { this.ui.canvas = value; }
@@ -296,7 +283,10 @@ export class GameContext {
     gameLoop() {
         // Update animations
         this.player.updateAnimations();
-        this.enemies.forEach(enemy => enemy.updateAnimations());
+        // Use enemyCollection to ensure we update the correct enemy array
+        if (this.enemyCollection) {
+            this.enemyCollection.forEach(enemy => enemy.updateAnimations());
+        }
 
         // Update centralized animation manager
         this.animationManager.updateAnimations();

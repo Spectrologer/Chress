@@ -114,8 +114,8 @@ export class OverlayMessageHandler {
      * Hide the overlay message
      */
     hide() {
-        // Don't hide if there's a pending charge
-        if (this.game.pendingCharge) {
+        // Don't hide if there's a pending charge (check transientGameState)
+        if (this.game.transientGameState && this.game.transientGameState.hasPendingCharge()) {
             return;
         }
 

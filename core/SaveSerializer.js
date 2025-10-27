@@ -25,9 +25,7 @@ export class SaveSerializer {
             specialZones: Array.from(game.specialZones.entries()),
             messageLog: game.messageLog,
             currentRegion: game.currentRegion,
-            bombPlacementMode: game.bombPlacementMode,
-            bombPlacementPositions: game.bombPlacementPositions,
-            isInPitfallZone: game.isInPitfallZone,
+            // Note: Transient state (bomb placement, pitfall, etc.) is NOT persisted - managed by TransientGameState
             // Zone state manager counters and flags
             zoneStateManager: SaveSerializer.serializeZoneStateManager(),
             signSpawnedMessages: Array.from(Sign.spawnedMessages)

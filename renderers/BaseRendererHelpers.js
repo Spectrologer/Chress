@@ -1,4 +1,5 @@
 import { RendererUtils } from './RendererUtils.js';
+import { STROKE_CONSTANTS } from '../core/constants/index.js';
 
 // Small helper to render an overlay image with a base already drawn by caller.
 // Options:
@@ -63,8 +64,9 @@ export function renderOverlay(ctx, images, imageKey, pixelX, pixelY, tileSize, f
         ctx.fillStyle = fallbackColor;
         ctx.fillRect(pixelX + offsetX, pixelY + offsetY, tileSize, tileSize);
     } else {
+        const padding = STROKE_CONSTANTS.FALLBACK_TILE_PADDING;
         ctx.fillStyle = fallbackColor;
-        ctx.fillRect(pixelX + 8 + offsetX, pixelY + 8 + offsetY, tileSize - 16, tileSize - 16);
+        ctx.fillRect(pixelX + padding + offsetX, pixelY + padding + offsetY, tileSize - padding * 2, tileSize - padding * 2);
     }
 
     if (fallbackText) {

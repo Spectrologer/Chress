@@ -8,7 +8,12 @@ export class UIRenderer {
     }
 
     drawBombPlacementIndicator() {
-        const positions = this.game.bombPlacementPositions;
+        const transientState = this.game.transientGameState;
+        if (!transientState || !transientState.isBombPlacementMode()) {
+            return;
+        }
+
+        const positions = transientState.getBombPlacementPositions();
         if (!positions || positions.length === 0) {
             return;
         }
@@ -32,11 +37,12 @@ export class UIRenderer {
     }
 
     drawChargeConfirmationIndicator() {
-        if (!this.game.pendingCharge) {
+        const pendingCharge = this.game.transientGameState?.getPendingCharge();
+        if (!pendingCharge) {
             return;
         }
 
-        const { targetX, targetY } = this.game.pendingCharge;
+        const { targetX, targetY } = pendingCharge;
 
         // Draw a flashing yellow indicator at the target position
         const alpha = 0.5 + Math.sin(Date.now() * 0.01) * 0.3; // Flashes between 0.2 and 0.8

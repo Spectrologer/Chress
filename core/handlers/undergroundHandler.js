@@ -29,7 +29,9 @@ class UndergroundHandler extends BaseZoneHandler {
         this.handleEnemySpawning();
         this.ensureExitAccess();
 
-        const isFromPitfall = this.zoneGen.game.portTransitionData?.from === 'pitfall';
+        const transientState = this.zoneGen.game.transientGameState;
+        const portData = transientState.getPortTransitionData();
+        const isFromPitfall = portData?.from === 'pitfall';
         this.zoneGen.playerSpawn = this.findPlayerSpawn(isFromPitfall);
 
         const result = this.buildResult();
@@ -39,9 +41,11 @@ class UndergroundHandler extends BaseZoneHandler {
     }
 
     handlePortTransitions() {
-        if (!this.zoneGen.game.portTransitionData) return;
+        const transientState = this.zoneGen.game.transientGameState;
+        const portData = transientState.getPortTransitionData();
+        if (!portData) return;
 
-        const { from, x, y } = this.zoneGen.game.portTransitionData;
+        const { from, x, y } = portData;
         const handlers = {
             cistern: () => {
                 this.structureGenerator.addCistern(this.zoneX, this.zoneY, true, x, y);
@@ -64,8 +68,10 @@ class UndergroundHandler extends BaseZoneHandler {
     handleRandomStairdownPlacement() {
         try {
             if (!this.isHomeZone && Math.random() < SPAWN_PROBABILITIES.STAIRS_DOWN) {
-                const avoidX = this.zoneGen.game?.portTransitionData?.x;
-                const avoidY = this.zoneGen.game?.portTransitionData?.y;
+                const transientState = this.zoneGen.game.transientGameState;
+                const portData = transientState.getPortTransitionData();
+                const avoidX = portData?.x;
+                const avoidY = portData?.y;
 
                 for (let attempts = 0; attempts < 50; attempts++) {
                     const sx = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
@@ -96,7 +102,9 @@ class UndergroundHandler extends BaseZoneHandler {
     }
 
     handleEnemySpawning() {
-        const isFromPitfall = this.zoneGen.game.portTransitionData?.from === 'pitfall';
+        const transientState = this.zoneGen.game.transientGameState;
+        const portData = transientState.getPortTransitionData();
+        const isFromPitfall = portData?.from === 'pitfall';
         const baseProbabilities = {
             1: SPAWN_PROBABILITIES.UNDERGROUND_ENEMY.HOME,
             2: SPAWN_PROBABILITIES.UNDERGROUND_ENEMY.WOODS,
@@ -113,7 +121,8 @@ class UndergroundHandler extends BaseZoneHandler {
     }
 
     addReturnToSurfaceData(result) {
-        const portData = this.zoneGen.game.portTransitionData;
+        const transientState = this.zoneGen.game.transientGameState;
+        const portData = transientState.getPortTransitionData();
         if (portData && (portData.from === 'hole' || portData.from === 'pitfall')) {
             result.returnToSurface = {
                 from: portData.from,

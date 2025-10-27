@@ -1,7 +1,7 @@
 import { TILE_COLORS, TILE_TYPES, TILE_SIZE, SCALE_CONSTANTS, PULSATE_CONSTANTS } from '../core/constants/index.js';
 import { RendererUtils } from './RendererUtils.js';
 import { logger } from '../core/logger.js';
-import { isBomb } from '../utils/TileUtils.js';
+import { isBomb, isTileObject } from '../utils/TypeChecks.js';
 
 export class ItemTileRenderer {
     constructor(images, tileSize) {
@@ -131,7 +131,7 @@ export class ItemTileRenderer {
     logger.debug('Bomb image loaded:', bombImage && bombImage.complete, 'naturalWidth:', bombImage?.naturalWidth);
 
         // Check if it's an object bomb (player-placed with animation timer)
-        if (typeof tile === 'object' && isBomb(tile)) {
+        if (isTileObject(tile) && isBomb(tile)) {
             // Active bomb object - render with pulsation
             if (bombImage && bombImage.complete) {
                 ctx.save();

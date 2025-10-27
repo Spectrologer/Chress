@@ -217,10 +217,11 @@
                                         </label>
                                         <div class="start-overlay-title">
                                             <img src="assets/ui/title.png" alt="Chress" class="start-overlay-logo">
-                                            <div class="start-overlay-sub">Chess 2: The Sequel to Chess</div>
+                                            <div class="start-overlay-sub">Main Menu</div>
                                         </div>
-                                        <button id="startButton" class="start-button-native start-overlay-action">New Game</button>
-                                        <button id="continueButton" class="start-button-native start-overlay-action">continue</button>
+                                        <button id="startButton" class="start-button-native start-overlay-action start-btn-new">New Game</button>
+                                        <button id="continueButton" class="start-button-native start-overlay-action start-btn-continue">continue</button>
+                                        <button id="zoneEditorButton" class="start-button-native start-overlay-action start-btn-editor">Zone Editor</button>
                                     </div>
                                 </div>
                                 <!-- Message Log overlay moved inside player card so it overlays the player panel like NPC messages -->
@@ -256,6 +257,12 @@
         <div id="expandedMapOverlay">
             <div class="expanded-map-container">
                 <canvas id="expandedMapCanvas"></canvas>
+            </div>
+        </div>
+        <div id="zoneEditorOverlay" class="zone-editor-overlay" style="display: none;">
+            <div class="zone-editor-container">
+                <button id="closeZoneEditor" class="zone-editor-close" aria-label="Close">×</button>
+                <iframe id="zoneEditorFrame" src="" class="zone-editor-frame"></iframe>
             </div>
         </div>
 </body>

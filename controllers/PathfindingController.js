@@ -3,6 +3,7 @@ import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
 import { Position } from '../core/Position.js';
+import { isSign, getTileType } from '../utils/TypeChecks.js';
 
 /**
  * PathfindingController - Handles pathfinding and path execution
@@ -39,6 +40,7 @@ export class PathfindingController {
      * @returns {Array|null} Array of direction keys, or null if no path found
      */
     findPath(startX, startY, targetX, targetY) {
+        const gridManager = this.game.gridManager;
         const startPos = new Position(startX, startY);
         const targetPos = new Position(targetX, targetY);
 
@@ -46,9 +48,8 @@ export class PathfindingController {
             return null;
         }
 
-        const targetTile = targetPos.getTile(this.game.grid);
-        if ((targetTile && typeof targetTile === 'object' && targetTile.type === TILE_TYPES.SIGN) ||
-            targetTile === TILE_TYPES.SIGN) {
+        const targetTile = gridManager.getTile(targetPos.x, targetPos.y);
+        if (isSign(targetTile)) {
             return null;
         }
 
@@ -274,12 +275,11 @@ export class PathfindingController {
         } catch (e) {}
 
         const playerPos = this.game.player.getPosition();
+        const gridManager = this.game.gridManager;
 
         try {
-            const landedTile = this.game.grid[playerPos.y]?.[playerPos.x];
-            const landedTileType = (typeof landedTile === 'object' && landedTile?.type !== undefined)
-                ? landedTile.type
-                : landedTile;
+            const landedTile = gridManager.getTile(playerPos.x, playerPos.y);
+            const landedTileType = getTileType(landedTile);
 
             if (landedTileType === TILE_TYPES.EXIT) {
                 if (this.autoUseNextExitReach || this.autoUseNextTransition === 'exit') {

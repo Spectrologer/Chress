@@ -50,7 +50,12 @@
       "Bash(node -e:*)",
       "Bash(node tests/ContentRegistry.test.js:*)",
       "Bash(node tests/tmp_stack_test.mjs:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(powershell -Command \"(Get-Content ''c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\core\\consoleCommands.js'' | Measure-Object -Line).Lines\")",
+      "Bash(wc:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(mkdir:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

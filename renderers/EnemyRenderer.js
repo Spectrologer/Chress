@@ -9,8 +9,11 @@ export class EnemyRenderer {
     }
 
     drawEnemies() {
-        for (let i = 0; i < this.game.enemies.length; i++) {
-            const enemy = this.game.enemies[i];
+        // Use enemyCollection instead of game.enemies to avoid array reference issues
+        const enemies = this.game.enemyCollection ? this.game.enemyCollection.getAll() : this.game.enemies;
+
+        for (let i = 0; i < enemies.length; i++) {
+            const enemy = enemies[i];
             let enemyKey;
             if (enemy.enemyType === 'lizardo') {
                 enemyKey = 'lizardo';
@@ -179,7 +182,7 @@ export class EnemyRenderer {
                     }
                 } else if (this.game.isPlayerTurn) {
                     // Player turn phase - show predicted order (based on current enemy list)
-                    const enemyIndex = this.game.enemies.indexOf(enemy);
+                    const enemyIndex = enemies.indexOf(enemy);
                     if (enemyIndex !== -1) {
                         turnNumber = enemyIndex + 1;
                     }

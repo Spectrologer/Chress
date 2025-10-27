@@ -99,7 +99,9 @@ export class ZoneManager {
         this.game.generateZone();
 
         try {
-            logger?.debug?.(`Transition complete: lastExitSide=${exitSide}, portTransitionData=${JSON.stringify(this.game.portTransitionData)}`);
+            const transientState = this.game.transientGameState;
+            const portData = transientState.getPortTransitionData();
+            logger?.debug?.(`Transition complete: lastExitSide=${exitSide}, portTransitionData=${JSON.stringify(portData)}`);
         } catch (e) {}
 
         // Position player based on which exit they used
@@ -404,9 +406,12 @@ export class ZoneManager {
             // Update gridManager's grid reference when zone changes
             this.game.gridManager.setGrid(zoneData.grid);
         }
-        if (!this.game.enemyCollection) {
-            this.game.enemyCollection = this.game._services.get('enemyCollection');
+        // IMPORTANT: Always recreate enemyCollection to ensure it wraps the current array reference
+        // The array reference might change during initialization, so we clear the cache
+        if (this.game._services) {
+            this.game._services._instances.delete('enemyCollection');
         }
+        this.game.enemyCollection = this.game._services.get('enemyCollection');
 
         // For new games (no lastExitSide), use the playerSpawn from zone generation
         if (!this.game.lastExitSide && zoneData.playerSpawn) {
@@ -485,6 +490,7 @@ export class ZoneManager {
         } catch (e) { /* non-fatal */ }
         // When loading enemies, filter out any that are in the defeatedEnemies set.
         const enemyCollection = this.game.enemyCollection;
+
         const allEnemies = (zoneData.enemies || []).map(e => new this.game.Enemy(e));
         const livingEnemies = allEnemies.filter(enemy => {
             const defeatedKey = `${enemy.id}`;

@@ -13,7 +13,10 @@ export const UI_CONSTANTS = {
     OPACITY_DIM: 0.3, // Dimmed opacity (e.g. for lost hearts)
     OPACITY_SEMI_TRANSPARENT: 0.7, // Semi-transparent opacity
     OPACITY_INDICATOR_FLASH_BASE: 0.5, // Base opacity for flashing indicators
-    OPACITY_INDICATOR_FLASH_VARIANCE: 0.3 // Variance in flash opacity
+    OPACITY_INDICATOR_FLASH_VARIANCE: 0.3, // Variance in flash opacity
+
+    // Transition durations
+    CSS_TRANSITION_DURATION: 260 // Duration (ms) for CSS transitions (e.g., fade-out)
 };
 
 // Input constants

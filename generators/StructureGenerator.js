@@ -3,7 +3,7 @@ import { TILE_TYPES, GRID_SIZE, ZONE_CONSTANTS } from '../core/constants/index.j
 import { randomInt, findValidPlacement, isAllowedTile, validateAndSetTile } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import { logger } from '../core/logger.js';
-import { isTileType } from '../utils/TileUtils.js';
+import { isTileType, isTileObjectOfType, isFloor, isSign } from '../utils/TypeChecks.js';
 
 export class StructureGenerator {
     constructor(grid) {
@@ -22,12 +22,12 @@ export class StructureGenerator {
                 // Place a PORT tile at the bottom-middle of the house as an entrance
                 // Centered for a 4-wide building, we place one door.
                 if (x === houseStartX + 1 && y === houseStartY + 2) {
-                    if (!(this.grid[y][x] && typeof this.grid[y][x] === 'object' && this.grid[y][x].type === TILE_TYPES.SIGN)) {
+                    if (!isTileObjectOfType(this.grid[y][x], TILE_TYPES.SIGN)) {
                         validateAndSetTile(this.grid, x, y, TILE_TYPES.PORT);
                     }
                 } else if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1) {
                     // Check bounds for the rest of the club
-                    if (!(this.grid[y][x] && typeof this.grid[y][x] === 'object' && this.grid[y][x].type === TILE_TYPES.SIGN)) {
+                    if (!isTileObjectOfType(this.grid[y][x], TILE_TYPES.SIGN)) {
                         validateAndSetTile(this.grid, x, y, TILE_TYPES.HOUSE);
                     }
                 }
@@ -207,7 +207,7 @@ export class StructureGenerator {
     checkSignExists() {
         for (let y = 0; y < this.grid.length; y++) {
             for (let x = 0; x < this.grid[y].length; x++) {
-                if (this.grid[y][x].type === TILE_TYPES.SIGN) {
+                if (isSign(this.grid[y][x])) {
                     return true;
                 }
             }
@@ -252,7 +252,7 @@ export class StructureGenerator {
         // Try to place the sign in a valid location (max 50 attempts)
         const pos = findValidPlacement({
             maxAttempts: 50,
-            validate: (x, y) => this.grid[y][x] === TILE_TYPES.FLOOR
+            validate: (x, y) => isFloor(this.grid[y][x])
         });
         if (pos) {
             const { x, y } = pos;
@@ -267,7 +267,7 @@ export class StructureGenerator {
     _placeSignRandomly(message, onPlacedCallback = null) {
         const pos = findValidPlacement({
             maxAttempts: 50,
-            validate: (x, y) => this.grid[y][x] === TILE_TYPES.FLOOR
+            validate: (x, y) => isFloor(this.grid[y][x])
         });
         if (pos) {
             const { x, y } = pos;

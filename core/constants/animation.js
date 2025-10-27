@@ -14,7 +14,11 @@ export const ANIMATION_CONSTANTS = {
     SMOKE_FRAME_LIFETIME: 18, // Individual smoke frame lifetime (PlayerAnimations)
     DAMAGE_FLASH_FRAMES: 30, // Duration of damage flash animation
     BACKFLIP_DEFAULT_FRAMES: 20, // Default frame count for backflip
-    BACKFLIP_DELAY_FRAMES: 6 // Delay frames at start of backflip
+    BACKFLIP_DELAY_FRAMES: 6, // Delay frames at start of backflip
+
+    // Bomb animation
+    BOMB_PULSE_FREQUENCY: 0.005, // Frequency multiplier for bomb pulsation (Date.now() * this)
+    BOMB_PULSE_AMPLITUDE: 0.1 // Scale amplitude for bomb pulsation (0.1 = 10% scale change)
 };
 
 // Rendering constants

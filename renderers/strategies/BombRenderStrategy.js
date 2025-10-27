@@ -1,7 +1,7 @@
-import { TILE_TYPES, TILE_SIZE, TILE_COLORS } from '../../core/constants/index.js';
+import { TILE_TYPES, TILE_SIZE, TILE_COLORS, ANIMATION_CONSTANTS, STROKE_CONSTANTS } from '../../core/constants/index.js';
 import { logger } from '../../core/logger.js';
 import { TileRenderStrategy } from './TileRenderStrategy.js';
-import { isBomb } from '../../utils/TileUtils.js';
+import { isBomb, isTileObject } from '../../utils/TypeChecks.js';
 
 export class BombRenderStrategy extends TileRenderStrategy {
     render(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
@@ -16,13 +16,13 @@ export class BombRenderStrategy extends TileRenderStrategy {
         logger.debug('Bomb image loaded:', bombImage && bombImage.complete, 'naturalWidth:', bombImage?.naturalWidth);
 
         // Check if it's an object bomb (player-placed with animation timer)
-        if (typeof tile === 'object' && isBomb(tile)) {
+        if (isTileObject(tile) && isBomb(tile)) {
             // Active bomb object - render with pulsation
             if (bombImage && bombImage.complete) {
                 ctx.save();
                 // Only animate if bomb is not just placed
                 if (!tile.justPlaced) {
-                    const scale = 1 + Math.sin(Date.now() * 0.005) * 0.1; // Pulsate
+                    const scale = 1 + Math.sin(Date.now() * ANIMATION_CONSTANTS.BOMB_PULSE_FREQUENCY) * ANIMATION_CONSTANTS.BOMB_PULSE_AMPLITUDE;
                     const cx = pixelX + TILE_SIZE / 2;
                     const cy = pixelY + TILE_SIZE / 2;
                     ctx.translate(cx, cy);
@@ -45,8 +45,9 @@ export class BombRenderStrategy extends TileRenderStrategy {
     }
 
     renderFallback(ctx, pixelX, pixelY, color, emoji) {
+        const padding = STROKE_CONSTANTS.FALLBACK_TILE_PADDING;
         ctx.fillStyle = color;
-        ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+        ctx.fillRect(pixelX + padding, pixelY + padding, TILE_SIZE - padding * 2, TILE_SIZE - padding * 2);
 
         if (emoji) {
             ctx.fillStyle = '#000000';

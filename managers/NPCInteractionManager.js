@@ -42,6 +42,9 @@ export class NPCInteractionManager {
             const dy = Math.abs(gridCoords.y - playerPos.y);
 
             if (isAdjacent(dx, dy)) {
+                // Track NPC position for distance-based auto-close
+                this.game.transientGameState.setCurrentNPCPosition(gridCoords);
+
                 if (config.action === 'barter') {
                     // Use event instead of direct UIManager call
                     eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
@@ -54,7 +57,14 @@ export class NPCInteractionManager {
                     const npcData = Sign.getDialogueNpcData(npcName);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
-                        this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                        const signData = { message: message, type: 'npc' };
+
+                        // Set both old and new state for compatibility
+                        this.game.displayingMessageForSign = signData;
+                        if (this.game.transientGameState) {
+                            this.game.transientGameState.setDisplayingSignMessage(signData);
+                        }
+
                         // Use event instead of direct UIManager call
                         eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
                             type: 'sign',
@@ -101,6 +111,9 @@ export class NPCInteractionManager {
         // Find and trigger NPC
         for (const [npcName, config] of Object.entries(this.npcConfig)) {
             if (targetTile === config.tileType) {
+                // Track NPC position for distance-based auto-close
+                this.game.transientGameState.setCurrentNPCPosition(gridCoords);
+
                 if (config.action === 'barter') {
                     // Use event instead of direct UIManager call
                     eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
@@ -113,7 +126,14 @@ export class NPCInteractionManager {
                     const npcData = Sign.getDialogueNpcData(npcName);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
-                        this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                        const signData = { message: message, type: 'npc' };
+
+                        // Set both old and new state for compatibility
+                        this.game.displayingMessageForSign = signData;
+                        if (this.game.transientGameState) {
+                            this.game.transientGameState.setDisplayingSignMessage(signData);
+                        }
+
                         // Use event instead of direct UIManager call
                         eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
                             type: 'sign',

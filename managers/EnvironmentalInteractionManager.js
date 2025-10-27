@@ -4,6 +4,7 @@ import { TileRegistry } from '../core/TileRegistry.js';
 import { isAdjacent } from '../core/utils/DirectionUtils.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
+import { isTileObjectOfType } from '../utils/TypeChecks.js';
 
 export class EnvironmentalInteractionManager {
     constructor(game) {
@@ -11,8 +12,9 @@ export class EnvironmentalInteractionManager {
     }
 
     handleSignTap(gridCoords) {
-        const signTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (!(signTile && typeof signTile === 'object' && signTile.type === TILE_TYPES.SIGN)) return false;
+        const gridManager = this.game.gridManager;
+        const signTile = gridManager.getTile(gridCoords.x, gridCoords.y);
+        if (!isTileObjectOfType(signTile, TILE_TYPES.SIGN)) return false;
 
         // Check if player is adjacent to this sign
         const playerPos = this.game.player.getPosition();
@@ -20,22 +22,25 @@ export class EnvironmentalInteractionManager {
         const dy = Math.abs(gridCoords.y - playerPos.y);
 
         if (isAdjacent(dx, dy)) {
+            const transientState = this.game.transientGameState;
+
             // Check if this is a new message being displayed (not already showing)
-            const isAlreadyDisplayed = this.game.displayingMessageForSign &&
-                                      this.game.displayingMessageForSign.message === signTile.message;
+            const displayingSign = transientState.getDisplayingSignMessage();
+            const isAlreadyDisplayed = displayingSign && displayingSign.message === signTile.message;
             const showingNewMessage = !isAlreadyDisplayed;
 
             // Let Sign class handle the toggle logic
             Sign.handleClick(signTile, this.game, isAdjacent);
 
             // Add to log only when first showing the message
-            if (showingNewMessage && signTile.message !== this.game.lastSignMessage) {
+            const lastMessage = transientState.getLastSignMessage();
+            if (showingNewMessage && signTile.message !== lastMessage) {
                 eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
                     text: `A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`,
                     category: 'environment',
                     priority: 'info'
                 });
-                this.game.lastSignMessage = signTile.message;
+                transientState.setLastSignMessage(signTile.message);
             }
             return true; // Interaction handled
         }
@@ -44,7 +49,8 @@ export class EnvironmentalInteractionManager {
     }
 
     handleStatueTap(gridCoords) {
-        const statueTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        const gridManager = this.game.gridManager;
+        const statueTile = gridManager.getTile(gridCoords.x, gridCoords.y);
 
         // Use centralized TileRegistry for statue mapping
         const statueNpcType = TileRegistry.getStatueNPCType(statueTile);
@@ -68,31 +74,35 @@ export class EnvironmentalInteractionManager {
     }
 
     forceInteractAt(gridCoords) {
+        const gridManager = this.game.gridManager;
         const playerPos = this.game.player.getPosition();
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);
         if (!isAdjacent(dx, dy)) return;
 
+        const transientState = this.game.transientGameState;
+
         // Check if sign
-        const signTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
-        if (signTile && typeof signTile === 'object' && signTile.type === TILE_TYPES.SIGN) {
+        const signTile = gridManager.getTile(gridCoords.x, gridCoords.y);
+        if (isTileObjectOfType(signTile, TILE_TYPES.SIGN)) {
             Sign.handleClick(signTile, this.game, isAdjacent(dx, dy));
-            const isAlreadyDisplayed = this.game.displayingMessageForSign &&
-                                      this.game.displayingMessageForSign.message === signTile.message;
+            const displayingSign = transientState.getDisplayingSignMessage();
+            const isAlreadyDisplayed = displayingSign && displayingSign.message === signTile.message;
             const showingNewMessage = !isAlreadyDisplayed;
-            if (showingNewMessage && signTile.message !== this.game.lastSignMessage) {
+            const lastMessage = transientState.getLastSignMessage();
+            if (showingNewMessage && signTile.message !== lastMessage) {
                 eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
                     text: `A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`,
                     category: 'environment',
                     priority: 'info'
                 });
-                this.game.lastSignMessage = signTile.message;
+                transientState.setLastSignMessage(signTile.message);
             }
             return;
         }
 
         // Check enemy statue using centralized TileRegistry
-        const statueTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        const statueTile = gridManager.getTile(gridCoords.x, gridCoords.y);
         const statueNpcType = TileRegistry.getStatueNPCType(statueTile);
 
         if (statueNpcType) {

@@ -59,7 +59,16 @@ export const EventTypes = {
 
   // Inventory Events
   INVENTORY_CHANGED: 'inventory:changed',
+  RADIAL_INVENTORY_CHANGED: 'inventory:radial:changed',
   ITEM_USED: 'inventory:item:used',
+
+  // Ability Events (new)
+  ABILITY_GAINED: 'ability:gained',
+  ABILITY_LOST: 'ability:lost',
+
+  // Stats Events (new)
+  STATS_CHANGED: 'stats:changed',
+  POINTS_CHANGED: 'points:changed',
 
   // Input Events
   INPUT_KEY_PRESS: 'input:key:press',
@@ -86,6 +95,15 @@ export const EventTypes = {
   GAME_EXIT_SHOVEL_MODE: 'game:exit:shovel_mode',
   GAME_INCREMENT_BOMB_ACTIONS: 'game:increment:bomb_actions',
   GAME_DECREMENT_ZONE_ENTRY_COUNT: 'game:decrement:zone_entry_count',
+
+  // Enemy Collection Events
+  ENEMY_SPAWNED: 'enemy:spawned',
+  ENEMY_REMOVED: 'enemy:removed',
+  ENEMIES_CLEARED: 'enemies:cleared',
+  ENEMIES_REPLACED: 'enemies:replaced',
+
+  // Transient State Events (charge state tracking)
+  CHARGE_STATE_CHANGED: 'charge:state:changed',
 };
 
 /**

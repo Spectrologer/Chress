@@ -99,21 +99,24 @@ export class CombatManager {
     }
 
     handleSingleEnemyMovement(enemy) {
+        const enemyCollection = this.game.enemyCollection;
         // Ensure we are not trying to move a dead or non-existent enemy
-        if (!enemy || enemy.health <= 0 || !this.game.enemies.includes(enemy)) {
+        if (!enemy || enemy.health <= 0 || !enemyCollection.includes(enemy)) {
             return;
         }
+        const gridManager = this.game.gridManager;
         const playerPos = this.game.player.getPosition();
 
-        const move = enemy.planMoveTowards(this.game.player, this.game.grid, this.game.enemies, playerPos, false, this.game);
+        const allEnemies = enemyCollection.getAll();
+        const move = enemy.planMoveTowards(this.game.player, this.game.grid, allEnemies, playerPos, false, this.game);
         if (move) {
             // Check if enemy is moving onto a pitfall trap
-            const targetTile = this.game.grid[move.y]?.[move.x];
+            const targetTile = gridManager.getTile(move.x, move.y);
             if (targetTile === TILE_TYPES.PITFALL) {
                 // The enemy falls into the pit!
                 // The enemy falls into the pit. Leave the surface tile as a primitive
                 // PITFALL (do not create an object-style 'stairup' on the surface).
-                this.game.grid[move.y][move.x] = TILE_TYPES.PITFALL;
+                gridManager.setTile(move.x, move.y, TILE_TYPES.PITFALL);
 
                 // Remove the enemy from the current zone's active enemy list
                 // Before removing, clear any turn-manager bookkeeping for this enemy so
@@ -130,7 +133,7 @@ export class CombatManager {
                     // Defensive: continue even if turnManager isn't present or delete fails
                 }
 
-                this.game.enemies = this.game.enemies.filter(e => e.id !== enemy.id);
+                enemyCollection.removeById(enemy.id, false); // Don't emit event for pitfall removals
 
                 // Add the enemy to the corresponding underground zone's data
                 const currentZone = this.getCurrentZone();
@@ -150,7 +153,7 @@ export class CombatManager {
             const key = `${move.x},${move.y}`;
             // Extra safeguard: don't move onto a tile currently occupied by another enemy
             // (exclude the moving enemy itself when comparing)
-            const occupiedNow = this.game.enemies.some(e => e.id !== enemy.id && e.x === move.x && e.y === move.y);
+            const occupiedNow = enemyCollection.some(e => e.id !== enemy.id && e.x === move.x && e.y === move.y);
             if (occupiedNow) {
                 return; // Tile is currently occupied, block the move
             }
@@ -217,15 +220,17 @@ export class CombatManager {
         // Delegate bomb timing checks to BombManager
         safeCall(this.bombManager, 'tickBombsAndExplode');
 
+        const enemyCollection = this.game.enemyCollection;
         const playerPos = this.game.player.getPosition();
-        const remainingEnemies = [];
+        const toRemove = [];
         let playerWasAttacked = false;
 
-        for (const enemy of this.game.enemies) {
+        enemyCollection.forEach((enemy) => {
             const enemyIsDead = safeCall(enemy, 'isDead') ?? (enemy.health <= 0);
             if (enemyIsDead) {
                 this.defeatEnemy(enemy);
-                continue;
+                toRemove.push(enemy);
+                return;
             }
 
             let isDefeated = false;
@@ -262,10 +267,16 @@ export class CombatManager {
 
             if (enemy.health <= 0) isDefeated = true;
 
-            if (isDefeated) this.defeatEnemy(enemy); else remainingEnemies.push(enemy);
-        }
+            if (isDefeated) {
+                this.defeatEnemy(enemy);
+                toRemove.push(enemy);
+            }
+        });
 
-        this.game.enemies = remainingEnemies;
+        // Remove defeated enemies
+        for (const enemy of toRemove) {
+            enemyCollection.remove(enemy, false); // Don't emit events for combat removals
+        }
 
         // Emit event for player stats change instead of calling UIManager directly
         eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {

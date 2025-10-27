@@ -91,20 +91,20 @@ export class KeyboardHandler {
         }
         if (this.game.player.isDead()) return null;
 
-        // Clear pending
-        if (this.game.pendingCharge) {
-            this.game.pendingCharge = null;
+        // Clear pending charge using transientGameState
+        if (this.game.transientGameState && this.game.transientGameState.hasPendingCharge()) {
+            this.game.transientGameState.clearPendingCharge();
             this.game.hideOverlayMessage();
         }
 
         // Clear UI if not pathing (check event-based state)
         const isPathExecuting = this.onPathExecutionCheck ? this.onPathExecutionCheck() : this._pathExecuting;
         if (!isPathExecuting) {
+            const transientState = this.game.transientGameState;
             if (this.game.displayingMessageForSign) {
                 Sign.hideMessageForSign(this.game);
-            } else if (this.game.bombPlacementMode) {
-                this.game.bombPlacementMode = false;
-                this.game.bombPlacementPositions = [];
+            } else if (transientState && transientState.isBombPlacementMode()) {
+                transientState.exitBombPlacementMode();
                 this.game.hideOverlayMessage();
             } else {
                 this.game.hideOverlayMessage();

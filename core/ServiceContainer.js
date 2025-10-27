@@ -34,6 +34,10 @@ import { BombManager } from '../managers/BombManager.js';
 import { TerrainInteractionManager } from '../managers/TerrainInteractionManager.js';
 import { EnvironmentalInteractionManager } from '../managers/EnvironmentalInteractionManager.js';
 import { EnemyDefeatFlow } from '../managers/EnemyDefeatFlow.js';
+import { GridManager } from '../managers/GridManager.js';
+import { PlayerFacade } from '../facades/PlayerFacade.js';
+import { TransientGameState } from '../state/TransientGameState.js';
+import { EnemyCollection } from '../facades/EnemyCollection.js';
 
 /**
  * Lightweight service container with lazy initialization for better testability.
@@ -90,6 +94,18 @@ export class ServiceContainer {
      */
     _buildServiceRegistry() {
         return {
+            // Grid abstraction layer (initialize early, needed by many services)
+            gridManager: () => new GridManager(this.game.grid),
+
+            // Player facade (initialize after player entity is created)
+            playerFacade: () => new PlayerFacade(this.game.player),
+
+            // Enemy collection facade (wraps enemies array for controlled access)
+            enemyCollection: () => new EnemyCollection(this.game.enemies, this.game),
+
+            // Transient state container (session-specific, non-persisted state)
+            transientGameState: () => new TransientGameState(),
+
             // Visual / external services
             textureManager: () => new TextureManager(),
             connectionManager: () => new ConnectionManager(),
@@ -198,6 +214,9 @@ export class ServiceContainer {
             // Error handling (initialize first to catch errors during initialization)
             'globalErrorHandler',
 
+            // Transient state (initialize early, no dependencies)
+            'transientGameState',
+
             // External services first
             'textureManager',
             'connectionManager',
@@ -206,6 +225,12 @@ export class ServiceContainer {
             // Entities
             'player',
             'Enemy',
+
+            // Player facade (after player entity is created)
+            'playerFacade',
+
+            // Enemy collection facade (after enemies array is available)
+            'enemyCollection',
 
             // Inventory system
             'inventoryService',
@@ -262,6 +287,10 @@ export class ServiceContainer {
 
             // State management
             'gameStateManager'
+
+            // NOTE: gridManager and enemyCollection are NOT eagerly initialized here
+            // They wrap game.grid and game.enemies which don't exist until generateZone() is called
+            // These services use lazy initialization - they'll be created on first access
         ];
 
         // Create all services

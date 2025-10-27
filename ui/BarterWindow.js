@@ -52,7 +52,14 @@ export class BarterWindow {
             const npcData = Sign.getDialogueNpcData(key);
             if (npcData) {
                 const message = npcData.messages[npcData.currentMessageIndex];
-                this.game.displayingMessageForSign = { message: message, type: 'npc' };
+                const signData = { message: message, type: 'npc' };
+
+                // Set both old and new state for compatibility
+                this.game.displayingMessageForSign = signData;
+                if (this.game.transientGameState) {
+                    this.game.transientGameState.setDisplayingSignMessage(signData);
+                }
+
                 // Use event instead of direct UIManager call
                 eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
                     type: 'sign',
@@ -241,6 +248,10 @@ export class BarterWindow {
             const mm = this.game.uiManager && this.game.uiManager.messageManager;
             if (mm) mm._currentVoiceSettings = null;
         } catch (e) {}
+        // Clear NPC position tracking when barter window closes
+        if (this.game.transientGameState) {
+            this.game.transientGameState.clearCurrentNPCPosition();
+        }
     }
 
     confirmTrade(tradeData) {

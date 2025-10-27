@@ -186,11 +186,12 @@ export class InputUIHandler {
      * Returns true if handled, false otherwise
      */
     _handleChargeSelection(gridCoords) {
-        if (!this.game.pendingCharge?.selectionType) {
+        const pendingCharge = this.game.transientGameState?.getPendingCharge();
+        if (!pendingCharge?.selectionType) {
             return false;
         }
 
-        const selType = this.game.pendingCharge.selectionType;
+        const selType = pendingCharge.selectionType;
         let chargeDetails = null;
         const playerPos = this.game.player.getPosition();
 

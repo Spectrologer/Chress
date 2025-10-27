@@ -30,7 +30,12 @@ export class GameStateManager {
         this.game.zoneRepository = new ZoneRepository(); // Centralized zone caching
         this.game.zones = this.game.zoneRepository.getMap(); // Backward compatibility - provides direct Map access (deprecated)
         this.game.grid = null; // Current zone grid
-        this.game.enemies = []; // Current zone enemies
+        // IMPORTANT: Clear array in place to preserve EnemyCollection reference
+        if (this.game.enemies) {
+            this.game.enemies.length = 0;
+        } else {
+            this.game.enemies = []; // First initialization
+        }
         this.game.defeatedEnemies = new Set(); // Tracks defeated enemy positions: "zoneX,zoneY,enemyX,enemyY"
         this.game.gameStarted = false;
         this.game.currentRegion = null; // Tracks current region name to avoid repeated notifications
@@ -64,7 +69,12 @@ export class GameStateManager {
         this.game.specialZones.clear(); // Reset special zones
         this.game.messageLog = []; // Reset message log
         this.game.player.reset();
-        this.game.enemies = [];
+        // IMPORTANT: Clear the array instead of reassigning to preserve EnemyCollection reference
+        if (this.game.enemyCollection) {
+            this.game.enemyCollection.clear(false); // Clear without emitting event
+        } else {
+            this.game.enemies.length = 0; // Fallback if enemyCollection not yet initialized
+        }
         this.game.defeatedEnemies = new Set();
         this.game.currentRegion = null; // Reset region tracking
         this.game.lastSignMessage = null; // Reset sign message tracking

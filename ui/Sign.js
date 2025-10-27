@@ -244,16 +244,18 @@ export class Sign {
             return; // Only respond to clicks when adjacent
         }
 
+        const transientState = gameInstance.transientGameState;
+
         // Check if this specific sign's message is currently displayed
-        const isDisplayed = gameInstance.displayingMessageForSign &&
-                           gameInstance.displayingMessageForSign.message === signData.message;
+        const displayingSign = transientState.getDisplayingSignMessage();
+        const isDisplayed = displayingSign && displayingSign.message === signData.message;
 
         if (isDisplayed) {
             // Message is showing, hide it
             Sign.hideMessageForSign(gameInstance);
         } else {
             // If another sign message is showing, hide it first to avoid overlap
-            if (gameInstance.displayingMessageForSign) {
+            if (transientState.isDisplayingSignMessage()) {
                 Sign.hideMessageForSign(gameInstance);
             }
             // Now, display the new one
@@ -263,17 +265,42 @@ export class Sign {
 
     // Static method to display message for a sign object
     static displayMessageForSign(signData, gameInstance) {
-            // Use the dedicated sign message method for persistent display
-            gameInstance.showSignMessage(signData.message, 'assets/sign.png');
-        gameInstance.displayingMessageForSign = signData;
+        // Use the dedicated sign message method for persistent display
+        gameInstance.showSignMessage(signData.message, 'assets/sign.png');
+        gameInstance.transientGameState.setDisplayingSignMessage(signData);
     }
 
     // Static method to hide the currently displayed sign message
     static hideMessageForSign(gameInstance) {
-        if (gameInstance.displayingMessageForSign) {
+        console.log('[Sign.hideMessageForSign] Called');
+        const transientState = gameInstance.transientGameState;
+
+        let didHide = false;
+
+        if (transientState && transientState.isDisplayingSignMessage()) {
+            console.log('[Sign.hideMessageForSign] Hiding via transient state');
             gameInstance.hideOverlayMessage();
-            gameInstance.displayingMessageForSign = null;
+            transientState.clearDisplayingSignMessage();
+            // Clear NPC position tracking when message is dismissed
+            transientState.clearCurrentNPCPosition();
+            didHide = true;
         }
+
+        // Also clear the old property for compatibility
+        if (gameInstance.displayingMessageForSign) {
+            console.log('[Sign.hideMessageForSign] Hiding via old displayingMessageForSign property');
+            if (!didHide) {
+                gameInstance.hideOverlayMessage();
+            }
+            gameInstance.displayingMessageForSign = null;
+
+            // Also clear NPC position if using old system
+            if (transientState) {
+                transientState.clearCurrentNPCPosition();
+            }
+        }
+
+        console.log('[Sign.hideMessageForSign] Complete');
     }
 
     // Dialogue NPC content

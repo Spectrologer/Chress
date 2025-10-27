@@ -1,7 +1,7 @@
 import { TILE_TYPES } from '../../core/constants/index.js';
 import { eventBus } from '../../core/EventBus.js';
 import { EventTypes } from '../../core/EventTypes.js';
-import { isTileType } from '../../utils/TileUtils.js';
+import { isNote, isFood, isWater, isAxe, isHammer, isBishopSpear, isHorseIcon, isBomb, isHeart, isBow, isShovel } from '../../utils/TypeChecks.js';
 
 export class ItemPickupManager {
     constructor(game) {
@@ -36,47 +36,47 @@ export class ItemPickupManager {
             return success;
         };
 
-        if (isTileType(tile, TILE_TYPES.NOTE)) {
+        if (isNote(tile)) {
             pick({ type: 'note' });
             ui.addMessageToLog('Found an ancient map note.');
             return;
         }
 
-        if (isTileType(tile, TILE_TYPES.FOOD)) {
+        if (isFood(tile)) {
             pick({ type: 'food', foodType: tile.foodType });
             ui.addMessageToLog('Found some food.');
         }
-        else if (isTileType(tile, TILE_TYPES.WATER)) {
+        else if (isWater(tile)) {
             pick({ type: 'water' });
         }
-        else if (isTileType(tile, TILE_TYPES.AXE)) {
+        else if (isAxe(tile)) {
             this.game.player.abilities.add('axe');
             this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
             ui.addMessageToLog('Gained axe ability! Can now chop grass and shrubbery.');
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         }
-        else if (isTileType(tile, TILE_TYPES.HAMMER)) {
+        else if (isHammer(tile)) {
             this.game.player.abilities.add('hammer');
             this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
             ui.addMessageToLog('Gained hammer ability! Can now smash rocks.');
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         }
-        else if (isTileType(tile, TILE_TYPES.BISHOP_SPEAR)) {
+        else if (isBishopSpear(tile)) {
             pick({ type: 'bishop_spear', uses: tile.uses });
         }
-        else if (isTileType(tile, TILE_TYPES.HORSE_ICON)) {
+        else if (isHorseIcon(tile)) {
             pick({ type: 'horse_icon', uses: tile.uses });
         }
-        else if (isTileType(tile, TILE_TYPES.BOMB)) {
+        else if (isBomb(tile)) {
             pick({ type: 'bomb' });
         }
-        else if (isTileType(tile, TILE_TYPES.HEART)) {
+        else if (isHeart(tile)) {
             console.log('[ItemPickupManager] Heart detected! Attempting pickup...');
             const result = pick({ type: 'heart' });
             console.log('[ItemPickupManager] Heart pickup result:', result);
             console.log('[ItemPickupManager] Inventory after pickup:', this.game.player.inventory);
         }
-        else if (isTileType(tile, TILE_TYPES.BOW)) {
+        else if (isBow(tile)) {
             pick({ type: 'bow', uses: tile.uses });
         }
     }

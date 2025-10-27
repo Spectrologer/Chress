@@ -1,4 +1,4 @@
-import { TILE_TYPES, TILE_SIZE, TILE_COLORS } from '../../core/constants/index.js';
+import { TILE_TYPES, TILE_SIZE, TILE_COLORS, STROKE_CONSTANTS } from '../../core/constants/index.js';
 import { RendererUtils } from '../RendererUtils.js';
 import { TileRenderStrategy } from './TileRenderStrategy.js';
 
@@ -36,8 +36,9 @@ export class FoodRenderStrategy extends TileRenderStrategy {
     }
 
     renderFallback(ctx, pixelX, pixelY, color, emoji) {
+        const padding = STROKE_CONSTANTS.FALLBACK_TILE_PADDING;
         ctx.fillStyle = color;
-        ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+        ctx.fillRect(pixelX + padding, pixelY + padding, TILE_SIZE - padding * 2, TILE_SIZE - padding * 2);
 
         if (emoji) {
             ctx.fillStyle = '#000000';

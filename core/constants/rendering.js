@@ -12,6 +12,7 @@ export const STROKE_CONSTANTS = {
 
     // Insets and spacing
     TILE_DRAWING_INSET: 8, // Pixel inset for tile border drawing
+    FALLBACK_TILE_PADDING: 8, // Padding for fallback tile rendering (creates 16px total inset)
     ZONE_BORDER_INSET_RATIO: 0.06, // Zone border inset (6% of tile size)
 
     // Dashed line parameters
