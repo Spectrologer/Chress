@@ -288,6 +288,11 @@ export class GameContext {
             this.enemyCollection.forEach(enemy => enemy.updateAnimations());
         }
 
+        // Update NPC animations
+        if (this.npcManager) {
+            this.npcManager.updateAnimations();
+        }
+
         // Update centralized animation manager
         this.animationManager.updateAnimations();
 

@@ -243,6 +243,11 @@ export class RenderManager {
         // Draw enemy smoke animations
         this.enemyRenderer.drawEnemySmokeAnimation();
 
+        // Draw NPCs (sprites with animations)
+        if (this.game.npcRenderer) {
+            this.game.npcRenderer.drawNPCs();
+        }
+
         // Draw player (sprite, smoke, exit indicators)
         this.playerRenderer.drawPlayer();
 

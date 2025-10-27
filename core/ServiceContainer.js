@@ -38,6 +38,8 @@ import { GridManager } from '../managers/GridManager.js';
 import { PlayerFacade } from '../facades/PlayerFacade.js';
 import { TransientGameState } from '../state/TransientGameState.js';
 import { EnemyCollection } from '../facades/EnemyCollection.js';
+import { NPCManager } from '../managers/NPCManager.js';
+import { NPCRenderer } from '../renderers/NPCRenderer.js';
 
 /**
  * Lightweight service container with lazy initialization for better testability.
@@ -102,6 +104,10 @@ export class ServiceContainer {
 
             // Enemy collection facade (wraps enemies array for controlled access)
             enemyCollection: () => new EnemyCollection(this.game.enemies, this.game),
+
+            // NPC management (like enemies but for friendly NPCs)
+            npcManager: () => new NPCManager(this.game),
+            npcRenderer: () => new NPCRenderer(this.game),
 
             // Transient state container (session-specific, non-persisted state)
             transientGameState: () => new TransientGameState(),

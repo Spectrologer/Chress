@@ -1,3 +1,5 @@
+import { TILE_TYPES } from '../core/constants/index.js';
+
 // Sign class, refactored to be a static utility class for message handling.
 export class Sign {
     // Static properties for message generation
@@ -274,6 +276,10 @@ export class Sign {
     static hideMessageForSign(gameInstance) {
         const transientState = gameInstance.transientGameState;
 
+        // Check if we're closing axolotl post-trade dialogue
+        const signData = transientState?.getDisplayingSignMessage();
+        const shouldAxolotlLeave = signData?.message === "Thanks a lot'l.";
+
         let didHide = false;
 
         if (transientState && transientState.isDisplayingSignMessage()) {
@@ -296,6 +302,89 @@ export class Sign {
                 transientState.clearCurrentNPCPosition();
             }
         }
+
+        // Make axolotl walk off after post-trade dialogue
+        if (shouldAxolotlLeave) {
+            Sign.makeAxolotlLeave(gameInstance);
+        }
+    }
+
+    // Helper method to make axolotl walk to exit and disappear
+    static makeAxolotlLeave(gameInstance) {
+        const grid = gameInstance.grid;
+        const npcManager = gameInstance.npcManager;
+
+        if (!npcManager) {
+            console.warn('NPC Manager not available');
+            return;
+        }
+
+        // Find axolotl NPC
+        const axolotls = npcManager.getByType('axelotl');
+        if (axolotls.length === 0) {
+            console.warn('No axolotl NPC found');
+            return;
+        }
+
+        const axolotl = axolotls[0];
+
+        // Find exit on the right side (well board has exit at 9,5)
+        let exitX = null;
+        let exitY = null;
+
+        for (let y = 0; y < grid.length; y++) {
+            for (let x = grid[y].length - 1; x >= 0; x--) {
+                if (grid[y][x] === TILE_TYPES.EXIT) {
+                    exitX = x;
+                    exitY = y;
+                    break;
+                }
+            }
+            if (exitX !== null) break;
+        }
+
+        if (exitX === null) {
+            // No exit found, just remove axolotl immediately
+            npcManager.removeNPC(axolotl);
+            gameInstance.render();
+            return;
+        }
+
+        // Animate axolotl walking to exit with hop animation
+        const walkToExit = () => {
+            if (axolotl.x === exitX && axolotl.y === exitY) {
+                // Reached exit, remove axolotl
+                npcManager.removeNPC(axolotl);
+                gameInstance.render();
+                return;
+            }
+
+            // Calculate next position (move towards exit)
+            let newX = axolotl.x;
+            let newY = axolotl.y;
+
+            if (newX < exitX) {
+                newX++;
+            } else if (newX > exitX) {
+                newX--;
+            }
+
+            if (newY < exitY) {
+                newY++;
+            } else if (newY > exitY) {
+                newY--;
+            }
+
+            // Move NPC (this automatically sets lastX/lastY and starts lift animation)
+            npcManager.moveNPC(axolotl, newX, newY);
+            gameInstance.render();
+
+            // Continue walking after animation completes (match LIFT_FRAMES duration)
+            setTimeout(walkToExit, 250);
+        };
+
+        // Start walking after a short delay
+        setTimeout(walkToExit, 500);
     }
 
     // Dialogue NPC content
@@ -367,6 +456,7 @@ export class Sign {
             subclass: 'dialogue',
             currentMessageIndex: 0,
             messages: [
+                "Thanks a lot'l.",
                 "The underground is dangerous."
             ]
         }

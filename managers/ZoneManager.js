@@ -436,6 +436,17 @@ export class ZoneManager {
         }
         this.game.enemyCollection = this.game._services.get('enemyCollection');
 
+        // Initialize NPC system after grid is set
+        // NPCs are extracted from the grid and converted to entity objects
+        if (!this.game.npcManager) {
+            this.game.npcManager = this.game._services.get('npcManager');
+        }
+        if (!this.game.npcRenderer) {
+            this.game.npcRenderer = this.game._services.get('npcRenderer');
+        }
+        // Scan grid for NPC tiles and convert them to NPC entities
+        this.game.npcManager.initializeFromGrid();
+
         // For new games (no lastExitSide), use the playerSpawn from zone generation
         if (!this.game.lastExitSide && zoneData.playerSpawn) {
             // Store the exit tile position for entrance animation
