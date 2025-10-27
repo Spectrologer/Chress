@@ -348,12 +348,12 @@ body {
     right: 0;
     bottom: 0;
     background-image:
-        repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px),
-        repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px),
-        radial-gradient(circle at 30% 40%, rgba(255,255,255,0.15) 0%, transparent 50%),
-        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.02) 3px, rgba(0,0,0,0.02) 6px);
+        repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(0,0,0,0.02) 1px, rgba(0,0,0,0.02) 2px),
+        repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(0,0,0,0.02) 1px, rgba(0,0,0,0.02) 2px),
+        radial-gradient(circle at 30% 40%, rgba(255,255,255,0.08) 0%, transparent 50%),
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.01) 3px, rgba(0,0,0,0.01) 6px);
     pointer-events: none;
-    opacity: 0.6;
+    opacity: 0.35;
     mix-blend-mode: multiply;
     z-index: -1;
 }
@@ -365,11 +365,11 @@ body {
     right: 0;
     bottom: 0;
     background:
-        radial-gradient(circle at 20% 30%, rgba(0,0,0,0.05) 0%, transparent 40%),
-        radial-gradient(circle at 70% 60%, rgba(0,0,0,0.05) 0%, transparent 40%),
-        radial-gradient(circle at 50% 80%, rgba(0,0,0,0.05) 0%, transparent 40%);
+        radial-gradient(circle at 20% 30%, rgba(0,0,0,0.03) 0%, transparent 40%),
+        radial-gradient(circle at 70% 60%, rgba(0,0,0,0.03) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(0,0,0,0.03) 0%, transparent 40%);
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.3;
     z-index: -1;
 }
 .start-button-native:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(139, 69, 19, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
@@ -422,13 +422,30 @@ body {
 }
 
 .start-btn-editor {
-    background: linear-gradient(135deg, #C8B8A8, #B4A494);
-    border-color: #968274;
-    box-shadow: 0 4px 12px rgba(150, 130, 116, 0.35);
+    background: linear-gradient(135deg, #9A8A7A, #867666);
+    border-color: #6A5A4A;
+    box-shadow: 0 4px 12px rgba(106, 90, 74, 0.35);
 }
 .start-btn-editor:hover:not(:disabled) {
-    background: linear-gradient(135deg, #D6C6B6, #C2B2A2);
-    box-shadow: 0 6px 16px rgba(150, 130, 116, 0.5);
+    background: linear-gradient(135deg, #A89888, #948474);
+    box-shadow: 0 6px 16px rgba(106, 90, 74, 0.5);
+}
+
+.start-btn-character {
+    background: linear-gradient(135deg, #A68A9E, #92768A);
+    border-color: #725E70;
+    box-shadow: 0 4px 12px rgba(114, 94, 112, 0.35);
+}
+.start-btn-character:hover:not(:disabled) {
+    background: linear-gradient(135deg, #B498AC, #A08498);
+    box-shadow: 0 6px 16px rgba(114, 94, 112, 0.5);
+}
+
+/* Make primary buttons (New Game, Continue) slightly larger */
+.start-btn-large {
+    font-size: clamp(1.1rem, 3.6vw, 1.35rem) !important;
+    padding: clamp(12px, 3vh, 18px) clamp(18px, 4.5vw, 28px) !important;
+    font-weight: 700;
 }
 
 /* Menu layout groups */
@@ -2674,19 +2691,25 @@ h1 {
     position: absolute;
     left: 10px;
     top: 8px;
-    background: linear-gradient(135deg, #CD853F, #B8860B);
-    border: 2px solid #8B4513;
-    color: #3A2418;
-    padding: 6px 10px;
-    font-weight: 700;
-    border-radius: 6px;
+    background: linear-gradient(135deg, #E8D5C3, #D4C4AA);
+    border: 2px solid #C9AB76;
+    color: #5a4223;
+    padding: 6px 12px;
+    font-weight: 600;
+    font-family: 'Cinzel', serif;
+    border-radius: 4px;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
     z-index: 60; /* above panel content */
-    font-size: 0.95em;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
 }
 
-.config-back-button:hover { transform: translateX(-2px); }
+.config-back-button:hover {
+    transform: translateX(-2px);
+    background: linear-gradient(135deg, #F0DDD1, #DCCBB7);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4);
+}
 
 /* Records (trophy) button positioned in the top-right of stats header */
 .stats-records-button {

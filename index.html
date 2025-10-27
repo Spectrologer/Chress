@@ -218,9 +218,14 @@
                                         <div class="start-overlay-title">
                                             <img src="assets/ui/title.png" alt="Chress" class="start-overlay-logo">
                                         </div>
-                                        <button id="startButton" class="start-button-native start-overlay-action start-btn-new">New Game</button>
-                                        <button id="continueButton" class="start-button-native start-overlay-action start-btn-continue">continue</button>
-                                        <button id="zoneEditorButton" class="start-button-native start-overlay-action start-btn-editor">Zone Editor</button>
+                                        <div class="start-menu-grid">
+                                            <button id="startButton" class="start-button-native start-overlay-action start-btn-new start-btn-large">New Game</button>
+                                            <button id="continueButton" class="start-button-native start-overlay-action start-btn-continue start-btn-large">Continue</button>
+                                            <button id="configButton" class="start-button-native start-overlay-action start-btn-config">Config</button>
+                                            <button id="recordsButton" class="start-button-native start-overlay-action start-btn-records">Records</button>
+                                            <button id="characterEditorButton" class="start-button-native start-overlay-action start-btn-character">Character Editor</button>
+                                            <button id="zoneEditorButton" class="start-button-native start-overlay-action start-btn-editor">Zone Editor</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- Message Log overlay moved inside player card so it overlays the player panel like NPC messages -->
@@ -262,6 +267,12 @@
             <div class="zone-editor-container">
                 <button id="closeZoneEditor" class="zone-editor-close" aria-label="Close">×</button>
                 <iframe id="zoneEditorFrame" src="" class="zone-editor-frame"></iframe>
+            </div>
+        </div>
+        <div id="characterEditorOverlay" class="zone-editor-overlay" style="display: none;">
+            <div class="zone-editor-container">
+                <button id="closeCharacterEditor" class="zone-editor-close" aria-label="Close">×</button>
+                <iframe id="characterEditorFrame" src="" class="zone-editor-frame"></iframe>
             </div>
         </div>
 </body>
