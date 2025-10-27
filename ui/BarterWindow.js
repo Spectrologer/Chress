@@ -271,13 +271,13 @@ export class BarterWindow {
             return;
         }
         if (tradeData.id === 'rune_food') {
-            this.game.player.addPoints(-tradeData.requiredAmount);
+            this.game.playerFacade.addPoints(-tradeData.requiredAmount);
             const randomFood = FOOD_ASSETS[Math.floor(Math.random() * FOOD_ASSETS.length)];
             // Use ItemManager helper to merge into existing stacks when possible
             this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: randomFood });
             this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} points for food.`, tradeData.receivedItemImg);
         } else if (tradeData.id === 'rune_item') {
-            this.game.player.addPoints(-tradeData.requiredAmount);
+            this.game.playerFacade.addPoints(-tradeData.requiredAmount);
             const items = [
                 TILE_TYPES.BOMB,
                 TILE_TYPES.BOW,
@@ -299,7 +299,7 @@ export class BarterWindow {
             }
             this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} points for an item.`, awardedImg);
         } else if (tradeData.id === 'nib_item') {
-            this.game.player.addPoints(-tradeData.requiredAmount);
+            this.game.playerFacade.addPoints(-tradeData.requiredAmount);
             // Normalize to the canonical radial book type so ItemManager stacks it correctly
             const randomItem = Math.random() < 0.5 ? { type: 'book_of_time_travel', uses: 1 } : { type: 'horse_icon', uses: 3 };
             this.game.itemManager.addItemToInventory(this.game.player, randomItem);

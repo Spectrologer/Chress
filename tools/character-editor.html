@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Chress Character Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #8B7355;
+            color: #3a2a1a;
+            padding: 10px;
+            max-width: 100vw;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .main-panel {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fffbe9;
+            border: 3px solid #e2cfa2;
+            border-radius: 0;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 0 #e2cfa2;
+            padding: 18px;
+            position: relative;
+        }
+
+        /* Frayed parchment edges */
+        .main-panel::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: inherit;
+            z-index: -1;
+            clip-path: polygon(
+                0% 3%, 2% 0%, 8% 2%, 12% 0%, 18% 3%, 25% 1%,
+                32% 4%, 38% 1%, 45% 2%, 52% 0%, 58% 3%, 65% 1%,
+                72% 3%, 78% 0%, 85% 2%, 92% 0%, 98% 3%, 100% 8%,
+                98% 15%, 100% 22%, 97% 28%, 100% 35%, 98% 42%,
+                100% 48%, 97% 55%, 100% 62%, 98% 68%, 100% 75%,
+                97% 82%, 100% 88%, 98% 95%, 92% 100%, 85% 98%,
+                78% 100%, 72% 97%, 65% 100%, 58% 98%, 52% 100%,
+                45% 97%, 38% 100%, 32% 98%, 25% 100%, 18% 97%,
+                12% 100%, 8% 98%, 2% 100%, 0% 97%, 3% 88%,
+                0% 82%, 2% 75%, 0% 68%, 3% 62%, 0% 55%,
+                2% 48%, 0% 42%, 3% 35%, 0% 28%, 2% 22%, 0% 15%, 3% 8%
+            );
+        }
+
+        h1 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            font-size: 22px;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+        }
+
+        .section {
+            background: rgba(230, 211, 163, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(226, 207, 162, 0.5);
+        }
+
+        .section-title {
+            color: #8B4513;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #d4c4a0;
+            padding-bottom: 5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (min-width: 500px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            color: #8B4513;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 8px;
+            background: #fffef5;
+            border: 2px solid #d4c4a0;
+            color: #3a2a1a;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #8B4513;
+            background: #ffffff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        button {
+            background: #d4a574;
+            color: #3a2a1a;
+            border: 2px solid #a89968;
+            padding: 12px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(139, 69, 19, 0.2);
+        }
+
+        button:hover {
+            background: #e6b786;
+            border-color: #8B4513;
+        }
+
+        button:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 2px rgba(139, 69, 19, 0.3);
+        }
+
+        button.secondary {
+            background: #c4b49a;
+            border-color: #a89968;
+        }
+
+        button.secondary:hover {
+            background: #d4c4aa;
+        }
+
+        .character-type-toggle {
+            display: flex;
+            gap: 0;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #a89968;
+            flex-wrap: wrap;
+        }
+
+        .type-button {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #b8a888;
+            border-bottom: none;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            border-radius: 6px 6px 0 0;
+            color: #3a2a1a;
+            white-space: nowrap;
+            touch-action: manipulation;
+        }
+
+        .type-button:hover {
+            z-index: 2;
+            filter: brightness(1.1);
+        }
+
+        /* DIALOGUE - cool sand/blue-gray */
+        .type-button[data-type="dialogue"] {
+            background: #bfc4b8;
+            border-color: #adb2a6;
+        }
+        .type-button[data-type="dialogue"].active {
+            background: #bfc4b8;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        /* MERCHANT - golden sand */
+        .type-button[data-type="merchant"] {
+            background: #dbb876;
+            border-color: #c7a564;
+        }
+        .type-button[data-type="merchant"].active {
+            background: #dbb876;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        /* HYBRID - warm tan/bronze */
+        .type-button[data-type="hybrid"] {
+            background: #c9a89a;
+            border-color: #b59888;
+        }
+        .type-button[data-type="hybrid"].active {
+            background: #c9a89a;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        @media (min-width: 600px) {
+            .action-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .trades-list, .dialogue-list {
+            margin-top: 10px;
+        }
+
+        .trade-item, .dialogue-item {
+            background: #fffef5;
+            border: 2px solid #d4c4a0;
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 6px;
+            position: relative;
+        }
+
+        .trade-item label,
+        .dialogue-item label {
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .trade-item input,
+        .trade-item select,
+        .trade-item textarea,
+        .dialogue-item input,
+        .dialogue-item textarea {
+            margin-bottom: 4px;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #d9a574;
+            border: 1px solid #b8855a;
+            padding: 3px 6px;
+            font-size: 9px;
+            cursor: pointer;
+            border-radius: 3px;
+            touch-action: manipulation;
+        }
+
+        .add-btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .preview {
+            background: #2a2a2a;
+            color: #aaa;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 11px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .sprite-preview {
+            width: 48px;
+            height: 48px;
+            background: #e6d3a3;
+            border: 2px solid #d4c4a0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5px;
+            font-size: 9px;
+            color: #888;
+        }
+
+        .sprite-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            image-rendering: pixelated;
+        }
+
+        .position-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 1px;
+            background: #8B7355;
+            padding: 1px;
+            margin-top: 8px;
+            border-radius: 10px;
+            max-width: 100%;
+            width: 100%;
+            aspect-ratio: 1;
+            box-shadow: 0 2px 12px rgba(139, 69, 19, 0.18);
+        }
+
+        .position-cell {
+            background: #d4c4a0;
+            border: 1px solid #a89968;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #aaa;
+            transition: all 0.1s;
+            position: relative;
+            touch-action: none;
+            user-select: none;
+        }
+
+        .position-cell:hover {
+            border-color: #8B4513;
+            background: #e6d3a3;
+        }
+
+        .position-cell.active {
+            border-color: #8B4513;
+        }
+
+        .position-cell.selected {
+            background: #d4a574;
+            border-color: #8B4513;
+            color: #3a2a1a;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(139, 69, 19, 0.3);
+        }
+
+        .zone-coords {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .zone-coords input[type="number"] {
+            flex: 1;
+            width: 60px;
+        }
+
+        .zone-coords-label {
+            font-size: 11px;
+            color: #8B4513;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .position-grid-container {
+            margin-top: 10px;
+        }
+
+        .position-grid-container.collapsed .position-grid {
+            display: none;
+        }
+
+        .toggle-grid-btn {
+            width: 100%;
+            padding: 8px;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-panel">
+        <h1>Chress Character Editor</h1>
+
+        <!-- Character Type Selection -->
+        <div class="section">
+            <div class="character-type-toggle">
+                <button class="type-button active" data-type="dialogue" onclick="switchCharacterType('dialogue')">Dialogue</button>
+                <button class="type-button" data-type="merchant" onclick="switchCharacterType('merchant')">Merchant</button>
+                <button class="type-button" data-type="hybrid" onclick="switchCharacterType('hybrid')">Hybrid</button>
+            </div>
+        </div>
+
+        <!-- Basic Info Section -->
+        <div class="section">
+            <div class="section-title">Basic Information</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Display Name:</label>
+                    <input type="text" id="charName" placeholder="Crayn" oninput="updateDerivedFields()">
+                </div>
+                <div class="form-group full-width">
+                    <label>Description:</label>
+                    <textarea id="charDescription" placeholder="A wise woodcutter who shares knowledge..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Display Section -->
+        <div class="section">
+            <div class="section-title">Display & Assets</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Sprite Path:</label>
+                    <input type="text" id="charSprite" placeholder="assets/fauna/crayn.png">
+                </div>
+                <div class="form-group">
+                    <label>Portrait Path:</label>
+                    <input type="text" id="charPortrait" placeholder="assets/fauna/craynface.png">
+                </div>
+            </div>
+        </div>
+
+        <!-- Placement Section -->
+        <div class="section">
+            <div class="section-title">Placement & Spawning</div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Zone Coordinates:</label>
+                    <div class="zone-coords">
+                        <span class="zone-coords-label">X:</span>
+                        <input type="number" id="charZoneX" value="0" placeholder="0">
+                        <span class="zone-coords-label">Y:</span>
+                        <input type="number" id="charZoneY" value="0" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Dimension:</label>
+                    <select id="charDimension">
+                        <option value="null">None</option>
+                        <option value="0">Surface (0)</option>
+                        <option value="1">Interior (1)</option>
+                        <option value="2">Underground (2)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Spawn Logic:</label>
+                    <select id="charSpawnLogic">
+                        <option value="fixed">Fixed Position</option>
+                        <option value="procedural">Procedural</option>
+                        <option value="special">Special Logic</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>Grid Position:</label>
+                    <button class="toggle-grid-btn" onclick="togglePositionGrid()">
+                        <span id="gridToggleText">Show Position Grid</span>
+                    </button>
+                    <div class="position-grid-container collapsed" id="positionGridContainer">
+                        <div class="position-grid" id="positionGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dialogue Section (for dialogue NPCs) -->
+        <div class="section" id="dialogueSection">
+            <div class="section-title">Dialogue Configuration</div>
+            <div class="form-group">
+                <label>Dialogue Cycle Mode:</label>
+                <select id="dialogueCycleMode">
+                    <option value="sequential">Sequential (cycles through messages)</option>
+                    <option value="random">Random</option>
+                    <option value="once">Once (single message)</option>
+                </select>
+            </div>
+            <div class="dialogue-list" id="dialogueList"></div>
+            <button class="add-btn" onclick="addDialogue()">+ Add Dialogue Line</button>
+        </div>
+
+        <!-- Merchant Section (for merchant NPCs) -->
+        <div class="section hidden" id="merchantSection">
+            <div class="section-title">Merchant Configuration</div>
+            <div class="form-group">
+                <label>Greeting Message:</label>
+                <textarea id="merchantGreeting" placeholder="Show me some new places."></textarea>
+            </div>
+            <div class="trades-list" id="tradesList"></div>
+            <button class="add-btn" onclick="addTrade()">+ Add Trade</button>
+        </div>
+
+        <!-- Hybrid Section (for NPCs with both trades and dialogue) -->
+        <div class="section hidden" id="hybridSection">
+            <div class="section-title">Hybrid Configuration</div>
+            <div class="form-group">
+                <label>Greeting Message:</label>
+                <textarea id="hybridGreeting" placeholder="Wanna chop down trees? Show me some new places."></textarea>
+            </div>
+            <div class="trades-list" id="hybridTradesList"></div>
+            <button class="add-btn" onclick="addHybridTrade()">+ Add Trade</button>
+
+            <div style="margin-top: 15px;">
+                <label><strong>Post-Trade Dialogue:</strong></label>
+                <div class="dialogue-list" id="hybridDialogueList"></div>
+                <button class="add-btn" onclick="addHybridDialogue()">+ Add Post-Trade Dialogue</button>
+            </div>
+        </div>
+
+        <!-- Behavior Section -->
+        <div class="section">
+            <div class="section-title">Behavior</div>
+            <div class="form-grid">
+                <div class="form-group" id="leaveAfterTradeGroup">
+                    <label>Leave After Trade:</label>
+                    <select id="charLeaveAfterTrade">
+                        <option value="false">No</option>
+                        <option value="true">Yes</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Section -->
+        <div class="section">
+            <div class="section-title">Audio & Voice</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Voice Pitch (50-250):</label>
+                    <input type="number" id="charVoicePitch" value="120" min="50" max="250" placeholder="120">
+                    <small style="color: #8B4513; font-size: 10px;">Lower = deeper voice, Higher = higher voice</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button onclick="exportCharacter()">Export JSON</button>
+            <button onclick="previewCharacter()" class="secondary">Preview JSON</button>
+            <button onclick="importCharacter()" class="secondary">Import JSON</button>
+            <button onclick="clearForm()" class="secondary">Clear Form</button>
+        </div>
+
+        <input type="file" id="fileInput" accept=".json" onchange="handleFileImport(event)">
+    </div>
+
+    <script>
+        let currentType = 'dialogue';
+        let dialogues = [];
+        let trades = [];
+        let hybridTrades = [];
+        let hybridDialogues = [];
+        let selectedPosition = { x: null, y: null };
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Auto-generate ID and tile type from display name
+        function updateDerivedFields() {
+            const displayName = document.getElementById('charName').value.trim();
+            // Character ID: lowercase version
+            // Tile Type: uppercase version
+            // These are not shown in UI but will be used in the JSON
+        }
+
+        function initPositionGrid() {
+            const grid = document.getElementById('positionGrid');
+            grid.innerHTML = '';
+
+            for (let y = 0; y < 10; y++) {
+                for (let x = 0; x < 10; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'position-cell';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    cell.title = `[${x}, ${y}]`;
+
+                    // Desktop click
+                    cell.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        selectPosition(x, y);
+                    });
+
+                    // Mobile touch
+                    cell.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        selectPosition(x, y);
+                    });
+
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function selectPosition(x, y) {
+            selectedPosition.x = x;
+            selectedPosition.y = y;
+
+            // Update visual selection
+            document.querySelectorAll('.position-cell').forEach(cell => {
+                const cellX = parseInt(cell.dataset.x);
+                const cellY = parseInt(cell.dataset.y);
+
+                if (cellX === x && cellY === y) {
+                    cell.classList.add('selected');
+                    cell.textContent = '✓';
+                } else {
+                    cell.classList.remove('selected');
+                    cell.textContent = '';
+                }
+            });
+        }
+
+        function clearPositionSelection() {
+            selectedPosition.x = null;
+            selectedPosition.y = null;
+            document.querySelectorAll('.position-cell').forEach(cell => {
+                cell.classList.remove('selected');
+                cell.textContent = '';
+            });
+        }
+
+        function togglePositionGrid() {
+            const container = document.getElementById('positionGridContainer');
+            const toggleText = document.getElementById('gridToggleText');
+
+            if (container.classList.contains('collapsed')) {
+                container.classList.remove('collapsed');
+                toggleText.textContent = 'Hide Position Grid';
+            } else {
+                container.classList.add('collapsed');
+                toggleText.textContent = 'Show Position Grid';
+            }
+        }
+
+        function switchCharacterType(type) {
+            currentType = type;
+
+            // Update buttons
+            document.querySelectorAll('.type-button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+
+            // Show/hide sections
+            document.getElementById('dialogueSection').classList.toggle('hidden', type !== 'dialogue');
+            document.getElementById('merchantSection').classList.toggle('hidden', type !== 'merchant');
+            document.getElementById('hybridSection').classList.toggle('hidden', type !== 'hybrid');
+            document.getElementById('leaveAfterTradeGroup').classList.toggle('hidden', type === 'dialogue');
+        }
+
+        function addDialogue() {
+            const id = `msg_${dialogues.length}`;
+            dialogues.push({ id, text: '' });
+            renderDialogues();
+        }
+
+        function removeDialogue(index) {
+            dialogues.splice(index, 1);
+            renderDialogues();
+        }
+
+        function renderDialogues() {
+            const container = document.getElementById('dialogueList');
+            container.innerHTML = '';
+
+            dialogues.forEach((dialogue, index) => {
+                const item = document.createElement('div');
+                item.className = 'dialogue-item';
+                item.innerHTML = `<button class="remove-btn" onclick="removeDialogue(${index})">Remove</button>
+                    <label>Message ${index + 1}:</label>
+                    <textarea onchange="updateDialogue(${index}, this.value)">${escapeHtml(dialogue.text || '')}</textarea>`;
+                container.appendChild(item);
+            });
+        }
+
+        function updateDialogue(index, text) {
+            dialogues[index].text = text;
+        }
+
+        function addTrade() {
+            trades.push({
+                id: `trade_${trades.length}`,
+                requires: { resource: '', amount: 1, displayName: '', icon: '' },
+                gives: { type: 'item', id: '', amount: 1, displayName: '', icon: '' },
+                repeatable: false
+            });
+            renderTrades();
+        }
+
+        function removeTrade(index) {
+            trades.splice(index, 1);
+            renderTrades();
+        }
+
+        function renderTrades() {
+            const container = document.getElementById('tradesList');
+            container.innerHTML = '';
+
+            trades.forEach((trade, index) => {
+                const item = document.createElement('div');
+                item.className = 'trade-item';
+                const requiresResource = escapeHtml(trade.requires.resource || '');
+                const requiresDisplayName = escapeHtml(trade.requires.displayName || '');
+                const requiresIcon = escapeHtml(trade.requires.icon || '');
+                const givesId = escapeHtml(trade.gives.id || '');
+                const givesDisplayName = escapeHtml(trade.gives.displayName || '');
+                const givesIcon = escapeHtml(trade.gives.icon || '');
+
+                item.innerHTML = `<button class="remove-btn" onclick="removeTrade(${index})">Remove</button>
+                    <div style="margin-bottom: 8px;"><strong>Trade ${index + 1}</strong></div>
+                    <label>Requires Resource:</label>
+                    <input type="text" value="${requiresResource}" onchange="updateTrade(${index}, 'requires.resource', this.value)" placeholder="DISCOVERED, points, etc.">
+                    <label>Amount:</label>
+                    <input type="number" value="${trade.requires.amount || 1}" onchange="updateTrade(${index}, 'requires.amount', parseInt(this.value))">
+                    <label>Display Name:</label>
+                    <input type="text" value="${requiresDisplayName}" onchange="updateTrade(${index}, 'requires.displayName', this.value)" placeholder="Discoveries">
+                    <label>Icon Path:</label>
+                    <input type="text" value="${requiresIcon}" onchange="updateTrade(${index}, 'requires.icon', this.value)" placeholder="assets/ui/talk.png">
+                    <hr style="margin: 10px 0; border: 1px solid #d4c4a0;">
+                    <label>Gives Type:</label>
+                    <select onchange="updateTrade(${index}, 'gives.type', this.value)">
+                        <option value="item"${trade.gives.type === 'item' ? ' selected' : ''}>Item</option>
+                        <option value="ability"${trade.gives.type === 'ability' ? ' selected' : ''}>Ability</option>
+                    </select>
+                    <label>Item/Ability ID:</label>
+                    <input type="text" value="${givesId}" onchange="updateTrade(${index}, 'gives.id', this.value)" placeholder="food/meat, axe">
+                    <label>Display Name:</label>
+                    <input type="text" value="${givesDisplayName}" onchange="updateTrade(${index}, 'gives.displayName', this.value)" placeholder="Meat">
+                    <label>Icon Path:</label>
+                    <input type="text" value="${givesIcon}" onchange="updateTrade(${index}, 'gives.icon', this.value)" placeholder="assets/food/meat/beaf.png">
+                    <label><input type="checkbox"${trade.repeatable ? ' checked' : ''} onchange="updateTrade(${index}, 'repeatable', this.checked)">Repeatable Trade</label>`;
+                container.appendChild(item);
+            });
+        }
+
+        function updateTrade(index, path, value) {
+            const keys = path.split('.');
+            let obj = trades[index];
+            for (let i = 0; i < keys.length - 1; i++) {
+                obj = obj[keys[i]];
+            }
+            obj[keys[keys.length - 1]] = value;
+        }
+
+        function addHybridTrade() {
+            hybridTrades.push({
+                id: `trade_${hybridTrades.length}`,
+                requires: { resource: '', amount: 1, displayName: '', icon: '' },
+                gives: { type: 'item', id: '', amount: 1, displayName: '', icon: '' },
+                repeatable: false
+            });
+            renderHybridTrades();
+        }
+
+        function removeHybridTrade(index) {
+            hybridTrades.splice(index, 1);
+            renderHybridTrades();
+        }
+
+        function renderHybridTrades() {
+            const container = document.getElementById('hybridTradesList');
+            container.innerHTML = '';
+
+            hybridTrades.forEach((trade, index) => {
+                const item = document.createElement('div');
+                item.className = 'trade-item';
+                const requiresResource = escapeHtml(trade.requires.resource || '');
+                const requiresDisplayName = escapeHtml(trade.requires.displayName || '');
+                const requiresIcon = escapeHtml(trade.requires.icon || '');
+                const givesId = escapeHtml(trade.gives.id || '');
+                const givesDisplayName = escapeHtml(trade.gives.displayName || '');
+                const givesIcon = escapeHtml(trade.gives.icon || '');
+
+                item.innerHTML = `<button class="remove-btn" onclick="removeHybridTrade(${index})">Remove</button>
+                    <div style="margin-bottom: 8px;"><strong>Trade ${index + 1}</strong></div>
+                    <label>Requires Resource:</label>
+                    <input type="text" value="${requiresResource}" onchange="updateHybridTrade(${index}, 'requires.resource', this.value)" placeholder="DISCOVERED, points, etc.">
+                    <label>Amount:</label>
+                    <input type="number" value="${trade.requires.amount || 1}" onchange="updateHybridTrade(${index}, 'requires.amount', parseInt(this.value))">
+                    <label>Display Name:</label>
+                    <input type="text" value="${requiresDisplayName}" onchange="updateHybridTrade(${index}, 'requires.displayName', this.value)" placeholder="Discoveries">
+                    <label>Icon Path:</label>
+                    <input type="text" value="${requiresIcon}" onchange="updateHybridTrade(${index}, 'requires.icon', this.value)" placeholder="assets/ui/talk.png">
+                    <hr style="margin: 10px 0; border: 1px solid #d4c4a0;">
+                    <label>Gives Type:</label>
+                    <select onchange="updateHybridTrade(${index}, 'gives.type', this.value)">
+                        <option value="item"${trade.gives.type === 'item' ? ' selected' : ''}>Item</option>
+                        <option value="ability"${trade.gives.type === 'ability' ? ' selected' : ''}>Ability</option>
+                    </select>
+                    <label>Item/Ability ID:</label>
+                    <input type="text" value="${givesId}" onchange="updateHybridTrade(${index}, 'gives.id', this.value)" placeholder="food/meat, axe">
+                    <label>Display Name:</label>
+                    <input type="text" value="${givesDisplayName}" onchange="updateHybridTrade(${index}, 'gives.displayName', this.value)" placeholder="Meat">
+                    <label>Icon Path:</label>
+                    <input type="text" value="${givesIcon}" onchange="updateHybridTrade(${index}, 'gives.icon', this.value)" placeholder="assets/food/meat/beaf.png">
+                    <label><input type="checkbox"${trade.repeatable ? ' checked' : ''} onchange="updateHybridTrade(${index}, 'repeatable', this.checked)">Repeatable Trade</label>`;
+                container.appendChild(item);
+            });
+        }
+
+        function updateHybridTrade(index, path, value) {
+            const keys = path.split('.');
+            let obj = hybridTrades[index];
+            for (let i = 0; i < keys.length - 1; i++) {
+                obj = obj[keys[i]];
+            }
+            obj[keys[keys.length - 1]] = value;
+        }
+
+        function addHybridDialogue() {
+            const id = `post_trade_${hybridDialogues.length}`;
+            hybridDialogues.push({ id, text: '', condition: '' });
+            renderHybridDialogues();
+        }
+
+        function removeHybridDialogue(index) {
+            hybridDialogues.splice(index, 1);
+            renderHybridDialogues();
+        }
+
+        function renderHybridDialogues() {
+            const container = document.getElementById('hybridDialogueList');
+            container.innerHTML = '';
+
+            hybridDialogues.forEach((dialogue, index) => {
+                const item = document.createElement('div');
+                item.className = 'dialogue-item';
+                const dialogueText = escapeHtml(dialogue.text || '');
+                const dialogueCondition = escapeHtml(dialogue.condition || '');
+
+                item.innerHTML = `<button class="remove-btn" onclick="removeHybridDialogue(${index})">Remove</button>
+                    <label>Post-Trade Message ${index + 1}:</label>
+                    <textarea onchange="updateHybridDialogue(${index}, 'text', this.value)">${dialogueText}</textarea>
+                    <label>Condition (optional):</label>
+                    <input type="text" value="${dialogueCondition}" onchange="updateHybridDialogue(${index}, 'condition', this.value)" placeholder="hasAbility:axe">`;
+                container.appendChild(item);
+            });
+        }
+
+        function updateHybridDialogue(index, field, value) {
+            hybridDialogues[index][field] = value;
+        }
+
+        function clearForm() {
+            if (!confirm('Clear all fields? This cannot be undone.')) return;
+
+            document.getElementById('charName').value = '';
+            document.getElementById('charDescription').value = '';
+            document.getElementById('charSprite').value = '';
+            document.getElementById('charPortrait').value = '';
+            document.getElementById('charZoneX').value = '0';
+            document.getElementById('charZoneY').value = '0';
+            document.getElementById('merchantGreeting').value = '';
+            document.getElementById('hybridGreeting').value = '';
+            document.getElementById('charVoicePitch').value = '120';
+
+            clearPositionSelection();
+
+            dialogues = [];
+            trades = [];
+            hybridTrades = [];
+            hybridDialogues = [];
+            renderDialogues();
+            renderTrades();
+            renderHybridTrades();
+            renderHybridDialogues();
+        }
+
+        function buildCharacterJSON() {
+            const charName = document.getElementById('charName').value.trim();
+            const description = document.getElementById('charDescription').value.trim();
+
+            // Derive ID and tile type from display name
+            const charId = charName.toLowerCase().replace(/\s+/g, '_');
+            const tileType = charName.toUpperCase().replace(/\s+/g, '_');
+
+            // Build zone string from coordinates
+            const zoneX = document.getElementById('charZoneX').value.trim();
+            const zoneY = document.getElementById('charZoneY').value.trim();
+            let zone = null;
+            if (zoneX !== '' && zoneY !== '') {
+                zone = `${zoneX},${zoneY}`;
+            }
+
+            const character = {
+                id: charId || 'unnamed_character',
+                name: charName || 'Unnamed Character',
+                type: currentType,
+                metadata: {
+                    description: description || '',
+                    created: new Date().toISOString(),
+                    version: '1.0.0'
+                },
+                display: {
+                    sprite: document.getElementById('charSprite').value.trim(),
+                    portrait: document.getElementById('charPortrait').value.trim(),
+                    tileType: tileType || 'UNNAMED_CHARACTER'
+                },
+                placement: {
+                    zone: zone,
+                    x: selectedPosition.x,
+                    y: selectedPosition.y,
+                    dimension: document.getElementById('charDimension').value === 'null' ? null : parseInt(document.getElementById('charDimension').value),
+                    spawnLogic: document.getElementById('charSpawnLogic').value
+                },
+                behavior: {
+                    movementType: 'stationary',
+                    walkable: false
+                },
+                audio: {
+                    voicePitch: parseInt(document.getElementById('charVoicePitch').value) || 120
+                }
+            };
+
+            // Add type-specific data
+            if (currentType === 'dialogue') {
+                character.interaction = {
+                    type: 'dialogue',
+                    cycleMode: document.getElementById('dialogueCycleMode').value,
+                    dialogueTree: dialogues
+                };
+            } else if (currentType === 'merchant') {
+                character.interaction = {
+                    type: 'barter',
+                    greeting: document.getElementById('merchantGreeting').value.trim(),
+                    trades: trades
+                };
+                character.behavior.leaveAfterTrade = document.getElementById('charLeaveAfterTrade').value === 'true';
+            } else if (currentType === 'hybrid') {
+                character.interaction = {
+                    type: 'barter',
+                    greeting: document.getElementById('hybridGreeting').value.trim(),
+                    trades: hybridTrades,
+                    postTradeDialogue: hybridDialogues
+                };
+                character.behavior.leaveAfterTrade = document.getElementById('charLeaveAfterTrade').value === 'true';
+            }
+
+            return character;
+        }
+
+        function previewCharacter() {
+            const character = buildCharacterJSON();
+            const json = JSON.stringify(character, null, 2);
+
+            const previewWindow = window.open('', 'Preview', 'width=600,height=800');
+            previewWindow.document.write('<!DOCTYPE html><html><head><title>Character Preview<\/title>');
+            previewWindow.document.write('<style>body{background:#2a2a2a;color:#aaa;font-family:"Courier New",monospace;padding:20px;}pre{white-space:pre-wrap;word-wrap:break-word;}<\/style>');
+            previewWindow.document.write('<\/head><body><h2>Character JSON Preview<\/h2><pre>');
+            previewWindow.document.write(escapeHtml(json));
+            previewWindow.document.write('<\/pre><\/body><\/html>');
+            previewWindow.document.close();
+        }
+
+        function exportCharacter() {
+            const character = buildCharacterJSON();
+            const json = JSON.stringify(character, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${character.id}.json`;
+            a.click();
+
+            URL.revokeObjectURL(url);
+        }
+
+        function importCharacter() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const character = JSON.parse(e.target.result);
+                    loadCharacterData(character);
+                    alert('Character imported successfully!');
+                } catch (err) {
+                    alert('Error importing character: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+
+            event.target.value = '';
+        }
+
+        function loadCharacterData(character) {
+            document.getElementById('charName').value = character.name || '';
+            document.getElementById('charDescription').value = character.metadata?.description || '';
+            document.getElementById('charSprite').value = character.display?.sprite || '';
+            document.getElementById('charPortrait').value = character.display?.portrait || '';
+
+            // Parse zone coordinates
+            if (character.placement?.zone) {
+                const zoneParts = character.placement.zone.split(',');
+                if (zoneParts.length === 2) {
+                    document.getElementById('charZoneX').value = zoneParts[0];
+                    document.getElementById('charZoneY').value = zoneParts[1];
+                }
+            } else {
+                document.getElementById('charZoneX').value = '';
+                document.getElementById('charZoneY').value = '';
+            }
+
+            // Set position on grid
+            if (character.placement?.x !== null && character.placement?.y !== null) {
+                selectPosition(character.placement.x, character.placement.y);
+            } else {
+                clearPositionSelection();
+            }
+
+            document.getElementById('charDimension').value = character.placement?.dimension !== null ? character.placement.dimension : 'null';
+            document.getElementById('charSpawnLogic').value = character.placement?.spawnLogic || 'fixed';
+            document.getElementById('charVoicePitch').value = character.audio?.voicePitch || 120;
+
+            // Determine type based on interaction structure
+            let detectedType = character.type || 'dialogue';
+
+            // If type is 'barter', check if it has post-trade dialogue (hybrid)
+            if (detectedType === 'barter' && character.interaction?.postTradeDialogue?.length > 0) {
+                detectedType = 'hybrid';
+            } else if (detectedType === 'barter') {
+                detectedType = 'merchant';
+            }
+
+            // Switch to correct type
+            switchCharacterType(detectedType);
+
+            if (detectedType === 'dialogue') {
+                document.getElementById('dialogueCycleMode').value = character.interaction?.cycleMode || 'sequential';
+                dialogues = character.interaction?.dialogueTree || [];
+                renderDialogues();
+            } else if (detectedType === 'merchant') {
+                document.getElementById('merchantGreeting').value = character.interaction?.greeting || '';
+                document.getElementById('charLeaveAfterTrade').value = character.behavior?.leaveAfterTrade ? 'true' : 'false';
+                trades = character.interaction?.trades || [];
+                renderTrades();
+            } else if (detectedType === 'hybrid') {
+                document.getElementById('hybridGreeting').value = character.interaction?.greeting || '';
+                document.getElementById('charLeaveAfterTrade').value = character.behavior?.leaveAfterTrade ? 'true' : 'false';
+                hybridTrades = character.interaction?.trades || [];
+                hybridDialogues = character.interaction?.postTradeDialogue || [];
+                renderHybridTrades();
+                renderHybridDialogues();
+            }
+        }
+
+        // Initialize with empty arrays
+        initPositionGrid();
+        renderDialogues();
+        renderTrades();
+        renderHybridTrades();
+        renderHybridDialogues();
+    </script>
+</body>
+</html>

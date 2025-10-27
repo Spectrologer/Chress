@@ -1,0 +1,69 @@
+{
+  "id": "axelotl",
+  "name": "Axe-O-Lot'l",
+  "type": "hybrid",
+  "metadata": {
+    "description": "A friendly underground merchant who trades the axe ability for discoveries. After trading, says farewell and walks away.",
+    "created": "2025-10-27T00:00:00.000Z",
+    "version": "1.0.0"
+  },
+  "display": {
+    "sprite": "assets/fauna/axolotl.png",
+    "portrait": "assets/fauna/axolotlface.png",
+    "tileType": "AXELOTL"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 2,
+    "spawnLogic": "special"
+  },
+  "interaction": {
+    "type": "barter",
+    "greeting": "Wanna chop down trees? Show me some new places.",
+    "trades": [
+      {
+        "id": "axelotl_axe",
+        "requires": {
+          "resource": "DISCOVERED",
+          "amount": 10,
+          "displayName": "Discoveries",
+          "icon": "assets/ui/talk.png"
+        },
+        "gives": {
+          "type": "ability",
+          "id": "axe",
+          "displayName": "Axe Ability",
+          "icon": "assets/items/axe.png"
+        },
+        "conditions": {
+          "requiresAbsence": ["axe"]
+        },
+        "onComplete": {
+          "message": "Thanks for showing me around!",
+          "grantAbility": "axe",
+          "dialogue": {
+            "text": "Thanks a lot'l.",
+            "action": "leave"
+          }
+        }
+      }
+    ],
+    "postTradeDialogue": [
+      {
+        "id": "post_trade",
+        "text": "Thanks a lot'l.",
+        "condition": "hasAbility:axe"
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false,
+    "leaveAfterTrade": true
+  },
+  "audio": {
+    "voicePitch": 180
+  }
+}

@@ -112,6 +112,10 @@ class InteriorHandler extends BaseZoneHandler {
     }
 
     generateShackInterior() {
+        // Note: Gouge's shack now uses a custom board (boards/canon/gouges.json)
+        // which is registered dynamically when the wilds shack spawns.
+        // The board system handles layout, so this procedural code is only used
+        // for non-Gouge shacks.
         this.handleShackGouge();
         this.placeShackPort();
         this.placeShackItems();
@@ -122,11 +126,15 @@ class InteriorHandler extends BaseZoneHandler {
     }
 
     handleShackGouge() {
+        // Gouge now spawns via board system (boards/canon/gouges.json)
+        // This code is kept for backwards compatibility but won't run for Gouge's shack
         const isWildsShackZone = ZoneStateManager.wildsShackSpawnZone
             && this.zoneX === ZoneStateManager.wildsShackSpawnZone.x
             && this.zoneY === ZoneStateManager.wildsShackSpawnZone.y;
 
         if (isWildsShackZone) {
+            // Board system will handle this, so this code path is not used
+            // Left here for reference or fallback if board fails to load
             const gougePos = _findOpenNpcSpawn(this.zoneGen, 2);
             if (gougePos) this.zoneGen.grid[gougePos.y][gougePos.x] = TILE_TYPES.GOUGE;
         }

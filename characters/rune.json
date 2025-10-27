@@ -1,0 +1,53 @@
+{
+  "id": "rune",
+  "name": "Rune",
+  "type": "merchant",
+  "metadata": {
+    "description": "A merchant who trades points for random weapons.",
+    "created": "2025-10-27T00:00:00.000Z",
+    "version": "1.0.0"
+  },
+  "display": {
+    "sprite": "assets/fauna/rune.png",
+    "portrait": "assets/fauna/runeface.png",
+    "tileType": "RUNE"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": null,
+    "spawnLogic": "procedural"
+  },
+  "interaction": {
+    "type": "barter",
+    "greeting": "I smell it... Points. Feed it me.",
+    "trades": [
+      {
+        "id": "rune_item",
+        "requires": {
+          "resource": "points",
+          "amount": 10,
+          "displayName": "Points",
+          "icon": "assets/items/points.png"
+        },
+        "gives": {
+          "type": "item",
+          "id": "random_weapon",
+          "amount": 1,
+          "displayName": "Random Weapon",
+          "icon": "assets/items/chest.png"
+        },
+        "repeatable": false
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false,
+    "leaveAfterTrade": false
+  },
+  "audio": {
+    "voicePitch": 70
+  }
+}

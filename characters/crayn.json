@@ -1,0 +1,83 @@
+{
+  "id": "crayn",
+  "name": "Crayn",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A wise woodcutter who shares knowledge about the game world. Provides helpful tips and tutorials to new players.",
+    "created": "2025-10-27T00:00:00.000Z",
+    "version": "1.0.0"
+  },
+  "display": {
+    "sprite": "assets/fauna/crayn.png",
+    "portrait": "assets/fauna/craynface.png",
+    "tileType": "CRAYN"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": 4,
+    "y": 4,
+    "dimension": 1,
+    "spawnLogic": "fixed"
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "You dropped your axe down the well."
+      },
+      {
+        "id": "msg_1",
+        "text": "Press down on items to disable them."
+      },
+      {
+        "id": "msg_2",
+        "text": "Sometimes I chop a tree to pass the time."
+      },
+      {
+        "id": "msg_3",
+        "text": "They say you are descended from a King."
+      },
+      {
+        "id": "msg_4",
+        "text": "The Woodcutter's Club is members only."
+      },
+      {
+        "id": "msg_5",
+        "text": "Spears can be used to get past obstacles."
+      },
+      {
+        "id": "msg_6",
+        "text": "Bombs can send you flying."
+      },
+      {
+        "id": "msg_7",
+        "text": "You can only hold six items, but you can use as many as you like."
+      },
+      {
+        "id": "msg_8",
+        "text": "The path gets harder the farther you go."
+      },
+      {
+        "id": "msg_9",
+        "text": "Sometimes enemies simply have a better position."
+      },
+      {
+        "id": "msg_10",
+        "text": "There is no end to the frontier."
+      },
+      {
+        "id": "msg_11",
+        "text": "Beyond the frontier is the adjudicator"
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 120
+  }
+}

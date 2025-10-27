@@ -15,8 +15,8 @@ export class ActionManager {
     }
 
     addBomb() {
-        if (this.game.player.inventory.length < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE) {
-            this.game.player.inventory.push({ type: 'bomb' });
+        if (this.game.playerFacade.getInventoryCount() < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE) {
+            this.game.playerFacade.addToInventory({ type: 'bomb' });
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         }
     }
@@ -49,7 +49,7 @@ export class ActionManager {
     }
 
     performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy) {
-        const playerPos = this.game.player.getPosition();
+        const playerPos = this.game.playerFacade.getPosition();
         const startX = playerPos.x;
         const startY = playerPos.y;
 
@@ -68,15 +68,15 @@ export class ActionManager {
         }
 
         if (enemy) {
-            this.game.player.setAction?.('attack');
+            this.game.playerFacade.setAction('attack');
             const res = this.game.combatManager.defeatEnemy(enemy, 'player');
             if (res && res.defeated) {
-                if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(enemy.x - startX, enemy.y - startY);
+                if (res.consecutiveKills >= 2) this.game.playerFacade.startBackflip(); else this.game.playerFacade.startBump(enemy.x - startX, enemy.y - startY);
             }
         }
 
-        this.game.player.setPosition?.(targetX, targetY);
-        this.game.player.startSmokeAnimation?.();
+        this.game.playerFacade.setPosition(targetX, targetY);
+        this.game.playerFacade.startSmokeAnimation();
         audioManager.playSound('whoosh', { game: this.game });
         this.game.startEnemyTurns?.();
 
@@ -89,8 +89,8 @@ export class ActionManager {
             this.itemRepository.removeItem(this.game.player, item);
         }
 
-        // Get current player position
-        const playerPos = this.game.player.getPosition();
+        // Get current player position (via facade)
+        const playerPos = this.game.playerFacade.getPosition();
         const startX = playerPos.x;
         const startY = playerPos.y;
         const endX = targetX;
@@ -155,15 +155,15 @@ export class ActionManager {
         }
 
         if (enemy) {
-            this.game.player.setAction?.('attack');
+            this.game.playerFacade.setAction('attack');
             const res = this.game.combatManager.defeatEnemy(enemy, 'player');
             if (res && res.defeated) {
-                if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(enemy.x - startX, enemy.y - startY);
+                if (res.consecutiveKills >= 2) this.game.playerFacade.startBackflip(); else this.game.playerFacade.startBump(enemy.x - startX, enemy.y - startY);
             }
         }
 
-        this.game.player.setPosition?.(targetX, targetY);
-        this.game.player.startSmokeAnimation?.();
+        this.game.playerFacade.setPosition(targetX, targetY);
+        this.game.playerFacade.startSmokeAnimation();
         audioManager.playSound('whoosh', { game: this.game });
         this.game.startEnemyTurns?.();
         eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
@@ -175,7 +175,7 @@ export class ActionManager {
             this.itemRepository.removeItem(this.game.player, item);
         }
 
-        const playerPos = this.game.player.getPosition();
+        const playerPos = this.game.playerFacade.getPosition();
         // Use provided enemy reference when available; do not rely on pendingCharge here
         const targetEnemy = enemy || null;
 
@@ -206,10 +206,10 @@ export class ActionManager {
             .then(() => {
                 const enemyCollection = this.game.enemyCollection;
                 if (targetEnemy && enemyCollection.includes(targetEnemy)) { // Check if enemy still exists
-                    this.game.player.setAction?.('attack');
+                    this.game.playerFacade.setAction('attack');
                     const res = this.game.combatManager.defeatEnemy(targetEnemy, 'player');
                     if (res && res.defeated) {
-                        if (res.consecutiveKills >= 2) this.game.player.startBackflip(); else this.game.player.startBump(targetEnemy.x - playerPos.x, targetEnemy.y - playerPos.y);
+                        if (res.consecutiveKills >= 2) this.game.playerFacade.startBackflip(); else this.game.playerFacade.startBump(targetEnemy.x - playerPos.x, targetEnemy.y - playerPos.y);
                     }
                 }
                 // Now that the arrow has hit, enemies can take their turn.
@@ -224,7 +224,7 @@ export class ActionManager {
         const gridManager = this.game.gridManager;
         gridManager.setTile(bx, by, TILE_TYPES.FLOOR);
         audioManager.playSound('splode', { game: this.game });
-        this.game.player.startSplodeAnimation(bx, by);
+        this.game.playerFacade.startSplodeAnimation(bx, by);
 
         const directions = [
             { dx: 0, dy: 0 }, { dx: 1, dy: 0 }, { dx: -1, dy: 0 }, { dx: 0, dy: 1 }, { dx: 0, dy: -1 },
@@ -248,7 +248,8 @@ export class ActionManager {
                 }
 
                 // Check for player knockback (within 1 tile, not center) - launch flying backward until hitting obstruction
-                if (nx === this.game.player.x && ny === this.game.player.y && !(dir.dx === 0 && dir.dy === 0)) {
+                const playerPos = this.game.playerFacade.getPosition();
+                if (nx === playerPos.x && ny === playerPos.y && !(dir.dx === 0 && dir.dy === 0)) {
                     // Launch player away from bomb - direction away is continuing in the dir.dx, dir.dy direction from player position
                     let launchX = nx;
                     let launchY = ny;
@@ -260,7 +261,7 @@ export class ActionManager {
                         launchX += dir.dx;
                         launchY += dir.dy;
                         if (isWithinGrid(launchX, launchY) &&
-                            this.game.player.isWalkable(launchX, launchY, this.game.grid, this.game.player.x, this.game.player.y)) {
+                            this.game.playerFacade.isWalkable(launchX, launchY, this.game.grid, playerPos.x, playerPos.y)) {
                             // Check if enemy at this position - if so, damage it and stop launch
                             const enemyAtLaunch = enemyCollection.findAt(launchX, launchY);
                             if (enemyAtLaunch) {
@@ -278,13 +279,14 @@ export class ActionManager {
                         }
                     }
                     // Move to the launch position if it's different from current
-                    if (launchX !== this.game.player.x || launchY !== this.game.player.y) {
+                    const currentPlayerPos = this.game.playerFacade.getPosition();
+                    if (launchX !== currentPlayerPos.x || launchY !== currentPlayerPos.y) {
                         // Add smoke at each intermediate position (not at original or final for trail effect)
                         intermediatePositions.forEach(pos => {
                             this.game.player.animations.smokeAnimations.push({ x: pos.x, y: pos.y, frame: ANIMATION_CONSTANTS.SMOKE_ANIMATION_FRAMES });
                         });
-                        this.game.player.setPosition(launchX, launchY);
-                        this.game.player.startBump(dir.dx, dir.dy); // Bump in the launch direction
+                        this.game.playerFacade.setPosition(launchX, launchY);
+                        this.game.playerFacade.startBump(dir.dx, dir.dy); // Bump in the launch direction
                     }
                 }
             }

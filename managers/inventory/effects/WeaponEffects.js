@@ -1,10 +1,13 @@
 import { BaseItemEffect } from './BaseItemEffect.js';
 import { TILE_TYPES, GRID_SIZE } from '../../../core/constants/index.js';
+import { isWithinGrid } from '../../../utils/GridUtils.js';
 
 /**
  * Weapon effects - Bomb, Bow, Bishop Spear, Horse Icon
+ * Refactored to use configuration-based approach to eliminate code duplication
  */
 
+// Bomb effect: Adjacent tile placement with validation
 export class BombEffect extends BaseItemEffect {
     apply(game, item, context = {}) {
         return this._applyRadialPattern(game, item, context, {
@@ -20,7 +23,7 @@ export class BombEffect extends BaseItemEffect {
                 for (const dir of directions) {
                     const nx = px + dir.dx;
                     const ny = py + dir.dy;
-                    if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE &&
+                    if (isWithinGrid(nx, ny) &&
                         (game.grid[ny][nx] === TILE_TYPES.FLOOR || game.grid[ny][nx] === TILE_TYPES.EXIT)) {
                         game.transientGameState.addBombPlacementPosition({x: nx, y: ny});
                     }
@@ -32,6 +35,7 @@ export class BombEffect extends BaseItemEffect {
     }
 }
 
+// Weapon charge effects: All follow the same pattern with different parameters
 export class BowEffect extends BaseItemEffect {
     apply(game, item, context = {}) {
         return this._applyRadialPattern(game, item, context, {

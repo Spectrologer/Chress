@@ -32,8 +32,17 @@ export class PortRenderStrategy extends TileRenderStrategy {
         // Interior zones use PORT as doors that transition back to surface; they are not holes.
         // Zone level 5 corresponds to interior zones in RenderManager. Don't render hole sprite there.
         if (zoneLevel === 5) {
-            // Render the underlying floor/house texture for interior tiles and return.
+            // Render the underlying floor/house texture for interior tiles
             baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+
+            // If this PORT has a portKind (stairdown/stairup), draw the corresponding doodad on top
+            if (tileType && tileType.portKind) {
+                if (tileType.portKind === 'stairdown' && RendererUtils.isImageLoaded(this.images, 'stairdown')) {
+                    ctx.drawImage(this.images.stairdown, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                } else if (tileType.portKind === 'stairup' && RendererUtils.isImageLoaded(this.images, 'stairup')) {
+                    ctx.drawImage(this.images.stairup, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                }
+            }
             return;
         }
 

@@ -1,0 +1,52 @@
+{
+  "id": "mark",
+  "name": "Mark",
+  "type": "merchant",
+  "metadata": {
+    "description": "A simple merchant who trades meat for discoveries. Encourages exploration of the world.",
+    "created": "2025-10-27T00:00:00.000Z",
+    "version": "1.0.0"
+  },
+  "display": {
+    "sprite": "assets/fauna/mark.png",
+    "portrait": "assets/fauna/markface.png",
+    "tileType": "MARK"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": null,
+    "spawnLogic": "procedural"
+  },
+  "interaction": {
+    "type": "barter",
+    "greeting": "Show me some new places.",
+    "trades": [
+      {
+        "id": "mark_meat",
+        "requires": {
+          "resource": "DISCOVERED",
+          "amount": 10,
+          "displayName": "Discoveries",
+          "icon": "assets/ui/talk.png"
+        },
+        "gives": {
+          "type": "item",
+          "id": "food/meat",
+          "amount": 1,
+          "displayName": "Meat",
+          "icon": "assets/food/meat/beaf.png"
+        },
+        "repeatable": true
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 100
+  }
+}

@@ -2,6 +2,7 @@ import { logger } from '../logger.js';
 import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
 import { BaseZoneHandler } from './BaseZoneHandler.js';
 import { SPAWN_PROBABILITIES } from '../constants/index.js';
+import { boardLoader } from '../BoardLoader.js';
 
 class SurfaceHandler extends BaseZoneHandler {
     constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets) {
@@ -66,12 +67,16 @@ class SurfaceHandler extends BaseZoneHandler {
                     ZoneStateManager.wildsShackSpawned = true;
                     ZoneStateManager.wildsShackSpawnZone = { x: this.zoneX, y: this.zoneY };
                     ZoneStateManager.firstWildsZonePlaced = true;
+                    // Register and load the gouges board for this shack's interior
+                    this.registerGougesBoard();
                     logger.log(`FIRST WILDS ZONE: Shack placed in zone (${this.zoneX}, ${this.zoneY}) - no other features`);
                 }
             } else {
                 if (this.structureGenerator.addShack(this.zoneX, this.zoneY)) {
                     ZoneStateManager.wildsShackSpawned = true;
                     ZoneStateManager.wildsShackSpawnZone = { x: this.zoneX, y: this.zoneY };
+                    // Register and load the gouges board for this shack's interior
+                    this.registerGougesBoard();
                 }
             }
         }
@@ -103,6 +108,15 @@ class SurfaceHandler extends BaseZoneHandler {
         };
         const enemyProbability = this.calculateEnemyProbability(baseProbabilities);
         this.spawnEnemyIfProbable(enemyProbability);
+    }
+
+    registerGougesBoard() {
+        // Register the gouges board for this shack's interior
+        boardLoader.registerBoard(this.zoneX, this.zoneY, 1, 'gouges', 'canon');
+        // Load it immediately so it's available when the player enters
+        boardLoader.loadBoard(this.zoneX, this.zoneY, 1).catch(err => {
+            logger.error(`Failed to load gouges board for zone (${this.zoneX},${this.zoneY}):`, err);
+        });
     }
 }
 

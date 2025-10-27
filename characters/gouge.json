@@ -1,0 +1,56 @@
+{
+  "id": "gouge",
+  "name": "Gouge",
+  "type": "merchant",
+  "metadata": {
+    "description": "A merchant who trades discoveries for the hammer ability. Found in a shack in the wilds.",
+    "created": "2025-10-27T00:00:00.000Z",
+    "version": "1.0.0",
+    "board": "boards/canon/gouges.json",
+    "notes": "Spawns in a dynamically placed shack in level 3 (wilds). The board is registered at runtime when the shack spawns."
+  },
+  "display": {
+    "sprite": "assets/fauna/gouge.png",
+    "portrait": "assets/fauna/gougeface.png",
+    "tileType": "GOUGE"
+  },
+  "placement": {
+    "zone": "wilds_shack",
+    "x": 4,
+    "y": 4,
+    "dimension": 1,
+    "spawnLogic": "board",
+    "board": "gouges"
+  },
+  "interaction": {
+    "type": "barter",
+    "greeting": "Gimme discoveries, I'll give you a hammer.",
+    "trades": [
+      {
+        "id": "gouge_hammer",
+        "requires": {
+          "resource": "DISCOVERED",
+          "amount": 35,
+          "displayName": "Discoveries",
+          "icon": "assets/ui/talk.png"
+        },
+        "gives": {
+          "type": "ability",
+          "id": "hammer",
+          "amount": 1,
+          "displayName": "Hammer Ability",
+          "icon": "assets/items/hammer.png"
+        },
+        "repeatable": false
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false,
+    "leaveAfterTrade": false
+  },
+  "audio": {
+    "voicePitch": 90
+  }
+}

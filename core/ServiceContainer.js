@@ -40,6 +40,7 @@ import { TransientGameState } from '../state/TransientGameState.js';
 import { EnemyCollection } from '../facades/EnemyCollection.js';
 import { NPCManager } from '../managers/NPCManager.js';
 import { NPCRenderer } from '../renderers/NPCRenderer.js';
+import { AnimationCoordinator } from './AnimationCoordinator.js';
 
 /**
  * Lightweight service container with lazy initialization for better testability.
@@ -101,6 +102,9 @@ export class ServiceContainer {
 
             // Player facade (initialize after player entity is created)
             playerFacade: () => new PlayerFacade(this.game.player),
+
+            // Animation coordinator (handles player animation events)
+            animationCoordinator: () => new AnimationCoordinator(this.game.player),
 
             // Enemy collection facade (wraps enemies array for controlled access)
             enemyCollection: () => new EnemyCollection(this.game.enemies, this.game),

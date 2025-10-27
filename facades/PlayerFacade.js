@@ -1,5 +1,6 @@
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { PlayerPositionFacade } from './PlayerPositionFacade.js';
+import { PlayerInventoryFacade } from './PlayerInventoryFacade.js';
+import { PlayerStatsFacade } from './PlayerStatsFacade.js';
 import { logger } from '../core/logger.js';
 
 /**
@@ -8,12 +9,18 @@ import { logger } from '../core/logger.js';
  * Eliminates direct player property access patterns scattered across the codebase.
  * Provides a controlled interface for reading, writing, and managing player state.
  *
+ * This facade now composes three specialized facades:
+ * - PlayerPositionFacade: Position and zone management
+ * - PlayerInventoryFacade: Inventory and abilities
+ * - PlayerStatsFacade: Stats, animations, and interactions
+ *
  * Benefits:
  * - Encapsulation: All player mutations go through validated methods
  * - Events: Automatic event emission on state changes
  * - Validation: Centralized business rules and constraints
  * - Testability: Player logic can be tested independently
  * - Type Safety: Consistent property handling and normalization
+ * - Modularity: Separated concerns with specialized facades
  *
  * Critical patterns this addresses:
  * - 339+ direct player property accesses
@@ -39,685 +46,211 @@ export class PlayerFacade {
             throw new Error('PlayerFacade requires a valid player instance');
         }
         this.player = player;
+
+        // Initialize specialized facades
+        this.position = new PlayerPositionFacade(player);
+        this.inventory = new PlayerInventoryFacade(player);
+        this.stats = new PlayerStatsFacade(player);
     }
 
     // ========================================
-    // POSITION OPERATIONS
+    // POSITION OPERATIONS (delegated to PlayerPositionFacade)
     // ========================================
 
-    /**
-     * Get player position as object
-     * @returns {{x: number, y: number}} Position coordinates
-     */
-    getPosition() {
-        return this.player.getPosition();
-    }
+    /** @returns {{x: number, y: number}} */
+    getPosition() { return this.position.getPosition(); }
 
-    /**
-     * Set player position with validation and events
-     * @param {number} x - X coordinate
-     * @param {number} y - Y coordinate
-     * @param {boolean} emitEvent - Whether to emit PLAYER_MOVED event (default: true)
-     */
-    setPosition(x, y, emitEvent = true) {
-        this.player.setPosition(x, y, emitEvent);
-    }
+    /** @param {number} x @param {number} y @param {boolean} emitEvent */
+    setPosition(x, y, emitEvent = true) { return this.position.setPosition(x, y, emitEvent); }
 
-    /**
-     * Get X coordinate
-     * @returns {number}
-     */
-    getX() {
-        return this.player.x;
-    }
+    /** @returns {number} */
+    getX() { return this.position.getX(); }
 
-    /**
-     * Get Y coordinate
-     * @returns {number}
-     */
-    getY() {
-        return this.player.y;
-    }
+    /** @returns {number} */
+    getY() { return this.position.getY(); }
 
-    /**
-     * Get last position (for interpolation/animation)
-     * @returns {{x: number, y: number}}
-     */
-    getLastPosition() {
-        return { x: this.player.lastX, y: this.player.lastY };
-    }
+    /** @returns {{x: number, y: number}} */
+    getLastPosition() { return this.position.getLastPosition(); }
 
-    /**
-     * Update last position (for animation tracking)
-     * @param {number} x - Last X coordinate
-     * @param {number} y - Last Y coordinate
-     */
-    setLastPosition(x, y) {
-        this.player.lastX = x;
-        this.player.lastY = y;
-    }
+    /** @param {number} x @param {number} y */
+    setLastPosition(x, y) { return this.position.setLastPosition(x, y); }
 
-    /**
-     * Check if a tile is walkable from current position
-     * @param {number} x - Target X coordinate
-     * @param {number} y - Target Y coordinate
-     * @param {Array<Array>} grid - The game grid
-     * @param {number} fromX - Source X coordinate (optional)
-     * @param {number} fromY - Source Y coordinate (optional)
-     * @returns {boolean}
-     */
-    isWalkable(x, y, grid, fromX = -1, fromY = -1) {
-        return this.player.isWalkable(x, y, grid, fromX, fromY);
-    }
+    /** @param {number} x @param {number} y @param {Array} grid @param {number} fromX @param {number} fromY @returns {boolean} */
+    isWalkable(x, y, grid, fromX = -1, fromY = -1) { return this.position.isWalkable(x, y, grid, fromX, fromY); }
 
-    /**
-     * Move player to target position
-     * @param {number} x - Target X
-     * @param {number} y - Target Y
-     * @param {Array<Array>} grid - Game grid
-     * @param {Function} onZoneTransition - Callback for zone transitions
-     */
-    move(x, y, grid, onZoneTransition) {
-        return this.player.move(x, y, grid, onZoneTransition);
-    }
+    /** @param {number} x @param {number} y @param {Array} grid @param {Function} onZoneTransition */
+    move(x, y, grid, onZoneTransition) { return this.position.move(x, y, grid, onZoneTransition); }
 
-    /**
-     * Ensure player is on a valid position
-     * @param {Array<Array>} grid - Game grid
-     */
-    ensureValidPosition(grid) {
-        this.player.ensureValidPosition(grid);
-    }
+    /** @param {Array} grid */
+    ensureValidPosition(grid) { return this.position.ensureValidPosition(grid); }
 
     // ========================================
-    // ZONE & DIMENSION OPERATIONS
+    // ZONE & DIMENSION OPERATIONS (delegated to PlayerPositionFacade)
     // ========================================
 
-    /**
-     * Get current zone information (returns a copy)
-     * @returns {{x: number, y: number, dimension: number, depth: number, portType: string}}
-     */
-    getCurrentZone() {
-        return this.player.getCurrentZone();
-    }
+    /** @returns {{x: number, y: number, dimension: number, depth: number, portType: string}} */
+    getCurrentZone() { return this.position.getCurrentZone(); }
 
-    /**
-     * Set current zone coordinates
-     * @param {number} x - Zone X coordinate
-     * @param {number} y - Zone Y coordinate
-     */
-    setCurrentZone(x, y) {
-        this.player.setCurrentZone(x, y);
-    }
+    /** @param {number} x @param {number} y */
+    setCurrentZone(x, y) { return this.position.setCurrentZone(x, y); }
 
-    /**
-     * Get zone dimension (0=surface, 1=interior, 2=underground)
-     * @returns {number}
-     */
-    getZoneDimension() {
-        return this.player.currentZone?.dimension ?? 0;
-    }
+    /** @returns {number} */
+    getZoneDimension() { return this.position.getZoneDimension(); }
 
-    /**
-     * Set zone dimension with validation
-     * @param {number} dimension - Dimension value (0, 1, or 2)
-     */
-    setZoneDimension(dimension) {
-        if (![0, 1, 2].includes(dimension)) {
-            logger.warn(`PlayerFacade: Invalid dimension ${dimension}, must be 0, 1, or 2`);
-            return;
-        }
-        if (!this.player.currentZone) {
-            this.player.currentZone = { x: 0, y: 0, dimension: 0, depth: 0 };
-        }
-        this.player.currentZone.dimension = dimension;
+    /** @param {number} dimension */
+    setZoneDimension(dimension) { return this.position.setZoneDimension(dimension); }
 
-        // Emit zone changed event
-        eventBus.emit(EventTypes.ZONE_CHANGED, this.getCurrentZone());
-    }
+    /** @returns {number} */
+    getUndergroundDepth() { return this.position.getUndergroundDepth(); }
 
-    /**
-     * Get underground depth (atomic with zone depth)
-     * @returns {number}
-     */
-    getUndergroundDepth() {
-        return this.player.undergroundDepth ?? 0;
-    }
+    /** @param {number} depth */
+    setUndergroundDepth(depth) { return this.position.setUndergroundDepth(depth); }
 
-    /**
-     * Set underground depth (keeps currentZone.depth in sync)
-     * IMPORTANT: This maintains consistency between undergroundDepth and currentZone.depth
-     * @param {number} depth - Depth level (0=surface, 1+=underground levels)
-     */
-    setUndergroundDepth(depth) {
-        if (typeof depth !== 'number' || depth < 0) {
-            logger.warn(`PlayerFacade: Invalid depth ${depth}, must be non-negative number`);
-            return;
-        }
+    /** @returns {string|undefined} */
+    getPortType() { return this.position.getPortType(); }
 
-        // Keep both properties in sync
-        this.player.undergroundDepth = depth;
-        if (!this.player.currentZone) {
-            this.player.currentZone = { x: 0, y: 0, dimension: 0, depth: 0 };
-        }
-        this.player.currentZone.depth = depth;
+    /** @param {string} portType */
+    setPortType(portType) { return this.position.setPortType(portType); }
 
-        logger.debug(`PlayerFacade: Set underground depth to ${depth}`);
-    }
+    /** @param {Object} zoneUpdate */
+    updateZoneState(zoneUpdate) { return this.position.updateZoneState(zoneUpdate); }
 
-    /**
-     * Get zone port type
-     * @returns {string|undefined}
-     */
-    getPortType() {
-        return this.player.currentZone?.portType;
-    }
+    /** @param {string} zoneKey */
+    markZoneVisited(zoneKey) { return this.position.markZoneVisited(zoneKey); }
 
-    /**
-     * Set zone port type
-     * @param {string} portType - Port type (e.g., 'interior', 'underground')
-     */
-    setPortType(portType) {
-        if (!this.player.currentZone) {
-            this.player.currentZone = { x: 0, y: 0, dimension: 0, depth: 0 };
-        }
-        this.player.currentZone.portType = portType;
-    }
-
-    /**
-     * Atomically update zone state (prevents drift between related properties)
-     * @param {Object} zoneUpdate - Zone properties to update
-     * @param {number} zoneUpdate.x - Zone X coordinate
-     * @param {number} zoneUpdate.y - Zone Y coordinate
-     * @param {number} zoneUpdate.dimension - Dimension (0, 1, or 2)
-     * @param {number} zoneUpdate.depth - Depth level
-     * @param {string} zoneUpdate.portType - Port type (optional)
-     */
-    updateZoneState(zoneUpdate) {
-        const { x, y, dimension, depth, portType } = zoneUpdate;
-
-        if (!this.player.currentZone) {
-            this.player.currentZone = { x: 0, y: 0, dimension: 0, depth: 0 };
-        }
-
-        // Atomic update - all or nothing
-        if (x !== undefined) this.player.currentZone.x = x;
-        if (y !== undefined) this.player.currentZone.y = y;
-        if (dimension !== undefined) this.player.currentZone.dimension = dimension;
-        if (depth !== undefined) {
-            this.player.currentZone.depth = depth;
-            this.player.undergroundDepth = depth; // Keep in sync
-        }
-        if (portType !== undefined) this.player.currentZone.portType = portType;
-
-        // Emit zone change event
-        eventBus.emit(EventTypes.ZONE_CHANGED, this.getCurrentZone());
-    }
-
-    /**
-     * Mark a zone as visited
-     * @param {string} zoneKey - Zone key string
-     */
-    markZoneVisited(zoneKey) {
-        if (this.player.markZoneVisited) {
-            this.player.markZoneVisited(zoneKey);
-        }
-    }
-
-    /**
-     * Trigger zone transition lifecycle
-     */
-    onZoneTransition() {
-        if (this.player.onZoneTransition) {
-            this.player.onZoneTransition();
-        }
-    }
+    /** Trigger zone transition lifecycle */
+    onZoneTransition() { return this.position.onZoneTransition(); }
 
     // ========================================
-    // INVENTORY OPERATIONS
+    // INVENTORY OPERATIONS (delegated to PlayerInventoryFacade)
     // ========================================
 
-    /**
-     * Get inventory (returns a copy to prevent direct mutations)
-     * @returns {Array<Object>} Copy of inventory array
-     */
-    getInventory() {
-        return [...(this.player.inventory || [])];
-    }
+    /** @returns {Array<Object>} */
+    getInventory() { return this.inventory.getInventory(); }
 
-    /**
-     * Get inventory reference (use sparingly - prefer getInventory())
-     * @returns {Array<Object>}
-     * @deprecated Use getInventory() instead for safer access
-     */
-    getInventoryRef() {
-        logger.warn('PlayerFacade.getInventoryRef: Direct inventory reference requested. Consider using getInventory() instead.');
-        return this.player.inventory;
-    }
+    /** @deprecated @returns {Array<Object>} */
+    getInventoryRef() { return this.inventory.getInventoryRef(); }
 
-    /**
-     * Add item to inventory with event emission
-     * @param {Object} item - Item to add
-     * @returns {boolean} True if added successfully
-     */
-    addToInventory(item) {
-        if (!item) {
-            logger.warn('PlayerFacade: Cannot add null/undefined item to inventory');
-            return false;
-        }
+    /** @param {Object} item @returns {boolean} */
+    addToInventory(item) { return this.inventory.addToInventory(item); }
 
-        if (!this.player.inventory) {
-            this.player.inventory = [];
-        }
+    /** @param {number} index @returns {Object|null} */
+    removeFromInventory(index) { return this.inventory.removeFromInventory(index); }
 
-        this.player.inventory.push(item);
+    /** @param {Function} predicate @returns {Object|undefined} */
+    findInInventory(predicate) { return this.inventory.findInInventory(predicate); }
 
-        // Emit inventory changed event
-        eventBus.emit(EventTypes.INVENTORY_CHANGED, {
-            action: 'add',
-            item,
-            inventory: this.getInventory()
-        });
+    /** @returns {number} */
+    getInventoryCount() { return this.inventory.getInventoryCount(); }
 
-        return true;
-    }
+    /** Clear inventory */
+    clearInventory() { return this.inventory.clearInventory(); }
 
-    /**
-     * Remove item from inventory by index
-     * @param {number} index - Index to remove
-     * @returns {Object|null} Removed item or null
-     */
-    removeFromInventory(index) {
-        if (!this.player.inventory || index < 0 || index >= this.player.inventory.length) {
-            logger.warn(`PlayerFacade: Invalid inventory index ${index}`);
-            return null;
-        }
+    /** @returns {Array<Object>} */
+    getRadialInventory() { return this.inventory.getRadialInventory(); }
 
-        const removed = this.player.inventory.splice(index, 1)[0];
-
-        // Emit inventory changed event
-        eventBus.emit(EventTypes.INVENTORY_CHANGED, {
-            action: 'remove',
-            item: removed,
-            index,
-            inventory: this.getInventory()
-        });
-
-        return removed;
-    }
-
-    /**
-     * Find item in inventory by predicate
-     * @param {Function} predicate - Function(item) => boolean
-     * @returns {Object|undefined} Found item
-     */
-    findInInventory(predicate) {
-        return this.player.inventory?.find(predicate);
-    }
-
-    /**
-     * Get inventory count
-     * @returns {number}
-     */
-    getInventoryCount() {
-        return this.player.inventory?.length ?? 0;
-    }
-
-    /**
-     * Clear inventory
-     */
-    clearInventory() {
-        const oldInventory = this.getInventory();
-        this.player.inventory = [];
-
-        eventBus.emit(EventTypes.INVENTORY_CHANGED, {
-            action: 'clear',
-            oldInventory,
-            inventory: []
-        });
-    }
-
-    /**
-     * Get radial inventory
-     * @returns {Array<Object>}
-     */
-    getRadialInventory() {
-        return [...(this.player.radialInventory || [])];
-    }
-
-    /**
-     * Set radial inventory
-     * @param {Array<Object>} items - Items for radial inventory
-     */
-    setRadialInventory(items) {
-        this.player.radialInventory = items;
-
-        eventBus.emit(EventTypes.RADIAL_INVENTORY_CHANGED, {
-            inventory: this.getRadialInventory()
-        });
-    }
+    /** @param {Array<Object>} items */
+    setRadialInventory(items) { return this.inventory.setRadialInventory(items); }
 
     // ========================================
-    // ABILITIES OPERATIONS
+    // ABILITIES OPERATIONS (delegated to PlayerInventoryFacade)
     // ========================================
 
-    /**
-     * Check if player has an ability
-     * @param {string} ability - Ability name
-     * @returns {boolean}
-     */
-    hasAbility(ability) {
-        return this.player.abilities?.has(ability) ?? false;
-    }
+    /** @param {string} ability @returns {boolean} */
+    hasAbility(ability) { return this.inventory.hasAbility(ability); }
 
-    /**
-     * Add ability with event emission
-     * @param {string} ability - Ability name
-     */
-    addAbility(ability) {
-        if (!this.player.abilities) {
-            this.player.abilities = new Set();
-        }
+    /** @param {string} ability */
+    addAbility(ability) { return this.inventory.addAbility(ability); }
 
-        if (this.player.abilities.has(ability)) {
-            logger.debug(`PlayerFacade: Player already has ability '${ability}'`);
-            return;
-        }
+    /** @param {string} ability */
+    removeAbility(ability) { return this.inventory.removeAbility(ability); }
 
-        this.player.abilities.add(ability);
-
-        eventBus.emit(EventTypes.ABILITY_GAINED, {
-            ability,
-            abilities: Array.from(this.player.abilities)
-        });
-
-        logger.debug(`PlayerFacade: Added ability '${ability}'`);
-    }
-
-    /**
-     * Remove ability
-     * @param {string} ability - Ability name
-     */
-    removeAbility(ability) {
-        if (!this.player.abilities?.has(ability)) {
-            return;
-        }
-
-        this.player.abilities.delete(ability);
-
-        eventBus.emit(EventTypes.ABILITY_LOST, {
-            ability,
-            abilities: Array.from(this.player.abilities)
-        });
-    }
-
-    /**
-     * Get all abilities
-     * @returns {Array<string>}
-     */
-    getAbilities() {
-        return Array.from(this.player.abilities || []);
-    }
+    /** @returns {Array<string>} */
+    getAbilities() { return this.inventory.getAbilities(); }
 
     // ========================================
-    // STATS OPERATIONS
+    // STATS OPERATIONS (delegated to PlayerStatsFacade)
     // ========================================
 
-    /**
-     * Get stats object (returns copy to prevent direct mutations)
-     * @returns {Object} Copy of stats
-     */
-    getStats() {
-        return this.player.stats ? { ...this.player.stats } : {};
-    }
+    /** @returns {Object} */
+    getStats() { return this.stats.getStats(); }
 
-    /**
-     * Get stats reference (use sparingly)
-     * @returns {Object}
-     * @deprecated Use getStats() for safer access
-     */
-    getStatsRef() {
-        logger.warn('PlayerFacade.getStatsRef: Direct stats reference requested.');
-        return this.player.stats;
-    }
+    /** @deprecated @returns {Object} */
+    getStatsRef() { return this.stats.getStatsRef(); }
 
-    /**
-     * Get health value
-     * @returns {number}
-     */
-    getHealth() {
-        return this.player.stats?.health ?? 0;
-    }
+    /** @returns {number} */
+    getHealth() { return this.stats.getHealth(); }
 
-    /**
-     * Get hunger value
-     * @returns {number}
-     */
-    getHunger() {
-        return this.player.stats?.hunger ?? 0;
-    }
+    /** @returns {number} */
+    getHunger() { return this.stats.getHunger(); }
 
-    /**
-     * Get thirst value
-     * @returns {number}
-     */
-    getThirst() {
-        return this.player.stats?.thirst ?? 0;
-    }
+    /** @returns {number} */
+    getThirst() { return this.stats.getThirst(); }
 
-    /**
-     * Take damage (delegates to PlayerStats)
-     * @param {number} amount - Damage amount
-     */
-    takeDamage(amount) {
-        if (this.player.takeDamage) {
-            this.player.takeDamage(amount);
-        } else if (this.player.stats?.takeDamage) {
-            this.player.stats.takeDamage(amount);
-        }
+    /** @param {number} amount */
+    takeDamage(amount) { return this.stats.takeDamage(amount); }
 
-        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-    }
+    /** @param {number} amount */
+    restoreHealth(amount) { return this.stats.restoreHealth(amount); }
 
-    /**
-     * Restore health
-     * @param {number} amount - Health to restore
-     */
-    restoreHealth(amount) {
-        if (this.player.restoreHealth) {
-            this.player.restoreHealth(amount);
-        }
+    /** @param {number} amount */
+    restoreHunger(amount) { return this.stats.restoreHunger(amount); }
 
-        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-    }
+    /** @returns {number} */
+    getPoints() { return this.stats.getPoints(); }
 
-    /**
-     * Restore hunger
-     * @param {number} amount - Hunger to restore
-     */
-    restoreHunger(amount) {
-        if (this.player.restoreHunger) {
-            this.player.restoreHunger(amount);
-        }
+    /** @param {number} points */
+    addPoints(points) { return this.stats.addPoints(points); }
 
-        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-    }
+    /** @returns {number} */
+    getSpentDiscoveries() { return this.stats.getSpentDiscoveries(); }
 
-    /**
-     * Get points
-     * @returns {number}
-     */
-    getPoints() {
-        return this.player.getPoints?.() ?? this.player.points ?? 0;
-    }
+    /** @param {number} count */
+    setSpentDiscoveries(count) { return this.stats.setSpentDiscoveries(count); }
 
-    /**
-     * Add points with event emission
-     * @param {number} points - Points to add
-     */
-    addPoints(points) {
-        if (this.player.addPoints) {
-            this.player.addPoints(points);
-        } else {
-            this.player.points = (this.player.points || 0) + points;
-        }
-
-        eventBus.emit(EventTypes.POINTS_CHANGED, {
-            points: this.getPoints()
-        });
-        eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-    }
-
-    /**
-     * Get spent discoveries
-     * @returns {number}
-     */
-    getSpentDiscoveries() {
-        return this.player.getSpentDiscoveries?.() ?? this.player.spentDiscoveries ?? 0;
-    }
-
-    /**
-     * Set spent discoveries
-     * @param {number} count - Number of spent discoveries
-     */
-    setSpentDiscoveries(count) {
-        if (this.player.setSpentDiscoveries) {
-            this.player.setSpentDiscoveries(count);
-        } else {
-            this.player.spentDiscoveries = count;
-        }
-    }
-
-    /**
-     * Update a specific stat property (for settings like musicEnabled)
-     * @param {string} statName - Stat property name
-     * @param {*} value - New value
-     */
-    updateStat(statName, value) {
-        if (!this.player.stats) {
-            this.player.stats = {};
-        }
-
-        this.player.stats[statName] = value;
-
-        eventBus.emit(EventTypes.STATS_CHANGED, {
-            stat: statName,
-            value,
-            stats: this.getStats()
-        });
-    }
+    /** @param {string} statName @param {*} value */
+    updateStat(statName, value) { return this.stats.updateStat(statName, value); }
 
     // ========================================
-    // ANIMATION & VISUAL STATE
+    // ANIMATION & VISUAL STATE (delegated to PlayerStatsFacade)
     // ========================================
 
-    /**
-     * Start bump animation
-     * @param {number} dx - X direction
-     * @param {number} dy - Y direction
-     */
-    startBump(dx, dy) {
-        if (this.player.startBump) {
-            this.player.startBump(dx, dy);
-        }
-    }
+    /** @param {number} dx @param {number} dy */
+    startBump(dx, dy) { return this.stats.startBump(dx, dy); }
 
-    /**
-     * Start backflip animation
-     */
-    startBackflip() {
-        if (this.player.startBackflip) {
-            this.player.startBackflip();
-        }
-    }
+    /** Start backflip animation */
+    startBackflip() { return this.stats.startBackflip(); }
 
-    /**
-     * Start attack animation
-     */
-    startAttackAnimation() {
-        if (this.player.startAttackAnimation) {
-            this.player.startAttackAnimation();
-        }
-    }
+    /** Start attack animation */
+    startAttackAnimation() { return this.stats.startAttackAnimation(); }
 
-    /**
-     * Start explosion animation
-     * @param {number} x - Explosion X
-     * @param {number} y - Explosion Y
-     */
-    startSplodeAnimation(x, y) {
-        if (this.player.startSplodeAnimation) {
-            this.player.startSplodeAnimation(x, y);
-        }
-    }
+    /** @param {number} x @param {number} y */
+    startSplodeAnimation(x, y) { return this.stats.startSplodeAnimation(x, y); }
 
-    /**
-     * Start smoke animation
-     * @param {number} x - Smoke X
-     * @param {number} y - Smoke Y
-     */
-    startSmokeAnimation(x, y) {
-        if (this.player.startSmokeAnimation) {
-            this.player.startSmokeAnimation(x, y);
-        }
-    }
+    /** @param {number} x @param {number} y */
+    startSmokeAnimation(x, y) { return this.stats.startSmokeAnimation(x, y); }
 
-    /**
-     * Set player action state
-     * @param {string} action - Action type
-     */
-    setAction(action) {
-        if (this.player.setAction) {
-            this.player.setAction(action);
-        }
-    }
+    /** @param {string} action */
+    setAction(action) { return this.stats.setAction(action); }
 
-    /**
-     * Get consecutive kills count
-     * @returns {number}
-     */
-    getConsecutiveKills() {
-        return this.player.consecutiveKills ?? 0;
-    }
+    /** @returns {number} */
+    getConsecutiveKills() { return this.stats.getConsecutiveKills(); }
 
-    /**
-     * Set consecutive kills count
-     * @param {number} count - Kill count
-     */
-    setConsecutiveKills(count) {
-        this.player.consecutiveKills = count;
-    }
+    /** @param {number} count */
+    setConsecutiveKills(count) { return this.stats.setConsecutiveKills(count); }
 
     // ========================================
-    // INTERACTION STATE
+    // INTERACTION STATE (delegated to PlayerStatsFacade)
     // ========================================
 
-    /**
-     * Get interact on reach target
-     * @returns {Object|null}
-     */
-    getInteractOnReach() {
-        return this.player.interactOnReach;
-    }
+    /** @returns {Object|null} */
+    getInteractOnReach() { return this.stats.getInteractOnReach(); }
 
-    /**
-     * Set interact on reach target
-     * @param {Object} target - Target coordinates
-     */
-    setInteractOnReach(target) {
-        this.player.interactOnReach = target;
-    }
+    /** @param {Object} target */
+    setInteractOnReach(target) { return this.stats.setInteractOnReach(target); }
 
-    /**
-     * Clear interact on reach
-     */
-    clearInteractOnReach() {
-        if (this.player.clearInteractOnReach) {
-            this.player.clearInteractOnReach();
-        } else {
-            this.player.interactOnReach = null;
-        }
-    }
+    /** Clear interact on reach */
+    clearInteractOnReach() { return this.stats.clearInteractOnReach(); }
 
     // ========================================
     // RAW ACCESS (Use sparingly)

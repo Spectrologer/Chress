@@ -134,10 +134,15 @@ export class RecordsPanelManager {
         if (backButton) {
             backButton.addEventListener('click', (e) => {
                 if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
-                this.hideRecordsOverlay();
-                // Callback to show stats panel again would be passed from parent
-                if (this._showStatsPanelCallback) {
-                    this._showStatsPanelCallback();
+
+                // Check if opened from start menu - if so, don't call hideRecordsOverlay
+                // as the OverlayManager handles closing it directly
+                if (!this.recordsOverlay.dataset.openedFromStart) {
+                    this.hideRecordsOverlay();
+                    // Callback to show stats panel again would be passed from parent
+                    if (this._showStatsPanelCallback) {
+                        this._showStatsPanelCallback();
+                    }
                 }
                 e.preventDefault();
                 e.stopPropagation();

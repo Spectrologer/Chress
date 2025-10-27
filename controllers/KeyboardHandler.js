@@ -126,9 +126,9 @@ export class KeyboardHandler {
 
         // Debug
         if (event.key === '9') {
-            this.game.player.addPoints(1);
-            this.game.combatManager.addPointAnimation(this.game.player.x, this.game.player.y, 1);
-            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
+            this.game.playerFacade.addPoints(1);
+            const pos = this.game.playerFacade.getPosition();
+            this.game.combatManager.addPointAnimation(pos.x, pos.y, 1);
             return null;
         }
         if (event.key === '0') {
@@ -141,7 +141,8 @@ export class KeyboardHandler {
             return null;
         }
         if (event.key === '7') {
-            this.game.transitionToZone(9, 0, 'teleport', this.game.player.x, this.game.player.y);
+            const pos = this.game.playerFacade.getPosition();
+            this.game.transitionToZone(9, 0, 'teleport', pos.x, pos.y);
             return null;
         }
 

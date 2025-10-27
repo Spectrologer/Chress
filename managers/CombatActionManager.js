@@ -6,17 +6,30 @@ export class CombatActionManager {
         this.game = game;
     }
 
-    isValidBishopSpearCharge(gridCoords, playerPos, includeRadial = false) {
-        const inventoryItems = (this.game.player.inventory || []).slice();
-        const radialItems = includeRadial ? (this.game.player.radialInventory || []) : [];
+    /**
+     * Finds a usable item of the specified type in player's inventory
+     * @param {string} itemType - The type of item to find
+     * @param {boolean} includeRadial - Whether to include radial inventory
+     * @returns {Object|null} The item if found and usable, null otherwise
+     */
+    findUsableItem(itemType, includeRadial = false) {
+        // Use facade for inventory access
+        const inventoryItems = this.game.playerFacade.getInventory();
+        const radialItems = includeRadial ? this.game.playerFacade.getRadialInventory() : [];
         const allItems = inventoryItems.concat(radialItems);
-        const bishopSpearItem = allItems.find(item => item.type === 'bishop_spear' && item.uses > 0 && !item.disabled);
+        return allItems.find(item => item.type === itemType && item.uses > 0 && !item.disabled) || null;
+    }
+
+    isValidBishopSpearCharge(gridCoords, playerPos, includeRadial = false) {
+        const bishopSpearItem = this.findUsableItem('bishop_spear', includeRadial);
         if (!bishopSpearItem) return null;
 
         const enemyCollection = this.game.enemyCollection;
         const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y, true);
-        const targetTile = this.game.grid[gridCoords.y][gridCoords.x];
-        const isEmptyTile = !enemyAtCoords && this.game.player.isWalkable(gridCoords.x, gridCoords.y, this.game.grid, playerPos.x, playerPos.y);
+        // Use gridManager for grid access
+        const targetTile = this.game.gridManager.getTile(gridCoords.x, gridCoords.y);
+        // Use playerFacade for walkability check
+        const isEmptyTile = !enemyAtCoords && this.game.playerFacade.isWalkable(gridCoords.x, gridCoords.y, this.game.grid, playerPos.x, playerPos.y);
 
         if (!(enemyAtCoords || isEmptyTile)) return null;
 
@@ -30,16 +43,15 @@ export class CombatActionManager {
     }
 
     isValidHorseIconCharge(gridCoords, playerPos, includeRadial = false) {
-        const inventoryItems = (this.game.player.inventory || []).slice();
-        const radialItems = includeRadial ? (this.game.player.radialInventory || []) : [];
-        const allItems = inventoryItems.concat(radialItems);
-        const horseIconItem = allItems.find(item => item.type === 'horse_icon' && item.uses > 0 && !item.disabled);
+        const horseIconItem = this.findUsableItem('horse_icon', includeRadial);
         if (!horseIconItem) return null;
 
         const enemyCollection = this.game.enemyCollection;
         const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y, true);
-        const targetTile = this.game.grid[gridCoords.y][gridCoords.x];
-        const isEmptyTile = !enemyAtCoords && this.game.player.isWalkable(gridCoords.x, gridCoords.y, this.game.grid, playerPos.x, playerPos.y);
+        // Use gridManager for grid access
+        const targetTile = this.game.gridManager.getTile(gridCoords.x, gridCoords.y);
+        // Use playerFacade for walkability check
+        const isEmptyTile = !enemyAtCoords && this.game.playerFacade.isWalkable(gridCoords.x, gridCoords.y, this.game.grid, playerPos.x, playerPos.y);
 
         if (!(enemyAtCoords || isEmptyTile)) return null;
 
@@ -55,10 +67,7 @@ export class CombatActionManager {
     }
 
     isValidBowShot(gridCoords, playerPos, includeRadial = false) {
-        const inventoryItems = (this.game.player.inventory || []).slice();
-        const radialItems = includeRadial ? (this.game.player.radialInventory || []) : [];
-        const allItems = inventoryItems.concat(radialItems);
-        const bowItem = allItems.find(item => item.type === 'bow' && item.uses > 0 && !item.disabled);
+        const bowItem = this.findUsableItem('bow', includeRadial);
         if (!bowItem) return null;
 
         const enemyCollection = this.game.enemyCollection;
@@ -71,7 +80,7 @@ export class CombatActionManager {
         const isOrthogonal = (dx === 0 && Math.abs(dy) > 1) || (dy === 0 && Math.abs(dx) > 1);
         if (!isOrthogonal) return null;
 
-        // Check line of sight
+        // Check line of sight (use playerFacade for walkability)
         let isPathClear = true;
         const stepX = Math.sign(dx);
         const stepY = Math.sign(dy);
@@ -79,7 +88,7 @@ export class CombatActionManager {
         let checkY = playerPos.y + stepY;
 
         while (checkX !== gridCoords.x || checkY !== gridCoords.y) {
-            if (!this.game.player.isWalkable(checkX, checkY, this.game.grid)) {
+            if (!this.game.playerFacade.isWalkable(checkX, checkY, this.game.grid)) {
                 isPathClear = false;
                 break;
             }

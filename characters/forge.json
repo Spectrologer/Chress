@@ -1,0 +1,95 @@
+{
+  "id": "forge",
+  "name": "Forge",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A dialogue NPC who tells lies and shares false information. Found in the home interior.",
+    "created": "2025-10-27T00:00:00.000Z",
+    "version": "1.0.0"
+  },
+  "display": {
+    "sprite": "assets/fauna/forge.png",
+    "portrait": "assets/fauna/forgeface.png",
+    "tileType": "FORGE"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": 3,
+    "y": 3,
+    "dimension": 1,
+    "spawnLogic": "fixed"
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I can move between tiles."
+      },
+      {
+        "id": "msg_1",
+        "text": "I'm not in your way, am I?"
+      },
+      {
+        "id": "msg_2",
+        "text": "There was so much food in here earlier. Yumm!"
+      },
+      {
+        "id": "msg_3",
+        "text": "Did you get a chance to play with the horse icons in here a minute ago?"
+      },
+      {
+        "id": "msg_4",
+        "text": "If you stand still for long enough, enemies can't hurt you."
+      },
+      {
+        "id": "msg_5",
+        "text": "The walls are edible. You just need to be hungry enough."
+      },
+      {
+        "id": "msg_6",
+        "text": "Water actually makes you thirstier the more you drink it."
+      },
+      {
+        "id": "msg_7",
+        "text": "I taught Crayn everything he knows."
+      },
+      {
+        "id": "msg_8",
+        "text": "The further you go, the easier it gets."
+      },
+      {
+        "id": "msg_9",
+        "text": "I invented moving in an L-shape."
+      },
+      {
+        "id": "msg_10",
+        "text": "Sometimes Crayn goes fishing."
+      },
+      {
+        "id": "msg_11",
+        "text": "If you drop food, it turns into gold."
+      },
+      {
+        "id": "msg_12",
+        "text": "Enemies are friendly if you're only holding water."
+      },
+      {
+        "id": "msg_13",
+        "text": "The world is a sphere. Go far enough east, you'll end up back at the start from the west."
+      },
+      {
+        "id": "msg_14",
+        "text": "If you don't score points for 100 boards, you might find a secret."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 85
+  }
+}

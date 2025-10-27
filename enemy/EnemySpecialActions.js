@@ -1,6 +1,6 @@
 import { EnemyChargeBehaviors } from './EnemyChargeBehaviors.js';
 import { EnemyLineOfSight } from './EnemyLineOfSight.js';
-import audioManager from '../utils/AudioManager.js';
+import { EnemyAttackHelper } from './EnemyAttackHelper.js';
 
 export class EnemySpecialActions {
     // Execute charge move for Zard enemy type
@@ -51,12 +51,11 @@ export class EnemySpecialActions {
             if (distance === 1) {
                 // Adjacent: normal attack without knockback
                 if (!isSimulation && (!game || !game.playerJustAttacked)) {
-                    player.takeDamage(enemy.attack);
-                    player.startBump(enemy.x - playerX, enemy.y - playerY);
-                    enemy.startBump(playerX - enemy.x, playerY - enemy.y);
-                    enemy.justAttacked = true;
-                    enemy.attackAnimation = 15;
-                    audioManager.playSound('attack');
+                    EnemyAttackHelper.performCompleteAttack(
+                        enemy, player, playerX, playerY, grid,
+                        'enemy_lizardeaux_attack',
+                        { skipKnockback: true }
+                    );
                 }
                 return null; // All in one turn
             } else {
@@ -96,20 +95,17 @@ export class EnemySpecialActions {
                         const attackDx = playerX - chargeMove.x;
                         const attackDy = playerY - chargeMove.y;
 
-                        player.takeDamage(enemy.attack); // Damage player
-                        player.startBump(attackDx, attackDy); // Bump player away from enemy
-                        enemy.startBump(-attackDx, -attackDy); // Bump enemy away from player
+                        // Calculate knockback in attack direction
+                        const knockbackPos = {
+                            x: playerX + (attackDx !== 0 ? attackDx : 0),
+                            y: playerY + (attackDy !== 0 ? attackDy : 0)
+                        };
 
-                        // Knockback player backward
-                        let knockbackX = playerX;
-                        let knockbackY = playerY;
-                        if (attackDx !== 0) knockbackX += attackDx;
-                        if (attackDy !== 0) knockbackY += attackDy;
-
-                        // Only knockback if walkable, else stay
-                        if (player.isWalkable(knockbackX, knockbackY, grid)) {
-                            player.setPosition(knockbackX, knockbackY);
-                        }
+                        EnemyAttackHelper.performCompleteAttack(
+                            enemy, player, playerX, playerY, grid,
+                            'enemy_lizardeaux_charge',
+                            { knockbackOverride: knockbackPos }
+                        );
                     }
                 }
                 return null; // All in one turn
@@ -145,24 +141,19 @@ export class EnemySpecialActions {
                 enemy.y = chargeMove.y;
                 // Now adjacent, attack
                 if (!isSimulation && (!game || !game.playerJustAttacked)) {
-                    player.takeDamage(enemy.attack);
-                    player.startBump(enemy.x - playerX, enemy.y - playerY);
-                    enemy.startBump(playerX - enemy.x, playerY - enemy.y);
-                    enemy.justAttacked = true;
-                    enemy.attackAnimation = 15;
-                    audioManager.playSound('attack');
-                    audioManager.playSound('attack');
-                    // Knockback away
-                    const dx = playerX - enemy.x; // Since enemy is at charge position (adjacent), dx= +/-1 or 0
+                    // Knockback away from enemy position
+                    const dx = playerX - enemy.x;
                     const dy = playerY - enemy.y;
-                    let knockbackX = playerX;
-                    let knockbackY = playerY;
-                    if (dx !== 0) knockbackX += dx;
-                    if (dy !== 0) knockbackY += dy;
-                    // Only knockback if the position is walkable
-                    if (player.isWalkable(knockbackX, knockbackY, grid)) {
-                        player.setPosition(knockbackX, knockbackY);
-                    }
+                    const knockbackPos = {
+                        x: playerX + (dx !== 0 ? dx : 0),
+                        y: playerY + (dy !== 0 ? dy : 0)
+                    };
+
+                    EnemyAttackHelper.performCompleteAttack(
+                        enemy, player, playerX, playerY, grid,
+                        'enemy_lazerd_charge',
+                        { knockbackOverride: knockbackPos }
+                    );
                 }
             }
             return null;

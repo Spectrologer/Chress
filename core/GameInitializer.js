@@ -173,6 +173,9 @@ export class GameInitializer {
             }
         }
 
+        // Initialize AnimationCoordinator to handle animation events
+        this.game.animationCoordinator = this.game._services.get('animationCoordinator');
+
         // Event listeners
         this.setupEventListeners();
 

@@ -237,6 +237,20 @@ export class BoardLoader {
         if (featureType === 'random_food_water') {
             return this.generateRandomFoodWater(foodAssets);
         }
+        if (featureType === 'random_merchant') {
+            return this.generateRandomMerchant();
+        }
+
+        // Handle special port_* format (port_stairup, port_stairdown, port_interior, port_cistern)
+        if (featureType.startsWith('port_')) {
+            const portKind = featureType.substring(5); // Remove 'port_' prefix
+            return { type: TILE_TYPES.PORT, portKind: portKind };
+        }
+
+        // Handle exit_* format (exit_up, exit_down, exit_left, exit_right)
+        if (featureType.startsWith('exit_')) {
+            return TILE_TYPES.EXIT;
+        }
 
         // Convert feature name to TILE_TYPES constant
         const tileTypeName = featureType.toUpperCase();
@@ -316,6 +330,20 @@ export class BoardLoader {
                 return TILE_TYPES.WATER;
             }
         }
+    }
+
+    /**
+     * Generate a random merchant NPC
+     */
+    generateRandomMerchant() {
+        const merchants = [
+            TILE_TYPES.MARK,
+            TILE_TYPES.NIB,
+            TILE_TYPES.RUNE,
+            TILE_TYPES.PENNE,
+            TILE_TYPES.SQUIG
+        ];
+        return merchants[Math.floor(Math.random() * merchants.length)];
     }
 
     /**

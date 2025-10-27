@@ -1,4 +1,5 @@
 import { TILE_TYPES } from '../core/constants/index.js';
+import { getNPCCharacterData } from '../core/NPCLoader.js';
 
 // Sign class, refactored to be a static utility class for message handling.
 export class Sign {
@@ -237,6 +238,29 @@ export class Sign {
     }
 
     static getBarterNpcData(npcType) {
+        // Try to get from loaded JSON data first
+        const characterData = getNPCCharacterData(npcType);
+        if (characterData && characterData.interaction?.type === 'barter') {
+            // Convert JSON format to expected format
+            return {
+                name: characterData.name,
+                portrait: characterData.display.portrait,
+                message: characterData.interaction.greeting,
+                subclass: 'merchant',
+                voicePitch: characterData.audio?.voicePitch,
+                trades: characterData.interaction.trades.map(trade => ({
+                    id: trade.id,
+                    requiredItem: trade.requires.resource,
+                    requiredAmount: trade.requires.amount,
+                    requiredItemName: trade.requires.displayName,
+                    requiredItemImg: trade.requires.icon,
+                    receivedItemName: trade.gives.displayName,
+                    receivedItemImg: trade.gives.icon
+                }))
+            };
+        }
+
+        // Fallback to hardcoded data
         return Sign.barterNpcData[npcType];
     }
 
@@ -456,8 +480,7 @@ export class Sign {
             subclass: 'dialogue',
             currentMessageIndex: 0,
             messages: [
-                "Thanks a lot'l.",
-                "The underground is dangerous."
+                "Thanks a lot'l."
             ]
         }
         ,
@@ -473,6 +496,21 @@ export class Sign {
     };
 
     static getDialogueNpcData(npcType) {
+        // Try to get from loaded JSON data first
+        const characterData = getNPCCharacterData(npcType);
+        if (characterData && characterData.interaction?.type === 'dialogue') {
+            // Convert JSON format to expected format
+            return {
+                name: characterData.name,
+                portrait: characterData.display.portrait,
+                subclass: 'dialogue',
+                voicePitch: characterData.audio?.voicePitch,
+                currentMessageIndex: 0,
+                messages: characterData.interaction.dialogueTree.map(entry => entry.text)
+            };
+        }
+
+        // Fallback to hardcoded data
         return Sign.dialogueNpcData[npcType];
     }
 }

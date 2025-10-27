@@ -2,6 +2,7 @@ import { TILE_TYPES } from '../../constants/index.js';
 import { BaseSpawnCommand } from './BaseSpawnCommand.js';
 import { SpawnPositionHelper } from '../SpawnPositionHelper.js';
 import { logger } from '../../logger.js';
+import { SharedStructureSpawner } from '../../../utils/SharedStructureSpawner.js';
 
 /**
  * Simple spawn commands for basic items
@@ -107,45 +108,14 @@ export class SpawnPitfallCommand extends BaseSpawnCommand {
  */
 
 export class SpawnShackCommand extends BaseSpawnCommand {
-    getSpawnPosition(game) {
-        return SpawnPositionHelper.findShackSpawnPosition(game);
-    }
-
     execute(game) {
-        const pos = this.getSpawnPosition(game);
-        if (pos) {
-            // Place the 3x3 shack
-            for (let dy = 0; dy < 3; dy++) {
-                for (let dx = 0; dx < 3; dx++) {
-                    if (dy === 2 && dx === 1) { // Middle bottom tile
-                        game.grid[pos.y + dy][pos.x + dx] = TILE_TYPES.PORT;
-                    } else {
-                        game.grid[pos.y + dy][pos.x + dx] = TILE_TYPES.SHACK;
-                    }
-                }
-            }
-            logger.log('Spawned shack at', pos);
-        } else {
-            logger.log('No valid spawn position found for shack');
-        }
+        SharedStructureSpawner.spawnShack(game);
     }
 }
 
 export class SpawnCisternCommand extends BaseSpawnCommand {
-    getSpawnPosition(game) {
-        return SpawnPositionHelper.findCisternSpawnPosition(game);
-    }
-
     execute(game) {
-        const pos = this.getSpawnPosition(game);
-        if (pos) {
-            // Place the 1x2 cistern
-            game.grid[pos.y][pos.x] = TILE_TYPES.PORT;
-            game.grid[pos.y + 1][pos.x] = TILE_TYPES.CISTERN;
-            logger.log('Spawned cistern at', pos);
-        } else {
-            logger.log('No valid spawn position found for cistern');
-        }
+        SharedStructureSpawner.spawnCistern(game);
     }
 }
 

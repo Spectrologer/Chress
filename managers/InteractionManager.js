@@ -61,8 +61,8 @@ export class InteractionManager {
             (gridCoords, playerPos) => this.bombManager.triggerBombExplosion(gridCoords, playerPos),
             (gridCoords, playerPos) => {
                 const bishopSpearCharge = this.combatManager.isValidBishopSpearCharge(gridCoords, playerPos);
-                // Only auto-start a bishop charge if the item is present in the main inventory
-                if (bishopSpearCharge && this.game.player.inventory.indexOf(bishopSpearCharge.item) >= 0) {
+                // Only auto-start a bishop charge if the item is present in the main inventory (via facade)
+                if (bishopSpearCharge && this.game.playerFacade.findInInventory(item => item === bishopSpearCharge.item)) {
                     this.game.transientGameState.setPendingCharge(bishopSpearCharge);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
@@ -79,8 +79,8 @@ export class InteractionManager {
             },
             (gridCoords, playerPos) => {
                 const horseIconCharge = this.combatManager.isValidHorseIconCharge(gridCoords, playerPos);
-                // Only auto-start a knight charge if the item is present in the main inventory
-                if (horseIconCharge && this.game.player.inventory.indexOf(horseIconCharge.item) >= 0) {
+                // Only auto-start a knight charge if the item is present in the main inventory (via facade)
+                if (horseIconCharge && this.game.playerFacade.findInInventory(item => item === horseIconCharge.item)) {
                     this.game.transientGameState.setPendingCharge(horseIconCharge);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
@@ -97,8 +97,8 @@ export class InteractionManager {
             },
             (gridCoords, playerPos) => {
                 const bowShot = this.combatManager.isValidBowShot(gridCoords, playerPos);
-                // Only auto-start a bow shot if the bow is in the main inventory
-                if (bowShot && this.game.player.inventory.indexOf(bowShot.item) >= 0) {
+                // Only auto-start a bow shot if the bow is in the main inventory (via facade)
+                if (bowShot && this.game.playerFacade.findInInventory(item => item === bowShot.item)) {
                     this.game.transientGameState.setPendingCharge(bowShot);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
@@ -235,8 +235,8 @@ export class InteractionManager {
 
                         // If player has the axe, play the file-backed 'slash' SFX
                         // and mark the enemy to suppress the generic 'attack' sound
-                        // in CombatManager (prevents double-playing).
-                        if (this.game.player.abilities && this.game.player.abilities.has && this.game.player.abilities.has('axe')) {
+                        // in CombatManager (prevents double-playing). Use facade for ability check.
+                        if (this.game.playerFacade.hasAbility('axe')) {
                             audioManager.playSound('slash', { game: this.game });
                             enemyAtCoords._suppressAttackSound = true;
                         }

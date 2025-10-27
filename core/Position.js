@@ -12,10 +12,18 @@
  * - Immutable operations (returns new Position instances)
  * - Grid coordinate validation
  * - Serialization support for events and storage
+ *
+ * This class now delegates to PositionCalculator and PositionValidator
+ * for mathematical operations and validation logic.
  */
 
 import { getOffset, getDeltaToDirection } from './utils/DirectionUtils.js';
 import { GRID_SIZE } from './constants/index.js';
+import { PositionCalculator } from './PositionCalculator.js';
+import { PositionValidator } from './PositionValidator.js';
+
+// Re-export the utility classes for convenience
+export { PositionCalculator, PositionValidator };
 
 export class Position {
     /**
@@ -93,9 +101,9 @@ export class Position {
      */
     equals(xOrPos, y) {
         if (typeof xOrPos === 'number') {
-            return this.x === xOrPos && this.y === y;
+            return PositionValidator.equals(this, { x: xOrPos, y });
         }
-        return this.x === xOrPos.x && this.y === xOrPos.y;
+        return PositionValidator.equals(this, xOrPos);
     }
 
     /**
@@ -103,7 +111,7 @@ export class Position {
      * @returns {boolean}
      */
     isZero() {
-        return this.x === 0 && this.y === 0;
+        return PositionValidator.isZero(this);
     }
 
     // ==========================================
@@ -117,7 +125,7 @@ export class Position {
      * @returns {number}
      */
     chebyshevDistance(other) {
-        return Math.max(Math.abs(other.x - this.x), Math.abs(other.y - this.y));
+        return PositionCalculator.chebyshevDistance(this, other);
     }
 
     /**
@@ -126,7 +134,7 @@ export class Position {
      * @returns {number}
      */
     manhattanDistance(other) {
-        return Math.abs(other.x - this.x) + Math.abs(other.y - this.y);
+        return PositionCalculator.manhattanDistance(this, other);
     }
 
     /**
@@ -135,9 +143,7 @@ export class Position {
      * @returns {number}
      */
     euclideanDistance(other) {
-        const dx = other.x - this.x;
-        const dy = other.y - this.y;
-        return Math.sqrt(dx * dx + dy * dy);
+        return PositionCalculator.euclideanDistance(this, other);
     }
 
     /**
@@ -159,10 +165,7 @@ export class Position {
      * @returns {{dx: number, dy: number}}
      */
     delta(other) {
-        return {
-            dx: other.x - this.x,
-            dy: other.y - this.y
-        };
+        return PositionCalculator.delta(this, other);
     }
 
     /**
@@ -171,10 +174,7 @@ export class Position {
      * @returns {{dx: number, dy: number}}
      */
     absDelta(other) {
-        return {
-            dx: Math.abs(other.x - this.x),
-            dy: Math.abs(other.y - this.y)
-        };
+        return PositionCalculator.absDelta(this, other);
     }
 
     /**
@@ -238,14 +238,7 @@ export class Position {
      * @returns {boolean}
      */
     isAdjacentTo(other, allowDiagonal = true) {
-        const { dx, dy } = this.absDelta(other);
-        if (dx === 0 && dy === 0) return false; // Same position
-
-        if (allowDiagonal) {
-            return dx <= 1 && dy <= 1;
-        } else {
-            return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
-        }
+        return PositionCalculator.isAdjacent(this, other, allowDiagonal);
     }
 
     /**
@@ -254,25 +247,8 @@ export class Position {
      * @returns {Position[]} Array of adjacent positions
      */
     getNeighbors(allowDiagonal = true) {
-        const offsets = allowDiagonal
-            ? [
-                { x: 0, y: -1 },  // North
-                { x: 0, y: 1 },   // South
-                { x: -1, y: 0 },  // West
-                { x: 1, y: 0 },   // East
-                { x: -1, y: -1 }, // NW
-                { x: 1, y: -1 },  // NE
-                { x: -1, y: 1 },  // SW
-                { x: 1, y: 1 }    // SE
-            ]
-            : [
-                { x: 0, y: -1 },  // North
-                { x: 0, y: 1 },   // South
-                { x: -1, y: 0 },  // West
-                { x: 1, y: 0 }    // East
-            ];
-
-        return offsets.map(offset => this.add(offset));
+        const neighbors = PositionCalculator.getNeighbors(this, allowDiagonal);
+        return neighbors.map(pos => new Position(pos.x, pos.y));
     }
 
     /**
@@ -295,7 +271,7 @@ export class Position {
      * @returns {boolean}
      */
     isInBounds(gridSize = GRID_SIZE) {
-        return this.x >= 0 && this.x < gridSize && this.y >= 0 && this.y < gridSize;
+        return PositionValidator.isInBounds(this, gridSize);
     }
 
     /**
@@ -305,7 +281,7 @@ export class Position {
      * @returns {boolean}
      */
     isInInnerBounds(gridSize = GRID_SIZE) {
-        return this.x >= 1 && this.x < gridSize - 1 && this.y >= 1 && this.y < gridSize - 1;
+        return PositionValidator.isInInnerBounds(this, gridSize);
     }
 
     /**
@@ -314,10 +290,8 @@ export class Position {
      * @returns {Position} New position clamped to bounds
      */
     clampToBounds(gridSize = GRID_SIZE) {
-        return new Position(
-            Math.max(0, Math.min(gridSize - 1, this.x)),
-            Math.max(0, Math.min(gridSize - 1, this.y))
-        );
+        const clamped = PositionValidator.clampToBounds(this, gridSize);
+        return new Position(clamped.x, clamped.y);
     }
 
     // ==========================================
@@ -331,7 +305,7 @@ export class Position {
      * @returns {*} The tile at this position, or undefined if out of bounds
      */
     getTile(grid) {
-        return grid[this.y]?.[this.x];
+        return PositionValidator.getTile(this, grid);
     }
 
     /**
@@ -353,8 +327,7 @@ export class Position {
      * @returns {boolean}
      */
     isValidTile(grid, validator) {
-        const tile = this.getTile(grid);
-        return tile !== undefined && validator(tile);
+        return PositionValidator.isValidTile(this, grid, validator);
     }
 
     // ==========================================
@@ -423,7 +396,7 @@ export class Position {
      * @returns {boolean}
      */
     isSameRow(other) {
-        return this.y === other.y;
+        return PositionCalculator.isSameRow(this, other);
     }
 
     /**
@@ -432,7 +405,7 @@ export class Position {
      * @returns {boolean}
      */
     isSameColumn(other) {
-        return this.x === other.x;
+        return PositionCalculator.isSameColumn(this, other);
     }
 
     /**
@@ -442,7 +415,7 @@ export class Position {
      * @returns {boolean}
      */
     isOrthogonalTo(other) {
-        return this.isSameRow(other) || this.isSameColumn(other);
+        return PositionCalculator.isOrthogonal(this, other);
     }
 
     /**
@@ -451,8 +424,7 @@ export class Position {
      * @returns {boolean}
      */
     isDiagonalTo(other) {
-        const { dx, dy } = this.absDelta(other);
-        return dx === dy && dx > 0;
+        return PositionCalculator.isDiagonal(this, other);
     }
 
     /**
@@ -464,40 +436,8 @@ export class Position {
      * @returns {Position[]} Array of positions along the line
      */
     lineTo(target, includeStart = false, includeEnd = true) {
-        const positions = [];
-        let x0 = this.x;
-        let y0 = this.y;
-        const x1 = target.x;
-        const y1 = target.y;
-
-        const dx = Math.abs(x1 - x0);
-        const dy = Math.abs(y1 - y0);
-        const sx = x0 < x1 ? 1 : -1;
-        const sy = y0 < y1 ? 1 : -1;
-        let err = dx - dy;
-
-        while (true) {
-            const isStart = x0 === this.x && y0 === this.y;
-            const isEnd = x0 === x1 && y0 === y1;
-
-            if ((!isStart || includeStart) && (!isEnd || includeEnd)) {
-                positions.push(new Position(x0, y0));
-            }
-
-            if (isEnd) break;
-
-            const e2 = 2 * err;
-            if (e2 > -dy) {
-                err -= dy;
-                x0 += sx;
-            }
-            if (e2 < dx) {
-                err += dx;
-                y0 += sy;
-            }
-        }
-
-        return positions;
+        const positions = PositionCalculator.lineTo(this, target, includeStart, includeEnd);
+        return positions.map(pos => new Position(pos.x, pos.y));
     }
 
     /**
@@ -507,24 +447,8 @@ export class Position {
      * @returns {Position[]} Array of positions in the rectangle
      */
     rectangleTo(corner, includeEdges = true) {
-        const positions = [];
-        const minX = Math.min(this.x, corner.x);
-        const maxX = Math.max(this.x, corner.x);
-        const minY = Math.min(this.y, corner.y);
-        const maxY = Math.max(this.y, corner.y);
-
-        const startX = includeEdges ? minX : minX + 1;
-        const endX = includeEdges ? maxX : maxX - 1;
-        const startY = includeEdges ? minY : minY + 1;
-        const endY = includeEdges ? maxY : maxY - 1;
-
-        for (let y = startY; y <= endY; y++) {
-            for (let x = startX; x <= endX; x++) {
-                positions.push(new Position(x, y));
-            }
-        }
-
-        return positions;
+        const positions = PositionCalculator.rectangleBetween(this, corner, includeEdges);
+        return positions.map(pos => new Position(pos.x, pos.y));
     }
 
     /**
@@ -534,13 +458,7 @@ export class Position {
      * @returns {Position[]} Array of positions within radius
      */
     positionsWithinRadius(radius, includeCenter = false) {
-        const positions = [];
-        for (let dy = -radius; dy <= radius; dy++) {
-            for (let dx = -radius; dx <= radius; dx++) {
-                if (!includeCenter && dx === 0 && dy === 0) continue;
-                positions.push(new Position(this.x + dx, this.y + dy));
-            }
-        }
-        return positions;
+        const positions = PositionCalculator.positionsWithinRadius(this, radius, includeCenter);
+        return positions.map(pos => new Position(pos.x, pos.y));
     }
 }

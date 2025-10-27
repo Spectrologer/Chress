@@ -250,6 +250,7 @@ export class RadialInventoryUI {
             case 'bow': return 'assets/items/bow.png';
             case 'bishop_spear': return 'assets/items/spear.png';
             case 'book_of_time_travel': return 'assets/items/book.png';
+            case 'shovel': return 'assets/items/shovel.png';
             default: return item.image || 'assets/items/unknown.png';
         }
     }

@@ -18,6 +18,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "live-server --port=3000 --host=0.0.0.0 --cors --open=/ --spa",
+    "asset-viewer": "live-server --port=3001 --host=0.0.0.0 --cors --open=/asset-viewer.html",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"

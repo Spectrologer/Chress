@@ -12,8 +12,10 @@ export class SoundManager {
         this.audioContext = null; // lazily created/resumed on user gesture
         this.currentMusicVolume = 0.0625; // default music volume (reduced)
         this.currentMusicTrack = null; // track file path intended to be playing
+        this.wasMusicPlayingBeforeBlur = false; // track if music was playing before losing focus
         this.loadSounds();
         this.setupEventListeners();
+        this.setupFocusListeners();
     }
 
     setupEventListeners() {
@@ -26,6 +28,71 @@ export class SoundManager {
         eventBus.on(EventTypes.ZONE_CHANGED, (data) => {
             this.setMusicForZone({ dimension: data.dimension });
         });
+    }
+
+    setupFocusListeners() {
+        // Handle Page Visibility API (desktop and mobile)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.handleBlur();
+            } else {
+                this.handleFocus();
+            }
+        });
+
+        // Handle window blur/focus events (desktop fallback)
+        window.addEventListener('blur', () => {
+            this.handleBlur();
+        });
+
+        window.addEventListener('focus', () => {
+            this.handleFocus();
+        });
+    }
+
+    handleBlur() {
+        // When app loses focus, pause music if it's currently playing
+        const isMusicPlaying = this.musicEnabled &&
+            (this.backgroundAudioElement && !this.backgroundAudioElement.paused);
+
+        this.wasMusicPlayingBeforeBlur = isMusicPlaying;
+
+        if (isMusicPlaying) {
+            try {
+                if (this.backgroundGain) {
+                    // Mute via gain node
+                    this.backgroundGain.gain.setValueAtTime(0, this.audioContext?.currentTime || 0);
+                }
+                if (this.backgroundAudioElement) {
+                    // Pause the audio element
+                    this.backgroundAudioElement.pause();
+                }
+            } catch (e) {
+                // Ignore pause errors
+            }
+        }
+    }
+
+    handleFocus() {
+        // When app regains focus, resume music only if it was playing before blur
+        // and music is still enabled by user preference
+        if (this.wasMusicPlayingBeforeBlur && this.musicEnabled) {
+            try {
+                if (this.backgroundAudioElement) {
+                    this.backgroundAudioElement.play().catch(() => {
+                        // Ignore autoplay policy errors
+                    });
+                }
+                if (this.backgroundGain && this.audioContext) {
+                    // Restore volume via gain node
+                    this.backgroundGain.gain.setValueAtTime(this.currentMusicVolume || 0.0625, this.audioContext.currentTime);
+                }
+            } catch (e) {
+                // Ignore resume errors
+            }
+        }
+        // Reset the flag after handling focus
+        this.wasMusicPlayingBeforeBlur = false;
     }
 
     async loadSounds() {

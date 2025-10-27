@@ -56,7 +56,8 @@
       "Bash(powershell -Command:*)",
       "Bash(mkdir:*)",
       "Bash(git add:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(del:*)"
     ],
     "deny": [],
     "ask": []

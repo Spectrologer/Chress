@@ -1,0 +1,54 @@
+{
+  "id": "penne",
+  "name": "Penne",
+  "type": "merchant",
+  "metadata": {
+    "description": "A merchant who trades meat for water. Found in the home interior.",
+    "created": "2025-10-27T00:00:00.000Z",
+    "version": "1.0.0"
+  },
+  "display": {
+    "sprite": "assets/fauna/penne.png",
+    "portrait": "assets/fauna/penneface.png",
+    "tileType": "PENNE"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 1,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.2
+  },
+  "interaction": {
+    "type": "barter",
+    "greeting": "Give me meat!",
+    "trades": [
+      {
+        "id": "penne_water",
+        "requires": {
+          "resource": "food/meat",
+          "amount": 1,
+          "displayName": "Meat",
+          "icon": "assets/food/meat/beaf.png"
+        },
+        "gives": {
+          "type": "item",
+          "id": "water",
+          "amount": 1,
+          "displayName": "Water",
+          "icon": "assets/items/water.png"
+        },
+        "repeatable": true
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false,
+    "leaveAfterTrade": false
+  },
+  "audio": {
+    "voicePitch": 150
+  }
+}

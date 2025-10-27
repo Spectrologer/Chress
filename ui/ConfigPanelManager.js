@@ -128,7 +128,12 @@ export class ConfigPanelManager {
             backBtn.addEventListener('click', (e) => {
                 e?.preventDefault?.();
                 e?.stopPropagation?.();
-                this.hideConfigOverlay();
+
+                // Check if opened from start menu - if so, don't call hideConfigOverlay
+                // as the OverlayManager handles closing it directly
+                if (!this.configOverlay.dataset.openedFromStart) {
+                    this.hideConfigOverlay();
+                }
             });
         }
     }

@@ -155,31 +155,59 @@ export class ZoneManager {
     _positionAfterInteriorEntry() {
         const playerFacade = this.game.playerFacade;
         const gridManager = this.game.gridManager;
+        const currentZone = playerFacade.getCurrentZone();
         const portX = Math.floor(GRID_SIZE / 2);
         const portY = GRID_SIZE - 1; // bottom edge
 
-        // Check if a PORT already exists in the zone (e.g., from a custom board)
-        let existingPortX = null;
-        let existingPortY = null;
+        // First, check if the zone has custom playerSpawn metadata (from board JSON)
+        const zoneKey = this.game.zoneRepository.createZoneKey(
+            currentZone.x,
+            currentZone.y,
+            currentZone.dimension,
+            currentZone.depth
+        );
+        const zoneData = this.game.zoneRepository.getByKey(zoneKey);
+
+        if (zoneData?.playerSpawn) {
+            playerFacade.setPosition(zoneData.playerSpawn.x, zoneData.playerSpawn.y);
+            return;
+        }
+
+        // Check if a PORT with portKind 'interior' exists (entrance from surface)
+        let interiorPortX = null;
+        let interiorPortY = null;
+        let anyPortX = null;
+        let anyPortY = null;
 
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
+                const tile = this.game.grid[y][x];
                 if (gridManager.isTileType(x, y, TILE_TYPES.PORT)) {
-                    existingPortX = x;
-                    existingPortY = y;
-                    break;
+                    // Store first PORT we find as fallback
+                    if (anyPortX === null) {
+                        anyPortX = x;
+                        anyPortY = y;
+                    }
+                    // Check if it's specifically an interior port
+                    if (tile && typeof tile === 'object' && tile.portKind === 'interior') {
+                        interiorPortX = x;
+                        interiorPortY = y;
+                        break;
+                    }
                 }
             }
-            if (existingPortX !== null) break;
+            if (interiorPortX !== null) break;
         }
 
-        // If no PORT exists, create one at the default position
-        if (existingPortX === null) {
+        // Prefer interior port, then any port, then create default
+        if (interiorPortX !== null) {
+            playerFacade.setPosition(interiorPortX, interiorPortY);
+        } else if (anyPortX !== null) {
+            playerFacade.setPosition(anyPortX, anyPortY);
+        } else {
+            // No PORT exists, create one at the default position
             this.validateAndSetTile(this.game.grid, portX, portY, TILE_TYPES.PORT);
             playerFacade.setPosition(portX, portY);
-        } else {
-            // Use the existing PORT position
-            playerFacade.setPosition(existingPortX, existingPortY);
         }
     }
 
@@ -293,41 +321,42 @@ export class ZoneManager {
 
     positionPlayerAfterTransition(exitSide, exitX, exitY) {
         const gridManager = this.game.gridManager;
+        const playerFacade = this.game.playerFacade;
         switch (exitSide) {
             case 'bottom':
                 // Came from bottom, enter north side at corresponding x position
                 gridManager.setTile(exitX, 0, TILE_TYPES.EXIT);
                 this.game.zoneGenerator.clearPathToExit(exitX, 0);
-                this.game.player.setPosition(exitX, 0);
+                playerFacade.setPosition(exitX, 0);
                 break;
             case 'top':
                 // Came from top, enter south side at corresponding x position
                 gridManager.setTile(exitX, GRID_SIZE - 1, TILE_TYPES.EXIT);
                 this.game.zoneGenerator.clearPathToExit(exitX, GRID_SIZE - 1);
-                this.game.player.setPosition(exitX, GRID_SIZE - 1);
+                playerFacade.setPosition(exitX, GRID_SIZE - 1);
                 break;
             case 'right':
                 // Came from right, enter west side at corresponding y position
                 gridManager.setTile(0, exitY, TILE_TYPES.EXIT);
                 this.game.zoneGenerator.clearPathToExit(0, exitY);
-                this.game.player.setPosition(0, exitY);
+                playerFacade.setPosition(0, exitY);
                 break;
             case 'left':
                 // Came from left, enter east side at corresponding y position
                 gridManager.setTile(GRID_SIZE - 1, exitY, TILE_TYPES.EXIT);
                 this.game.zoneGenerator.clearPathToExit(GRID_SIZE - 1, exitY);
-                this.game.player.setPosition(GRID_SIZE - 1, exitY);
+                playerFacade.setPosition(GRID_SIZE - 1, exitY);
                 break;
             case 'teleport':
                 // Teleport: place in center
-                this.game.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
+                playerFacade.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
                 break;
             case 'port':
                 this._positionAfterPortTransition(exitX, exitY);
                 break;
             default:
                 // Fallback to center
-                this.game.player.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
+                playerFacade.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
                 break;
         }
     }
@@ -471,7 +500,7 @@ export class ZoneManager {
                 offScreenX = GRID_SIZE;
             }
 
-            this.game.player.setPosition(offScreenX, offScreenY);
+            this.game.playerFacade.setPosition(offScreenX, offScreenY);
         }
 
         // If we generated this zone as the result of a port transition, ensure

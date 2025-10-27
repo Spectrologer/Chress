@@ -2,7 +2,9 @@
 // Helpers for voice settings, audio context, and typing SFX for MessageManager
 
 // Generate deterministic voice/settings based on the character name.
-export function getVoiceSettingsForName(name) {
+// @param {string} name - Character name
+// @param {number} [customPitch] - Optional custom pitch override from character JSON
+export function getVoiceSettingsForName(name, customPitch) {
     if (!name) return null;
     const n = (name || '').toString();
     // simple hash: sum of char codes
@@ -11,10 +13,12 @@ export function getVoiceSettingsForName(name) {
         hash = (hash * 31 + n.charCodeAt(i)) >>> 0;
     }
     const lower = n.trim().toLowerCase();
+
+    // Use custom pitch if provided, otherwise use character-specific defaults
     if (lower === 'crayn' || lower.indexOf('crayn') !== -1) {
         return {
             name: 'Crayn',
-            base: 120,
+            base: customPitch !== undefined ? customPitch : 120,
             wave1: 'sawtooth',
             wave2: 'sine',
             bandMul: 1.6,
@@ -22,7 +26,7 @@ export function getVoiceSettingsForName(name) {
         };
     }
     if (lower.indexOf('merchant') !== -1 || lower.indexOf('shop') !== -1 || lower.indexOf('vendor') !== -1) {
-        const base = 90 + (hash % 80);
+        const base = customPitch !== undefined ? customPitch : (90 + (hash % 80));
         return {
             name: n,
             base: base,
@@ -32,7 +36,7 @@ export function getVoiceSettingsForName(name) {
             peak: 0.16 + ((hash % 20) / 200)
         };
     }
-    const base = 80 + (hash % 160);
+    const base = customPitch !== undefined ? customPitch : (80 + (hash % 160));
     const waveChoices = ['sine','triangle','sawtooth','square'];
     const wave1 = waveChoices[hash % waveChoices.length];
     const wave2 = waveChoices[(hash >> 3) % waveChoices.length];

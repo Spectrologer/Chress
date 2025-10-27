@@ -193,6 +193,17 @@ export class ItemMetadata {
             delete item.quantity;
         }
 
+        // Initialize uses for items that need them (shovel, bow, bishop_spear, horse_icon)
+        const itemsWithUses = {
+            'shovel': 3,
+            'bow': 3,
+            'bishop_spear': 3,
+            'horse_icon': 3
+        };
+        if (item.type in itemsWithUses && typeof item.uses === 'undefined') {
+            item.uses = itemsWithUses[item.type];
+        }
+
         // Initialize quantity for stackable consumables
         const defaultQty = this.getDefaultQuantity(item.type);
         if (defaultQty !== undefined && typeof item.quantity === 'undefined') {

@@ -1,0 +1,53 @@
+{
+  "id": "nib",
+  "name": "Nib",
+  "type": "merchant",
+  "metadata": {
+    "description": "A merchant who trades points for random trinkets.",
+    "created": "2025-10-27T00:00:00.000Z",
+    "version": "1.0.0"
+  },
+  "display": {
+    "sprite": "assets/fauna/nib.png",
+    "portrait": "assets/fauna/nibface.png",
+    "tileType": "NIB"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": null,
+    "spawnLogic": "procedural"
+  },
+  "interaction": {
+    "type": "barter",
+    "greeting": "I offer knowledge for your points.",
+    "trades": [
+      {
+        "id": "nib_item",
+        "requires": {
+          "resource": "points",
+          "amount": 10,
+          "displayName": "Points",
+          "icon": "assets/items/points.png"
+        },
+        "gives": {
+          "type": "item",
+          "id": "random_trinket",
+          "amount": 1,
+          "displayName": "Random Trinket",
+          "icon": "assets/items/chest.png"
+        },
+        "repeatable": false
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false,
+    "leaveAfterTrade": false
+  },
+  "audio": {
+    "voicePitch": 110
+  }
+}

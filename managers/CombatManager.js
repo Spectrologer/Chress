@@ -5,6 +5,7 @@ import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
 import { safeCall, safeGet } from '../utils/SafeServiceCall.js';
+import { EnemyAttackHelper } from '../enemy/EnemyAttackHelper.js';
 
 export class CombatManager {
     /**
@@ -66,17 +67,20 @@ export class CombatManager {
      * @returns {Object} Result of the attack including defeated status
      */
     handlePlayerAttack(enemy, playerPos) {
-        // Start player attack animation
-        this.game.player.startAttackAnimation();
+        // Emit player attack animation event
+        eventBus.emit(EventTypes.ANIMATION_ATTACK, {
+            x: playerPos.x,
+            y: playerPos.y
+        });
 
         // Enemy bump animation (pushed back from player)
         enemy.startBump(playerPos.x - enemy.x, playerPos.y - enemy.y);
 
-        // Set player action state
-        this.game.player.setAction('attack');
+        // Set player action state (via facade)
+        this.game.playerFacade.setAction('attack');
 
-        // Play axe sound if player has the ability
-        if (this.game.player.abilities?.has?.('axe')) {
+        // Play axe sound if player has the ability (via facade)
+        if (this.game.playerFacade.hasAbility('axe')) {
             audioManager.playSound('slash', { game: this.game });
             enemy._suppressAttackSound = true;
         }
@@ -87,11 +91,19 @@ export class CombatManager {
         // Handle post-defeat animations based on combo
         if (result?.defeated) {
             if (result.consecutiveKills >= 2) {
-                // Backflip on combo kills (2+)
-                this.game.player.startBackflip();
+                // Emit backflip animation event on combo kills (2+)
+                eventBus.emit(EventTypes.ANIMATION_BACKFLIP, {
+                    x: playerPos.x,
+                    y: playerPos.y
+                });
             } else {
-                // Regular bump towards enemy on single kill
-                this.game.player.startBump(enemy.x - playerPos.x, enemy.y - playerPos.y);
+                // Emit bump animation event towards enemy on single kill
+                EnemyAttackHelper.emitBumpEventWithDirection(
+                    enemy.x - playerPos.x,
+                    enemy.y - playerPos.y,
+                    playerPos.x,
+                    playerPos.y
+                );
             }
         }
 
@@ -137,7 +149,7 @@ export class CombatManager {
 
                 // Add the enemy to the corresponding underground zone's data
                 const currentZone = this.getCurrentZone();
-                const depth = this.game.player.undergroundDepth || 1;
+                const depth = this.game.playerFacade.getUndergroundDepth() || 1;
                 const undergroundZoneKey = createZoneKey(currentZone.x, currentZone.y, 2, depth);
                 if (this.game.zoneRepository.hasByKey(undergroundZoneKey)) {
                     const undergroundZoneData = this.game.zoneRepository.getByKey(undergroundZoneKey);
@@ -250,7 +262,11 @@ export class CombatManager {
                 // If enemy didn't move, use a default bump
                 const knockbackX = enemyMoveX !== 0 ? Math.sign(enemyMoveX) : 1;
                 const knockbackY = enemyMoveY !== 0 ? Math.sign(enemyMoveY) : 0;
-                this.game.player.startBump(knockbackX, knockbackY);
+
+                // Emit bump animation event for player knockback
+                EnemyAttackHelper.emitBumpEventWithDirection(
+                    knockbackX, knockbackY, playerPos.x, playerPos.y
+                );
 
                 // Enemy attack animation (bump towards player - opposite of knockback)
                 enemy.attackAnimation = 15;
@@ -259,8 +275,8 @@ export class CombatManager {
                 // Play hurt sound
                 audioManager.playSound('hurt', { game: this.game });
 
-                // Deal damage
-                this.game.player.takeDamage(enemy.attack);
+                // Deal damage (via facade)
+                this.game.playerFacade.takeDamage(enemy.attack);
                 enemy.takeDamage(enemy.health);
                 isDefeated = true;
             }
@@ -278,12 +294,12 @@ export class CombatManager {
             enemyCollection.remove(enemy, false); // Don't emit events for combat removals
         }
 
-        // Emit event for player stats change instead of calling UIManager directly
+        // Emit event for player stats change (via facade) instead of calling UIManager directly
         eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {
-            health: this.game.player.health,
-            points: this.game.player.points,
-            hunger: this.game.player.hunger,
-            thirst: this.game.player.thirst
+            health: this.game.playerFacade.getHealth(),
+            points: this.game.playerFacade.getPoints(),
+            hunger: this.game.playerFacade.getHunger(),
+            thirst: this.game.playerFacade.getThirst()
         });
 
         // If player was attacked, add a pause for dramatic effect

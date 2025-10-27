@@ -1,0 +1,54 @@
+{
+  "id": "squig",
+  "name": "Squig",
+  "type": "merchant",
+  "metadata": {
+    "description": "A merchant who trades nuts for water. Found in the home interior.",
+    "created": "2025-10-27T00:00:00.000Z",
+    "version": "1.0.0"
+  },
+  "display": {
+    "sprite": "assets/fauna/squig.png",
+    "portrait": "assets/fauna/squigface.png",
+    "tileType": "SQUIG"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 1,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.1
+  },
+  "interaction": {
+    "type": "barter",
+    "greeting": "I'm nuts for nuts!",
+    "trades": [
+      {
+        "id": "squig_water",
+        "requires": {
+          "resource": "food/veg",
+          "amount": 1,
+          "displayName": "Nut",
+          "icon": "assets/food/veg/nut.png"
+        },
+        "gives": {
+          "type": "item",
+          "id": "water",
+          "amount": 1,
+          "displayName": "Water",
+          "icon": "assets/items/water.png"
+        },
+        "repeatable": true
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false,
+    "leaveAfterTrade": false
+  },
+  "audio": {
+    "voicePitch": 200
+  }
+}

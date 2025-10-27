@@ -1,5 +1,4 @@
-import audioManager from '../utils/AudioManager.js';
-import { ANIMATION_CONSTANTS } from '../core/constants/index.js';
+import { EnemyAttackHelper } from './EnemyAttackHelper.js';
 
 export const EnemyAttackMixin = {
     performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation = false) {
@@ -63,34 +62,18 @@ export const EnemyAttackMixin = {
 
         // Perform ram attack
         if (!isSimulation) {
-            player.takeDamage(this.attack);
-            player.startBump(this.x - playerX, this.y - playerY);
-            this.startBump(playerX - this.x, playerY - this.y);
-            this.justAttacked = true;
-            this.attackAnimation = ANIMATION_CONSTANTS.ATTACK_ANIMATION_FRAMES;
-            audioManager.playSound('attack');
-
-            // Calculate knockback direction (away from enemy)
+            // Calculate knockback direction using helper
             const attackDx = playerX - this.x;
             const attackDy = playerY - this.y;
-            if (attackDx !== 0 || attackDy !== 0) {
-                const absDx = Math.abs(attackDx);
-                const absDy = Math.abs(attackDy);
-                let knockbackX = playerX;
-                let knockbackY = playerY;
-                if (absDx > absDy) {
-                    knockbackX += attackDx > 0 ? 1 : -1;
-                } else if (absDy > absDx) {
-                    knockbackY += attackDy > 0 ? 1 : -1;
-                } else {
-                    knockbackX += attackDx > 0 ? 1 : -1;
-                    knockbackY += attackDy > 0 ? 1 : -1;
-                }
-                // Only knockback if the position is walkable
-                if (player.isWalkable(knockbackX, knockbackY, grid)) {
-                    player.setPosition(knockbackX, knockbackY);
-                }
-            }
+            const knockbackPos = EnemyAttackHelper.calculateKnockbackPosition(
+                attackDx, attackDy, playerX, playerY
+            );
+
+            EnemyAttackHelper.performCompleteAttack(
+                this, player, playerX, playerY, grid,
+                'enemy_ram',
+                { knockbackOverride: knockbackPos }
+            );
         }
 
         return true; // Ram attack performed
@@ -170,23 +153,17 @@ export const EnemyAttackMixin = {
         const onPlayer = (newDx === 0 && newDy === 0);
         const adjacent = (newDx === 1 && newDy === 0) || (newDx === 0 && newDy === 1) || (newDx === 1 && newDy === 1);
         if (onPlayer || adjacent) {
-            // Perform attack
-            player.takeDamage(this.attack);
-            player.startBump(this.x - playerX, this.y - playerY);
-            this.startBump(playerX - this.x, playerY - this.y);
-            this.justAttacked = true;
-            this.attackAnimation = ANIMATION_CONSTANTS.ATTACK_ANIMATION_FRAMES;
-            audioManager.playSound('attack');
+            // Perform attack with knockback in charge direction
+            const knockbackPos = {
+                x: playerX + (dx !== 0 ? (dx > 0 ? 1 : -1) : 0),
+                y: playerY + (dy !== 0 ? (dy > 0 ? 1 : -1) : 0)
+            };
 
-            // Knockback away in the attack direction
-            let knockbackX = playerX;
-            let knockbackY = playerY;
-            if (dx !== 0) knockbackX += dx > 0 ? 1 : -1;
-            if (dy !== 0) knockbackY += dy > 0 ? 1 : -1;
-            // Only knockback if the position is walkable
-            if (player.isWalkable(knockbackX, knockbackY, grid)) {
-                player.setPosition(knockbackX, knockbackY);
-            }
+            EnemyAttackHelper.performCompleteAttack(
+                this, player, playerX, playerY, grid,
+                'enemy_charge',
+                { knockbackOverride: knockbackPos }
+            );
         }
     }
 };

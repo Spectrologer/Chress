@@ -1,0 +1,59 @@
+{
+  "id": "felt",
+  "name": "Felt",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A dialogue NPC who admires Crayn and shares humorous observations. Found in the home interior.",
+    "created": "2025-10-27T00:00:00.000Z",
+    "version": "1.0.0"
+  },
+  "display": {
+    "sprite": "assets/fauna/felt.png",
+    "portrait": "assets/fauna/feltface.png",
+    "tileType": "FELT"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": 6,
+    "y": 3,
+    "dimension": 1,
+    "spawnLogic": "fixed"
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Crayn is like, so smart."
+      },
+      {
+        "id": "msg_1",
+        "text": "I want to be like Crayn."
+      },
+      {
+        "id": "msg_2",
+        "text": "Word around town is Crayn has 4 hearts."
+      },
+      {
+        "id": "msg_3",
+        "text": "I wonder if Crayn likes standing too."
+      },
+      {
+        "id": "msg_4",
+        "text": "I hear Crayn can put down food after he picks it up! Couldn't be me."
+      },
+      {
+        "id": "msg_5",
+        "text": "Forge is a LIAR."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 170
+  }
+}

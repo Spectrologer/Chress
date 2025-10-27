@@ -86,6 +86,10 @@ export const EventTypes = {
   ANIMATION_ARROW: 'animation:arrow',
   ANIMATION_POINT: 'animation:point',
   ANIMATION_MULTIPLIER: 'animation:multiplier',
+  ANIMATION_BUMP: 'animation:bump',
+  ANIMATION_BACKFLIP: 'animation:backflip',
+  ANIMATION_SMOKE: 'animation:smoke',
+  ANIMATION_ATTACK: 'animation:attack',
 
   // Audio Events
   SOUND_PLAY: 'audio:sound:play',
@@ -95,6 +99,15 @@ export const EventTypes = {
   GAME_EXIT_SHOVEL_MODE: 'game:exit:shovel_mode',
   GAME_INCREMENT_BOMB_ACTIONS: 'game:increment:bomb_actions',
   GAME_DECREMENT_ZONE_ENTRY_COUNT: 'game:decrement:zone_entry_count',
+
+  // Combat State Events
+  COMBAT_STARTED: 'combat:started',
+  COMBAT_ENDED: 'combat:ended',
+  PLAYER_KNOCKBACK: 'player:knockback',
+
+  // Trade Events
+  TRADE_INITIATED: 'trade:initiated',
+  TRADE_COMPLETED: 'trade:completed',
 
   // Enemy Collection Events
   ENEMY_SPAWNED: 'enemy:spawned',
@@ -338,4 +351,52 @@ export const EventTypes = {
  * @property {number} oldValue - Previous thirst value
  * @property {number} newValue - New thirst value
  * @property {number} delta - Change in thirst
+ */
+
+/**
+ * @typedef {Object} AnimationBumpEvent
+ * @property {number} dx - Direction X offset for bump
+ * @property {number} dy - Direction Y offset for bump
+ * @property {number} playerX - Player's current X position
+ * @property {number} playerY - Player's current Y position
+ */
+
+/**
+ * @typedef {Object} AnimationBackflipEvent
+ * @property {number} [x] - Optional X position for backflip
+ * @property {number} [y] - Optional Y position for backflip
+ */
+
+/**
+ * @typedef {Object} AnimationSmokeEvent
+ * @property {number} x - X position for smoke animation
+ * @property {number} y - Y position for smoke animation
+ */
+
+/**
+ * @typedef {Object} AnimationAttackEvent
+ * @property {number} [x] - Optional X position for attack
+ * @property {number} [y] - Optional Y position for attack
+ */
+
+/**
+ * @typedef {Object} PlayerKnockbackEvent
+ * @property {number} x - New X position after knockback
+ * @property {number} y - New Y position after knockback
+ * @property {string} [source] - Source of the knockback (enemy, trap, etc.)
+ */
+
+/**
+ * @typedef {Object} TradeInitiatedEvent
+ * @property {string} npc - NPC name
+ * @property {Object} tradeData - Trade data details
+ * @property {number} playerPoints - Player's current points
+ */
+
+/**
+ * @typedef {Object} TradeCompletedEvent
+ * @property {string} npc - NPC name
+ * @property {number} cost - Cost of the trade
+ * @property {Object} reward - Reward received
+ * @property {number} remainingPoints - Player's remaining points
  */

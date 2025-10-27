@@ -5,6 +5,8 @@ import { Enemy } from '../entities/Enemy.js';
 import { logger } from './logger.js';
 import { customZoneLoader } from '../loaders/CustomZoneLoader.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
+import { SharedStructureSpawner } from '../utils/SharedStructureSpawner.js';
+import { PositionValidator } from './PositionValidator.js';
 
 // Generic spawn utility that reduces code duplication
 function spawnAtPosition(game, tileValue, itemName) {
@@ -52,38 +54,13 @@ const consoleCommands = {
   spawnGouge: (game) => spawnAtPosition(game, TILE_TYPES.GOUGE, 'Gouge'),
 
   spawnShack: function(game) {
-    // Find position and check if enough space for 3x3 shack + 1 front space
-    const pos = findShackSpawnPosition(game);
-    if (pos) {
-      // Place the 3x3 shack
-      for (let dy = 0; dy < 3; dy++) {
-        for (let dx = 0; dx < 3; dx++) {
-          if (dy === 2 && dx === 1) { // Middle bottom tile
-            game.grid[pos.y + dy][pos.x + dx] = TILE_TYPES.PORT; // Entrance
-          } else {
-            game.grid[pos.y + dy][pos.x + dx] = TILE_TYPES.SHACK;
-          }
-        }
-      }
-      logger.log('Spawned shack at', pos);
-    } else {
-      logger.log('No valid spawn position found for shack');
-    }
+    SharedStructureSpawner.spawnShack(game);
   },
 
   spawnShovel: (game) => spawnAtPosition(game, { type: TILE_TYPES.SHOVEL, uses: 3 }, 'shovel'),
 
   spawnCistern: function(game) {
-    const pos = findCisternSpawnPosition(game);
-    if (pos) {
-      // Place the 1x2 cistern
-      game.grid[pos.y][pos.x] = TILE_TYPES.PORT;    // Top part (entrance)
-      game.grid[pos.y + 1][pos.x] = TILE_TYPES.CISTERN; // Bottom part
-
-      logger.log('Spawned cistern at', pos);
-    } else {
-      logger.log('No valid spawn position found for cistern');
-    }
+    SharedStructureSpawner.spawnCistern(game);
   },
 
   spawnPitfall: (game) => spawnAtPosition(game, TILE_TYPES.PITFALL, 'pitfall'),
@@ -114,7 +91,7 @@ const consoleCommands = {
       logger.log('Usage: tp(x, y) - teleport player to position');
       return;
     }
-    if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) {
+    if (!PositionValidator.isInBounds({ x, y })) {
       logger.log('Position out of bounds. Valid range: 0 to', GRID_SIZE - 1);
       return;
     }
@@ -500,98 +477,6 @@ function isValidSpawnPosition(game, x, y) {
   const enemyHere = game.enemyCollection.hasEnemyAt(x, y);
 
   return walkable && !enemyHere;
-}
-
-// Helper function to find shack spawn position - finds position for 3x3 shack + front space
-function findShackSpawnPosition(game) {
-  const availablePositions = [];
-
-  // Scan the entire grid for available 3x3 areas with front space
-  for (let y = 1; y < GRID_SIZE - 4; y++) { // Leave space for shack (3) + front (1) + border
-    for (let x = 1; x < GRID_SIZE - 3; x++) {
-      if (isValidShackPosition(game, x, y)) {
-        availablePositions.push({ x, y });
-      }
-    }
-  }
-
-  if (availablePositions.length === 0) {
-    return undefined; // No valid positions
-  }
-
-  // Pick a random available position
-  const randomIndex = Math.floor(Math.random() * availablePositions.length);
-  return availablePositions[randomIndex];
-}
-
-function isValidShackPosition(game, x, y) {
-  // Check 3x3 area
-  for (let dy = 0; dy < 3; dy++) {
-    for (let dx = 0; dx < 3; dx++) {
-      const tileX = x + dx;
-      const tileY = y + dy;
-      if (tileX < 0 || tileX >= GRID_SIZE || tileY < 0 || tileY >= GRID_SIZE) {
-        return false;
-      }
-      const tile = game.grid[tileY][tileX];
-      if (tile !== TILE_TYPES.FLOOR) {
-        return false;
-      }
-      // Check if any enemy is at this position
-      if (game.enemyCollection.hasEnemyAt(tileX, tileY)) {
-        return false;
-      }
-    }
-  }
-
-  // Check front space (south of shack, middle)
-  const frontX = x + 1;
-  const frontY = y + 3;
-  if (frontY >= GRID_SIZE) return false;
-  const frontTile = game.grid[frontY][frontX];
-  if (frontTile !== TILE_TYPES.FLOOR) {
-    return false;
-  }
-  if (game.enemyCollection.hasEnemyAt(frontX, frontY)) {
-    return false;
-  }
-
-  return true;
-}
-
-function findCisternSpawnPosition(game) {
-    const availablePositions = [];
-
-    // Scan for available 1x2 vertical space
-    for (let y = 1; y < GRID_SIZE - 2; y++) { // y from 1 to GRID_SIZE - 3
-        for (let x = 1; x < GRID_SIZE - 1; x++) { // x from 1 to GRID_SIZE - 2
-            if (isValidCisternPosition(game, x, y)) {
-                availablePositions.push({ x, y });
-            }
-        }
-    }
-
-    if (availablePositions.length === 0) {
-        return undefined;
-    }
-
-    const randomIndex = Math.floor(Math.random() * availablePositions.length);
-    return availablePositions[randomIndex];
-}
-
-function isValidCisternPosition(game, x, y) {
-    // Check 1x2 vertical area
-    for (let dy = 0; dy < 2; dy++) {
-        const tileX = x;
-        const tileY = y + dy;
-        if (tileX < 0 || tileX >= GRID_SIZE || tileY < 0 || tileY >= GRID_SIZE) {
-            return false;
-        }
-        if (game.grid[tileY][tileX] !== TILE_TYPES.FLOOR) {
-            return false;
-        }
-    }
-    return true;
 }
 
 export default consoleCommands;
