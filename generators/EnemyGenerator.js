@@ -1,52 +1,14 @@
 import { Enemy } from '../entities/Enemy.js';
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index.js';
 import { findValidPlacement } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
-
-const ENEMY_WEIGHTS = {
-    lizardy: 1,
-    lizardo: 2,
-    lizardeaux: 3,
-    lizord: 3,
-    lazerd: 5,
-    zard: 3
-};
+import { ContentRegistry } from '../core/ContentRegistry.js';
 
 const MAX_WEIGHT_PER_LEVEL = {
     1: 4,
     2: 6,
     3: 8,
     4: 10
-};
-
-const ENEMY_SPAWN_PROBS = {
-    1: [
-        { type: 'lizardy', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_1_HOME.LIZARDY },
-        { type: 'lizardo', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_1_HOME.LIZARDO },
-        { type: 'lizardeaux', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_1_HOME.LIZARDEAUX }
-    ],
-    2: [
-        { type: 'lizardy', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_2_WOODS.LIZARDY },
-        { type: 'lizardo', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_2_WOODS.LIZARDO },
-        { type: 'lizardeaux', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_2_WOODS.LIZARDEAUX },
-        { type: 'zard', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_2_WOODS.ZARD },
-        { type: 'lizord', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_2_WOODS.LIZORD }
-    ],
-    3: [
-        { type: 'lizardy', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.LIZARDY },
-        { type: 'lizardo', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.LIZARDO },
-        { type: 'lizardeaux', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.LIZARDEAUX },
-        { type: 'zard', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.ZARD },
-        { type: 'lizord', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.LIZORD },
-        { type: 'lazerd', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_3_WILDS.LAZERD }
-    ],
-    4: [
-        { type: 'lizardeaux', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_4_FRONTIER.LIZARDEAUX },
-        { type: 'lizardy', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_4_FRONTIER.LIZARDY },
-        { type: 'lizord', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_4_FRONTIER.LIZORD },
-        { type: 'lazerd', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_4_FRONTIER.LAZERD },
-        { type: 'zard', prob: SPAWN_PROBABILITIES.ENEMY_TYPES.LEVEL_4_FRONTIER.ZARD }
-    ]
 };
 
 export class EnemyGenerator {
@@ -57,7 +19,12 @@ export class EnemyGenerator {
     }
 
     selectEnemyType(zoneLevel) {
-        const list = ENEMY_SPAWN_PROBS[zoneLevel] || ENEMY_SPAWN_PROBS[1];
+        // Get spawnable enemies from ContentRegistry
+        const list = ContentRegistry.getSpawnableEnemies(zoneLevel);
+        if (!list || list.length === 0) {
+            return null;
+        }
+
         let rand = Math.random();
         let cum = 0;
         for (let item of list) {
@@ -83,7 +50,12 @@ export class EnemyGenerator {
             });
             if (pos) {
                 let enemyType = this.selectEnemyType(zoneLevel);
-                let weight = ENEMY_WEIGHTS[enemyType];
+                if (!enemyType) break; // No valid enemies for this level
+
+                // Get enemy weight from ContentRegistry
+                const enemyConfig = ContentRegistry.getEnemy(enemyType);
+                let weight = enemyConfig ? enemyConfig.weight : 1;
+
                 if (currentWeight + weight <= maxWeight) {
                     this.enemies.push({ x: pos.x, y: pos.y, enemyType: enemyType, id: `${zoneX}_${zoneY}_${localId++}` });
                     currentWeight += weight;

@@ -369,6 +369,15 @@ body {
     letter-spacing: 0.5px;
     margin-bottom: 2px;
 }
+
+.start-overlay-logo {
+    width: clamp(120px, 35vw, 280px);
+    height: auto;
+    margin-bottom: 8px;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
 .start-overlay-sub {
     font-size: clamp(14px, 3.2vw, 20px);
     font-weight: 700;

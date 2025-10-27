@@ -1,4 +1,5 @@
 import audioManager from '../utils/AudioManager.js';
+import { ANIMATION_CONSTANTS } from '../core/constants/index.js';
 
 export const EnemyAttackMixin = {
     performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation = false) {
@@ -66,7 +67,7 @@ export const EnemyAttackMixin = {
             player.startBump(this.x - playerX, this.y - playerY);
             this.startBump(playerX - this.x, playerY - this.y);
             this.justAttacked = true;
-            this.attackAnimation = 15;
+            this.attackAnimation = ANIMATION_CONSTANTS.ATTACK_ANIMATION_FRAMES;
             audioManager.playSound('attack');
 
             // Calculate knockback direction (away from enemy)
@@ -174,7 +175,7 @@ export const EnemyAttackMixin = {
             player.startBump(this.x - playerX, this.y - playerY);
             this.startBump(playerX - this.x, playerY - this.y);
             this.justAttacked = true;
-            this.attackAnimation = 15;
+            this.attackAnimation = ANIMATION_CONSTANTS.ATTACK_ANIMATION_FRAMES;
             audioManager.playSound('attack');
 
             // Knockback away in the attack direction

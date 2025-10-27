@@ -1,5 +1,6 @@
 import GridIterator from '../utils/GridIterator.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
+import { isTileType } from '../utils/TileUtils.js';
 
 describe('GridIterator', () => {
     describe('initialize', () => {
@@ -70,7 +71,7 @@ describe('GridIterator', () => {
     describe('findTiles', () => {
         test('finds all matching tiles', () => {
             const grid = GridIterator.initialize((x, y) => (x + y) % 2 === 0 ? TILE_TYPES.FLOOR : TILE_TYPES.WALL);
-            const floors = GridIterator.findTiles(grid, tile => tile === TILE_TYPES.FLOOR);
+            const floors = GridIterator.findTiles(grid, tile => isTileType(tile, TILE_TYPES.FLOOR));
 
             expect(floors.length).toBeGreaterThan(0);
             floors.forEach(({ tile, x, y }) => {
@@ -81,7 +82,7 @@ describe('GridIterator', () => {
 
         test('returns empty array when no matches', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
-            const walls = GridIterator.findTiles(grid, tile => tile === TILE_TYPES.WALL);
+            const walls = GridIterator.findTiles(grid, tile => isTileType(tile, TILE_TYPES.WALL));
             expect(walls).toEqual([]);
         });
 
@@ -90,7 +91,7 @@ describe('GridIterator', () => {
             grid[5][3] = TILE_TYPES.WALL;
             grid[7][2] = TILE_TYPES.WALL;
 
-            const walls = GridIterator.findTiles(grid, tile => tile === TILE_TYPES.WALL);
+            const walls = GridIterator.findTiles(grid, tile => isTileType(tile, TILE_TYPES.WALL));
             expect(walls.length).toBe(2);
             expect(walls).toContainEqual({ tile: TILE_TYPES.WALL, x: 3, y: 5 });
             expect(walls).toContainEqual({ tile: TILE_TYPES.WALL, x: 2, y: 7 });
@@ -103,13 +104,13 @@ describe('GridIterator', () => {
             grid[3][5] = TILE_TYPES.WALL;
             grid[7][2] = TILE_TYPES.WALL;
 
-            const result = GridIterator.findFirst(grid, tile => tile === TILE_TYPES.WALL);
+            const result = GridIterator.findFirst(grid, tile => isTileType(tile, TILE_TYPES.WALL));
             expect(result).toEqual({ tile: TILE_TYPES.WALL, x: 5, y: 3 });
         });
 
         test('returns null when no match', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
-            const result = GridIterator.findFirst(grid, tile => tile === TILE_TYPES.WALL);
+            const result = GridIterator.findFirst(grid, tile => isTileType(tile, TILE_TYPES.WALL));
             expect(result).toBeNull();
         });
 
@@ -118,7 +119,7 @@ describe('GridIterator', () => {
             grid[1][1] = TILE_TYPES.WALL;
             grid[5][5] = TILE_TYPES.WALL;
 
-            const result = GridIterator.findFirst(grid, tile => tile === TILE_TYPES.WALL, {
+            const result = GridIterator.findFirst(grid, tile => isTileType(tile, TILE_TYPES.WALL), {
                 startY: 3, startX: 3
             });
             expect(result).toEqual({ tile: TILE_TYPES.WALL, x: 5, y: 5 });
@@ -128,14 +129,14 @@ describe('GridIterator', () => {
     describe('count', () => {
         test('counts matching tiles', () => {
             const grid = GridIterator.initialize((x, y) => (x + y) % 3 === 0 ? TILE_TYPES.WALL : TILE_TYPES.FLOOR);
-            const wallCount = GridIterator.count(grid, tile => tile === TILE_TYPES.WALL);
+            const wallCount = GridIterator.count(grid, tile => isTileType(tile, TILE_TYPES.WALL));
             expect(wallCount).toBeGreaterThan(0);
             expect(wallCount).toBeLessThan(GRID_SIZE * GRID_SIZE);
         });
 
         test('returns 0 when no matches', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
-            const count = GridIterator.count(grid, tile => tile === TILE_TYPES.WALL);
+            const count = GridIterator.count(grid, tile => isTileType(tile, TILE_TYPES.WALL));
             expect(count).toBe(0);
         });
     });
@@ -145,13 +146,13 @@ describe('GridIterator', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
             grid[5][5] = TILE_TYPES.WALL;
 
-            const result = GridIterator.some(grid, tile => tile === TILE_TYPES.WALL);
+            const result = GridIterator.some(grid, tile => isTileType(tile, TILE_TYPES.WALL));
             expect(result).toBe(true);
         });
 
         test('returns false if no tiles match', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
-            const result = GridIterator.some(grid, tile => tile === TILE_TYPES.WALL);
+            const result = GridIterator.some(grid, tile => isTileType(tile, TILE_TYPES.WALL));
             expect(result).toBe(false);
         });
     });
@@ -159,7 +160,7 @@ describe('GridIterator', () => {
     describe('every', () => {
         test('returns true if all tiles match', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
-            const result = GridIterator.every(grid, tile => tile === TILE_TYPES.FLOOR);
+            const result = GridIterator.every(grid, tile => isTileType(tile, TILE_TYPES.FLOOR));
             expect(result).toBe(true);
         });
 
@@ -167,7 +168,7 @@ describe('GridIterator', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
             grid[5][5] = TILE_TYPES.WALL;
 
-            const result = GridIterator.every(grid, tile => tile === TILE_TYPES.FLOOR);
+            const result = GridIterator.every(grid, tile => isTileType(tile, TILE_TYPES.FLOOR));
             expect(result).toBe(false);
         });
     });
@@ -208,13 +209,13 @@ describe('GridIterator', () => {
     describe('canPlaceRegion', () => {
         test('returns true for valid placement', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
-            const result = GridIterator.canPlaceRegion(grid, 5, 5, 3, 3, tile => tile === TILE_TYPES.FLOOR);
+            const result = GridIterator.canPlaceRegion(grid, 5, 5, 3, 3, tile => isTileType(tile, TILE_TYPES.FLOOR));
             expect(result).toBe(true);
         });
 
         test('returns false when out of bounds', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
-            const result = GridIterator.canPlaceRegion(grid, GRID_SIZE - 2, GRID_SIZE - 2, 3, 3, tile => tile === TILE_TYPES.FLOOR);
+            const result = GridIterator.canPlaceRegion(grid, GRID_SIZE - 2, GRID_SIZE - 2, 3, 3, tile => isTileType(tile, TILE_TYPES.FLOOR));
             expect(result).toBe(false);
         });
 
@@ -222,7 +223,7 @@ describe('GridIterator', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
             grid[6][6] = TILE_TYPES.WALL;
 
-            const result = GridIterator.canPlaceRegion(grid, 5, 5, 3, 3, tile => tile === TILE_TYPES.FLOOR);
+            const result = GridIterator.canPlaceRegion(grid, 5, 5, 3, 3, tile => isTileType(tile, TILE_TYPES.FLOOR));
             expect(result).toBe(false);
         });
 
@@ -230,7 +231,7 @@ describe('GridIterator', () => {
             const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
             grid[5][7] = TILE_TYPES.WALL; // Edge of 3x3 region starting at (5,5)
 
-            const result = GridIterator.canPlaceRegion(grid, 5, 5, 3, 3, tile => tile === TILE_TYPES.FLOOR);
+            const result = GridIterator.canPlaceRegion(grid, 5, 5, 3, 3, tile => isTileType(tile, TILE_TYPES.FLOOR));
             expect(result).toBe(false);
         });
     });
@@ -362,11 +363,11 @@ describe('GridIterator', () => {
             grid[5][5] = TILE_TYPES.WALL;
 
             // Try to place 3x3 structure at (4, 4) - should fail because (5,5) has wall
-            const canPlace = GridIterator.canPlaceRegion(grid, 4, 4, 3, 3, tile => tile === TILE_TYPES.FLOOR);
+            const canPlace = GridIterator.canPlaceRegion(grid, 4, 4, 3, 3, tile => isTileType(tile, TILE_TYPES.FLOOR));
             expect(canPlace).toBe(false);
 
             // Try at (6, 6) - should succeed
-            const canPlace2 = GridIterator.canPlaceRegion(grid, 6, 6, 3, 3, tile => tile === TILE_TYPES.FLOOR);
+            const canPlace2 = GridIterator.canPlaceRegion(grid, 6, 6, 3, 3, tile => isTileType(tile, TILE_TYPES.FLOOR));
             expect(canPlace2).toBe(true);
 
             if (canPlace2) {

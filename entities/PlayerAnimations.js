@@ -1,4 +1,4 @@
-import { ANIMATION_CONSTANTS } from '../core/constants.js';
+import { ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '../core/constants/index.js';
 
 export class PlayerAnimations {
     constructor(player) {
@@ -28,25 +28,24 @@ export class PlayerAnimations {
     }
 
     startBump(deltaX, deltaY) {
-        // Strong visual bump for damage feedback (increased from 24 to 48)
-        this.bumpOffsetX = deltaX * 48;
-        this.bumpOffsetY = deltaY * 48;
+        // Strong visual bump for damage feedback
+        this.bumpOffsetX = deltaX * PHYSICS_CONSTANTS.BUMP_OFFSET_MAGNITUDE;
+        this.bumpOffsetY = deltaY * PHYSICS_CONSTANTS.BUMP_OFFSET_MAGNITUDE;
         this.bumpFrames = ANIMATION_CONSTANTS.BUMP_ANIMATION_FRAMES;
     }
 
-    startBackflip(frames = 20) {
+    startBackflip(frames = ANIMATION_CONSTANTS.BACKFLIP_DEFAULT_FRAMES) {
         // Sequence: bump -> small delay -> jump+rotate -> land
         // Optional: keep the bump visual for a short moment before the flip
         // We'll use a small delay to separate the bump from the rotation.
         this.backflipInProgress = true;
-        this.backflipDelayFrames = 6; // frames to wait after bump before jumping/rotating
+        this.backflipDelayFrames = ANIMATION_CONSTANTS.BACKFLIP_DELAY_FRAMES;
         // rotation is slightly slower than lift
-        const rotationFactor = 1.3;
-        this.backflipFrames = Math.max(1, Math.round(frames * rotationFactor));
+        this.backflipFrames = Math.max(1, Math.round(frames * PHYSICS_CONSTANTS.BACKFLIP_ROTATION_FACTOR));
         this.backflipTotal = this.backflipFrames;
         this.backflipAngle = 0;
         // Jump slightly higher than normal lift for backflip
-        this.backflipLiftFrames = Math.max(6, Math.floor(frames * 0.8));
+        this.backflipLiftFrames = Math.max(6, Math.floor(frames * PHYSICS_CONSTANTS.BACKFLIP_LIFT_FRAME_RATIO));
         this.backflipLiftTotal = this.backflipLiftFrames;
         this.backflipLiftOffsetY = 0;
     }
@@ -64,25 +63,25 @@ export class PlayerAnimations {
     }
 
     startDamageAnimation() {
-        this.damageAnimation = 30; // 30 frames of red flash (~0.5 seconds at 60fps)
+        this.damageAnimation = ANIMATION_CONSTANTS.DAMAGE_FLASH_FRAMES;
     }
 
     startSmokeAnimation() {
         this.smokeX = this.player.x;
         this.smokeY = this.player.y;
-        this.smokeAnimationFrame = 18;
+        this.smokeAnimationFrame = ANIMATION_CONSTANTS.SMOKE_FRAME_LIFETIME;
     }
 
     startSplodeAnimation(x, y) {
-        const total = 36; // keep previous chosen value
+        const total = ANIMATION_CONSTANTS.SPLODE_FRAMES;
         this.splodeAnimations.push({ x, y, frame: total, totalFrames: total });
     }
 
     update() {
         if (this.bumpFrames > 0) {
             this.bumpFrames--;
-            this.bumpOffsetX *= 0.85;
-            this.bumpOffsetY *= 0.85;
+            this.bumpOffsetX *= PHYSICS_CONSTANTS.BUMP_DECAY_FACTOR;
+            this.bumpOffsetY *= PHYSICS_CONSTANTS.BUMP_DECAY_FACTOR;
         }
         // Backflip handling: if a backflip was initiated, wait the delay then perform jump+rotation
         if (this.backflipInProgress) {
@@ -111,8 +110,7 @@ export class PlayerAnimations {
                     const elapsedL = this.backflipLiftTotal - this.backflipLiftFrames; // 0..total
                     const tL = Math.max(0, Math.min(1, elapsedL / Math.max(1, this.backflipLiftTotal)));
                     // Use sine to do 0 -> 1 -> 0 over tL
-                    const maxLift = -48; // pixels up at peak (negative is up) — taller jump
-                    this.backflipLiftOffsetY = maxLift * Math.sin(Math.PI * tL);
+                    this.backflipLiftOffsetY = PHYSICS_CONSTANTS.BACKFLIP_LIFT_AMPLITUDE * Math.sin(Math.PI * tL);
                     if (this.backflipLiftFrames === 0) this.backflipLiftOffsetY = 0;
                 }
             }
@@ -132,11 +130,9 @@ export class PlayerAnimations {
             const total = ANIMATION_CONSTANTS.LIFT_FRAMES;
             const elapsed = total - this.liftFrames; // 0..total
             const t = Math.max(0, Math.min(1, elapsed / total)); // normalized 0..1
-            // Make hop more pronounced: larger negative maxLift (upwards)
-            const maxLift = -28; // pixels up at peak (more pronounced)
             // Use a sine ease (smooth up and down) for natural hop
             // sin(pi * t) goes 0 -> 1 -> 0 over t in [0,1]
-            this.liftOffsetY = maxLift * Math.sin(Math.PI * t);
+            this.liftOffsetY = PHYSICS_CONSTANTS.STANDARD_LIFT_AMPLITUDE * Math.sin(Math.PI * t);
         } else {
             this.liftOffsetY = 0;
         }

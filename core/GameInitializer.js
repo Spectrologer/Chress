@@ -1,5 +1,5 @@
-import { GRID_SIZE, CANVAS_SIZE, TILE_TYPES } from './constants.js';
-import logger from './logger.js';
+import { GRID_SIZE, CANVAS_SIZE, TILE_TYPES } from './constants/index.js';
+import { logger } from './logger.js';
 import { TextureManager } from '../renderers/TextureManager.js';
 import { ZoneStateManager } from '../generators/ZoneStateManager.js';
 import { eventBus } from './EventBus.js';
@@ -325,8 +325,6 @@ export class GameInitializer {
 
         // UI
         this.game.uiManager.setupGameOverHandler();
-        this.game.uiManager.setupCloseMessageLogHandler();
-        this.game.uiManager.setupMessageLogButton();
         this.game.uiManager.setupBarterHandlers();
 
         // Autosave

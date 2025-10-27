@@ -92,5 +92,3 @@ export const logger = {
         }
     }
 };
-// Default export for convenience in existing code that imports default
-export default logger;

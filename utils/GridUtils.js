@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../core/constants.js';
+import { GRID_SIZE } from '../core/constants/index.js';
 
 /**
  * Check if coordinates are within the grid boundaries

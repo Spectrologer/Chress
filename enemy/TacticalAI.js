@@ -1,5 +1,5 @@
 // Tactical AI system for cooperative enemy behavior and movement optimization
-import { GRID_SIZE } from '../core/constants.js';
+import { GRID_SIZE, DIRECTION_QUADRANTS } from '../core/constants/index.js';
 import { EnemyPathfinding } from './EnemyPathfinding.js';
 
 export class TacticalAI {
@@ -23,14 +23,14 @@ export class TacticalAI {
         const dx = x - px;
         const dy = y - py;
         let thisQuad = 0;
-        if (dx > 0 && dy > 0) thisQuad = 1; // NE
-        else if (dx > 0 && dy < 0) thisQuad = 2; // SE
-        else if (dx < 0 && dy > 0) thisQuad = 3; // NW
-        else if (dx < 0 && dy < 0) thisQuad = 4; // SW
-        else if (dx > 0 && dy === 0) thisQuad = 10; // East
-        else if (dx < 0 && dy === 0) thisQuad = 20; // West
-        else if (dy > 0 && dx === 0) thisQuad = 30; // North
-        else if (dy < 0 && dx === 0) thisQuad = 40; // South
+        if (dx > 0 && dy > 0) thisQuad = DIRECTION_QUADRANTS.NORTHEAST;
+        else if (dx > 0 && dy < 0) thisQuad = DIRECTION_QUADRANTS.SOUTHEAST;
+        else if (dx < 0 && dy > 0) thisQuad = DIRECTION_QUADRANTS.NORTHWEST;
+        else if (dx < 0 && dy < 0) thisQuad = DIRECTION_QUADRANTS.SOUTHWEST;
+        else if (dx > 0 && dy === 0) thisQuad = DIRECTION_QUADRANTS.EAST;
+        else if (dx < 0 && dy === 0) thisQuad = DIRECTION_QUADRANTS.WEST;
+        else if (dy > 0 && dx === 0) thisQuad = DIRECTION_QUADRANTS.NORTH;
+        else if (dy < 0 && dx === 0) thisQuad = DIRECTION_QUADRANTS.SOUTH;
 
         let count = 0;
         let total = 0;
@@ -39,14 +39,14 @@ export class TacticalAI {
             const ex = enemy.x - px;
             const ey = enemy.y - py;
             let enemyQuad = 0;
-            if (ex > 0 && ey > 0) enemyQuad = 1;
-            else if (ex > 0 && ey < 0) enemyQuad = 2;
-            else if (ex < 0 && ey > 0) enemyQuad = 3;
-            else if (ex < 0 && ey < 0) enemyQuad = 4;
-            else if (ex > 0 && ey === 0) enemyQuad = 10;
-            else if (ex < 0 && ey === 0) enemyQuad = 20;
-            else if (ey > 0 && ex === 0) enemyQuad = 30;
-            else if (ey < 0 && ex === 0) enemyQuad = 40;
+            if (ex > 0 && ey > 0) enemyQuad = DIRECTION_QUADRANTS.NORTHEAST;
+            else if (ex > 0 && ey < 0) enemyQuad = DIRECTION_QUADRANTS.SOUTHEAST;
+            else if (ex < 0 && ey > 0) enemyQuad = DIRECTION_QUADRANTS.NORTHWEST;
+            else if (ex < 0 && ey < 0) enemyQuad = DIRECTION_QUADRANTS.SOUTHWEST;
+            else if (ex > 0 && ey === 0) enemyQuad = DIRECTION_QUADRANTS.EAST;
+            else if (ex < 0 && ey === 0) enemyQuad = DIRECTION_QUADRANTS.WEST;
+            else if (ey > 0 && ex === 0) enemyQuad = DIRECTION_QUADRANTS.NORTH;
+            else if (ey < 0 && ex === 0) enemyQuad = DIRECTION_QUADRANTS.SOUTH;
             total++;
             if (enemyQuad === thisQuad) count++;
         }

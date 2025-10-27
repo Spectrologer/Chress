@@ -1,4 +1,4 @@
-import { TILE_SIZE, ANIMATION_CONSTANTS } from '../core/constants.js';
+import { TILE_SIZE, ANIMATION_CONSTANTS, SCALE_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/index.js';
 import { RendererUtils } from './RendererUtils.js'; // Correctly import using ES Modules
 
 export class AnimationRenderer {
@@ -51,7 +51,7 @@ export class AnimationRenderer {
     
             this.ctx.save();
             this.ctx.strokeStyle = `rgba(255, 255, 100, ${alpha})`; // Bright yellow, fading out
-            this.ctx.lineWidth = 6;
+            this.ctx.lineWidth = STROKE_CONSTANTS.POINT_ANIMATION_STROKE;
             this.ctx.lineCap = 'round';
             this.ctx.beginPath();
     
@@ -128,7 +128,7 @@ export class AnimationRenderer {
                 this.ctx.globalAlpha = alpha;
 
                 // Scale icon slightly based on amount (more points = slightly larger)
-                const baseSize = TILE_SIZE * 0.6;
+                const baseSize = TILE_SIZE * SCALE_CONSTANTS.ANIMATION_BASE_SIZE_SCALE;
                 const scale = 1 + Math.min(0.6, (anim.amount - 1) * 0.12);
                 const drawW = baseSize * scale;
                 const drawH = baseSize * scale;
@@ -143,7 +143,7 @@ export class AnimationRenderer {
                 this.ctx.font = 'bold 36px "Press Start 2P", cursive';
                 this.ctx.textAlign = 'center';
                 this.ctx.strokeStyle = 'black';
-                this.ctx.lineWidth = 6;
+                this.ctx.lineWidth = STROKE_CONSTANTS.POINT_ANIMATION_STROKE;
 
                 const text = `+${anim.amount}`;
                 this.ctx.strokeText(text, x, y);
@@ -166,7 +166,7 @@ export class AnimationRenderer {
             this.ctx.font = 'bold 28px "Press Start 2P", cursive';
             this.ctx.textAlign = 'center';
             this.ctx.strokeStyle = 'black';
-            this.ctx.lineWidth = 6;
+            this.ctx.lineWidth = STROKE_CONSTANTS.POINT_ANIMATION_STROKE;
 
             const text = `x${anim.multiplier}!`;
             const x = anim.x * TILE_SIZE + TILE_SIZE / 2;

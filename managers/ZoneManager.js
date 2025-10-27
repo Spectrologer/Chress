@@ -1,11 +1,11 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
+import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
 import { Sign } from '../ui/Sign.js';
 import { logger } from '../core/logger.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
-import { isFloor } from '../utils/TileUtils.js';
+import { isFloor, isTileType } from '../utils/TileUtils.js';
 
 export class ZoneManager {
     constructor(game) {
@@ -57,7 +57,7 @@ export class ZoneManager {
 
         // If player spawned on shrubbery, remove it (restore exit)
         const playerPos = this.game.player.getPosition();
-        if (this.game.grid[playerPos.y][playerPos.x] === TILE_TYPES.SHRUBBERY) {
+        if (isTileType(this.game.grid[playerPos.y][playerPos.x], TILE_TYPES.SHRUBBERY)) {
             this.game.grid[playerPos.y][playerPos.x] = TILE_TYPES.EXIT;
         }
 
@@ -205,7 +205,7 @@ export class ZoneManager {
 
                     if (!placed) {
                         // If the explicit exit coords are a PORT in the new grid, use them
-                        if (isWithinGrid(exitX, exitY) && this.game.grid[exitY][exitX] === TILE_TYPES.PORT) {
+                        if (isWithinGrid(exitX, exitY) && isTileType(this.game.grid[exitY][exitX], TILE_TYPES.PORT)) {
                             this.game.player.setPosition(exitX, exitY);
                             placed = true;
                         }
@@ -215,7 +215,7 @@ export class ZoneManager {
                         // Search the grid for any PORT tile and use the first found
                         for (let y = 0; y < GRID_SIZE && !placed; y++) {
                             for (let x = 0; x < GRID_SIZE; x++) {
-                                if (this.game.grid[y][x] === TILE_TYPES.PORT) {
+                                if (isTileType(this.game.grid[y][x], TILE_TYPES.PORT)) {
                                     this.game.player.setPosition(x, y);
                                     placed = true;
                                     break;
@@ -423,7 +423,7 @@ export class ZoneManager {
                 // Check if tile is floor and not occupied or blocked
                 const tile = this.game.grid[y][x];
                 const isFloorTile = isFloor(tile);
-                const isExit = tile === TILE_TYPES.EXIT;
+                const isExit = isTileType(tile, TILE_TYPES.EXIT);
 
                 if (isFloorTile && !isExit) {
                     // Place the treasure

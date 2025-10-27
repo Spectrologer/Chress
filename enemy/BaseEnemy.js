@@ -1,4 +1,4 @@
-import { TILE_TYPES, ANIMATION_CONSTANTS } from '../core/constants.js';
+import { TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '../core/constants/index.js';
 import { Position } from '../core/Position.js';
 
 export class BaseEnemy {
@@ -42,7 +42,7 @@ export class BaseEnemy {
 
         // Add a small scaling factor for lizardy to prevent clipping
         if (this.enemyType === 'lizardy') {
-            this.scale = 0.9; // Render at 90% of original size
+            this.scale = PHYSICS_CONSTANTS.LIZARDY_SCALE;
         }
     }
 
@@ -98,14 +98,13 @@ export class BaseEnemy {
     }
 
     startDeathAnimation() {
-        this.deathAnimation = 15; // 15 frames of death animation
+        this.deathAnimation = ANIMATION_CONSTANTS.DEATH_ANIMATION_FRAMES;
     }
 
     startBump(deltaX, deltaY) {
         // Set initial bump offset (towards the other entity)
-        // Increased from 24 to 48 for much more visible attack animation
-        this.bumpOffsetX = deltaX * 48;
-        this.bumpOffsetY = deltaY * 48;
+        this.bumpOffsetX = deltaX * PHYSICS_CONSTANTS.BUMP_OFFSET_MAGNITUDE;
+        this.bumpOffsetY = deltaY * PHYSICS_CONSTANTS.BUMP_OFFSET_MAGNITUDE;
         this.bumpFrames = ANIMATION_CONSTANTS.BUMP_ANIMATION_FRAMES;
     }
 
@@ -116,8 +115,8 @@ export class BaseEnemy {
         if (this.bumpFrames > 0) {
             this.bumpFrames--;
             // Gradually reduce the offset
-            this.bumpOffsetX *= 0.85; // Adjusted decay for smoother return
-            this.bumpOffsetY *= 0.85;
+            this.bumpOffsetX *= PHYSICS_CONSTANTS.BUMP_DECAY_FACTOR;
+            this.bumpOffsetY *= PHYSICS_CONSTANTS.BUMP_DECAY_FACTOR;
         }
         if (this.attackAnimation > 0) {
             this.attackAnimation--;

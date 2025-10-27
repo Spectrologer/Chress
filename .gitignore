@@ -82,3 +82,40 @@ REFACTOR_SUMMARY.md
 QUICK_START.md
 MIGRATION_COMPLETE.md
 FINAL_SUMMARY.md
+
+# Test artifacts and coverage
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+junit.xml
+
+# Claude Code settings (local configuration)
+.claude/settings.local.json
+
+# System/OS files
+*.stackdump
+*.core
+
+# Personal notes and TODOs
+TODO.txt
+NOTES.txt
+notes.md
+scratch/
+
+# Debug files
+*.map
+.pnp.*
+
+# Lock files (optional - some teams commit these)
+# pnpm-lock.yaml
+
+# Local database/state files (if any)
+*.db
+*.sqlite
+*.sqlite3
+
+# Asset source files (if you keep originals elsewhere)
+*.xcf
+*.kra
+*.aseprite

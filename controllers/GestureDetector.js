@@ -1,4 +1,4 @@
-import { INPUT_CONSTANTS, TILE_TYPES, TILE_SIZE } from '../core/constants.js';
+import { INPUT_CONSTANTS, TILE_TYPES, TILE_SIZE } from '../core/constants/index.js';
 import { getDeltaToDirection } from '../core/utils/DirectionUtils.js';
 import audioManager from '../utils/AudioManager.js';
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';

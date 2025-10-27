@@ -1,4 +1,4 @@
-import { TILE_TYPES } from '../core/constants.js';
+import { TILE_TYPES } from '../core/constants/index.js';
 import { Sign } from '../ui/Sign.js';
 import { TileRegistry } from '../core/TileRegistry.js';
 import { isAdjacent } from '../core/utils/DirectionUtils.js';

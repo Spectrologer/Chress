@@ -1,6 +1,6 @@
 import { Sign } from '../ui/Sign.js';
 import { validateLoadedGrid } from '../generators/GeneratorUtils.js';
-import logger from './logger.js';
+import { logger } from './logger.js';
 
 /**
  * Helper class for deserializing game state from a save format.

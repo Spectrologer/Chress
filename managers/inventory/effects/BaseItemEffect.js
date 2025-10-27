@@ -1,5 +1,5 @@
 import audioManager from '../../../utils/AudioManager.js';
-import { TILE_TYPES } from '../../../core/constants.js';
+import { TILE_TYPES } from '../../../core/constants/index.js';
 import { isFloor } from '../../../utils/TileUtils.js';
 
 /**

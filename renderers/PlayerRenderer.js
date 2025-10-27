@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '../core/constants.js';
+import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS, SCALE_CONSTANTS, DAMAGE_FLASH_CONSTANTS } from '../core/constants/index.js';
 import { MultiTileHandler } from './MultiTileHandler.js';
 import { RendererUtils } from './RendererUtils.js';
 
@@ -61,12 +61,12 @@ export class PlayerRenderer {
             // Apply damage flash effect if taking damage
             if (anim.damageAnimation > 0) {
                 // Flash red for first half, then fade
-                if (anim.damageAnimation > 15) {
+                if (anim.damageAnimation > DAMAGE_FLASH_CONSTANTS.DAMAGE_ANIMATION_THRESHOLD) {
                     // Strong red flash with glow (first half)
-                    this.ctx.filter = 'brightness(2.0) saturate(2) hue-rotate(340deg) drop-shadow(0 0 16px red) drop-shadow(0 0 8px red)';
+                    this.ctx.filter = `brightness(${DAMAGE_FLASH_CONSTANTS.DAMAGE_BRIGHTNESS_STRONG}) saturate(${DAMAGE_FLASH_CONSTANTS.DAMAGE_SATURATION_STRONG}) hue-rotate(${DAMAGE_FLASH_CONSTANTS.DAMAGE_HUE_ROTATION}) drop-shadow(0 0 ${DAMAGE_FLASH_CONSTANTS.DAMAGE_SHADOW_BLUR_LARGE} red) drop-shadow(0 0 ${DAMAGE_FLASH_CONSTANTS.DAMAGE_SHADOW_BLUR_MEDIUM} red)`;
                 } else {
                     // Dimmer red glow as it fades (second half)
-                    this.ctx.filter = 'brightness(1.5) saturate(1.5) hue-rotate(340deg) drop-shadow(0 0 4px red)';
+                    this.ctx.filter = `brightness(${DAMAGE_FLASH_CONSTANTS.DAMAGE_BRIGHTNESS_WEAK}) saturate(1.5) hue-rotate(${DAMAGE_FLASH_CONSTANTS.DAMAGE_HUE_ROTATION}) drop-shadow(0 0 ${DAMAGE_FLASH_CONSTANTS.DAMAGE_SHADOW_BLUR_SMALL} red)`;
                 }
             }
 
@@ -105,7 +105,7 @@ export class PlayerRenderer {
             // Stronger scale and a quick outward/back motion
             const power = bowAnim.power || 1.2;
             const scale = 0.6 * power; // base 60% of tile, multiplied by power
-            const floatOffset = Math.sin(progress * Math.PI) * 8; // small up/down for dramatic effect
+            const floatOffset = Math.sin(progress * Math.PI) * PHYSICS_CONSTANTS.BOW_SHOT_FLOAT_AMPLITUDE;
             const rotateAngle = -Math.PI / 2; // -90deg counter-clockwise
 
             this.ctx.save();
@@ -119,14 +119,14 @@ export class PlayerRenderer {
             const bh = (bowImage?.height || TILE_SIZE) * scale;
 
             // Slight pulsing based on progress
-            const pulse = 1 + Math.sin(progress * Math.PI * 2) * 0.08 * (power - 1);
+            const pulse = 1 + Math.sin(progress * Math.PI * 2) * PHYSICS_CONSTANTS.BOW_PULSE_AMPLITUDE * (power - 1);
 
             if (bowImage && bowImage.complete) {
                 this.ctx.drawImage(bowImage, -bw / 2 * pulse, -bh / 2 * pulse, bw * pulse, bh * pulse);
             } else {
                 // Fallback: draw a rotated rectangle to represent the bow
                 this.ctx.fillStyle = '#8B4513';
-                this.ctx.fillRect(-TILE_SIZE * 0.3, -TILE_SIZE * 0.05, TILE_SIZE * 0.6, TILE_SIZE * 0.1);
+                this.ctx.fillRect(-TILE_SIZE * SCALE_CONSTANTS.BOW_DRAW_WIDTH, -TILE_SIZE * SCALE_CONSTANTS.BOW_DRAW_HEIGHT_TOP, TILE_SIZE * SCALE_CONSTANTS.BOW_DRAW_WIDTH_BOTTOM, TILE_SIZE * SCALE_CONSTANTS.BOW_DRAW_HEIGHT_BOTTOM);
             }
             this.ctx.restore();
 
@@ -143,7 +143,7 @@ export class PlayerRenderer {
             const progress = 1 - (pickup.frames / pickup.totalFrames);
             // Vertical float: start near top of head and move up a bit.
             // Use a slower, gentler float so the player has time to read the icon.
-            const floatY = -12 - (Math.sin(progress * Math.PI * 0.6) * 12); // pixels above player
+            const floatY = PHYSICS_CONSTANTS.PICKUP_HOVER_BASE_HEIGHT - (Math.sin(progress * Math.PI * 0.6) * PHYSICS_CONSTANTS.PICKUP_HOVER_AMPLITUDE);
             // Slower fade so the pickup stays visible longer
             const alpha = Math.max(0, 1 - progress * 0.9);
 
@@ -152,14 +152,14 @@ export class PlayerRenderer {
 
             // Use pixel-preserving scaling. For bow, match ItemTileRenderer's approach (scale by max dimension)
             // Make pickup icons larger so they are easier to read.
-            const maxSize = TILE_SIZE * 0.8;
+            const maxSize = TILE_SIZE * SCALE_CONSTANTS.PLAYER_ITEM_MAX_SIZE_SCALE;
             let drawW = Math.round(maxSize);
             let drawH = Math.round(maxSize);
             if (img && img.complete && typeof img.width === 'number' && typeof img.height === 'number') {
                 if (pickup.imageKey === 'bow') {
                     // For bows, match ItemTileRenderer but make it slightly larger for the pickup hover
                     const maxDim = Math.max(img.width, img.height);
-                    const scale = (TILE_SIZE * 0.95) / maxDim; // 95% of tile for bows
+                    const scale = (TILE_SIZE * SCALE_CONSTANTS.PLAYER_BOW_SCALE) / maxDim;
                     drawW = Math.round(img.width * scale);
                     drawH = Math.round(img.height * scale);
                 } else {
@@ -217,8 +217,8 @@ export class PlayerRenderer {
                 const pixelY = playerGridY * TILE_SIZE;
 
                 // Create subtle floating animation
-                const time = Date.now() * 0.003; // Slow time scale
-                const floatOffset = Math.sin(time) * 4; // 4 pixel float range
+                const time = Date.now() * PHYSICS_CONSTANTS.PORT_ANIMATION_TIME_SCALE;
+                const floatOffset = Math.sin(time) * PHYSICS_CONSTANTS.PORT_ARROW_FLOAT_AMPLITUDE;
 
                 // Translate to the center of the tile with floating offset
                 this.ctx.translate(pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2 + floatOffset);
@@ -264,7 +264,7 @@ export class PlayerRenderer {
                 this.ctx.globalAlpha = 0.8;
 
                 // Draw the image, offset by half its size to center it after rotation, and slightly above the player (higher z-level)
-                const arrowSize = TILE_SIZE * 0.75; // Make arrow slightly smaller than tile
+                const arrowSize = TILE_SIZE * SCALE_CONSTANTS.ARROW_INDICATOR_SIZE_SCALE;
                 this.ctx.drawImage(arrowImage, -arrowSize / 2, -arrowSize / 2 - TILE_SIZE / 2, arrowSize, arrowSize);
 
                 this.ctx.restore();

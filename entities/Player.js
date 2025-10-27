@@ -1,4 +1,4 @@
-import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANTS } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANTS } from '../core/constants/index.js';
 import { PlayerStats } from './PlayerStats.js';
 import { PlayerAnimations } from './PlayerAnimations.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
@@ -7,7 +7,7 @@ import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
 import { TileRegistry } from '../core/TileRegistry.js';
-import { isBomb } from '../utils/TileUtils.js';
+import { isBomb, isTileType } from '../utils/TileUtils.js';
 import GridIterator from '../utils/GridIterator.js';
 import { Position } from '../core/Position.js';
 
@@ -61,7 +61,7 @@ export class Player {
         // Check if the new position is off-grid while player is on an exit tile
         if (!newPos.isInBounds(GRID_SIZE)) {
             // Only allow off-grid movement if player is currently on an exit tile
-            if (this._position.getTile(grid) === TILE_TYPES.EXIT) {
+            if (isTileType(this._position.getTile(grid), TILE_TYPES.EXIT)) {
                 // Determine which zone boundary was crossed and transition
                 let newZoneX = this.currentZone.x;
                 let newZoneY = this.currentZone.y;
@@ -117,7 +117,7 @@ export class Player {
 
             // Check for pitfall trap after moving
             const newTile = this._position.getTile(grid);
-            if (newTile === TILE_TYPES.PITFALL) {
+            if (isTileType(newTile, TILE_TYPES.PITFALL)) {
                 window.gameInstance.interactionManager.zoneManager.handlePitfallTransition(this.x, this.y);
                 return true; // Movement was successful, but transition is happening
             }
@@ -143,7 +143,7 @@ export class Player {
 
             if (isAdjacentOrthogonal) {
                 const hasAxe = this.abilities.has('axe');
-                if (hasAxe && (tile === TILE_TYPES.GRASS || tile === TILE_TYPES.SHRUBBERY)) {
+                if (hasAxe && (isTileType(tile, TILE_TYPES.GRASS) || isTileType(tile, TILE_TYPES.SHRUBBERY))) {
                     // Chop at target position without moving
                     const isBorder = newX === 0 || newX === GRID_SIZE - 1 || newY === 0 || newY === GRID_SIZE - 1;
                     newPos.setTile(grid, isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR);
@@ -157,7 +157,7 @@ export class Player {
                 }
 
                 const hasHammer = this.abilities.has('hammer');
-                if (hasHammer && tile === TILE_TYPES.ROCK) {
+                if (hasHammer && isTileType(tile, TILE_TYPES.ROCK)) {
                     // Break at target position without moving
                     const isBorder = newY === 0 || newY === GRID_SIZE - 1 || newX === 0 || newX === GRID_SIZE - 1;
                     newPos.setTile(grid, isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR);
@@ -409,7 +409,7 @@ export class Player {
         const playerPos = this.getPosition();
         const availableTiles = GridIterator.findTiles(game.grid, (tile, x, y) => {
             const hasEnemy = game.enemies.some(e => e.x === x && e.y === y);
-            return (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) &&
+            return (isTileType(tile, TILE_TYPES.FLOOR) || isTileType(tile, TILE_TYPES.EXIT)) &&
                    !hasEnemy &&
                    !(x === playerPos.x && y === playerPos.y);
         });

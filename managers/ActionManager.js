@@ -1,10 +1,10 @@
-import { TILE_TYPES, TILE_SIZE, GRID_SIZE, ANIMATION_CONSTANTS, TIMING_CONSTANTS, GAMEPLAY_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants.js';
+import { TILE_TYPES, TILE_SIZE, GRID_SIZE, ANIMATION_CONSTANTS, TIMING_CONSTANTS, GAMEPLAY_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants/index.js';
 import audioManager from '../utils/AudioManager.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
 import { ItemRepository } from './inventory/ItemRepository.js';
-import { isBomb } from '../utils/TileUtils.js';
+import { isBomb, isTileType } from '../utils/TileUtils.js';
 import GridIterator from '../utils/GridIterator.js';
 
 export class ActionManager {
@@ -133,7 +133,7 @@ export class ActionManager {
         // Use animationScheduler to add smoke sequentially for a snappier trail
         if (this.game.animationScheduler?.createSequence) {
             const seq = this.game.animationScheduler.createSequence();
-            const smokeFrameLifetime = 12; // shorter lifetime for snappier trail
+            const smokeFrameLifetime = ANIMATION_CONSTANTS.SMOKE_SHORT_LIFETIME;
             const stepDelay = TIMING_CONSTANTS.SMOKE_SPAWN_DELAY; // ms between smoke spawns
             smokePositions.forEach((pos, idx) => {
                 seq.then(() => {
@@ -225,7 +225,7 @@ export class ActionManager {
             const ny = by + dir.dy;
             if (isWithinGrid(nx, ny)) {
                 const tile = this.game.grid[ny][nx];
-                if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.GRASS) {
+                if (isTileType(tile, TILE_TYPES.WALL) || isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY) || isTileType(tile, TILE_TYPES.GRASS)) {
                     this.game.grid[ny][nx] = (nx === 0 || nx === GRID_SIZE - 1 || ny === 0 || ny === GRID_SIZE - 1) ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
                 }
 

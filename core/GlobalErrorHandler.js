@@ -1,5 +1,5 @@
 import { errorHandler, ErrorSeverity } from './ErrorHandler.js';
-import logger from './logger.js';
+import { logger } from './logger.js';
 
 /**
  * GlobalErrorHandler - Sets up global error boundaries
@@ -217,5 +217,3 @@ export class GlobalErrorHandler {
         logger.info('[GlobalErrorHandler] Error handlers removed');
     }
 }
-
-export default GlobalErrorHandler;

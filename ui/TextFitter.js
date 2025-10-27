@@ -69,5 +69,3 @@ export function fitTextToContainer(container, options = {}) {
     // Note: we intentionally do not restore the original inline fontSize if we've changed it
     // because the goal is to keep the text readable while preventing clipping on small devices.
 }
-
-export default { fitTextToContainer };

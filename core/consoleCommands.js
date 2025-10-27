@@ -1,8 +1,8 @@
 // Console Commands for debugging and testing
 
-import { TILE_TYPES, GRID_SIZE } from './constants.js';
+import { TILE_TYPES, GRID_SIZE } from './constants/index.js';
 import { Enemy } from '../entities/Enemy.js';
-import logger from './logger.js';
+import { logger } from './logger.js';
 
 const consoleCommands = {
   // Spawn commands

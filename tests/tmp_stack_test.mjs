@@ -1,5 +1,5 @@
 import { ItemManager } from '../managers/ItemManager.js';
-import { TILE_TYPES } from '../core/constants.js';
+import { TILE_TYPES } from '../core/constants/index.js';
 import { logger } from '../core/logger.js';
 
 const mockGame = { soundManager: { playSound: () => {} } };

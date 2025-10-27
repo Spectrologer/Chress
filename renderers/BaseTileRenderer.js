@@ -1,4 +1,4 @@
-import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from '../core/constants.js';
+import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from '../core/constants/index.js';
 import { RendererUtils } from './RendererUtils.js';
 import { TextureDetector } from './TextureDetector.js';
 import { WallTileRenderer } from './WallTileRenderer.js';

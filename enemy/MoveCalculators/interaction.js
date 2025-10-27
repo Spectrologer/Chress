@@ -1,4 +1,4 @@
-import { TILE_TYPES } from '../../core/constants.js';
+import { TILE_TYPES } from '../../core/constants/index.js';
 
 export function handlePlayerInteraction(base, enemy, next, player, playerX, playerY, grid, enemies, isSimulation, game) {
     // Check adjacency

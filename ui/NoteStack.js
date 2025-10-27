@@ -1,6 +1,6 @@
 // NoteStack.js
 // Handles the UI logic for the note stack (add/remove notes)
-import logger from '../core/logger.js';
+import { logger } from '../core/logger.js';
 
 export class NoteStack {
     constructor() {

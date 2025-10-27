@@ -3,7 +3,7 @@
  */
 import { InventoryService } from '../managers/inventory/InventoryService.js';
 import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
-import { TILE_TYPES } from '../core/constants.js';
+import { TILE_TYPES } from '../core/constants/index.js';
 
 describe('InventoryService', () => {
   let inventoryService;

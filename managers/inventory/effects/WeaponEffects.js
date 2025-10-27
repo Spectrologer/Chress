@@ -1,5 +1,5 @@
 import { BaseItemEffect } from './BaseItemEffect.js';
-import { TILE_TYPES } from '../../../core/constants.js';
+import { TILE_TYPES } from '../../../core/constants/index.js';
 
 /**
  * Weapon effects - Bomb, Bow, Bishop Spear, Horse Icon

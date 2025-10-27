@@ -1,12 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import { InventoryManager } from '../managers/InventoryManager.js';
+import { InventoryUI } from '../ui/InventoryUI.js';
 import { InventoryService } from '../managers/inventory/InventoryService.js';
-import { TILE_TYPES } from '../core/constants.js';
+import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
+import { TILE_TYPES } from '../core/constants/index.js';
+import { eventBus } from '../core/EventBus.js';
+import { EventTypes } from '../core/EventTypes.js';
 
-describe('InventoryManager', () => {
-  let inventoryManager;
+describe('InventoryUI', () => {
+  let inventoryUI;
   let inventoryService;
   let mockGame;
   let mockPlayer;
@@ -43,7 +46,14 @@ describe('InventoryManager', () => {
       hideOverlayMessage: jest.fn(),
       displayingMessageForSign: null,
       showSignMessage: jest.fn(),
-      updatePlayerStats: jest.fn()
+      updatePlayerStats: jest.fn(),
+      animationScheduler: {
+        createSequence: jest.fn().mockReturnValue({
+          wait: jest.fn().mockReturnValue({
+            then: jest.fn().mockReturnValue({ start: jest.fn() })
+          })
+        })
+      }
     };
 
     // Mock DOM elements
@@ -67,7 +77,12 @@ describe('InventoryManager', () => {
     mockGame.inventoryService = inventoryService;
     mockGame.itemService = inventoryService; // backward compat
 
-    inventoryManager = new InventoryManager(mockGame);
+    inventoryUI = new InventoryUI(mockGame, inventoryService);
+
+    // Listen for UI_UPDATE_STATS events and call updatePlayerStats
+    eventBus.on(EventTypes.UI_UPDATE_STATS, () => {
+      mockGame.updatePlayerStats();
+    });
   });
 
   afterEach(() => {
@@ -76,29 +91,29 @@ describe('InventoryManager', () => {
 
   test('getItemTooltipText returns correct text for food', () => {
     const foodItem = { type: 'food', foodType: 'food/meat/beaf.png' };
-    expect(inventoryManager.getItemTooltipText(foodItem)).toBe('meat - Restores 10 hunger');
+    expect(ItemMetadata.getTooltipText(foodItem)).toBe('meat - Restores 10 hunger');
   });
 
   test('getItemTooltipText returns correct text for water', () => {
     const waterItem = { type: 'water' };
-    expect(inventoryManager.getItemTooltipText(waterItem)).toBe('Water - Restores 10 thirst');
+    expect(ItemMetadata.getTooltipText(waterItem)).toBe('Water - Restores 10 thirst');
   });
 
   test('getItemTooltipText shows disabled state for bishop_spear', () => {
     const spearItem = { type: 'bishop_spear', uses: 3, disabled: true };
-    expect(inventoryManager.getItemTooltipText(spearItem)).toBe('Bishop Spear (DISABLED) - Charge diagonally towards enemies, has 3 charges');
+    expect(ItemMetadata.getTooltipText(spearItem)).toBe('Bishop Spear (DISABLED) - Charge diagonally towards enemies, has 3 charges');
   });
 
   test('getItemTooltipText shows disabled state for horse_icon', () => {
     const horseItem = { type: 'horse_icon', uses: 2, disabled: true };
-    expect(inventoryManager.getItemTooltipText(horseItem)).toBe('Horse Icon (DISABLED) - Charge in L-shape (knight moves) towards enemies, has 2 charges');
+    expect(ItemMetadata.getTooltipText(horseItem)).toBe('Horse Icon (DISABLED) - Charge in L-shape (knight moves) towards enemies, has 2 charges');
   });
 
   test('useInventoryItem handles food consumption', () => {
     const foodItem = { type: 'food', foodType: 'food/meat/beaf.png' };
     mockPlayer.inventory = [foodItem];
 
-    inventoryManager.useInventoryItem(foodItem, 0);
+    inventoryService.useItem(foodItem, { fromRadial: false });
 
     expect(mockPlayer.restoreHunger).toHaveBeenCalledWith(10);
     expect(mockPlayer.inventory).toHaveLength(0);
@@ -109,7 +124,7 @@ describe('InventoryManager', () => {
     const waterItem = { type: 'water' };
     mockPlayer.inventory = [waterItem];
 
-    inventoryManager.useInventoryItem(waterItem, 0);
+    inventoryService.useItem(waterItem, { fromRadial: false });
 
     expect(mockPlayer.restoreThirst).toHaveBeenCalledWith(10);
     expect(mockPlayer.inventory).toHaveLength(0);
@@ -119,7 +134,7 @@ describe('InventoryManager', () => {
     const heartItem = { type: 'heart' };
     mockPlayer.inventory = [heartItem];
 
-    inventoryManager.useInventoryItem(heartItem, 0);
+    inventoryService.useItem(heartItem, { fromRadial: false });
 
     expect(mockPlayer.setHealth).toHaveBeenCalledWith(3); // 2 + 1
     expect(mockPlayer.inventory).toHaveLength(0);
@@ -129,7 +144,7 @@ describe('InventoryManager', () => {
     const axeItem = { type: 'axe' };
     mockPlayer.inventory = [axeItem];
 
-    inventoryManager.useInventoryItem(axeItem, 0);
+    inventoryService.useItem(axeItem, { fromRadial: false });
 
     expect(mockGame.grid[1][1]).toBe(TILE_TYPES.AXE);
     expect(mockPlayer.inventory).toHaveLength(0);
@@ -142,7 +157,7 @@ describe('InventoryManager', () => {
     const axeItem = { type: 'axe' };
     mockPlayer.inventory = [axeItem];
 
-    inventoryManager.useInventoryItem(axeItem, 0);
+    inventoryService.useItem(axeItem, { fromRadial: false });
 
     expect(mockGame.grid[1][1]).toBe(TILE_TYPES.WALL); // Unchanged
     expect(mockPlayer.inventory).toHaveLength(1); // Still in inventory
@@ -152,7 +167,7 @@ describe('InventoryManager', () => {
     const spearItem = { type: 'bishop_spear', uses: 3, disabled: false };
     mockPlayer.inventory = [spearItem];
 
-    inventoryManager.toggleItemDisabled(spearItem, 0);
+    inventoryService.toggleItemDisabled(spearItem);
 
     expect(spearItem.disabled).toBe(true);
   });
@@ -169,7 +184,7 @@ describe('InventoryManager', () => {
     // Mock random to select first candidate
     jest.spyOn(Math, 'random').mockReturnValue(0.1);
 
-    inventoryManager.useMapNote();
+    inventoryService.useItem(noteItem, { fromRadial: false });
 
     expect(mockPlayer.markZoneVisited).toHaveBeenCalled();
     expect(mockUIManager.addMessageToLog).toHaveBeenCalled();

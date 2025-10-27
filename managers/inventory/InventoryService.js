@@ -1,7 +1,7 @@
 import { ItemRepository } from './ItemRepository.js';
 import { ItemEffectStrategy } from './ItemEffectStrategy.js';
 import { ItemMetadata } from './ItemMetadata.js';
-import { GRID_SIZE, TILE_TYPES } from '../../core/constants.js';
+import { GRID_SIZE, TILE_TYPES } from '../../core/constants/index.js';
 import audioManager from '../../utils/AudioManager.js';
 import { eventBus } from '../../core/EventBus.js';
 import { EventTypes } from '../../core/EventTypes.js';
@@ -44,6 +44,7 @@ export class InventoryService {
         if (success) {
             this._playPickupAnimation(item);
             this._playSound(sound);
+            this._updateUI();
         }
 
         return success;

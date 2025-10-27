@@ -1,9 +1,9 @@
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../constants.js';
-import logger from '../logger.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../constants/index.js';
+import { logger } from '../logger.js';
 import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
 import { BaseZoneHandler } from './BaseZoneHandler.js';
 import { findValidPlayerSpawn as _findValidPlayerSpawn } from '../zoneSpawnManager.js';
-import { isPort } from '../../utils/TileUtils.js';
+import { isPort, isTileType } from '../../utils/TileUtils.js';
 
 class UndergroundHandler extends BaseZoneHandler {
     constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets, exitSide) {
@@ -78,8 +78,8 @@ class UndergroundHandler extends BaseZoneHandler {
                     }
 
                     const tile = this.zoneGen.grid[sy][sx];
-                    const isFloor = tile === TILE_TYPES.FLOOR || (tile && tile.type === TILE_TYPES.FLOOR);
-                    const isExit = tile === TILE_TYPES.EXIT;
+                    const isFloor = isTileType(tile, TILE_TYPES.FLOOR);
+                    const isExit = isTileType(tile, TILE_TYPES.EXIT);
                     const isObjectPort = isPort(tile);
 
                     // Only place on a plain floor tile

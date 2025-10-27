@@ -1,8 +1,8 @@
 import { Sign } from '../ui/Sign.js';
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index.js';
 import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
-import logger from '../core/logger.js';
+import { logger } from '../core/logger.js';
 
 export class FeatureGenerator {
     constructor(grid, foodAssets, depth = 0) {

@@ -3,7 +3,7 @@
  */
 import { InventoryService } from '../managers/inventory/InventoryService.js';
 import { BombManager } from '../managers/BombManager.js';
-import { TILE_TYPES } from '../core/constants.js';
+import { TILE_TYPES } from '../core/constants/index.js';
 
 describe('Bomb and Shovel integration', () => {
   let mockGame, mockPlayer, mockUI, inventoryService, bombManager;

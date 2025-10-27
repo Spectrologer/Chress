@@ -1,5 +1,5 @@
-import { GRID_SIZE, TILE_TYPES } from './constants.js';
-import logger from './logger.js';
+import { GRID_SIZE, TILE_TYPES } from './constants/index.js';
+import { logger } from './logger.js';
 import { Sign } from '../ui/Sign.js';
 import { validateLoadedGrid } from '../generators/GeneratorUtils.js';
 import { eventBus } from './EventBus.js';

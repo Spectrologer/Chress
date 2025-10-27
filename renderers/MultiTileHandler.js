@@ -1,5 +1,6 @@
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
+import { isTileType } from '../utils/TileUtils.js';
 
 export class MultiTileHandler {
     static findHousePosition(targetX, targetY, grid, isStrictCheck = false) {
@@ -12,7 +13,7 @@ export class MultiTileHandler {
                     for (let x = startX; x < startX + 4 && isHouse; x++) { // 4 tiles wide
                         const tile = grid[y]?.[x];
                         // A house tile can be either HOUSE or a PORT (the door)
-                        if (!(tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.PORT)) {
+                        if (!(isTileType(tile, TILE_TYPES.HOUSE) || isTileType(tile, TILE_TYPES.PORT))) {
                             isHouse = false;
                         }
                     }
@@ -21,7 +22,7 @@ export class MultiTileHandler {
                 // If doing a strict check (e.g., for cistern detection), ensure the target tile itself is a HOUSE or PORT.
                 if (isStrictCheck && isHouse) {
                     const targetTile = grid[targetY]?.[targetX];
-                    if (!(targetTile === TILE_TYPES.HOUSE || targetTile === TILE_TYPES.PORT)) continue;
+                    if (!(isTileType(targetTile, TILE_TYPES.HOUSE) || isTileType(targetTile, TILE_TYPES.PORT))) continue;
                 }
                 if (isHouse && targetX >= startX && targetX < startX + 4 &&
                     targetY >= startY && targetY < startY + 3) {

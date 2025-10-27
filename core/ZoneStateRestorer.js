@@ -1,5 +1,5 @@
 import { ZoneStateManager } from '../generators/ZoneStateManager.js';
-import logger from './logger.js';
+import { logger } from './logger.js';
 
 /**
  * Helper class for restoring ZoneStateManager static data from saved state.

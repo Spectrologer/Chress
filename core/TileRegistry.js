@@ -1,4 +1,4 @@
-import { TILE_TYPES } from './constants.js';
+import { TILE_TYPES } from './constants/index.js';
 import { getTileType } from '../utils/TileUtils.js';
 
 /**

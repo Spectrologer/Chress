@@ -1,6 +1,6 @@
 import { Enemy } from '../../../entities/Enemy.js';
 import { BaseSpawnCommand } from './BaseSpawnCommand.js';
-import logger from '../../logger.js';
+import { logger } from '../../logger.js';
 
 /**
  * Base class for enemy spawn commands

@@ -1,4 +1,5 @@
-import { TILE_TYPES } from '../../core/constants.js';
+import { TILE_TYPES } from '../../core/constants/index.js';
+import { isTileType } from '../../utils/TileUtils.js';
 
 /**
  * ItemMetadata - Single source of truth for item static data
@@ -155,15 +156,15 @@ export class ItemMetadata {
      */
     static isStackableItem(tile) {
         // Handle primitive tile constants
-        if (tile === TILE_TYPES.NOTE) return true;
-        if (tile === TILE_TYPES.WATER) return true;
-        if (tile === TILE_TYPES.HEART) return true;
-        if (tile === TILE_TYPES.BOMB) return true;
+        if (isTileType(tile, TILE_TYPES.NOTE)) return true;
+        if (isTileType(tile, TILE_TYPES.WATER)) return true;
+        if (isTileType(tile, TILE_TYPES.HEART)) return true;
+        if (isTileType(tile, TILE_TYPES.BOMB)) return true;
 
         // Handle object-based tiles
         if (tile && tile.type) {
             const itemType = this.TILE_TYPE_MAP[tile.type] ||
-                           (tile.type === TILE_TYPES.FOOD ? 'food' : null);
+                           (isTileType(tile, TILE_TYPES.FOOD) ? 'food' : null);
             return itemType ? this.isStackable(itemType) : false;
         }
 

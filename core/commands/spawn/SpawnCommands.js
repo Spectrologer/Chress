@@ -1,7 +1,7 @@
-import { TILE_TYPES } from '../../constants.js';
+import { TILE_TYPES } from '../../constants/index.js';
 import { BaseSpawnCommand } from './BaseSpawnCommand.js';
 import { SpawnPositionHelper } from '../SpawnPositionHelper.js';
-import logger from '../../logger.js';
+import { logger } from '../../logger.js';
 
 /**
  * Simple spawn commands for basic items

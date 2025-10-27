@@ -21,7 +21,7 @@ export class ZardMoveCalculator extends BaseMoveCalculator {
         return super.calculateMove(enemy, player, playerPos, grid, enemies, isSimulation, game);
     }
 
-    performDiagonalAttack(enemy, player, isSimulation, game) { if (!isSimulation && (!game || !game.playerJustAttacked)) { player.takeDamage(enemy.attack); player.startBump(enemy.x - player.x, enemy.y - player.y); enemy.startBump(player.x - enemy.x, player.y - enemy.y); enemy.justAttacked = true; enemy.attackAnimation = 15; if (window.soundManager) window.soundManager.playSound('attack'); } return null; }
+    performDiagonalAttack(enemy, player, isSimulation, game) { if (!isSimulation) { super.performAttack(enemy, player, player.x, player.y, null, null, game); } return null; }
 
     calculateMoveDistance(x1, y1, x2, y2) { return Math.abs(x2 - x1) + Math.abs(y2 - y1); }
 }

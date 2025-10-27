@@ -10,7 +10,7 @@
  * 3. Silent failure (graceful degradation)
  */
 
-import logger from '../core/logger.js';
+import { logger } from '../core/logger.js';
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
 import MethodChecker from './MethodChecker.js';
 

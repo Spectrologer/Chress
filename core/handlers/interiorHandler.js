@@ -1,4 +1,4 @@
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../constants.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES, ZONE_CONSTANTS } from '../constants/index.js';
 import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
 import { validateAndSetTile } from '../../generators/GeneratorUtils.js';
 import { findOpenNpcSpawn as _findOpenNpcSpawn } from '../zoneSpawnManager.js';
@@ -63,8 +63,8 @@ class InteriorHandler extends BaseZoneHandler {
     }
 
     placeHomeWallStatues() {
-        const houseStartX = 3;
-        const houseStartY = 3;
+        const houseStartX = ZONE_CONSTANTS.HOUSE_START_POSITION.x;
+        const houseStartY = ZONE_CONSTANTS.HOUSE_START_POSITION.y;
         const leftItems = [TILE_TYPES.BOMB_STATUE, TILE_TYPES.SPEAR_STATUE, TILE_TYPES.BOW_STATUE];
         const rightItems = [TILE_TYPES.HORSE_STATUE, TILE_TYPES.BOOK_STATUE, TILE_TYPES.SHOVEL_STATUE];
 

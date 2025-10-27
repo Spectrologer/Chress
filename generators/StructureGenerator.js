@@ -1,8 +1,9 @@
 import { Sign } from '../ui/Sign.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE, ZONE_CONSTANTS } from '../core/constants/index.js';
 import { randomInt, findValidPlacement, isAllowedTile, validateAndSetTile } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
-import logger from '../core/logger.js';
+import { logger } from '../core/logger.js';
+import { isTileType } from '../utils/TileUtils.js';
 
 export class StructureGenerator {
     constructor(grid) {
@@ -12,8 +13,8 @@ export class StructureGenerator {
     addHouse(zoneX, zoneY) {
         // Place a 4x3 club in the center-left area of zone (0,0)
         // Position it so the player can spawn in front of it (to the south)
-        const houseStartX = 3; // Start at x=3
-        const houseStartY = 3; // Start at y=3
+        const houseStartX = ZONE_CONSTANTS.HOUSE_START_POSITION.x;
+        const houseStartY = ZONE_CONSTANTS.HOUSE_START_POSITION.y;
 
         // Place the 4x3 club
         for (let y = houseStartY; y < houseStartY + 3; y++) {
@@ -152,7 +153,7 @@ export class StructureGenerator {
                 for (let clearX = entranceX - 1; clearX <= entranceX + 1 && clearX >= 1 && clearX < GRID_SIZE - 1; clearX++) {
                     // Only clear rocks, shrubs, and other obstacles; leave floor/grass/water/shack/port
                     const tile = this.grid[clearY][clearX];
-                    if (tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY) {
+                    if (isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY)) {
                         this.grid[clearY][clearX] = TILE_TYPES.FLOOR;
                     }
                 }

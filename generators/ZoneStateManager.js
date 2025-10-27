@@ -1,5 +1,5 @@
-import logger from '../core/logger.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { logger } from '../core/logger.js';
+import { TILE_TYPES, GRID_SIZE, getZoneLevelFromDistance } from '../core/constants/index.js';
 
 export class ZoneStateManager {
     static zoneCounter = 0;
@@ -70,10 +70,7 @@ static hammerWarningSignPlaced = false;
 
     static getZoneLevel(zoneX, zoneY) {
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
-        if (dist <= 2) return 1; // Home
-        else if (dist <= 8) return 2; // Woods
-        else if (dist <= 16) return 3; // Wilds
-        else return 4; // Frontier
+        return getZoneLevelFromDistance(dist);
     }
 
     static hashCode(str) {

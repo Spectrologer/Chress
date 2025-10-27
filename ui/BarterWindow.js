@@ -1,5 +1,5 @@
 import { Sign } from './Sign.js';
-import { FOOD_ASSETS, TILE_TYPES } from '../core/constants.js';
+import { FOOD_ASSETS, TILE_TYPES } from '../core/constants/index.js';
 import { fitTextToContainer } from './TextFitter.js';
 import audioManager from '../utils/AudioManager.js';
 import { eventBus } from '../core/EventBus.js';
@@ -92,23 +92,19 @@ export class BarterWindow {
     // Fit dialogue text to the message container (exclude lists which may scroll)
     try { fitTextToContainer(this.barterNPCMessage, { childSelector: '.dialogue-text', minFontSize: 12 }); } catch (e) {}
         try {
-            // Clear any existing typewriter running on the message manager
+            // Use the typewriter controller from message manager
             const mm = this.game.uiManager && this.game.uiManager.messageManager;
-            if (mm && mm.currentTypewriterInterval) {
-                try { clearInterval(mm.currentTypewriterInterval); } catch (e) {}
-                try { cancelAnimationFrame(mm.currentTypewriterInterval); } catch (e) {}
-                mm.currentTypewriterInterval = null;
+            if (mm && mm.typewriterController) {
+                // Stop any existing typewriter
+                mm.typewriterController.stop();
+
+                // Start typewriter for merchant dialogue
+                // The typewriter controller will automatically detect the character name
+                // and apply appropriate voice settings
+                mm.typewriterController.start(this.barterNPCMessage, () => {
+                    // Typewriter complete
+                });
             }
-            // If we have a message manager, set its current voice settings so
-            // merchant dialogue gets the per-letter blips tuned to this NPC.
-            const voiceSettings = safeCall(mm, '_getVoiceSettingsForName', name);
-            if (voiceSettings && mm) {
-                try {
-                    mm._currentVoiceSettings = voiceSettings;
-                    try { console.debug && console.debug(`BarterWindow: set merchant voice for ${name}`, mm._currentVoiceSettings); } catch (e) {}
-                } catch (e) {}
-            }
-            safeCall(mm, '_typewriter', this.barterNPCMessage, mm?.typewriterSpeed, () => {});
         } catch (e) {}
 
         const barterOffersContainer = document.getElementById('barterOffers');

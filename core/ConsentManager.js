@@ -1,6 +1,6 @@
 // c:/Users/virgi/OneDrive/Desktop/Apps/Chress/ConsentManager.js
 
-import logger from './logger.js';
+import { logger } from './logger.js';
 
 export class ConsentManager {
     constructor(game) {

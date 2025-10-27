@@ -1,5 +1,5 @@
 import { BaseMoveCalculator } from './base.js';
-import { ANIMATION_CONSTANTS } from '../../core/constants.js';
+import { ANIMATION_CONSTANTS } from '../../core/constants/index.js';
 
 export class LizardyMoveCalculator extends BaseMoveCalculator {
     calculateMove(enemy, player, playerPos, grid, enemies, isSimulation = false, game = null) {
@@ -29,7 +29,7 @@ export class LizardyMoveCalculator extends BaseMoveCalculator {
         return { x: nextX, y: nextY };
     }
 
-    performDiagonalAttack(enemy, player, attackX, attackY, isSimulation) { if (isSimulation) return; player.takeDamage(enemy.attack); player.startBump(enemy.x - attackX, enemy.y - attackY); enemy.startBump(attackX - enemy.x, attackY - enemy.y); enemy.justAttacked = true; enemy.attackAnimation = 15; if (window.soundManager) window.soundManager.playSound('attack'); }
+    performDiagonalAttack(enemy, player, attackX, attackY, isSimulation) { if (isSimulation) return; super.performAttack(enemy, player, attackX, attackY, null, null, null); }
 
     performBumpAttack(enemy, player, isSimulation) { if (isSimulation) return; player.startBump(enemy.x - player.x, enemy.y - player.y); enemy.startBump(player.x - enemy.x, player.y - enemy.y); if (window.soundManager) window.soundManager.playSound('attack'); }
 }

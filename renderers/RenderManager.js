@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_SIZE, TILE_TYPES, CANVAS_SIZE } from '../core/constants.js';
+import { GRID_SIZE, TILE_SIZE, TILE_TYPES, CANVAS_SIZE, getZoneLevelFromDistance } from '../core/constants/index.js';
 import { TextureManager } from './TextureManager.js';
 import { PlayerRenderer } from './PlayerRenderer.js';
 import { EnemyRenderer } from './EnemyRenderer.js';
@@ -6,6 +6,7 @@ import { AnimationRenderer } from './AnimationRenderer.js';
 import { UIRenderer } from './UIRenderer.js';
 import { FogRenderer } from './FogRenderer.js';
 import GridIterator from '../utils/GridIterator.js';
+import { isTileType } from '../utils/TileUtils.js';
 
 export class RenderManager {
     constructor(game) {
@@ -297,16 +298,13 @@ export class RenderManager {
             zoneLevel = 5; // Interior zones
         } else {
             const dist = Math.max(Math.abs(zone.x), Math.abs(zone.y));
-            if (dist <= 2) zoneLevel = 1;
-            else if (dist <= 8) zoneLevel = 2;
-            else if (dist <= 16) zoneLevel = 3;
-            else zoneLevel = 4;
+            zoneLevel = getZoneLevelFromDistance(dist);
         }
 
         GridIterator.forEach(this.game.grid, (tile, x, y) => {
             try {
                 // Handle bomb tiles specially
-                if (tile === TILE_TYPES.BOMB) {
+                if (isTileType(tile, TILE_TYPES.BOMB)) {
                     // Primitive bomb (randomly generated) - render normally
                     this.textureManager.renderTile(this.ctx, x, y, tile, this.game.grid, zoneLevel);
                 } else if (tile && tile.type === 'food') {

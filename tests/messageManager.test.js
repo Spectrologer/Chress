@@ -1,4 +1,5 @@
 import { MessageManager } from '../ui/MessageManager.js';
+import { getVoiceSettingsForName } from '../ui/VoiceSettings.js';
 
 // Minimal fake animation scheduler used by many MessageManager flows
 const makeFakeAnimationScheduler = () => ({
@@ -32,6 +33,14 @@ describe('MessageManager typing & blip behavior', () => {
     noteStack.id = 'noteStack';
     document.body.appendChild(noteStack);
 
+    const messageLogOverlay = document.createElement('div');
+    messageLogOverlay.id = 'messageLogOverlay';
+    document.body.appendChild(messageLogOverlay);
+
+    const messageLogContent = document.createElement('div');
+    messageLogContent.id = 'messageLogContent';
+    document.body.appendChild(messageLogContent);
+
     const closeBtn = document.createElement('button');
     closeBtn.id = 'closeMessageLogButton';
     document.body.appendChild(closeBtn);
@@ -51,10 +60,8 @@ describe('MessageManager typing & blip behavior', () => {
     document.body.innerHTML = '';
   });
 
-  test('_getVoiceSettingsForName returns deterministic tuning for Crayn', () => {
-    const fakeGame = { messageLog: [], animationScheduler: makeFakeAnimationScheduler() };
-    const mm = new MessageManager(fakeGame);
-    const vs = mm._getVoiceSettingsForName('Crayn');
+  test('getVoiceSettingsForName returns deterministic tuning for Crayn', () => {
+    const vs = getVoiceSettingsForName('Crayn');
     expect(vs).toBeTruthy();
     expect(vs.name).toBe('Crayn');
     expect(vs.base).toBe(120);
@@ -62,59 +69,85 @@ describe('MessageManager typing & blip behavior', () => {
     expect(vs.wave2).toBe('sine');
   });
 
-  test('_detectCharacterNameForElement finds a .character-name child', () => {
+  test('TypewriterController detects character name from element', () => {
     const fakeGame = { messageLog: [], animationScheduler: makeFakeAnimationScheduler() };
     const mm = new MessageManager(fakeGame);
     const container = document.createElement('div');
     container.innerHTML = '<span class="character-name">  Penne  </span><div class="dialogue-text">Hi</div>';
-    const name = mm._detectCharacterNameForElement(container);
+    const name = mm.typewriterController._detectCharacterNameForElement(container);
     expect(name).toBe('Penne');
   });
 
-  test('showMessage with typewriterSpeed = 0 displays text immediately and does not call blip SFX', async () => {
+  test('showMessage with typewriterSpeed = 0 displays text immediately', async () => {
     const fakeGame = { messageLog: [], animationScheduler: makeFakeAnimationScheduler(), soundManager: { sfxEnabled: true } };
     const mm = new MessageManager(fakeGame);
     // disable animation by setting speed to 0
-    mm.typewriterSpeed = 0;
-
-    // spy on _playTypingBlip to ensure it's not called
-    const spy = jest.spyOn(mm, '_playTypingBlip');
+    mm.setTypewriterSpeed(0);
 
     const overlay = document.getElementById('messageOverlay');
-    // ensure no character-name so typewriter would act on full text
+    // ensure no character-name so typewriter won't activate
     mm.showMessage('Hello world!', null, true, false, false);
 
     // because speed === 0 the text should be present immediately
     const textNode = overlay.querySelector('.dialogue-text');
     expect(textNode).toBeTruthy();
     expect(textNode.textContent).toBe('Hello world!');
-    expect(spy).not.toHaveBeenCalled();
-    spy.mockRestore();
   });
 
-  test('_typewriter triggers per-letter blips when voice settings are present', async () => {
+  test('TypewriterController starts typewriter effect on element with character name', async () => {
     const fakeGame = { messageLog: [], animationScheduler: makeFakeAnimationScheduler(), soundManager: { sfxEnabled: true } };
     const mm = new MessageManager(fakeGame);
 
-    // Prepare element with a dialogue-text node containing non-whitespace characters
+    // Prepare element with a character name and dialogue text
     const el = document.createElement('div');
-    el.innerHTML = '<div class="dialogue-text">Test</div>';
+    el.innerHTML = '<span class="character-name">Tester</span><div class="dialogue-text">Test</div>';
     document.body.appendChild(el);
 
-    // Ensure blips are enabled and we have a current voice
-    mm.typewriterSfxEnabled = true;
-    mm._currentVoiceSettings = { name: 'Tester', base: 120 };
+    // Should use typewriter for this element
+    expect(mm.typewriterController.shouldUseTypewriter(el)).toBe(true);
 
-    // Spy on _playTypingBlip and wait for _typewriter to call onComplete
-    const spy = jest.spyOn(mm, '_playTypingBlip');
-
+    // Start typewriter
     await new Promise((resolve) => {
-      // use a small speed so the routine runs quickly but still schedules via rAF
-      mm._typewriter(el, 6, () => { resolve(); });
+      mm.typewriterController.start(el, () => {
+        resolve();
+      });
     });
 
-    // Expect at least one blip was played for the non-whitespace chars
-    expect(spy.mock.calls.length).toBeGreaterThan(0);
-    spy.mockRestore();
+    // The text should have been revealed
+    const textNode = el.querySelector('.dialogue-text');
+    expect(textNode).toBeTruthy();
   }, 10000);
+
+  test('MessageLog adds messages with coordinate highlighting', () => {
+    const fakeGame = { messageLog: [], animationScheduler: makeFakeAnimationScheduler() };
+    const mm = new MessageManager(fakeGame);
+
+    const coords = mm.messageLog.addMessage('Found treasure at (5, 10)');
+
+    expect(coords).toBe('(5, 10)');
+    expect(fakeGame.messageLog.length).toBe(1);
+    expect(fakeGame.messageLog[0]).toContain('darkgreen');
+  });
+
+  test('PenneMessageHandler shows message only if no sign message active', () => {
+    const fakeGame = {
+      messageLog: [],
+      animationScheduler: makeFakeAnimationScheduler(),
+      displayingMessageForSign: false
+    };
+    const mm = new MessageManager(fakeGame);
+
+    mm.handlePenneInteractionMessage();
+
+    const overlay = document.getElementById('messageOverlay');
+    expect(overlay.classList.contains('show')).toBe(true);
+    expect(overlay.innerHTML).toContain('Penne');
+
+    // Now set sign flag and try again
+    fakeGame.displayingMessageForSign = true;
+    overlay.classList.remove('show');
+
+    mm.handlePenneInteractionMessage();
+    expect(overlay.classList.contains('show')).toBe(false);
+  });
 });

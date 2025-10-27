@@ -1,5 +1,5 @@
 // Shared utility functions for tile rendering
-import { TILE_SIZE, TILE_COLORS } from '../core/constants.js';
+import { TILE_SIZE, TILE_COLORS } from '../core/constants/index.js';
 
 export class RendererUtils {
     // Utility methods moved from TileRenderer

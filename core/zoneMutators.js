@@ -1,6 +1,7 @@
-import { GRID_SIZE, TILE_TYPES, ZONE_CONSTANTS, GAMEPLAY_CONSTANTS } from './constants.js';
-import logger from './logger.js';
+import { GRID_SIZE, TILE_TYPES, ZONE_CONSTANTS, GAMEPLAY_CONSTANTS } from './constants/index.js';
+import { logger } from './logger.js';
 import GridIterator from '../utils/GridIterator.js';
+import { isTileType } from '../utils/TileUtils.js';
 
 export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel) {
     const zoneKey = `${zoneX},${zoneY}`;
@@ -47,7 +48,7 @@ export function clearPathToExit(zoneGen, exitX, exitY) {
     else if (exitX === GRID_SIZE - 1) inwardX = GRID_SIZE - 2;
 
     const adjacentTile = zoneGen.grid[inwardY][inwardX];
-    if (adjacentTile === TILE_TYPES.WALL || adjacentTile === TILE_TYPES.ROCK || adjacentTile === TILE_TYPES.SHRUBBERY) {
+    if (isTileType(adjacentTile, TILE_TYPES.WALL) || isTileType(adjacentTile, TILE_TYPES.ROCK) || isTileType(adjacentTile, TILE_TYPES.SHRUBBERY)) {
         zoneGen.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
     }
 
@@ -58,7 +59,7 @@ export function clearPathToExit(zoneGen, exitX, exitY) {
             const ny = inwardY + dy;
             if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
                 const tile = zoneGen.grid[ny][nx];
-                if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY) {
+                if (isTileType(tile, TILE_TYPES.WALL) || isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY)) {
                     zoneGen.grid[ny][nx] = TILE_TYPES.FLOOR;
                 }
             }
@@ -80,7 +81,7 @@ export function clearPathToCenter(zoneGen, startX, startY) {
         else if (currentY > centerY) currentY--;
 
         const curTile = zoneGen.grid[currentY][currentX];
-        if (curTile === TILE_TYPES.WALL || curTile === TILE_TYPES.ROCK || curTile === TILE_TYPES.SHRUBBERY) {
+        if (isTileType(curTile, TILE_TYPES.WALL) || isTileType(curTile, TILE_TYPES.ROCK) || isTileType(curTile, TILE_TYPES.SHRUBBERY)) {
             zoneGen.grid[currentY][currentX] = TILE_TYPES.FLOOR;
         }
         if (currentX === centerX && currentY === centerY) break;
@@ -90,7 +91,7 @@ export function clearPathToCenter(zoneGen, startX, startY) {
 export function clearZoneForShackOnly(zoneGen) {
     logger.log('Clearing first wilds zone for shack-only placement');
     GridIterator.forEach(zoneGen.grid, (tile, x, y) => {
-        if (tile !== TILE_TYPES.WALL && tile !== TILE_TYPES.EXIT && tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.GRASS) {
+        if (!isTileType(tile, TILE_TYPES.WALL) && !isTileType(tile, TILE_TYPES.EXIT) && !isTileType(tile, TILE_TYPES.FLOOR) && !isTileType(tile, TILE_TYPES.GRASS)) {
             zoneGen.grid[y][x] = TILE_TYPES.FLOOR;
         }
     });

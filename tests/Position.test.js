@@ -4,7 +4,7 @@
  */
 
 import { Position } from '../core/Position.js';
-import { GRID_SIZE } from '../core/Constants.js';
+import { GRID_SIZE } from '../core/constants/index.js';
 
 describe('Position', () => {
     // ==========================================

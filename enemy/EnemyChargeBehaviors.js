@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../core/constants.js';
+import { GRID_SIZE } from '../core/constants/index.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
 
 export class EnemyChargeBehaviors {

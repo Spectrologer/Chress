@@ -1,4 +1,4 @@
-import { TILE_TYPES, INVENTORY_CONSTANTS, TIMING_CONSTANTS, UI_CONSTANTS, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, INVENTORY_CONSTANTS, TIMING_CONSTANTS, UI_CONSTANTS, GRID_SIZE } from '../core/constants/index.js';
 import { logger } from '../core/logger.js';
 import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
 import { eventBus } from '../core/EventBus.js';

@@ -1,5 +1,5 @@
 import { CombatActionManager } from '../managers/CombatActionManager.js';
-import { TILE_TYPES } from '../core/constants.js';
+import { TILE_TYPES } from '../core/constants/index.js';
 
 describe('CombatActionManager', () => {
   let game;

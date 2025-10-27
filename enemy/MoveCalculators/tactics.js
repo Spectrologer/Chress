@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../../core/constants.js';
+import { GRID_SIZE } from '../../core/constants/index.js';
 import { EnemyPathfinding } from '../EnemyPathfinding.js';
 
 export function applyTacticalAdjustments(tacticalAI, enemy, next, playerX, playerY, grid, enemies) {

@@ -9,7 +9,7 @@ export class LizardoMoveCalculator extends BaseMoveCalculator {
     }
 
     performAdjacentAttack(enemy, player, playerX, playerY, isSimulation, game) {
-        if (isSimulation || (game && game.playerJustAttacked)) return;
-        player.takeDamage(enemy.attack); player.startBump(enemy.x - playerX, enemy.y - playerY); enemy.startBump(playerX - enemy.x, playerY - enemy.y); enemy.justAttacked = true; enemy.attackAnimation = 15; if (window.soundManager) window.soundManager.playSound('attack');
+        if (isSimulation) return;
+        super.performAttack(enemy, player, playerX, playerY, null, null, game);
     }
 }

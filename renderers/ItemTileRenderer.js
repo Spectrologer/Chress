@@ -1,4 +1,4 @@
-import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from '../core/constants.js';
+import { TILE_COLORS, TILE_TYPES, TILE_SIZE, SCALE_CONSTANTS, PULSATE_CONSTANTS } from '../core/constants/index.js';
 import { RendererUtils } from './RendererUtils.js';
 import { logger } from '../core/logger.js';
 import { isBomb } from '../utils/TileUtils.js';
@@ -32,8 +32,8 @@ export class ItemTileRenderer {
                 // Draw aguamelin pixel-perfect, no scaling, aligned to tile
                 ctx.drawImage(this.images[foodKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
-                // Scale other food to 70%
-                const scaledSize = TILE_SIZE * 0.7;
+                // Scale other food
+                const scaledSize = TILE_SIZE * SCALE_CONSTANTS.ITEM_RENDER_SCALE;
                 const offsetX = (TILE_SIZE - scaledSize) / 2;
                 const offsetY = (TILE_SIZE - scaledSize) / 2;
                 ctx.drawImage(this.images[foodKey], pixelX + offsetX, pixelY + offsetY, scaledSize, scaledSize);
@@ -101,7 +101,7 @@ export class ItemTileRenderer {
         if (RendererUtils.isImageLoaded(this.images, 'horse')) {
             // Scale horse to fit within tile while maintaining aspect ratio
             const horseImage = this.images.horse;
-            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(horseImage, TILE_SIZE * 0.7);
+            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(horseImage, TILE_SIZE * SCALE_CONSTANTS.ITEM_RENDER_SCALE);
 
             // Center the image in the tile
             const offsetX = (TILE_SIZE - scaledWidth) / 2;
@@ -137,7 +137,7 @@ export class ItemTileRenderer {
                 ctx.save();
                 // Only animate if bomb is not just placed
                 if (!tile.justPlaced) {
-                    const scale = 1 + Math.sin(Date.now() * 0.005) * 0.1; // Pulsate
+                    const scale = 1 + Math.sin(Date.now() * PULSATE_CONSTANTS.HORSE_PULSATE_FREQUENCY) * PULSATE_CONSTANTS.HORSE_PULSATE_AMPLITUDE;
                     const cx = pixelX + TILE_SIZE / 2;
                     const cy = pixelY + TILE_SIZE / 2;
                     ctx.translate(cx, cy);
@@ -165,8 +165,8 @@ export class ItemTileRenderer {
 
         // Try to draw the heart image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'heart')) {
-            // Scale heart to ~65% to be visually smaller on ground and draw crisply
-            const scaledSize = Math.round(TILE_SIZE * 0.65);
+            // Scale heart to be visually smaller on ground and draw crisply
+            const scaledSize = Math.round(TILE_SIZE * SCALE_CONSTANTS.FOOD_RENDER_SCALE);
             const offsetX = Math.round((TILE_SIZE - scaledSize) / 2);
             const offsetY = Math.round((TILE_SIZE - scaledSize) / 2);
             // Disable smoothing for a pixel-crisp draw, but restore context state afterwards
@@ -190,7 +190,7 @@ export class ItemTileRenderer {
         if (RendererUtils.isImageLoaded(this.images, 'note')) {
             // Scale note to fit within tile while maintaining aspect ratio, 70% size
             const noteImage = this.images.note;
-            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(noteImage, TILE_SIZE * 0.7);
+            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(noteImage, TILE_SIZE * SCALE_CONSTANTS.ITEM_RENDER_SCALE);
 
             // Center the image in the tile
             const offsetX = (TILE_SIZE - scaledWidth) / 2;
@@ -228,7 +228,7 @@ export class ItemTileRenderer {
         if (RendererUtils.isImageLoaded(this.images, 'book')) {
             // Scale book to fit within tile while maintaining aspect ratio, 70% size
             const bookImage = this.images.book;
-            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(bookImage, TILE_SIZE * 0.7);
+            const { width: scaledWidth, height: scaledHeight } = RendererUtils.calculateScaledDimensions(bookImage, TILE_SIZE * SCALE_CONSTANTS.ITEM_RENDER_SCALE);
 
             // Center the image in the tile
             const offsetX = (TILE_SIZE - scaledWidth) / 2;

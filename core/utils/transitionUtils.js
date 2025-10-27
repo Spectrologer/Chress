@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../constants.js';
+import { GRID_SIZE } from '../constants/index.js';
 
 /**
  * Determines the exit direction based on the exit tile position.

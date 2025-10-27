@@ -1,4 +1,4 @@
-import { TILE_SIZE, GRID_SIZE } from '../core/constants.js';
+import { TILE_SIZE, GRID_SIZE } from '../core/constants/index.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 // Scrolling tiled fog overlay using a preloaded texture (assets/fx/fog.png).

@@ -1,9 +1,10 @@
 import { Sign } from '../ui/Sign.js';
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index.js';
 import { randomInt, findValidPlacement, getGridCenter, isWithinBounds } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import { PathGenerator } from './PathGenerator.js';
-import logger from '../core/logger.js';
+import { ContentRegistry } from '../core/ContentRegistry.js';
+import { logger } from '../core/logger.js';
 
 export class ItemGenerator {
     constructor(grid, foodAssets, zoneX, zoneY, dimension, depth) {
@@ -66,54 +67,39 @@ export class ItemGenerator {
     }
 
     addSpecialZoneItems() {
-        // Add enemy with native level-based probability plus flat increase per zones discovered (1% per 10 zones)
-        const baseProbabilities = {
-            1: 0.11, // Home
-            2: 0.15, // Woods
-            3: 0.17, // Wilds
-            4: 0.22  // Frontier
-        };
-        const baseEnemyProbability = baseProbabilities[this.zoneLevel] || 0.11; // Default to home probability
-        const enemyProbability = baseEnemyProbability + Math.floor(ZoneStateManager.zoneCounter / 10) * 0.01;
-        // This will be handled by the main generator
-
         // Hammer is now an ability obtained through trading with Gouge
         // Remove hammer spawning logic
 
         const undergroundMultiplier = this.dimension === 2 ? 1.5 : 1.0;
 
-        // AI Note: "Activated Items" are items that require player interaction to use, such as Bombs, Spears, Bows, etc.
-        const specialItems = [
-            { name: 'Squig', tile: TILE_TYPES.SQUIG, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.SQUIG, dimension: 0 },
-            { name: 'Penne', tile: TILE_TYPES.PENNE, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.PENNE, dimension: 0 },
-            { name: 'Nib', tile: TILE_TYPES.NIB, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.NIB, dimension: 2 },
-            { name: 'Mark', tile: TILE_TYPES.MARK, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.MARK, dimension: 0 },
-            { name: 'Rune', tile: TILE_TYPES.RUNE, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.RUNE, dimension: 2 },
-            { name: 'Note', tile: TILE_TYPES.NOTE, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.NOTE, dimension: 'any' }, // Activated Item
-            { name: 'Bishop Spear', tile: { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.BISHOP_SPEAR, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Horse Icon', tile: { type: TILE_TYPES.HORSE_ICON, uses: 3 }, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.HORSE_ICON, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Bomb', tile: TILE_TYPES.BOMB, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.BOMB, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Heart', tile: TILE_TYPES.HEART, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.HEART, minLevel: 1, maxLevel: 4, dimension: 'any' },
-            { name: 'Bow', tile: { type: TILE_TYPES.BOW, uses: 3 }, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.BOW, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Shovel', tile: { type: TILE_TYPES.SHOVEL, uses: 3 }, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.SHOVEL, minLevel: 1, maxLevel: 4, dimension: 'any', isActivated: true }, // Activated Item
-            { name: 'Pitfall', tile: TILE_TYPES.PITFALL, chance: SPAWN_PROBABILITIES.SPECIAL_ITEMS.PITFALL, minLevel: 2, maxLevel: 4, dimension: 0 },
-        ];
+        // Get spawnable items from ContentRegistry
+        const spawnableItems = ContentRegistry.getSpawnableItems(this.zoneLevel, this.dimension, this.depth);
 
-        specialItems.forEach(item => {
-            const dimensionMatch = item.dimension === 'any' || item.dimension === this.dimension;
-            const levelMatch = (!item.minLevel || this.zoneLevel >= item.minLevel) &&
-                               (!item.maxLevel || this.zoneLevel <= item.maxLevel);
+        spawnableItems.forEach(itemConfig => {
+            // Apply underground multiplier and depth multiplier
+            const effectiveMultiplier = undergroundMultiplier * this.depthMultiplier;
 
-            // Prevent activated items from spawning on the surface in level 1
-            const activatedItemRestriction = item.isActivated && this.zoneLevel === 1 && this.dimension === 0;
+            if (Math.random() < itemConfig.spawnWeight * effectiveMultiplier) {
+                // Determine tile data to place
+                let tileData;
 
-            if (dimensionMatch && levelMatch && !activatedItemRestriction) {
-                const multiplier = item.noMultiplier ? 1.0 : undergroundMultiplier;
-                // Apply depthMultiplier on top of underground multiplier
-                const effectiveMultiplier = multiplier * this.depthMultiplier;
-                if (Math.random() < item.chance * effectiveMultiplier) {
-                    this._placeItem(item);
+                // Handle items with default uses (weapons/tools)
+                if (itemConfig.metadata && itemConfig.metadata.defaultUses) {
+                    tileData = { type: itemConfig.tileType, uses: itemConfig.metadata.defaultUses };
+                } else {
+                    tileData = itemConfig.tileType;
                 }
+
+                // Log special NPCs and pitfalls
+                const loggableItems = ['squig', 'penne', 'nib', 'mark', 'rune', 'pitfall'];
+                let onPlacedCallback = null;
+
+                if (loggableItems.includes(itemConfig.id)) {
+                    const displayName = itemConfig.id.charAt(0).toUpperCase() + itemConfig.id.slice(1);
+                    onPlacedCallback = (x, y) => logger.log(`${displayName} spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
+                }
+
+                this._placeItemRandomly(tileData, onPlacedCallback);
             }
         });
 
@@ -121,17 +107,6 @@ export class ItemGenerator {
         if (this.dimension === 2 && this.zoneX === 0 && this.zoneY === 0 && this.depth === 1) {
             this.addAxelotlItem();
         }
-    }
-
-    _placeItem(item) {
-        const loggableItems = ['Penne', 'Squig', 'Nib', 'Mark', 'Rune', 'Pitfall'];
-        let onPlacedCallback = null;
-
-        if (loggableItems.includes(item.name)) {
-            onPlacedCallback = (x, y) => logger.log(`${item.name} spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
-        }
-
-        this._placeItemRandomly(item.tile, onPlacedCallback);
     }
 
     _placeItemRandomly(itemData, onPlacedCallback = null) {

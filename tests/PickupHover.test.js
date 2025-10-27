@@ -1,7 +1,7 @@
 import { ItemManager } from '../managers/ItemManager.js';
 import { ItemPickupManager } from '../managers/inventory/ItemPickupManager.js';
 import { Player } from '../entities/Player.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
 
 describe('Pickup hover visuals', () => {
   beforeEach(() => {

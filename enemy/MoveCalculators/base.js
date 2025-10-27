@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '../../core/constants.js';
+import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '../../core/constants/index.js';
 import { EnemyPathfinding } from '../EnemyPathfinding.js';
 import { EnemySpecialActions } from '../EnemySpecialActions.js';
 import { logger } from '../../core/logger.js';

@@ -15,7 +15,7 @@
  */
 
 import { getOffset, getDeltaToDirection } from './utils/DirectionUtils.js';
-import { GRID_SIZE } from './Constants.js';
+import { GRID_SIZE } from './constants/index.js';
 
 export class Position {
     /**
@@ -544,5 +544,3 @@ export class Position {
         return positions;
     }
 }
-
-export default Position;

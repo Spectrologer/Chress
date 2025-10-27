@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS } from '../core/constants.js';
+import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS } from '../core/constants/index.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { isWithinGrid } from '../utils/GridUtils.js';

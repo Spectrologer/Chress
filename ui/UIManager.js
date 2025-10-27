@@ -1,4 +1,3 @@
-import logger from '../core/logger.js';
 import { MessageManager } from './MessageManager.js';
 import { PanelManager } from './PanelManager.js';
 import { PlayerStatsUI } from './PlayerStatsUI.js';
@@ -21,9 +20,6 @@ export class UIManager {
 
         // UI Event Coordinator - centralizes event-driven UI updates
         this.eventCoordinator = new UIEventCoordinator(game, this.messageManager, this.panelManager);
-
-        // Handlers
-        this.messageManager.setupMessageLogButton();
 
         // Event listeners
         this.setupEventListeners();
@@ -71,10 +67,6 @@ export class UIManager {
                 pointsValueElement.textContent = this.game.player.getPoints();
             }
         });
-    }
-
-    setupMessageLogButton() {
-        this.messageManager.setupMessageLogButton();
     }
 
     updatePlayerPosition() {
@@ -184,10 +176,6 @@ export class UIManager {
             // Restart loop (player alive)
             this.game.gameLoop();
         });
-    }
-
-    setupCloseMessageLogHandler() {
-        this.messageManager.setupCloseMessageLogHandler();
     }
 
     setupBarterHandlers() {

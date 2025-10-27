@@ -1,4 +1,4 @@
-import { TILE_SIZE } from '../../core/constants.js';
+import { TILE_SIZE } from '../../core/constants/index.js';
 import { RendererUtils } from '../RendererUtils.js';
 import { TileRenderStrategy } from './TileRenderStrategy.js';
 

@@ -1,5 +1,5 @@
 import { RenderManager } from '../renderers/RenderManager.js';
-import { GRID_SIZE, TILE_TYPES, TILE_SIZE } from '../core/constants.js';
+import { GRID_SIZE, TILE_TYPES, TILE_SIZE } from '../core/constants/index.js';
 
 function makeMockCanvas() {
   const listeners = {};

@@ -1,0 +1,40 @@
+// UI Constants
+export const UI_CONSTANTS = {
+    AXE_ICON_SIZE_RELATIVE: 0.7, // Axe icon size relative to map
+    CHARACTER_NAME_FONT_SIZE: '1.5em', // Font size for character names
+
+    // Spacing and padding
+    PADDING_SMALL: '4px', // Small padding
+    PADDING_MEDIUM: '8px', // Medium padding
+    PADDING_LARGE: '10px', // Large padding
+    IMAGE_SIZE_LARGE: '128px', // Large image size
+
+    // Opacity values
+    OPACITY_DIM: 0.3, // Dimmed opacity (e.g. for lost hearts)
+    OPACITY_SEMI_TRANSPARENT: 0.7, // Semi-transparent opacity
+    OPACITY_INDICATOR_FLASH_BASE: 0.5, // Base opacity for flashing indicators
+    OPACITY_INDICATOR_FLASH_VARIANCE: 0.3 // Variance in flash opacity
+};
+
+// Input constants
+export const INPUT_CONSTANTS = {
+    // Touch detection
+    MIN_SWIPE_DISTANCE: 30,
+    MAX_TAP_TIME: 300, // Maximum time for a tap (milliseconds)
+    // Time window for double-tap detection (ms). Kept reasonably short to
+    // avoid perceived input lag while still being forgiving on mobile.
+    DOUBLE_TAP_TIME: 250,
+    // Delay before executing single tap action (waiting for potential double-tap)
+    DOUBLE_TAP_DELAY: 300,
+    // Pixel tolerance for double-tap detection. Sometimes subsequent
+    // taps fall on slightly different client coordinates due to
+    // devicePixelRatio / rounding; allow small movement to still count.
+    DOUBLE_TAP_PIXEL_TOLERANCE: 20,
+
+    // Animation timing
+    PATH_STEP_DELAY: 150, // ms between path steps
+    LEGACY_PATH_DELAY: 150, // ms for legacy pathing
+
+    // Debug points
+    DEBUG_POINT_AMOUNT: 999
+};

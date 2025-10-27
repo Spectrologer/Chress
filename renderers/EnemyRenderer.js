@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS } from '../core/constants.js';
+import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/index.js';
 import { RendererUtils } from './RendererUtils.js';
 
 export class EnemyRenderer {
@@ -208,7 +208,7 @@ export class EnemyRenderer {
 
                     // Draw black outline
                     this.ctx.strokeStyle = '#000000';
-                    this.ctx.lineWidth = 4;
+                    this.ctx.lineWidth = STROKE_CONSTANTS.ENEMY_OUTLINE_STROKE;
                     this.ctx.strokeText(turnNumber, pixelX + TILE_SIZE / 2, pixelY - 4);
 
                     // Draw white fill

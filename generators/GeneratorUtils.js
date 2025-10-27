@@ -1,7 +1,7 @@
 // GeneratorUtils.js
 // Shared utilities for random placement, attempts loops, and tile validation in generators
-import { GRID_SIZE, TILE_TYPES } from '../core/constants.js';
-import logger from '../core/logger.js';
+import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
+import { logger } from '../core/logger.js';
 import GridIterator from '../utils/GridIterator.js';
 import { Position } from '../core/Position.js';
 

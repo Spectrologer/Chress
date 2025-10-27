@@ -1,6 +1,7 @@
-import { TILE_TYPES, INVENTORY_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants.js';
+import { TILE_TYPES, INVENTORY_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants/index.js';
 import { InventoryService } from './inventory/InventoryService.js';
 import { ItemMetadata } from './inventory/ItemMetadata.js';
+import { isTileType } from '../utils/TileUtils.js';
 
 /**
  * ItemManager - Public API facade for item/inventory operations
@@ -129,13 +130,13 @@ export class ItemManager {
 
         // Check for existing stack based on tile type
         let hasExistingStack = false;
-        if (tile === TILE_TYPES.WATER) {
+        if (isTileType(tile, TILE_TYPES.WATER)) {
             hasExistingStack = player.inventory.some(i => i.type === 'water');
-        } else if (tile === TILE_TYPES.HEART) {
+        } else if (isTileType(tile, TILE_TYPES.HEART)) {
             hasExistingStack = player.inventory.some(i => i.type === 'heart');
-        } else if (tile === TILE_TYPES.NOTE) {
+        } else if (isTileType(tile, TILE_TYPES.NOTE)) {
             hasExistingStack = player.inventory.some(i => i.type === 'note');
-        } else if (tile.type === TILE_TYPES.FOOD) {
+        } else if (isTileType(tile, TILE_TYPES.FOOD)) {
             hasExistingStack = player.inventory.some(i =>
                 i.type === 'food' && i.foodType === tile.foodType
             );

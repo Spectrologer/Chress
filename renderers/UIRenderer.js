@@ -1,4 +1,4 @@
-import { TILE_SIZE } from '../core/constants.js';
+import { TILE_SIZE } from '../core/constants/index.js';
 
 export class UIRenderer {
     constructor(game) {

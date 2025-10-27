@@ -3,7 +3,7 @@
  */
 
 import { ZoneManager } from '../managers/ZoneManager.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
 
 // Tests to lock in pitfall/hole metadata persistence and ensure port transitions
 // don't unintentionally overwrite saved underground zone return coordinates.

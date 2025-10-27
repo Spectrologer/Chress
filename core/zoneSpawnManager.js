@@ -1,12 +1,13 @@
-import { GRID_SIZE, TILE_TYPES } from './constants.js';
-import logger from './logger.js';
+import { GRID_SIZE, TILE_TYPES } from './constants/index.js';
+import { logger } from './logger.js';
 import GridIterator from '../utils/GridIterator.js';
+import { isTileType } from '../utils/TileUtils.js';
 
 export function isTileFree(zoneGen, x, y) {
     const tile = zoneGen.grid[y][x];
-    if (tile === TILE_TYPES.WALL || tile === TILE_TYPES.ROCK || tile === TILE_TYPES.SHRUBBERY || tile === TILE_TYPES.HOUSE || tile === TILE_TYPES.DEADTREE || tile === TILE_TYPES.WELL || tile === TILE_TYPES.SHACK || tile === TILE_TYPES.SIGN || (tile && tile.type === TILE_TYPES.SIGN)) return false;
+    if (isTileType(tile, TILE_TYPES.WALL) || isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY) || isTileType(tile, TILE_TYPES.HOUSE) || isTileType(tile, TILE_TYPES.DEADTREE) || isTileType(tile, TILE_TYPES.WELL) || isTileType(tile, TILE_TYPES.SHACK) || isTileType(tile, TILE_TYPES.SIGN)) return false;
     if (zoneGen.enemies && zoneGen.enemies.some(e => e.x === x && e.y === y)) return false;
-    if (tile === TILE_TYPES.AXE || tile === TILE_TYPES.HAMMER || (tile && tile.type === TILE_TYPES.BISHOP_SPEAR)) return false;
+    if (isTileType(tile, TILE_TYPES.AXE) || isTileType(tile, TILE_TYPES.HAMMER) || isTileType(tile, TILE_TYPES.BISHOP_SPEAR)) return false;
     return true;
 }
 
@@ -43,7 +44,7 @@ export function findValidPlayerSpawn(zoneGen, avoidEntrance = false) {
         logger.log('[SPAWN] Home zone detected, looking for exit tiles');
 
         // Find all exit tiles in the zone
-        const exitTiles = GridIterator.findTiles(zoneGen.grid, tile => tile === TILE_TYPES.EXIT);
+        const exitTiles = GridIterator.findTiles(zoneGen.grid, tile => isTileType(tile, TILE_TYPES.EXIT));
 
         logger.log('[SPAWN] Found exit tiles:', exitTiles.length, exitTiles);
 

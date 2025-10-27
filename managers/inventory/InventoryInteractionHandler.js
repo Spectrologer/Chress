@@ -1,6 +1,7 @@
-import { TILE_TYPES } from '../../core/constants.js';
+import { TILE_TYPES } from '../../core/constants/index.js';
 import { eventBus } from '../../core/EventBus.js';
 import { EventTypes } from '../../core/EventTypes.js';
+import { isTileType } from '../../utils/TileUtils.js';
 
 /**
  * InventoryInteractionHandler - Unified interaction layer for inventory UI
@@ -127,7 +128,7 @@ export class InventoryInteractionHandler {
 
             if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9) {
                 const tile = this.game.grid[ny][nx];
-                if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.EXIT) {
+                if (isTileType(tile, TILE_TYPES.FLOOR) || isTileType(tile, TILE_TYPES.EXIT)) {
                     this.game.bombPlacementPositions.push({ x: nx, y: ny });
                 }
             }

@@ -4,7 +4,7 @@
 
 import { ZoneTransitionManager } from '../managers/ZoneTransitionManager.js';
 import { ZoneManager } from '../managers/ZoneManager.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
 
 jest.mock('../renderers/MultiTileHandler.js');
 import { MultiTileHandler } from '../renderers/MultiTileHandler.js';

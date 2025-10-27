@@ -1,4 +1,4 @@
-import logger from '../core/logger.js';
+import { logger } from '../core/logger.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';

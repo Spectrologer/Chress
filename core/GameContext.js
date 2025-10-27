@@ -134,6 +134,13 @@ export class GameContext {
     get radialInventoryUI() { return this.ui.radialInventoryUI; }
     set radialInventoryUI(value) { this.ui.radialInventoryUI = value; }
 
+    // Backward compatibility aliases
+    get inventoryManager() { return this.ui.inventoryUI; }
+    set inventoryManager(value) { this.ui.inventoryUI = value; }
+
+    get itemService() { return this.inventoryService; }
+    set itemService(value) { this.inventoryService = value; }
+
     get _lastPlayerPos() { return this.ui._lastPlayerPos; }
     set _lastPlayerPos(value) { this.ui._lastPlayerPos = value; }
 

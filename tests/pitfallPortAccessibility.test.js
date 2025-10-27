@@ -3,7 +3,8 @@
  */
 
 import { PathGenerator } from '../generators/PathGenerator.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
+import { isTileType } from '../utils/TileUtils.js';
 
 /**
  * Tests to ensure that pitfall zones always have accessible escape routes.
@@ -30,7 +31,7 @@ describe('Pitfall Port Accessibility', () => {
             for (let dx = -1; dx <= 1; dx++) {
                 if (dx === 0 && dy === 0) continue;
                 const tile = grid[portY + dy][portX + dx];
-                if (tile === TILE_TYPES.FLOOR) {
+                if (isTileType(tile, TILE_TYPES.FLOOR)) {
                     hasAdjacentFloor = true;
                     break;
                 }
@@ -63,12 +64,12 @@ describe('Pitfall Port Accessibility', () => {
         const hasFloorNearFirst = [
             grid[1][2], grid[3][2], grid[2][1], grid[2][3],
             grid[1][1], grid[1][3], grid[3][1], grid[3][3]
-        ].some(tile => tile === TILE_TYPES.FLOOR);
+        ].some(tile => isTileType(tile, TILE_TYPES.FLOOR));
 
         const hasFloorNearSecond = [
             grid[4][5], grid[6][5], grid[5][4], grid[5][6],
             grid[4][4], grid[4][6], grid[6][4], grid[6][6]
-        ].some(tile => tile === TILE_TYPES.FLOOR);
+        ].some(tile => isTileType(tile, TILE_TYPES.FLOOR));
 
         expect(hasFloorNearFirst).toBe(true);
         expect(hasFloorNearSecond).toBe(true);
@@ -117,7 +118,7 @@ describe('Pitfall Port Accessibility', () => {
         const hasFloorNearPort = [
             grid[3][4], grid[5][4], grid[4][3], grid[4][5],
             grid[3][3], grid[3][5], grid[5][3], grid[5][5]
-        ].some(tile => tile === TILE_TYPES.FLOOR);
+        ].some(tile => isTileType(tile, TILE_TYPES.FLOOR));
         expect(hasFloorNearPort).toBe(true);
     });
 

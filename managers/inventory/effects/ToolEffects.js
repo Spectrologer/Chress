@@ -1,5 +1,5 @@
 import { BaseItemEffect } from './BaseItemEffect.js';
-import { TILE_TYPES } from '../../../core/constants.js';
+import { TILE_TYPES } from '../../../core/constants/index.js';
 
 /**
  * Tool effects - Axe, Hammer
@@ -8,8 +8,8 @@ import { TILE_TYPES } from '../../../core/constants.js';
 export class AxeEffect extends BaseItemEffect {
     apply(game, item, context = {}) {
         // Drop axe on current tile
-        this._dropItem(game, 'axe', TILE_TYPES.AXE);
-        return { consumed: true, success: true };
+        const success = this._dropItem(game, 'axe', TILE_TYPES.AXE);
+        return { consumed: success, quantity: 1, success };
     }
 }
 
@@ -17,6 +17,6 @@ export class HammerEffect extends BaseItemEffect {
     apply(game, item, context = {}) {
         // Drop hammer on current tile
         const success = this._dropItem(game, 'hammer', TILE_TYPES.HAMMER);
-        return { consumed: success, success };
+        return { consumed: success, quantity: 1, success };
     }
 }

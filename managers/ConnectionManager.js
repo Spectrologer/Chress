@@ -1,4 +1,4 @@
-import { GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants.js';
+import { GRID_SIZE, SPAWN_PROBABILITIES, ZONE_LEVEL_DISTANCES, getZoneLevelFromDistance } from '../core/constants/index.js';
 
 export class ConnectionManager {
     constructor() {
@@ -78,9 +78,9 @@ export class ConnectionManager {
                 break;
         }
 
-        // Make home zones (dist <= 2) highly interconnected with exits on almost all sides
+        // Make home zones highly interconnected with exits on almost all sides
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
-        const isHome = dist <= 2;
+        const isHome = dist <= ZONE_LEVEL_DISTANCES.HOME_RADIUS;
         const nullThreshold = isHome ? 5 : 30; // 95% chance for home zones, 70% otherwise
 
         // Chance of having an exit on this side
@@ -140,7 +140,7 @@ export class ConnectionManager {
 
         // Ensure minimum connectivity based on zone level
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
-        let zoneLevel = dist <= 2 ? 1 : dist <= 8 ? 2 : dist <= 16 ? 3 : 4;
+        let zoneLevel = getZoneLevelFromDistance(dist);
         const minConnections = zoneLevel === 4 ? 1 : 2;
 
         while (hasConnections < minConnections) {

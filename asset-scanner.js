@@ -1,5 +1,5 @@
 // Asset Scanner Module - Dynamically reads game asset definitions
-import { IMAGE_ASSETS, FOOD_ASSETS } from './core/constants.js';
+import { IMAGE_ASSETS, FOOD_ASSETS } from './core/constants/index.js';
 import { Sign } from './ui/Sign.js';
 
 export class AssetScanner {

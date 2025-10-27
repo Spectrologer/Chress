@@ -44,6 +44,7 @@ export class ServiceContainer {
     constructor(game) {
         this.game = game;
         this._instances = new Map();
+        this._serviceRegistry = this._buildServiceRegistry();
     }
 
     /**
@@ -84,33 +85,23 @@ export class ServiceContainer {
     }
 
     /**
-     * Factory method that creates services based on name.
-     * This maintains the same initialization order and dependencies as before.
+     * Build the service registry - a map of service names to factory functions.
+     * Each factory function receives the ServiceContainer instance and returns the service.
      */
-    _createService(serviceName) {
-        switch (serviceName) {
+    _buildServiceRegistry() {
+        return {
             // Visual / external services
-            case 'textureManager':
-                return new TextureManager();
-
-            case 'connectionManager':
-                return new ConnectionManager();
-
-            case 'zoneGenerator':
-                return new ZoneGenerator(this.game);
+            textureManager: () => new TextureManager(),
+            connectionManager: () => new ConnectionManager(),
+            zoneGenerator: () => new ZoneGenerator(this.game),
 
             // Entities
-            case 'player':
-                return new Player();
-
-            case 'Enemy':
-                return Enemy; // expose class for GameStateManager
+            player: () => new Player(),
+            Enemy: () => Enemy, // expose class for GameStateManager
 
             // Consolidated inventory system
-            case 'inventoryService':
-                return new InventoryService(this.game);
-
-            case 'itemManager': {
+            inventoryService: () => new InventoryService(this.game),
+            itemManager: () => {
                 const itemManager = new ItemManager(this.game);
                 // Cross-reference: player needs itemManager
                 const player = this.get('player');
@@ -118,125 +109,82 @@ export class ServiceContainer {
                     player.itemManager = itemManager;
                 }
                 return itemManager;
-            }
+            },
+            itemService: () => this.get('inventoryService'), // Backward compatibility alias
+            itemUsageHandler: () => null, // Replaced by ItemEffectStrategy
+            itemUsageManager: () => null, // Replaced by ItemEffectStrategy
+            inventoryInteractionHandler: () => new InventoryInteractionHandler(this.game),
+            inventoryUI: () => new InventoryUI(this.game, this.get('inventoryService')),
+            radialInventoryUI: () => new RadialInventoryUI(this.game, this.get('inventoryService')),
 
-            case 'itemService':
-                // Backward compatibility alias
-                return this.get('inventoryService');
+            // Input and UI
+            inputManager: () => new InputManager(this.game, this.get('inventoryService')),
+            uiManager: () => new UIManager(this.game),
+            assetLoader: () => new AssetLoader(this.game),
+            overlayManager: () => new OverlayManager(this.game),
+            gameInitializer: () => new GameInitializer(this.game),
 
-            case 'itemUsageHandler':
-                return null; // Replaced by ItemEffectStrategy
+            // Rendering
+            renderManager: () => new RenderManager(this.game),
 
-            case 'itemUsageManager':
-                return null; // Replaced by ItemEffectStrategy
+            // Core managers
+            actionManager: () => new ActionManager(this.game),
+            consentManager: () => new ConsentManager(this.game),
 
-            case 'inventoryInteractionHandler':
-                return new InventoryInteractionHandler(this.game);
-
-            case 'inventoryUI':
-                return new InventoryUI(this.game, this.get('inventoryService'));
-
-            case 'radialInventoryUI':
-                return new RadialInventoryUI(this.game, this.get('inventoryService'));
-
-            case 'inputManager':
-                return new InputManager(this.game, this.get('inventoryService'));
-
-            case 'uiManager':
-                return new UIManager(this.game);
-
-            case 'assetLoader':
-                return new AssetLoader(this.game);
-
-            case 'overlayManager':
-                return new OverlayManager(this.game);
-
-            case 'gameInitializer':
-                return new GameInitializer(this.game);
-
-            case 'renderManager':
-                return new RenderManager(this.game);
-
-            case 'actionManager':
-                return new ActionManager(this.game);
-
-            case 'consentManager':
-                return new ConsentManager(this.game);
-
-            case 'animationScheduler':
-                return new AnimationScheduler();
-
-            case 'soundManager':
-                return new SoundManager();
-
-            case 'turnManager':
-                return new TurnManager(this.game);
+            // Systems / utilities
+            animationScheduler: () => new AnimationScheduler(),
+            soundManager: () => new SoundManager(),
+            turnManager: () => new TurnManager(this.game),
 
             // Sub-managers for InteractionManager
-            case 'npcInteractionManager':
-                return new NPCInteractionManager(this.game);
+            npcInteractionManager: () => new NPCInteractionManager(this.game),
+            itemPickupManager: () => new ItemPickupManager(this.game),
+            combatActionManager: () => new CombatActionManager(this.game),
+            bombManager: () => new BombManager(this.game),
+            terrainInteractionManager: () => new TerrainInteractionManager(this.game),
+            environmentalInteractionManager: () => new EnvironmentalInteractionManager(this.game),
+            enemyDefeatFlow: () => new EnemyDefeatFlow(this.game),
 
-            case 'itemPickupManager':
-                return new ItemPickupManager(this.game);
+            // Managers with dependencies
+            combatManager: () => new CombatManager(
+                this.game,
+                this.get('turnManager').occupiedTilesThisTurn,
+                this.get('bombManager'),
+                this.get('enemyDefeatFlow')
+            ),
+            interactionManager: () => new InteractionManager(
+                this.game,
+                this.get('inputManager'),
+                this.get('npcInteractionManager'),
+                this.get('itemPickupManager'),
+                this.get('combatActionManager'),
+                this.get('bombManager'),
+                this.get('terrainInteractionManager'),
+                this.get('zoneTransitionManager'),
+                this.get('environmentalInteractionManager')
+            ),
 
-            case 'combatActionManager':
-                return new CombatActionManager(this.game);
+            // Zone management
+            zoneManager: () => new ZoneManager(this.game),
+            zoneTransitionManager: () => new ZoneTransitionManager(this.game, this.get('inputManager')),
+            zoneTransitionController: () => new ZoneTransitionController(this.game),
 
-            case 'bombManager':
-                return new BombManager(this.game);
+            // Error and state management
+            globalErrorHandler: () => new GlobalErrorHandler(this.game),
+            gameStateManager: () => new GameStateManager(this.game)
+        };
+    }
 
-            case 'terrainInteractionManager':
-                return new TerrainInteractionManager(this.game);
-
-            case 'environmentalInteractionManager':
-                return new EnvironmentalInteractionManager(this.game);
-
-            case 'enemyDefeatFlow':
-                return new EnemyDefeatFlow(this.game);
-
-            case 'combatManager':
-                return new CombatManager(
-                    this.game,
-                    this.get('turnManager').occupiedTilesThisTurn,
-                    this.get('bombManager'),
-                    this.get('enemyDefeatFlow')
-                );
-
-            case 'interactionManager':
-                return new InteractionManager(
-                    this.game,
-                    this.get('inputManager'),
-                    this.get('npcInteractionManager'),
-                    this.get('itemPickupManager'),
-                    this.get('combatActionManager'),
-                    this.get('bombManager'),
-                    this.get('terrainInteractionManager'),
-                    this.get('zoneTransitionManager'),
-                    this.get('environmentalInteractionManager')
-                );
-
-            case 'zoneManager':
-                return new ZoneManager(this.game);
-
-            case 'zoneTransitionManager':
-                return new ZoneTransitionManager(this.game, this.get('inputManager'));
-
-            case 'zoneTransitionController':
-                return new ZoneTransitionController(this.game);
-
-            case 'globalErrorHandler':
-                return new GlobalErrorHandler(this.game);
-
-            case 'gameStateManager':
-                return new GameStateManager(this.game);
-
-            case 'inventoryManager':
-                // Legacy reference for code expecting inventoryManager object
-                return this.get('inventoryUI');
-
-            default:
-                throw new Error(`Unknown service: ${serviceName}`);
+    /**
+     * Factory method that creates services based on name.
+     * This maintains the same initialization order and dependencies as before.
+     */
+    _createService(serviceName) {
+        const factory = this._serviceRegistry[serviceName];
+        if (!factory) {
+            throw new Error(`Unknown service: ${serviceName}`);
         }
+        return factory();
     }
 
     /**
@@ -313,10 +261,7 @@ export class ServiceContainer {
             'zoneTransitionController',
 
             // State management
-            'gameStateManager',
-
-            // Legacy aliases
-            'inventoryManager'
+            'gameStateManager'
         ];
 
         // Create all services

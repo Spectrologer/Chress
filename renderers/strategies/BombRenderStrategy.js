@@ -1,4 +1,4 @@
-import { TILE_TYPES, TILE_SIZE, TILE_COLORS } from '../../core/constants.js';
+import { TILE_TYPES, TILE_SIZE, TILE_COLORS } from '../../core/constants/index.js';
 import { logger } from '../../core/logger.js';
 import { TileRenderStrategy } from './TileRenderStrategy.js';
 import { isBomb } from '../../utils/TileUtils.js';

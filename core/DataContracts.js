@@ -1,4 +1,4 @@
-import { ANIMATION_SCHEMAS } from './constants.js';
+import { ANIMATION_SCHEMAS } from './constants/index.js';
 import { eventBus } from './EventBus.js';
 import { EventTypes } from './EventTypes.js';
 

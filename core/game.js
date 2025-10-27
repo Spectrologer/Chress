@@ -1,8 +1,9 @@
-import { TILE_TYPES } from './constants.js';
+import { TILE_TYPES } from './constants/index.js';
 import { ServiceContainer } from './ServiceContainer.js';
 import { AnimationManager } from './DataContracts.js';
 import { GameContext } from './GameContext.js';
 import { isFloor } from '../utils/TileUtils.js';
+import { registerAllContent } from '../config/ContentRegistrations.js';
 
 // Game state - now extends GameContext for better organization
 class Game extends GameContext {
@@ -42,6 +43,9 @@ class Game extends GameContext {
     
 // Initialize game when the page loads
 window.addEventListener('DOMContentLoaded', () => {
+    // Register all game content before creating the game
+    registerAllContent();
+
     const game = new Game();
 
     // Debug: Q spawns aguamelin

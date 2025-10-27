@@ -1,5 +1,5 @@
 import { BaseItemEffect } from './BaseItemEffect.js';
-import { TILE_TYPES } from '../../../core/constants.js';
+import { TILE_TYPES } from '../../../core/constants/index.js';
 import { Sign } from '../../../ui/Sign.js';
 import { logger } from '../../../core/logger.js';
 import { eventBus } from '../../../core/EventBus.js';

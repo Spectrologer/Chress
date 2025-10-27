@@ -1,7 +1,7 @@
-import logger from '../logger.js';
+import { logger } from '../logger.js';
 import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
 import { BaseZoneHandler } from './BaseZoneHandler.js';
-import { SPAWN_PROBABILITIES } from '../constants.js';
+import { SPAWN_PROBABILITIES } from '../constants/index.js';
 
 class SurfaceHandler extends BaseZoneHandler {
     constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets) {

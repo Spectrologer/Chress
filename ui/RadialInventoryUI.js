@@ -1,4 +1,4 @@
-import { TILE_SIZE, TILE_TYPES, UI_CONSTANTS, TIMING_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants.js';
+import { TILE_SIZE, TILE_TYPES, UI_CONSTANTS, TIMING_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants/index.js';
 import { saveRadialInventory } from '../managers/RadialPersistence.js';
 import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
 import { eventBus } from '../core/EventBus.js';

@@ -75,6 +75,8 @@ export class PlayerStatsUI {
         }
 
         // Update inventory display
-        this.game.inventoryManager.updateInventoryDisplay();
+        if (this.game.inventoryManager) {
+            this.game.inventoryManager.updateInventoryDisplay();
+        }
     }
 }
