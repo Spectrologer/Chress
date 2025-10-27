@@ -29,8 +29,6 @@ export class AssetLoader {
 
             // Store on game instance for backward compatibility
             this.game.availableFoodAssets = this.availableFoodAssets;
-
-            logger.info(`Loaded ${this.availableFoodAssets.length} food assets`);
         } catch (error) {
             logger.error('Error loading assets:', error);
             this.availableFoodAssets = [];

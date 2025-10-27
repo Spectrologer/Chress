@@ -49,13 +49,6 @@ static hammerWarningSignPlaced = false;
 
         // Level 4 (Frontier): dist 17-24
         this.horseIconSpawnZone = this.getRandomZoneForLevel(17, 24);
-
-        logger.log('Special Item Locations:', {
-            axe: this.axeSpawnZone,
-            hammer: this.hammerSpawnZone,
-            spear: this.spearSpawnZone,
-            horseIcon: this.horseIconSpawnZone
-        });
     }
 
     static getRandomZoneForLevel(minDist, maxDist) {

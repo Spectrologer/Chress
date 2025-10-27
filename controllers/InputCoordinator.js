@@ -160,8 +160,17 @@ export class InputCoordinator {
         if (!enemyAtTile) {
             this.game?.renderManager?.clearFeedback?.();
             this.game?.renderManager?.showTapFeedback?.(gridCoords.x, gridCoords.y);
+        } else {
+            // If on enemy and adjacent (will trigger immediate attack), clear feedback
+            const playerPos = this.game.player.getPosition();
+            const dx = Math.abs(gridCoords.x - playerPos.x);
+            const dy = Math.abs(gridCoords.y - playerPos.y);
+            const isAdjacent = (dx + dy === 1); // Cardinal adjacency only
+            if (isAdjacent) {
+                this.game?.renderManager?.clearFeedback?.();
+            }
+            // If not adjacent, leave hold feedback to show attack range preview
         }
-        // If on enemy, hold feedback is already set from pointer down, leave it as is to show attack range
 
         // Check double tap
         const isDoubleTap = this.gestureDetector.handleDoubleTapLogic(gridCoords, screenX, screenY);
@@ -295,7 +304,7 @@ export class InputCoordinator {
 
             // Combat or movement
             const targetPos = new Position(newX, newY);
-            const enemyAtTarget = this.game.enemies.find(enemy => enemy.getPositionObject().equals(targetPos));
+            const enemyAtTarget = this.game.enemies.find(enemy => enemy.getPositionObject().equals(targetPos) && enemy.health > 0);
 
             if (enemyAtTarget) {
                 // Delegate all combat logic to CombatManager

@@ -32,7 +32,6 @@ export class BombManager {
      */
     tickBombsAndExplode() {
         const bombs = GridIterator.findTiles(this.game.grid, isBomb);
-        console.log('[BombManager] tickBombsAndExplode found', bombs.length, 'bombs');
 
         bombs.forEach(({ tile, x, y }) => {
             // Skip primitive bombs - they're inactive pickup items

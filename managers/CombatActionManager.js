@@ -14,7 +14,7 @@ export class CombatActionManager {
         if (!bishopSpearItem) return null;
 
         const enemyCollection = this.game.enemyCollection;
-        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y);
+        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y, true);
         const targetTile = this.game.grid[gridCoords.y][gridCoords.x];
         const isEmptyTile = !enemyAtCoords && this.game.player.isWalkable(gridCoords.x, gridCoords.y, this.game.grid, playerPos.x, playerPos.y);
 
@@ -37,7 +37,7 @@ export class CombatActionManager {
         if (!horseIconItem) return null;
 
         const enemyCollection = this.game.enemyCollection;
-        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y);
+        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y, true);
         const targetTile = this.game.grid[gridCoords.y][gridCoords.x];
         const isEmptyTile = !enemyAtCoords && this.game.player.isWalkable(gridCoords.x, gridCoords.y, this.game.grid, playerPos.x, playerPos.y);
 
@@ -62,7 +62,7 @@ export class CombatActionManager {
         if (!bowItem) return null;
 
         const enemyCollection = this.game.enemyCollection;
-        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y);
+        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y, true);
         if (!enemyAtCoords) return null;
 
         const dx = gridCoords.x - playerPos.x;

@@ -82,8 +82,8 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(9, 1fr);
-            grid-template-rows: repeat(9, 1fr);
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
             gap: 1px;
             background: #8B7355;
             padding: 1px;
@@ -548,7 +548,7 @@
     </div>
 
     <script>
-        const GRID_SIZE = 9;
+        const GRID_SIZE = 10;
         let currentLayer = 'terrain';
         let isPainting = false;
         let gridData = Array(GRID_SIZE * GRID_SIZE).fill(null);
@@ -574,7 +574,7 @@
             'pitfall': '../assets/doodads/pitfall.png',
             'rock': '../assets/rock.png',
             'shrubbery': '../assets/shrubbery.png',
-            'wall': '../assets/bush.png',
+            'wall': '⬛',
 
             // STRUCTURE
             'cistern': '../assets/doodads/cistern.png',
@@ -606,6 +606,9 @@
             'heart': '../assets/items/heart.png',
             'horse_icon': '../assets/items/horse.png',
             'note': '../assets/items/note.png',
+            'random_item': '❓',
+            'random_radial_item': '🎯',
+            'random_food_water': '🍎',
             'shovel': '../assets/items/shovel.png',
             'water': '../assets/items/water.png',
 
@@ -649,9 +652,13 @@
 
         function preloadImages() {
             Object.entries(tileAssets).forEach(([key, path]) => {
-                const img = new Image();
-                img.src = path;
-                loadedImages[key] = img;
+                // Skip emoji/unicode placeholders (they're not image paths)
+                const isEmoji = path && path.length <= 3 && !path.includes('/') && !path.includes('.');
+                if (!isEmoji) {
+                    const img = new Image();
+                    img.src = path;
+                    loadedImages[key] = img;
+                }
             });
         }
 
@@ -675,7 +682,7 @@
             ],
             ITEM: [
                 'axe', 'bishop_spear', 'bomb', 'book_of_time_travel', 'bow', 'food', 'hammer',
-                'heart', 'horse_icon', 'note', 'shovel', 'water',
+                'heart', 'horse_icon', 'note', 'random_item', 'random_radial_item', 'random_food_water', 'shovel', 'water',
                 null
             ],
             ENEMY: [
@@ -706,6 +713,16 @@
         function initGrid() {
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
+
+            // Initialize with walls on borders
+            for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+                const row = Math.floor(i / GRID_SIZE);
+                const col = i % GRID_SIZE;
+                // Add wall if on border (first/last row or first/last column)
+                if (row === 0 || row === GRID_SIZE - 1 || col === 0 || col === GRID_SIZE - 1) {
+                    gridData[i] = 'wall';
+                }
+            }
 
             for (let row = 0; row < GRID_SIZE; row++) {
                 for (let col = 0; col < GRID_SIZE; col++) {
@@ -820,7 +837,24 @@
 
                 if (value) {
                     const assetPath = getAssetPath(value);
-                    if (assetPath && loadedImages[value]) {
+
+                    // Check if assetPath is an emoji/unicode character (not a file path)
+                    const isEmoji = assetPath && assetPath.length <= 3 && !assetPath.includes('/') && !assetPath.includes('.');
+
+                    if (isEmoji) {
+                        // Display emoji directly
+                        const emojiDiv = document.createElement('div');
+                        emojiDiv.className = 'cell-feature';
+                        emojiDiv.textContent = assetPath;
+                        emojiDiv.title = value;
+                        emojiDiv.style.fontSize = '20px';
+                        emojiDiv.style.display = 'flex';
+                        emojiDiv.style.alignItems = 'center';
+                        emojiDiv.style.justifyContent = 'center';
+                        emojiDiv.style.width = '100%';
+                        emojiDiv.style.height = '100%';
+                        cell.appendChild(emojiDiv);
+                    } else if (assetPath && loadedImages[value]) {
                         // Check if this is a multi-tile structure
                         const structure = multiTileStructures[value];
 
@@ -869,11 +903,16 @@
                             img.style.objectFit = 'contain';
                             img.style.imageRendering = 'pixelated';
 
+                            // Apply gray filter for statues
+                            if (value.endsWith('_statue')) {
+                                img.style.filter = 'grayscale(100%) brightness(0.7)';
+                            }
+
                             // Rotate arrow for directional exits
                             if (value === 'exit_left') img.style.transform = 'rotate(-90deg)';
-                            else if (value === 'exit_up') img.style.transform = 'rotate(180deg)';
+                            else if (value === 'exit_down') img.style.transform = 'rotate(180deg)';
                             else if (value === 'exit_right') img.style.transform = 'rotate(90deg)';
-                            // exit_down is default (0deg)
+                            // exit_up is default (0deg)
 
                             cell.appendChild(img);
                         }
@@ -933,7 +972,15 @@
                     item.textContent = '🚫';
                 } else {
                     const assetPath = getAssetPath(value);
-                    if (assetPath && loadedImages[value]) {
+
+                    // Check if assetPath is an emoji/unicode character (not a file path)
+                    const isEmoji = assetPath && assetPath.length <= 3 && !assetPath.includes('/') && !assetPath.includes('.');
+
+                    if (isEmoji) {
+                        // Display emoji directly
+                        item.textContent = assetPath;
+                        item.style.fontSize = '24px';
+                    } else if (assetPath && loadedImages[value]) {
                         const img = document.createElement('img');
                         img.src = assetPath;
                         img.style.width = '100%';
@@ -941,11 +988,16 @@
                         img.style.objectFit = 'contain';
                         img.style.imageRendering = 'pixelated';
 
+                        // Apply gray filter for statues
+                        if (value.endsWith('_statue')) {
+                            img.style.filter = 'grayscale(100%) brightness(0.7)';
+                        }
+
                         // Rotate arrow for directional exits
                         if (value === 'exit_left') img.style.transform = 'rotate(-90deg)';
-                        else if (value === 'exit_up') img.style.transform = 'rotate(180deg)';
+                        else if (value === 'exit_down') img.style.transform = 'rotate(180deg)';
                         else if (value === 'exit_right') img.style.transform = 'rotate(90deg)';
-                        // exit_down is default (0deg)
+                        // exit_up is default (0deg)
 
                         item.appendChild(img);
                     } else {
@@ -990,6 +1042,14 @@
         function clearGrid() {
             if (confirm('Clear entire grid? This cannot be undone.')) {
                 gridData = Array(GRID_SIZE * GRID_SIZE).fill(null);
+                // Add default walls on borders
+                for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+                    const row = Math.floor(i / GRID_SIZE);
+                    const col = i % GRID_SIZE;
+                    if (row === 0 || row === GRID_SIZE - 1 || col === 0 || col === GRID_SIZE - 1) {
+                        gridData[i] = 'wall';
+                    }
+                }
                 updateGrid();
             }
         }

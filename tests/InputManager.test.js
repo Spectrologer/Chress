@@ -144,13 +144,13 @@ describe('InputManager', () => {
 
   describe('convertScreenToGrid', () => {
     test('converts screen coordinates to grid coordinates', () => {
-      mockGame.canvas.width = 576;  // 9 tiles * 64px per tile = 576px
-      mockGame.canvas.height = 576;
+      mockGame.canvas.width = 640;  // 10 tiles * 64px per tile = 640px
+      mockGame.canvas.height = 640;
       mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
         left: 0,
         top: 0,
-        width: 576,  // Canvas displayed at full size
-        height: 576
+        width: 640,  // Canvas displayed at full size
+        height: 640
       });
 
       const result = inputManager.convertScreenToGrid(64, 64); // Center of first tile (0,0) to tile center
@@ -206,12 +206,12 @@ describe('InputManager', () => {
     });
 
     test('finds and executes path to valid target', () => {
-      mockGame.canvas.width = 576;
+      mockGame.canvas.width = 640;
       mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
         left: 0,
         top: 0,
-        width: 576,
-        height: 576
+        width: 640,
+        height: 640
       });
       const executePathSpy = jest.spyOn(inputManager, 'executePath');
 
@@ -224,10 +224,10 @@ describe('InputManager', () => {
     test('handles exit double tap', () => {
       mockGame.grid[2][2] = TILE_TYPES.EXIT;
       mockPlayer.getPosition = jest.fn().mockReturnValue({ x: 2, y: 2 });
-      mockGame.canvas.width = 576;
-      mockGame.canvas.height = 576;
+      mockGame.canvas.width = 640;
+      mockGame.canvas.height = 640;
       mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
-        left: 0, top: 0, width: 576, height: 576
+        left: 0, top: 0, width: 640, height: 640
       });
       const performExitTapSpy = jest.spyOn(inputManager.controller.coordinator, 'performExitTap');
 
@@ -242,10 +242,10 @@ describe('InputManager', () => {
     test('handles port double tap', () => {
       mockGame.grid[2][2] = TILE_TYPES.PORT;
       mockPlayer.getPosition = jest.fn().mockReturnValue({ x: 2, y: 2 });
-      mockGame.canvas.width = 576;
-      mockGame.canvas.height = 576;
+      mockGame.canvas.width = 640;
+      mockGame.canvas.height = 640;
       mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
-        left: 0, top: 0, width: 576, height: 576
+        left: 0, top: 0, width: 640, height: 640
       });
 
       if (!mockGame.interactionManager.zoneManager) {

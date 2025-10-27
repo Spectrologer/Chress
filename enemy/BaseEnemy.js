@@ -39,6 +39,7 @@ export class BaseEnemy {
         this.liftFrames = 0;
         this.smokeAnimations = [];
         this.isFrozen = false; // Frozen when player is on exit tile
+        this.showFrozenVisual = false; // Visual grayscale effect (removed 1 turn earlier than isFrozen)
 
         // Add a small scaling factor for lizardy to prevent clipping
         if (this.enemyType === 'lizardy') {

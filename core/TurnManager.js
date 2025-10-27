@@ -50,6 +50,8 @@ export class TurnManager {
         const shouldFreeze = playerOnExit || this.game.justLeftExitTile;
         enemyCollection.forEach(enemy => {
             enemy.isFrozen = shouldFreeze;
+            // Visual freeze effect is removed 1 turn earlier (only when on exit tile, not during grace period)
+            enemy.showFrozenVisual = playerOnExit;
         });
 
         // Clear the grace period flag after it's been used for one turn

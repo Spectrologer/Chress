@@ -12,6 +12,7 @@
 
 import { ContentRegistry } from '../core/ContentRegistry.js';
 import { TILE_TYPES, SPAWN_PROBABILITIES } from '../core/constants/index.js';
+import { boardLoader } from '../core/BoardLoader.js';
 
 // Import item effects
 import { FoodEffect, WaterEffect, HeartEffect } from '../managers/inventory/effects/ConsumableEffects.js';
@@ -23,17 +24,18 @@ import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect } from '../managers/in
  * Initialize all game content registrations
  * Call this once during game initialization
  */
-export function registerAllContent() {
-    console.log('[ContentRegistry] Starting content registration...');
-
+export async function registerAllContent() {
     registerItems();
     registerNPCs();
     registerEnemies();
+    registerBoards();
     // Zone handlers registered separately in ZoneGenerator
+
+    // Pre-load custom boards
+    await boardLoader.preloadAllBoards();
 
     ContentRegistry.markInitialized();
     const stats = ContentRegistry.getStats();
-    console.log('[ContentRegistry] Initialization complete:', stats);
 
     if (stats.items === 0 || stats.npcs === 0 || stats.enemies === 0) {
         console.error('[ContentRegistry] WARNING: Some content categories are empty!', stats);
@@ -537,6 +539,22 @@ function registerEnemies() {
             damage: 2
         }
     });
+}
+
+// ==================== BOARD REGISTRATIONS ====================
+
+/**
+ * Register custom board JSON files for specific zones
+ * These boards override procedural generation for canon/custom zones
+ */
+function registerBoards() {
+    // Museum - The home interior at zone (0,0) dimension 1
+    boardLoader.registerBoard(0, 0, 1, 'museum', 'canon');
+
+    // Add more custom boards here as they are created
+    // Example for custom boards:
+    // boardLoader.registerBoard(5, 5, 0, 'special_surface_zone', 'custom');
+    // boardLoader.registerBoard(2, 3, 2, 'underground_cavern', 'custom');
 }
 
 // ==================== HELPER FUNCTIONS ====================

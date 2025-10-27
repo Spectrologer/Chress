@@ -34,12 +34,12 @@ export function getZoneLevelFromDistance(distance) {
 
 /**
  * Derived grid calculations
- * Note: Math.floor(9/2) = 4, not 3
- * If your code uses position 3,3 it's NOT the mathematical center
+ * Note: Math.floor(10/2) = 5
+ * The center is at position (5,5) with 10x10 grid
  * GRID_SIZE is imported from tiles.js
  */
-export const GRID_CENTER = Math.floor(GRID_SIZE / 2); // = 4
-export const GRID_MAX_INDEX = GRID_SIZE - 1; // = 8
+export const GRID_CENTER = Math.floor(GRID_SIZE / 2); // = 5
+export const GRID_MAX_INDEX = GRID_SIZE - 1; // = 9
 
 // Re-export GRID_SIZE for convenience so it can be imported from zones.js
 export { GRID_SIZE };

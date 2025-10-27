@@ -86,8 +86,12 @@ export function ensureTypingAudio(manager) {
 // Play a short, characterful blip for per-letter typing sound.
 // Accepts optional voiceSettings (from getVoiceSettingsForName) to tune pitch/timbre.
 export function playTypingBlip(manager, voiceSettings) {
-    if (!manager.typewriterSfxEnabled) return;
-    if (manager.game?.soundManager?.sfxEnabled === false) return;
+    if (!manager.typewriterSfxEnabled) {
+        return;
+    }
+    if (manager.game?.soundManager?.sfxEnabled === false) {
+        return;
+    }
 
     ensureTypingAudio(manager);
     const ctx = manager._typingAudioContext;

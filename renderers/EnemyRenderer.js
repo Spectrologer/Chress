@@ -72,7 +72,7 @@ export class EnemyRenderer {
                 // and lizord, draw them directly without scaling to avoid blurriness,
                 // unless they are doing a special animation (attack/move) or frozen.
                 const isPixelPerfectEnemy = enemy.enemyType === 'lazerd' || enemy.enemyType === 'lizord';
-                if (isPixelPerfectEnemy && scale === 1 && !flash && enemy.liftFrames === 0 && !enemy.isFrozen) {
+                if (isPixelPerfectEnemy && scale === 1 && !flash && enemy.liftFrames === 0 && !enemy.showFrozenVisual) {
                     this.ctx.drawImage(
                         enemyImage,
                         pixelXBase,
@@ -84,7 +84,7 @@ export class EnemyRenderer {
                 }
 
                 // Handle frozen pixel-perfect enemies separately
-                if (isPixelPerfectEnemy && enemy.isFrozen && scale === 1 && !flash && enemy.liftFrames === 0) {
+                if (isPixelPerfectEnemy && enemy.showFrozenVisual && scale === 1 && !flash && enemy.liftFrames === 0) {
                     this.ctx.save();
                     this.ctx.filter = 'grayscale(1) brightness(0.8)';
                     this.ctx.globalAlpha = 0.9;
@@ -116,7 +116,7 @@ export class EnemyRenderer {
                 if (flash) {
                     // Much more dramatic red flash for attacking enemies
                     this.ctx.filter = 'brightness(2.0) saturate(2) hue-rotate(340deg) drop-shadow(0 0 16px red) drop-shadow(0 0 8px red)';
-                } else if (enemy.isFrozen) {
+                } else if (enemy.showFrozenVisual) {
                     this.ctx.filter = 'grayscale(1) brightness(0.8)';
                     this.ctx.globalAlpha = 0.9;
                 }

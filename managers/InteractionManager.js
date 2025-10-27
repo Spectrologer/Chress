@@ -278,24 +278,15 @@ export class InteractionManager {
                 try { this.game.updatePlayerPosition(); } catch (e) {}
                 try { eventBus.emit(EventTypes.UI_UPDATE_STATS, {}); } catch (e) {}
 
-                // Clear the hold feedback so enemy range indicator disappears after attack
-                try { this.game.renderManager?.clearFeedback?.(); } catch (e) {}
-
                 return true;
             }
 
-            // Not adjacent: consume the tap to prevent auto-pathing onto an enemy tile
-            // unless the player has enabled the 'Auto Path With Enemies' setting.
-            const allowAutoPath = !!(this.game.player.stats && this.game.player.stats.autoPathWithEnemies);
-            if (!isAdjacent && !allowAutoPath) return true;
-            if (!isAdjacent && allowAutoPath) {
-                // Let the input/controller logic proceed so it can attempt pathfinding
-                // (which will only succeed if a path exists and the controller allows
-                // targeting enemy tiles when the setting is enabled).
-                // Fall through to return false (meaning: not handled here).
-            } else {
-                return true; // adjacent handled above
-            }
+            // Not adjacent: consume the tap to prevent auto-pathing onto an enemy tile.
+            // Tapping on an enemy should never trigger auto-pathing, regardless of the
+            // 'Auto Path With Enemies' setting. That setting only controls whether
+            // auto-pathing is allowed when enemies exist on the map, not whether you
+            // can path directly to enemy tiles.
+            return true;
         }
 
         return false; // No interaction, allow pathfinding

@@ -8,7 +8,8 @@ import { safeCall } from '../utils/SafeServiceCall.js';
  * Manages character detection and voice settings for dialogue.
  */
 export class TypewriterController {
-    constructor() {
+    constructor(game = null) {
+        this.game = game;
         this.currentTypewriterInterval = null;
         this.typewriterSpeed = 28; // ms per character
         this.typewriterSfxEnabled = true;
@@ -27,6 +28,9 @@ export class TypewriterController {
      */
     start(element, onComplete = null) {
         try {
+            // Stop any previous typewriter first (before detecting name)
+            this.stop();
+
             // Detect character name for voice SFX
             const detectedName = this._detectCharacterNameForElement(element);
             if (detectedName) {
@@ -34,9 +38,6 @@ export class TypewriterController {
             } else {
                 this._currentVoiceSettings = null;
             }
-
-            // Stop any previous typewriter
-            this.stop();
 
             // Create new typewriter effect
             const effect = new TypewriterEffect({
@@ -108,10 +109,14 @@ export class TypewriterController {
      */
     _detectCharacterNameForElement(element) {
         try {
-            if (!element) return null;
+            if (!element) {
+                return null;
+            }
 
             const nameEl = element.querySelector && element.querySelector('.character-name');
-            if (!nameEl) return null;
+            if (!nameEl) {
+                return null;
+            }
 
             const txt = (nameEl.textContent || '').trim();
             return txt.length ? txt : null;

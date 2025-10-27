@@ -19,7 +19,7 @@ export class MessageManager {
 
         // Initialize specialized handlers
         this.overlayHandler = new OverlayMessageHandler(game);
-        this.typewriterController = new TypewriterController();
+        this.typewriterController = new TypewriterController(game);
         this.dialogueManager = new DialogueManager(game, this.typewriterController);
         this.messageLog = new MessageLog(game);
         this.penneHandler = new PenneMessageHandler(game, this.overlayHandler);
@@ -52,11 +52,7 @@ export class MessageManager {
 
         // Hide persistent messages when player moves (unless it's a sign message)
         eventBus.on(EventTypes.PLAYER_MOVED, (positionData) => {
-            console.log('[MessageManager] PLAYER_MOVED event:', positionData);
-            console.log('[MessageManager] displayingMessageForSign:', this.game.displayingMessageForSign);
-
             if (!this.game.displayingMessageForSign) {
-                console.log('[MessageManager] No message displaying, hiding overlay');
                 this.hideOverlayMessage();
             } else {
                 // Check if player walked away from NPC
@@ -65,11 +61,8 @@ export class MessageManager {
 
                 if (transientState) {
                     const npcPos = transientState.getCurrentNPCPosition();
-                    console.log('[MessageManager] NPC position:', npcPos);
-                    console.log('[MessageManager] Player position:', playerPos);
 
                     const isAdjacent = transientState.isPlayerAdjacentToNPC(playerPos);
-                    console.log('[MessageManager] Player adjacent to NPC:', isAdjacent);
 
                     if (!isAdjacent) {
                         // Player walked away from NPC, close the message
@@ -86,8 +79,6 @@ export class MessageManager {
                         // Also close barter window if open
                         eventBus.emit(EventTypes.UI_DIALOG_HIDE, { type: 'barter' });
                     }
-                } else {
-                    console.log('[MessageManager] No transientState available');
                 }
             }
         });

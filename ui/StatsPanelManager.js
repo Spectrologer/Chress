@@ -24,7 +24,6 @@ export class StatsPanelManager {
     setActionCallbacks(showConfigCallback, showRecordsCallback) {
         this._showConfigCallback = showConfigCallback;
         this._showRecordsCallback = showRecordsCallback;
-        console.log('[StatsPanelManager] Action callbacks set:', !!showConfigCallback, !!showRecordsCallback);
     }
 
     /**
@@ -42,7 +41,6 @@ export class StatsPanelManager {
 
         // Update stats content (this recreates the buttons via innerHTML)
         this._updateStatsContent();
-        console.log('[StatsPanelManager] Stats content updated');
 
         // Make overlay visible immediately (furl animations removed)
         this.statsPanelOverlay.classList.add('show');
@@ -59,13 +57,11 @@ export class StatsPanelManager {
         // Install capture blocker FIRST to prevent immediate clickthrough from portrait tap
         // This blocks ALL events for 400ms to prevent the portrait tap from triggering buttons
         PanelEventHandler.installCaptureBlocker(400, null);
-        console.log('[StatsPanelManager] Initial capture blocker installed');
 
         // Wire up action buttons AFTER a delay to ensure the capture blocker is active
         // This prevents the portrait tap from immediately triggering the config button
         setTimeout(() => {
             this._wireActionButtons(this._showConfigCallback, this._showRecordsCallback);
-            console.log('[StatsPanelManager] Action buttons wired after delay');
         }, 50);
     }
 
@@ -161,19 +157,13 @@ export class StatsPanelManager {
     _wireActionButtons(showConfigCallback, showRecordsCallback) {
         // Config button - use multiple event types to catch any interaction
         const configButton = this.statsPanelOverlay.querySelector('#stats-config-button');
-        console.log('[StatsPanelManager] Config button found:', !!configButton, 'Callback:', !!showConfigCallback);
-        console.log('[StatsPanelManager] Config button element:', configButton);
 
         if (configButton) {
             const handleConfig = (e) => {
-                console.log('[StatsPanelManager] Config button event triggered!', e.type);
                 e.preventDefault();
                 e.stopPropagation();
                 if (showConfigCallback) {
-                    console.log('[StatsPanelManager] Calling showConfigCallback');
                     showConfigCallback();
-                } else {
-                    console.error('[StatsPanelManager] No showConfigCallback available!');
                 }
             };
 
@@ -185,24 +175,17 @@ export class StatsPanelManager {
             newConfigButton.addEventListener('click', handleConfig, { capture: false });
             newConfigButton.addEventListener('pointerup', handleConfig, { capture: false });
             newConfigButton.addEventListener('touchend', handleConfig, { capture: false });
-            console.log('[StatsPanelManager] Config button listeners attached');
         }
 
         // Records button - use multiple event types to catch any interaction
         const recordsButton = this.statsPanelOverlay.querySelector('#stats-records-button');
-        console.log('[StatsPanelManager] Records button found:', !!recordsButton, 'Callback:', !!showRecordsCallback);
-        console.log('[StatsPanelManager] Records button element:', recordsButton);
 
         if (recordsButton) {
             const handleRecords = (e) => {
-                console.log('[StatsPanelManager] Records button event triggered!', e.type);
                 e.preventDefault();
                 e.stopPropagation();
                 if (showRecordsCallback) {
-                    console.log('[StatsPanelManager] Calling showRecordsCallback');
                     showRecordsCallback();
-                } else {
-                    console.error('[StatsPanelManager] No showRecordsCallback available!');
                 }
             };
 
@@ -214,7 +197,6 @@ export class StatsPanelManager {
             newRecordsButton.addEventListener('click', handleRecords, { capture: false });
             newRecordsButton.addEventListener('pointerup', handleRecords, { capture: false });
             newRecordsButton.addEventListener('touchend', handleRecords, { capture: false });
-            console.log('[StatsPanelManager] Records button listeners attached');
         }
 
         // Restart button
@@ -273,6 +255,10 @@ export class StatsPanelManager {
             safeCall(e, 'stopPropagation');
             if (confirm('Return to start menu? Current game progress will be saved.')) {
                 this.hideStatsPanel();
+                // Reset the gameStarted flag so the player can continue or start a new game
+                this.game.gameStarted = false;
+                // Enter preview mode to show the game board but disable input
+                this.game.previewMode = true;
                 // Show the start overlay
                 if (this.game.overlayManager) {
                     this.game.overlayManager.showStartOverlay();

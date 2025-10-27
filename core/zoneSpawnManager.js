@@ -37,26 +37,18 @@ export function findOpenNpcSpawn(zoneGen, requiredNeighbors) {
 }
 
 export function findValidPlayerSpawn(zoneGen, avoidEntrance = false) {
-    logger.log('[SPAWN] findValidPlayerSpawn called with zone:', zoneGen.currentZoneX, zoneGen.currentZoneY, 'dimension:', zoneGen.currentDimension);
-
     // Home zone spawn behavior - spawn on an exit tile for cinematic arrival
     if (zoneGen.currentZoneX === 0 && zoneGen.currentZoneY === 0 && zoneGen.currentDimension === 0) {
-        logger.log('[SPAWN] Home zone detected, looking for exit tiles');
-
         // Find all exit tiles in the zone
         const exitTiles = GridIterator.findTiles(zoneGen.grid, tile => isTileType(tile, TILE_TYPES.EXIT));
-
-        logger.log('[SPAWN] Found exit tiles:', exitTiles.length, exitTiles);
 
         // Spawn on a random exit tile if any exist
         if (exitTiles.length > 0) {
             const spawnPos = exitTiles[Math.floor(Math.random() * exitTiles.length)];
-            logger.log('[SPAWN] Spawning on exit tile:', spawnPos);
             return spawnPos;
         }
 
         // Fallback to original behavior if no exits found
-        logger.log('[SPAWN] No exits found, using fallback spawn');
         const houseStartX = 3;
         const houseStartY = 3;
         const frontY = houseStartY + 3;

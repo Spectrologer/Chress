@@ -26,7 +26,6 @@ export class ActionManager {
         // Primitive bombs (just the number TILE_TYPES.BOMB) are inactive pickup items
         // NOTE: This method ONLY increments timers. BombManager.tickBombsAndExplode() handles explosions.
         const bombs = GridIterator.findTiles(this.game.grid, isBomb);
-        console.log('[ActionManager] incrementBombActions found', bombs.length, 'bombs');
 
         bombs.forEach(({ tile, x, y }) => {
             // Skip primitive bombs - they're inactive until placed by player

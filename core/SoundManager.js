@@ -216,11 +216,6 @@ export class SoundManager {
     setMusicEnabled(enabled) {
         this.musicEnabled = !!enabled;
         try {
-            if (typeof console !== 'undefined' && console.debug) {
-                console.debug('[SoundManager] setMusicEnabled ->', this.musicEnabled, 'currentTrack=', this.currentMusicTrack);
-            }
-        } catch (e) {}
-        try {
             if (!this.musicEnabled) {
                 // mute or pause background
                 if (this.backgroundGain) {

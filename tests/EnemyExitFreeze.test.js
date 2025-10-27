@@ -27,6 +27,7 @@ describe('Enemy Exit Freeze Feature', () => {
             id: 'enemy1',
             enemyType: 'lizardy',
             isFrozen: false,
+            showFrozenVisual: false,
             isDead: jest.fn().mockReturnValue(false)
         };
 
@@ -36,6 +37,7 @@ describe('Enemy Exit Freeze Feature', () => {
             id: 'enemy2',
             enemyType: 'lizardo',
             isFrozen: false,
+            showFrozenVisual: false,
             isDead: jest.fn().mockReturnValue(false)
         };
 
@@ -71,10 +73,27 @@ describe('Enemy Exit Freeze Feature', () => {
             Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)
         );
 
+        // Create mock enemy collection
+        const mockEnemyCollection = {
+            getAll: jest.fn(() => [mockEnemy1, mockEnemy2]),
+            forEach: jest.fn((callback) => [mockEnemy1, mockEnemy2].forEach(callback)),
+            includes: jest.fn((enemy) => [mockEnemy1, mockEnemy2].includes(enemy)),
+            getPositionsSet: jest.fn(() => new Set(['2,2', '6,6']))
+        };
+
+        // Create mock transient game state
+        const mockTransientGameState = {
+            didPlayerJustAttack: jest.fn(() => false),
+            isInPitfallZone: jest.fn(() => false),
+            incrementPitfallTurnsSurvived: jest.fn()
+        };
+
         // Create mock game context
         mockGame = {
             player: mockPlayer,
             enemies: [mockEnemy1, mockEnemy2],
+            enemyCollection: mockEnemyCollection,
+            transientGameState: mockTransientGameState,
             grid: grid,
             isPlayerTurn: true,
             playerJustAttacked: false,
@@ -270,6 +289,90 @@ describe('Enemy Exit Freeze Feature', () => {
             });
 
             expect(enemy.isFrozen).toBe(false);
+        });
+
+        test('initializes showFrozenVisual property to false', () => {
+            const enemy = new BaseEnemy({
+                x: 3,
+                y: 3,
+                enemyType: 'lizardy',
+                id: 'test-enemy'
+            });
+
+            expect(enemy.showFrozenVisual).toBe(false);
+        });
+    });
+
+    describe('Visual freeze effect timing', () => {
+        test('shows grayscale effect when player is on exit tile', () => {
+            // Player on exit tile
+            mockGame.isPlayerOnExitTile.mockReturnValue(true);
+            turnManager.startEnemyTurns();
+
+            // Both movement and visual freeze should be active
+            expect(mockEnemy1.isFrozen).toBe(true);
+            expect(mockEnemy1.showFrozenVisual).toBe(true);
+            expect(mockEnemy2.isFrozen).toBe(true);
+            expect(mockEnemy2.showFrozenVisual).toBe(true);
+        });
+
+        test('removes grayscale effect 1 turn before movement unfreezes', () => {
+            // Turn 1: Player on exit - both frozen and visual
+            mockGame.isPlayerOnExitTile.mockReturnValue(true);
+            turnManager.startEnemyTurns();
+
+            expect(mockEnemy1.isFrozen).toBe(true);
+            expect(mockEnemy1.showFrozenVisual).toBe(true);
+
+            // Turn 2: Player moves off exit - movement still frozen but visual removed
+            mockGame.isPlayerOnExitTile.mockReturnValue(false);
+            turnManager.startEnemyTurns();
+
+            expect(mockEnemy1.isFrozen).toBe(true); // Still frozen (grace period)
+            expect(mockEnemy1.showFrozenVisual).toBe(false); // Visual removed (warning)
+            expect(mockEnemy2.isFrozen).toBe(true);
+            expect(mockEnemy2.showFrozenVisual).toBe(false);
+        });
+
+        test('completes full cycle: frozen -> warning -> unfrozen', () => {
+            // Turn 1: Player on exit - fully frozen with visual
+            mockGame.isPlayerOnExitTile.mockReturnValue(true);
+            turnManager.startEnemyTurns();
+
+            expect(mockEnemy1.isFrozen).toBe(true);
+            expect(mockEnemy1.showFrozenVisual).toBe(true);
+
+            // Turn 2: Player off exit - movement frozen, visual removed (warning state)
+            mockGame.isPlayerOnExitTile.mockReturnValue(false);
+            turnManager.startEnemyTurns();
+
+            expect(mockEnemy1.isFrozen).toBe(true);
+            expect(mockEnemy1.showFrozenVisual).toBe(false);
+
+            // Turn 3: Second turn off exit - fully unfrozen
+            turnManager.startEnemyTurns();
+
+            expect(mockEnemy1.isFrozen).toBe(false);
+            expect(mockEnemy1.showFrozenVisual).toBe(false);
+        });
+
+        test('immediately refreezes visual when returning to exit tile', () => {
+            // Turn 1: Player on exit
+            mockGame.isPlayerOnExitTile.mockReturnValue(true);
+            turnManager.startEnemyTurns();
+
+            // Turn 2: Player moves off exit (warning state)
+            mockGame.isPlayerOnExitTile.mockReturnValue(false);
+            turnManager.startEnemyTurns();
+
+            expect(mockEnemy1.showFrozenVisual).toBe(false);
+
+            // Turn 3: Player returns to exit - visual should be reapplied
+            mockGame.isPlayerOnExitTile.mockReturnValue(true);
+            turnManager.startEnemyTurns();
+
+            expect(mockEnemy1.isFrozen).toBe(true);
+            expect(mockEnemy1.showFrozenVisual).toBe(true);
         });
     });
 

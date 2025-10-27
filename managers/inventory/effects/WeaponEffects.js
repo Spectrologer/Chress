@@ -1,5 +1,5 @@
 import { BaseItemEffect } from './BaseItemEffect.js';
-import { TILE_TYPES } from '../../../core/constants/index.js';
+import { TILE_TYPES, GRID_SIZE } from '../../../core/constants/index.js';
 
 /**
  * Weapon effects - Bomb, Bow, Bishop Spear, Horse Icon
@@ -20,7 +20,7 @@ export class BombEffect extends BaseItemEffect {
                 for (const dir of directions) {
                     const nx = px + dir.dx;
                     const ny = py + dir.dy;
-                    if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9 &&
+                    if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE &&
                         (game.grid[ny][nx] === TILE_TYPES.FLOOR || game.grid[ny][nx] === TILE_TYPES.EXIT)) {
                         game.transientGameState.addBombPlacementPosition({x: nx, y: ny});
                     }

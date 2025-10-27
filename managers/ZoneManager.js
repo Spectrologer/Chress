@@ -154,10 +154,33 @@ export class ZoneManager {
      */
     _positionAfterInteriorEntry() {
         const playerFacade = this.game.playerFacade;
+        const gridManager = this.game.gridManager;
         const portX = Math.floor(GRID_SIZE / 2);
         const portY = GRID_SIZE - 1; // bottom edge
-        this.validateAndSetTile(this.game.grid, portX, portY, TILE_TYPES.PORT);
-        playerFacade.setPosition(portX, portY);
+
+        // Check if a PORT already exists in the zone (e.g., from a custom board)
+        let existingPortX = null;
+        let existingPortY = null;
+
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                if (gridManager.isTileType(x, y, TILE_TYPES.PORT)) {
+                    existingPortX = x;
+                    existingPortY = y;
+                    break;
+                }
+            }
+            if (existingPortX !== null) break;
+        }
+
+        // If no PORT exists, create one at the default position
+        if (existingPortX === null) {
+            this.validateAndSetTile(this.game.grid, portX, portY, TILE_TYPES.PORT);
+            playerFacade.setPosition(portX, portY);
+        } else {
+            // Use the existing PORT position
+            playerFacade.setPosition(existingPortX, existingPortY);
+        }
     }
 
     /**
@@ -438,7 +461,6 @@ export class ZoneManager {
             }
 
             this.game.player.setPosition(offScreenX, offScreenY);
-            logger.log('[ZONE GEN] New game detected, positioning player off-screen at:', { x: offScreenX, y: offScreenY }, 'exit tile at:', zoneData.playerSpawn);
         }
 
         // If we generated this zone as the result of a port transition, ensure

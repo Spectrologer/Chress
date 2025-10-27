@@ -10,12 +10,18 @@ export class InventoryUI {
         this.inventoryService = inventoryService;
         // WeakMap to track last-used timestamps per item object (survives DOM re-renders)
         this._itemLastUsed = new WeakMap();
+        // Track active pointer interactions to prevent newly created slots from interfering
+        this._activePointerIds = new Set();
+        // Track when slots were created to ignore pointer events from previous interactions
+        this._slotCreationTime = 0;
     }
 
     updateInventoryDisplay() {
         const inventoryGrid = document.querySelector('.inventory-list');
         if (inventoryGrid) {
             inventoryGrid.innerHTML = '';
+            // Record the time when new slots are being created
+            this._slotCreationTime = Date.now();
             this.game.player.inventory.forEach((item, idx) => {
                 const slot = this.createInventorySlot(item, idx);
                 inventoryGrid.appendChild(slot);
@@ -218,12 +224,23 @@ export class InventoryUI {
         const onPointerDown = (e) => {
             // only consider primary button for mouse
             if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+            // Ignore pointer events on slots created while another pointer interaction is active
+            // This prevents the bug where consuming an item causes DOM regeneration and the
+            // pointerup event fires on a newly created slot for a different item
+            if (this._activePointerIds.size > 0) {
+                // There's already an active pointer interaction, ignore this one
+                return;
+            }
+
             e?.preventDefault?.();
             isLongPress = false;
             // record pointer info to suppress the following click
             _lastPointerTime = Date.now();
             _lastPointerWasTouch = e.pointerType !== 'mouse';
             pressPointerId = e.pointerId;
+            // Track this active pointer interaction globally
+            this._activePointerIds.add(e.pointerId);
             // Capture the item at the start of the interaction
             clickedItem = item;
             // store start position so small movements don't cancel long-press
@@ -264,6 +281,8 @@ export class InventoryUI {
             if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; }
             delete item._pendingToggle;
             slot.classList.remove('item-disabled-temp');
+            // Clean up active pointer tracking
+            this._activePointerIds.delete(e.pointerId);
             pressPointerId = null;
             clickedItem = null;
         };
@@ -286,6 +305,8 @@ export class InventoryUI {
                 slot.classList.remove('item-disabled-temp');
                 toggleDisabled();
             }
+            // Clean up active pointer tracking
+            this._activePointerIds.delete(e.pointerId);
             pressPointerId = null;
             clickedItem = null;
         };

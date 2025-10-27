@@ -152,15 +152,30 @@ export class GestureDetector {
             });
         }
 
-        // Hold feedback
-        if (gridCoords && this.game?.renderManager?.startHoldFeedback) {
-            this.game.renderManager.startHoldFeedback(gridCoords.x, gridCoords.y);
-        }
-
-        // Bloop if not on enemy
+        // Hold feedback - but don't show it for adjacent enemies (would flash attack range before immediate attack)
         const enemyAtInitial = gridCoords
             ? this.game.enemyCollection?.findAt(gridCoords.x, gridCoords.y, true)
             : null;
+
+        if (gridCoords && this.game?.renderManager?.startHoldFeedback) {
+            // Check if enemy is adjacent to player
+            let shouldShowFeedback = true;
+            if (enemyAtInitial && this.game?.player) {
+                const playerPos = this.game.player.getPosition();
+                const dx = Math.abs(gridCoords.x - playerPos.x);
+                const dy = Math.abs(gridCoords.y - playerPos.y);
+                const isAdjacent = (dx + dy === 1); // Cardinal adjacency only
+                if (isAdjacent) {
+                    shouldShowFeedback = false; // Don't show hold feedback for adjacent enemies
+                }
+            }
+
+            if (shouldShowFeedback) {
+                this.game.renderManager.startHoldFeedback(gridCoords.x, gridCoords.y);
+            }
+        }
+
+        // Bloop if not on enemy
         if (!enemyAtInitial) {
             audioManager.playSound('bloop', { game: this.game });
         }
@@ -199,9 +214,27 @@ export class GestureDetector {
             });
         }
 
-        // Update hold feedback
+        // Update hold feedback - but don't show it for adjacent enemies
         if (this.game?.renderManager?.startHoldFeedback) {
-            this.game.renderManager.startHoldFeedback(gc.x, gc.y);
+            const enemyOnGc = this.game.enemyCollection?.findAt(gc.x, gc.y, true);
+            let shouldShowFeedback = true;
+
+            if (enemyOnGc && this.game?.player) {
+                const playerPos = this.game.player.getPosition();
+                const dx = Math.abs(gc.x - playerPos.x);
+                const dy = Math.abs(gc.y - playerPos.y);
+                const isAdjacent = (dx + dy === 1); // Cardinal adjacency only
+                if (isAdjacent) {
+                    shouldShowFeedback = false; // Don't show hold feedback for adjacent enemies
+                }
+            }
+
+            if (shouldShowFeedback) {
+                this.game.renderManager.startHoldFeedback(gc.x, gc.y);
+            } else {
+                // Clear feedback if moving to adjacent enemy
+                this.game.renderManager.clearFeedback?.();
+            }
         }
 
         // Bloop on tile change (not on enemy)
@@ -228,14 +261,26 @@ export class GestureDetector {
             });
         }
 
-        // Check if we're releasing on an enemy - if so, keep the hold feedback to show attack range
+        // Check if we're releasing on an enemy
         const gc = this._safeConvert(e.clientX, e.clientY);
         const enemyAtRelease = gc
             ? this.game.enemyCollection?.findAt(gc.x, gc.y, true)
             : null;
 
-        // Clear hold feedback only if not on an enemy
-        if (!enemyAtRelease && this.game?.renderManager?.clearFeedback) {
+        // If releasing on an enemy, only keep hold feedback if NOT adjacent (to show range preview)
+        // If adjacent, clear feedback immediately since it will trigger an attack
+        let shouldClearFeedback = !enemyAtRelease;
+        if (enemyAtRelease && gc && this.game?.player) {
+            const playerPos = this.game.player.getPosition();
+            const dx = Math.abs(gc.x - playerPos.x);
+            const dy = Math.abs(gc.y - playerPos.y);
+            const isAdjacent = (dx + dy === 1); // Cardinal adjacency only
+            if (isAdjacent) {
+                shouldClearFeedback = true; // Clear feedback for adjacent enemy (immediate attack)
+            }
+        }
+
+        if (shouldClearFeedback && this.game?.renderManager?.clearFeedback) {
             this.game.renderManager.clearFeedback();
         }
 

@@ -63,7 +63,6 @@ export class StructureGenerator {
             const signX = 2;
             const signY = 5;
             this.grid[signY][signX] = { type: TILE_TYPES.SIGN, message: message };
-            logger.log(`WOODCUTTERS sign placed at tile ${signX},${signY} in zone (0,0)`);
             return; // Placed successfully
         }
 

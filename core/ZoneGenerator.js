@@ -14,6 +14,7 @@ import { handleInterior } from './handlers/interiorHandler.js';
 import { handleUnderground } from './handlers/undergroundHandler.js';
 import { handleSurface } from './handlers/surfaceHandler.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
+import { boardLoader } from './BoardLoader.js';
 
 export class ZoneGenerator {
 
@@ -53,6 +54,19 @@ export class ZoneGenerator {
         const zoneKey = createZoneKey(zoneX, zoneY, dimension, depth);
         if (existingZones.has(zoneKey)) {
             return existingZones.get(zoneKey);
+        }
+
+        // Check for custom board first (synchronous - boards must be pre-loaded)
+        if (boardLoader.hasBoard(zoneX, zoneY, dimension)) {
+            logger.log(`Loading custom board for zone (${zoneX},${zoneY}) dimension ${dimension}`);
+            const boardData = boardLoader.getBoardSync(zoneX, zoneY, dimension);
+            if (boardData) {
+                const result = boardLoader.convertBoardToGrid(boardData, this.foodAssets);
+                logger.log(`Custom board loaded successfully for zone (${zoneX},${zoneY})`);
+                return result;
+            } else {
+                logger.warn(`Custom board not pre-loaded, falling back to procedural generation`);
+            }
         }
 
         // Generate new zone structure

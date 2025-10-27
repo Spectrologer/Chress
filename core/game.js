@@ -42,9 +42,9 @@ class Game extends GameContext {
 }
     
 // Initialize game when the page loads
-window.addEventListener('DOMContentLoaded', () => {
-    // Register all game content before creating the game
-    registerAllContent();
+window.addEventListener('DOMContentLoaded', async () => {
+    // Register all game content before creating the game (including preloading boards)
+    await registerAllContent();
 
     const game = new Game();
 

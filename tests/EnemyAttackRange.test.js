@@ -4,9 +4,9 @@ import { GRID_SIZE, TILE_TYPES, TILE_SIZE } from '../core/constants/index.js';
 function makeMockCanvas() {
   const listeners = {};
   return {
-    width: 576,
-    height: 576,
-    getBoundingClientRect: jest.fn().mockReturnValue({ left: 0, top: 0, width: 576, height: 576 }),
+    width: 640,
+    height: 640,
+    getBoundingClientRect: jest.fn().mockReturnValue({ left: 0, top: 0, width: 640, height: 640 }),
     addEventListener: jest.fn((name, fn) => { listeners[name] = fn; }),
     __listeners: listeners
   };

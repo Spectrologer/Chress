@@ -1,4 +1,4 @@
-import { TILE_TYPES } from '../../core/constants/index.js';
+import { TILE_TYPES, GRID_SIZE } from '../../core/constants/index.js';
 import { eventBus } from '../../core/EventBus.js';
 import { EventTypes } from '../../core/EventTypes.js';
 import { isTileType } from '../../utils/TileUtils.js';
@@ -129,7 +129,7 @@ export class InventoryInteractionHandler {
             const nx = px + dir.dx;
             const ny = py + dir.dy;
 
-            if (nx >= 0 && nx < 9 && ny >= 0 && ny < 9) {
+            if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
                 const tile = this.game.grid[ny][nx];
                 if (isTileType(tile, TILE_TYPES.FLOOR) || isTileType(tile, TILE_TYPES.EXIT)) {
                     transientState.addBombPlacementPosition({ x: nx, y: ny });

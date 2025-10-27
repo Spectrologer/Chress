@@ -232,6 +232,12 @@ export class EnemyDefeatFlow {
         // Remove from zone data
         this.removeFromZoneData(enemy, currentZone);
 
+        // Remove from active enemy collection and clear grid tile
+        // This prevents the defeated enemy from blocking player movement
+        if (this.game.enemyCollection && typeof this.game.enemyCollection.remove === 'function') {
+            this.game.enemyCollection.remove(enemy, true);
+        }
+
         // Handle combo kills
         const consecutiveKills = this.handleComboKills(enemy, enemyX, enemyY, initiator);
 

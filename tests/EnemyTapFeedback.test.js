@@ -11,6 +11,7 @@ describe('Enemy tap feedback', () => {
 
     beforeEach(() => {
         const mockEnemies = [
+            { x: 1, y: 0, health: 5, getPositionObject: () => new Position(1, 0) }, // Adjacent enemy
             { x: 1, y: 1, health: 5, getPositionObject: () => new Position(1, 1) }
         ];
 
@@ -51,8 +52,8 @@ describe('Enemy tap feedback', () => {
         inputCoordinator.gestureDetector = gestureDetector;
     });
 
-    test('pointerUp on enemy should NOT clear hold feedback', () => {
-        const enemyX = 1, enemyY = 1;
+    test('pointerUp on adjacent enemy should clear hold feedback (immediate attack)', () => {
+        const enemyX = 1, enemyY = 0; // Adjacent to player at (0,0)
 
         // Mock the conversion to return enemy position
         gestureDetector._safeConvert = jest.fn(() => ({ x: enemyX, y: enemyY }));
@@ -87,7 +88,48 @@ describe('Enemy tap feedback', () => {
 
         gestureDetector._onPointerUp(pointerUpEvent);
 
-        // clearFeedback should NOT have been called because we released on an enemy
+        // clearFeedback SHOULD have been called because enemy is adjacent (immediate attack)
+        expect(mockGame.renderManager.clearFeedback).toHaveBeenCalled();
+    });
+
+    test('pointerUp on non-adjacent enemy should NOT clear hold feedback (show range)', () => {
+        const enemyX = 2, enemyY = 2; // Not adjacent to player at (0,0)
+
+        // Add a non-adjacent enemy
+        const nonAdjacentEnemy = { x: 2, y: 2, health: 5, getPositionObject: () => new Position(2, 2) };
+        mockGame.enemies.push(nonAdjacentEnemy);
+
+        // Mock the conversion to return non-adjacent enemy position
+        gestureDetector._safeConvert = jest.fn(() => ({ x: enemyX, y: enemyY }));
+
+        // Simulate pointer down (which starts hold feedback)
+        const pointerDownEvent = {
+            pointerId: 1,
+            clientX: 200,
+            clientY: 200,
+            pointerType: 'touch',
+            target: { setPointerCapture: jest.fn() }
+        };
+        gestureDetector._onPointerDown(pointerDownEvent);
+
+        // Verify hold feedback was started
+        expect(mockGame.renderManager.startHoldFeedback).toHaveBeenCalledWith(enemyX, enemyY);
+
+        // Clear the mock to check pointer up behavior
+        mockGame.renderManager.clearFeedback.mockClear();
+
+        // Simulate pointer up on the same enemy tile
+        const pointerUpEvent = {
+            pointerId: 1,
+            clientX: 200,
+            clientY: 200,
+            pointerType: 'touch',
+            target: { releasePointerCapture: jest.fn() }
+        };
+
+        gestureDetector._onPointerUp(pointerUpEvent);
+
+        // clearFeedback should NOT have been called because enemy is not adjacent (show range preview)
         expect(mockGame.renderManager.clearFeedback).not.toHaveBeenCalled();
     });
 
@@ -140,20 +182,41 @@ describe('Enemy tap feedback', () => {
         expect(mockGame.renderManager.showTapFeedback).toHaveBeenCalledWith(emptyX, emptyY);
     });
 
-    test('tapping on enemy tile should NOT clear hold feedback', () => {
-        const enemyX = 1, enemyY = 1;
+    test('tapping on adjacent enemy tile should clear hold feedback', () => {
+        const enemyX = 1, enemyY = 0; // Adjacent to player at (0,0)
 
         // Mock grid coordinates conversion
         gestureDetector.convertScreenToGrid = jest.fn(() => ({ x: enemyX, y: enemyY }));
         gestureDetector.clearTapTimeout = jest.fn();
         gestureDetector.handleDoubleTapLogic = jest.fn(() => false);
 
-        // Simulate tap on enemy tile
+        // Simulate tap on adjacent enemy tile
         inputCoordinator.handleTap(100, 100);
 
-        // clearFeedback should NOT be called when tapping on enemy
+        // clearFeedback SHOULD be called for adjacent enemy (immediate attack)
+        expect(mockGame.renderManager.clearFeedback).toHaveBeenCalled();
+        // showTapFeedback should NOT be called for enemy tiles
+        expect(mockGame.renderManager.showTapFeedback).not.toHaveBeenCalled();
+    });
+
+    test('tapping on non-adjacent enemy tile should NOT clear hold feedback', () => {
+        const enemyX = 2, enemyY = 2; // Not adjacent to player at (0,0)
+
+        // Add a non-adjacent enemy
+        const nonAdjacentEnemy = { x: 2, y: 2, health: 5, getPositionObject: () => new Position(2, 2) };
+        mockGame.enemies.push(nonAdjacentEnemy);
+
+        // Mock grid coordinates conversion
+        gestureDetector.convertScreenToGrid = jest.fn(() => ({ x: enemyX, y: enemyY }));
+        gestureDetector.clearTapTimeout = jest.fn();
+        gestureDetector.handleDoubleTapLogic = jest.fn(() => false);
+
+        // Simulate tap on non-adjacent enemy tile
+        inputCoordinator.handleTap(200, 200);
+
+        // clearFeedback should NOT be called for non-adjacent enemy (show range preview)
         expect(mockGame.renderManager.clearFeedback).not.toHaveBeenCalled();
-        // showTapFeedback should also NOT be called for enemy tiles
+        // showTapFeedback should NOT be called for enemy tiles
         expect(mockGame.renderManager.showTapFeedback).not.toHaveBeenCalled();
     });
 });

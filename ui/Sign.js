@@ -272,13 +272,11 @@ export class Sign {
 
     // Static method to hide the currently displayed sign message
     static hideMessageForSign(gameInstance) {
-        console.log('[Sign.hideMessageForSign] Called');
         const transientState = gameInstance.transientGameState;
 
         let didHide = false;
 
         if (transientState && transientState.isDisplayingSignMessage()) {
-            console.log('[Sign.hideMessageForSign] Hiding via transient state');
             gameInstance.hideOverlayMessage();
             transientState.clearDisplayingSignMessage();
             // Clear NPC position tracking when message is dismissed
@@ -288,7 +286,6 @@ export class Sign {
 
         // Also clear the old property for compatibility
         if (gameInstance.displayingMessageForSign) {
-            console.log('[Sign.hideMessageForSign] Hiding via old displayingMessageForSign property');
             if (!didHide) {
                 gameInstance.hideOverlayMessage();
             }
@@ -299,8 +296,6 @@ export class Sign {
                 transientState.clearCurrentNPCPosition();
             }
         }
-
-        console.log('[Sign.hideMessageForSign] Complete');
     }
 
     // Dialogue NPC content

@@ -206,29 +206,21 @@ export class GameInitializer {
 
         // Safety timeout - always re-enable input after max 10 seconds
         const safetyTimeout = setTimeout(() => {
-            logger.log('[NEW GAME ENTRANCE] Safety timeout - re-enabling input');
             this.game._entranceAnimationInProgress = false;
         }, 10000);
 
         // Delay slightly to ensure everything is rendered
         setTimeout(() => {
             try {
-                logger.log('[NEW GAME ENTRANCE] Starting entrance sequence');
                 const playerPos = this.game.player.getPosition();
                 const currentZone = this.game.player.getCurrentZone();
 
-                logger.log('[NEW GAME ENTRANCE] Player position:', playerPos);
-                logger.log('[NEW GAME ENTRANCE] Current zone:', currentZone);
-
                 // Only trigger for home surface zone (0,0,0,0)
                 if (currentZone.x === 0 && currentZone.y === 0 && currentZone.dimension === 0) {
-                    logger.log('[NEW GAME ENTRANCE] In home zone, calculating entrance path');
-
                     // Get the stored spawn position (the exit tile)
                     const exitSpawn = this.game._newGameSpawnPosition;
 
                     if (!exitSpawn) {
-                        logger.log('[NEW GAME ENTRANCE] No spawn position stored, skipping entrance');
                         clearTimeout(safetyTimeout);
                         this.game._entranceAnimationInProgress = false;
                         return;
@@ -241,11 +233,6 @@ export class GameInitializer {
                     const clubEntranceX = houseStartX + 1; // Middle of house width (4)
                     const clubEntranceY = houseStartY + 3; // Front of house (6)
 
-                    logger.log('[NEW GAME ENTRANCE] Exit spawn position:', exitSpawn);
-                    logger.log('[NEW GAME ENTRANCE] Club entrance target:', { x: clubEntranceX, y: clubEntranceY });
-                    logger.log('[NEW GAME ENTRANCE] Player actual position:', playerPos);
-                    logger.log('[NEW GAME ENTRANCE] InputManager exists:', !!this.game.inputManager);
-
                     // Stage 1: Path from off-screen to exit tile
                     const pathToExit = this.game.inputManager?.findPath(
                         playerPos.x,
@@ -254,22 +241,16 @@ export class GameInitializer {
                         exitSpawn.y
                     );
 
-                    logger.log('[NEW GAME ENTRANCE] Path to exit:', pathToExit);
-
                     if (!pathToExit || pathToExit.length === 0) {
-                        logger.log('[NEW GAME ENTRANCE] Could not find path to exit tile');
                         clearTimeout(safetyTimeout);
                         this.game._entranceAnimationInProgress = false;
                         return;
                     }
 
                     // Execute first hop onto exit tile
-                    logger.log('[NEW GAME ENTRANCE] Stage 1: Hopping onto exit tile');
-
                     // Subscribe to completion of first hop
                     const unsubscribeHop = eventBus.on(EventTypes.INPUT_PATH_COMPLETED, () => {
                         unsubscribeHop();
-                        logger.log('[NEW GAME ENTRANCE] Stage 1 complete, player on exit tile');
 
                         // Stage 2: Path from exit tile to club entrance
                         const currentPos = this.game.player.getPosition();
@@ -280,21 +261,15 @@ export class GameInitializer {
                             clubEntranceY
                         );
 
-                        logger.log('[NEW GAME ENTRANCE] Path to club:', pathToClub);
-
                         if (!pathToClub || pathToClub.length === 0) {
-                            logger.log('[NEW GAME ENTRANCE] Could not find path to club');
                             clearTimeout(safetyTimeout);
                             this.game._entranceAnimationInProgress = false;
                             return;
                         }
 
-                        logger.log('[NEW GAME ENTRANCE] Stage 2: Walking to club entrance');
-
                         // Subscribe to completion of walk to club
                         const unsubscribeWalk = eventBus.on(EventTypes.INPUT_PATH_COMPLETED, () => {
                             unsubscribeWalk();
-                            logger.log('[NEW GAME ENTRANCE] Entrance animation complete, re-enabling input');
                             clearTimeout(safetyTimeout);
                             this.game._entranceAnimationInProgress = false;
                         });
@@ -304,7 +279,6 @@ export class GameInitializer {
 
                     this.game.inputManager.executePath(pathToExit);
                 } else {
-                    logger.log('[NEW GAME ENTRANCE] Not in home zone, skipping entrance');
                     clearTimeout(safetyTimeout);
                     this.game._entranceAnimationInProgress = false;
                 }
@@ -389,13 +363,6 @@ export class GameInitializer {
 
             safeCall(this.game.soundManager, 'setMusicEnabled', !!musicEnabled);
             safeCall(this.game.soundManager, 'setSfxEnabled', !!sfxEnabled);
-
-            // Debug
-            if (typeof console !== 'undefined' && console.debug) {
-                console.debug('[AUDIO STARTUP] restored player.stats.musicEnabled=', musicEnabled,
-                              'soundManager.musicEnabled=', safeGet(this.game, 'soundManager.musicEnabled'),
-                              'soundManager.currentMusicTrack=', safeGet(this.game, 'soundManager.currentMusicTrack'));
-            }
 
             // Zone music
             safeCall(this.game.soundManager, 'setMusicForZone', { dimension });

@@ -48,6 +48,7 @@ export class OverlayManager {
             // Show the overlay
             overlay.style.display = 'flex';
             overlay.style.visibility = 'visible';
+            overlay.setAttribute('aria-hidden', 'false');
         } catch (error) {
             logger.error('Error showing start overlay:', error);
         }
@@ -122,16 +123,28 @@ export class OverlayManager {
         const zoneEditorBtn = overlay.querySelector('#zoneEditorButton');
 
         if (startBtn) {
-            startBtn.addEventListener('click', () => this.handleStartGame(overlay), { once: true });
+            // Clone and replace to remove any old listeners
+            const newStartBtn = startBtn.cloneNode(true);
+            startBtn.parentNode.replaceChild(newStartBtn, startBtn);
+            newStartBtn.addEventListener('click', () => this.handleStartGame(overlay), { once: true });
         }
 
-        if (continueBtn && hasSaved) {
-            continueBtn.addEventListener('click', () => this.handleContinueGame(overlay), { once: true });
+        if (continueBtn) {
+            // Clone and replace to remove any old listeners
+            const newContinueBtn = continueBtn.cloneNode(true);
+            continueBtn.parentNode.replaceChild(newContinueBtn, continueBtn);
+
+            if (hasSaved) {
+                newContinueBtn.addEventListener('click', () => this.handleContinueGame(overlay), { once: true });
+            }
         }
 
         if (zoneEditorBtn) {
+            // Clone and replace to remove any old listeners
+            const newZoneEditorBtn = zoneEditorBtn.cloneNode(true);
+            zoneEditorBtn.parentNode.replaceChild(newZoneEditorBtn, zoneEditorBtn);
             // Don't use { once: true } for zone editor since it doesn't close the start menu
-            zoneEditorBtn.addEventListener('click', () => this.handleZoneEditor());
+            newZoneEditorBtn.addEventListener('click', () => this.handleZoneEditor());
         }
     }
 

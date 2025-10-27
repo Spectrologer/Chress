@@ -12,7 +12,6 @@ export class ConsentManager {
         // Delay the consent check to ensure UI managers are fully initialized
         setTimeout(() => {
             const consent = localStorage.getItem(this.consentKey);
-            logger.log('Consent from localStorage:', consent);
 
             if (consent === 'true') {
                 this.enableTracking();

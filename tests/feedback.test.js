@@ -29,9 +29,9 @@ describe('Input feedback integration', () => {
     // canvas mock that captures event listeners
     const listeners = {};
     const mockCanvas = {
-      width: 576,
-      height: 576,
-      getBoundingClientRect: jest.fn().mockReturnValue({ left: 0, top: 0, width: 576, height: 576 }),
+      width: 640,
+      height: 640,
+      getBoundingClientRect: jest.fn().mockReturnValue({ left: 0, top: 0, width: 640, height: 640 }),
       addEventListener: jest.fn((name, fn, options) => { listeners[name] = fn; }),
       removeEventListener: jest.fn((name, fn, options) => { delete listeners[name]; }),
       setPointerCapture: jest.fn(),

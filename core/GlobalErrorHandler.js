@@ -32,7 +32,6 @@ export class GlobalErrorHandler {
         this.setupUnhandledRejectionHandler();
 
         this.isInitialized = true;
-        logger.info('[GlobalErrorHandler] Global error handlers initialized');
     }
 
     /**
