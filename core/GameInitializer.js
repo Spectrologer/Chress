@@ -113,10 +113,10 @@ export class GameInitializer {
      * Initializes the game state, event listeners, and UI.
      */
     init() {
-        // Bomb mode
-        this.game.bombPlacementMode = false;
-        this.game.bombPlacementPositions = [];
-        this.game.pendingCharge = null;
+        // Initialize transient game state (no longer need scattered flags)
+        if (this.game.transientGameState) {
+            this.game.transientGameState.resetAll();
+        }
 
         // Load saved state or generate zone
         // Food assets must be ready
@@ -418,6 +418,7 @@ export class GameInitializer {
                     window.consoleCommands = module.default;
                     window.tp = (x, y) => module.default.tp(this.game, x, y);
                     window.spawnHorseIcon = () => module.default.spawnHorseIcon(this.game);
+                    window.spawnTimedBomb = () => module.default.spawnTimedBomb(this.game);
                     window.gotoInterior = () => module.default.gotoInterior(this.game);
                     window.gotoWorld = () => module.default.gotoWorld(this.game);
                 })

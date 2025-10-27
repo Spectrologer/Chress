@@ -24,19 +24,28 @@ export class ActionManager {
     incrementBombActions() {
         // Find any placed bombs (objects with timers) on the grid and increment their timer
         // Primitive bombs (just the number TILE_TYPES.BOMB) are inactive pickup items
-        GridIterator.findTiles(this.game.grid, isBomb).forEach(({ tile, x, y }) => {
+        // NOTE: This method ONLY increments timers. BombManager.tickBombsAndExplode() handles explosions.
+        const bombs = GridIterator.findTiles(this.game.grid, isBomb);
+        console.log('[ActionManager] incrementBombActions found', bombs.length, 'bombs');
+
+        bombs.forEach(({ tile, x, y }) => {
             // Skip primitive bombs - they're inactive until placed by player
-            if (typeof tile !== 'object') return;
+            if (typeof tile !== 'object') {
+                console.log(`[ActionManager] Bomb at (${x},${y}) is primitive, skipping`);
+                return;
+            }
+
+            console.log(`[ActionManager] Bomb at (${x},${y}) before: actionsSincePlaced=${tile.actionsSincePlaced}, justPlaced=${tile.justPlaced}`);
 
             if (tile.justPlaced) {
                 // This is the turn the bomb was placed, don't increment the timer yet.
                 tile.justPlaced = false;
+                console.log(`[ActionManager] Cleared justPlaced flag for bomb at (${x},${y})`);
                 return;
             }
             tile.actionsSincePlaced = (tile.actionsSincePlaced || 0) + 1; // Increment on subsequent actions
-            if (tile.actionsSincePlaced >= 2) {
-                this.explodeBomb(x, y);
-            }
+            console.log(`[ActionManager] Incremented bomb at (${x},${y}) to actionsSincePlaced=${tile.actionsSincePlaced}`);
+            // Explosion check moved to BombManager.tickBombsAndExplode() to avoid duplicate explosions
         });
     }
 
@@ -183,7 +192,8 @@ export class ActionManager {
                 });
 
                 // Player has acted. Prevent enemies from moving until the action resolves.
-                this.game.playerJustAttacked = true;
+                const transientState = this.game.transientGameState;
+                transientState.setPlayerJustAttacked(true);
 
                 // Give player a pronounced bow-shot animation state for rendering
                 if (this.game.player.animations) {
@@ -195,7 +205,8 @@ export class ActionManager {
             })
             .wait(TIMING_CONSTANTS.ARROW_FLIGHT_TIME) // delay for arrow to travel
             .then(() => {
-                if (targetEnemy && this.game.enemies.includes(targetEnemy)) { // Check if enemy still exists
+                const enemyCollection = this.game.enemyCollection;
+                if (targetEnemy && enemyCollection.includes(targetEnemy)) { // Check if enemy still exists
                     this.game.player.setAction?.('attack');
                     const res = this.game.combatManager.defeatEnemy(targetEnemy, 'player');
                     if (res && res.defeated) {
@@ -203,14 +214,16 @@ export class ActionManager {
                     }
                 }
                 // Now that the arrow has hit, enemies can take their turn.
-                this.game.playerJustAttacked = false;
+                const transientState = this.game.transientGameState;
+                transientState.clearPlayerJustAttacked();
                 this.game.startEnemyTurns?.();
             })
             .start();
     }
 
     explodeBomb(bx, by) {
-        this.game.grid[by][bx] = TILE_TYPES.FLOOR;
+        const gridManager = this.game.gridManager;
+        gridManager.setTile(bx, by, TILE_TYPES.FLOOR);
         audioManager.playSound('splode', { game: this.game });
         this.game.player.startSplodeAnimation(bx, by);
 
@@ -224,12 +237,13 @@ export class ActionManager {
             const nx = bx + dir.dx;
             const ny = by + dir.dy;
             if (isWithinGrid(nx, ny)) {
-                const tile = this.game.grid[ny][nx];
+                const tile = gridManager.getTile(nx, ny);
                 if (isTileType(tile, TILE_TYPES.WALL) || isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY) || isTileType(tile, TILE_TYPES.GRASS)) {
-                    this.game.grid[ny][nx] = (nx === 0 || nx === GRID_SIZE - 1 || ny === 0 || ny === GRID_SIZE - 1) ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR;
+                    gridManager.setTile(nx, ny, (nx === 0 || nx === GRID_SIZE - 1 || ny === 0 || ny === GRID_SIZE - 1) ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR);
                 }
 
-                const enemy = this.game.enemies.find(e => e.x === nx && e.y === ny);
+                const enemyCollection = this.game.enemyCollection;
+                const enemy = enemyCollection.findAt(nx, ny);
                 if (enemy) {
                     this.game.combatManager.defeatEnemy(enemy);
                 }
@@ -249,9 +263,9 @@ export class ActionManager {
                         if (isWithinGrid(launchX, launchY) &&
                             this.game.player.isWalkable(launchX, launchY, this.game.grid, this.game.player.x, this.game.player.y)) {
                             // Check if enemy at this position - if so, damage it and stop launch
-                            const enemy = this.game.enemies.find(e => e.x === launchX && e.y === launchY);
-                            if (enemy) {
-                                this.game.combatManager.defeatEnemy(enemy);
+                            const enemyAtLaunch = enemyCollection.findAt(launchX, launchY);
+                            if (enemyAtLaunch) {
+                                this.game.combatManager.defeatEnemy(enemyAtLaunch);
                                 // Stop launching here (don't go further)
                                 break;
                             }

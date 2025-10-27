@@ -3,33 +3,31 @@
 import { TILE_TYPES, GRID_SIZE } from './constants/index.js';
 import { Enemy } from '../entities/Enemy.js';
 import { logger } from './logger.js';
+import { customZoneLoader } from '../loaders/CustomZoneLoader.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils.js';
+
+// Generic spawn utility that reduces code duplication
+function spawnAtPosition(game, tileValue, itemName) {
+  const pos = findSpawnPosition(game);
+  if (pos) {
+    game.grid[pos.y][pos.x] = tileValue;
+    logger.log(`Spawned ${itemName} at`, pos);
+  } else {
+    logger.log('No valid spawn position found');
+  }
+}
 
 const consoleCommands = {
-  // Spawn commands
-  spawnBomb: (game) => {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.BOMB;
-      logger.log('Spawned bomb at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnHorseIcon: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.HORSE_ICON, uses: 3 };
-      logger.log('Spawned horse icon at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
+  // Spawn commands - now using generic utility
+  spawnBomb: (game) => spawnAtPosition(game, TILE_TYPES.BOMB, 'bomb'),  // Spawns pickup item
+  spawnTimedBomb: (game) => spawnAtPosition(game, { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true }, 'timed bomb'),  // Spawns active bomb
+  spawnHorseIcon: (game) => spawnAtPosition(game, { type: TILE_TYPES.HORSE_ICON, uses: 3 }, 'horse icon'),
 
   spawnEnemy: function(game, enemyType = 'lizardy') {
     const pos = findSpawnPosition(game);
     if (pos) {
-      game.enemies.push(new Enemy({ x: pos.x, y: pos.y, enemyType: enemyType, id: Date.now() }));
+      const enemy = new Enemy({ x: pos.x, y: pos.y, enemyType: enemyType, id: Date.now() });
+      game.enemyCollection.add(enemy);
       logger.log('Spawned enemy', enemyType, 'at', pos);
     } else {
       logger.log('No valid spawn position found');
@@ -37,155 +35,21 @@ const consoleCommands = {
   },
 
   // Item spawn commands
-  spawnHammer: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.HAMMER;
-      logger.log('Spawned hammer at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnBishopSpear: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 };
-      logger.log('Spawned bishop spear at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnNote: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.NOTE;
-      logger.log('Spawned note at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnHeart: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.HEART;
-      logger.log('Spawned heart at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnBook: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.BOOK_OF_TIME_TRAVEL, uses: 3 };
-      logger.log('Spawned Book of Time Travel at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnBow: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.BOW, uses: 3 };
-      logger.log('Spawned bow at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnWater: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.WATER;
-      logger.log('Spawned water at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnFoodMeat: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'food/meat/beaf.png' };
-      logger.log('Spawned meat at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnFoodNut: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.FOOD, foodType: 'food/veg/nut.png' };
-      logger.log('Spawned nut at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnPenne: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.PENNE;
-      logger.log('Spawned Penne at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnSquig: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.SQUIG;
-      logger.log('Spawned squig at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnRune: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.RUNE;
-      logger.log('Spawned rune at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnNib: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.NIB;
-      logger.log('Spawned nib at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnMark: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.MARK;
-      logger.log('Spawned Mark at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  spawnGouge: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.GOUGE;
-      logger.log('Spawned Gouge at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
+  spawnHammer: (game) => spawnAtPosition(game, TILE_TYPES.HAMMER, 'hammer'),
+  spawnBishopSpear: (game) => spawnAtPosition(game, { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, 'bishop spear'),
+  spawnNote: (game) => spawnAtPosition(game, TILE_TYPES.NOTE, 'note'),
+  spawnHeart: (game) => spawnAtPosition(game, TILE_TYPES.HEART, 'heart'),
+  spawnBook: (game) => spawnAtPosition(game, { type: TILE_TYPES.BOOK_OF_TIME_TRAVEL, uses: 3 }, 'Book of Time Travel'),
+  spawnBow: (game) => spawnAtPosition(game, { type: TILE_TYPES.BOW, uses: 3 }, 'bow'),
+  spawnWater: (game) => spawnAtPosition(game, TILE_TYPES.WATER, 'water'),
+  spawnFoodMeat: (game) => spawnAtPosition(game, { type: TILE_TYPES.FOOD, foodType: 'food/meat/beaf.png' }, 'meat'),
+  spawnFoodNut: (game) => spawnAtPosition(game, { type: TILE_TYPES.FOOD, foodType: 'food/veg/nut.png' }, 'nut'),
+  spawnPenne: (game) => spawnAtPosition(game, TILE_TYPES.PENNE, 'Penne'),
+  spawnSquig: (game) => spawnAtPosition(game, TILE_TYPES.SQUIG, 'squig'),
+  spawnRune: (game) => spawnAtPosition(game, TILE_TYPES.RUNE, 'rune'),
+  spawnNib: (game) => spawnAtPosition(game, TILE_TYPES.NIB, 'nib'),
+  spawnMark: (game) => spawnAtPosition(game, TILE_TYPES.MARK, 'Mark'),
+  spawnGouge: (game) => spawnAtPosition(game, TILE_TYPES.GOUGE, 'Gouge'),
 
   spawnShack: function(game) {
     // Find position and check if enough space for 3x3 shack + 1 front space
@@ -207,15 +71,7 @@ const consoleCommands = {
     }
   },
 
-  spawnShovel: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.SHOVEL, uses: 3 };
-      logger.log('Spawned shovel at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
+  spawnShovel: (game) => spawnAtPosition(game, { type: TILE_TYPES.SHOVEL, uses: 3 }, 'shovel'),
 
   spawnCistern: function(game) {
     const pos = findCisternSpawnPosition(game);
@@ -230,15 +86,7 @@ const consoleCommands = {
     }
   },
 
-  spawnPitfall: function(game) {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = TILE_TYPES.PITFALL;
-      logger.log('Spawned pitfall at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
+  spawnPitfall: (game) => spawnAtPosition(game, TILE_TYPES.PITFALL, 'pitfall'),
 
   spawnStairdown: function(game) {
     // Try to place stairdown at player's position if valid, otherwise find random valid spawn
@@ -306,6 +154,211 @@ const consoleCommands = {
       0 // dimension 0 = surface
     );
     logger.log('Returned to surface world');
+  },
+
+  // Load custom zone
+  loadzone: async function(game, zoneName) {
+    if (!zoneName || typeof zoneName !== 'string') {
+      logger.log('Usage: loadzone("zone_name") - load a custom zone from zones/custom/');
+      logger.log('Available zones:', customZoneLoader.getLoadedZones().join(', ') || 'none loaded yet');
+      return;
+    }
+
+    logger.log(`Loading custom zone: ${zoneName}...`);
+
+    try {
+      const zoneData = await customZoneLoader.loadAndConvert(zoneName);
+
+      if (!zoneData) {
+        logger.log(`Failed to load zone "${zoneName}". Make sure the file exists in zones/custom/${zoneName}.json`);
+        return;
+      }
+
+      // Apply the custom zone to the current grid
+      const width = Math.min(zoneData.width, GRID_SIZE);
+      const height = Math.min(zoneData.height, GRID_SIZE);
+
+      logger.log(`Applying ${width}x${height} custom zone: ${zoneData.name}`);
+
+      for (let row = 0; row < height; row++) {
+        for (let col = 0; col < width; col++) {
+          const cellData = zoneData.grid[row][col];
+
+          // Set terrain
+          if (cellData.terrain) {
+            const terrainType = TILE_TYPES[cellData.terrain.toUpperCase()];
+            game.grid[row][col] = terrainType !== undefined ? terrainType : TILE_TYPES.FLOOR;
+
+            // Log if terrain type not recognized
+            if (terrainType === undefined) {
+              logger.log(`Warning: Unknown terrain type "${cellData.terrain}" at [${col},${row}], using FLOOR`);
+            }
+          }
+
+          // Apply feature (overlay on terrain)
+          if (cellData.feature) {
+            // Handle special port_* format (port_stairup, port_stairdown, etc.)
+            if (cellData.feature.startsWith('port_')) {
+              const portKind = cellData.feature.substring(5); // Remove 'port_' prefix
+              game.grid[row][col] = { type: TILE_TYPES.PORT, portKind: portKind };
+              logger.log(`Placed PORT with portKind="${portKind}" at [${col},${row}]`);
+            } else {
+              const featureType = TILE_TYPES[cellData.feature.toUpperCase()];
+
+              if (featureType !== undefined) {
+                game.grid[row][col] = featureType;
+              } else {
+                // For unrecognized features, log them but don't replace terrain
+                logger.log(`Warning: Unknown feature "${cellData.feature}" at [${col},${row}], feature not applied`);
+              }
+            }
+          }
+        }
+      }
+
+      // Clear enemies in the zone (optional, can be removed if you want to keep them)
+      game.enemyCollection.clear(false);
+
+      logger.log(`Custom zone "${zoneData.name}" loaded successfully!`);
+      if (zoneData.metadata?.description) {
+        logger.log(`Description: ${zoneData.metadata.description}`);
+      }
+
+      // Force render update
+      if (game.uiManager) {
+        game.uiManager.render();
+      }
+
+    } catch (error) {
+      logger.log(`Error loading custom zone: ${error.message}`);
+    }
+  },
+
+  // Reload a custom zone (bypass cache)
+  reloadzone: async function(game, zoneName) {
+    if (!zoneName || typeof zoneName !== 'string') {
+      logger.log('Usage: reloadzone("zone_name") - reload a custom zone from disk');
+      return;
+    }
+
+    logger.log(`Reloading custom zone: ${zoneName}...`);
+    await customZoneLoader.reloadZone(zoneName);
+    await this.loadzone(game, zoneName);
+  },
+
+  // Export current zone or zone at specific coordinates
+  exportzone: function(game, x, y, dimension, depth) {
+    let zoneData, zoneName, zoneKey;
+
+    // If no parameters, export current zone
+    if (x === undefined) {
+      const playerZone = game.player.getCurrentZone();
+      const currentDepth = game.player.currentZone?.depth || 1;
+
+      zoneKey = createZoneKey(playerZone.x, playerZone.y, playerZone.dimension, currentDepth);
+      zoneData = game.zoneRepository.getByKey(zoneKey);
+      zoneName = `zone_${playerZone.x}_${playerZone.y}_dim${playerZone.dimension}`;
+
+      if (playerZone.dimension === 2) {
+        zoneName += `_depth${currentDepth}`;
+      }
+    } else {
+      // Export specific coordinates
+      const useDepth = dimension === 2 ? (depth || 1) : undefined;
+      zoneKey = createZoneKey(x, y, dimension, useDepth);
+      zoneData = game.zoneRepository.getByKey(zoneKey);
+      zoneName = `zone_${x}_${y}_dim${dimension}`;
+
+      if (dimension === 2) {
+        zoneName += `_depth${useDepth}`;
+      }
+    }
+
+    if (!zoneData) {
+      logger.log(`Zone not found: ${zoneKey}`);
+      logger.log('Usage: exportzone() - export current zone');
+      logger.log('       exportzone(x, y, dimension) - export specific zone');
+      logger.log('       exportzone(x, y, 2, depth) - export underground zone at depth');
+      return;
+    }
+
+    logger.log(`Exporting zone: ${zoneKey}`);
+
+    // Convert grid to terrain/features format
+    const terrain = [];
+    const features = {};
+
+    // Reverse lookup for TILE_TYPES
+    const TILE_NAMES = {};
+    Object.keys(TILE_TYPES).forEach(key => {
+      TILE_NAMES[TILE_TYPES[key]] = key.toLowerCase();
+    });
+
+    for (let row = 0; row < GRID_SIZE; row++) {
+      for (let col = 0; col < GRID_SIZE; col++) {
+        const tile = zoneData.grid[row][col];
+
+        // Handle tile as number or object
+        let tileType, tileName;
+
+        if (typeof tile === 'number') {
+          tileType = tile;
+          tileName = TILE_NAMES[tile] || 'floor';
+        } else if (tile && typeof tile === 'object') {
+          tileType = tile.type;
+          tileName = TILE_NAMES[tile.type] || 'floor';
+
+          // Special handling for PORT with portKind
+          if (tileType === TILE_TYPES.PORT && tile.portKind) {
+            tileName = `port_${tile.portKind}`;
+          }
+        } else {
+          tileName = 'floor';
+        }
+
+        // Determine if this is terrain or feature
+        const isTerrainType = [
+          TILE_TYPES.FLOOR,
+          TILE_TYPES.GRASS,
+          TILE_TYPES.WATER,
+          TILE_TYPES.WALL
+        ].includes(tileType);
+
+        if (isTerrainType || !tile) {
+          terrain.push(tileName);
+        } else {
+          // Feature on top of floor terrain
+          terrain.push('floor');
+          features[`${col},${row}`] = tileName;
+        }
+      }
+    }
+
+    const exportData = {
+      name: zoneName,
+      size: [GRID_SIZE, GRID_SIZE],
+      terrain: terrain,
+      features: features,
+      metadata: {
+        description: `Exported from game zone ${zoneKey}`,
+        originalZone: zoneKey,
+        exported: new Date().toISOString()
+      }
+    };
+
+    // Download as JSON
+    const json = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${zoneName}.json`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    logger.log(`Zone exported as ${zoneName}.json`);
   },
 
 
@@ -444,7 +497,7 @@ function isValidSpawnPosition(game, x, y) {
   const walkable = game.player.isWalkable(x, y, game.grid);
 
   // Check if any enemy is at position
-  const enemyHere = game.enemies.some(enemy => enemy.x === x && enemy.y === y);
+  const enemyHere = game.enemyCollection.hasEnemyAt(x, y);
 
   return walkable && !enemyHere;
 }
@@ -485,7 +538,7 @@ function isValidShackPosition(game, x, y) {
         return false;
       }
       // Check if any enemy is at this position
-      if (game.enemies.some(enemy => enemy.x === tileX && enemy.y === tileY)) {
+      if (game.enemyCollection.hasEnemyAt(tileX, tileY)) {
         return false;
       }
     }
@@ -499,7 +552,7 @@ function isValidShackPosition(game, x, y) {
   if (frontTile !== TILE_TYPES.FLOOR) {
     return false;
   }
-  if (game.enemies.some(enemy => enemy.x === frontX && enemy.y === frontY)) {
+  if (game.enemyCollection.hasEnemyAt(frontX, frontY)) {
     return false;
   }
 

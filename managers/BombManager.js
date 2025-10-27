@@ -3,7 +3,7 @@ import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { isAdjacent } from '../core/utils/DirectionUtils.js';
 import { ItemRepository } from './inventory/ItemRepository.js';
-import { isBomb } from '../utils/TileUtils.js';
+import { isBomb, isTileObject, isTileObjectOfType } from '../utils/TypeChecks.js';
 import GridIterator from '../utils/GridIterator.js';
 import { safeCall } from '../utils/SafeServiceCall.js';
 import { Position } from '../core/Position.js';
@@ -31,11 +31,28 @@ export class BombManager {
      * Called each turn from CombatManager
      */
     tickBombsAndExplode() {
-        GridIterator.findTiles(this.game.grid, isBomb).forEach(({ tile, x, y }) => {
+        const bombs = GridIterator.findTiles(this.game.grid, isBomb);
+        console.log('[BombManager] tickBombsAndExplode found', bombs.length, 'bombs');
+
+        bombs.forEach(({ tile, x, y }) => {
             // Skip primitive bombs - they're inactive pickup items
-            if (typeof tile !== 'object') return;
+            if (!isTileObject(tile)) {
+                console.log(`[BombManager] Bomb at (${x},${y}) is primitive, skipping`);
+                return;
+            }
+
+            console.log(`[BombManager] Bomb at (${x},${y}): actionsSincePlaced=${tile.actionsSincePlaced}, justPlaced=${tile.justPlaced}`);
 
             if (tile.actionsSincePlaced >= 2) {
+                // Double-check that the tile is still a bomb before exploding
+                // (in case it was already exploded earlier in this iteration)
+                const currentTile = this.game.grid[y][x];
+                if (!isBomb(currentTile)) {
+                    console.log(`[BombManager] Bomb at (${x},${y}) already exploded, skipping`);
+                    return;
+                }
+
+                console.log(`[BombManager] Exploding bomb at (${x},${y})`);
                 safeCall(this.game, 'explodeBomb', x, y);
             }
         });
@@ -53,15 +70,25 @@ export class BombManager {
      * @returns {boolean} - True if bomb was placed successfully
      */
     handleBombPlacement(gridCoords) {
-        if (!this.game.bombPlacementMode) return false;
+        const transientState = this.game.transientGameState;
+
+        if (!transientState || !transientState.isBombPlacementMode()) {
+            return false;
+        }
 
         const clickedPos = Position.from(gridCoords);
-        const placed = this.game.bombPlacementPositions.find(p => clickedPos.equals(p));
-        if (!placed) return false;
+        const bombPositions = transientState.getBombPlacementPositions();
+        const placed = bombPositions.find(p => clickedPos.equals(p));
+
+        if (!placed) {
+            return false;
+        }
 
         // Place timed bomb here
         const placedPos = Position.from(placed);
         placedPos.setTile(this.game.grid, { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true });
+
+        console.log('[BombManager] Placed bomb at', placed, 'tile:', this.game.grid[placed.y][placed.x]);
 
         // Remove one bomb from either inventory (prefer main inventory)
         this.itemRepository.decrementItemByType(this.game.player, 'bomb');
@@ -87,7 +114,7 @@ export class BombManager {
     triggerBombExplosion(gridCoords, playerPos) {
         const clickedPos = Position.from(gridCoords);
         const tapTile = clickedPos.getTile(this.game.grid);
-        if (!(tapTile && typeof tapTile === 'object' && tapTile.type === TILE_TYPES.BOMB)) return false;
+        if (!isTileObjectOfType(tapTile, TILE_TYPES.BOMB)) return false;
 
         const playerPosition = Position.from(playerPos);
         if (!playerPosition.isAdjacentTo(clickedPos)) return false;
@@ -108,7 +135,7 @@ export class BombManager {
     forceBombTrigger(gridCoords) {
         const clickedPos = Position.from(gridCoords);
         const tapTile = clickedPos.getTile(this.game.grid);
-        if (!(tapTile && typeof tapTile === 'object' && tapTile.type === TILE_TYPES.BOMB)) return;
+        if (!isTileObjectOfType(tapTile, TILE_TYPES.BOMB)) return;
 
         // Force immediate explosion without action count
         tapTile.actionsSincePlaced = 2;  // Trigger immediate explosion
@@ -119,9 +146,9 @@ export class BombManager {
      * End bomb placement mode and clear UI state
      */
     endBombPlacement() {
-        if (!this.game.bombPlacementMode) return;
-        this.game.bombPlacementMode = false;
-        this.game.bombPlacementPositions = [];
+        const transientState = this.game.transientGameState;
+        if (!transientState.isBombPlacementMode()) return;
+        transientState.exitBombPlacementMode();
         this.game.hideOverlayMessage();
     }
 }

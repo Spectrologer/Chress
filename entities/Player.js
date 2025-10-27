@@ -99,8 +99,10 @@ export class Player {
             // Check if moving to active player-placed bomb (object bomb, not primitive pickup)
             const tile = newPos.getTile(grid);
             if (typeof tile === 'object' && isBomb(tile)) {
+                // Explode the bomb and prevent the move
+                // The bomb will launch the player away as part of the explosion
                 window.gameInstance.explodeBomb(newX, newY);
-                return false; // Explode and launch, don't move normally
+                return false; // Explode and launch, don't complete the move
             }
 
             // Delegate item pickup logic to ItemManager
