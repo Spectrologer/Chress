@@ -163,7 +163,7 @@
     "1,9": "wall",
     "2,9": "wall",
     "3,9": "wall",
-    "4,9": "port",
+    "4,9": "port_interior",
     "5,9": "wall",
     "6,9": "wall",
     "7,9": "wall",
@@ -175,6 +175,10 @@
     "dimension": 1,
     "level": "home",
     "rarity": 5,
-    "created": "2025-10-27T16:51:19.775Z"
+    "created": "2025-10-27T16:51:19.775Z",
+    "playerSpawn": {
+      "x": 4,
+      "y": 9
+    }
   }
 }

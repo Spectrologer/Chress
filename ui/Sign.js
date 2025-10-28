@@ -89,124 +89,6 @@ export class Sign {
         }
     };
 
-    // Barter dialogue content
-    static barterNpcData = {
-        penne: {
-            name: 'Penne',
-            portrait: 'assets/fauna/penneface.png',
-            message: 'Give me meat!',
-            subclass: 'merchant',
-            trades: [
-                {
-                    requiredItem: 'food/meat',
-                    requiredAmount: 1,
-                    requiredItemImg: 'assets/food/meat/beaf.png',
-                    requiredItemName: 'Meat',
-                    receivedItemImg: 'assets/items/water.png',
-                    receivedItemName: 'Water'
-                }
-            ]
-        },
-        squig: {
-            name: 'Squig',
-            portrait: 'assets/fauna/squigface.png',
-            message: 'I\'m nuts for nuts!',
-            subclass: 'merchant',
-            trades: [
-                {
-                    requiredItem: 'food/veg',
-                    requiredAmount: 1,
-                    requiredItemImg: 'assets/food/veg/nut.png',
-                    requiredItemName: 'Nut',
-                    receivedItemImg: 'assets/items/water.png',
-                    receivedItemName: 'Water'
-                }
-            ]
-        },
-        rune: {
-            name: 'Rune', // This is now a header for the NPC
-            portrait: 'assets/fauna/runeface.png', // Shared portrait
-            message: 'I smell it... Points. Feed it me.', // Shared message
-            subclass: 'merchant',
-            trades: [
-                {
-                    id: 'rune_item',
-                    requiredItem: 'points',
-                    requiredAmount: 10,
-                    requiredItemImg: 'assets/items/points.png',
-                    receivedItemName: 'Random Weapon',
-                    receivedItemImg: 'assets/items/chest.png'
-                }
-            ]
-        },
-        nib: {
-            name: 'Nib',
-            portrait: 'assets/fauna/nibface.png',
-            message: 'I offer knowledge for your points.',
-            subclass: 'merchant',
-            trades: [
-                {
-                    id: 'nib_item',
-                    requiredItem: 'points',
-                    requiredAmount: 10,
-                    requiredItemImg: 'assets/items/points.png',
-                    receivedItemName: 'Random Trinket',
-                    receivedItemImg: 'assets/items/chest.png'
-                }
-            ]
-        },
-        mark: {
-            name: 'Mark',
-            portrait: 'assets/fauna/markface.png',
-            message: 'Show me some new places.',
-            subclass: 'merchant',
-            trades: [
-                {
-                    id: 'mark_meat',
-                    requiredItem: 'DISCOVERED',
-                    requiredAmount: 10,
-                    requiredItemName: 'Discoveries',
-                    requiredItemImg: 'assets/ui/talk.png',
-                    receivedItemName: 'Meat',
-                    receivedItemImg: 'assets/food/meat/beaf.png'
-                }
-            ]
-        },
-        axelotl: {
-            name: 'Axe-O-Lot\'l',
-            portrait: 'assets/fauna/axolotlface.png',
-            message: 'Wanna chop down trees? Show me some new places.',
-            subclass: 'merchant',
-            trades: [
-                {
-                    id: 'axelotl_axe',
-                    requiredItem: 'DISCOVERED',
-                    requiredAmount: 10,
-                    requiredItemName: 'Discoveries',
-                    requiredItemImg: 'assets/ui/talk.png',
-                    receivedItemName: 'Axe Ability',
-                    receivedItemImg: 'assets/items/axe.png'
-                }
-            ]
-        },
-        gouge: {
-            name: 'Gouge',
-            portrait: 'assets/fauna/gougeface.png',
-            message: 'Gimme discoveries, I\'ll give you a hammer.',
-            subclass: 'merchant',
-            trades: [
-                {
-                    id: 'gouge_hammer',
-                    requiredItem: 'DISCOVERED',
-                    requiredAmount: 35,
-                    requiredItemName: 'Discoveries',
-                    requiredItemImg: 'assets/ui/talk.png',
-                    receivedItemName: 'Hammer Ability',
-                    receivedItemImg: 'assets/items/hammer.png'
-                }
-            ]
-        },
-    };
 
     static getProceduralMessage(zoneX, zoneY, usedMessagesSet = Sign.spawnedMessages) {
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
@@ -238,7 +120,7 @@ export class Sign {
     }
 
     static getBarterNpcData(npcType) {
-        // Try to get from loaded JSON data first
+        // Get from loaded JSON data
         const characterData = getNPCCharacterData(npcType);
         if (characterData && characterData.interaction?.type === 'barter') {
             // Convert JSON format to expected format
@@ -260,8 +142,7 @@ export class Sign {
             };
         }
 
-        // Fallback to hardcoded data
-        return Sign.barterNpcData[npcType];
+        return null;
     }
 
     // Handle click interaction (toggle message display)
@@ -411,92 +292,9 @@ export class Sign {
         setTimeout(walkToExit, 500);
     }
 
-    // Dialogue NPC content
-    static dialogueNpcData = {
-        crayn: {
-            name: 'Crayn',
-            portrait: 'assets/fauna/craynface.png',
-            subclass: 'dialogue',
-            currentMessageIndex: 0,
-            messages: [
-                "You dropped your axe down the well.",
-                "Press down on items to disable them.",
-                "Sometimes I chop a tree to pass the time.",
-                "They say you are descended from a King.",
-                "The Woodcutter's Club is members only.",
-                "Spears can be used to get past obstacles.",
-                "Bombs can send you flying.",
-                "You can only hold six items, but you can use as many as you like.",
-                "The path gets harder the farther you go.",
-                "Sometimes enemies simply have a better position.",
-                "There is no end to the frontier.",
-                "Beyond the frontier is the adjudicator",
-
-
-            ]
-        },
-        felt: {
-            name: 'Felt',
-            portrait: 'assets/fauna/feltface.png',
-            subclass: 'dialogue',
-            currentMessageIndex: 0,
-            messages: [
-                "Crayn is like, so smart.",
-                "I want to be like Crayn.",
-                "Word around town is Crayn has 4 hearts.",
-                "I wonder if Crayn likes standing too.",
-                "I hear Crayn can put down food after he picks it up! Couldn't be me.",
-                "Forge is a LIAR.",
-
-            ]
-        },
-        forge: {
-            name: 'Forge',
-            portrait: 'assets/fauna/forgeface.png',
-            subclass: 'dialogue',
-            currentMessageIndex: 0,
-            messages: [
-                "I can move between tiles.",
-                "I'm not in your way, am I?",
-                "There was so much food in here earlier. Yumm!",
-                "Did you get a chance to play with the horse icons in here a minute ago?",
-                "If you stand still for long enough, enemies can't hurt you.",
-                "The walls are edible. You just need to be hungry enough.",
-                "Water actually makes you thirstier the more you drink it.",
-                "I taught Crayn everything he knows.",
-                "The further you go, the easier it gets.",
-                "I invented moving in an L-shape.",
-                "Sometimes Crayn goes fishing.",
-                "If you drop food, it turns into gold.",
-                "Enemies are friendly if you're only holding water.",
-                "The world is a sphere. Go far enough east, you'll end up back at the start from the west.",
-                "If you don't score points for 100 boards, you might find a secret.",
-                "I once saw a Penne eat a nut.",
-            ]
-        },
-        axelotl_post_trade: {
-            name: 'Axe-O-Lot\'l',
-            portrait: 'assets/fauna/axolotlface.png',
-            subclass: 'dialogue',
-            currentMessageIndex: 0,
-            messages: [
-                "Thanks a lot'l."
-            ]
-        }
-        ,
-        gouge_post_trade: {
-            name: 'Gouge',
-            portrait: 'assets/fauna/gougeface.png',
-            subclass: 'dialogue',
-            currentMessageIndex: 0,
-            messages: [
-                "Mind the cracks. The hammer helps, but it won't fix everything."
-            ]
-        }
-    };
 
     static getDialogueNpcData(npcType) {
-        // Try to get from loaded JSON data first
+        // Get from loaded JSON data
         const characterData = getNPCCharacterData(npcType);
         if (characterData && characterData.interaction?.type === 'dialogue') {
             // Convert JSON format to expected format
@@ -510,7 +308,6 @@ export class Sign {
             };
         }
 
-        // Fallback to hardcoded data
-        return Sign.dialogueNpcData[npcType];
+        return null;
     }
 }

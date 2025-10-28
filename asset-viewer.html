@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chress Asset Viewer - Dynamic</title>
+    <title>Chress Asset Viewer - </title>
     <style>
         * {
             margin: 0;
@@ -14,22 +14,52 @@
 
         body {
             font-family: 'Courier New', monospace;
-            background-color: #1a1a1a;
-            color: #e0e0e0;
+            background: linear-gradient(180deg, #2d1b3d 0%, #3d2845 40%, #4a2d52 100%);
+            color: #f4e8f0;
             padding: 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Starry night effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, #fff, transparent),
+                radial-gradient(2px 2px at 60% 70%, #d4a5c0, transparent),
+                radial-gradient(1px 1px at 50% 50%, #fff, transparent),
+                radial-gradient(1px 1px at 80% 10%, #e8c8d8, transparent),
+                radial-gradient(2px 2px at 90% 60%, #fff, transparent),
+                radial-gradient(1px 1px at 33% 85%, #d4a5c0, transparent),
+                radial-gradient(1px 1px at 15% 60%, #fff, transparent);
+            background-size: 200% 200%, 180% 180%, 220% 220%, 190% 190%, 250% 250%, 160% 160%, 210% 210%;
+            background-position: 0 0, 40% 60%, 50% 50%, 80% 10%, 90% 60%, 33% 85%, 15% 60%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        body > * {
+            position: relative;
+            z-index: 1;
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 10px;
-            color: #ffffff;
+            margin-bottom: 30px;
+            color: #f0d8e8;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            font-size: 32px;
+            font-weight: bold;
         }
 
         .stats {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #888;
-            font-size: 14px;
+            display: none;
         }
 
         .controls {
@@ -59,66 +89,111 @@
 
         .search-controls input[type="text"] {
             padding: 5px 10px;
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            color: #e0e0e0;
+            background: linear-gradient(135deg, #5a3a52 0%, #6a4a62 100%);
+            border: 1px solid #8a6a82;
+            color: #f4e8f0;
             border-radius: 4px;
             width: 250px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-controls input[type="text"]:focus {
+            outline: none;
+            border-color: #b8a0b0;
+            box-shadow: 0 0 10px rgba(212, 165, 192, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .search-controls button {
             padding: 5px 15px;
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            color: #e0e0e0;
+            background: linear-gradient(135deg, #7a5a72 0%, #8a6a82 100%);
+            border: 1px solid #b8a0b0;
+            color: #f4e8f0;
             border-radius: 4px;
             cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
         }
 
         .search-controls button:hover {
-            background-color: #3a3a3a;
+            background: linear-gradient(135deg, #8a6a82 0%, #9a7a92 100%);
+            box-shadow: 0 4px 8px rgba(212, 165, 192, 0.3);
+            transform: translateY(-1px);
         }
 
         .tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #444;
-            padding-bottom: 10px;
+            gap: 3px;
+            margin-bottom: -2px;
+            padding-left: 20px;
             flex-wrap: wrap;
-            justify-content: center;
+            justify-content: flex-start;
+            background: linear-gradient(180deg, transparent 0%, rgba(90, 58, 82, 0.3) 100%);
+            padding-bottom: 0;
+            padding-top: 10px;
+            position: relative;
+            z-index: 1;
+            align-items: flex-end;
         }
 
         .tab-button {
-            padding: 10px 20px;
-            background-color: #2a2a2a;
-            color: #e0e0e0;
-            border: 1px solid #444;
+            padding: 12px 20px 10px 20px;
+            background: linear-gradient(180deg, #b8a0b0 0%, #a08898 100%);
+            color: #3a2535;
+            border: none;
+            border-top: 2px solid #d4b8c8;
+            border-left: 1px solid #d4b8c8;
+            border-right: 1px solid #8a6a82;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
             position: relative;
+            border-radius: 8px 8px 0 0;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                2px 0 4px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+            margin-right: -8px;
+            margin-bottom: 0;
+            z-index: 1;
         }
 
         .tab-button:hover {
-            background-color: #3a3a3a;
+            background: linear-gradient(180deg, #c8b0c0 0%, #b09898 100%);
+            transform: translateY(-2px);
+            z-index: 10;
         }
 
         .tab-button.active {
-            background-color: #444;
-            color: #ffffff;
+            background: linear-gradient(180deg, #e8d8e0 0%, #d4c0c8 100%);
+            color: #2a1a25;
+            border-top-color: #f0e0e8;
+            border-left-color: #f0e0e8;
+            z-index: 11;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                2px 0 6px rgba(0, 0, 0, 0.3),
+                0 -2px 8px rgba(212, 165, 192, 0.2);
+            padding-bottom: 14px;
+            margin-bottom: -4px;
         }
 
         .tab-count {
             position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: #666;
-            color: white;
-            border-radius: 10px;
-            padding: 2px 6px;
-            font-size: 11px;
-            min-width: 18px;
+            top: 3px;
+            right: 6px;
+            background: rgba(90, 58, 82, 0.6);
+            color: #f0e0e8;
+            border-radius: 8px;
+            padding: 1px 5px;
+            font-size: 10px;
+            min-width: 16px;
             text-align: center;
+            font-weight: normal;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .tab-button.active .tab-count {
+            background: rgba(90, 58, 82, 0.8);
         }
 
         .tab-content {
@@ -127,6 +202,24 @@
 
         .tab-content.active {
             display: block;
+            background: linear-gradient(135deg, #e8d8e0 0%, #d4c0c8 100%);
+            border: 2px solid #d4b8c8;
+            border-top: none;
+            padding: 20px;
+            border-radius: 0 8px 8px 8px;
+            box-shadow:
+                inset 0 3px 8px rgba(0, 0, 0, 0.1),
+                0 4px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        .tab-content h2 {
+            color: #5a3a52;
+            margin-bottom: 20px;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+            font-size: 24px;
+            font-weight: bold;
         }
 
         .asset-grid {
@@ -137,40 +230,46 @@
         }
 
         .asset-card {
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 4px;
+            background: linear-gradient(135deg, #c8b0c0 0%, #b8a0b0 100%);
+            border: 1px solid #a08898;
+            border-radius: 6px;
             padding: 15px;
             text-align: center;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         .asset-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 16px rgba(212, 165, 192, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            border-color: #d4a5c0;
         }
 
         .asset-card h3 {
             margin-bottom: 10px;
-            color: #ffffff;
-            font-size: 14px;
+            color: #3a2535;
+            font-size: 16px;
+            font-weight: bold;
             word-break: break-word;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
         }
 
         .asset-type {
-            font-size: 11px;
-            color: #888;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5a3a52;
             margin-bottom: 10px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .sprite-container {
-            background-color: #333;
+            background: linear-gradient(135deg, #3a2a32 0%, #2a1a22 100%);
             background-image:
-                linear-gradient(45deg, #444 25%, transparent 25%),
-                linear-gradient(-45deg, #444 25%, transparent 25%),
-                linear-gradient(45deg, transparent 75%, #444 75%),
-                linear-gradient(-45deg, transparent 75%, #444 75%);
+                linear-gradient(45deg, #4a3a42 25%, transparent 25%),
+                linear-gradient(-45deg, #4a3a42 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #4a3a42 75%),
+                linear-gradient(-45deg, transparent 75%, #4a3a42 75%);
             background-size: 20px 20px;
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
             padding: 20px;
@@ -181,6 +280,8 @@
             border-radius: 4px;
             min-height: 80px;
             min-width: 80px;
+            border: 1px solid #1a0a12;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
         }
 
         .sprite {
@@ -191,52 +292,61 @@
         }
 
         .sprite-info {
-            font-size: 11px;
-            color: #aaa;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5a3a52;
             margin-top: 5px;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         .sprite-path {
-            font-size: 10px;
-            color: #666;
+            font-size: 11px;
+            font-weight: 500;
+            color: #7a5a72;
             margin-top: 5px;
             word-break: break-all;
         }
 
         .error {
-            color: #ff6b6b;
+            color: #c84860;
             font-style: italic;
             font-size: 12px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .loading {
             text-align: center;
             padding: 50px;
-            color: #888;
+            color: #d4a5c0;
         }
 
         .search-results {
             margin-bottom: 20px;
             padding: 10px;
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 4px;
+            background: linear-gradient(135deg, #c8b0c0 0%, #b8a0b0 100%);
+            border: 1px solid #a08898;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .search-results h3 {
             margin-bottom: 10px;
-            color: #fff;
+            color: #3a2535;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .clear-search {
             float: right;
-            color: #888;
+            color: #7a5a72;
             cursor: pointer;
             text-decoration: underline;
+            transition: all 0.2s;
         }
 
         .clear-search:hover {
-            color: #fff;
+            color: #3a2535;
         }
 
         .npc-sprites {
@@ -263,8 +373,178 @@
 
         .frame-label {
             font-size: 10px;
-            color: #666;
+            color: #7a5a72;
             margin-top: 5px;
+        }
+
+        /* Range slider styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-track {
+            background: linear-gradient(180deg, #8a6a82 0%, #7a5a72 100%);
+            border-radius: 4px;
+            height: 8px;
+            border: 1px solid #6a4a62;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"]::-moz-range-track {
+            background: linear-gradient(180deg, #8a6a82 0%, #7a5a72 100%);
+            border-radius: 4px;
+            height: 8px;
+            border: 1px solid #6a4a62;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(135deg, #d4b8c8 0%, #c8a0b8 100%);
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 2px solid #f0e0e8;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            margin-top: -6px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            background: linear-gradient(135deg, #d4b8c8 0%, #c8a0b8 100%);
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 2px solid #f0e0e8;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: linear-gradient(135deg, #e8d8e0 0%, #d4b8c8 100%);
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            background: linear-gradient(135deg, #e8d8e0 0%, #d4b8c8 100%);
+        }
+
+        .scale-controls label,
+        .scale-controls span {
+            color: #f0d8e8;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Subtle color coding for tabs */
+        [data-tab="npcs"] {
+            background: linear-gradient(180deg, #c8b0d0 0%, #b0a0b8 100%);
+        }
+        [data-tab="npcs"]:hover {
+            background: linear-gradient(180deg, #d8c0e0 0%, #c0b0c8 100%);
+        }
+        [data-tab="npcs"].active {
+            background: linear-gradient(180deg, #e8d8f0 0%, #d4c0d8 100%);
+        }
+
+        [data-tab="enemies"] {
+            background: linear-gradient(180deg, #d0a0a8 0%, #b88898 100%);
+        }
+        [data-tab="enemies"]:hover {
+            background: linear-gradient(180deg, #e0b0b8 0%, #c898a8 100%);
+        }
+        [data-tab="enemies"].active {
+            background: linear-gradient(180deg, #f0d0d8 0%, #e0c0c8 100%);
+        }
+
+        [data-tab="items"] {
+            background: linear-gradient(180deg, #c0b8a8 0%, #a8a090 100%);
+        }
+        [data-tab="items"]:hover {
+            background: linear-gradient(180deg, #d0c8b8 0%, #b8b0a0 100%);
+        }
+        [data-tab="items"].active {
+            background: linear-gradient(180deg, #e8e0d0 0%, #d4c8b8 100%);
+        }
+
+        [data-tab="food"] {
+            background: linear-gradient(180deg, #b8c8a8 0%, #a0b090 100%);
+        }
+        [data-tab="food"]:hover {
+            background: linear-gradient(180deg, #c8d8b8 0%, #b0c0a0 100%);
+        }
+        [data-tab="food"].active {
+            background: linear-gradient(180deg, #e0f0d0 0%, #d0e0c0 100%);
+        }
+
+        [data-tab="flora"] {
+            background: linear-gradient(180deg, #a8c8b0 0%, #90b098 100%);
+        }
+        [data-tab="flora"]:hover {
+            background: linear-gradient(180deg, #b8d8c0 0%, #a0c0a8 100%);
+        }
+        [data-tab="flora"].active {
+            background: linear-gradient(180deg, #d0f0d8 0%, #c0e0c8 100%);
+        }
+
+        [data-tab="doodads"] {
+            background: linear-gradient(180deg, #b8b0c0 0%, #a098a8 100%);
+        }
+        [data-tab="doodads"]:hover {
+            background: linear-gradient(180deg, #c8c0d0 0%, #b0a8b8 100%);
+        }
+        [data-tab="doodads"].active {
+            background: linear-gradient(180deg, #e0d8e8 0%, #d0c8d8 100%);
+        }
+
+        [data-tab="floors"] {
+            background: linear-gradient(180deg, #c8b8a8 0%, #b0a090 100%);
+        }
+        [data-tab="floors"]:hover {
+            background: linear-gradient(180deg, #d8c8b8 0%, #c0b0a0 100%);
+        }
+        [data-tab="floors"].active {
+            background: linear-gradient(180deg, #e8d8c8 0%, #d8c8b8 100%);
+        }
+
+        [data-tab="effects"] {
+            background: linear-gradient(180deg, #b8a8c8 0%, #a090b0 100%);
+        }
+        [data-tab="effects"]:hover {
+            background: linear-gradient(180deg, #c8b8d8 0%, #b0a0c0 100%);
+        }
+        [data-tab="effects"].active {
+            background: linear-gradient(180deg, #e0d0e8 0%, #d0c0d8 100%);
+        }
+
+        [data-tab="protag"] {
+            background: linear-gradient(180deg, #c0c8b8 0%, #a8b0a0 100%);
+        }
+        [data-tab="protag"]:hover {
+            background: linear-gradient(180deg, #d0d8c8 0%, #b8c0b0 100%);
+        }
+        [data-tab="protag"].active {
+            background: linear-gradient(180deg, #e8f0e0 0%, #d8e0d0 100%);
+        }
+
+        [data-tab="ui"] {
+            background: linear-gradient(180deg, #a8b8c8 0%, #90a0b0 100%);
+        }
+        [data-tab="ui"]:hover {
+            background: linear-gradient(180deg, #b8c8d8 0%, #a0b0c0 100%);
+        }
+        [data-tab="ui"].active {
+            background: linear-gradient(180deg, #d0e0f0 0%, #c0d0e0 100%);
+        }
+
+        [data-tab="misc"] {
+            background: linear-gradient(180deg, #b8a8b8 0%, #a090a0 100%);
+        }
+        [data-tab="misc"]:hover {
+            background: linear-gradient(180deg, #c8b8c8 0%, #b0a0b0 100%);
+        }
+        [data-tab="misc"].active {
+            background: linear-gradient(180deg, #e0d0e0 0%, #d0c0d0 100%);
         }
     </style>
 </head>

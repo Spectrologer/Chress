@@ -4,6 +4,7 @@ import { getExitDirection } from '../core/utils/transitionUtils.js';
 import audioManager from '../utils/AudioManager.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 export class ZoneTransitionManager {
     constructor(game, inputManager) {
@@ -142,11 +143,12 @@ export class ZoneTransitionManager {
                 transientState.setPortTransitionData({ from: 'interior', x: playerPos.x, y: playerPos.y });
             }
         } else {
-            // Exiting to surface or handling stair transitions while underground
+            // Exiting to surface or handling stair transitions while underground or interior
+            const tileUnderPlayer = gridManager.getTile(playerPos.x, playerPos.y);
+            const portKind = tileUnderPlayer && tileUnderPlayer.portKind;
+
             // If currently in underground, check for stair portals that should change depth rather than exit to surface
             if (currentDim === DIMENSION_CONSTANTS.UNDERGROUND) {
-                const tileUnderPlayer = gridManager.getTile(playerPos.x, playerPos.y);
-                const portKind = tileUnderPlayer && tileUnderPlayer.portKind;
                 if (portKind === 'stairdown') {
                     // Descend further: keep dimension=2 but increase player's underground depth and mark transition
                     targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
@@ -155,7 +157,7 @@ export class ZoneTransitionManager {
                     const prevDepth2 = playerFacade.getUndergroundDepth();
                     playerFacade.setUndergroundDepth(prevDepth2 + 1);
                 } else if (portKind === 'stairup') {
-                    // Ascend one level: if depth > 1, stay in underground with decreased depth; if depth == 1, go to surface
+                    // Ascend one level: if depth > 1, stay in underground with decreased depth; if depth == 1, check if we should return to interior or surface
                     const currentDepth = playerFacade.getUndergroundDepth();
                     if (currentDepth > 1) {
                         targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
@@ -163,20 +165,57 @@ export class ZoneTransitionManager {
                         transientState.setPortTransitionData({ from: 'stairup', x: playerPos.x, y: playerPos.y });
                         playerFacade.setUndergroundDepth(currentDepth - 1);
                     } else {
-                        // Depth 1 (or 0) -> surface
-                        targetDim = DIMENSION_CONSTANTS.SURFACE;
-                        portType = playerFacade.getPortType();
-                        // Ensure we mark a stairup->surface transition so surface gets a stairdown
-                        transientState.setPortTransitionData({ from: 'stairup', x: playerPos.x, y: playerPos.y });
-                        playerFacade.setUndergroundDepth(DIMENSION_CONSTANTS.DEFAULT_SURFACE_DEPTH);
+                        // Depth 1 - check if this underground zone is connected to an interior
+                        const currentZone = playerFacade.getCurrentZone();
+                        const undergroundZoneKey = createZoneKey(
+                            currentZone.x,
+                            currentZone.y,
+                            DIMENSION_CONSTANTS.UNDERGROUND,
+                            currentDepth
+                        );
+                        const undergroundZoneData = this.game.zoneRepository.getByKey(undergroundZoneKey);
+
+                        if (undergroundZoneData?.returnToInterior) {
+                            // Return to interior dimension
+                            targetDim = DIMENSION_CONSTANTS.INTERIOR;
+                            portType = 'interior';
+                            transientState.setPortTransitionData({ from: 'stairup', x: playerPos.x, y: playerPos.y, toInterior: true });
+                            playerFacade.setUndergroundDepth(DIMENSION_CONSTANTS.DEFAULT_SURFACE_DEPTH);
+                        } else {
+                            // Return to surface
+                            targetDim = DIMENSION_CONSTANTS.SURFACE;
+                            portType = playerFacade.getPortType();
+                            transientState.setPortTransitionData({ from: 'stairup', x: playerPos.x, y: playerPos.y });
+                            playerFacade.setUndergroundDepth(DIMENSION_CONSTANTS.DEFAULT_SURFACE_DEPTH);
+                        }
                     }
                 } else {
                     // Regular port: surface exit
                     targetDim = DIMENSION_CONSTANTS.SURFACE;
                     portType = playerFacade.getPortType();
                 }
+            } else if (currentDim === DIMENSION_CONSTANTS.INTERIOR) {
+                // Handle stair transitions from interior dimension
+                if (portKind === 'stairdown') {
+                    // Descend from interior to underground
+                    targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
+                    portType = 'underground';
+                    transientState.setPortTransitionData({ from: 'stairdown', x: playerPos.x, y: playerPos.y, fromDimension: currentDim });
+                    // Ensure player's underground depth is initialized to 1 (first underground level)
+                    playerFacade.setUndergroundDepth(DIMENSION_CONSTANTS.DEFAULT_UNDERGROUND_DEPTH);
+                } else if (portKind === 'stairup') {
+                    // Ascend from interior - this is unusual but would go to surface
+                    targetDim = DIMENSION_CONSTANTS.SURFACE;
+                    portType = playerFacade.getPortType();
+                    transientState.setPortTransitionData({ from: 'stairup', x: playerPos.x, y: playerPos.y });
+                    playerFacade.setUndergroundDepth(DIMENSION_CONSTANTS.DEFAULT_SURFACE_DEPTH);
+                } else {
+                    // Regular port: surface exit (normal interior->surface transition)
+                    targetDim = DIMENSION_CONSTANTS.SURFACE;
+                    portType = playerFacade.getPortType();
+                }
             } else {
-                // Exiting to surface from interior (non-underground)
+                // Exiting to surface from other dimensions
                 targetDim = DIMENSION_CONSTANTS.SURFACE;
                 portType = playerFacade.getPortType();
             }

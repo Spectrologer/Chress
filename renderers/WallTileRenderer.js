@@ -137,7 +137,19 @@ export class WallTileRenderer {
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
 
-        const middleEnd = GRID_SIZE - 1; // 8
+        const middleEnd = GRID_SIZE - 1; // 9
+        const isPerimeter = (x === 0 || x === middleEnd || y === 0 || y === middleEnd);
+
+        // For interior walls (not on perimeter), just draw a simple wall texture
+        if (!isPerimeter) {
+            if (RendererUtils.isImageLoaded(this.images, 'house_wall_side')) {
+                ctx.drawImage(this.images.house_wall_side, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = '#8B4513'; // Brown fallback
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            return;
+        }
 
         if (x === 0 && y === 0) {
             // Top-left corner

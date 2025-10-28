@@ -59,7 +59,10 @@
       "Bash(dir:*)",
       "Bash(del:*)",
       "Bash(git log:*)",
-      "Bash(git fsck:*)"
+      "Bash(git fsck:*)",
+      "Bash(cmd /c \"del .\\nul\")",
+      "Bash(cmd /c \"del \\\\?\\C:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\nul\")",
+      "Bash(npx live-server --port=8080 --open=asset-viewer.html)"
     ],
     "deny": [],
     "ask": []

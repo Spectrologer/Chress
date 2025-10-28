@@ -1,7 +1,7 @@
 {
   "id": "gouge",
   "name": "Gouge",
-  "type": "merchant",
+  "type": "hybrid",
   "metadata": {
     "description": "A merchant who trades discoveries for the hammer ability. Found in a shack in the wilds.",
     "created": "2025-10-27T00:00:00.000Z",
@@ -42,6 +42,13 @@
           "icon": "assets/items/hammer.png"
         },
         "repeatable": false
+      }
+    ],
+    "postTradeDialogue": [
+      {
+        "id": "post_trade",
+        "text": "Mind the cracks. The hammer helps, but it won't fix everything.",
+        "condition": "hasAbility:hammer"
       }
     ]
   },

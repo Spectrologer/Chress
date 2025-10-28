@@ -48,11 +48,14 @@ export class AssetScanner {
         // Extract barter NPCs
         Object.entries(Sign.barterNpcData).forEach(([key, data]) => {
             if (data.name) {
+                // Determine the type based on subclass (use 'barter' as default for backwards compatibility)
+                const npcType = data.subclass || 'barter';
+
                 // Use the key as the lookup name
                 npcs[key] = {
                     name: data.name,
                     portrait: data.portrait,
-                    type: 'barter',
+                    type: npcType,
                     trades: data.trades,
                     key: key
                 };
@@ -60,7 +63,7 @@ export class AssetScanner {
                 npcs[data.name.toLowerCase()] = {
                     name: data.name,
                     portrait: data.portrait,
-                    type: 'barter',
+                    type: npcType,
                     trades: data.trades,
                     key: key
                 };
@@ -69,7 +72,7 @@ export class AssetScanner {
                     npcs['lion'] = {
                         name: data.name,
                         portrait: data.portrait,
-                        type: 'barter',
+                        type: npcType,
                         trades: data.trades,
                         key: key
                     };

@@ -160,7 +160,7 @@ export class ZoneManager {
         const portY = GRID_SIZE - 1; // bottom edge
 
         // First, check if the zone has custom playerSpawn metadata (from board JSON)
-        const zoneKey = this.game.zoneRepository.createZoneKey(
+        const zoneKey = createZoneKey(
             currentZone.x,
             currentZone.y,
             currentZone.dimension,
@@ -298,6 +298,39 @@ export class ZoneManager {
     }
 
     /**
+     * Position player after returning to interior from underground via stairup
+     */
+    _positionAfterUndergroundToInterior(exitX, exitY) {
+        const playerFacade = this.game.playerFacade;
+        const gridManager = this.game.gridManager;
+
+        // Find the stairdown port in the interior
+        let stairdownX = null;
+        let stairdownY = null;
+
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                const tile = this.game.grid[y][x];
+                if (tile && typeof tile === 'object' && tile.portKind === 'stairdown') {
+                    stairdownX = x;
+                    stairdownY = y;
+                    break;
+                }
+            }
+            if (stairdownX !== null) break;
+        }
+
+        // Position player at the stairdown port
+        if (stairdownX !== null) {
+            playerFacade.setPosition(stairdownX, stairdownY);
+        } else {
+            // Fallback: place at exitX/exitY
+            playerFacade.setPosition(exitX, exitY);
+            this.validateAndSetTile(this.game.grid, exitX, exitY, TILE_TYPES.PORT);
+        }
+    }
+
+    /**
      * Handle port positioning based on context
      */
     _positionAfterPortTransition(exitX, exitY) {
@@ -308,7 +341,11 @@ export class ZoneManager {
 
         if (portData?.from === 'pitfall') {
             this._positionAfterPitfall(exitX, exitY);
+        } else if (currentZone.dimension === 1 && portData?.toInterior) {
+            // Returning to interior from underground via stairup
+            this._positionAfterUndergroundToInterior(exitX, exitY);
         } else if (currentZone.dimension === 1) {
+            // Entering interior from surface
             this._positionAfterInteriorEntry();
         } else if (currentZone.dimension === 0 && currentZone.portType === 'underground') {
             this._positionAfterUndergroundExit(exitX, exitY);
@@ -444,6 +481,11 @@ export class ZoneManager {
                 if (!zoneData.returnToSurface) {
                     zoneData.returnToSurface = { x: portData.x, y: portData.y };
                 }
+            }
+            // If generating an underground zone from an interior stairdown,
+            // store metadata so stairup can return to the interior instead of surface
+            if (currentZone.dimension === 2 && portData && portData.from === 'stairdown' && portData.fromDimension === 1) {
+                zoneData.returnToInterior = { x: portData.x, y: portData.y, zoneX: currentZone.x, zoneY: currentZone.y };
             }
             this.game.zoneRepository.setByKey(zoneKey, zoneData);
         }
