@@ -149,7 +149,7 @@ describe('ZoneManager', () => {
 
   describe('positionPlayerAfterTransition', () => {
     test('positions from bottom exit at top', () => {
-      zoneManager.positionPlayerAfterTransition('bottom', 2, 8);
+      zoneManager.transitionCoordinator.positionPlayerAfterTransition('bottom', 2, 8);
 
       expect(mockPlayer.setPosition).toHaveBeenCalledWith(2, 0);
       expect(mockZoneGenerator.clearPathToExit).toHaveBeenCalledWith(2, 0);
@@ -157,7 +157,7 @@ describe('ZoneManager', () => {
     });
 
     test('positions from top exit at bottom', () => {
-      zoneManager.positionPlayerAfterTransition('top', 3, 0);
+      zoneManager.transitionCoordinator.positionPlayerAfterTransition('top', 3, 0);
 
       expect(mockPlayer.setPosition).toHaveBeenCalledWith(3, 8);
       expect(mockZoneGenerator.clearPathToExit).toHaveBeenCalledWith(3, 8);
@@ -165,7 +165,7 @@ describe('ZoneManager', () => {
     });
 
     test('positions from teleport in center', () => {
-      zoneManager.positionPlayerAfterTransition('teleport', 0, 0);
+      zoneManager.transitionCoordinator.positionPlayerAfterTransition('teleport', 0, 0);
 
       expect(mockPlayer.setPosition).toHaveBeenCalledWith(4, 4);
     });
@@ -173,7 +173,7 @@ describe('ZoneManager', () => {
     test('positions at PORT tile', () => {
       mockGame.grid[5][5] = TILE_TYPES.PORT;
 
-      zoneManager.positionPlayerAfterTransition('port', 0, 0);
+      zoneManager.transitionCoordinator.positionPlayerAfterTransition('port', 0, 0);
 
       expect(mockPlayer.setPosition).toHaveBeenCalledWith(5, 5);
     });

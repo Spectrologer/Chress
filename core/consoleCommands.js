@@ -1,90 +1,26 @@
 // Console Commands for debugging and testing
+// This file uses a registry pattern to reduce repetitive code
 
 import { TILE_TYPES, GRID_SIZE } from './constants/index.js';
-import { Enemy } from '../entities/Enemy.js';
 import { logger } from './logger.js';
 import { customZoneLoader } from '../loaders/CustomZoneLoader.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import { SharedStructureSpawner } from '../utils/SharedStructureSpawner.js';
 import { PositionValidator } from './PositionValidator.js';
+import {
+  generateSpawnCommands,
+  generateEnemyCommands,
+  generateSpecialCommands,
+  generateHotkeyMap,
+  createHotkeyHandler
+} from './consoleCommandsGenerator.js';
 
-// Generic spawn utility that reduces code duplication
-function spawnAtPosition(game, tileValue, itemName) {
-  const pos = findSpawnPosition(game);
-  if (pos) {
-    game.grid[pos.y][pos.x] = tileValue;
-    logger.log(`Spawned ${itemName} at`, pos);
-  } else {
-    logger.log('No valid spawn position found');
-  }
-}
+// Generate all spawn commands from registry
+const spawnCommands = generateSpawnCommands();
+const enemyCommands = generateEnemyCommands();
+const specialCommands = generateSpecialCommands();
 
-const consoleCommands = {
-  // Spawn commands - now using generic utility
-  spawnBomb: (game) => spawnAtPosition(game, TILE_TYPES.BOMB, 'bomb'),  // Spawns pickup item
-  spawnTimedBomb: (game) => spawnAtPosition(game, { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true }, 'timed bomb'),  // Spawns active bomb
-  spawnHorseIcon: (game) => spawnAtPosition(game, { type: TILE_TYPES.HORSE_ICON, uses: 3 }, 'horse icon'),
-
-  spawnEnemy: function(game, enemyType = 'lizardy') {
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      const enemy = new Enemy({ x: pos.x, y: pos.y, enemyType: enemyType, id: Date.now() });
-      game.enemyCollection.add(enemy);
-      logger.log('Spawned enemy', enemyType, 'at', pos);
-    } else {
-      logger.log('No valid spawn position found');
-    }
-  },
-
-  // Item spawn commands
-  spawnHammer: (game) => spawnAtPosition(game, TILE_TYPES.HAMMER, 'hammer'),
-  spawnBishopSpear: (game) => spawnAtPosition(game, { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 }, 'bishop spear'),
-  spawnNote: (game) => spawnAtPosition(game, TILE_TYPES.NOTE, 'note'),
-  spawnHeart: (game) => spawnAtPosition(game, TILE_TYPES.HEART, 'heart'),
-  spawnBook: (game) => spawnAtPosition(game, { type: TILE_TYPES.BOOK_OF_TIME_TRAVEL, uses: 3 }, 'Book of Time Travel'),
-  spawnBow: (game) => spawnAtPosition(game, { type: TILE_TYPES.BOW, uses: 3 }, 'bow'),
-  spawnWater: (game) => spawnAtPosition(game, TILE_TYPES.WATER, 'water'),
-  spawnFoodMeat: (game) => spawnAtPosition(game, { type: TILE_TYPES.FOOD, foodType: 'food/meat/beaf.png' }, 'meat'),
-  spawnFoodNut: (game) => spawnAtPosition(game, { type: TILE_TYPES.FOOD, foodType: 'food/veg/nut.png' }, 'nut'),
-  spawnPenne: (game) => spawnAtPosition(game, TILE_TYPES.PENNE, 'Penne'),
-  spawnSquig: (game) => spawnAtPosition(game, TILE_TYPES.SQUIG, 'squig'),
-  spawnRune: (game) => spawnAtPosition(game, TILE_TYPES.RUNE, 'rune'),
-  spawnNib: (game) => spawnAtPosition(game, TILE_TYPES.NIB, 'nib'),
-  spawnMark: (game) => spawnAtPosition(game, TILE_TYPES.MARK, 'Mark'),
-  spawnGouge: (game) => spawnAtPosition(game, TILE_TYPES.GOUGE, 'Gouge'),
-
-  spawnShack: function(game) {
-    SharedStructureSpawner.spawnShack(game);
-  },
-
-  spawnShovel: (game) => spawnAtPosition(game, { type: TILE_TYPES.SHOVEL, uses: 3 }, 'shovel'),
-
-  spawnCistern: function(game) {
-    SharedStructureSpawner.spawnCistern(game);
-  },
-
-  spawnPitfall: (game) => spawnAtPosition(game, TILE_TYPES.PITFALL, 'pitfall'),
-
-  spawnStairdown: function(game) {
-    // Try to place stairdown at player's position if valid, otherwise find random valid spawn
-    const playerPos = game.player.getPosition();
-    const tileAtPlayer = game.grid[playerPos.y]?.[playerPos.x];
-    const canPlaceAtPlayer = tileAtPlayer === TILE_TYPES.FLOOR || (tileAtPlayer && tileAtPlayer.type === TILE_TYPES.FLOOR);
-    if (canPlaceAtPlayer) {
-      game.grid[playerPos.y][playerPos.x] = { type: TILE_TYPES.PORT, portKind: 'stairdown' };
-      logger.log('Placed stairdown at player position', playerPos);
-      return;
-    }
-
-    const pos = findSpawnPosition(game);
-    if (pos) {
-      game.grid[pos.y][pos.x] = { type: TILE_TYPES.PORT, portKind: 'stairdown' };
-      logger.log('Spawned stairdown at', pos);
-    } else {
-      logger.log('No valid spawn position found for stairdown');
-    }
-  },
-
+// Utility commands (teleport, zone management, etc.)
+const utilityCommands = {
   // Teleport command
   tp: function(game, x, y) {
     if (typeof x !== 'number' || typeof y !== 'number') {
@@ -110,7 +46,7 @@ const consoleCommands = {
     }
     // Find an interior port or create one
     const playerPos = game.player.getPosition();
-    game.grid[playerPos.y][playerPos.x] = { type: TILE_TYPES.PORT, portKind: 'interior' };
+    game.gridManager.setTile(playerPos.x, playerPos.y, { type: TILE_TYPES.PORT, portKind: 'interior' });
     logger.log('Created interior port at player position. Use it to enter.');
   },
 
@@ -164,7 +100,7 @@ const consoleCommands = {
           // Set terrain
           if (cellData.terrain) {
             const terrainType = TILE_TYPES[cellData.terrain.toUpperCase()];
-            game.grid[row][col] = terrainType !== undefined ? terrainType : TILE_TYPES.FLOOR;
+            game.gridManager.setTile(col, row, terrainType !== undefined ? terrainType : TILE_TYPES.FLOOR);
 
             // Log if terrain type not recognized
             if (terrainType === undefined) {
@@ -177,13 +113,13 @@ const consoleCommands = {
             // Handle special port_* format (port_stairup, port_stairdown, etc.)
             if (cellData.feature.startsWith('port_')) {
               const portKind = cellData.feature.substring(5); // Remove 'port_' prefix
-              game.grid[row][col] = { type: TILE_TYPES.PORT, portKind: portKind };
+              game.gridManager.setTile(col, row, { type: TILE_TYPES.PORT, portKind: portKind });
               logger.log(`Placed PORT with portKind="${portKind}" at [${col},${row}]`);
             } else {
               const featureType = TILE_TYPES[cellData.feature.toUpperCase()];
 
               if (featureType !== undefined) {
-                game.grid[row][col] = featureType;
+                game.gridManager.setTile(col, row, featureType);
               } else {
                 // For unrecognized features, log them but don't replace terrain
                 logger.log(`Warning: Unknown feature "${cellData.feature}" at [${col},${row}], feature not applied`);
@@ -220,7 +156,7 @@ const consoleCommands = {
 
     logger.log(`Reloading custom zone: ${zoneName}...`);
     await customZoneLoader.reloadZone(zoneName);
-    await this.loadzone(game, zoneName);
+    await utilityCommands.loadzone(game, zoneName);
   },
 
   // Export current zone or zone at specific coordinates
@@ -271,9 +207,12 @@ const consoleCommands = {
       TILE_NAMES[TILE_TYPES[key]] = key.toLowerCase();
     });
 
+    // Create a temporary GridManager for the zone data
+    const tempGridManager = new (game.gridManager.constructor)(zoneData.grid);
+
     for (let row = 0; row < GRID_SIZE; row++) {
       for (let col = 0; col < GRID_SIZE; col++) {
-        const tile = zoneData.grid[row][col];
+        const tile = tempGridManager.getTile(col, row);
 
         // Handle tile as number or object
         let tileType, tileName;
@@ -338,145 +277,24 @@ const consoleCommands = {
     logger.log(`Zone exported as ${zoneName}.json`);
   },
 
-
-  // Enemy spawn commands (additional)
-  spawnLizardeaux: function(game) {
-    this.spawnEnemy(game, 'lizardeaux');
-  },
-
-  spawnLizord: function(game) {
-    this.spawnEnemy(game, 'lizord');
-  },
-
-  spawnLazerd: function(game) {
-    this.spawnEnemy(game, 'lazerd');
-  },
-
-  spawnZard: function(game) {
-    this.spawnEnemy(game, 'zard');
-  },
-
-  // Hotkey commands
+  // Restart game
   restartGame: function(game) {
     if (confirm('Are you sure you want to restart the game? All progress will be lost.')) {
       game.resetGame();
     }
-  },
-
-  hotkeyB: function(game) { this.spawnBomb(game); },
-  hotkeyH: function(game) { this.spawnHorseIcon(game); },
-  hotkeyM: function(game) { this.spawnHammer(game); },
-  hotkeyV: function(game) { this.spawnShovel(game); }, // V for shovel (vacuum? or V is unused)
-  hotkeyS: function(game) { this.spawnBishopSpear(game); },
-  hotkeyN: function(game) { this.spawnNote(game); },
-  hotkeyR: function(game) { this.spawnHeart(game); },
-  hotkeyK: function(game) { this.spawnBook(game); },
-  hotkeyY: function(game) { this.spawnBow(game); }, // Y for bow
-  hotkeyI: function(game) { this.spawnNib(game); },
-  hotkeyE: function(game) { this.spawnRune(game); },
-  hotkeyW: function(game) { this.spawnWater(game); },
-
-  hotkeyF: function(game) {
-    if (Math.random() < 0.5) {
-      this.spawnFoodMeat(game);
-    } else {
-      this.spawnFoodNut(game);
-    }
-  },
-  hotkeyU: function(game) { this.spawnFoodNut(game); }, // U for nut
-  hotkeyL: function(game) { this.spawnPenne(game); },
-  hotkeyG: function(game) { this.spawnSquig(game); }, // G for green squig
-
-  hotkeyD: function(game) { this.spawnGouge(game); }, // D for Gouge
-  hotkeyX: function(game) { this.spawnMark(game); }, // X for Mark
-  hotkeyJ: function(game) { this.spawnShack(game); }, // J for shack
-  hotkeyC: function(game) { this.spawnCistern(game); }, // C for cistern
-  hotkeyP: function(game) { this.spawnPitfall(game); }, // P for pitfall
-  hotkeyT: function(game) { this.spawnStairdown(game); }, // T for stairdown
-
-  hotkeyShift1: function(game) { this.spawnEnemy(game, 'lizardy'); },
-  hotkeyShift2: function(game) { this.spawnEnemy(game, 'lizardo'); },
-  hotkeyShift3: function(game) { this.spawnEnemy(game, 'lizardeaux'); },
-  hotkeyShift4: function(game) { this.spawnEnemy(game, 'lizord'); },
-  hotkeyShift5: function(game) { this.spawnEnemy(game, 'lazerd'); },
-  hotkeyShift6: function(game) { this.spawnEnemy(game, 'zard'); },
-
-  // Handle hotkey events (for external calling from InputManager)
-  handleHotkey: function(game, key, shiftKey = false) {
-    const lowerKey = key.toLowerCase();
-    if (!shiftKey) {
-      // Restart game hotkey
-      if (lowerKey === 'escape') { this.restartGame(game); return true; }
-
-      // Items
-      if (lowerKey === 'b') { this.hotkeyB(game); return true; }
-      if (lowerKey === 'h') { this.hotkeyH(game); return true; }
-      if (lowerKey === 'm') { this.hotkeyM(game); return true; }
-      if (lowerKey === 'v') { this.hotkeyV(game); return true; }
-  if (lowerKey === 'z') { this.hotkeyS(game); return true; }
-      if (lowerKey === 'n') { this.hotkeyN(game); return true; }
-      if (lowerKey === 'r') { this.hotkeyR(game); return true; }
-      if (lowerKey === 'k') { this.hotkeyK(game); return true; }
-      if (lowerKey === 'y') { this.hotkeyY(game); return true; }
-      if (lowerKey === 'i') { this.hotkeyI(game); return true; }
-      if (lowerKey === 'e') { this.hotkeyE(game); return true; }
-      if (lowerKey === 'w') { this.hotkeyW(game); return true; }
-      if (lowerKey === 'f') { this.hotkeyF(game); return true; }
-      if (lowerKey === 'u') { this.hotkeyU(game); return true; }
-      if (lowerKey === 'l') { this.hotkeyL(game); return true; }
-      if (lowerKey === 'g') { this.hotkeyG(game); return true; }
-      if (lowerKey === 'd') { this.hotkeyD(game); return true; }
-      if (lowerKey === 'x') { this.hotkeyX(game); return true; }
-      if (lowerKey === 'j') { this.hotkeyJ(game); return true; }
-      if (lowerKey === 'c') { this.hotkeyC(game); return true; }
-      if (lowerKey === 'p') { this.hotkeyP(game); return true; }
-  if (lowerKey === 't') { this.hotkeyT(game); return true; }
-      // Enemies (numbers without shift)
-      if (lowerKey === '1') { this.hotkeyShift1(game); return true; }
-      if (lowerKey === '2') { this.hotkeyShift2(game); return true; }
-      if (lowerKey === '3') { this.hotkeyShift3(game); return true; }
-      if (lowerKey === '4') { this.hotkeyShift4(game); return true; }
-      if (lowerKey === '5') { this.hotkeyShift5(game); return true; }
-      if (lowerKey === '6') { this.hotkeyShift6(game); return true; }
-    }
-    return false; // Not a hotkey
   }
 };
 
-// Helper function to find spawn position - finds any random available passable tile
-function findSpawnPosition(game) {
-  const availablePositions = [];
+// Combine all commands
+const consoleCommands = {
+  ...spawnCommands,
+  ...enemyCommands,
+  ...specialCommands,
+  ...utilityCommands
+};
 
-  // Scan the entire grid for available passable tiles
-  for (let y = 0; y < GRID_SIZE; y++) {
-    for (let x = 0; x < GRID_SIZE; x++) {
-      if (isValidSpawnPosition(game, x, y)) {
-        availablePositions.push({ x, y });
-      }
-    }
-  }
-
-  if (availablePositions.length === 0) {
-    return undefined; // No available positions
-  }
-
-  // Pick a random available position
-  const randomIndex = Math.floor(Math.random() * availablePositions.length);
-  return availablePositions[randomIndex];
-}
-
-function isValidSpawnPosition(game, x, y) {
-  if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) {
-    return false;
-  }
-
-  const tile = game.grid[y][x];
-  const walkable = game.player.isWalkable(x, y, game.grid);
-
-  // Check if any enemy is at position
-  const enemyHere = game.enemyCollection.hasEnemyAt(x, y);
-
-  return walkable && !enemyHere;
-}
+// Generate hotkey map and handler
+const hotkeyMap = generateHotkeyMap(consoleCommands);
+consoleCommands.handleHotkey = createHotkeyHandler(consoleCommands, hotkeyMap);
 
 export default consoleCommands;

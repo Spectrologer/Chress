@@ -258,8 +258,10 @@ export class Sign {
         // Animate axolotl walking to exit with hop animation
         const walkToExit = () => {
             if (axolotl.x === exitX && axolotl.y === exitY) {
-                // Reached exit, remove axolotl
+                // Reached exit, remove axolotl and restore the exit tile
                 npcManager.removeNPC(axolotl);
+                // Restore the exit tile (removeNPC sets it to FLOOR)
+                grid[exitY][exitX] = TILE_TYPES.EXIT;
                 gameInstance.render();
                 return;
             }
@@ -309,5 +311,9 @@ export class Sign {
         }
 
         return null;
+    }
+
+    static getNPCCharacterData(npcType) {
+        return getNPCCharacterData(npcType);
     }
 }

@@ -1,89 +1,26 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
-import { Sign } from '../ui/Sign.js';
 import { logger } from '../core/logger.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
-import { isFloor, isTileType, isTileObjectOfType, isTileObjectWithProperty, isPort, isPitfall } from '../utils/TypeChecks.js';
+import { isTileObjectOfType, isTileObjectWithProperty, isPitfall } from '../utils/TypeChecks.js';
+import { ZoneTransitionCoordinator } from './ZoneTransitionCoordinator.js';
+import { ZoneTreasureManager } from './ZoneTreasureManager.js';
+import { ZoneEventEmitter } from './ZoneEventEmitter.js';
 
 export class ZoneManager {
     constructor(game) {
         this.game = game;
+        this.transitionCoordinator = new ZoneTransitionCoordinator(game);
+        this.treasureManager = new ZoneTreasureManager(game);
+        this.eventEmitter = new ZoneEventEmitter(game);
     }
 
-    /**
-     * Initialize transition state (pitfall tracking, sign reset, etc.)
-     */
-    _initializeTransitionState(exitSide) {
-        this.game.lastExitSide = exitSide;
-
-        const transientState = this.game.transientGameState;
-
-        // Reset sign message tracking for the new zone
-        transientState.clearLastSignMessage();
-        transientState.clearDisplayingSignMessage();
-
-        // Set pitfall zone flag based on transition data
-        const portData = transientState.getPortTransitionData();
-        const isPitfallEntry = portData?.from === 'pitfall';
-
-        if (exitSide !== 'port') {
-            transientState.exitPitfallZone();
-        }
-
-        // If entering a pitfall zone, reset the turn counter
-        if (isPitfallEntry) {
-            transientState.enterPitfallZone();
-        }
-    }
-
-    /**
-     * Handle special zone treasures if player reached a marked zone
-     */
-    _handleSpecialZoneTreasures(zoneKey) {
-        if (this.game.specialZones.has(zoneKey)) {
-            const treasures = this.game.specialZones.get(zoneKey);
-            this.game.spawnTreasuresOnGrid(treasures);
-            this.game.specialZones.delete(zoneKey);
-        }
-    }
-
-    /**
-     * Emit events and save state after transition
-     */
-    _finalizeTransition(newZoneX, newZoneY) {
-        const playerFacade = this.game.playerFacade;
-        const dimension = playerFacade.getZoneDimension();
-
-        eventBus.emit(EventTypes.ZONE_CHANGED, {
-            x: newZoneX,
-            y: newZoneY,
-            dimension
-        });
-
-        const playerPos = playerFacade.getPosition();
-        eventBus.emit(EventTypes.PLAYER_MOVED, {
-            x: playerPos.x,
-            y: playerPos.y
-        });
-
-        this.game.gameStateManager.saveGameState();
-
-        // Clear the one-time transition data
-        const transientState = this.game.transientGameState;
-        const portData = transientState.getPortTransitionData();
-        try {
-            logger?.debug?.(`Clearing portTransitionData (was=${JSON.stringify(portData)})`);
-        } catch (e) {}
-        transientState.clearPortTransitionData();
-    }
 
     transitionToZone(newZoneX, newZoneY, exitSide, exitX, exitY) {
         const playerFacade = this.game.playerFacade;
         const gridManager = this.game.gridManager;
 
-        this._initializeTransitionState(exitSide);
+        this.transitionCoordinator.initializeTransitionState(exitSide);
 
         const zoneKey = `${newZoneX},${newZoneY}`;
 
@@ -105,7 +42,7 @@ export class ZoneManager {
         } catch (e) {}
 
         // Position player based on which exit they used
-        this.positionPlayerAfterTransition(exitSide, exitX, exitY);
+        this.transitionCoordinator.positionPlayerAfterTransition(exitSide, exitX, exitY);
 
         // If player spawned on shrubbery, remove it (restore exit)
         const playerPos = playerFacade.getPosition();
@@ -120,306 +57,12 @@ export class ZoneManager {
         playerFacade.setLastPosition(playerPos.x, playerPos.y);
 
         // Check for special zone treasures
-        this._handleSpecialZoneTreasures(zoneKey);
+        this.treasureManager.handleSpecialZoneTreasures(zoneKey);
 
         // Emit events and save state
-        this._finalizeTransition(newZoneX, newZoneY);
+        this.eventEmitter.finalizeTransition(newZoneX, newZoneY);
     }
 
-    /**
-     * Position player after pitfall transition
-     */
-    _positionAfterPitfall(exitX, exitY) {
-        const playerFacade = this.game.playerFacade;
-        const currentZone = playerFacade.getCurrentZone();
-
-        const portZoneKey = createZoneKey(
-            currentZone.x,
-            currentZone.y,
-            currentZone.dimension,
-            currentZone.depth
-        );
-        const zoneData = this.game.zoneRepository.getByKey(portZoneKey);
-
-        if (zoneData?.playerSpawn) {
-            playerFacade.setPosition(zoneData.playerSpawn.x, zoneData.playerSpawn.y);
-        } else {
-            playerFacade.setPosition(exitX, exitY);
-            this.validateAndSetTile(this.game.grid, exitX, exitY, TILE_TYPES.PORT);
-        }
-    }
-
-    /**
-     * Position player after entering an interior
-     */
-    _positionAfterInteriorEntry() {
-        const playerFacade = this.game.playerFacade;
-        const gridManager = this.game.gridManager;
-        const currentZone = playerFacade.getCurrentZone();
-        const portX = Math.floor(GRID_SIZE / 2);
-        const portY = GRID_SIZE - 1; // bottom edge
-
-        // First, check if the zone has custom playerSpawn metadata (from board JSON)
-        const zoneKey = createZoneKey(
-            currentZone.x,
-            currentZone.y,
-            currentZone.dimension,
-            currentZone.depth
-        );
-        const zoneData = this.game.zoneRepository.getByKey(zoneKey);
-
-        if (zoneData?.playerSpawn) {
-            playerFacade.setPosition(zoneData.playerSpawn.x, zoneData.playerSpawn.y);
-            return;
-        }
-
-        // Check if a PORT with portKind 'interior' exists (entrance from surface)
-        let interiorPortX = null;
-        let interiorPortY = null;
-        let anyPortX = null;
-        let anyPortY = null;
-
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.game.grid[y][x];
-                if (gridManager.isTileType(x, y, TILE_TYPES.PORT)) {
-                    // Store first PORT we find as fallback
-                    if (anyPortX === null) {
-                        anyPortX = x;
-                        anyPortY = y;
-                    }
-                    // Check if it's specifically an interior port
-                    if (tile && typeof tile === 'object' && tile.portKind === 'interior') {
-                        interiorPortX = x;
-                        interiorPortY = y;
-                        break;
-                    }
-                }
-            }
-            if (interiorPortX !== null) break;
-        }
-
-        // Prefer interior port, then any port, then create default
-        if (interiorPortX !== null) {
-            playerFacade.setPosition(interiorPortX, interiorPortY);
-        } else if (anyPortX !== null) {
-            playerFacade.setPosition(anyPortX, anyPortY);
-        } else {
-            // No PORT exists, create one at the default position
-            this.validateAndSetTile(this.game.grid, portX, portY, TILE_TYPES.PORT);
-            playerFacade.setPosition(portX, portY);
-        }
-    }
-
-    /**
-     * Position player after exiting underground to surface
-     */
-    _positionAfterUndergroundExit(exitX, exitY) {
-        const playerFacade = this.game.playerFacade;
-        const currentZone = playerFacade.getCurrentZone();
-        let portX = exitX;
-        let portY = exitY;
-
-        try {
-            const undergroundDepth = currentZone.depth;
-            const undergroundZoneKey = createZoneKey(
-                currentZone.x,
-                currentZone.y,
-                2,
-                undergroundDepth
-            );
-            const undergroundData = this.game.zoneRepository.getByKey(undergroundZoneKey);
-
-            if (undergroundData?.returnToSurface) {
-                portX = undergroundData.returnToSurface.x;
-                portY = undergroundData.returnToSurface.y;
-            } else {
-                const transientState = this.game.transientGameState;
-                const portData = transientState.getPortTransitionData();
-                if (portData && (portData.from === 'hole' || portData.from === 'pitfall')) {
-                    portX = portData.x;
-                    portY = portData.y;
-                }
-            }
-        } catch (e) {
-            // Non-fatal, fall back to exitX/exitY
-        }
-
-        this.validateAndSetTile(this.game.grid, portX, portY, TILE_TYPES.PORT);
-        playerFacade.setPosition(portX, portY);
-    }
-
-    /**
-     * Position player after exiting interior to surface
-     */
-    _positionAfterInteriorExit(exitX, exitY) {
-        const playerFacade = this.game.playerFacade;
-        const gridManager = this.game.gridManager;
-        const currentZone = playerFacade.getCurrentZone();
-
-        const interiorZoneKey = createZoneKey(currentZone.x, currentZone.y, 1);
-        const interiorZoneData = this.game.zoneRepository.getByKey(interiorZoneKey);
-
-        // Try recorded return coordinates
-        if (interiorZoneData?.returnToSurface) {
-            const { x: sx, y: sy } = interiorZoneData.returnToSurface;
-            if (sx !== undefined && sy !== undefined) {
-                playerFacade.setPosition(sx, sy);
-                this.validateAndSetTile(this.game.grid, sx, sy, TILE_TYPES.PORT);
-                return;
-            }
-        }
-
-        // Try exit coords if they're a PORT
-        if (isWithinGrid(exitX, exitY) && gridManager.isTileType(exitX, exitY, TILE_TYPES.PORT)) {
-            playerFacade.setPosition(exitX, exitY);
-            return;
-        }
-
-        // Search for any PORT tile using GridManager
-        const portTile = gridManager.findFirst(tile => isTileType(tile, TILE_TYPES.PORT));
-        if (portTile) {
-            playerFacade.setPosition(portTile.x, portTile.y);
-            return;
-        }
-
-        // Fallback to exitX/exitY
-        playerFacade.setPosition(exitX, exitY);
-        this.validateAndSetTile(this.game.grid, exitX, exitY, TILE_TYPES.PORT);
-    }
-
-    /**
-     * Position player after regular port transition
-     */
-    _positionAfterRegularPort(exitX, exitY) {
-        const playerFacade = this.game.playerFacade;
-        playerFacade.setPosition(exitX, exitY);
-        this.validateAndSetTile(this.game.grid, exitX, exitY, TILE_TYPES.PORT);
-    }
-
-    /**
-     * Position player after returning to interior from underground via stairup
-     */
-    _positionAfterUndergroundToInterior(exitX, exitY) {
-        const playerFacade = this.game.playerFacade;
-        const gridManager = this.game.gridManager;
-
-        // Find the stairdown port in the interior
-        let stairdownX = null;
-        let stairdownY = null;
-
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.game.grid[y][x];
-                if (tile && typeof tile === 'object' && tile.portKind === 'stairdown') {
-                    stairdownX = x;
-                    stairdownY = y;
-                    break;
-                }
-            }
-            if (stairdownX !== null) break;
-        }
-
-        // Position player at the stairdown port
-        if (stairdownX !== null) {
-            playerFacade.setPosition(stairdownX, stairdownY);
-        } else {
-            // Fallback: place at exitX/exitY
-            playerFacade.setPosition(exitX, exitY);
-            this.validateAndSetTile(this.game.grid, exitX, exitY, TILE_TYPES.PORT);
-        }
-    }
-
-    /**
-     * Handle port positioning based on context
-     */
-    _positionAfterPortTransition(exitX, exitY) {
-        const playerFacade = this.game.playerFacade;
-        const transientState = this.game.transientGameState;
-        const currentZone = playerFacade.getCurrentZone();
-        const portData = transientState.getPortTransitionData();
-
-        if (portData?.from === 'pitfall') {
-            this._positionAfterPitfall(exitX, exitY);
-        } else if (currentZone.dimension === 1 && portData?.toInterior) {
-            // Returning to interior from underground via stairup
-            this._positionAfterUndergroundToInterior(exitX, exitY);
-        } else if (currentZone.dimension === 1) {
-            // Entering interior from surface
-            this._positionAfterInteriorEntry();
-        } else if (currentZone.dimension === 0 && currentZone.portType === 'underground') {
-            this._positionAfterUndergroundExit(exitX, exitY);
-        } else if (currentZone.dimension === 0) {
-            this._positionAfterInteriorExit(exitX, exitY);
-        } else {
-            this._positionAfterRegularPort(exitX, exitY);
-        }
-    }
-
-    positionPlayerAfterTransition(exitSide, exitX, exitY) {
-        const gridManager = this.game.gridManager;
-        const playerFacade = this.game.playerFacade;
-        switch (exitSide) {
-            case 'bottom':
-                // Came from bottom, enter north side at corresponding x position
-                gridManager.setTile(exitX, 0, TILE_TYPES.EXIT);
-                this.game.zoneGenerator.clearPathToExit(exitX, 0);
-                playerFacade.setPosition(exitX, 0);
-                break;
-            case 'top':
-                // Came from top, enter south side at corresponding x position
-                gridManager.setTile(exitX, GRID_SIZE - 1, TILE_TYPES.EXIT);
-                this.game.zoneGenerator.clearPathToExit(exitX, GRID_SIZE - 1);
-                playerFacade.setPosition(exitX, GRID_SIZE - 1);
-                break;
-            case 'right':
-                // Came from right, enter west side at corresponding y position
-                gridManager.setTile(0, exitY, TILE_TYPES.EXIT);
-                this.game.zoneGenerator.clearPathToExit(0, exitY);
-                playerFacade.setPosition(0, exitY);
-                break;
-            case 'left':
-                // Came from left, enter east side at corresponding y position
-                gridManager.setTile(GRID_SIZE - 1, exitY, TILE_TYPES.EXIT);
-                this.game.zoneGenerator.clearPathToExit(GRID_SIZE - 1, exitY);
-                playerFacade.setPosition(GRID_SIZE - 1, exitY);
-                break;
-            case 'teleport':
-                // Teleport: place in center
-                playerFacade.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
-                break;
-            case 'port':
-                this._positionAfterPortTransition(exitX, exitY);
-                break;
-            default:
-                // Fallback to center
-                playerFacade.setPosition(Math.floor(GRID_SIZE / 2), Math.floor(GRID_SIZE / 2));
-                break;
-        }
-    }
-
-    /**
-     * Helper to safely set a tile on the grid, checking bounds.
-     * @param {Array<Array<any>>} grid The game grid.
-     * @param {number} x The x-coordinate.
-     * @param {number} y The y-coordinate.
-     * @param {any} tile The tile to set.
-     */
-    validateAndSetTile(grid, x, y, tile) {
-        if (isWithinGrid(x, y)) {
-            // If we're trying to set a primitive PORT tile, don't overwrite an existing
-            // object-style PORT (which may contain metadata like portKind: 'stairup').
-            if (tile === TILE_TYPES.PORT) {
-                const existing = grid[y] && grid[y][x];
-                if (isTileObjectOfType(existing, TILE_TYPES.PORT)) {
-                    // Preserve the object port
-                    return;
-                }
-            }
-
-            grid[y][x] = tile;
-        }
-    }
 
     generateZone() {
         const currentZone = this.game.player.getCurrentZone();
@@ -570,7 +213,7 @@ export class ZoneManager {
                         // ensure cistern top/port is present
                         const belowTile = gridManager.getTile(px, py + 1);
                         if (belowTile !== undefined && belowTile !== TILE_TYPES.CISTERN) {
-                            this.validateAndSetTile(this.game.grid, px, py + 1, TILE_TYPES.CISTERN);
+                            this.transitionCoordinator.validateAndSetTile(this.game.grid, px, py + 1, TILE_TYPES.CISTERN);
                         }
                     } else if (from === 'hole' || from === 'pitfall') {
                         // Only convert a primitive PITFALL/hole into an object-style PORT
@@ -608,34 +251,8 @@ export class ZoneManager {
     }
 
     spawnTreasuresOnGrid(treasures) {
-        // Spawn treasures on grid at valid floor positions
-        const gridManager = this.game.gridManager;
-        for (const treasure of treasures) {
-            // Try to place treasure in a valid location (max 50 attempts)
-            for (let attempts = 0; attempts < 50; attempts++) {
-                const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-                const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
-
-                // Check if tile is floor and not occupied or blocked
-                const tile = gridManager.getTile(x, y);
-                const isFloorTile = isFloor(tile);
-                const isExit = isTileType(tile, TILE_TYPES.EXIT);
-
-                if (isFloorTile && !isExit) {
-                    // Place the treasure
-                    gridManager.setTile(x, y, treasure);
-                    break; // Successfully placed
-                }
-            }
-        }
-
-        // Add message to log via event
-        eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
-            text: 'Treasures found scattered throughout the zone!',
-            category: 'treasure',
-            priority: 'info',
-            timestamp: Date.now()
-        });
+        // Delegate to treasure manager
+        this.treasureManager.spawnTreasuresOnGrid(treasures);
     }
 
     saveCurrentZoneState() {

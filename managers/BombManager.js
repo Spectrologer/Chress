@@ -45,7 +45,7 @@ export class BombManager {
             if (tile.actionsSincePlaced >= 2) {
                 // Double-check that the tile is still a bomb before exploding
                 // (in case it was already exploded earlier in this iteration)
-                const currentTile = this.game.grid[y][x];
+                const currentTile = this.game.gridManager.getTile(x, y);
                 if (!isBomb(currentTile)) {
                     console.log(`[BombManager] Bomb at (${x},${y}) already exploded, skipping`);
                     return;
@@ -85,9 +85,9 @@ export class BombManager {
 
         // Place timed bomb here
         const placedPos = Position.from(placed);
-        placedPos.setTile(this.game.grid, { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true });
+        this.game.gridManager.setTile(placedPos.x, placedPos.y, { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true });
 
-        console.log('[BombManager] Placed bomb at', placed, 'tile:', this.game.grid[placed.y][placed.x]);
+        console.log('[BombManager] Placed bomb at', placed, 'tile:', this.game.gridManager.getTile(placed.x, placed.y));
 
         // Remove one bomb from either inventory (prefer main inventory)
         this.itemRepository.decrementItemByType(this.game.player, 'bomb');

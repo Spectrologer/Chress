@@ -97,6 +97,13 @@ export class InputUIHandler {
     _handlePlayerTileTap(event) {
         const { gridCoords, tileType, portKind } = event;
 
+        console.log('[InputUIHandler] Player tile tap event received:', {
+            gridCoords,
+            tileType,
+            portKind,
+            hasRadialUI: !!this.game.radialInventoryUI
+        });
+
         // Disable radial menu on exit/port tiles to allow transition access
         const isExitOrPort = tileType === TILE_TYPES.EXIT ||
                             tileType === TILE_TYPES.PORT ||
@@ -104,6 +111,7 @@ export class InputUIHandler {
                             portKind === 'stairup';
 
         if (isExitOrPort) {
+            console.log('[InputUIHandler] Exit/port tile detected, skipping radial menu');
             // Close radial menu if open
             if (this.game.radialInventoryUI?.open) {
                 this.game.radialInventoryUI.close();
@@ -114,11 +122,14 @@ export class InputUIHandler {
 
         // Single tap on player tile opens radial menu (if available)
         if (this.game.radialInventoryUI) {
+            console.log('[InputUIHandler] Toggling radial menu. Currently open:', this.game.radialInventoryUI.open);
             if (this.game.radialInventoryUI.open) {
                 this.game.radialInventoryUI.close();
             } else {
                 this.game.radialInventoryUI.openAtPlayer();
             }
+        } else {
+            console.error('[InputUIHandler] radialInventoryUI is not available!');
         }
     }
 

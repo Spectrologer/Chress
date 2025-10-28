@@ -62,7 +62,9 @@
       "Bash(git fsck:*)",
       "Bash(cmd /c \"del .\\nul\")",
       "Bash(cmd /c \"del \\\\?\\C:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\nul\")",
-      "Bash(npx live-server --port=8080 --open=asset-viewer.html)"
+      "Bash(npx live-server --port=8080 --open=asset-viewer.html)",
+      "Bash(for file in \"core/consoleCommands.js\" \"core/zoneMutators.js\" \"managers/BombManager.js\")",
+      "Bash(do echo \"=== $file ===\")"
     ],
     "deny": [],
     "ask": []

@@ -1,10 +1,9 @@
 import { EnemyAttackHelper } from './EnemyAttackHelper.js';
+import { checkQueenLineOfSight, checkOrthogonalLineOfSight } from '../utils/LineOfSightUtils.js';
 
 export const EnemyAttackMixin = {
     performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation = false) {
         // Ram attack from adjacent: check if in straight line (orthogonal or diagonal) with clear line of sight
-        const sameRow = this.y === playerY;
-        const sameCol = this.x === playerX;
         const sameDiagonal = Math.abs(this.x - playerX) === Math.abs(this.y - playerY) && (playerX !== this.x) && (playerY !== this.y);
 
         // Enforce rook-like attacks for lizardeaux: disallow diagonal rams
@@ -12,38 +11,27 @@ export const EnemyAttackMixin = {
             return false;
         }
 
-        if (!sameRow && !sameCol && !sameDiagonal) {
-            return false; // Not in straight line
+        // Check line of sight using utility function
+        const hasLineOfSight = checkQueenLineOfSight(
+            this.x, this.y,
+            playerX, playerY,
+            grid,
+            {
+                isWalkable: (x, y, grid) => this.isWalkable(x, y, grid),
+                checkEnemies: true,
+                enemies: enemies,
+                includeEndpoint: false
+            }
+        );
+
+        if (!hasLineOfSight) {
+            return false;
         }
 
-        // Determine direction and steps
-        let stepX = 0, stepY = 0;
-        let steps = 0;
-        if (sameRow) {
-            stepX = playerX > this.x ? 1 : -1;
-            stepY = 0;
-            steps = Math.abs(playerX - this.x);
-        } else if (sameCol) {
-            stepX = 0;
-            stepY = playerY > this.y ? 1 : -1;
-            steps = Math.abs(playerY - this.y);
-        } else { // sameDiagonal
-            stepX = playerX > this.x ? 1 : -1;
-            stepY = playerY > this.y ? 1 : -1;
-            steps = Math.abs(playerX - this.x);
-        }
-
-        // Check line of sight: no walls or enemies blocking
-        for (let i = 1; i < steps; i++) {
-            const checkX = this.x + i * stepX;
-            const checkY = this.y + i * stepY;
-            if (!this.isWalkable(checkX, checkY, grid)) {
-                return false;
-            }
-            if (enemies.find(e => e.x === checkX && e.y === checkY)) {
-                return false;
-            }
-        }
+        // Calculate steps for animation
+        const steps = Math.max(Math.abs(playerX - this.x), Math.abs(playerY - this.y));
+        const stepX = playerX > this.x ? 1 : playerX < this.x ? -1 : 0;
+        const stepY = playerY > this.y ? 1 : playerY < this.y ? -1 : 0;
 
         // Add smoke animation for ram attack
         if (!isSimulation) {
@@ -81,39 +69,27 @@ export const EnemyAttackMixin = {
 
     checkRamAttack(playerX, playerY, grid) {
         // Lizardeaux straight line movement: check if player is in straight line with clear line of sight
-        const sameRow = this.y === playerY;
-        const sameCol = this.x === playerX;
+        const hasLineOfSight = checkOrthogonalLineOfSight(
+            this.x, this.y,
+            playerX, playerY,
+            grid,
+            {
+                isWalkable: (x, y, grid) => this.isWalkable(x, y, grid),
+                checkEnemies: false,
+                includeEndpoint: false
+            }
+        );
 
-        if (!sameRow && !sameCol) {
-            return null; // Not in straight line
+        if (!hasLineOfSight) {
+            return null;
         }
 
-        let distance = 0;
-        let direction = null;
-
-        if (sameRow) {
-            // Check horizontal line of sight
-            const minX = Math.min(this.x, playerX);
-            const maxX = Math.max(this.x, playerX);
-            for (let x = minX + 1; x < maxX; x++) {
-                if (!this.isWalkable(x, this.y, grid)) {
-                    return null; // Obstacle blocks line of sight
-                }
-            }
-            distance = Math.abs(playerX - this.x);
-            direction = { x: playerX > this.x ? 1 : -1, y: 0 }; // East or West
-        } else {
-            // Check vertical line of sight
-            const minY = Math.min(this.y, playerY);
-            const maxY = Math.max(this.y, playerY);
-            for (let y = minY + 1; y < maxY; y++) {
-                if (!this.isWalkable(this.x, y, grid)) {
-                    return null; // Obstacle blocks line of sight
-                }
-            }
-            distance = Math.abs(playerY - this.y);
-            direction = { x: 0, y: playerY > this.y ? 1 : -1 }; // South or North
-        }
+        // Calculate distance and direction
+        const distance = Math.max(Math.abs(playerX - this.x), Math.abs(playerY - this.y));
+        const direction = {
+            x: playerX > this.x ? 1 : playerX < this.x ? -1 : 0,
+            y: playerY > this.y ? 1 : playerY < this.y ? -1 : 0
+        };
 
         // Move 1 tile directly towards player along line of sight (only when distance <= 1 will trigger attack)
         if (distance >= 1) {

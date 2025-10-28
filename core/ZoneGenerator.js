@@ -15,12 +15,14 @@ import { handleUnderground } from './handlers/undergroundHandler.js';
 import { handleSurface } from './handlers/surfaceHandler.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 import { boardLoader } from './BoardLoader.js';
+import { GridManager } from '../managers/GridManager.js';
 
 export class ZoneGenerator {
 
     constructor(game) {
         this.game = game;
         this.grid = null;
+        this.gridManager = null;
         this.enemies = null;
         this.currentZoneX = null;
         this.currentZoneY = null;
@@ -98,6 +100,7 @@ export class ZoneGenerator {
     initialize() {
         // Initialize grid with floor tiles using safe initialization
         this.grid = initializeGrid();
+        this.gridManager = new GridManager(this.grid);
         this.enemies = [];
         this.addWallBorders();
     }

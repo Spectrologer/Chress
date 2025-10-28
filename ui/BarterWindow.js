@@ -48,26 +48,42 @@ export class BarterWindow {
         // If the player already has the ability granted by this NPC, show post-trade dialogue instead of trade.
         if ((npcType === 'axelotl' && this.game.player.abilities.has('axe')) ||
             (npcType === 'gouge' && this.game.player.abilities.has('hammer'))) {
-            const key = npcType === 'axelotl' ? 'axelotl_post_trade' : 'gouge_post_trade';
-            const npcData = Sign.getDialogueNpcData(key);
-            if (npcData) {
-                const message = npcData.messages[npcData.currentMessageIndex];
-                const signData = { message: message, type: 'npc' };
+            // Get the character data from JSON
+            const characterData = Sign.getNPCCharacterData(npcType);
+            if (characterData && characterData.interaction) {
+                let message = null;
 
-                // Set both old and new state for compatibility
-                this.game.displayingMessageForSign = signData;
-                if (this.game.transientGameState) {
-                    this.game.transientGameState.setDisplayingSignMessage(signData);
+                // Try onComplete.dialogue first (new format)
+                const completedTrade = characterData.interaction.trades?.find(trade => {
+                    if (npcType === 'axelotl') return trade.id === 'axelotl_axe';
+                    if (npcType === 'gouge') return trade.id === 'gouge_hammer';
+                    return false;
+                });
+
+                if (completedTrade?.onComplete?.dialogue) {
+                    message = completedTrade.onComplete.dialogue.text;
+                } else if (characterData.interaction.postTradeDialogue?.length > 0) {
+                    // Fallback to postTradeDialogue array
+                    message = characterData.interaction.postTradeDialogue[0].text;
                 }
 
-                // Use event instead of direct UIManager call
-                eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
-                    type: 'sign',
-                    message: message,
-                    portrait: npcData.portrait,
-                    name: npcData.name
-                });
-                npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+                if (message) {
+                    const signData = { message: message, type: 'npc' };
+
+                    // Set both old and new state for compatibility
+                    this.game.displayingMessageForSign = signData;
+                    if (this.game.transientGameState) {
+                        this.game.transientGameState.setDisplayingSignMessage(signData);
+                    }
+
+                    // Use event instead of direct UIManager call
+                    eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
+                        type: 'sign',
+                        message: message,
+                        portrait: characterData.display.portrait,
+                        name: characterData.name
+                    });
+                }
             }
             return;
         }
@@ -317,7 +333,25 @@ export class BarterWindow {
             const cur2 = this.game.player.getSpentDiscoveries();
             this.game.player.setSpentDiscoveries(cur2 + tradeData.requiredAmount);
             this.game.player.abilities.add('axe');
-            this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} discoveries for axe ability.`, tradeData.receivedItemImg);
+
+            // Show the onComplete message if available
+            const characterData = Sign.getNPCCharacterData('axolotl');
+            const completedTrade = characterData?.interaction?.trades?.find(t => t.id === 'axelotl_axe');
+            if (completedTrade?.onComplete?.message) {
+                eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
+                    text: completedTrade.onComplete.message,
+                    category: 'trade',
+                    priority: 'info'
+                });
+            }
+
+            eventBus.emit(EventTypes.UI_OVERLAY_MESSAGE_SHOW, {
+                text: 'Trade successful!',
+                imageSrc: tradeData.receivedItemImg,
+                persistent: false,
+                largeText: false,
+                useTypewriter: false
+            });
         } else if (tradeData.id === 'gouge_hammer') { // Trade discoveries for hammer ability
             const cur3 = this.game.player.getSpentDiscoveries();
             this.game.player.setSpentDiscoveries(cur3 + tradeData.requiredAmount);

@@ -1,5 +1,6 @@
 import { TILE_TYPES } from '../core/constants/index.js';
 import { safeCall } from '../utils/SafeServiceCall.js';
+import { checkOrthogonalLineOfSight } from '../utils/LineOfSightUtils.js';
 
 export class CombatActionManager {
     constructor(game) {
@@ -81,20 +82,16 @@ export class CombatActionManager {
         if (!isOrthogonal) return null;
 
         // Check line of sight (use playerFacade for walkability)
-        let isPathClear = true;
-        const stepX = Math.sign(dx);
-        const stepY = Math.sign(dy);
-        let checkX = playerPos.x + stepX;
-        let checkY = playerPos.y + stepY;
-
-        while (checkX !== gridCoords.x || checkY !== gridCoords.y) {
-            if (!this.game.playerFacade.isWalkable(checkX, checkY, this.game.grid)) {
-                isPathClear = false;
-                break;
+        const isPathClear = checkOrthogonalLineOfSight(
+            playerPos.x, playerPos.y,
+            gridCoords.x, gridCoords.y,
+            this.game.grid,
+            {
+                isWalkable: (x, y, grid) => this.game.playerFacade.isWalkable(x, y, grid),
+                checkEnemies: false,
+                includeEndpoint: false
             }
-            checkX += stepX;
-            checkY += stepY;
-        }
+        );
 
         if (isPathClear) {
             return { type: 'bow', item: bowItem, target: gridCoords, enemy: enemyAtCoords };

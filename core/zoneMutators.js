@@ -23,16 +23,16 @@ export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGen
         }
 
         if (effectiveConnections.north !== null && effectiveConnections.north >= 0 && effectiveConnections.north < GRID_SIZE) {
-            zoneGen.grid[0][effectiveConnections.north] = TILE_TYPES.EXIT;
+            zoneGen.gridManager.setTile(effectiveConnections.north, 0, TILE_TYPES.EXIT);
         }
         if (effectiveConnections.south !== null && effectiveConnections.south >= 0 && effectiveConnections.south < GRID_SIZE) {
-            zoneGen.grid[GRID_SIZE - 1][effectiveConnections.south] = TILE_TYPES.EXIT;
+            zoneGen.gridManager.setTile(effectiveConnections.south, GRID_SIZE - 1, TILE_TYPES.EXIT);
         }
         if (effectiveConnections.west !== null && effectiveConnections.west >= 0 && effectiveConnections.west < GRID_SIZE) {
-            zoneGen.grid[effectiveConnections.west][0] = TILE_TYPES.EXIT;
+            zoneGen.gridManager.setTile(0, effectiveConnections.west, TILE_TYPES.EXIT);
         }
         if (effectiveConnections.east !== null && effectiveConnections.east >= 0 && effectiveConnections.east < GRID_SIZE) {
-            zoneGen.grid[effectiveConnections.east][GRID_SIZE - 1] = TILE_TYPES.EXIT;
+            zoneGen.gridManager.setTile(GRID_SIZE - 1, effectiveConnections.east, TILE_TYPES.EXIT);
         }
 
         featureGenerator.blockExitsWithShrubbery(zoneLevel, effectiveConnections, zoneGen.currentDimension === 2);
@@ -47,9 +47,9 @@ export function clearPathToExit(zoneGen, exitX, exitY) {
     else if (exitX === 0) inwardX = 1;
     else if (exitX === GRID_SIZE - 1) inwardX = GRID_SIZE - 2;
 
-    const adjacentTile = zoneGen.grid[inwardY][inwardX];
+    const adjacentTile = zoneGen.gridManager.getTile(inwardX, inwardY);
     if (isTileType(adjacentTile, TILE_TYPES.WALL) || isTileType(adjacentTile, TILE_TYPES.ROCK) || isTileType(adjacentTile, TILE_TYPES.SHRUBBERY)) {
-        zoneGen.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
+        zoneGen.gridManager.setTile(inwardX, inwardY, TILE_TYPES.FLOOR);
     }
 
     for (let dy = -1; dy <= 1; dy++) {
@@ -58,9 +58,9 @@ export function clearPathToExit(zoneGen, exitX, exitY) {
             const nx = inwardX + dx;
             const ny = inwardY + dy;
             if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
-                const tile = zoneGen.grid[ny][nx];
+                const tile = zoneGen.gridManager.getTile(nx, ny);
                 if (isTileType(tile, TILE_TYPES.WALL) || isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY)) {
-                    zoneGen.grid[ny][nx] = TILE_TYPES.FLOOR;
+                    zoneGen.gridManager.setTile(nx, ny, TILE_TYPES.FLOOR);
                 }
             }
         }
@@ -80,9 +80,9 @@ export function clearPathToCenter(zoneGen, startX, startY) {
         else if (currentY < centerY) currentY++;
         else if (currentY > centerY) currentY--;
 
-        const curTile = zoneGen.grid[currentY][currentX];
+        const curTile = zoneGen.gridManager.getTile(currentX, currentY);
         if (isTileType(curTile, TILE_TYPES.WALL) || isTileType(curTile, TILE_TYPES.ROCK) || isTileType(curTile, TILE_TYPES.SHRUBBERY)) {
-            zoneGen.grid[currentY][currentX] = TILE_TYPES.FLOOR;
+            zoneGen.gridManager.setTile(currentX, currentY, TILE_TYPES.FLOOR);
         }
         if (currentX === centerX && currentY === centerY) break;
     }
@@ -90,9 +90,9 @@ export function clearPathToCenter(zoneGen, startX, startY) {
 
 export function clearZoneForShackOnly(zoneGen) {
     logger.log('Clearing first wilds zone for shack-only placement');
-    GridIterator.forEach(zoneGen.grid, (tile, x, y) => {
+    zoneGen.gridManager.forEach((tile, x, y) => {
         if (!isTileType(tile, TILE_TYPES.WALL) && !isTileType(tile, TILE_TYPES.EXIT) && !isTileType(tile, TILE_TYPES.FLOOR) && !isTileType(tile, TILE_TYPES.GRASS)) {
-            zoneGen.grid[y][x] = TILE_TYPES.FLOOR;
+            zoneGen.gridManager.setTile(x, y, TILE_TYPES.FLOOR);
         }
     });
     zoneGen.enemies = [];
@@ -105,8 +105,11 @@ export function forcePlaceShackInCenter(zoneGen, zoneX, zoneY) {
         for (let dx = 0; dx < ZONE_CONSTANTS.SHACK_SIZE; dx++) {
             const tileX = startX + dx;
             const tileY = startY + dy;
-            if (dy === ZONE_CONSTANTS.SHACK_PORT_OFFSET.y && dx === ZONE_CONSTANTS.SHACK_PORT_OFFSET.x) zoneGen.grid[tileY][tileX] = TILE_TYPES.PORT;
-            else zoneGen.grid[tileY][tileX] = TILE_TYPES.SHACK;
+            if (dy === ZONE_CONSTANTS.SHACK_PORT_OFFSET.y && dx === ZONE_CONSTANTS.SHACK_PORT_OFFSET.x) {
+                zoneGen.gridManager.setTile(tileX, tileY, TILE_TYPES.PORT);
+            } else {
+                zoneGen.gridManager.setTile(tileX, tileY, TILE_TYPES.SHACK);
+            }
         }
     }
     logger.log(`Shack force-placed at zone (${zoneX}, ${zoneY}) position (${startX}, ${startY})`);
