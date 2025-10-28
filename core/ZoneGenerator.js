@@ -108,10 +108,10 @@ export class ZoneGenerator {
     addWallBorders() {
         // Add some walls around the borders
         for (let i = 0; i < GRID_SIZE; i++) {
-            this.grid[0][i] = TILE_TYPES.WALL; // Top border
-            this.grid[GRID_SIZE - 1][i] = TILE_TYPES.WALL; // Bottom border
-            this.grid[i][0] = TILE_TYPES.WALL; // Left border
-            this.grid[i][GRID_SIZE - 1] = TILE_TYPES.WALL; // Right border
+            this.gridManager.setTile(i, 0, TILE_TYPES.WALL); // Top border
+            this.gridManager.setTile(i, GRID_SIZE - 1, TILE_TYPES.WALL); // Bottom border
+            this.gridManager.setTile(0, i, TILE_TYPES.WALL); // Left border
+            this.gridManager.setTile(GRID_SIZE - 1, i, TILE_TYPES.WALL); // Right border
         }
     }
 

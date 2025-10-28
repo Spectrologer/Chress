@@ -217,8 +217,8 @@ export class BarterWindow {
                 // random among bomb, bow, bishop_spear
                 if (hasExistingStackFor('bomb') || hasExistingStackFor('bow') || hasExistingStackFor('bishop_spear')) return true;
             } else if (tradeData.id === 'nib_item') {
-                // nib gives either a book or a horse_icon
-                if (hasExistingStackFor('horse_icon') || hasExistingStackFor('book_of_time_travel') || hasExistingStackFor('book')) return true;
+                // nib gives either a book, horse_icon, or shovel
+                if (hasExistingStackFor('horse_icon') || hasExistingStackFor('book_of_time_travel') || hasExistingStackFor('book') || hasExistingStackFor('shovel')) return true;
             } else if (tradeData.id === 'mark_meat') {
                 // Mark gives a specific meat asset 'food/meat/beaf.png'
                 if (hasExistingStackFor('food', 'food/meat/beaf.png')) return true;
@@ -317,10 +317,25 @@ export class BarterWindow {
         } else if (tradeData.id === 'nib_item') {
             this.game.playerFacade.addPoints(-tradeData.requiredAmount);
             // Normalize to the canonical radial book type so ItemManager stacks it correctly
-            const randomItem = Math.random() < 0.5 ? { type: 'book_of_time_travel', uses: 1 } : { type: 'horse_icon', uses: 3 };
+            const rand = Math.random();
+            let randomItem;
+            if (rand < 0.33) {
+                randomItem = { type: 'book_of_time_travel', uses: 3 };
+            } else if (rand < 0.66) {
+                randomItem = { type: 'horse_icon', uses: 3 };
+            } else {
+                randomItem = { type: 'shovel', uses: 3 };
+            }
             this.game.itemManager.addItemToInventory(this.game.player, randomItem);
             // Choose overlay image based on awarded item
-            const awardedImg2 = randomItem.type === 'book_of_time_travel' ? 'assets/items/book.png' : 'assets/items/horse.png';
+            let awardedImg2;
+            if (randomItem.type === 'book_of_time_travel') {
+                awardedImg2 = 'assets/items/book.png';
+            } else if (randomItem.type === 'horse_icon') {
+                awardedImg2 = 'assets/items/horse.png';
+            } else {
+                awardedImg2 = 'assets/items/shovel.png';
+            }
             this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} points for a random trinket.`, awardedImg2);
 
         } else if (tradeData.id === 'mark_meat') { // Trade discoveries for meat

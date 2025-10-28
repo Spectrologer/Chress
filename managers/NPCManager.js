@@ -69,7 +69,7 @@ export class NPCManager {
      * @param {BaseNPC|number} npcOrId - NPC object or ID
      */
     removeNPC(npcOrId) {
-        const grid = this.game.grid;
+        const gridManager = this.game.gridManager;
 
         // Find the NPC object
         let npcToRemove = null;
@@ -82,8 +82,8 @@ export class NPCManager {
         }
 
         // Clear the NPC from the grid
-        if (npcToRemove && grid) {
-            grid[npcToRemove.y][npcToRemove.x] = TILE_TYPES.FLOOR;
+        if (npcToRemove && gridManager) {
+            gridManager.setTile(npcToRemove.x, npcToRemove.y, TILE_TYPES.FLOOR);
         }
     }
 
@@ -103,26 +103,26 @@ export class NPCManager {
      * @param {number} newY - New grid y position
      */
     moveNPC(npc, newX, newY) {
-        const grid = this.game.grid;
+        const gridManager = this.game.gridManager;
         const oldX = npc.x;
         const oldY = npc.y;
 
         // Check if the position is walkable
-        if (!npc.isWalkable(newX, newY, grid)) {
+        if (!npc.isWalkable(newX, newY, gridManager)) {
             return false;
         }
 
         // Get the NPC's tile type to preserve it
-        const npcTileType = grid[oldY][oldX];
+        const npcTileType = gridManager.getTile(oldX, oldY);
 
         // Clear old position in grid
-        grid[oldY][oldX] = TILE_TYPES.FLOOR;
+        gridManager.setTile(oldX, oldY, TILE_TYPES.FLOOR);
 
         // Set new position (this updates lastX/lastY automatically)
         npc.setPosition(newX, newY);
 
         // Update grid at new position
-        grid[newY][newX] = npcTileType;
+        gridManager.setTile(newX, newY, npcTileType);
 
         // Start lift animation
         npc.startLift();
@@ -142,16 +142,17 @@ export class NPCManager {
      * Scans the grid for NPC tiles and converts them to NPC entities
      */
     initializeFromGrid() {
-        const grid = this.game.grid;
-        if (!grid) return;
+        const gridManager = this.game.gridManager;
+        if (!gridManager) return;
 
         // Clear existing NPCs
         this.clear();
 
         // Scan grid for NPC tiles
-        for (let y = 0; y < grid.length; y++) {
-            for (let x = 0; x < grid[y].length; x++) {
-                const tile = grid[y][x];
+        const gridSize = gridManager.getSize();
+        for (let y = 0; y < gridSize; y++) {
+            for (let x = 0; x < gridSize; x++) {
+                const tile = gridManager.getTile(x, y);
                 const tileType = tile && tile.type ? tile.type : tile;
 
                 // Check if this is an NPC tile type

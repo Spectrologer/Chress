@@ -2,6 +2,7 @@ import { logger } from '../core/logger.js';
 import { TypewriterEffect } from './TypewriterEffect.js';
 import { getVoiceSettingsForName, playTypingBlip } from './VoiceSettings.js';
 import { safeCall } from '../utils/SafeServiceCall.js';
+import { UI_TIMING_CONSTANTS } from '../core/constants/ui.js';
 
 /**
  * Coordinates typewriter text reveal effects with voice SFX.
@@ -11,7 +12,7 @@ export class TypewriterController {
     constructor(game = null) {
         this.game = game;
         this.currentTypewriterInterval = null;
-        this.typewriterSpeed = 28; // ms per character
+        this.typewriterSpeed = UI_TIMING_CONSTANTS.TYPEWRITER_SPEED; // ms per character
         this.typewriterSfxEnabled = true;
 
         // Voice settings cache and state

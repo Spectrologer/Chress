@@ -1,5 +1,6 @@
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
+import { UI_RENDERING_CONSTANTS } from '../core/constants/rendering.js';
 
 export class PlayerStatsUI {
     constructor(game) {
@@ -28,7 +29,7 @@ export class PlayerStatsUI {
     }
 
     updatePlayerStats() {
-        const lowStatThreshold = 10; // Pulsate when hunger/thirst is 10 or less
+        const lowStatThreshold = UI_RENDERING_CONSTANTS.LOW_STAT_THRESHOLD; // Pulsate when hunger/thirst is 10 or less
 
         // Update thirst and hunger bars
         const thirst = this.game.player.getThirst();

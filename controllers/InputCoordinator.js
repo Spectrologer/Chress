@@ -310,16 +310,16 @@ export class InputCoordinator {
         if (result.type === 'movement') {
             const { newX, newY, currentPos } = result;
 
-            // Combat or movement
+            // Combat or movement - use enemyCollection to properly filter living enemies
             const targetPos = new Position(newX, newY);
-            const enemyAtTarget = this.game.enemies.find(enemy => enemy.getPositionObject().equals(targetPos) && enemy.health > 0);
+            const enemyAtTarget = this.game.enemyCollection?.findAt(newX, newY, true);
 
             if (enemyAtTarget) {
                 // Delegate all combat logic to CombatManager
                 this.game.combatManager?.handlePlayerAttack(enemyAtTarget, currentPos);
             } else {
                 this.game.incrementBombActions();
-                this.game.player.move(newX, newY, this.game.grid, (zoneX, zoneY, exitSide) => {
+                this.game.player.move(newX, newY, this.game.gridManager, (zoneX, zoneY, exitSide) => {
                     this.game.transitionToZone(zoneX, zoneY, exitSide, currentPos.x, currentPos.y);
                 });
             }

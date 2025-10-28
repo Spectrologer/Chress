@@ -8,40 +8,32 @@ import { Position } from '../core/Position.js';
 export class InteractionManager {
     /**
      * InteractionManager coordinates all player interactions with the game world.
-     * Dependencies are injected to enable testing and avoid circular dependencies.
+     *
+     * Reduced from 9 constructor parameters to 4 by grouping related dependencies
+     * into facades (InteractionFacade, CombatFacade, WorldFacade).
      *
      * @param {Object} game - The main game instance
-     * @param {Object} inputManager - Handles user input
-     * @param {Object} npcManager - Manages NPC interactions
-     * @param {Object} itemPickupManager - Handles item pickup logic
-     * @param {Object} combatActionManager - Manages combat actions (charges, bow shots)
-     * @param {Object} bombManager - Handles bomb placement and explosions
-     * @param {Object} terrainManager - Manages terrain interactions (chopping, etc)
-     * @param {Object} zoneManager - Handles zone transitions
-     * @param {Object} environmentManager - Manages environmental interactions (signs, statues)
+     * @param {Object} interactionFacade - Groups NPC, environmental, and input managers
+     * @param {Object} combatFacade - Groups combat action and bomb managers
+     * @param {Object} worldFacade - Groups terrain, zone, and item pickup managers
      */
-    constructor(
-        game,
-        inputManager,
-        npcManager,
-        itemPickupManager,
-        combatActionManager,
-        bombManager,
-        terrainManager,
-        zoneManager,
-        environmentManager
-    ) {
+    constructor(game, interactionFacade, combatFacade, worldFacade) {
         this.game = game;
-        this.inputManager = inputManager;
 
-        // Injected specialized managers (no more internal instantiation!)
-        this.npcManager = npcManager;
-        this.itemPickupManager = itemPickupManager;
-        this.combatManager = combatActionManager;
-        this.bombManager = bombManager;
-        this.terrainManager = terrainManager;
-        this.zoneManager = zoneManager;
-        this.environmentManager = environmentManager;
+        // Store facades for direct access to underlying managers when needed
+        this.interactionFacade = interactionFacade;
+        this.combatFacade = combatFacade;
+        this.worldFacade = worldFacade;
+
+        // Maintain backward compatibility with direct manager references
+        this.inputManager = interactionFacade.inputManager;
+        this.npcManager = interactionFacade.npcManager;
+        this.environmentManager = interactionFacade.environmentManager;
+        this.combatManager = combatFacade.combatActionManager;
+        this.bombManager = combatFacade.bombManager;
+        this.terrainManager = worldFacade.terrainManager;
+        this.zoneManager = worldFacade.zoneManager;
+        this.itemPickupManager = worldFacade.itemPickupManager;
 
         // Register interaction handlers for handleTap
         this.interactionHandlers = [

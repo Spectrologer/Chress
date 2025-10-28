@@ -2,6 +2,8 @@
  * PanelEventHandler
  * Shared utilities for panel event handling and interaction management
  */
+import { UI_TIMING_CONSTANTS } from '../core/constants/ui.js';
+
 export class PanelEventHandler {
     /**
      * Installs a short-lived capturing blocker to prevent immediate pointer events
@@ -9,7 +11,7 @@ export class PanelEventHandler {
      * @param {number} duration - Duration in milliseconds (default: 300ms)
      * @param {HTMLElement} allowedContainer - Optional container element to allow clicks within
      */
-    static installCaptureBlocker(duration = 300, allowedContainer = null) {
+    static installCaptureBlocker(duration = UI_TIMING_CONSTANTS.PANEL_CAPTURE_BLOCKER_DURATION, allowedContainer = null) {
         const captureHandler = (ev) => {
             // Allow clicks within the specified container
             if (allowedContainer && allowedContainer.contains(ev.target)) {
@@ -75,7 +77,7 @@ export class PanelEventHandler {
      * @returns {Function} The handler function (for cleanup)
      */
     static createOutsideClickHandler(overlay, closeCallback, options = {}) {
-        const { debounceMs = 300, skipButtonId = null } = options;
+        const { debounceMs = UI_TIMING_CONSTANTS.PANEL_CAPTURE_BLOCKER_DURATION, skipButtonId = null } = options;
         const openTime = Date.now();
 
         return (ev) => {

@@ -4,11 +4,11 @@ import { TileRenderStrategy } from './TileRenderStrategy.js';
 import { isBomb, isTileObject } from '../../utils/TypeChecks.js';
 
 export class BombRenderStrategy extends TileRenderStrategy {
-    render(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
-        const tile = grid[y][x];
+    render(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel, baseRenderer) {
+        const tile = gridManager.getTile ? gridManager.getTile(x, y) : gridManager[y]?.[x];
 
         // First draw the base tile
-        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel);
 
         // Get the bomb image
         const bombImage = this.images.bomb;

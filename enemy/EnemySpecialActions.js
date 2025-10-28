@@ -1,6 +1,7 @@
 import { EnemyChargeBehaviors } from './EnemyChargeBehaviors.js';
 import { EnemyLineOfSight } from './EnemyLineOfSight.js';
 import { EnemyAttackHelper } from './EnemyAttackHelper.js';
+import { ANIMATION_CONSTANTS } from '../core/constants/index.js';
 
 export class EnemySpecialActions {
     // Execute charge move for Zard enemy type
@@ -22,11 +23,11 @@ export class EnemySpecialActions {
                     let stepX = chargeMove.x > enemy.x ? 1 : -1;
                     let stepY = chargeMove.y > enemy.y ? 1 : -1;
                     for (let i = 1; i < stepsDx; i++) {
-                        enemy.smokeAnimations.push({ x: enemy.x + i * stepX, y: enemy.y + i * stepY, frame: 18 });
+                        enemy.smokeAnimations.push({ x: enemy.x + i * stepX, y: enemy.y + i * stepY, frame: ANIMATION_CONSTANTS.SMOKE_FRAME_LIFETIME });
                     }
                     enemy.x = chargeMove.x;
                     enemy.y = chargeMove.y;
-                    enemy.liftFrames = 15; // Start lift animation
+                    enemy.liftFrames = ANIMATION_CONSTANTS.LIFT_FRAMES; // Start lift animation
                 }
                 // After moving, check if adjacent diagonally and ram
                 const newDx = Math.abs(chargeMove.x - playerX);
@@ -84,11 +85,11 @@ export class EnemySpecialActions {
                     if (dx > 0) stepY = 0; // if horizontal, no vertical step
                     else if (dy > 0) stepX = 0;
                     for (let i = 1; i < distance; i++) {
-                        enemy.smokeAnimations.push({ x: enemy.x + i * stepX, y: enemy.y + i * stepY, frame: 18 });
+                        enemy.smokeAnimations.push({ x: enemy.x + i * stepX, y: enemy.y + i * stepY, frame: ANIMATION_CONSTANTS.SMOKE_FRAME_LIFETIME });
                     }
                     enemy.x = chargeMove.x;
                     enemy.y = chargeMove.y;
-                    enemy.liftFrames = 15; // Start lift animation
+                    enemy.liftFrames = ANIMATION_CONSTANTS.LIFT_FRAMES; // Start lift animation
                     // Attack upon arriving
                     if (!game || !game.playerJustAttacked) {
                         // The enemy is now at chargeMove.x, chargeMove.y

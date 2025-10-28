@@ -14,6 +14,14 @@ export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGen
             }
         }
 
+        // Use zoneGen.gridManager if available, otherwise use zoneGen.game.gridManager
+        const gridManager = zoneGen.gridManager || (zoneGen.game && zoneGen.game.gridManager);
+
+        if (!gridManager) {
+            logger.warn('generateExits: gridManager not available');
+            return;
+        }
+
         let effectiveConnections = { ...connections };
         if (zoneGen.currentDimension === 2) {
             effectiveConnections.north = connections.north !== null && Math.random() < GAMEPLAY_CONSTANTS.UNDERGROUND_CONNECTION_PROBABILITY ? connections.north : null;
@@ -23,16 +31,16 @@ export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGen
         }
 
         if (effectiveConnections.north !== null && effectiveConnections.north >= 0 && effectiveConnections.north < GRID_SIZE) {
-            zoneGen.gridManager.setTile(effectiveConnections.north, 0, TILE_TYPES.EXIT);
+            gridManager.setTile(effectiveConnections.north, 0, TILE_TYPES.EXIT);
         }
         if (effectiveConnections.south !== null && effectiveConnections.south >= 0 && effectiveConnections.south < GRID_SIZE) {
-            zoneGen.gridManager.setTile(effectiveConnections.south, GRID_SIZE - 1, TILE_TYPES.EXIT);
+            gridManager.setTile(effectiveConnections.south, GRID_SIZE - 1, TILE_TYPES.EXIT);
         }
         if (effectiveConnections.west !== null && effectiveConnections.west >= 0 && effectiveConnections.west < GRID_SIZE) {
-            zoneGen.gridManager.setTile(0, effectiveConnections.west, TILE_TYPES.EXIT);
+            gridManager.setTile(0, effectiveConnections.west, TILE_TYPES.EXIT);
         }
         if (effectiveConnections.east !== null && effectiveConnections.east >= 0 && effectiveConnections.east < GRID_SIZE) {
-            zoneGen.gridManager.setTile(GRID_SIZE - 1, effectiveConnections.east, TILE_TYPES.EXIT);
+            gridManager.setTile(GRID_SIZE - 1, effectiveConnections.east, TILE_TYPES.EXIT);
         }
 
         featureGenerator.blockExitsWithShrubbery(zoneLevel, effectiveConnections, zoneGen.currentDimension === 2);
@@ -47,9 +55,18 @@ export function clearPathToExit(zoneGen, exitX, exitY) {
     else if (exitX === 0) inwardX = 1;
     else if (exitX === GRID_SIZE - 1) inwardX = GRID_SIZE - 2;
 
-    const adjacentTile = zoneGen.gridManager.getTile(inwardX, inwardY);
+    // Use zoneGen.gridManager if available, otherwise use zoneGen.game.gridManager
+    // This handles both zone generation and zone transition after loading a saved game
+    const gridManager = zoneGen.gridManager || (zoneGen.game && zoneGen.game.gridManager);
+
+    if (!gridManager) {
+        logger.warn('clearPathToExit: gridManager not available');
+        return;
+    }
+
+    const adjacentTile = gridManager.getTile(inwardX, inwardY);
     if (isTileType(adjacentTile, TILE_TYPES.WALL) || isTileType(adjacentTile, TILE_TYPES.ROCK) || isTileType(adjacentTile, TILE_TYPES.SHRUBBERY)) {
-        zoneGen.gridManager.setTile(inwardX, inwardY, TILE_TYPES.FLOOR);
+        gridManager.setTile(inwardX, inwardY, TILE_TYPES.FLOOR);
     }
 
     for (let dy = -1; dy <= 1; dy++) {
@@ -58,9 +75,9 @@ export function clearPathToExit(zoneGen, exitX, exitY) {
             const nx = inwardX + dx;
             const ny = inwardY + dy;
             if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
-                const tile = zoneGen.gridManager.getTile(nx, ny);
+                const tile = gridManager.getTile(nx, ny);
                 if (isTileType(tile, TILE_TYPES.WALL) || isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY)) {
-                    zoneGen.gridManager.setTile(nx, ny, TILE_TYPES.FLOOR);
+                    gridManager.setTile(nx, ny, TILE_TYPES.FLOOR);
                 }
             }
         }
@@ -74,15 +91,24 @@ export function clearPathToCenter(zoneGen, startX, startY) {
     const centerY = Math.floor(GRID_SIZE / 2);
     let currentX = startX;
     let currentY = startY;
+
+    // Use zoneGen.gridManager if available, otherwise use zoneGen.game.gridManager
+    const gridManager = zoneGen.gridManager || (zoneGen.game && zoneGen.game.gridManager);
+
+    if (!gridManager) {
+        logger.warn('clearPathToCenter: gridManager not available');
+        return;
+    }
+
     while (Math.abs(currentX - centerX) > 1 || Math.abs(currentY - centerY) > 1) {
         if (currentX < centerX) currentX++;
         else if (currentX > centerX) currentX--;
         else if (currentY < centerY) currentY++;
         else if (currentY > centerY) currentY--;
 
-        const curTile = zoneGen.gridManager.getTile(currentX, currentY);
+        const curTile = gridManager.getTile(currentX, currentY);
         if (isTileType(curTile, TILE_TYPES.WALL) || isTileType(curTile, TILE_TYPES.ROCK) || isTileType(curTile, TILE_TYPES.SHRUBBERY)) {
-            zoneGen.gridManager.setTile(currentX, currentY, TILE_TYPES.FLOOR);
+            gridManager.setTile(currentX, currentY, TILE_TYPES.FLOOR);
         }
         if (currentX === centerX && currentY === centerY) break;
     }
@@ -90,9 +116,18 @@ export function clearPathToCenter(zoneGen, startX, startY) {
 
 export function clearZoneForShackOnly(zoneGen) {
     logger.log('Clearing first wilds zone for shack-only placement');
-    zoneGen.gridManager.forEach((tile, x, y) => {
+
+    // Use zoneGen.gridManager if available, otherwise use zoneGen.game.gridManager
+    const gridManager = zoneGen.gridManager || (zoneGen.game && zoneGen.game.gridManager);
+
+    if (!gridManager) {
+        logger.warn('clearZoneForShackOnly: gridManager not available');
+        return;
+    }
+
+    gridManager.forEach((tile, x, y) => {
         if (!isTileType(tile, TILE_TYPES.WALL) && !isTileType(tile, TILE_TYPES.EXIT) && !isTileType(tile, TILE_TYPES.FLOOR) && !isTileType(tile, TILE_TYPES.GRASS)) {
-            zoneGen.gridManager.setTile(x, y, TILE_TYPES.FLOOR);
+            gridManager.setTile(x, y, TILE_TYPES.FLOOR);
         }
     });
     zoneGen.enemies = [];
@@ -101,14 +136,23 @@ export function clearZoneForShackOnly(zoneGen) {
 export function forcePlaceShackInCenter(zoneGen, zoneX, zoneY) {
     const startX = ZONE_CONSTANTS.SHACK_START_POSITION.x;
     const startY = ZONE_CONSTANTS.SHACK_START_POSITION.y;
+
+    // Use zoneGen.gridManager if available, otherwise use zoneGen.game.gridManager
+    const gridManager = zoneGen.gridManager || (zoneGen.game && zoneGen.game.gridManager);
+
+    if (!gridManager) {
+        logger.warn('forcePlaceShackInCenter: gridManager not available');
+        return false;
+    }
+
     for (let dy = 0; dy < ZONE_CONSTANTS.SHACK_SIZE; dy++) {
         for (let dx = 0; dx < ZONE_CONSTANTS.SHACK_SIZE; dx++) {
             const tileX = startX + dx;
             const tileY = startY + dy;
             if (dy === ZONE_CONSTANTS.SHACK_PORT_OFFSET.y && dx === ZONE_CONSTANTS.SHACK_PORT_OFFSET.x) {
-                zoneGen.gridManager.setTile(tileX, tileY, TILE_TYPES.PORT);
+                gridManager.setTile(tileX, tileY, TILE_TYPES.PORT);
             } else {
-                zoneGen.gridManager.setTile(tileX, tileY, TILE_TYPES.SHACK);
+                gridManager.setTile(tileX, tileY, TILE_TYPES.SHACK);
             }
         }
     }

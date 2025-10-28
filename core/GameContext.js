@@ -1,6 +1,7 @@
 import { GameWorld } from './GameWorld.js';
 import { GameUI } from './GameUI.js';
 import { GameAudio } from './GameAudio.js';
+import { UI_TIMING_CONSTANTS } from './constants/ui.js';
 
 /**
  * GameContext
@@ -78,6 +79,12 @@ export class GameContext {
 
     get grid() { return this.world.grid; }
     set grid(value) { this.world.grid = value; }
+
+    // Lazy-load gridManager from ServiceContainer
+    get gridManager() {
+        if (!this._services) return null;
+        return this._services.get('gridManager');
+    }
 
     get zones() { return this.world.zones; }
     set zones(value) { this.world.zones = value; }
@@ -312,7 +319,7 @@ export class GameContext {
         if (this.player.isDead()) {
             // If player just died, start death animation timer and keep rendering
             if (!this.playerDeathTimer) {
-                this.playerDeathTimer = 60; // frames to show death animation (~1 second at 60fps)
+                this.playerDeathTimer = UI_TIMING_CONSTANTS.PLAYER_DEATH_TIMER; // frames to show death animation (~1 second at 60fps)
             }
 
             this.playerDeathTimer--;

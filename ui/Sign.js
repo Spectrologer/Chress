@@ -237,9 +237,12 @@ export class Sign {
         let exitX = null;
         let exitY = null;
 
-        for (let y = 0; y < grid.length; y++) {
-            for (let x = grid[y].length - 1; x >= 0; x--) {
-                if (grid[y][x] === TILE_TYPES.EXIT) {
+        const gridManager = gameInstance.gridManager;
+        const gridSize = gridManager.getSize();
+
+        for (let y = 0; y < gridSize; y++) {
+            for (let x = gridSize - 1; x >= 0; x--) {
+                if (gridManager.getTile(x, y) === TILE_TYPES.EXIT) {
                     exitX = x;
                     exitY = y;
                     break;
@@ -261,7 +264,7 @@ export class Sign {
                 // Reached exit, remove axolotl and restore the exit tile
                 npcManager.removeNPC(axolotl);
                 // Restore the exit tile (removeNPC sets it to FLOOR)
-                grid[exitY][exitX] = TILE_TYPES.EXIT;
+                gridManager.setTile(exitX, exitY, TILE_TYPES.EXIT);
                 gameInstance.render();
                 return;
             }
@@ -295,19 +298,44 @@ export class Sign {
     }
 
 
-    static getDialogueNpcData(npcType) {
+    /**
+     * Get or create dialogue data for an NPC
+     * Uses a cache to persist dialogue state across interactions
+     * @param {string} npcType - The type of NPC (e.g., 'felt', 'crayn')
+     * @param {Object} [gameInstance] - Optional game instance for persistent state
+     * @returns {Object|null} - Dialogue data with persistent currentMessageIndex
+     */
+    static getDialogueNpcData(npcType, gameInstance = null) {
+        // Initialize dialogue state cache if not present
+        if (gameInstance && !gameInstance.dialogueState) {
+            gameInstance.dialogueState = new Map();
+        }
+
+        // Check if we have cached dialogue data for this NPC
+        if (gameInstance?.dialogueState?.has(npcType)) {
+            return gameInstance.dialogueState.get(npcType);
+        }
+
         // Get from loaded JSON data
         const characterData = getNPCCharacterData(npcType);
         if (characterData && characterData.interaction?.type === 'dialogue') {
             // Convert JSON format to expected format
-            return {
+            const dialogueData = {
                 name: characterData.name,
                 portrait: characterData.display.portrait,
                 subclass: 'dialogue',
                 voicePitch: characterData.audio?.voicePitch,
                 currentMessageIndex: 0,
+                cycleMode: characterData.interaction.cycleMode || 'loop',
                 messages: characterData.interaction.dialogueTree.map(entry => entry.text)
             };
+
+            // Cache the dialogue data if game instance is provided
+            if (gameInstance?.dialogueState) {
+                gameInstance.dialogueState.set(npcType, dialogueData);
+            }
+
+            return dialogueData;
         }
 
         return null;

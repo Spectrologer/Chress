@@ -41,3 +41,55 @@ export const INPUT_CONSTANTS = {
     // Debug points
     DEBUG_POINT_AMOUNT: 999
 };
+
+// UI timing and interaction constants
+export const UI_TIMING_CONSTANTS = {
+    // Typewriter effect
+    TYPEWRITER_SPEED: 28, // Milliseconds per character
+
+    // Message/note display
+    NOTE_DEFAULT_TIMEOUT: 2000, // Default timeout for notes in milliseconds
+    NOTE_TRANSITION_DURATION: 260, // CSS transition duration for notes
+
+    // Panel interactions
+    PANEL_CAPTURE_BLOCKER_DURATION: 300, // Duration to block captures after panel interaction
+
+    // Game state
+    SAVE_DEBOUNCE_MS: 750, // Debounce delay for autosave
+    SAVE_INTERVAL_MS: 30000, // Periodic save interval (30 seconds)
+
+    // Death animation
+    PLAYER_DEATH_TIMER: 60, // Frames for player death animation
+};
+
+export const GENERATOR_CONSTANTS = {
+    // Connection/spawn calculations
+    SEED_MULTIPLIER_X: 73, // Seed multiplier for zone X coordinate
+    SEED_MULTIPLIER_Y: 97, // Seed multiplier for zone Y coordinate
+    SEED_MULTIPLIER_ALT_1: 137, // Alternative seed multiplier
+    SEED_MULTIPLIER_ALT_2: 149, // Alternative seed multiplier
+    SEED_MODULO: 1000, // Modulo for seed range
+    POSITION_MODULO: 4, // Modulo for position selection
+
+    // Connection thresholds
+    HOME_ZONE_NULL_THRESHOLD: 5, // Threshold for null connections in home zone
+    OTHER_ZONE_NULL_THRESHOLD: 30, // Threshold for null connections in other zones
+    POSITION_OFFSET: 3, // Offset for position calculations
+    POSITION_VARIATION_RANGE: 31, // Random range for position variation
+
+    // Feature generation
+    FEATURE_EXTRA_MULTIPLIER: 0.02, // Multiplier for extra features
+    FEATURE_EXTRA_DIVISOR: 5, // Divisor for extra feature calculation
+    ROCK_CHANCE_MULTIPLIER: 0.98, // Multiplier for rock chance
+    FEATURE_CHANCE_MULTIPLIER: 0.55, // Multiplier for feature chance
+    MAX_THRESHOLD: 0.95, // Maximum threshold for generation
+
+    // Enemy generation
+    MAX_SCALED_ENEMY_COUNT: 20, // Maximum scaled enemy count
+};
+
+export const PLAYER_STAT_CONSTANTS = {
+    // Initial player stats
+    INITIAL_THIRST: 50, // Starting thirst level
+    INITIAL_HUNGER: 50, // Starting hunger level
+};

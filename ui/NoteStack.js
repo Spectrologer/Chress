@@ -1,7 +1,7 @@
 // NoteStack.js
 // Handles the UI logic for the note stack (add/remove notes)
 import { logger } from '../core/logger.js';
-import { UI_CONSTANTS } from '../core/constants/index.js';
+import { UI_CONSTANTS, UI_TIMING_CONSTANTS } from '../core/constants/ui.js';
 
 export class NoteStack {
     constructor() {
@@ -9,7 +9,7 @@ export class NoteStack {
         this.activeNotes = new Map(); // id -> timeoutId
     }
 
-    addNoteToStack(text, imageSrc = null, timeout = 2000) {
+    addNoteToStack(text, imageSrc = null, timeout = UI_TIMING_CONSTANTS.NOTE_DEFAULT_TIMEOUT) {
         try {
             const container = document.getElementById('noteStack');
             if (!container) return null;
@@ -45,7 +45,7 @@ export class NoteStack {
                 setTimeout(() => {
                     if (card.parentNode) card.parentNode.removeChild(card);
                     this.activeNotes.delete(id);
-                }, 260);
+                }, UI_TIMING_CONSTANTS.NOTE_TRANSITION_DURATION);
             };
 
             const tId = setTimeout(removeFn, timeout);

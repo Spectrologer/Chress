@@ -41,6 +41,9 @@ import { EnemyCollection } from '../facades/EnemyCollection.js';
 import { NPCManager } from '../managers/NPCManager.js';
 import { NPCRenderer } from '../renderers/NPCRenderer.js';
 import { AnimationCoordinator } from './AnimationCoordinator.js';
+import { InteractionFacade } from '../facades/InteractionFacade.js';
+import { CombatFacade } from '../facades/CombatFacade.js';
+import { WorldFacade } from '../facades/WorldFacade.js';
 
 /**
  * Lightweight service container with lazy initialization for better testability.
@@ -171,6 +174,22 @@ export class ServiceContainer {
             environmentalInteractionManager: () => new EnvironmentalInteractionManager(this.game),
             enemyDefeatFlow: () => new EnemyDefeatFlow(this.game),
 
+            // Facades for grouping related dependencies
+            interactionFacade: () => new InteractionFacade(
+                this.get('npcInteractionManager'),
+                this.get('environmentalInteractionManager'),
+                this.get('inputManager')
+            ),
+            combatFacade: () => new CombatFacade(
+                this.get('combatActionManager'),
+                this.get('bombManager')
+            ),
+            worldFacade: () => new WorldFacade(
+                this.get('terrainInteractionManager'),
+                this.get('zoneTransitionManager'),
+                this.get('itemPickupManager')
+            ),
+
             // Managers with dependencies
             combatManager: () => new CombatManager(
                 this.game,
@@ -180,14 +199,9 @@ export class ServiceContainer {
             ),
             interactionManager: () => new InteractionManager(
                 this.game,
-                this.get('inputManager'),
-                this.get('npcInteractionManager'),
-                this.get('itemPickupManager'),
-                this.get('combatActionManager'),
-                this.get('bombManager'),
-                this.get('terrainInteractionManager'),
-                this.get('zoneTransitionManager'),
-                this.get('environmentalInteractionManager')
+                this.get('interactionFacade'),
+                this.get('combatFacade'),
+                this.get('worldFacade')
             ),
 
             // Zone management

@@ -64,7 +64,13 @@
       "Bash(cmd /c \"del \\\\?\\C:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\nul\")",
       "Bash(npx live-server --port=8080 --open=asset-viewer.html)",
       "Bash(for file in \"core/consoleCommands.js\" \"core/zoneMutators.js\" \"managers/BombManager.js\")",
-      "Bash(do echo \"=== $file ===\")"
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(npm install:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(if exist test-eslint-rule.js del test-eslint-rule.js)",
+      "Bash(if exist temp_scan.js del temp_scan.js)",
+      "Bash(if exist temp_scan.cjs del temp_scan.cjs)"
     ],
     "deny": [],
     "ask": []

@@ -1,5 +1,6 @@
 // VoiceSettings.js
 // Helpers for voice settings, audio context, and typing SFX for MessageManager
+import { VOICE_CONSTANTS } from '../core/constants/audio.js';
 
 // Generate deterministic voice/settings based on the character name.
 // @param {string} name - Character name
@@ -26,21 +27,21 @@ export function getVoiceSettingsForName(name, customPitch) {
         };
     }
     if (lower.indexOf('merchant') !== -1 || lower.indexOf('shop') !== -1 || lower.indexOf('vendor') !== -1) {
-        const base = customPitch !== undefined ? customPitch : (90 + (hash % 80));
+        const base = customPitch !== undefined ? customPitch : (VOICE_CONSTANTS.MERCHANT_BASE_MIN + (hash % VOICE_CONSTANTS.MERCHANT_BASE_RANGE));
         return {
             name: n,
             base: base,
             wave1: (['sawtooth','triangle','square','sine'][hash % 4]),
             wave2: (['sine','triangle','sawtooth','square'][(hash >> 2) % 4]),
-            bandMul: 1.5 + ((hash % 20) / 100),
-            peak: 0.16 + ((hash % 20) / 200)
+            bandMul: VOICE_CONSTANTS.MERCHANT_BAND_MUL_BASE + ((hash % 20) / 100),
+            peak: VOICE_CONSTANTS.MERCHANT_PEAK_BASE + ((hash % 20) / 200)
         };
     }
-    const base = customPitch !== undefined ? customPitch : (80 + (hash % 160));
+    const base = customPitch !== undefined ? customPitch : (VOICE_CONSTANTS.GENERIC_BASE_MIN + (hash % VOICE_CONSTANTS.GENERIC_BASE_RANGE));
     const waveChoices = ['sine','triangle','sawtooth','square'];
     const wave1 = waveChoices[hash % waveChoices.length];
     const wave2 = waveChoices[(hash >> 3) % waveChoices.length];
-    const peak = 0.08 + ( (hash % 80) / 400 );
+    const peak = VOICE_CONSTANTS.VOICE_PEAK_BASE + ( (hash % VOICE_CONSTANTS.VOICE_HASH_MODULO) / VOICE_CONSTANTS.VOICE_PEAK_DIVISOR );
     const bandMul = 1.4 + ((hash % 30) / 100);
     return {
         name: n,

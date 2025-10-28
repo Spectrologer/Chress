@@ -84,9 +84,9 @@ export class EnemyGenerator {
         return false;
     }
 
-    // Updated method that takes grid and items for full validation
-    addRandomEnemyWithValidation(zoneLevel, zoneX, zoneY, grid, items = []) {
-        this.grid = grid;
+    // Updated method that takes gridManager and items for full validation
+    addRandomEnemyWithValidation(zoneLevel, zoneX, zoneY, gridManager, items = []) {
+        this.gridManager = gridManager;
         this.zoneX = zoneX;
         this.zoneY = zoneY;
         this.items = items;
@@ -94,7 +94,7 @@ export class EnemyGenerator {
     }
 
     isFloorTileAvailable(x, y, zoneX, zoneY) {
-        const tile = this.grid[y][x];
+        const tile = this.gridManager.getTile(x, y);
         const tileValue = tile && tile.type ? tile.type : tile;
         // Only place on normal floor tiles
         if (tileValue !== TILE_TYPES.FLOOR) return false;

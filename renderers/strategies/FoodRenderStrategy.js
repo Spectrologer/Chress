@@ -3,9 +3,9 @@ import { RendererUtils } from '../RendererUtils.js';
 import { TileRenderStrategy } from './TileRenderStrategy.js';
 
 export class FoodRenderStrategy extends TileRenderStrategy {
-    render(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+    render(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel, baseRenderer) {
         // Use the stored foodType from the grid tile
-        const tile = grid[y][x];
+        const tile = gridManager.getTile ? gridManager.getTile(x, y) : gridManager[y]?.[x];
         const foodAsset = tile.foodType;
 
         // Safeguard against undefined foodAsset
@@ -16,7 +16,7 @@ export class FoodRenderStrategy extends TileRenderStrategy {
         const foodKey = foodAsset.replace('.png', '').replace('/', '_');
 
         // First draw the base tile
-        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel);
 
         // Try to draw the food image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, foodKey)) {

@@ -1,4 +1,5 @@
 import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS, SCALE_CONSTANTS, DAMAGE_FLASH_CONSTANTS } from '../core/constants/index.js';
+import { RENDERING_CONSTANTS } from '../core/constants/animation.js';
 import { MultiTileHandler } from './MultiTileHandler.js';
 import { RendererUtils } from './RendererUtils.js';
 
@@ -104,14 +105,14 @@ export class PlayerRenderer {
             const progress = 1 - (bowAnim.frames / bowAnim.totalFrames);
             // Stronger scale and a quick outward/back motion
             const power = bowAnim.power || 1.2;
-            const scale = 0.6 * power; // base 60% of tile, multiplied by power
+            const scale = RENDERING_CONSTANTS.BOW_BASE_SCALE * power; // base 60% of tile, multiplied by power
             const floatOffset = Math.sin(progress * Math.PI) * PHYSICS_CONSTANTS.BOW_SHOT_FLOAT_AMPLITUDE;
             const rotateAngle = -Math.PI / 2; // -90deg counter-clockwise
 
             this.ctx.save();
             // translate to center of player sprite, then apply float and extra upward offset
             const centerX = pixelXBase + TILE_SIZE / 2;
-            const centerY = pixelYBase + TILE_SIZE / 2 + floatOffset - 6;
+            const centerY = pixelYBase + TILE_SIZE / 2 + floatOffset + RENDERING_CONSTANTS.BOW_PIXEL_OFFSET_Y;
             this.ctx.translate(centerX, centerY);
             this.ctx.rotate(rotateAngle);
 
@@ -143,9 +144,9 @@ export class PlayerRenderer {
             const progress = 1 - (pickup.frames / pickup.totalFrames);
             // Vertical float: start near top of head and move up a bit.
             // Use a slower, gentler float so the player has time to read the icon.
-            const floatY = PHYSICS_CONSTANTS.PICKUP_HOVER_BASE_HEIGHT - (Math.sin(progress * Math.PI * 0.6) * PHYSICS_CONSTANTS.PICKUP_HOVER_AMPLITUDE);
+            const floatY = PHYSICS_CONSTANTS.PICKUP_HOVER_BASE_HEIGHT - (Math.sin(progress * Math.PI * ANIMATION_CONSTANTS.PICKUP_FLOAT_FACTOR) * PHYSICS_CONSTANTS.PICKUP_HOVER_AMPLITUDE);
             // Slower fade so the pickup stays visible longer
-            const alpha = Math.max(0, 1 - progress * 0.9);
+            const alpha = Math.max(0, 1 - progress * RENDERING_CONSTANTS.PICKUP_FADE_MULTIPLIER);
 
             this.ctx.save();
             this.ctx.globalAlpha = alpha;
@@ -194,7 +195,7 @@ export class PlayerRenderer {
                 this.ctx.fillStyle = '#000';
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
-                this.ctx.font = `${Math.floor(Math.max(drawW, drawH) * 0.5)}px sans-serif`;
+                this.ctx.font = `${Math.floor(Math.max(drawW, drawH) * RENDERING_CONSTANTS.ENTITY_NAME_FONT_SCALE)}px sans-serif`;
                 const label = (pickup.type === 'food' ? '🍞' : (pickup.type ? pickup.type[0].toUpperCase() : '?'));
                 this.ctx.fillText(label, iconX + drawW / 2, iconY + drawH / 2);
             }
@@ -230,8 +231,8 @@ export class PlayerRenderer {
                     if (tileUnderPlayer.portKind === 'stairdown') rotationAngle = Math.PI; // point down to indicate descend
                     else if (tileUnderPlayer.portKind === 'stairup') rotationAngle = 0; // point up to indicate ascend
                 } else if (tileUnderPlayer === TILE_TYPES.PORT) {
-                    const isCistern = MultiTileHandler.findCisternPosition(playerGridX, playerGridY, this.game.grid);
-                    const isHole = !isCistern && !MultiTileHandler.findShackPosition(playerGridX, playerGridY, this.game.grid) && !MultiTileHandler.findHousePosition(playerGridX, playerGridY, this.game.grid);
+                    const isCistern = MultiTileHandler.findCisternPosition(playerGridX, playerGridY, this.game.gridManager);
+                    const isHole = !isCistern && !MultiTileHandler.findShackPosition(playerGridX, playerGridY, this.game.gridManager) && !MultiTileHandler.findHousePosition(playerGridX, playerGridY, this.game.gridManager);
 
                     if (isCistern || isHole) {
                         // For underground entrances (cisterns, holes), arrow points down to enter, and up to exit.

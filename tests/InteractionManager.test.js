@@ -8,11 +8,18 @@ describe('InteractionManager melee tap adjacency', () => {
   beforeEach(() => {
     mockPlayer = {
       getPosition: jest.fn().mockReturnValue({ x: 1, y: 1 }),
+      getPositionObject: jest.fn().mockReturnValue({
+        x: 1,
+        y: 1,
+        equals: jest.fn(),
+        toObject: jest.fn().mockReturnValue({ x: 1, y: 1 }),
+        getTile: jest.fn()
+      }),
       startAttackAnimation: jest.fn(),
       startBump: jest.fn(),
+      startBackflip: jest.fn(),
       setAction: jest.fn(),
       abilities: { has: jest.fn().mockReturnValue(false) },
-      setAction: jest.fn(),
       x: 1,
       y: 1
     };
@@ -20,9 +27,41 @@ describe('InteractionManager melee tap adjacency', () => {
     const mockEnemyCardinal = { x: 2, y: 1, health: 10, startBump: jest.fn(), takeDamage: jest.fn(), id: 'e1', getPoints: jest.fn().mockReturnValue(5) };
     const mockEnemyDiagonal = { x: 2, y: 2, health: 10, startBump: jest.fn(), takeDamage: jest.fn(), id: 'e2', getPoints: jest.fn().mockReturnValue(5) };
 
+    // Create mock facades
+    const mockInteractionFacade = {
+      npcManager: {},
+      environmentManager: {},
+      inputManager: {}
+    };
+
+    const mockCombatFacade = {
+      combatActionManager: {},
+      bombManager: {}
+    };
+
+    const mockWorldFacade = {
+      terrainManager: {},
+      zoneManager: {},
+      itemPickupManager: {}
+    };
+
     mockGame = {
       player: mockPlayer,
       enemies: [mockEnemyCardinal, mockEnemyDiagonal],
+      enemyCollection: {
+        findAt: jest.fn((x, y) => {
+          if (x === 2 && y === 1) return mockEnemyCardinal;
+          if (x === 2 && y === 2) return mockEnemyDiagonal;
+          return null;
+        })
+      },
+      playerFacade: {
+        hasAbility: jest.fn().mockReturnValue(false),
+        findInInventory: jest.fn().mockReturnValue(null)
+      },
+      transientGameState: {
+        hasPendingCharge: jest.fn().mockReturnValue(false)
+      },
       grid: [],
       pendingCharge: null,
       justEnteredZone: false,
@@ -34,7 +73,7 @@ describe('InteractionManager melee tap adjacency', () => {
       combatManager: { defeatEnemy: jest.fn().mockReturnValue({ defeated: true, consecutiveKills: 0 }) },
     };
 
-    im = new InteractionManager(mockGame, null);
+    im = new InteractionManager(mockGame, mockInteractionFacade, mockCombatFacade, mockWorldFacade);
     // Prevent other handlers (NPCs/items/etc) from intercepting taps in the test
     im.interactionHandlers = [];
   });

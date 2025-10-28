@@ -49,7 +49,7 @@ export class GridIterator {
 
     for (let y = actualStartY; y < actualEndY; y++) {
       for (let x = actualStartX; x < actualEndX; x++) {
-        const tile = grid[y][x];
+        const tile = grid[y]?.[x];
         callback(tile, x, y, grid);
       }
     }
@@ -97,7 +97,7 @@ export class GridIterator {
 
     for (let y = actualStartY; y < actualEndY; y++) {
       for (let x = actualStartX; x < actualEndX; x++) {
-        const tile = grid[y][x];
+        const tile = grid[y]?.[x];
         if (predicate(tile, x, y)) {
           return { tile, x, y };
         }
@@ -160,7 +160,7 @@ export class GridIterator {
 
     for (let y = actualStartY; y < actualEndY; y++) {
       for (let x = actualStartX; x < actualEndX; x++) {
-        const tile = grid[y][x];
+        const tile = grid[y]?.[x];
         if (!predicate(tile, x, y)) {
           return false;
         }
@@ -178,10 +178,12 @@ export class GridIterator {
    * @returns {Array<Array>} New grid with mapped values
    */
   static map(grid, mapper, options = {}) {
-    const newGrid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE));
+    const newGrid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
 
     this.forEach(grid, (tile, x, y) => {
-      newGrid[y][x] = mapper(tile, x, y);
+      if (newGrid[y]) {
+        newGrid[y][x] = mapper(tile, x, y);
+      }
     }, options);
 
     return newGrid;
@@ -225,7 +227,7 @@ export class GridIterator {
 
     for (let y = startY; y < endY; y++) {
       for (let x = startX; x < endX; x++) {
-        callback(grid[y][x], x, y);
+        callback(grid[y]?.[x], x, y);
       }
     }
 
@@ -251,7 +253,7 @@ export class GridIterator {
     // Check all tiles in region
     for (let dy = 0; dy < height; dy++) {
       for (let dx = 0; dx < width; dx++) {
-        const tile = grid[y + dy][x + dx];
+        const tile = grid[y + dy]?.[x + dx];
         if (!predicate(tile, x + dx, y + dy)) {
           return false;
         }
@@ -277,7 +279,7 @@ export class GridIterator {
       for (let dx = 0; dx < width; dx++) {
         const tileX = x + dx;
         const tileY = y + dy;
-        if (tileX >= 0 && tileX < GRID_SIZE && tileY >= 0 && tileY < GRID_SIZE) {
+        if (tileX >= 0 && tileX < GRID_SIZE && tileY >= 0 && tileY < GRID_SIZE && grid[tileY]) {
           grid[tileY][tileX] = isFn ? value(tileX, tileY) : value;
         }
       }
@@ -300,12 +302,14 @@ export class GridIterator {
    * @returns {Array<Array>} New grid
    */
   static initialize(value) {
-    const grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE));
+    const grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
     const isFn = typeof value === 'function';
 
     for (let y = 0; y < GRID_SIZE; y++) {
       for (let x = 0; x < GRID_SIZE; x++) {
-        grid[y][x] = isFn ? value(x, y) : value;
+        if (grid[y]) {
+          grid[y][x] = isFn ? value(x, y) : value;
+        }
       }
     }
 

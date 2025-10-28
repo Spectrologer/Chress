@@ -1,4 +1,6 @@
 import { TILE_SIZE, ANIMATION_CONSTANTS, SCALE_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/index.js';
+import { RENDERING_CONSTANTS } from '../core/constants/animation.js';
+import { COLOR_CONSTANTS, UI_RENDERING_CONSTANTS } from '../core/constants/rendering.js';
 import { RendererUtils } from './RendererUtils.js'; // Correctly import using ES Modules
 
 export class AnimationRenderer {
@@ -15,7 +17,7 @@ export class AnimationRenderer {
                 let frameNumber = 1;
                 if (anim.totalFrames && anim.totalFrames > 0) {
                     const elapsed = anim.totalFrames - anim.frame;
-                    const per = Math.max(1, Math.floor(anim.totalFrames / 8));
+                    const per = Math.max(1, Math.floor(anim.totalFrames / ANIMATION_CONSTANTS.SPLODE_FRAME_DIVISOR));
                     frameNumber = Math.min(8, Math.floor(elapsed / per) + 1);
                 }
                 const splodeImage = this.textureManager.getImage(`fx/splode/splode_${frameNumber}`);
@@ -55,7 +57,7 @@ export class AnimationRenderer {
             this.ctx.lineCap = 'round';
             this.ctx.beginPath();
     
-            const turnPoint = 0.5; // The point in the animation where it turns the corner
+            const turnPoint = RENDERING_CONSTANTS.HORSE_CHARGE_TURN_POINT; // The point in the animation where it turns the corner
     
             if (progress < turnPoint) {
                 // Draw the first leg of the L
@@ -113,12 +115,12 @@ export class AnimationRenderer {
     drawPointAnimations() {
         const animations = this.game.animationManager.pointAnimations;
         animations.forEach(anim => {
-            const progress = 1 - (anim.frame / 15);
-            const yOffset = -progress * 40; // Move up
+            const progress = 1 - (anim.frame / ANIMATION_CONSTANTS.POINT_ANIMATION_FRAMES);
+            const yOffset = -progress * ANIMATION_CONSTANTS.POINT_RISE_DISTANCE; // Move up
             const alpha = 1 - progress; // Fade out
             const x = anim.x * TILE_SIZE + TILE_SIZE / 2;
             // Show the point slightly above the tile center (over the enemy's head)
-            const headOffset = -18; // pixels above center
+            const headOffset = ANIMATION_CONSTANTS.POINT_HEAD_OFFSET; // pixels above center
             const y = anim.y * TILE_SIZE + TILE_SIZE / 2 + yOffset + headOffset;
 
             // Try to use the 'points' image asset if loaded. Fallback to text if missing.
@@ -129,7 +131,7 @@ export class AnimationRenderer {
 
                 // Scale icon slightly based on amount (more points = slightly larger)
                 const baseSize = TILE_SIZE * SCALE_CONSTANTS.ANIMATION_BASE_SIZE_SCALE;
-                const scale = 1 + Math.min(0.6, (anim.amount - 1) * 0.12);
+                const scale = RENDERING_CONSTANTS.DAMAGE_SCALE_BASE + Math.min(RENDERING_CONSTANTS.DAMAGE_SCALE_MAX, (anim.amount - 1) * RENDERING_CONSTANTS.DAMAGE_SCALE_COEFFICIENT);
                 const drawW = baseSize * scale;
                 const drawH = baseSize * scale;
 
@@ -139,8 +141,8 @@ export class AnimationRenderer {
                 // Fallback to text rendering if image not available
                 this.ctx.save();
                 this.ctx.globalAlpha = alpha;
-                this.ctx.fillStyle = '#ffd700'; // Gold color for points
-                this.ctx.font = 'bold 36px "Press Start 2P", cursive';
+                this.ctx.fillStyle = COLOR_CONSTANTS.GOLD_COLOR; // Gold color for points
+                this.ctx.font = `${UI_RENDERING_CONSTANTS.POINT_FONT_WEIGHT} ${UI_RENDERING_CONSTANTS.POINT_FONT_SIZE}px ${UI_RENDERING_CONSTANTS.POINT_FONT_FAMILY}`;
                 this.ctx.textAlign = 'center';
                 this.ctx.strokeStyle = 'black';
                 this.ctx.lineWidth = STROKE_CONSTANTS.POINT_ANIMATION_STROKE;
@@ -156,8 +158,8 @@ export class AnimationRenderer {
     drawMultiplierAnimations() {
         const animations = this.game.animationManager.multiplierAnimations;
         animations.forEach(anim => {
-            const progress = 1 - (anim.frame / 30);
-            const yOffset = -progress * 36; // float up
+            const progress = 1 - (anim.frame / ANIMATION_CONSTANTS.MULTIPLIER_ANIMATION_FRAMES);
+            const yOffset = -progress * ANIMATION_CONSTANTS.MULTIPLIER_RISE_DISTANCE; // float up
             const alpha = 1 - progress;
 
             this.ctx.save();

@@ -1,17 +1,18 @@
 import { Sign } from '../ui/Sign.js';
 import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index.js';
+import { GENERATOR_CONSTANTS } from '../core/constants/ui.js';
 import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import { logger } from '../core/logger.js';
 import { isFloor, isWall } from '../utils/TypeChecks.js';
 
 export class FeatureGenerator {
-    constructor(grid, foodAssets, depth = 0) {
-        this.grid = grid;
+    constructor(gridManager, foodAssets, depth = 0) {
+        this.gridManager = gridManager;
         this.foodAssets = foodAssets;
         this.depth = depth || 0;
         // depthMultiplier: +2% per underground depth beyond the first (depth 1 -> 1.0)
-        this.depthMultiplier = 1 + Math.max(0, (this.depth - 1)) * 0.02;
+        this.depthMultiplier = 1 + Math.max(0, (this.depth - 1)) * GENERATOR_CONSTANTS.FEATURE_EXTRA_MULTIPLIER;
     }
 
     addRandomFeatures(zoneLevel, zoneX, zoneY, isUnderground = false) {
@@ -40,7 +41,7 @@ export class FeatureGenerator {
         if (zoneLevel === 1) {
             featureCount = Math.floor(featureCount * 0.7); // Reduce by 30%
         } else if (zoneLevel === 3) {
-            featureCount += 5;
+            featureCount += GENERATOR_CONSTANTS.FEATURE_EXTRA_DIVISOR;
         }
         featureCount += Math.floor(ZoneStateManager.zoneCounter / 10);
 
@@ -49,7 +50,7 @@ export class FeatureGenerator {
             const pos = findValidPlacement({
                 validate: (x, y) => {
                     if (x === 1 && y === 1) return false;
-                    if (this.grid[y][x] !== TILE_TYPES.FLOOR) return false;
+                    if (this.gridManager.getTile(x, y) !== TILE_TYPES.FLOOR) return false;
                     return true;
                 }
             });
@@ -58,15 +59,15 @@ export class FeatureGenerator {
             const featureType = Math.random();
             // Apply depthMultiplier to obstruction likelihoods (more obstructions deeper)
             let baseRockThresh = zoneLevel === 1 ? 0.25 : 0.35;
-            let baseShrubThresh = zoneLevel === 1 ? 0.40 : 0.55;
-            const rockThreshold = Math.min(0.95, baseRockThresh * this.depthMultiplier);
-            const shrubThreshold = Math.min(0.95, baseShrubThresh * this.depthMultiplier);
+            let baseShrubThresh = zoneLevel === 1 ? 0.40 : GENERATOR_CONSTANTS.FEATURE_CHANCE_MULTIPLIER;
+            const rockThreshold = Math.min(GENERATOR_CONSTANTS.MAX_THRESHOLD, baseRockThresh * this.depthMultiplier);
+            const shrubThreshold = Math.min(GENERATOR_CONSTANTS.MAX_THRESHOLD, baseShrubThresh * this.depthMultiplier);
             if (featureType < rockThreshold) {
-                this.grid[y][x] = TILE_TYPES.ROCK;
+                this.gridManager.setTile(x, y, TILE_TYPES.ROCK);
             } else if (featureType < shrubThreshold) {
-                this.grid[y][x] = TILE_TYPES.SHRUBBERY;
+                this.gridManager.setTile(x, y, TILE_TYPES.SHRUBBERY);
             } else if (featureType >= 0.7) {
-                this.grid[y][x] = TILE_TYPES.GRASS;
+                this.gridManager.setTile(x, y, TILE_TYPES.GRASS);
             }
             placedCount++;
         }
@@ -83,7 +84,7 @@ export class FeatureGenerator {
         // Add a chance tile: could be an extra water, food, or sign
         const pos = findValidPlacement({
             maxAttempts: 20,
-            validate: (x, y) => isFloor(this.grid[y][x])
+            validate: (x, y) => isFloor(this.gridManager.getTile(x, y))
         });
         if (!pos) return;
         const { x, y } = pos;
@@ -93,18 +94,18 @@ export class FeatureGenerator {
             if (!this.checkSignExists()) {
                 const message = Sign.getProceduralMessage(zoneX, zoneY);
                 Sign.spawnedMessages.add(message);
-                this.grid[y][x] = { type: TILE_TYPES.SIGN, message: message };
+                this.gridManager.setTile(x, y, { type: TILE_TYPES.SIGN, message: message });
                 tilePlaced = true;
             }
         }
         if (!tilePlaced) {
             if (chanceType < SPAWN_PROBABILITIES.CHANCE_TILES.WATER) {
-                this.grid[y][x] = TILE_TYPES.WATER;
+                this.gridManager.setTile(x, y, TILE_TYPES.WATER);
             } else {
                 const zoneKey = `${zoneX},${zoneY}`;
                 const seed = ZoneStateManager.hashCode(zoneKey) % this.foodAssets.length;
                 const selectedFood = this.foodAssets[seed];
-                this.grid[y][x] = { type: TILE_TYPES.FOOD, foodType: selectedFood };
+                this.gridManager.setTile(x, y, { type: TILE_TYPES.FOOD, foodType: selectedFood });
             }
         }
     }
@@ -138,7 +139,7 @@ export class FeatureGenerator {
         // Fill interior with walls first
         for (let y = 1; y < GRID_SIZE - 1; y++) {
             for (let x = 1; x < GRID_SIZE - 1; x++) {
-                this.grid[y][x] = TILE_TYPES.WALL;
+                this.gridManager.setTile(x, y, TILE_TYPES.WALL);
             }
         }
 
@@ -154,7 +155,7 @@ export class FeatureGenerator {
     }
 
     carveMaze(x, y) {
-        this.grid[y][x] = TILE_TYPES.FLOOR;
+        this.gridManager.setTile(x, y, TILE_TYPES.FLOOR);
 
         // Directions: up, right, down, left
         const directions = [
@@ -176,9 +177,9 @@ export class FeatureGenerator {
             const ny = y + dir.dy;
 
             if (nx > 0 && nx < GRID_SIZE - 1 && ny > 0 && ny < GRID_SIZE - 1 &&
-                isWall(this.grid[ny][nx])) {
+                isWall(this.gridManager.getTile(nx, ny))) {
                 // Carve the wall between current and neighbor
-                this.grid[y + dir.dy / 2][x + dir.dx / 2] = TILE_TYPES.FLOOR;
+                this.gridManager.setTile(x + dir.dx / 2, y + dir.dy / 2, TILE_TYPES.FLOOR);
                 this.carveMaze(nx, ny);
             }
         }
@@ -187,17 +188,17 @@ export class FeatureGenerator {
     addMazeBlockages() {
         // Add some rocks and shrubbery to block alternative paths
         // Slightly increase number of blockages with depth
-        const extra = Math.floor(Math.max(0, this.depth - 1) * 0.02 * 5);
+        const extra = Math.floor(Math.max(0, this.depth - 1) * GENERATOR_CONSTANTS.FEATURE_EXTRA_MULTIPLIER * GENERATOR_CONSTANTS.FEATURE_EXTRA_DIVISOR);
         const blockages = randomInt(3 + extra, 8 + extra); // Math.floor(Math.random() * 5) + 3
         for (let i = 0; i < blockages; i++) {
             const pos = findValidPlacement({
                 maxAttempts: 20,
-                validate: (x, y) => isFloor(this.grid[y][x])
+                validate: (x, y) => isFloor(this.gridManager.getTile(x, y))
             });
             if (pos) {
                 const { x, y } = pos;
                 // Increase chance of rock (hard obstruction) with depth
-                this.grid[y][x] = TILE_TYPES.ROCK;
+                this.gridManager.setTile(x, y, TILE_TYPES.ROCK);
             }
         }
     }
@@ -210,18 +211,18 @@ export class FeatureGenerator {
         // Underground zones use only rocks for exit blocking (no shrubbery)
         if (isUnderground) {
             // Block exits with rocks in underground zones (base 55% chance), scaled by depth
-            const rockChance = Math.min(0.98, 0.55 * this.depthMultiplier);
+            const rockChance = Math.min(GENERATOR_CONSTANTS.ROCK_CHANCE_MULTIPLIER, GENERATOR_CONSTANTS.FEATURE_CHANCE_MULTIPLIER * this.depthMultiplier);
             if (connections.north !== null && Math.random() < rockChance) {
-                this.grid[0][connections.north] = TILE_TYPES.ROCK;
+                this.gridManager.setTile(connections.north, 0, TILE_TYPES.ROCK);
             }
             if (connections.south !== null && Math.random() < rockChance) {
-                this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.ROCK;
+                this.gridManager.setTile(connections.south, GRID_SIZE - 1, TILE_TYPES.ROCK);
             }
             if (connections.west !== null && Math.random() < rockChance) {
-                this.grid[connections.west][0] = TILE_TYPES.ROCK;
+                this.gridManager.setTile(0, connections.west, TILE_TYPES.ROCK);
             }
             if (connections.east !== null && Math.random() < rockChance) {
-                this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.ROCK;
+                this.gridManager.setTile(GRID_SIZE - 1, connections.east, TILE_TYPES.ROCK);
             }
         } else if (zoneLevel === 4) {
             // Surface frontier zones (maintain existing behavior)
@@ -230,30 +231,30 @@ export class FeatureGenerator {
 
             if (connections.north !== null) {
                 if (Math.random() < rockChance) {
-                    this.grid[0][connections.north] = TILE_TYPES.ROCK;
+                    this.gridManager.setTile(connections.north, 0, TILE_TYPES.ROCK);
                 } else if (Math.random() < shrubberyChance) {
-                    this.grid[0][connections.north] = TILE_TYPES.SHRUBBERY;
+                    this.gridManager.setTile(connections.north, 0, TILE_TYPES.SHRUBBERY);
                 }
             }
             if (connections.south !== null) {
                 if (Math.random() < rockChance) {
-                    this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.ROCK;
+                    this.gridManager.setTile(connections.south, GRID_SIZE - 1, TILE_TYPES.ROCK);
                 } else if (Math.random() < shrubberyChance) {
-                    this.grid[GRID_SIZE - 1][connections.south] = TILE_TYPES.SHRUBBERY;
+                    this.gridManager.setTile(connections.south, GRID_SIZE - 1, TILE_TYPES.SHRUBBERY);
                 }
             }
             if (connections.west !== null) {
                 if (Math.random() < rockChance) {
-                    this.grid[connections.west][0] = TILE_TYPES.ROCK;
+                    this.gridManager.setTile(0, connections.west, TILE_TYPES.ROCK);
                 } else if (Math.random() < shrubberyChance) {
-                    this.grid[connections.west][0] = TILE_TYPES.SHRUBBERY;
+                    this.gridManager.setTile(0, connections.west, TILE_TYPES.SHRUBBERY);
                 }
             }
             if (connections.east !== null) {
                 if (Math.random() < rockChance) {
-                    this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.ROCK;
+                    this.gridManager.setTile(GRID_SIZE - 1, connections.east, TILE_TYPES.ROCK);
                 } else if (Math.random() < shrubberyChance) {
-                    this.grid[connections.east][GRID_SIZE - 1] = TILE_TYPES.SHRUBBERY;
+                    this.gridManager.setTile(GRID_SIZE - 1, connections.east, TILE_TYPES.SHRUBBERY);
                 }
             }
         }
@@ -269,7 +270,7 @@ export class FeatureGenerator {
             const pos = findValidPlacement({
                 validate: (x, y) => {
                     if (Math.abs(x - centerX) <= 2 && Math.abs(y - centerY) <= 2) return false;
-                    if (this.grid[y][x] !== TILE_TYPES.FLOOR) return false;
+                    if (this.gridManager.getTile(x, y) !== TILE_TYPES.FLOOR) return false;
                     return true;
                 }
             });
@@ -277,11 +278,11 @@ export class FeatureGenerator {
             const { x, y } = pos;
             const featureType = Math.random();
             if (featureType < 0.7) {
-                this.grid[y][x] = TILE_TYPES.ROCK;
+                this.gridManager.setTile(x, y, TILE_TYPES.ROCK);
             } else if (featureType < 0.85) {
-                this.grid[y][x] = TILE_TYPES.WALL;
+                this.gridManager.setTile(x, y, TILE_TYPES.WALL);
             } else {
-                this.grid[y][x] = TILE_TYPES.FLOOR;
+                this.gridManager.setTile(x, y, TILE_TYPES.FLOOR);
             }
             placedCount++;
         }
@@ -303,26 +304,28 @@ export class FeatureGenerator {
             maxY: GRID_SIZE - 2,
             validate: (x, y) => {
                 if (Math.abs(x - centerX) <= 2 && Math.abs(y - centerY) <= 2) return false;
-                return this.grid[y][x] === TILE_TYPES.FLOOR;
+                return this.gridManager.getTile(x, y) === TILE_TYPES.FLOOR;
             }
         });
         if (!pos) return;
         const { x, y } = pos;
         const chanceType = Math.random();
         if (chanceType < 0.7) {
-            this.grid[y][x] = TILE_TYPES.WATER;
+            this.gridManager.setTile(x, y, TILE_TYPES.WATER);
         } else {
             const zoneKey = `${zoneX},${zoneY}`;
             const seed = ZoneStateManager.hashCode(zoneKey) % this.foodAssets.length;
             const selectedFood = this.foodAssets[seed];
-            this.grid[y][x] = { type: TILE_TYPES.FOOD, foodType: selectedFood };
+            this.gridManager.setTile(x, y, { type: TILE_TYPES.FOOD, foodType: selectedFood });
         }
     }
 
     checkSignExists() {
-        for (let y = 0; y < this.grid.length; y++) {
-            for (let x = 0; x < this.grid[y].length; x++) {
-                if (this.grid[y][x].type === TILE_TYPES.SIGN) {
+        const gridSize = this.gridManager.getSize();
+        for (let y = 0; y < gridSize; y++) {
+            for (let x = 0; x < gridSize; x++) {
+                const tile = this.gridManager.getTile(x, y);
+                if (tile && tile.type === TILE_TYPES.SIGN) {
                     return true;
                 }
             }

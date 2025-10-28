@@ -19,7 +19,7 @@ import { isWithinGrid } from './GridUtils.js';
 export class SharedStructureSpawner {
     /**
      * Spawn a 3x3 shack with entrance at bottom-middle
-     * @param {Object} game - Game instance with grid and enemyCollection
+     * @param {Object} game - Game instance with gridManager and enemyCollection
      * @returns {boolean} True if shack was spawned successfully
      */
     static spawnShack(game) {
@@ -33,9 +33,9 @@ export class SharedStructureSpawner {
         for (let dy = 0; dy < 3; dy++) {
             for (let dx = 0; dx < 3; dx++) {
                 if (dy === 2 && dx === 1) { // Middle bottom tile
-                    game.grid[pos.y + dy][pos.x + dx] = TILE_TYPES.PORT; // Entrance
+                    game.gridManager.setTile(pos.x + dx, pos.y + dy, TILE_TYPES.PORT); // Entrance
                 } else {
-                    game.grid[pos.y + dy][pos.x + dx] = TILE_TYPES.SHACK;
+                    game.gridManager.setTile(pos.x + dx, pos.y + dy, TILE_TYPES.SHACK);
                 }
             }
         }
@@ -46,7 +46,7 @@ export class SharedStructureSpawner {
 
     /**
      * Spawn a 1x2 vertical cistern with entrance at top
-     * @param {Object} game - Game instance with grid and enemyCollection
+     * @param {Object} game - Game instance with gridManager and enemyCollection
      * @returns {boolean} True if cistern was spawned successfully
      */
     static spawnCistern(game) {
@@ -57,8 +57,8 @@ export class SharedStructureSpawner {
         }
 
         // Place the 1x2 cistern
-        game.grid[pos.y][pos.x] = TILE_TYPES.PORT;    // Top part (entrance)
-        game.grid[pos.y + 1][pos.x] = TILE_TYPES.CISTERN; // Bottom part
+        game.gridManager.setTile(pos.x, pos.y, TILE_TYPES.PORT);    // Top part (entrance)
+        game.gridManager.setTile(pos.x, pos.y + 1, TILE_TYPES.CISTERN); // Bottom part
 
         logger.log('Spawned cistern at', pos);
         return true;
@@ -139,7 +139,7 @@ export class SharedStructureSpawner {
                 if (!isWithinGrid(tileX, tileY)) {
                     return false;
                 }
-                const tile = game.grid[tileY][tileX];
+                const tile = game.gridManager.getTile(tileX, tileY);
                 if (tile !== TILE_TYPES.FLOOR) {
                     return false;
                 }
@@ -154,7 +154,7 @@ export class SharedStructureSpawner {
         const frontX = x + 1;
         const frontY = y + 3;
         if (!isWithinGrid(frontX, frontY)) return false;
-        const frontTile = game.grid[frontY][frontX];
+        const frontTile = game.gridManager.getTile(frontX, frontY);
         if (frontTile !== TILE_TYPES.FLOOR) {
             return false;
         }
@@ -180,7 +180,7 @@ export class SharedStructureSpawner {
             if (!isWithinGrid(tileX, tileY)) {
                 return false;
             }
-            if (game.grid[tileY][tileX] !== TILE_TYPES.FLOOR) {
+            if (game.gridManager.getTile(tileX, tileY) !== TILE_TYPES.FLOOR) {
                 return false;
             }
         }

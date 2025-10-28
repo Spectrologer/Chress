@@ -299,25 +299,34 @@ export class Position {
     // ==========================================
 
     /**
-     * Gets the tile at this position from a grid
+     * Gets the tile at this position from a grid or gridManager
      * Note: Grid access is always grid[y][x] (row-major order)
-     * @param {Array<Array>} grid - 2D grid array
+     * @param {Array<Array>|GridManager} gridOrManager - 2D grid array or GridManager instance
      * @returns {*} The tile at this position, or undefined if out of bounds
      */
-    getTile(grid) {
-        return PositionValidator.getTile(this, grid);
+    getTile(gridOrManager) {
+        // Support both GridManager and raw grid arrays
+        if (gridOrManager && typeof gridOrManager.getTile === 'function') {
+            return gridOrManager.getTile(this.x, this.y);
+        }
+        return PositionValidator.getTile(this, gridOrManager);
     }
 
     /**
-     * Sets the tile at this position in a grid
-     * @param {Array<Array>} grid - 2D grid array
+     * Sets the tile at this position in a grid or gridManager
+     * @param {Array<Array>|GridManager} gridOrManager - 2D grid array or GridManager instance
      * @param {*} value - Value to set
      */
-    setTile(grid, value) {
-        if (!grid[this.y]) {
-            grid[this.y] = [];
+    setTile(gridOrManager, value) {
+        // Support both GridManager and raw grid arrays
+        if (gridOrManager && typeof gridOrManager.setTile === 'function') {
+            gridOrManager.setTile(this.x, this.y, value);
+            return;
         }
-        grid[this.y][this.x] = value;
+        if (!gridOrManager[this.y]) {
+            gridOrManager[this.y] = [];
+        }
+        gridOrManager[this.y][this.x] = value;
     }
 
     /**

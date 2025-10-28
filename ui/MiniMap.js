@@ -1,4 +1,5 @@
 import { ZoneStateManager } from '../generators/ZoneStateManager.js';
+import { UI_RENDERING_CONSTANTS } from '../core/constants/rendering.js';
 
 export class MiniMap {
     constructor(game) {
@@ -102,7 +103,7 @@ export class MiniMap {
         const y = e.clientY - rect.top;
 
         const mapSize = this.expandedCanvas.width; // renderExpanded keeps canvas square
-        const visibleZoneCount = 15;
+        const visibleZoneCount = UI_RENDERING_CONSTANTS.MINIMAP_VISIBLE_ZONE_COUNT;
         const zoneSize = Math.max(30, Math.min(64, Math.floor(mapSize / visibleZoneCount)));
         const centerX = mapSize / 2;
         const centerY = mapSize / 2;
@@ -147,7 +148,7 @@ export class MiniMap {
         // Responsive square size
         const mapSize = canvasSize || Math.min(ctx.canvas.width, ctx.canvas.height);
         // More tiles visible in expanded mode
-        const visibleZoneCount = isExpanded ? 15 : 5.5;
+        const visibleZoneCount = isExpanded ? UI_RENDERING_CONSTANTS.MINIMAP_VISIBLE_ZONE_COUNT : 5.5;
         const zoneSize = Math.max(isExpanded ? 30 : 20, Math.min(isExpanded ? 64 : 36, Math.floor(mapSize / visibleZoneCount)));
         const centerX = mapSize / 2;
         const centerY = mapSize / 2;

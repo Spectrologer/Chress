@@ -110,7 +110,9 @@ export function validateLoadedGrid(grid) {
             corruptionFixed = true;
         } else {
             GridIterator.forEach(grid, (tile, x, y) => {
-                if (!tile || tile === null || tile === undefined) {
+                // Check if tile is actually invalid (null/undefined)
+                // Note: tile can be 0 (FLOOR) or an object {type: 0}, both are valid
+                if (tile === null || tile === undefined) {
                     grid[y][x] = TILE_TYPES.FLOOR;
                     corruptionFixed = true;
                 }

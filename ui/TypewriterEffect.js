@@ -1,7 +1,9 @@
 // TypewriterEffect.js
 // Handles typewriter animation for text nodes in a DOM element.
+import { UI_TIMING_CONSTANTS } from '../core/constants/ui.js';
+
 export class TypewriterEffect {
-    constructor({ speed = 28, onChar = null, onComplete = null } = {}) {
+    constructor({ speed = UI_TIMING_CONSTANTS.TYPEWRITER_SPEED, onChar = null, onComplete = null } = {}) {
         this.speed = speed;
         this.onChar = onChar;
         this.onComplete = onComplete;

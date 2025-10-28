@@ -11,9 +11,9 @@ export class ItemTileRenderer {
 
 
 
-    renderFoodTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+    renderFoodTile(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel, baseRenderer) {
         // Use the stored foodType from the grid tile
-        const tile = grid[y][x];
+        const tile = gridManager.getTile ? gridManager.getTile(x, y) : gridManager[y]?.[x];
         const foodAsset = tile.foodType;
 
         // Safeguard against undefined foodAsset
@@ -119,11 +119,11 @@ export class ItemTileRenderer {
         }
     }
 
-    renderBombTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
-        const tile = grid[y][x];
+    renderBombTile(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel, baseRenderer) {
+        const tile = gridManager.getTile ? gridManager.getTile(x, y) : gridManager[y]?.[x];
 
         // First draw the base tile
-        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel);
 
         // Get the bomb image
         const bombImage = this.images.bomb;

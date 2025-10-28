@@ -85,7 +85,7 @@ export class SpawnPositionHelper {
                 if (tileX < 0 || tileX >= GRID_SIZE || tileY < 0 || tileY >= GRID_SIZE) {
                     return false;
                 }
-                const tile = game.grid[tileY][tileX];
+                const tile = game.gridManager.getTile(tileX, tileY);
                 if (tile !== TILE_TYPES.FLOOR) {
                     return false;
                 }
@@ -99,7 +99,7 @@ export class SpawnPositionHelper {
         const frontX = x + 1;
         const frontY = y + 3;
         if (frontY >= GRID_SIZE) return false;
-        const frontTile = game.grid[frontY][frontX];
+        const frontTile = game.gridManager.getTile(frontX, frontY);
         if (frontTile !== TILE_TYPES.FLOOR) {
             return false;
         }
@@ -146,7 +146,7 @@ export class SpawnPositionHelper {
             if (tileX < 0 || tileX >= GRID_SIZE || tileY < 0 || tileY >= GRID_SIZE) {
                 return false;
             }
-            if (game.grid[tileY][tileX] !== TILE_TYPES.FLOOR) {
+            if (game.gridManager.getTile(tileX, tileY) !== TILE_TYPES.FLOOR) {
                 return false;
             }
         }

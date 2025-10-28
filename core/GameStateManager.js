@@ -1,4 +1,5 @@
 import { GRID_SIZE, TILE_TYPES } from './constants/index.js';
+import { UI_TIMING_CONSTANTS } from './constants/ui.js';
 import { logger } from './logger.js';
 import { Sign } from '../ui/Sign.js';
 import { validateLoadedGrid } from '../generators/GeneratorUtils.js';
@@ -19,9 +20,9 @@ export class GameStateManager {
         this.game = game;
         this.initializeState();
         // Autosave configuration
-        this.saveDebounceMs = 750; // debounce writes when many changes happen in quick succession
+        this.saveDebounceMs = UI_TIMING_CONSTANTS.SAVE_DEBOUNCE_MS; // debounce writes when many changes happen in quick succession
         this._saveTimer = null;
-        this.saveIntervalMs = 30000; // periodic save every 30s
+        this.saveIntervalMs = UI_TIMING_CONSTANTS.SAVE_INTERVAL_MS; // periodic save every 30s
         this._saveIntervalId = null;
     }
 
@@ -48,6 +49,13 @@ export class GameStateManager {
 
         // Special zones marked by notes (zoneKey: "x,y" -> items array)
         this.game.specialZones = new Map();
+
+        // NPC dialogue state tracking (maps npcType -> dialogue data with currentMessageIndex)
+        this.game.dialogueState = new Map();
+
+        // Zone transition tracking (used to determine if player is entering from an exit or starting new game)
+        this.game.lastExitSide = null; // null for new games, set during zone transitions
+        this.game._newGameSpawnPosition = null; // Stores exit tile position for entrance animation
     }
 
     resetGame() {
@@ -68,6 +76,9 @@ export class GameStateManager {
         Sign.spawnedMessages.clear(); // Reset spawned message tracking
         this.game.specialZones.clear(); // Reset special zones
         this.game.messageLog = []; // Reset message log
+        if (this.game.dialogueState) {
+            this.game.dialogueState.clear(); // Reset NPC dialogue progression
+        }
         this.game.player.reset();
         // IMPORTANT: Clear the array instead of reassigning to preserve EnemyCollection reference
         if (this.game.enemyCollection) {
@@ -81,6 +92,8 @@ export class GameStateManager {
         this.game.displayingMessageForSign = null; // Reset sign message display tracking
         this.game.animationManager.clearAll(); // Reset all animations
         this.game.player.spentDiscoveries = 0; // Reset spent discoveries
+        this.game.lastExitSide = null; // Reset for new game entrance animation
+        this.game._newGameSpawnPosition = null; // Reset entrance animation spawn position
 
         // Generate starting zone
         this.game.zoneManager.generateZone();
@@ -102,11 +115,24 @@ export class GameStateManager {
         this.game.player.stats.sfxEnabled = prevConfig.sfxEnabled;
         this.game.player.stats.autoPathWithEnemies = prevConfig.autoPathWithEnemies;
 
+        // Trigger entrance animation for new game BEFORE emitting events
+        // This ensures input is blocked before any event handlers could process clicks
+        const shouldTriggerEntrance = this.game.gameInitializer && this.game._newGameSpawnPosition;
+        if (shouldTriggerEntrance) {
+            // Pre-emptively block input to prevent race conditions with queued mouse events
+            this.game._entranceAnimationInProgress = true;
+        }
+
         // Emit game reset event instead of calling UI methods directly
         eventBus.emit(EventTypes.GAME_RESET, {
             zone: initialZone,
             regionName: this.game.currentRegion
         });
+
+        // Now trigger the entrance animation (flag already set above)
+        if (shouldTriggerEntrance) {
+            this.game.gameInitializer.triggerNewGameEntrance();
+        }
 
         // Ensure background music matches the new starting zone so any previous
         // underground track doesn't continue playing after a respawn/reset.

@@ -3,14 +3,14 @@ import { isPort, isTileType, isExit, isWall, isRock, isShrubbery } from '../util
 import GridIterator from '../utils/GridIterator.js';
 
 export class PathGenerator {
-    constructor(grid) {
-        this.grid = grid;
+    constructor(gridManager) {
+        this.gridManager = gridManager;
     }
 
     ensureExitAccess() {
         // Find all exit tiles and PORT tiles (for escape routes) and ensure they have clear paths
-        const exits = GridIterator.findTiles(this.grid, tile => isExit(tile));
-        const ports = GridIterator.findTiles(this.grid, isPort);
+        const exits = this.gridManager.findTiles(tile => isExit(tile));
+        const ports = this.gridManager.findTiles(isPort);
 
         // For each exit, ensure there's a clear path inward
         exits.forEach(({ x, y }) => {
@@ -44,9 +44,9 @@ export class PathGenerator {
         }
 
         // Clear the adjacent tile only if it's an obstacle (preserve PORT/CISTERN and other structures)
-        const adjacentTile = this.grid[inwardY][inwardX];
+        const adjacentTile = this.gridManager.getTile(inwardX, inwardY);
         if (isWall(adjacentTile) || isRock(adjacentTile) || isShrubbery(adjacentTile)) {
-            this.grid[inwardY][inwardX] = TILE_TYPES.FLOOR;
+            this.gridManager.setTile(inwardX, inwardY, TILE_TYPES.FLOOR);
         }
 
         // Clear adjacent inward tiles to create wider entry area (3x3 around inward tile)
@@ -56,9 +56,9 @@ export class PathGenerator {
                 const nx = inwardX + dx;
                 const ny = inwardY + dy;
                 if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
-                    const tile = this.grid[ny][nx];
+                    const tile = this.gridManager.getTile(nx, ny);
                     if (isWall(tile) || isRock(tile) || isShrubbery(tile)) {
-                        this.grid[ny][nx] = TILE_TYPES.FLOOR;
+                        this.gridManager.setTile(nx, ny, TILE_TYPES.FLOOR);
                     }
                 }
             }
@@ -82,12 +82,12 @@ export class PathGenerator {
                 const nx = startX + dx;
                 const ny = startY + dy;
                 if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
-                    const tile = this.grid[ny][nx];
+                    const tile = this.gridManager.getTile(nx, ny);
                     // Don't overwrite PORTs, EXITs, or other important tiles
                     const isPortTile = isPort(tile);
                     const isExitTile = isExit(tile);
                     if (!isPortTile && !isExitTile && (isWall(tile) || isRock(tile) || isShrubbery(tile))) {
-                        this.grid[ny][nx] = TILE_TYPES.FLOOR;
+                        this.gridManager.setTile(nx, ny, TILE_TYPES.FLOOR);
                     }
                 }
             }
@@ -107,11 +107,11 @@ export class PathGenerator {
             }
 
             // Clear this tile if it's not already floor, exit, or port
-            const tile = this.grid[currentY][currentX];
+            const tile = this.gridManager.getTile(currentX, currentY);
             const isPortTile = isPort(tile);
             const isExitTile = isExit(tile);
             if (!isPortTile && !isExitTile && (isWall(tile) || isRock(tile) || isShrubbery(tile))) {
-                this.grid[currentY][currentX] = TILE_TYPES.FLOOR;
+                this.gridManager.setTile(currentX, currentY, TILE_TYPES.FLOOR);
             }
 
             // Prevent infinite loops

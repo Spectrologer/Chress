@@ -93,7 +93,7 @@ export class ZoneTransitionCoordinator {
 
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.game.grid[y][x];
+                const tile = gridManager.getTile(x, y);
                 if (gridManager.isTileType(x, y, TILE_TYPES.PORT)) {
                     // Store first PORT we find as fallback
                     if (anyPortX === null) {
@@ -218,10 +218,11 @@ export class ZoneTransitionCoordinator {
         // Find the stairdown port in the interior
         let stairdownX = null;
         let stairdownY = null;
+        const gridManager = this.game.gridManager;
 
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = this.game.grid[y][x];
+                const tile = gridManager.getTile(x, y);
                 if (tile && typeof tile === 'object' && tile.portKind === 'stairdown') {
                     stairdownX = x;
                     stairdownY = y;
@@ -314,24 +315,27 @@ export class ZoneTransitionCoordinator {
 
     /**
      * Helper to safely set a tile on the grid, checking bounds.
-     * @param {Array<Array<any>>} grid The game grid.
+     * @param {Object} gridOrGridManager The game grid or gridManager (for backwards compatibility).
      * @param {number} x The x-coordinate.
      * @param {number} y The y-coordinate.
      * @param {any} tile The tile to set.
      */
-    validateAndSetTile(grid, x, y, tile) {
+    validateAndSetTile(gridOrGridManager, x, y, tile) {
         if (isWithinGrid(x, y)) {
+            // Use gridManager if available
+            const gridManager = this.game.gridManager;
+
             // If we're trying to set a primitive PORT tile, don't overwrite an existing
             // object-style PORT (which may contain metadata like portKind: 'stairup').
             if (tile === TILE_TYPES.PORT) {
-                const existing = grid[y] && grid[y][x];
+                const existing = gridManager.getTile(x, y);
                 if (isTileObjectOfType(existing, TILE_TYPES.PORT)) {
                     // Preserve the object port
                     return;
                 }
             }
 
-            grid[y][x] = tile;
+            gridManager.setTile(x, y, tile);
         }
     }
 }

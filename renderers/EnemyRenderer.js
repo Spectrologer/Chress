@@ -1,4 +1,5 @@
 import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/index.js';
+import { RENDERING_CONSTANTS } from '../core/constants/animation.js';
 import { RendererUtils } from './RendererUtils.js';
 
 export class EnemyRenderer {
@@ -43,12 +44,12 @@ export class EnemyRenderer {
             if (enemy.attackAnimation > 0) {
                 // Scale up and flash red for first half, shake for second half
                 if (enemy.attackAnimation > 7) {
-                    scale = 1.6; // Increased from 1.35 for more dramatic effect
+                    scale = RENDERING_CONSTANTS.ATTACK_SCALE_LARGE; // Increased from 1.35 for more dramatic effect
                     flash = true;
                 } else {
-                    scale = 1.3; // Increased from 1.15
-                    shakeX = (Math.random() - 0.5) * 16; // Doubled shake intensity
-                    shakeY = (Math.random() - 0.5) * 16;
+                    scale = RENDERING_CONSTANTS.ATTACK_SCALE_SMALL; // Increased from 1.15
+                    shakeX = (Math.random() - 0.5) * RENDERING_CONSTANTS.ATTACK_SHAKE_INTENSITY; // Doubled shake intensity
+                    shakeY = (Math.random() - 0.5) * RENDERING_CONSTANTS.ATTACK_SHAKE_INTENSITY;
                 }
             }
 
@@ -86,8 +87,8 @@ export class EnemyRenderer {
                 // Handle frozen pixel-perfect enemies separately
                 if (isPixelPerfectEnemy && enemy.showFrozenVisual && scale === 1 && !flash && enemy.liftFrames === 0) {
                     this.ctx.save();
-                    this.ctx.filter = 'grayscale(1) brightness(0.8)';
-                    this.ctx.globalAlpha = 0.9;
+                    this.ctx.filter = `grayscale(1) brightness(${RENDERING_CONSTANTS.FROZEN_BRIGHTNESS})`;
+                    this.ctx.globalAlpha = RENDERING_CONSTANTS.FROZEN_ALPHA;
                     this.ctx.drawImage(
                         enemyImage,
                         pixelXBase,
@@ -115,10 +116,10 @@ export class EnemyRenderer {
                 this.ctx.translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
                 if (flash) {
                     // Much more dramatic red flash for attacking enemies
-                    this.ctx.filter = 'brightness(2.0) saturate(2) hue-rotate(340deg) drop-shadow(0 0 16px red) drop-shadow(0 0 8px red)';
+                    this.ctx.filter = `brightness(${RENDERING_CONSTANTS.ATTACK_FLASH_BRIGHTNESS}) saturate(${RENDERING_CONSTANTS.ATTACK_FLASH_SATURATE}) hue-rotate(${RENDERING_CONSTANTS.ATTACK_FLASH_HUE_ROTATE}deg) drop-shadow(0 0 ${RENDERING_CONSTANTS.ATTACK_FLASH_SHADOW_BLUR}px red) drop-shadow(0 0 ${RENDERING_CONSTANTS.ATTACK_FLASH_SHADOW_SPREAD}px red)`;
                 } else if (enemy.showFrozenVisual) {
-                    this.ctx.filter = 'grayscale(1) brightness(0.8)';
-                    this.ctx.globalAlpha = 0.9;
+                    this.ctx.filter = `grayscale(1) brightness(${RENDERING_CONSTANTS.FROZEN_BRIGHTNESS})`;
+                    this.ctx.globalAlpha = RENDERING_CONSTANTS.FROZEN_ALPHA;
                 }
 
                 // For 'lizardy', handle horizontal flipping with animation centered in the tile.

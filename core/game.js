@@ -51,12 +51,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Debug: Q spawns aguamelin
     window.addEventListener('keydown', (e) => {
         if (e.key === 'q' || e.key === 'Q') {
-            if (game && game.player && game.zoneManager && game.zoneManager.game && game.zoneManager.game.grid) {
+            if (game && game.player && game.gridManager) {
                 const { x, y } = game.player;
-                const grid = game.zoneManager.game.grid;
+                const gridManager = game.gridManager;
                 // Floor only
-                if (isFloor(grid[y][x])) {
-                    grid[y][x] = { type: TILE_TYPES.FOOD, foodType: 'food/aguamelin.png' };
+                if (isFloor(gridManager.getTile(x, y))) {
+                    gridManager.setTile(x, y, { type: TILE_TYPES.FOOD, foodType: 'food/aguamelin.png' });
                     if (game.render) game.render();
                 }
             }

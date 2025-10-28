@@ -1,8 +1,10 @@
 // Utility to scale text down so it fits within a container element.
 // Designed to be safe for mobile where native text sizes can cause clipping.
+import { UI_RENDERING_CONSTANTS } from '../core/constants/rendering.js';
+
 export function fitTextToContainer(container, options = {}) {
     if (!container) return;
-    const { childSelector = null, minFontSize = 10, maxIterations = 40 } = options;
+    const { childSelector = null, minFontSize = UI_RENDERING_CONSTANTS.TEXT_MIN_FONT_SIZE, maxIterations = UI_RENDERING_CONSTANTS.TEXT_FIT_MAX_ITERATIONS } = options;
     const el = childSelector ? container.querySelector(childSelector) : container;
     if (!el) return;
 

@@ -183,11 +183,13 @@ export class BoardLoader {
                 // null or missing = default walkable floor
                 // 'wall' = explicit wall
                 // 'floor' = explicit floor
-                if (terrain === 'wall') {
-                    grid[y][x] = TILE_TYPES.WALL;
-                } else {
-                    // Default to floor for null, 'floor', or unknown terrain
-                    grid[y][x] = TILE_TYPES.FLOOR;
+                if (grid[y]) {
+                    if (terrain === 'wall') {
+                        grid[y][x] = TILE_TYPES.WALL;
+                    } else {
+                        // Default to floor for null, 'floor', or unknown terrain
+                        grid[y][x] = TILE_TYPES.FLOOR;
+                    }
                 }
             }
         }
@@ -196,7 +198,7 @@ export class BoardLoader {
         for (const [posKey, featureType] of Object.entries(boardData.features)) {
             const [x, y] = posKey.split(',').map(Number);
 
-            if (x >= 0 && x < width && y >= 0 && y < height) {
+            if (x >= 0 && x < width && y >= 0 && y < height && grid[y]) {
                 const tile = this.convertFeatureToTile(featureType, foodAssets);
                 if (tile !== null) {
                     grid[y][x] = tile;

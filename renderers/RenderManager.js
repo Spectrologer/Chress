@@ -1,4 +1,5 @@
 import { GRID_SIZE, TILE_SIZE, TILE_TYPES, CANVAS_SIZE, getZoneLevelFromDistance } from '../core/constants/index.js';
+import { COLOR_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/rendering.js';
 import { TextureManager } from './TextureManager.js';
 import { PlayerRenderer } from './PlayerRenderer.js';
 import { EnemyRenderer } from './EnemyRenderer.js';
@@ -71,14 +72,14 @@ export class RenderManager {
         }
 
         // Compute alpha and inset. For hold, use a steady subtle value; for transient, fade out
-        const maxAlpha = 0.45;
+        const maxAlpha = COLOR_CONSTANTS.TAP_FEEDBACK_MAX_ALPHA;
         let alpha = maxAlpha;
-        let inset = Math.round((TILE_SIZE || 64) * 0.06);
+        let inset = Math.round((TILE_SIZE || 64) * COLOR_CONSTANTS.TAP_FEEDBACK_INSET_RATIO);
 
         if (!tf.hold) {
             const progress = Math.max(0, Math.min(1, elapsed / tf.duration)); // 0 -> 1
             alpha = maxAlpha * (1 - progress);
-            inset = Math.round((TILE_SIZE || 64) * 0.06 * (1 - progress));
+            inset = Math.round((TILE_SIZE || 64) * COLOR_CONSTANTS.TAP_FEEDBACK_INSET_RATIO * (1 - progress));
         }
 
     const px = tf.x * TILE_SIZE + inset;
@@ -87,25 +88,25 @@ export class RenderManager {
 
     // Subtle inner fill to indicate selection (very low alpha)
     this.ctx.save();
-    this.ctx.fillStyle = `rgba(255,255,255,${Math.min(0.06, alpha * 0.15)})`;
+    this.ctx.fillStyle = `rgba(255,255,255,${Math.min(COLOR_CONSTANTS.TAP_FEEDBACK_FILL_ALPHA_MAX, alpha * COLOR_CONSTANTS.TAP_FEEDBACK_FILL_ALPHA_MULTIPLIER)})`;
     this.ctx.fillRect(px, py, size, size);
 
     // Marching ants outline: draw a black dashed stroke and then a thinner white dashed stroke
-    const dashLen = Math.max(4, Math.round(TILE_SIZE * 0.09));
-    const animMs = 800; // period for one cycle
+    const dashLen = Math.max(4, Math.round(TILE_SIZE * STROKE_CONSTANTS.DASH_LENGTH_RATIO));
+    const animMs = STROKE_CONSTANTS.DASH_ANIMATION_DURATION; // period for one cycle
     const anim = (Date.now() % animMs) / animMs; // 0..1
     const offset = anim * (dashLen * 2);
 
     // Outer dark stroke
-    this.ctx.lineWidth = Math.max(2, Math.round(TILE_SIZE * 0.04));
-    this.ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+    this.ctx.lineWidth = Math.max(2, Math.round(TILE_SIZE * STROKE_CONSTANTS.ZONE_BORDER_STROKE_RATIO));
+    this.ctx.strokeStyle = `rgba(0,0,0,${COLOR_CONSTANTS.OUTER_STROKE_ALPHA})`;
     this.ctx.setLineDash([dashLen, dashLen]);
     this.ctx.lineDashOffset = -offset;
     this.ctx.strokeRect(px + 0.5, py + 0.5, size - 1, size - 1);
 
     // Inner light stroke (offset so dashes alternate)
-    this.ctx.lineWidth = Math.max(1, Math.round(TILE_SIZE * 0.02));
-    this.ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+    this.ctx.lineWidth = Math.max(1, Math.round(TILE_SIZE * STROKE_CONSTANTS.ZONE_EXIT_STROKE_RATIO));
+    this.ctx.strokeStyle = `rgba(255,255,255,${COLOR_CONSTANTS.INNER_STROKE_ALPHA})`;
     this.ctx.lineDashOffset = -offset - dashLen;
     this.ctx.strokeRect(px + 0.5, py + 0.5, size - 1, size - 1);
 
@@ -311,11 +312,11 @@ export class RenderManager {
                 // Handle bomb tiles specially
                 if (isTileType(tile, TILE_TYPES.BOMB)) {
                     // Primitive bomb (randomly generated) - render normally
-                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.grid, zoneLevel);
+                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel);
                 } else if (tile && tile.type === 'food') {
-                    this.textureManager.renderTile(this.ctx, x, y, tile.type, this.game.grid, zoneLevel);
+                    this.textureManager.renderTile(this.ctx, x, y, tile.type, this.game.gridManager, zoneLevel);
                 } else {
-                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.grid, zoneLevel);
+                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel);
                 }
             } catch (error) {
                 // Fallback rendering

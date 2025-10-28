@@ -1,4 +1,5 @@
 import { GRID_SIZE, SPAWN_PROBABILITIES, ZONE_LEVEL_DISTANCES, getZoneLevelFromDistance } from '../core/constants/index.js';
+import { GENERATOR_CONSTANTS } from '../core/constants/ui.js';
 
 export class ConnectionManager {
     constructor() {
@@ -53,10 +54,10 @@ export class ConnectionManager {
                 // Convert to valid exit position (avoiding corners and edges)
                 const validRange = GRID_SIZE - 6; // Avoid 3 tiles from each edge
                 // Use zone coordinates for some determinacy in position while still randomizing existence
-                const seed = (zoneX * 73 + zoneY * 97) % validRange;
-                const position = seed + 3;
+                const seed = (zoneX * GENERATOR_CONSTANTS.SEED_MULTIPLIER_X + zoneY * GENERATOR_CONSTANTS.SEED_MULTIPLIER_Y) % validRange;
+                const position = seed + GENERATOR_CONSTANTS.POSITION_OFFSET;
                 // Clamp position to valid range to prevent out-of-bounds errors
-                return Math.max(3, Math.min(GRID_SIZE - 4, position));
+                return Math.max(GENERATOR_CONSTANTS.POSITION_OFFSET, Math.min(GRID_SIZE - GENERATOR_CONSTANTS.POSITION_MODULO, position));
             }
             return null;
         }
@@ -65,23 +66,23 @@ export class ConnectionManager {
 
         switch (side) {
             case 'north':
-                seed = (zoneX * 73 + (zoneY - 1) * 97) % 1000;
+                seed = (zoneX * GENERATOR_CONSTANTS.SEED_MULTIPLIER_X + (zoneY - 1) * GENERATOR_CONSTANTS.SEED_MULTIPLIER_Y) % GENERATOR_CONSTANTS.SEED_MODULO;
                 break;
             case 'south':
-                seed = (zoneX * 73 + (zoneY + 1) * 97) % 1000;
+                seed = (zoneX * GENERATOR_CONSTANTS.SEED_MULTIPLIER_X + (zoneY + 1) * GENERATOR_CONSTANTS.SEED_MULTIPLIER_Y) % GENERATOR_CONSTANTS.SEED_MODULO;
                 break;
             case 'west':
-                seed = ((zoneX - 1) * 73 + zoneY * 97) % 1000;
+                seed = ((zoneX - 1) * GENERATOR_CONSTANTS.SEED_MULTIPLIER_X + zoneY * GENERATOR_CONSTANTS.SEED_MULTIPLIER_Y) % GENERATOR_CONSTANTS.SEED_MODULO;
                 break;
             case 'east':
-                seed = ((zoneX + 1) * 73 + zoneY * 97) % 1000;
+                seed = ((zoneX + 1) * GENERATOR_CONSTANTS.SEED_MULTIPLIER_X + zoneY * GENERATOR_CONSTANTS.SEED_MULTIPLIER_Y) % GENERATOR_CONSTANTS.SEED_MODULO;
                 break;
         }
 
         // Make home zones highly interconnected with exits on almost all sides
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
         const isHome = dist <= ZONE_LEVEL_DISTANCES.HOME_RADIUS;
-        const nullThreshold = isHome ? 5 : 30; // 95% chance for home zones, 70% otherwise
+        const nullThreshold = isHome ? GENERATOR_CONSTANTS.HOME_ZONE_NULL_THRESHOLD : GENERATOR_CONSTANTS.OTHER_ZONE_NULL_THRESHOLD; // 95% chance for home zones, 70% otherwise
 
         // Chance of having an exit on this side
         if ((seed % 100) < nullThreshold) {
@@ -90,10 +91,10 @@ export class ConnectionManager {
 
         // Convert seed to valid exit position (avoiding corners and edges)
         const validRange = GRID_SIZE - 6; // Avoid 3 tiles from each edge
-        const position = (seed % validRange) + 3;
+        const position = (seed % validRange) + GENERATOR_CONSTANTS.POSITION_OFFSET;
 
         // Clamp position to valid range to prevent out-of-bounds errors
-        return Math.max(3, Math.min(GRID_SIZE - 4, position));
+        return Math.max(GENERATOR_CONSTANTS.POSITION_OFFSET, Math.min(GRID_SIZE - GENERATOR_CONSTANTS.POSITION_MODULO, position));
     }
 
     ensureMinimumConnectivity(zoneX, zoneY, connections) {
@@ -108,14 +109,14 @@ export class ConnectionManager {
         // If no connections exist, force at least one
         if (hasConnections === 0) {
             // Choose a direction based on zone coordinates to ensure deterministic behavior
-            const seed = (zoneX * 137 + zoneY * 149) % 4;
+            const seed = (zoneX * GENERATOR_CONSTANTS.SEED_MULTIPLIER_ALT_1 + zoneY * GENERATOR_CONSTANTS.SEED_MULTIPLIER_ALT_2) % GENERATOR_CONSTANTS.POSITION_MODULO;
             const directions = ['north', 'south', 'west', 'east'];
             const forcedDirection = directions[seed];
 
             // Force an exit in the chosen direction
             const validRange = GRID_SIZE - 6;
-            const position = ((zoneX * 73 + zoneY * 97) % validRange) + 3;
-            connections[forcedDirection] = Math.max(3, Math.min(GRID_SIZE - 4, position));
+            const position = ((zoneX * GENERATOR_CONSTANTS.SEED_MULTIPLIER_X + zoneY * GENERATOR_CONSTANTS.SEED_MULTIPLIER_Y) % validRange) + GENERATOR_CONSTANTS.POSITION_OFFSET;
+            connections[forcedDirection] = Math.max(GENERATOR_CONSTANTS.POSITION_OFFSET, Math.min(GRID_SIZE - GENERATOR_CONSTANTS.POSITION_MODULO, position));
         }
 
         // Special case: ensure the starting zone (0,0) has multiple connections with variation
@@ -158,12 +159,12 @@ export class ConnectionManager {
             // Force an exit in the first available direction
             const direction = availableDirections[0];
             const validRange = GRID_SIZE - 6;
-            let basePosition = ((zoneX * 73 + zoneY * 97 + Math.floor(Math.random() * 31)) % validRange) + 3;
+            let basePosition = ((zoneX * GENERATOR_CONSTANTS.SEED_MULTIPLIER_X + zoneY * GENERATOR_CONSTANTS.SEED_MULTIPLIER_Y + Math.floor(Math.random() * GENERATOR_CONSTANTS.POSITION_VARIATION_RANGE)) % validRange) + GENERATOR_CONSTANTS.POSITION_OFFSET;
 
             // Find a position not adjacent to existing exits on the same border (only if multiple exist)
             if (zoneLevel === 1 && availableDirections.length > 1) { // Only for level 1 to avoid crowding
                 for (let attempt = 0; attempt < 20; attempt++) {
-                    const candidate = ((basePosition + attempt) % validRange) + 3;
+                    const candidate = ((basePosition + attempt) % validRange) + GENERATOR_CONSTANTS.POSITION_OFFSET;
 
                     let isAdjacent = false;
                     const existingExits = [];
@@ -182,7 +183,7 @@ export class ConnectionManager {
             }
 
             if (connections[direction] === null) {
-                connections[direction] = Math.max(3, Math.min(GRID_SIZE - 4, basePosition));
+                connections[direction] = Math.max(GENERATOR_CONSTANTS.POSITION_OFFSET, Math.min(GRID_SIZE - GENERATOR_CONSTANTS.POSITION_MODULO, basePosition));
             }
 
             hasConnections = [

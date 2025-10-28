@@ -10,7 +10,7 @@ export class ItemPickupManager {
 
     checkItemPickup() {
         const p = this.game.player.getPosition();
-        const tile = this.game.grid[p.y][p.x];
+        const tile = this.game.gridManager.getTile(p.x, p.y);
 
         // Log every pickup check to see if we're stepping on hearts
         if (tile === 27 || tile === TILE_TYPES.HEART) {
@@ -23,7 +23,7 @@ export class ItemPickupManager {
             if (!this.game.inventoryService) {
                 console.error('[ItemPickupManager] inventoryService not found! Falling back to direct push');
                 inv.push(item);
-                this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
+                this.game.gridManager.setTile(p.x, p.y, TILE_TYPES.FLOOR);
                 eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
                 return true;
             }
@@ -31,7 +31,7 @@ export class ItemPickupManager {
             // Use the inventory service to properly handle stacking
             const success = this.game.inventoryService.pickupItem(item, 'pickup');
             if (success) {
-                this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
+                this.game.gridManager.setTile(p.x, p.y, TILE_TYPES.FLOOR);
             }
             return success;
         };
@@ -51,13 +51,13 @@ export class ItemPickupManager {
         }
         else if (isAxe(tile)) {
             this.game.player.abilities.add('axe');
-            this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
+            this.game.gridManager.setTile(p.x, p.y, TILE_TYPES.FLOOR);
             ui.addMessageToLog('Gained axe ability! Can now chop grass and shrubbery.');
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         }
         else if (isHammer(tile)) {
             this.game.player.abilities.add('hammer');
-            this.game.grid[p.y][p.x] = TILE_TYPES.FLOOR;
+            this.game.gridManager.setTile(p.x, p.y, TILE_TYPES.FLOOR);
             ui.addMessageToLog('Gained hammer ability! Can now smash rocks.');
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
         }

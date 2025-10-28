@@ -8,6 +8,7 @@ import { MessageLog } from './MessageLog.js';
 import { PenneMessageHandler } from './PenneMessageHandler.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
+import { UI_TIMING_CONSTANTS } from '../core/constants/ui.js';
 
 /**
  * Coordinates message display across the application.
@@ -138,13 +139,13 @@ export class MessageManager {
                     this.typewriterController.start(element, () => {
                         // Auto-hide after typewriter completes
                         if (!isPersistent) {
-                            this.overlayHandler.scheduleAutoHide(2000);
+                            this.overlayHandler.scheduleAutoHide(UI_TIMING_CONSTANTS.NOTE_DEFAULT_TIMEOUT);
                         }
                     });
                 } else {
                     // No typewriter, just schedule auto-hide
                     if (!isPersistent) {
-                        this.overlayHandler.scheduleAutoHide(2000);
+                        this.overlayHandler.scheduleAutoHide(UI_TIMING_CONSTANTS.NOTE_DEFAULT_TIMEOUT);
                     }
                 }
             });
@@ -255,7 +256,7 @@ export class MessageManager {
      * @param {number} timeout - ms to auto-hide (default 2000)
      * @returns {string} Note ID
      */
-    addNoteToStack(text, imageSrc = null, timeout = 2000) {
+    addNoteToStack(text, imageSrc = null, timeout = UI_TIMING_CONSTANTS.NOTE_DEFAULT_TIMEOUT) {
         return this.noteStack.addNoteToStack(text, imageSrc, timeout);
     }
 

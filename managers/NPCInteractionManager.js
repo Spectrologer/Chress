@@ -54,7 +54,7 @@ export class NPCInteractionManager {
                         npcPos: gridCoords
                     });
                 } else if (config.action === 'dialogue') {
-                    const npcData = Sign.getDialogueNpcData(npcName);
+                    const npcData = Sign.getDialogueNpcData(npcName, this.game);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
                         const signData = { message: message, type: 'npc' };
@@ -72,7 +72,17 @@ export class NPCInteractionManager {
                             portrait: npcData.portrait,
                             name: npcData.name
                         });
-                        npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+
+                        // Advance dialogue based on cycle mode
+                        if (npcData.cycleMode === 'sequential') {
+                            // Sequential: advance to next message, stop at last
+                            if (npcData.currentMessageIndex < npcData.messages.length - 1) {
+                                npcData.currentMessageIndex++;
+                            }
+                        } else {
+                            // Loop (default): cycle back to first message
+                            npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+                        }
                     }
                 }
                 return true;
@@ -123,7 +133,7 @@ export class NPCInteractionManager {
                         npcPos: gridCoords
                     });
                 } else if (config.action === 'dialogue') {
-                    const npcData = Sign.getDialogueNpcData(npcName);
+                    const npcData = Sign.getDialogueNpcData(npcName, this.game);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
                         const signData = { message: message, type: 'npc' };
@@ -141,7 +151,17 @@ export class NPCInteractionManager {
                             portrait: npcData.portrait,
                             name: npcData.name
                         });
-                        npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+
+                        // Advance dialogue based on cycle mode
+                        if (npcData.cycleMode === 'sequential') {
+                            // Sequential: advance to next message, stop at last
+                            if (npcData.currentMessageIndex < npcData.messages.length - 1) {
+                                npcData.currentMessageIndex++;
+                            }
+                        } else {
+                            // Loop (default): cycle back to first message
+                            npcData.currentMessageIndex = (npcData.currentMessageIndex + 1) % npcData.messages.length;
+                        }
                     }
                 }
                 return;

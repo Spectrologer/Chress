@@ -1,4 +1,4 @@
-import { TILE_TYPES } from '../../core/constants/index.js';
+import { TILE_TYPES, ANIMATION_CONSTANTS } from '../../core/constants/index.js';
 
 export function handlePlayerInteraction(base, enemy, next, player, playerX, playerY, grid, enemies, isSimulation, game) {
     // Check adjacency
@@ -16,7 +16,7 @@ export function handlePlayerInteraction(base, enemy, next, player, playerX, play
             const ownStart = `${enemy.x},${enemy.y}`;
             if (initialSet.has(key) && key !== ownStart) return null;
             if (game && game.occupiedTilesThisTurn) game.occupiedTilesThisTurn.add(key);
-            enemy.lastX = enemy.x; enemy.lastY = enemy.y; enemy.x = next.x; enemy.y = next.y; enemy.liftFrames = 15;
+            enemy.lastX = enemy.x; enemy.lastY = enemy.y; enemy.x = next.x; enemy.y = next.y; enemy.liftFrames = ANIMATION_CONSTANTS.LIFT_FRAMES;
             base.performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game);
             return null;
         }

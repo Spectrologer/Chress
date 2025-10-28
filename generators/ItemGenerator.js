@@ -7,8 +7,8 @@ import { ContentRegistry } from '../core/ContentRegistry.js';
 import { logger } from '../core/logger.js';
 
 export class ItemGenerator {
-    constructor(grid, foodAssets, zoneX, zoneY, dimension, depth) {
-        this.grid = grid;
+    constructor(gridManager, foodAssets, zoneX, zoneY, dimension, depth) {
+        this.gridManager = gridManager;
         this.foodAssets = foodAssets;
         this.zoneX = zoneX;
         this.zoneY = zoneY;
@@ -112,11 +112,11 @@ export class ItemGenerator {
     _placeItemRandomly(itemData, onPlacedCallback = null) {
         const pos = findValidPlacement({
             maxAttempts: 50,
-            validate: (x, y) => this.grid[y][x] === TILE_TYPES.FLOOR
+            validate: (x, y) => this.gridManager.getTile(x, y) === TILE_TYPES.FLOOR
         });
         if (pos) {
             const { x, y } = pos;
-            this.grid[y][x] = itemData;
+            this.gridManager.setTile(x, y, itemData);
             if (onPlacedCallback) {
                 onPlacedCallback(x, y);
             }
@@ -142,8 +142,8 @@ export class ItemGenerator {
                 for (let dy = -r; dy <= r; dy++) {
                     const x = centerX + dx;
                     const y = centerY + dy;
-                    if (isWithinBounds(x, y) && this.grid[y][x] === TILE_TYPES.FLOOR && !(Math.abs(dx) < 2 && Math.abs(dy) < 2)) {
-                        this.grid[y][x] = TILE_TYPES.AXELOTL;
+                    if (isWithinBounds(x, y) && this.gridManager.getTile(x, y) === TILE_TYPES.FLOOR && !(Math.abs(dx) < 2 && Math.abs(dy) < 2)) {
+                        this.gridManager.setTile(x, y, TILE_TYPES.AXELOTL);
                         logger.log(`Axe-O-Lot'l spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
                         return;
                     }
@@ -153,7 +153,7 @@ export class ItemGenerator {
     }
 
     clearPathToCenter(x, y) {
-        const pathGenerator = new PathGenerator(this.grid);
+        const pathGenerator = new PathGenerator(this.gridManager);
         pathGenerator.clearPathToCenterForItem(x, y, this.zoneX, this.zoneY);
     }
 }

@@ -1,3 +1,5 @@
+import { PLAYER_STAT_CONSTANTS } from '../core/constants/ui.js';
+
 export class PlayerStats {
     constructor(player) {
         this.player = player;
@@ -6,8 +8,8 @@ export class PlayerStats {
 
     reset() {
         this.health = 3;
-        this.thirst = 50;
-        this.hunger = 50;
+        this.thirst = PLAYER_STAT_CONSTANTS.INITIAL_THIRST;
+        this.hunger = PLAYER_STAT_CONSTANTS.INITIAL_HUNGER;
         this.points = 0;
         this.spentDiscoveries = 0;
         this.dead = false;
@@ -29,14 +31,14 @@ export class PlayerStats {
     }
 
     setThirst(value) {
-        this.thirst = Math.max(0, Math.min(50, value));
+        this.thirst = Math.max(0, Math.min(PLAYER_STAT_CONSTANTS.INITIAL_THIRST, value));
         if (this.thirst === 0) {
             this.setDead();
         }
     }
 
     setHunger(value) {
-        this.hunger = Math.max(0, Math.min(50, value));
+        this.hunger = Math.max(0, Math.min(PLAYER_STAT_CONSTANTS.INITIAL_HUNGER, value));
         if (this.hunger === 0) {
             this.setDead();
         }

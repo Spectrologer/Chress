@@ -30,10 +30,10 @@ export class BaseZoneHandler {
      * Initialize all generator instances with appropriate parameters
      */
     initializeGenerators() {
-        this.structureGenerator = new StructureGenerator(this.zoneGen.grid);
-        this.featureGenerator = new FeatureGenerator(this.zoneGen.grid, this.foodAssets, this.depth);
+        this.structureGenerator = new StructureGenerator(this.zoneGen.gridManager);
+        this.featureGenerator = new FeatureGenerator(this.zoneGen.gridManager, this.foodAssets, this.depth);
         this.itemGenerator = new ItemGenerator(
-            this.zoneGen.grid,
+            this.zoneGen.gridManager,
             this.foodAssets,
             this.zoneX,
             this.zoneY,
@@ -41,7 +41,7 @@ export class BaseZoneHandler {
             this.depth
         );
         this.enemyGenerator = new EnemyGenerator(this.zoneGen.enemies, this.depth);
-        this.pathGenerator = new PathGenerator(this.zoneGen.grid);
+        this.pathGenerator = new PathGenerator(this.zoneGen.gridManager);
     }
 
     /**
@@ -123,7 +123,7 @@ export class BaseZoneHandler {
                 this.zoneLevel,
                 this.zoneX,
                 this.zoneY,
-                this.zoneGen.grid,
+                this.zoneGen.gridManager,
                 []
             );
         }

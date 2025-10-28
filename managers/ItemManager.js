@@ -42,16 +42,16 @@ export class ItemManager {
      * @param {Object} player - Player object
      * @param {number} x - Grid X coordinate
      * @param {number} y - Grid Y coordinate
-     * @param {Array} grid - Game grid
+     * @param {Object} gridManager - GridManager instance
      */
-    handleItemPickup(player, x, y, grid) {
-        const tile = grid[y][x];
+    handleItemPickup(player, x, y, gridManager) {
+        const tile = gridManager.getTile(x, y);
         if (!tile) return;
 
         const pickup = (item, sound = 'pickup') => {
             const success = this.service.pickupItem(item, sound);
             if (success) {
-                grid[y][x] = TILE_TYPES.FLOOR;
+                gridManager.setTile(x, y, TILE_TYPES.FLOOR);
             }
         };
 
@@ -64,7 +64,7 @@ export class ItemManager {
                 } else {
                     player.restoreThirst(GAMEPLAY_CONSTANTS.WATER_RESTORATION_AMOUNT);
                 }
-                grid[y][x] = TILE_TYPES.FLOOR;
+                gridManager.setTile(x, y, TILE_TYPES.FLOOR);
                 break;
 
             case TILE_TYPES.HEART:
@@ -74,7 +74,7 @@ export class ItemManager {
                     // If inventory full, consume directly
                     player.setHealth((player.getHealth ? player.getHealth() : 0) + GAMEPLAY_CONSTANTS.HEART_RESTORATION_AMOUNT);
                 }
-                grid[y][x] = TILE_TYPES.FLOOR;
+                gridManager.setTile(x, y, TILE_TYPES.FLOOR);
                 break;
 
             case TILE_TYPES.AXE:
@@ -103,7 +103,7 @@ export class ItemManager {
                             } else {
                                 player.restoreHunger(GAMEPLAY_CONSTANTS.FOOD_RESTORATION_AMOUNT);
                             }
-                            grid[y][x] = TILE_TYPES.FLOOR;
+                            gridManager.setTile(x, y, TILE_TYPES.FLOOR);
                             break;
 
                         case TILE_TYPES.BISHOP_SPEAR:

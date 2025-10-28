@@ -6,8 +6,8 @@ import { logger } from '../core/logger.js';
 import { isTileType, isTileObjectOfType, isFloor, isSign } from '../utils/TypeChecks.js';
 
 export class StructureGenerator {
-    constructor(grid) {
-        this.grid = grid;
+    constructor(gridManager) {
+        this.gridManager = gridManager;
     }
 
     addHouse(zoneX, zoneY) {
@@ -22,13 +22,13 @@ export class StructureGenerator {
                 // Place a PORT tile at the bottom-middle of the house as an entrance
                 // Centered for a 4-wide building, we place one door.
                 if (x === houseStartX + 1 && y === houseStartY + 2) {
-                    if (!isTileObjectOfType(this.grid[y][x], TILE_TYPES.SIGN)) {
-                        validateAndSetTile(this.grid, x, y, TILE_TYPES.PORT);
+                    if (!isTileObjectOfType(this.gridManager.getTile(x, y), TILE_TYPES.SIGN)) {
+                        validateAndSetTile(this.gridManager, x, y, TILE_TYPES.PORT);
                     }
                 } else if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1) {
                     // Check bounds for the rest of the club
-                    if (!isTileObjectOfType(this.grid[y][x], TILE_TYPES.SIGN)) {
-                        validateAndSetTile(this.grid, x, y, TILE_TYPES.HOUSE);
+                    if (!isTileObjectOfType(this.gridManager.getTile(x, y), TILE_TYPES.SIGN)) {
+                        validateAndSetTile(this.gridManager, x, y, TILE_TYPES.HOUSE);
                     }
                 }
             }
@@ -38,22 +38,22 @@ export class StructureGenerator {
         for (let x = houseStartX; x < houseStartX + 3; x++) {
             const frontY = houseStartY + 3; // One row south of the club
             if (frontY < GRID_SIZE - 1) {
-                this.grid[frontY][x] = TILE_TYPES.FLOOR;
+                this.gridManager.setTile(x, frontY, TILE_TYPES.FLOOR);
             }
         }
 
         // Clear a bit more space around the house
         for (let y = houseStartY + 3; y < houseStartY + 5 && y < GRID_SIZE - 1; y++) {
             for (let x = houseStartX - 1; x < houseStartX + 5 && x >= 1 && x < GRID_SIZE - 1; x++) {
-                this.grid[y][x] = TILE_TYPES.FLOOR;
+                this.gridManager.setTile(x, y, TILE_TYPES.FLOOR);
             }
         }
 
         // Always add a cistern behind the house in the home zone (0,0)
         if (zoneX === 0 && zoneY === 0) {
             // Place PORT tile two tiles above the sign (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
-            this.grid[3][2] = TILE_TYPES.PORT;     // Top part (entrance) - two tiles above the sign
-            this.grid[4][2] = TILE_TYPES.CISTERN; // Bottom part
+            this.gridManager.setTile(2, 3, TILE_TYPES.PORT);     // Top part (entrance) - two tiles above the sign
+            this.gridManager.setTile(2, 4, TILE_TYPES.CISTERN); // Bottom part
         }
     }
 
@@ -62,7 +62,7 @@ export class StructureGenerator {
         if (zoneX === 0 && zoneY === 0) {
             const signX = 2;
             const signY = 5;
-            this.grid[signY][signX] = { type: TILE_TYPES.SIGN, message: message };
+            this.gridManager.setTile(signX, signY, { type: TILE_TYPES.SIGN, message: message });
             return; // Placed successfully
         }
 
@@ -80,7 +80,7 @@ export class StructureGenerator {
             validate: (x, y) => {
                 for (let dy = 0; dy < height; dy++) {
                     for (let dx = 0; dx < width; dx++) {
-                        if (!isAllowedTile(this.grid[y + dy][x + dx], allowedTiles)) {
+                        if (!isAllowedTile(this.gridManager.getTile(x + dx, y + dy), allowedTiles)) {
                             return false;
                         }
                     }
@@ -92,7 +92,7 @@ export class StructureGenerator {
             const { x, y } = pos;
             for (let dy = 0; dy < height; dy++) {
                 for (let dx = 0; dx < width; dx++) {
-                    this.grid[y + dy][x + dx] = tileType;
+                    this.gridManager.setTile(x + dx, y + dy, tileType);
                 }
             }
             if (onPlacedCallback) {
@@ -128,7 +128,8 @@ export class StructureGenerator {
                 // Check 3x3 area + one tile in front for the door
                 for (let dy = 0; dy < 4; dy++) {
                     for (let dx = 0; dx < 3; dx++) {
-                        if (!isAllowedTile(this.grid[y + dy]?.[x + dx], allowedTiles)) return false;
+                        const tile = this.gridManager.getTile(x + dx, y + dy);
+                        if (!isAllowedTile(tile, allowedTiles)) return false;
                     }
                 }
                 return true;
@@ -139,7 +140,7 @@ export class StructureGenerator {
             const { x, y } = pos;
             for (let dy = 0; dy < 3; dy++) {
                 for (let dx = 0; dx < 3; dx++) {
-                    this.grid[y + dy][x + dx] = (dy === 2 && dx === 1) ? TILE_TYPES.PORT : TILE_TYPES.SHACK;
+                    this.gridManager.setTile(x + dx, y + dy, (dy === 2 && dx === 1) ? TILE_TYPES.PORT : TILE_TYPES.SHACK);
                 }
             }
 
@@ -151,9 +152,9 @@ export class StructureGenerator {
             for (let clearY = entranceY - 1; clearY <= entranceY + 3 && clearY < GRID_SIZE - 1; clearY++) {
                 for (let clearX = entranceX - 1; clearX <= entranceX + 1 && clearX >= 1 && clearX < GRID_SIZE - 1; clearX++) {
                     // Only clear rocks, shrubs, and other obstacles; leave floor/grass/water/shack/port
-                    const tile = this.grid[clearY][clearX];
+                    const tile = this.gridManager.getTile(clearX, clearY);
                     if (isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY)) {
-                        this.grid[clearY][clearX] = TILE_TYPES.FLOOR;
+                        this.gridManager.setTile(clearX, clearY, TILE_TYPES.FLOOR);
                     }
                 }
             }
@@ -169,14 +170,14 @@ export class StructureGenerator {
         if (zoneX === 0 && zoneY === 0 && force) {
             // Always add the cistern behind the house in the home zone (0,0)
             // Place PORT tile two tiles above the sign (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
-            this.grid[3][2] = TILE_TYPES.PORT;     // Top part (entrance)
-            this.grid[4][2] = TILE_TYPES.CISTERN; // Bottom part
+            this.gridManager.setTile(2, 3, TILE_TYPES.PORT);     // Top part (entrance)
+            this.gridManager.setTile(2, 4, TILE_TYPES.CISTERN); // Bottom part
             return;
         }
 
         // Handle forced placement at specific coordinates (e.g., from a hole)
         if (forcedX !== null && forcedY !== null) {
-            this.grid[forcedY][forcedX] = TILE_TYPES.PORT;
+            this.gridManager.setTile(forcedX, forcedY, TILE_TYPES.PORT);
             // The cistern structure is a PORT on top of a CISTERN tile. But for a hole, it's just a PORT.
             // The logic in ZoneTransitionManager handles this. We just need the PORT to exist.
             return;
@@ -191,22 +192,23 @@ export class StructureGenerator {
             maxX: GRID_SIZE - 3,
             maxY: GRID_SIZE - 3,
             validate: (x, y) => {
-                const topTile = this.grid[y][x];
-                const bottomTile = this.grid[y + 1][x];
+                const topTile = this.gridManager.getTile(x, y);
+                const bottomTile = this.gridManager.getTile(x, y + 1);
                 return isAllowedTile(topTile, placeableTiles) && isAllowedTile(bottomTile, placeableTiles);
             }
         });
         if (pos) {
             const { x, y } = pos;
-            this.grid[y][x] = TILE_TYPES.PORT;
-            this.grid[y + 1][x] = TILE_TYPES.CISTERN;
+            this.gridManager.setTile(x, y, TILE_TYPES.PORT);
+            this.gridManager.setTile(x, y + 1, TILE_TYPES.CISTERN);
         }
     }
 
     checkSignExists() {
-        for (let y = 0; y < this.grid.length; y++) {
-            for (let x = 0; x < this.grid[y].length; x++) {
-                if (isSign(this.grid[y][x])) {
+        const gridSize = this.gridManager.getSize();
+        for (let y = 0; y < gridSize; y++) {
+            for (let x = 0; x < gridSize; x++) {
+                if (isSign(this.gridManager.getTile(x, y))) {
                     return true;
                 }
             }
@@ -234,10 +236,10 @@ export class StructureGenerator {
             x = 3;
             y = 4;
             // Override any tile here to place the sign
-            this.grid[y][x] = {
+            this.gridManager.setTile(x, y, {
                 type: TILE_TYPES.SIGN,
                 message: message
-            };
+            });
             Sign.spawnedMessages.add(message);
             logger.log(`Home note sign placed at tile 3,4 in zone (0,0)`);
             return;
@@ -251,26 +253,26 @@ export class StructureGenerator {
         // Try to place the sign in a valid location (max 50 attempts)
         const pos = findValidPlacement({
             maxAttempts: 50,
-            validate: (x, y) => isFloor(this.grid[y][x])
+            validate: (x, y) => isFloor(this.gridManager.getTile(x, y))
         });
         if (pos) {
             const { x, y } = pos;
             const message = Sign.getProceduralMessage(zoneX, zoneY);
-            this.grid[y][x] = {
+            this.gridManager.setTile(x, y, {
                 type: TILE_TYPES.SIGN,
                 message: message
-            };
+            });
         }
     }
 
     _placeSignRandomly(message, onPlacedCallback = null) {
         const pos = findValidPlacement({
             maxAttempts: 50,
-            validate: (x, y) => isFloor(this.grid[y][x])
+            validate: (x, y) => isFloor(this.gridManager.getTile(x, y))
         });
         if (pos) {
             const { x, y } = pos;
-            this.grid[y][x] = { type: TILE_TYPES.SIGN, message: message };
+            this.gridManager.setTile(x, y, { type: TILE_TYPES.SIGN, message: message });
             if (onPlacedCallback) {
                 onPlacedCallback();
             }

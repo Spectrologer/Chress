@@ -3,6 +3,7 @@ import { eventBus } from './EventBus.js';
 import { EventTypes } from './EventTypes.js';
 import { errorHandler, ErrorSeverity } from './ErrorHandler.js';
 import { safeCallAsync } from '../utils/SafeServiceCall.js';
+import { VOLUME_CONSTANTS, SFX_CONSTANTS } from './constants/audio.js';
 
 export class SoundManager {
     constructor() {
@@ -10,7 +11,7 @@ export class SoundManager {
         this.sfxEnabled = true;
         this.musicEnabled = true;
         this.audioContext = null; // lazily created/resumed on user gesture
-        this.currentMusicVolume = 0.0625; // default music volume (reduced)
+        this.currentMusicVolume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME; // default music volume (reduced)
         this.currentMusicTrack = null; // track file path intended to be playing
         this.wasMusicPlayingBeforeBlur = false; // track if music was playing before losing focus
         this.loadSounds();
@@ -85,7 +86,7 @@ export class SoundManager {
                 }
                 if (this.backgroundGain && this.audioContext) {
                     // Restore volume via gain node
-                    this.backgroundGain.gain.setValueAtTime(this.currentMusicVolume || 0.0625, this.audioContext.currentTime);
+                    this.backgroundGain.gain.setValueAtTime(this.currentMusicVolume || VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, this.audioContext.currentTime);
                 }
             } catch (e) {
                 // Ignore resume errors
@@ -110,13 +111,13 @@ export class SoundManager {
     addSound(name, filePath) {
         const audio = new Audio();
         audio.src = filePath;
-        audio.volume = 0.2; // Slightly more subtle default
+        audio.volume = VOLUME_CONSTANTS.DEFAULT_SFX_VOLUME; // Slightly more subtle default
         this.sounds[name] = audio;
     }
 
     // Play a background music track by file path (loops)
     // Default volume reduced to ~half to make music quieter
-    playBackground(filePath, volume = 0.0625) {
+    playBackground(filePath, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME) {
         try {
             // If music is disabled, remember the intended track but don't start it
             if (this.musicEnabled === false) {
@@ -181,7 +182,7 @@ export class SoundManager {
 
     // Play background using WebAudio so we can crossfade smoothly between tracks.
     // If the same file is already playing, keep it running.
-    playBackgroundContinuous(filePath, volume = 0.0625, crossfadeMs = 600) {
+    playBackgroundContinuous(filePath, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, crossfadeMs = VOLUME_CONSTANTS.DEFAULT_CROSSFADE_DURATION) {
         try {
             // If music is disabled, remember the intended track but don't start it
             if (this.musicEnabled === false) {
@@ -266,7 +267,7 @@ export class SoundManager {
             // Create a fresh audio instance to allow overlapping sounds
             const newAudio = audio.cloneNode();
             // Keep clone volume in line with the stored asset but slightly subdued
-            newAudio.volume = Math.min(1, audio.volume || 0.2);
+            newAudio.volume = Math.min(VOLUME_CONSTANTS.MAX_VOLUME, audio.volume || VOLUME_CONSTANTS.DEFAULT_SFX_VOLUME);
             newAudio.play().catch(error => {
                 // Could not play sound
             });
@@ -294,12 +295,12 @@ export class SoundManager {
             } else {
                 // restore music based on current zone if available
                 if (this.backgroundGain && this.backgroundAudioElement) {
-                    try { this.backgroundGain.gain.setValueAtTime(this.currentMusicVolume || 0.0625, this.audioContext.currentTime); } catch (e) {}
+                    try { this.backgroundGain.gain.setValueAtTime(this.currentMusicVolume || VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, this.audioContext.currentTime); } catch (e) {}
                 } else if (this.backgroundAudioElement) {
                     try { this.backgroundAudioElement.play().catch(() => {}); } catch (e) {}
                 } else if (this.currentMusicTrack) {
                     // No existing background element; start the stored track
-                    try { this.playBackgroundContinuous(this.currentMusicTrack, this.currentMusicVolume || 0.0625); } catch (e) {}
+                    try { this.playBackgroundContinuous(this.currentMusicTrack, this.currentMusicVolume || VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME); } catch (e) {}
                 }
             }
         } catch (e) {}
@@ -321,111 +322,111 @@ export class SoundManager {
             switch(soundName) {
                 case 'attack':
                     // Attack sound: descending pitch (subtler)
-                    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(110, audioContext.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.06, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.008, audioContext.currentTime + 0.2);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.ATTACK_FREQ_START, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(SFX_CONSTANTS.ATTACK_FREQ_END, audioContext.currentTime + SFX_CONSTANTS.ATTACK_DURATION);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.ATTACK_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.ATTACK_DECAY, audioContext.currentTime + SFX_CONSTANTS.ATTACK_TOTAL_DURATION);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.2);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.ATTACK_TOTAL_DURATION);
                     break;
 
                 case 'tap_enemy':
                     // Distinct subtle tone for tapping an enemy tile (not overly loud)
-                    oscillator.frequency.setValueAtTime(160, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(320, audioContext.currentTime + 0.06);
-                    gainNode.gain.setValueAtTime(0.035, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.005, audioContext.currentTime + 0.12);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.TAP_ENEMY_FREQ_START, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(SFX_CONSTANTS.TAP_ENEMY_FREQ_END, audioContext.currentTime + SFX_CONSTANTS.TAP_ENEMY_DURATION);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.TAP_ENEMY_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.TAP_ENEMY_DECAY, audioContext.currentTime + SFX_CONSTANTS.TAP_ENEMY_TOTAL_DURATION);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.12);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.TAP_ENEMY_TOTAL_DURATION);
                     break;
 
                 case 'chop':
                     // Chopping sound: low frequency burst (subtler)
-                    oscillator.frequency.setValueAtTime(80, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.008, audioContext.currentTime + 0.15);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.CHOP_FREQUENCY, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.CHOP_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.CHOP_DECAY, audioContext.currentTime + SFX_CONSTANTS.CHOP_TOTAL_DURATION);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.15);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.CHOP_TOTAL_DURATION);
                     break;
 
                 case 'smash':
                     // Smashing sound: noisy burst (subtler)
-                    oscillator.frequency.setValueAtTime(60, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.008, audioContext.currentTime + 0.25);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.SMASH_FREQUENCY, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.SMASH_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.SMASH_DECAY, audioContext.currentTime + SFX_CONSTANTS.SMASH_TOTAL_DURATION);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.25);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.SMASH_TOTAL_DURATION);
                     break;
 
                 case 'hurt':
                     // Hurt sound: low descending tone with slight warble for pain effect
-                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.15);
-                    gainNode.gain.setValueAtTime(0.12, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.008, audioContext.currentTime + 0.2);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.HURT_FREQ_START, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(SFX_CONSTANTS.HURT_FREQ_END, audioContext.currentTime + SFX_CONSTANTS.HURT_DURATION);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.HURT_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.HURT_DECAY, audioContext.currentTime + SFX_CONSTANTS.HURT_DURATION);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.2);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.HURT_DURATION);
                     break;
 
                 case 'move':
                     // Very subtle movement sound
-                    oscillator.frequency.setValueAtTime(120, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.004, audioContext.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.MOVE_FREQUENCY, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.MOVE_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.MOVE_DECAY, audioContext.currentTime + SFX_CONSTANTS.MOVE_STOP_TIME);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.08);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.MOVE_STOP_TIME);
                     break;
 
                 case 'pickup':
                     // Pickup sound: ascending ding (subtler)
-                    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.08);
-                    gainNode.gain.setValueAtTime(0.04, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.008, audioContext.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.PICKUP_FREQ_START, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(SFX_CONSTANTS.PICKUP_FREQ_END, audioContext.currentTime + SFX_CONSTANTS.PICKUP_DURATION);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.PICKUP_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.PICKUP_DECAY, audioContext.currentTime + SFX_CONSTANTS.PICKUP_DURATION);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.1);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.PICKUP_DURATION);
                     break;
 
                 case 'bloop':
                     // Subtle bloop/ping for selection (more subdued)
-                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(660, audioContext.currentTime + 0.06);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.BLOOP_FREQ_START, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(SFX_CONSTANTS.BLOOP_FREQ_END, audioContext.currentTime + SFX_CONSTANTS.BLOOP_DURATION);
                     // Reduce overall selection volume to be less intrusive
-                    gainNode.gain.setValueAtTime(0.015, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.003, audioContext.currentTime + 0.12);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.BLOOP_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.BLOOP_DECAY, audioContext.currentTime + SFX_CONSTANTS.BLOOP_TOTAL_DURATION);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.12);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.BLOOP_TOTAL_DURATION);
                     break;
 
                 case 'bow_shot':
                     // Twang-like bow shot: quick pluck + short higher overtone
-                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(700, audioContext.currentTime + 0.05);
-                    gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.004, audioContext.currentTime + 0.2);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.BOW_SHOT_FREQ_START, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(SFX_CONSTANTS.BOW_SHOT_FREQ_END, audioContext.currentTime + SFX_CONSTANTS.BOW_SHOT_DURATION);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.BOW_SHOT_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.BOW_SHOT_DECAY, audioContext.currentTime + SFX_CONSTANTS.BOW_SHOT_TOTAL_DURATION);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.18);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.BOW_SHOT_TOTAL_DURATION);
                     break;
 
                 case 'double_tap':
                     // Slightly different, shorter, and subtler tone for double-tap
-                    oscillator.frequency.setValueAtTime(660, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.035);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.DOUBLE_TAP_FREQ_START, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(SFX_CONSTANTS.DOUBLE_TAP_FREQ_END, audioContext.currentTime + SFX_CONSTANTS.DOUBLE_TAP_DURATION);
                     // Make double-tap more subtle
-                    gainNode.gain.setValueAtTime(0.02, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.004, audioContext.currentTime + 0.07);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.DOUBLE_TAP_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.DOUBLE_TAP_DECAY, audioContext.currentTime + SFX_CONSTANTS.DOUBLE_TAP_TOTAL_DURATION);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.08);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.DOUBLE_TAP_TOTAL_DURATION);
                     break;
 
                 default:
                     // Default attack sound
-                    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(110, audioContext.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.frequency.setValueAtTime(SFX_CONSTANTS.ATTACK_FREQ_START, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(SFX_CONSTANTS.ATTACK_FREQ_END, audioContext.currentTime + SFX_CONSTANTS.ATTACK_DURATION);
+                    gainNode.gain.setValueAtTime(SFX_CONSTANTS.DEFAULT_GAIN, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(SFX_CONSTANTS.DEFAULT_DECAY, audioContext.currentTime + SFX_CONSTANTS.ATTACK_TOTAL_DURATION);
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.2);
+                    oscillator.stop(audioContext.currentTime + SFX_CONSTANTS.ATTACK_TOTAL_DURATION);
             }
         } catch (error) {
             // Could not play procedural sound

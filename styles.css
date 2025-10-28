@@ -2673,16 +2673,24 @@ h1 {
     position: absolute;
     left: 12px;
     top: 10px;
-    background: linear-gradient(135deg, #CD853F, #B8860B);
-    border: 2px solid #8B4513;
-    color: #3A2418;
-    padding: 6px 10px;
-    font-weight: 700;
-    border-radius: 6px;
+    background: linear-gradient(135deg, #E8D5C3, #D4C4AA);
+    border: 2px solid #C9AB76;
+    color: #5a4223;
+    padding: 6px 12px;
+    font-weight: 600;
+    font-family: 'Cinzel', serif;
+    border-radius: 4px;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
     z-index: 30; /* above header content */
-    font-size: 0.95em;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.stats-config-button:hover {
+    transform: translateX(2px);
+    background: linear-gradient(135deg, #F0DDD1, #DCCBB7);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
 /* Back button inside the config overlay (top-left). Small, consistent with other

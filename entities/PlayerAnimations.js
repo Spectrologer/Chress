@@ -1,4 +1,5 @@
 import { ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '../core/constants/index.js';
+import { RENDERING_CONSTANTS } from '../core/constants/animation.js';
 
 export class PlayerAnimations {
     constructor(player) {
@@ -45,7 +46,7 @@ export class PlayerAnimations {
         this.backflipTotal = this.backflipFrames;
         this.backflipAngle = 0;
         // Jump slightly higher than normal lift for backflip
-        this.backflipLiftFrames = Math.max(6, Math.floor(frames * PHYSICS_CONSTANTS.BACKFLIP_LIFT_FRAME_RATIO));
+        this.backflipLiftFrames = Math.max(ANIMATION_CONSTANTS.BACKFLIP_DELAY_FRAMES, Math.floor(frames * PHYSICS_CONSTANTS.BACKFLIP_LIFT_FRAME_RATIO));
         this.backflipLiftTotal = this.backflipLiftFrames;
         this.backflipLiftOffsetY = 0;
     }
@@ -94,7 +95,7 @@ export class PlayerAnimations {
                     const elapsed = this.backflipTotal - this.backflipFrames; // 0..total-1
                     const t = Math.max(0, Math.min(1, elapsed / Math.max(1, this.backflipTotal)));
                     // Ease-in-out for nicer motion
-                    const ease = 0.5 - 0.5 * Math.cos(Math.PI * t);
+                    const ease = ANIMATION_CONSTANTS.EASE_BASE - ANIMATION_CONSTANTS.EASE_AMPLITUDE * Math.cos(Math.PI * t);
                     // Single full rotation, counterclockwise (-2PI)
                     this.backflipAngle = -ease * Math.PI * 2; // 0..-2PI
                     this.backflipFrames--;

@@ -49,7 +49,7 @@ class UndergroundHandler extends BaseZoneHandler {
         const handlers = {
             cistern: () => {
                 this.structureGenerator.addCistern(this.zoneX, this.zoneY, true, x, y);
-                this.zoneGen.grid[y + 1][x] = TILE_TYPES.CISTERN;
+                this.zoneGen.gridManager.setTile(x, y + 1, TILE_TYPES.CISTERN);
             },
             hole: () => this.placeStairPort(x, y, 'stairup', from),
             pitfall: () => this.placeStairPort(x, y, 'stairup', from),
@@ -61,7 +61,7 @@ class UndergroundHandler extends BaseZoneHandler {
     }
 
     placeStairPort(x, y, portKind, from) {
-        this.zoneGen.grid[y][x] = { type: TILE_TYPES.PORT, portKind };
+        this.zoneGen.gridManager.setTile(x, y, { type: TILE_TYPES.PORT, portKind });
         try { logger?.debug?.(`undergroundHandler: placed ${portKind} at (${x},${y}) from ${from}`); } catch (e) {}
     }
 
@@ -83,14 +83,14 @@ class UndergroundHandler extends BaseZoneHandler {
                         continue;
                     }
 
-                    const tile = this.zoneGen.grid[sy][sx];
+                    const tile = this.zoneGen.gridManager.getTile(sx, sy);
                     const isFloor = isTileType(tile, TILE_TYPES.FLOOR);
                     const isExit = isTileType(tile, TILE_TYPES.EXIT);
                     const isObjectPort = isPort(tile);
 
                     // Only place on a plain floor tile
                     if (isFloor && !isExit && !isObjectPort) {
-                        this.zoneGen.grid[sy][sx] = { type: TILE_TYPES.PORT, portKind: 'stairdown' };
+                        this.zoneGen.gridManager.setTile(sx, sy, { type: TILE_TYPES.PORT, portKind: 'stairdown' });
                         try { logger.debug?.(`Placed random stairdown at (${sx},${sy})`); } catch (e) {}
                         break;
                     }

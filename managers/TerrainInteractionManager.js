@@ -25,7 +25,7 @@ export class TerrainInteractionManager {
                 // This will trigger the chop logic inside player.move, which now handles turn ending.
                 // The player won't actually move into the tile.
                 // We pass a dummy onZoneTransition callback.
-                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, () => {});
+                this.game.player.move(gridCoords.x, gridCoords.y, this.game.gridManager, () => {});
                 return true;
             }
         }
@@ -34,7 +34,7 @@ export class TerrainInteractionManager {
             if (hasHammer) {
                 // Perform breaking action
                 // This will trigger the smash logic inside player.move, which now handles turn ending.
-                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, () => {});
+                this.game.player.move(gridCoords.x, gridCoords.y, this.game.gridManager, () => {});
                 return true;
             }
         }
@@ -54,7 +54,7 @@ export class TerrainInteractionManager {
             if (hasAxe) {
                 // Perform chopping action - since player is adjacent, move to it and chop
                 this.game.handleEnemyMovements(); // Enemies move before player
-                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
+                this.game.player.move(gridCoords.x, gridCoords.y, this.game.gridManager, (zoneX, zoneY, exitSide) => {
                     this.game.transitionToZone(zoneX, zoneY, exitSide, playerPos.x, playerPos.y);
                 });
                 this.game.checkCollisions();
@@ -65,7 +65,7 @@ export class TerrainInteractionManager {
         } else if (TileRegistry.isBreakable(tappedTile)) {
             if (hasHammer) {
                 // Perform breaking action
-                this.game.player.move(gridCoords.x, gridCoords.y, this.game.grid, (zoneX, zoneY, exitSide) => {
+                this.game.player.move(gridCoords.x, gridCoords.y, this.game.gridManager, (zoneX, zoneY, exitSide) => {
                     this.game.transitionToZone(zoneX, zoneY, exitSide, playerPos.x, playerPos.y);
                 });
                 this.game.handleEnemyMovements();

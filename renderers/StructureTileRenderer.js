@@ -165,16 +165,16 @@ export class StructureTileRenderer {
         }
     }
 
-    renderEnemyTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
+    renderEnemyTile(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel, baseRenderer) {
         // Use the stored enemyType from the grid tile
-        const tile = grid[y][x];
+        const tile = gridManager.getTile ? gridManager.getTile(x, y) : gridManager[y]?.[x];
         let enemyKey = 'lizardy';
 
         // First draw the base tile
         if (zoneLevel >= 4 && RendererUtils.isImageLoaded(this.images, 'desert')) {
             ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+            baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel);
         }
 
     // Try to draw the enemy image if loaded, otherwise use fallback

@@ -1,4 +1,5 @@
 import { TILE_SIZE, GRID_SIZE } from '../core/constants/index.js';
+import { MOTION_CONSTANTS } from '../core/constants/rendering.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 // Scrolling tiled fog overlay using a preloaded texture (assets/fx/fog.png).
@@ -15,8 +16,8 @@ export class FogRenderer {
         // Scrolling offsets (pixels) and speed (pixels per frame)
         this.offsetX = 0;
         this.offsetY = 0;
-        this.speedX = 0.3; // slow horizontal scroll
-        this.speedY = 0.08; // gentle vertical drift
+        this.speedX = MOTION_CONSTANTS.FOG_SPEED_X; // slow horizontal scroll
+        this.speedY = MOTION_CONSTANTS.FOG_SPEED_Y; // gentle vertical drift
 
         // Pattern instance cached per frame when available
         this._pattern = null;

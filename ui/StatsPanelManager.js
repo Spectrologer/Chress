@@ -117,7 +117,6 @@ export class StatsPanelManager {
                 <div class="stats-portrait-container">
                     <img src="assets/protag/faceset.png" alt="Player Portrait" class="player-portrait">
                 </div>
-                <h2>CHALK</h2>
             </div>
             <div class="stats-list">
                 <div class="stat-item"><span class="stat-label">Captures:</span> <span class="stat-value">${enemiesCaptured}</span></div>
