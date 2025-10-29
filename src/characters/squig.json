@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/fauna/squig.png",
-    "portrait": "assets/fauna/squigface.png",
+    "sprite": "assets/characters/npcs/squig.png",
+    "portrait": "assets/characters/npcs/portraits/squigface.png",
     "tileType": "SQUIG"
   },
   "placement": {
@@ -27,17 +27,17 @@
       {
         "id": "squig_water",
         "requires": {
-          "resource": "food/veg",
+          "resource": "items/consumables/nut",
           "amount": 1,
           "displayName": "Nut",
-          "icon": "assets/food/veg/nut.png"
+          "icon": "assets/items/consumables/nut.png"
         },
         "gives": {
           "type": "item",
           "id": "water",
           "amount": 1,
           "displayName": "Water",
-          "icon": "assets/items/water.png"
+          "icon": "assets/items/consumables/water.png"
         },
         "repeatable": true
       }

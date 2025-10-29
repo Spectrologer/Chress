@@ -115,7 +115,7 @@ export class StatsPanelManager {
                     </div>
                 </div>
                 <div class="stats-portrait-container">
-                    <img src="assets/protag/faceset.png" alt="Player Portrait" class="player-portrait">
+                    <img src="assets/characters/player/faceset.png" alt="Player Portrait" class="player-portrait">
                 </div>
             </div>
             <div class="stats-list">

@@ -62,7 +62,7 @@ export class ItemMetadata {
                 const foodName = this._formatFoodName(item.foodType);
                 const foodQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
 
-                if (item.foodType === 'food/aguamelin.png') {
+                if (item.foodType === 'items/consumables/aguamelin.png') {
                     return `${foodName}${foodQuantity} - Restores 5 hunger, 5 thirst`;
                 }
                 return `${foodName}${foodQuantity} - Restores 10 hunger`;
@@ -221,13 +221,10 @@ export class ItemMetadata {
         if (!foodType) return '';
 
         try {
-            const parts = foodType.split('/');
-            if (parts.length >= 2) {
-                return parts[1].replace('.png', '');
-            }
-            return parts.pop().replace('.png', '');
-        } catch (e) {
+            // Extract just the filename (e.g., 'items/consumables/beaf.png' -> 'beaf')
             return foodType.split('/').pop().replace('.png', '');
+        } catch (e) {
+            return foodType.replace('.png', '');
         }
     }
 }

@@ -1,6 +1,6 @@
-import { TransientGameState } from './state/TransientGameState.js';
-import { eventBus } from './core/EventBus.js';
-import { EventTypes } from './core/EventTypes.js';
+import { TransientGameState } from '../src/state/TransientGameState.js';
+import { eventBus } from '../src/core/EventBus.js';
+import { EventTypes } from '../src/core/EventTypes.js';
 
 // Create a new TransientGameState instance
 const state = new TransientGameState();

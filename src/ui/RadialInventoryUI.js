@@ -245,12 +245,12 @@ export class RadialInventoryUI {
     _getImageForItem(item) {
         // Best-effort mapping to existing assets
         switch (item.type) {
-            case 'bomb': return 'assets/items/bomb.png';
-            case 'horse_icon': return 'assets/items/horse.png';
-            case 'bow': return 'assets/items/bow.png';
-            case 'bishop_spear': return 'assets/items/spear.png';
-            case 'book_of_time_travel': return 'assets/items/book.png';
-            case 'shovel': return 'assets/items/shovel.png';
+            case 'bomb': return 'assets/items/misc/bomb.png';
+            case 'horse_icon': return 'assets/items/misc/horse.png';
+            case 'bow': return 'assets/items/equipment/bow.png';
+            case 'bishop_spear': return 'assets/items/equipment/spear.png';
+            case 'book_of_time_travel': return 'assets/items/misc/book.png';
+            case 'shovel': return 'assets/items/equipment/shovel.png';
             default: return item.image || 'assets/items/unknown.png';
         }
     }

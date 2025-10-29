@@ -55,65 +55,102 @@ npm test:coverage # Generate test coverage report
 
 ### Directory Structure & Key Systems
 
+#### Root Structure
+```
+Chress/
+├── assets/              # All game assets (images, sounds)
+│   ├── characters/     # Character sprites and portraits
+│   │   ├── player/    # Player character animations
+│   │   ├── enemies/   # Enemy sprites and portraits
+│   │   └── npcs/      # NPC sprites and portraits
+│   ├── environment/   # Environmental assets
+│   │   ├── floors/    # Floor tiles
+│   │   ├── walls/     # Wall tiles
+│   │   ├── flora/     # Plants, vegetation
+│   │   ├── doodads/   # Props, furniture, signs
+│   │   └── effects/   # Visual effects (smoke, explosions)
+│   ├── items/         # Item sprites
+│   │   ├── equipment/ # Weapons and tools
+│   │   ├── consumables/ # Food and drinks
+│   │   └── misc/      # Other items
+│   ├── ui/            # UI elements
+│   └── hidden/        # Unused/easter egg assets
+├── src/               # All JavaScript source code
+│   ├── core/          # Core game systems
+│   ├── managers/      # Game logic managers
+│   ├── renderers/     # Rendering systems
+│   ├── ui/            # UI components
+│   ├── entities/      # Game entities
+│   ├── controllers/   # Input/game controllers
+│   ├── generators/    # Procedural generation
+│   ├── state/         # State management
+│   └── utils/         # Utility functions
+├── boards/            # Pre-made board definitions
+├── tests/             # Jest unit tests
+├── docs/              # Documentation
+├── sfx/               # Sound effects
+└── fonts/             # Web fonts
+```
+
 #### Root Files
 - [index.html](index.html) — Main entry point with canvas and UI overlays
 - [styles.css](styles.css) — Global styling
 - [package.json](package.json) — Dependencies and scripts
 
-#### Core Systems ([core/](core/))
-- **[GameInitializer.js](core/GameInitializer.js)** — Bootstrap: canvas setup, assets, event listeners
-- **[Game.js](core/game.js)** — Main Game class extending GameContext
-- **[GameStateManager.js](core/GameStateManager.js)** — Save/load, zone caching, message logs
-- **[ServiceContainer.js](core/ServiceContainer.js)** — Dependency injection with lazy initialization (30+ services)
-- **[EventBus.js](core/EventBus.js)** — Centralized pub-sub event system
-- **[TurnManager.js](core/TurnManager.js)** — Turn queue and combat turn execution
-- **[ZoneGenerator.js](core/ZoneGenerator.js)** — Main zone generation orchestrator
-- **[SaveSerializer.js](core/SaveSerializer.js)** / **[SaveDeserializer.js](core/SaveDeserializer.js)** — Save system
-- **[ErrorHandler.js](core/ErrorHandler.js)** / **[GlobalErrorHandler.js](core/GlobalErrorHandler.js)** — Error handling with Sentry
-- **Zone Handlers**: [BaseZoneHandler.js](core/handlers/BaseZoneHandler.js), [surfaceHandler.js](core/handlers/surfaceHandler.js), [undergroundHandler.js](core/handlers/undergroundHandler.js)
-- **Spawn Commands**: [BaseSpawnCommand.js](core/commands/spawn/BaseSpawnCommand.js), [EnemySpawnCommands.js](core/commands/spawn/EnemySpawnCommands.js)
+#### Core Systems ([src/core/](src/core/))
+- **[[GameInitializer.js](src/core/](src/core/GameInitializer.js)** — Bootstrap: canvas setup, assets, event listeners
+- **[[Game.js](src/core/](src/core/game.js)** — Main Game class extending GameContext
+- **[[GameStateManager.js](src/core/](src/core/GameStateManager.js)** — Save/load, zone caching, message logs
+- **[[ServiceContainer.js](src/core/](src/core/ServiceContainer.js)** — Dependency injection with lazy initialization (30+ services)
+- **[[EventBus.js](src/core/](src/core/EventBus.js)** — Centralized pub-sub event system
+- **[[TurnManager.js](src/core/](src/core/TurnManager.js)** — Turn queue and combat turn execution
+- **[[ZoneGenerator.js](src/core/](src/core/ZoneGenerator.js)** — Main zone generation orchestrator
+- **[[SaveSerializer.js](src/core/SaveSerializer.js)** / **[SaveDeserializer.js](src/core/](src/core/SaveDeserializer.js)** — Save system
+- **[[ErrorHandler.js](src/core/ErrorHandler.js)** / **[GlobalErrorHandler.js](src/core/](src/core/GlobalErrorHandler.js)** — Error handling with Sentry
+- **Zone Handlers**: [[BaseZoneHandler.js](src/core/handlers/BaseZoneHandler.js), [surfaceHandler.js](src/core/handlers/surfaceHandler.js), [undergroundHandler.js](src/core/](src/core/handlers/undergroundHandler.js)
+- **Spawn Commands**: [[BaseSpawnCommand.js](src/core/commands/spawn/BaseSpawnCommand.js), [EnemySpawnCommands.js](src/core/](src/core/commands/spawn/EnemySpawnCommands.js)
 
-#### Managers ([managers/](managers/)) — 15+ Specialized Managers
+#### Managers ([[managers/](src/managers/](src/managers/)) — 15+ Specialized Managers
 
 **Combat & Interaction**:
-- **[CombatManager.js](managers/CombatManager.js)** — Enemy movements, collisions, defeat flow
-- **[CombatActionManager.js](managers/CombatActionManager.js)** — Individual combat actions
-- **[EnemyDefeatFlow.js](managers/EnemyDefeatFlow.js)** — Defeat logic, rewards, combo tracking
-- **[InteractionManager.js](managers/InteractionManager.js)** — Player tile interactions
-- **[NPCInteractionManager.js](managers/NPCInteractionManager.js)** — NPC dialogue and barter
-- **[EnvironmentalInteractionManager.js](managers/EnvironmentalInteractionManager.js)** — Environmental tiles (pits, etc.)
-- **[TerrainInteractionManager.js](managers/TerrainInteractionManager.js)** — Terrain-specific interactions
+- **[[CombatManager.js](src/managers/](src/managers/CombatManager.js)** — Enemy movements, collisions, defeat flow
+- **[[CombatActionManager.js](src/managers/](src/managers/CombatActionManager.js)** — Individual combat actions
+- **[[EnemyDefeatFlow.js](src/managers/](src/managers/EnemyDefeatFlow.js)** — Defeat logic, rewards, combo tracking
+- **[[InteractionManager.js](src/managers/](src/managers/InteractionManager.js)** — Player tile interactions
+- **[[NPCInteractionManager.js](src/managers/](src/managers/NPCInteractionManager.js)** — NPC dialogue and barter
+- **[[EnvironmentalInteractionManager.js](src/managers/](src/managers/EnvironmentalInteractionManager.js)** — Environmental tiles (pits, etc.)
+- **[[TerrainInteractionManager.js](src/managers/](src/managers/TerrainInteractionManager.js)** — Terrain-specific interactions
 
 **Inventory & Items**:
-- **[ItemManager.js](managers/ItemManager.js)** — Item pickup and placement
-- **[ItemPickupManager.js](managers/ItemPickupManager.js)** — Item collection mechanics
-- **Inventory Architecture** ([managers/inventory/](managers/inventory/)):
-  - **[ItemMetadata.js](managers/inventory/ItemMetadata.js)** — Static item data (tooltips, constants, type checks)
-  - **[ItemRepository.js](managers/inventory/ItemRepository.js)** — Data access layer (inventory CRUD)
-  - **[InventoryService.js](managers/inventory/InventoryService.js)** — Business logic orchestration
-  - **[ItemEffectStrategy.js](managers/inventory/ItemEffectStrategy.js)** — Effect routing (Strategy pattern)
-  - **Effects** ([managers/inventory/effects/](managers/inventory/effects/)):
-    - [BaseItemEffect.js](managers/inventory/effects/BaseItemEffect.js) — Abstract base class
-    - [ConsumableEffects.js](managers/inventory/effects/ConsumableEffects.js) — Food, Water, Heart
-    - [ToolEffects.js](managers/inventory/effects/ToolEffects.js) — Axe, Hammer
-    - [WeaponEffects.js](managers/inventory/effects/WeaponEffects.js) — Bomb, Bow, Bishop Spear, Horse Icon
-    - [SpecialEffects.js](managers/inventory/effects/SpecialEffects.js) — Shovel, Note, Book of Time Travel
+- **[[ItemManager.js](src/managers/](src/managers/ItemManager.js)** — Item pickup and placement
+- **[[ItemPickupManager.js](src/managers/](src/managers/ItemPickupManager.js)** — Item collection mechanics
+- **Inventory Architecture** ([[managers/inventory/](src/managers/](src/managers/inventory/)):
+  - **[[ItemMetadata.js](src/managers/](src/managers/inventory/ItemMetadata.js)** — Static item data (tooltips, constants, type checks)
+  - **[[ItemRepository.js](src/managers/](src/managers/inventory/ItemRepository.js)** — Data access layer (inventory CRUD)
+  - **[[InventoryService.js](src/managers/](src/managers/inventory/InventoryService.js)** — Business logic orchestration
+  - **[[ItemEffectStrategy.js](src/managers/](src/managers/inventory/ItemEffectStrategy.js)** — Effect routing (Strategy pattern)
+  - **Effects** ([[managers/inventory/effects/](src/managers/](src/managers/inventory/effects/)):
+    - [[BaseItemEffect.js](src/managers/](src/managers/inventory/effects/BaseItemEffect.js) — Abstract base class
+    - [[ConsumableEffects.js](src/managers/](src/managers/inventory/effects/ConsumableEffects.js) — Food, Water, Heart
+    - [[ToolEffects.js](src/managers/](src/managers/inventory/effects/ToolEffects.js) — Axe, Hammer
+    - [[WeaponEffects.js](src/managers/](src/managers/inventory/effects/WeaponEffects.js) — Bomb, Bow, Bishop Spear, Horse Icon
+    - [[SpecialEffects.js](src/managers/](src/managers/inventory/effects/SpecialEffects.js) — Shovel, Note, Book of Time Travel
 
 **World & Zones**:
-- **[ZoneManager.js](managers/ZoneManager.js)** — Zone generation and caching
-- **[ZoneTransitionManager.js](managers/ZoneTransitionManager.js)** — Movement between zones
-- **[ConnectionManager.js](managers/ConnectionManager.js)** — Zone connections and exits
-- **[RadialPersistence.js](managers/RadialPersistence.js)** — Radial inventory save/load
+- **[[ZoneManager.js](src/managers/](src/managers/ZoneManager.js)** — Zone generation and caching
+- **[[ZoneTransitionManager.js](src/managers/](src/managers/ZoneTransitionManager.js)** — Movement between zones
+- **[[ConnectionManager.js](src/managers/](src/managers/ConnectionManager.js)** — Zone connections and exits
+- **[[RadialPersistence.js](src/managers/](src/managers/RadialPersistence.js)** — Radial inventory save/load
 
 **Input & Audio**:
-- **[InputManager.js](managers/InputManager.js)** — Input handling facade
-- **[ActionManager.js](managers/ActionManager.js)** — Player action execution
-- **[SoundManager.js](managers/SoundManager.js)** — Audio playback
+- **[[InputManager.js](src/managers/](src/managers/InputManager.js)** — Input handling facade
+- **[[ActionManager.js](src/managers/](src/managers/ActionManager.js)** — Player action execution
+- **[[SoundManager.js](src/managers/](src/managers/SoundManager.js)** — Audio playback
 
-#### Entities ([entities/](entities/) & [enemy/](enemy/))
-- **[Player.js](entities/Player.js)** — Player character with Position class, stats, inventory, abilities
+#### Entities ([[entities/](src/entities/](src/entities/) & [enemy/](enemy/))
+- **[[Player.js](src/entities/](src/entities/Player.js)** — Player character with Position class, stats, inventory, abilities
 - **[BaseEnemy.js](enemy/BaseEnemy.js)** — Enemy base class with animations and attributes
-- **[Enemy.js](entities/Enemy.js)** — Enemy factory and type registry
+- **[[Enemy.js](src/entities/](src/entities/Enemy.js)** — Enemy factory and type registry
 - **Enemy AI**:
   - [EnemyMovement.js](enemy/EnemyMovement.js) — Movement planning
   - [EnemyPathfinding.js](enemy/EnemyPathfinding.js) — Pathfinding algorithms
@@ -122,72 +159,72 @@ npm test:coverage # Generate test coverage report
   - [TacticalAI.js](enemy/TacticalAI.js) — Unified tactical system
   - [MoveCalculators.js](enemy/MoveCalculators.js) — Move strategy factory
 
-#### Generators ([generators/](generators/))
-- **[ZoneGenerator.js](generators/ZoneGenerator.js)** — Main orchestrator
-- **[FeatureGenerator.js](generators/FeatureGenerator.js)** — Terrain features (grass, rocks, holes, pits)
-- **[StructureGenerator.js](generators/StructureGenerator.js)** — Building/structure placement
-- **[ItemGenerator.js](generators/ItemGenerator.js)** — Item spawning with weighted probabilities
-- **[EnemyGenerator.js](generators/EnemyGenerator.js)** — Enemy spawning with level-based scaling
-- **[PathGenerator.js](generators/PathGenerator.js)** — Pathfinding and roads
-- **[GeneratorUtils.js](generators/GeneratorUtils.js)** — Grid validation, position utilities
-- **[ZoneStateManager.js](generators/ZoneStateManager.js)** — Zone state persistence
+#### Generators ([[generators/](src/generators/](src/generators/))
+- **[[ZoneGenerator.js](src/generators/](src/generators/ZoneGenerator.js)** — Main orchestrator
+- **[[FeatureGenerator.js](src/generators/](src/generators/FeatureGenerator.js)** — Terrain features (grass, rocks, holes, pits)
+- **[[StructureGenerator.js](src/generators/](src/generators/StructureGenerator.js)** — Building/structure placement
+- **[[ItemGenerator.js](src/generators/](src/generators/ItemGenerator.js)** — Item spawning with weighted probabilities
+- **[[EnemyGenerator.js](src/generators/](src/generators/EnemyGenerator.js)** — Enemy spawning with level-based scaling
+- **[[PathGenerator.js](src/generators/](src/generators/PathGenerator.js)** — Pathfinding and roads
+- **[[GeneratorUtils.js](src/generators/](src/generators/GeneratorUtils.js)** — Grid validation, position utilities
+- **[[ZoneStateManager.js](src/generators/](src/generators/ZoneStateManager.js)** — Zone state persistence
 
-#### Rendering ([renderers/](renderers/))
-- **[RenderManager.js](renderers/RenderManager.js)** — Main render loop coordinator
-- **[TileRenderer.js](renderers/TileRenderer.js)** — Base tile rendering
-- **[BaseTileRenderer.js](renderers/BaseTileRenderer.js)** — Floor and wall tiles
-- **[ItemTileRenderer.js](renderers/ItemTileRenderer.js)** — Item rendering
-- **[StructureTileRenderer.js](renderers/StructureTileRenderer.js)** — Structures and buildings
-- **[PlayerRenderer.js](renderers/PlayerRenderer.js)** — Player sprite and animation
-- **[EnemyRenderer.js](renderers/EnemyRenderer.js)** — Enemy sprite and animation
-- **[AnimationRenderer.js](renderers/AnimationRenderer.js)** — Animation frame handling
-- **[FogRenderer.js](renderers/FogRenderer.js)** — Unexplored area fog
-- **[UIRenderer.js](renderers/UIRenderer.js)** — UI overlay rendering
-- **[TextureManager.js](renderers/TextureManager.js)** — Texture caching
-- **[TextureLoader.js](renderers/TextureLoader.js)** — Asset loading
-- **[TextureDetector.js](renderers/TextureDetector.js)** — Tile type to texture mapping
+#### Rendering ([[renderers/](src/renderers/](src/renderers/))
+- **[[RenderManager.js](src/renderers/](src/renderers/RenderManager.js)** — Main render loop coordinator
+- **[[TileRenderer.js](src/renderers/](src/renderers/TileRenderer.js)** — Base tile rendering
+- **[[BaseTileRenderer.js](src/renderers/](src/renderers/BaseTileRenderer.js)** — Floor and wall tiles
+- **[[ItemTileRenderer.js](src/renderers/](src/renderers/ItemTileRenderer.js)** — Item rendering
+- **[[StructureTileRenderer.js](src/renderers/](src/renderers/StructureTileRenderer.js)** — Structures and buildings
+- **[[PlayerRenderer.js](src/renderers/](src/renderers/PlayerRenderer.js)** — Player sprite and animation
+- **[[EnemyRenderer.js](src/renderers/](src/renderers/EnemyRenderer.js)** — Enemy sprite and animation
+- **[[AnimationRenderer.js](src/renderers/](src/renderers/AnimationRenderer.js)** — Animation frame handling
+- **[[FogRenderer.js](src/renderers/](src/renderers/FogRenderer.js)** — Unexplored area fog
+- **[[UIRenderer.js](src/renderers/](src/renderers/UIRenderer.js)** — UI overlay rendering
+- **[[TextureManager.js](src/renderers/](src/renderers/TextureManager.js)** — Texture caching
+- **[[TextureLoader.js](src/renderers/](src/renderers/TextureLoader.js)** — Asset loading
+- **[[TextureDetector.js](src/renderers/](src/renderers/TextureDetector.js)** — Tile type to texture mapping
 
-#### UI System ([ui/](ui/)) — 30+ Components
+#### UI System ([[ui/](src/ui/](src/ui/)) — 30+ Components
 **Core Managers**:
-- **[UIManager.js](ui/UIManager.js)** — Central UI orchestrator
-- **[OverlayManager.js](ui/OverlayManager.js)** — Modal overlay management
-- **[PanelManager.js](ui/PanelManager.js)** — Player card and panel management
+- **[[UIManager.js](src/ui/](src/ui/UIManager.js)** — Central UI orchestrator
+- **[[OverlayManager.js](src/ui/](src/ui/OverlayManager.js)** — Modal overlay management
+- **[[PanelManager.js](src/ui/](src/ui/PanelManager.js)** — Player card and panel management
 
 **Components**:
-- **Inventory**: [InventoryUI.js](ui/InventoryUI.js), [RadialInventoryUI.js](ui/RadialInventoryUI.js)
-- **Stats**: [PlayerStatsUI.js](ui/PlayerStatsUI.js), [StatsPanelManager.js](ui/StatsPanelManager.js), [RecordsPanelManager.js](ui/RecordsPanelManager.js)
-- **Config**: [ConfigPanelManager.js](ui/ConfigPanelManager.js), [VoiceSettings.js](ui/VoiceSettings.js)
-- **Dialogue**: [DialogueManager.js](ui/DialogueManager.js), [TypewriterController.js](ui/TypewriterController.js), [TypewriterEffect.js](ui/TypewriterEffect.js)
-- **Messaging**: [MessageManager.js](ui/MessageManager.js), [MessageLog.js](ui/MessageLog.js), [OverlayMessageHandler.js](ui/OverlayMessageHandler.js), [NoteStack.js](ui/NoteStack.js)
-- **Trading**: [BarterWindow.js](ui/BarterWindow.js)
-- **World**: [MiniMap.js](ui/MiniMap.js), [RegionNotification.js](ui/RegionNotification.js), [Sign.js](ui/Sign.js)
-- **Effects**: [StatueInfoWindow.js](ui/StatueInfoWindow.js), [RadialMenu.js](ui/RadialMenu.js)
+- **Inventory**: [[InventoryUI.js](src/ui/InventoryUI.js), [RadialInventoryUI.js](src/ui/](src/ui/RadialInventoryUI.js)
+- **Stats**: [[PlayerStatsUI.js](src/ui/PlayerStatsUI.js), [StatsPanelManager.js](src/ui/StatsPanelManager.js), [RecordsPanelManager.js](src/ui/](src/ui/RecordsPanelManager.js)
+- **Config**: [[ConfigPanelManager.js](src/ui/ConfigPanelManager.js), [VoiceSettings.js](src/ui/](src/ui/VoiceSettings.js)
+- **Dialogue**: [[DialogueManager.js](src/ui/DialogueManager.js), [TypewriterController.js](src/ui/TypewriterController.js), [TypewriterEffect.js](src/ui/](src/ui/TypewriterEffect.js)
+- **Messaging**: [[MessageManager.js](src/ui/MessageManager.js), [MessageLog.js](src/ui/MessageLog.js), [OverlayMessageHandler.js](src/ui/OverlayMessageHandler.js), [NoteStack.js](src/ui/](src/ui/NoteStack.js)
+- **Trading**: [[BarterWindow.js](src/ui/](src/ui/BarterWindow.js)
+- **World**: [[MiniMap.js](src/ui/MiniMap.js), [RegionNotification.js](src/ui/RegionNotification.js), [Sign.js](src/ui/](src/ui/Sign.js)
+- **Effects**: [[StatueInfoWindow.js](src/ui/StatueInfoWindow.js), [RadialMenu.js](src/ui/](src/ui/RadialMenu.js)
 
-#### Input Controllers ([controllers/](controllers/))
-- **[InputController.js](controllers/InputController.js)** — Main input coordinator (keyboard, mouse, touch, gestures)
-- **[KeyboardHandler.js](controllers/KeyboardHandler.js)** — Keyboard events
-- **[PathfindingController.js](controllers/PathfindingController.js)** — BFS pathfinding with Position class
-- **[InputCoordinator.js](controllers/InputCoordinator.js)** — Tap handling and movement
-- **[GestureDetector.js](controllers/GestureDetector.js)** — Mobile gesture recognition
-- **[ZoneTransitionController.js](controllers/ZoneTransitionController.js)** — Zone transition input
+#### Input Controllers ([[controllers/](src/controllers/](src/controllers/))
+- **[[InputController.js](src/controllers/](src/controllers/InputController.js)** — Main input coordinator (keyboard, mouse, touch, gestures)
+- **[[KeyboardHandler.js](src/controllers/](src/controllers/KeyboardHandler.js)** — Keyboard events
+- **[[PathfindingController.js](src/controllers/](src/controllers/PathfindingController.js)** — BFS pathfinding with Position class
+- **[[InputCoordinator.js](src/controllers/](src/controllers/InputCoordinator.js)** — Tap handling and movement
+- **[[GestureDetector.js](src/controllers/](src/controllers/GestureDetector.js)** — Mobile gesture recognition
+- **[[ZoneTransitionController.js](src/controllers/](src/controllers/ZoneTransitionController.js)** — Zone transition input
 
 #### Content & Configuration ([config/](config/))
 - **[ContentRegistrations.js](config/ContentRegistrations.js)** — Unified registry for items, NPCs, enemies, zones
 - **[NPCConfig.js](config/NPCConfig.js)** — NPC configuration (10 NPCs: penne, squig, rune, nib, mark, axelotl, gouge, crayn, felt, forge)
 
-#### Utilities ([utils/](utils/))
-- **[Position.js](utils/Position.js)** — Rich position abstraction (40+ methods, 99/99 tests passing)
+#### Utilities ([[utils/](src/utils/](src/utils/))
+- **[[Position.js](src/utils/](src/utils/Position.js)** — Rich position abstraction (40+ methods, 99/99 tests passing)
   - Distance metrics (Chebyshev, Manhattan, Euclidean)
   - Neighbor generation, adjacency checks
   - Line drawing (Bresenham), rectangle/radius generation
   - Immutable operations, serialization
-- **[logger.js](utils/logger.js)** — Centralized logging
-- **[ZoneKeyUtils.js](utils/ZoneKeyUtils.js)** — Zone key generation
-- **[AudioManager.js](utils/AudioManager.js)** — Sound management
-- **[GridUtils.js](utils/GridUtils.js)** — Grid operations
-- **[TileUtils.js](utils/TileUtils.js)** — Tile type checking
-- **[GridIterator.js](utils/GridIterator.js)** — Grid position iteration
-- **[SafeServiceCall.js](utils/SafeServiceCall.js)** — Safe method invocation
+- **[[logger.js](src/utils/](src/utils/logger.js)** — Centralized logging
+- **[[ZoneKeyUtils.js](src/utils/](src/utils/ZoneKeyUtils.js)** — Zone key generation
+- **[[AudioManager.js](src/utils/](src/utils/AudioManager.js)** — Sound management
+- **[[GridUtils.js](src/utils/](src/utils/GridUtils.js)** — Grid operations
+- **[[TileUtils.js](src/utils/](src/utils/TileUtils.js)** — Tile type checking
+- **[[GridIterator.js](src/utils/](src/utils/GridIterator.js)** — Grid position iteration
+- **[[SafeServiceCall.js](src/utils/](src/utils/SafeServiceCall.js)** — Safe method invocation
 
 #### Assets
 - **[assets/](assets/)** — Game images, sprites, tiles
@@ -200,18 +237,18 @@ npm test:coverage # Generate test coverage report
 
 ### Game Loop Flow
 
-1. **Input Handling**: [InputController.js](controllers/InputController.js) processes keyboard, mouse, touch, and gestures
-   - Delegates to specialized handlers ([KeyboardHandler.js](controllers/KeyboardHandler.js), [GestureDetector.js](controllers/GestureDetector.js))
-   - [InputManager.js](managers/InputManager.js) provides facade for game systems
+1. **Input Handling**: [[InputController.js](src/controllers/](src/controllers/InputController.js) processes keyboard, mouse, touch, and gestures
+   - Delegates to specialized handlers ([[KeyboardHandler.js](src/controllers/KeyboardHandler.js), [GestureDetector.js](src/controllers/](src/controllers/GestureDetector.js))
+   - [[InputManager.js](src/managers/](src/managers/InputManager.js) provides facade for game systems
 
-2. **Action Execution**: [ActionManager.js](managers/ActionManager.js) executes player actions
+2. **Action Execution**: [[ActionManager.js](src/managers/](src/managers/ActionManager.js) executes player actions
    - Movement validated and processed
-   - Interactions handled by [InteractionManager.js](managers/InteractionManager.js) and specialized interaction managers
+   - Interactions handled by [[InteractionManager.js](src/managers/](src/managers/InteractionManager.js) and specialized interaction managers
 
-3. **Turn System**: [TurnManager.js](core/TurnManager.js) manages turn order
+3. **Turn System**: [[TurnManager.js](src/core/](src/core/TurnManager.js) manages turn order
    - Player moves first
-   - Then all enemies move via [CombatManager.js](managers/CombatManager.js)
-   - Individual combat actions via [CombatActionManager.js](managers/CombatActionManager.js)
+   - Then all enemies move via [[CombatManager.js](src/managers/](src/managers/CombatManager.js)
+   - Individual combat actions via [[CombatActionManager.js](src/managers/](src/managers/CombatActionManager.js)
 
 4. **Enemy AI**: Chess-inspired tactical movement
    - Line of sight via [EnemyLineOfSight.js](enemy/EnemyLineOfSight.js)
@@ -219,25 +256,25 @@ npm test:coverage # Generate test coverage report
    - Tactical decisions via [TacticalAI.js](enemy/TacticalAI.js)
 
 5. **Zone Management**:
-   - [ZoneManager.js](managers/ZoneManager.js) handles current zone
-   - [ZoneTransitionManager.js](managers/ZoneTransitionManager.js) handles movement between zones
-   - [ConnectionManager.js](managers/ConnectionManager.js) manages zone connections and exits
-   - Procedural generation via [ZoneGenerator.js](core/ZoneGenerator.js)
+   - [[ZoneManager.js](src/managers/](src/managers/ZoneManager.js) handles current zone
+   - [[ZoneTransitionManager.js](src/managers/](src/managers/ZoneTransitionManager.js) handles movement between zones
+   - [[ConnectionManager.js](src/managers/](src/managers/ConnectionManager.js) manages zone connections and exits
+   - Procedural generation via [[ZoneGenerator.js](src/core/](src/core/ZoneGenerator.js)
 
-6. **Rendering**: [RenderManager.js](renderers/RenderManager.js) orchestrates rendering
-   - Tile rendering via specialized renderers ([BaseTileRenderer.js](renderers/BaseTileRenderer.js), [ItemTileRenderer.js](renderers/ItemTileRenderer.js), etc.)
-   - Player via [PlayerRenderer.js](renderers/PlayerRenderer.js)
-   - Enemies via [EnemyRenderer.js](renderers/EnemyRenderer.js)
-   - UI overlays via [UIManager.js](ui/UIManager.js)
+6. **Rendering**: [[RenderManager.js](src/renderers/](src/renderers/RenderManager.js) orchestrates rendering
+   - Tile rendering via specialized renderers ([[BaseTileRenderer.js](src/renderers/BaseTileRenderer.js), [ItemTileRenderer.js](src/renderers/](src/renderers/ItemTileRenderer.js), etc.)
+   - Player via [[PlayerRenderer.js](src/renderers/](src/renderers/PlayerRenderer.js)
+   - Enemies via [[EnemyRenderer.js](src/renderers/](src/renderers/EnemyRenderer.js)
+   - UI overlays via [[UIManager.js](src/ui/](src/ui/UIManager.js)
 
-7. **Events**: [EventBus.js](core/EventBus.js) coordinates cross-system communication
+7. **Events**: [[EventBus.js](src/core/](src/core/EventBus.js) coordinates cross-system communication
    - Decouples systems via publish-subscribe pattern
    - Event types: zone transitions, combat, UI updates, sound effects
 
-8. **Persistence**: [GameStateManager.js](core/GameStateManager.js) handles saves
+8. **Persistence**: [[GameStateManager.js](src/core/](src/core/GameStateManager.js) handles saves
    - Autosave every 750ms (debounced)
    - Periodic save every 30s
-   - Serialization via [SaveSerializer.js](core/SaveSerializer.js) / [SaveDeserializer.js](core/SaveDeserializer.js)
+   - Serialization via [[SaveSerializer.js](src/core/SaveSerializer.js) / [SaveDeserializer.js](src/core/](src/core/SaveDeserializer.js)
 
 ### Adding New Content
 
@@ -249,7 +286,7 @@ See [ADDING_CONTENT.md](docs/ADDING_CONTENT.md) for detailed guides on:
 
 **Quick Example - Adding a New Item**:
 1. Register in [ContentRegistrations.js](config/ContentRegistrations.js)
-2. Create effect class in [managers/inventory/effects/](managers/inventory/effects/)
+2. Create effect class in [[managers/inventory/effects/](src/managers/](src/managers/inventory/effects/)
 3. Add texture to [assets/](assets/)
 
 ### Design Bible & Visual Style
@@ -310,9 +347,9 @@ See [ADDING_CONTENT.md](docs/ADDING_CONTENT.md) for detailed guides on:
 
 ### Architecture Principles
 
-1. **Dependency Injection**: [ServiceContainer.js](core/ServiceContainer.js) provides loose coupling with lazy initialization
-2. **Event-Driven**: [EventBus.js](core/EventBus.js) decouples game systems via pub-sub
-3. **Backward Compatibility**: [Position.js](utils/Position.js) maintains old `.x`/`.y` API while providing rich abstractions
+1. **Dependency Injection**: [[ServiceContainer.js](src/core/](src/core/ServiceContainer.js) provides loose coupling with lazy initialization
+2. **Event-Driven**: [[EventBus.js](src/core/](src/core/EventBus.js) decouples game systems via pub-sub
+3. **Backward Compatibility**: [[Position.js](src/utils/](src/utils/Position.js) maintains old `.x`/`.y` API while providing rich abstractions
 4. **Immutability**: Position operations return new instances
 5. **Clean Architecture**: Clear separation between data access, business logic, and presentation
 6. **Strategy Pattern**: Item effects use strategy pattern for extensibility

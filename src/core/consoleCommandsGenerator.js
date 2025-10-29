@@ -146,9 +146,9 @@ export function generateSpecialCommands() {
   // Random food spawner
   commands.spawnFoodRandom = function(game) {
     if (Math.random() < 0.5) {
-      spawnAtPosition(game, { type: TILE_TYPES.FOOD, foodType: 'food/meat/beaf.png' }, 'meat');
+      spawnAtPosition(game, { type: TILE_TYPES.FOOD, foodType: 'items/consumables/beaf.png' }, 'meat');
     } else {
-      spawnAtPosition(game, { type: TILE_TYPES.FOOD, foodType: 'food/veg/nut.png' }, 'nut');
+      spawnAtPosition(game, { type: TILE_TYPES.FOOD, foodType: 'items/consumables/nut.png' }, 'nut');
     }
   };
 

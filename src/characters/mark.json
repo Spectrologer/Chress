@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/fauna/mark.png",
-    "portrait": "assets/fauna/markface.png",
+    "sprite": "assets/characters/npcs/mark.png",
+    "portrait": "assets/characters/npcs/portraits/markface.png",
     "tileType": "MARK"
   },
   "placement": {
@@ -33,10 +33,10 @@
         },
         "gives": {
           "type": "item",
-          "id": "food/meat",
+          "id": "items/consumables/beaf",
           "amount": 1,
           "displayName": "Meat",
-          "icon": "assets/food/meat/beaf.png"
+          "icon": "assets/items/consumables/beaf.png"
         },
         "repeatable": true
       }

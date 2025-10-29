@@ -35,14 +35,14 @@ export class StatueInfoWindow {
         const name = enemyType.charAt(0).toUpperCase() + enemyType.slice(1) + ' Statue';
         // Use fauna portraits for enemy statues, but item-statues use item images so we don't 404
         const itemPortraitMap = {
-            bomb: 'assets/items/bomb.png',
-            spear: 'assets/items/spear.png',
-            bow: 'assets/items/bow.png',
-            horse: 'assets/items/horse.png',
-            book: 'assets/items/book.png',
-            shovel: 'assets/items/shovel.png'
+            bomb: 'assets/items/misc/bomb.png',
+            spear: 'assets/items/equipment/spear.png',
+            bow: 'assets/items/equipment/bow.png',
+            horse: 'assets/items/misc/horse.png',
+            book: 'assets/items/misc/book.png',
+            shovel: 'assets/items/equipment/shovel.png'
         };
-    const portrait = itemPortraitMap[enemyType] || `assets/fauna/${enemyType}.png`;
+    const portrait = itemPortraitMap[enemyType] || `assets/characters/enemies/${enemyType}.png`;
     // Portrait style overrides (rotate bow counter-clockwise)
     const portraitStyle = enemyType === 'bow' ? 'style="transform: rotate(-90deg);"' : '';
         const message = statueDetails.message;

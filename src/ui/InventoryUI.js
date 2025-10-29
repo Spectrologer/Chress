@@ -75,11 +75,11 @@ export class InventoryUI {
                 this._addUsesIndicator(slot, item);
                 break;
             case 'horse_icon':
-                this._createItemImage(slot, 'assets/items/horse.png', item);
+                this._createItemImage(slot, 'assets/items/misc/horse.png', item);
                 if ((item.uses && item.uses > 1) || (item.quantity && item.quantity > 1)) this._addUsesIndicator(slot, item);
                 break;
             case 'bomb':
-                this._createItemImage(slot, 'assets/items/bomb.png', item);
+                this._createItemImage(slot, 'assets/items/misc/bomb.png', item);
                 if (item.quantity > 1) this._addUsesIndicator(slot, item);
                 break;
             case 'heart':
@@ -97,11 +97,11 @@ export class InventoryUI {
                 this._addUsesIndicator(slot, item);
                 break;
             case 'bow':
-                this._createItemImage(slot, 'assets/items/bow.png', item, { transform: 'rotate(-90deg)' });
+                this._createItemImage(slot, 'assets/items/equipment/bow.png', item, { transform: 'rotate(-90deg)' });
                 this._addUsesIndicator(slot, item);
                 break;
             case 'shovel':
-                this._createItemImage(slot, 'assets/items/shovel.png', item);
+                this._createItemImage(slot, 'assets/items/equipment/shovel.png', item);
                 this._addUsesIndicator(slot, item);
                 break;
             default:

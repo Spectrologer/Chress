@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/fauna/nib.png",
-    "portrait": "assets/fauna/nibface.png",
+    "sprite": "assets/characters/npcs/nib.png",
+    "portrait": "assets/characters/npcs/portraits/nibface.png",
     "tileType": "NIB"
   },
   "placement": {

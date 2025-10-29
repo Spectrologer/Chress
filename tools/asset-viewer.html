@@ -4,7 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chress Asset Viewer - </title>
+    <base href="/">
+    <script>
+        // Set random NPC favicon
+        const npcSprites = [
+            'felt', 'nib', 'forge', 'dragon', 'mark', 'rune', 'penne', 'gouge',
+            'axolotl', 'squig', 'crayn', 'rok', 'stik', 'duk', 'snak', 'flub', 'dawrg'
+        ];
+        const randomNPC = npcSprites[Math.floor(Math.random() * npcSprites.length)];
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = 'image/png';
+        link.href = `/assets/characters/npcs/${randomNPC}.png`;
+        document.head.appendChild(link);
+    </script>
+    <title>Chress Asset Viewer</title>
     <style>
         * {
             margin: 0;
@@ -570,7 +584,8 @@
     <div id="tab-contents"></div>
 
     <script type="module">
-        import { assetScanner } from './asset-scanner.js';
+        // v5 - Feltface moved to portraits folder
+        import { assetScanner } from '/tools/asset-scanner.js?v=5';
 
         let currentScale = 4;
         let categories = {};

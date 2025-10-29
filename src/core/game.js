@@ -56,7 +56,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const gridManager = game.gridManager;
                 // Floor only
                 if (isFloor(gridManager.getTile(x, y))) {
-                    gridManager.setTile(x, y, { type: TILE_TYPES.FOOD, foodType: 'food/aguamelin.png' });
+                    gridManager.setTile(x, y, { type: TILE_TYPES.FOOD, foodType: 'items/consumables/aguamelin.png' });
                     if (game.render) game.render();
                 }
             }

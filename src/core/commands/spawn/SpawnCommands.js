@@ -54,12 +54,12 @@ export class SpawnWaterCommand extends BaseSpawnCommand {
 }
 
 export class SpawnFoodMeatCommand extends BaseSpawnCommand {
-    getTileToSpawn() { return { type: TILE_TYPES.FOOD, foodType: 'food/meat/beaf.png' }; }
+    getTileToSpawn() { return { type: TILE_TYPES.FOOD, foodType: 'items/consumables/beaf.png' }; }
     getItemName() { return 'meat'; }
 }
 
 export class SpawnFoodNutCommand extends BaseSpawnCommand {
-    getTileToSpawn() { return { type: TILE_TYPES.FOOD, foodType: 'food/veg/nut.png' }; }
+    getTileToSpawn() { return { type: TILE_TYPES.FOOD, foodType: 'items/consumables/nut.png' }; }
     getItemName() { return 'nut'; }
 }
 

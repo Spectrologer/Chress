@@ -1,5 +1,5 @@
 // Test NPC distance checking logic
-import { TransientGameState } from './state/TransientGameState.js';
+import { TransientGameState } from '../src/state/TransientGameState.js';
 
 console.log('=== Testing NPC Distance Logic ===\n');
 

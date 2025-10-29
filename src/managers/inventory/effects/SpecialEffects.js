@@ -69,10 +69,10 @@ export class NoteEffect extends BaseItemEffect {
 
         if (game.uiManager && game.uiManager.messageManager &&
             typeof game.uiManager.messageManager.addNoteToStack === 'function') {
-            game.uiManager.messageManager.addNoteToStack(noteMessageText, 'assets/items/note.png', 2000);
+            game.uiManager.messageManager.addNoteToStack(noteMessageText, 'assets/items/misc/note.png', 2000);
         } else {
             game.displayingMessageForSign = { message: noteMessageText };
-            game.showSignMessage(noteMessageText, 'assets/items/note.png');
+            game.showSignMessage(noteMessageText, 'assets/items/misc/note.png');
             game.animationScheduler.createSequence()
                 .wait(2000)
                 .then(() => {
@@ -154,7 +154,7 @@ export class BookOfTimeTravelEffect extends BaseItemEffect {
         // Show visual feedback
         eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
             text: 'Reading from the Book of Time Travel...<br>Time passes.',
-            imageSrc: 'assets/items/book.png',
+            imageSrc: 'assets/items/misc/book.png',
             isPersistent: true,
             isLargeText: false,
             useTypewriter: false

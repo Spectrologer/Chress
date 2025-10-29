@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/fauna/penne.png",
-    "portrait": "assets/fauna/penneface.png",
+    "sprite": "assets/characters/npcs/penne.png",
+    "portrait": "assets/characters/npcs/portraits/penneface.png",
     "tileType": "PENNE"
   },
   "placement": {
@@ -27,17 +27,17 @@
       {
         "id": "penne_water",
         "requires": {
-          "resource": "food/meat",
+          "resource": "items/consumables/beaf",
           "amount": 1,
           "displayName": "Meat",
-          "icon": "assets/food/meat/beaf.png"
+          "icon": "assets/items/consumables/beaf.png"
         },
         "gives": {
           "type": "item",
           "id": "water",
           "amount": 1,
           "displayName": "Water",
-          "icon": "assets/items/water.png"
+          "icon": "assets/items/consumables/water.png"
         },
         "repeatable": true
       }

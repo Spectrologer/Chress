@@ -332,6 +332,12 @@ export class RenderManager {
     // Draw a darkened border overlay on the exterior edge of the 8x8 playable area
     // (excluding the wall tiles at the edges of the 10x10 grid)
     drawExteriorBorderOverlay() {
+        // Don't draw border overlay in underground zones
+        const currentZone = this.game.player.getCurrentZone();
+        if (Number(currentZone.dimension) === 2) {
+            return;
+        }
+
         this.ctx.save();
 
         // The playable 8x8 area is from (1,1) to (8,8) in grid coordinates

@@ -1,6 +1,7 @@
 // Asset Scanner Module - Dynamically reads game asset definitions
-import { IMAGE_ASSETS, FOOD_ASSETS } from './core/constants/index.js';
-import { Sign } from './ui/Sign.js';
+// v2.1 - Feltface moved to portraits folder
+import { IMAGE_ASSETS, FOOD_ASSETS } from '/src/core/constants/index.js?v=5';
+import { loadAllNPCs, getAllNPCCharacterData } from '/src/core/NPCLoader.js?v=5';
 
 export class AssetScanner {
     constructor() {
@@ -18,80 +19,144 @@ export class AssetScanner {
             misc: []
         };
 
-        this.npcData = this.extractNPCData();
+        this.npcData = {};
+        this.npcDataLoaded = false;
         this.enemyTypes = ['lizardy', 'lizardo', 'lizardeaux', 'lizord', 'lazerd', 'zard'];
     }
 
-    extractNPCData() {
-        const npcs = {};
+    async loadNPCData() {
+        if (this.npcDataLoaded) return;
 
-        // Extract dialogue NPCs
-        Object.entries(Sign.dialogueNpcData).forEach(([key, data]) => {
-            if (data.name && !key.includes('post_trade')) {
-                // Use the key as the lookup name
-                npcs[key] = {
-                    name: data.name,
-                    portrait: data.portrait,
-                    type: 'dialogue',
-                    key: key
-                };
-                // Also add by name for redundancy
-                npcs[data.name.toLowerCase()] = {
-                    name: data.name,
-                    portrait: data.portrait,
-                    type: 'dialogue',
-                    key: key
-                };
-            }
-        });
+        try {
+            // Load all NPC character data from JSON files
+            await loadAllNPCs();
+            const allNPCData = getAllNPCCharacterData();
 
-        // Extract barter NPCs
-        Object.entries(Sign.barterNpcData).forEach(([key, data]) => {
-            if (data.name) {
-                // Determine the type based on subclass (use 'barter' as default for backwards compatibility)
-                const npcType = data.subclass || 'barter';
-
-                // Use the key as the lookup name
-                npcs[key] = {
-                    name: data.name,
-                    portrait: data.portrait,
-                    type: npcType,
-                    trades: data.trades,
-                    key: key
-                };
-                // Also add by name for redundancy
-                npcs[data.name.toLowerCase()] = {
-                    name: data.name,
-                    portrait: data.portrait,
-                    type: npcType,
-                    trades: data.trades,
-                    key: key
-                };
-                // Special case for Penne who is a lion
-                if (key === 'penne') {
-                    npcs['lion'] = {
+            // Convert to the format we need
+            const npcs = {};
+            allNPCData.forEach((data, key) => {
+                if (data.name) {
+                    const npcType = data.interaction?.type || 'npc';
+                    // Ensure paths are absolute
+                    const portrait = data.display?.portrait;
+                    const sprite = data.display?.sprite;
+                    const npcInfo = {
                         name: data.name,
-                        portrait: data.portrait,
+                        portrait: portrait ? (portrait.startsWith('/') ? portrait : '/' + portrait) : null,
+                        sprite: sprite ? (sprite.startsWith('/') ? sprite : '/' + sprite) : null,
                         type: npcType,
-                        trades: data.trades,
+                        trades: data.interaction?.trades,
                         key: key
                     };
-                }
-            }
-        });
 
-        return npcs;
+                    // Use the key as the lookup name
+                    npcs[key] = npcInfo;
+                    // Also add by name for redundancy
+                    npcs[data.name.toLowerCase()] = npcInfo;
+
+                    // Special case for Penne who is a lion
+                    if (key === 'penne') {
+                        npcs['lion'] = npcInfo;
+                    }
+                }
+            });
+
+            this.npcData = npcs;
+            this.npcDataLoaded = true;
+        } catch (error) {
+            console.warn('Could not load NPC data:', error);
+            // Fallback to empty data
+            this.npcData = {};
+            this.npcDataLoaded = true;
+        }
     }
 
     categorizeAsset(path) {
         const category = {
             asset: path,
             name: this.extractName(path),
-            path: 'assets/' + path
+            path: '/assets/' + path
         };
 
-        // Categorize based on path
-        if (path.startsWith('fauna/')) {
+        // Categorize based on new path structure
+        if (path.startsWith('characters/enemies/')) {
+            const baseName = path.replace('characters/enemies/', '').replace('.png', '');
+            this.categories.enemies.push({
+                ...category,
+                name: this.capitalize(baseName),
+                type: 'enemy'
+            });
+        } else if (path.startsWith('characters/npcs/')) {
+            const baseName = path.replace('characters/npcs/', '').replace('.png', '');
+            const isPortrait = baseName.includes('face');
+            const cleanName = baseName.replace('face', '');
+
+            // Check if it's an NPC
+            if (this.npcData[cleanName]) {
+                const npcInfo = this.npcData[cleanName];
+
+                // Find or create NPC entry - use the NPC's actual name as the key
+                let npc = this.categories.npcs.find(n => n.name === npcInfo.name || n.key === npcInfo.key);
+                if (!npc) {
+                    npc = {
+                        name: npcInfo.name,
+                        type: npcInfo.type,
+                        sprite: null,
+                        portrait: null,
+                        trades: npcInfo.trades,
+                        key: npcInfo.key
+                    };
+                    this.categories.npcs.push(npc);
+                }
+
+                // Add sprite or portrait
+                if (isPortrait) {
+                    npc.portrait = '/assets/' + path;
+                } else {
+                    npc.sprite = '/assets/' + path;
+                }
+            } else {
+                // Unknown NPC - might still be an NPC we haven't matched
+                // Try to find by checking all NPC data for matching portraits
+                let found = false;
+                Object.values(this.npcData).forEach(npcInfo => {
+                    if (npcInfo.portrait && npcInfo.portrait.includes(baseName)) {
+                        let npc = this.categories.npcs.find(n => n.name === npcInfo.name);
+                        if (!npc) {
+                            npc = {
+                                name: npcInfo.name,
+                                type: npcInfo.type,
+                                sprite: null,
+                                portrait: null,
+                                trades: npcInfo.trades,
+                                key: npcInfo.key
+                            };
+                            this.categories.npcs.push(npc);
+                        }
+                        if (isPortrait) {
+                            npc.portrait = 'assets/' + path;
+                        } else {
+                            npc.sprite = 'assets/' + path;
+                        }
+                        found = true;
+                    }
+                });
+
+                if (!found) {
+                    // Really unknown NPC
+                    this.categories.misc.push({
+                        ...category,
+                        name: this.capitalize(cleanName),
+                        type: 'npc'
+                    });
+                }
+            }
+        } else if (path.startsWith('characters/player/')) {
+            this.categories.protag.push({
+                ...category,
+                name: this.capitalize(path.replace('characters/player/', '').replace('.png', ''))
+            });
+        } else if (path.startsWith('fauna/')) {
             const baseName = path.replace('fauna/', '').replace('.png', '');
             const isPortrait = baseName.includes('face');
             const cleanName = baseName.replace('face', '');
@@ -124,9 +189,9 @@ export class AssetScanner {
 
                 // Add sprite or portrait
                 if (isPortrait) {
-                    npc.portrait = 'assets/' + path;
+                    npc.portrait = '/assets/' + path;
                 } else {
-                    npc.sprite = 'assets/' + path;
+                    npc.sprite = '/assets/' + path;
                 }
             } else {
                 // Unknown fauna - might still be an NPC we haven't matched
@@ -165,80 +230,74 @@ export class AssetScanner {
                 }
             }
         } else if (path.startsWith('items/')) {
-            this.categories.items.push({
-                ...category,
-                name: this.capitalize(path.replace('items/', '').replace('.png', ''))
-            });
-        } else if (path.startsWith('food/')) {
-            const foodPath = path.replace('food/', '');
-            let foodType = 'unknown';
-            let name = this.extractName(path);
-
-            if (foodPath.startsWith('meat/')) {
-                foodType = 'meat';
-                name = this.capitalize(foodPath.replace('meat/', '').replace('.png', ''));
-            } else if (foodPath.startsWith('veg/')) {
-                foodType = 'vegetable';
-                name = this.capitalize(foodPath.replace('veg/', '').replace('.png', ''));
-            } else {
-                name = this.capitalize(foodPath.replace('.png', ''));
+            const itemPath = path.replace('items/', '');
+            let itemType = 'misc';
+            if (itemPath.startsWith('equipment/')) {
+                itemType = 'equipment';
+            } else if (itemPath.startsWith('consumables/')) {
+                itemType = 'consumable';
             }
 
-            this.categories.food.push({
+            this.categories.items.push({
                 ...category,
-                name: name,
-                foodType: foodType
+                name: this.capitalize(itemPath.replace(/^(equipment|misc|consumables)\//, '').replace('.png', '')),
+                itemType: itemType
             });
+
+            // Also add to food category if consumable
+            if (itemType === 'consumable') {
+                this.categories.food.push({
+                    ...category,
+                    name: this.capitalize(itemPath.replace('consumables/', '').replace('.png', '')),
+                    foodType: 'consumable'
+                });
+            }
         } else if (path.startsWith('ui/')) {
             this.categories.ui.push({
                 ...category,
                 name: this.capitalize(path.replace('ui/', '').replace('.png', ''))
             });
-        } else if (path.startsWith('flora/')) {
+        } else if (path.startsWith('environment/flora/')) {
             this.categories.flora.push({
                 ...category,
-                name: this.capitalize(path.replace('flora/', '').replace('.png', ''))
+                name: this.capitalize(path.replace('environment/flora/', '').replace('.png', ''))
             });
-        } else if (path.startsWith('doodads/')) {
+        } else if (path.startsWith('environment/doodads/')) {
             this.categories.doodads.push({
                 ...category,
-                name: this.capitalize(path.replace('doodads/', '').replace('.png', ''))
+                name: this.capitalize(path.replace('environment/doodads/', '').replace('.png', ''))
             });
-        } else if (path.startsWith('floors/')) {
-            const floorPath = path.replace('floors/', '');
-            const parts = floorPath.split('/');
-            const floorType = parts[0];
-            const variant = parts[1]?.replace('.png', '') || 'default';
-
+        } else if (path.startsWith('environment/floors/')) {
+            const floorName = path.replace('environment/floors/', '').replace('.png', '');
             this.categories.floors.push({
                 ...category,
-                name: `${this.capitalize(floorType)} - ${this.capitalize(variant)}`,
-                floorType: floorType,
-                variant: variant
+                name: this.capitalize(floorName),
+                floorType: floorName
             });
-        } else if (path.startsWith('fx/')) {
-            const fxPath = path.replace('fx/', '');
+        } else if (path.startsWith('environment/walls/')) {
+            this.categories.doodads.push({
+                ...category,
+                name: this.capitalize(path.replace('environment/walls/', '').replace('.png', '')),
+                type: 'wall'
+            });
+        } else if (path.startsWith('environment/effects/')) {
+            const effectName = path.replace('environment/effects/', '').replace('.png', '');
             let effectType = 'general';
             let frame = null;
 
-            if (fxPath.startsWith('smoke/')) {
+            if (effectName.includes('smoke')) {
                 effectType = 'smoke';
-                frame = fxPath.match(/\d+/)?.[0];
-            } else if (fxPath.startsWith('splode/')) {
+                frame = effectName.match(/\d+/)?.[0];
+            } else if (effectName.includes('splode')) {
                 effectType = 'explosion';
-                frame = fxPath.match(/\d+/)?.[0];
+                frame = effectName.match(/\d+/)?.[0];
             }
 
             this.categories.effects.push({
                 ...category,
-                name: this.capitalize(fxPath.replace('.png', '')),
+                name: this.capitalize(effectName),
                 effectType: effectType,
                 frame: frame
-            });
-        } else if (path.startsWith('protag/')) {
-            this.categories.protag.push({
-                ...category,
-                name: this.capitalize(path.replace('protag/', '').replace('.png', ''))
             });
         } else {
             // Miscellaneous assets (rock.png, bush.png, etc.)
@@ -260,6 +319,9 @@ export class AssetScanner {
     }
 
     async scanAssets() {
+        // Load NPC data first
+        await this.loadNPCData();
+
         // Process all image assets
         IMAGE_ASSETS.forEach(asset => {
             this.categorizeAsset(asset);
@@ -270,13 +332,14 @@ export class AssetScanner {
             this.categorizeAsset(asset);
         });
 
-        // Now go through NPCs and ensure they have their portraits from Sign.js
+        // Now go through NPCs and ensure they have their portraits from loaded data
         Object.values(this.npcData).forEach(npcInfo => {
             if (npcInfo.portrait) {
                 let npc = this.categories.npcs.find(n => n.name === npcInfo.name);
                 if (npc) {
-                    // Use the portrait path directly from Sign.js
-                    npc.portrait = npcInfo.portrait;
+                    // Use the portrait path directly from NPC data, ensure it's absolute
+                    const portraitPath = npcInfo.portrait.startsWith('/') ? npcInfo.portrait : '/' + npcInfo.portrait;
+                    npc.portrait = portraitPath;
                 }
             }
         });

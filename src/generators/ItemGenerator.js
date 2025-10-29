@@ -22,7 +22,7 @@ export class ItemGenerator {
         if (this.dimension === 2) {
             // Underground: Only aguamelin
             if (Math.random() < SPAWN_PROBABILITIES.FOOD_WATER.UNDERGROUND_AGUAMELIN) {
-                this._placeItemRandomly({ type: TILE_TYPES.FOOD, foodType: 'food/aguamelin.png' });
+                this._placeItemRandomly({ type: TILE_TYPES.FOOD, foodType: 'items/consumables/aguamelin.png' });
             }
             return;
         }

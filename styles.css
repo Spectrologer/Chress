@@ -1091,21 +1091,21 @@ body {
 }
 
 .inventory-slot.item-water {
-    background-image: url('assets/items/water.png'), url('assets/ui/cell.png');
+    background-image: url('assets/items/consumables/water.png'), url('assets/ui/cell.png');
     background-size: 70%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-note {
-    background-image: url('assets/items/note.png'), url('assets/ui/cell.png');
+    background-image: url('assets/items/misc/note.png'), url('assets/ui/cell.png');
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-heart {
-    background-image: url('assets/items/heart.png'), url('assets/ui/cell.png');
+    background-image: url('assets/items/misc/heart.png'), url('assets/ui/cell.png');
     /* make heart visually smaller in inventory */
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
@@ -1117,35 +1117,35 @@ body {
 
 
 .inventory-slot.item-axe {
-    background-image: url('assets/items/axe.png'), url('assets/ui/cell.png');
+    background-image: url('assets/items/equipment/axe.png'), url('assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-hammer {
-    background-image: url('assets/items/hammer.png'), url('assets/ui/cell.png');
+    background-image: url('assets/items/equipment/hammer.png'), url('assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-spear {
-    background-image: url('assets/items/spear.png'), url('assets/ui/cell.png');
+    background-image: url('assets/items/equipment/spear.png'), url('assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-bomb {
-    background-image: url('assets/items/bomb.png'), url('assets/ui/cell.png');
+    background-image: url('assets/items/misc/bomb.png'), url('assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-heart {
-    background-image: url('assets/items/heart.png'), url('assets/ui/cell.png');
+    background-image: url('assets/items/misc/heart.png'), url('assets/ui/cell.png');
     /* tighter size for crispness in inventory */
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
@@ -1153,14 +1153,14 @@ body {
 }
 
 .inventory-slot.item-note {
-    background-image: url('assets/items/note.png'), url('assets/ui/cell.png');
+    background-image: url('assets/items/misc/note.png'), url('assets/ui/cell.png');
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-book {
-    background-image: url('assets/items/book.png'), url('assets/ui/cell.png');
+    background-image: url('assets/items/misc/book.png'), url('assets/ui/cell.png');
     background-size: 70%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;

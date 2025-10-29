@@ -13,14 +13,15 @@ export class FoodRenderStrategy extends TileRenderStrategy {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.FOOD], '🥖');
             return;
         }
-        const foodKey = foodAsset.replace('.png', '').replace('/', '_');
+        // Extract just the filename for the image key (e.g., 'items/consumables/beaf.png' -> 'beaf')
+        const foodKey = foodAsset.split('/').pop().replace('.png', '');
 
         // First draw the base tile
         baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel);
 
         // Try to draw the food image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, foodKey)) {
-            if (foodAsset === 'food/aguamelin.png') {
+            if (foodAsset === 'items/consumables/aguamelin.png') {
                 // Draw aguamelin pixel-perfect, no scaling, aligned to tile
                 ctx.drawImage(this.images[foodKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {

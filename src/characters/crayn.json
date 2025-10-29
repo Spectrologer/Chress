@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/fauna/crayn.png",
-    "portrait": "assets/fauna/craynface.png",
+    "sprite": "assets/characters/npcs/crayn.png",
+    "portrait": "assets/characters/npcs/portraits/craynface.png",
     "tileType": "CRAYN"
   },
   "placement": {

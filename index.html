@@ -5,8 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Chress: Chess 2: The Sequel to Chess</title>
-    <link rel="icon" href="assets/fauna/zard.png" type="image/png">
-    
+    <script>
+        // Set random NPC favicon
+        const npcSprites = [
+            'felt', 'nib', 'forge', 'dragon', 'mark', 'rune', 'penne', 'gouge',
+            'axolotl', 'squig', 'crayn', 'rok', 'stik', 'duk', 'snak', 'flub', 'dawrg'
+        ];
+        const randomNPC = npcSprites[Math.floor(Math.random() * npcSprites.length)];
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = 'image/png';
+        link.href = `assets/characters/npcs/${randomNPC}.png`;
+        document.head.appendChild(link);
+    </script>
+
     <!-- Sentry CDN -->
     <script
       src="https://js-de.sentry-cdn.com/2d2383cc5fdaf52165ff0b7c57dfa857.min.js"
@@ -29,7 +41,7 @@
             document.head.appendChild(base);
         }
     </script>
-    <script type="module" src="core/game.js"></script>
+    <script type="module" src="src/core/game.js"></script>
     <link rel="stylesheet" href="styles.css">
     <style>
         .barter-window button {
@@ -155,19 +167,19 @@
                     <div id="player-card-content" class="character-card modern-player-card" style="position:relative;z-index:3;">
                         <div class="player-header">
                             <div class="player-portrait-container">
-                                <img src="assets/protag/faceset.png" alt="Player Portrait" class="player-portrait">
+                                <img src="assets/characters/player/faceset.png" alt="Player Portrait" class="player-portrait">
                             </div>
                             <div class="player-stats-main">
                                 <div class="health-points-wrapper">
                                     <div class="player-health">
-                                        <img src="assets/items/heart.png" alt="Heart" class="heart-icon">
-                                        <img src="assets/items/heart.png" alt="Heart" class="heart-icon">
-                                        <img src="assets/items/heart.png" alt="Heart" class="heart-icon">
-                                        <img src="assets/items/axe.png" alt="Axe Ability" class="axe-ability-icon">
-                                        <img src="assets/items/hammer.png" alt="Hammer Ability" class="hammer-ability-icon">
+                                        <img src="assets/items/misc/heart.png" alt="Heart" class="heart-icon">
+                                        <img src="assets/items/misc/heart.png" alt="Heart" class="heart-icon">
+                                        <img src="assets/items/misc/heart.png" alt="Heart" class="heart-icon">
+                                        <img src="assets/items/equipment/axe.png" alt="Axe Ability" class="axe-ability-icon">
+                                        <img src="assets/items/equipment/hammer.png" alt="Hammer Ability" class="hammer-ability-icon">
                                     </div>
                                     <div id="player-points" class="player-points">
-                                        <img src="assets/items/points.png" alt="Points" class="points-icon">
+                                        <img src="assets/items/misc/points.png" alt="Points" class="points-icon">
                                         <span class="points-value">0</span>
                                     </div>
                                 </div>
@@ -276,5 +288,5 @@
             </div>
         </div>
 </body>
-    <script src="ui/overlayAnimations.js"></script>
+    <script src="src/ui/overlayAnimations.js"></script>
 </html>

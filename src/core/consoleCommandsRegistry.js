@@ -65,12 +65,12 @@ export const SPAWN_REGISTRY = [
   {
     commandName: 'spawnFoodMeat',
     displayName: 'meat',
-    tileValue: { type: TILE_TYPES.FOOD, foodType: 'food/meat/beaf.png' }
+    tileValue: { type: TILE_TYPES.FOOD, foodType: 'items/consumables/beaf.png' }
   },
   {
     commandName: 'spawnFoodNut',
     displayName: 'nut',
-    tileValue: { type: TILE_TYPES.FOOD, foodType: 'food/veg/nut.png' },
+    tileValue: { type: TILE_TYPES.FOOD, foodType: 'items/consumables/nut.png' },
     hotkey: 'u'
   },
 ];

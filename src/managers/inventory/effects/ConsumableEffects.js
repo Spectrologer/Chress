@@ -6,7 +6,7 @@ import { BaseItemEffect } from './BaseItemEffect.js';
 
 export class FoodEffect extends BaseItemEffect {
     apply(game, item, context = {}) {
-        const isAguamelin = item.foodType === 'food/aguamelin.png';
+        const isAguamelin = item.foodType === 'items/consumables/aguamelin.png';
 
         // Restore hunger (and thirst for aguamelin)
         game.player.restoreHunger(isAguamelin ? 5 : 10);

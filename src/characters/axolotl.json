@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/fauna/axolotl.png",
-    "portrait": "assets/fauna/axolotlface.png",
+    "sprite": "assets/characters/npcs/axolotl.png",
+    "portrait": "assets/characters/npcs/portraits/axolotlface.png",
     "tileType": "AXELOTL"
   },
   "placement": {
@@ -35,7 +35,7 @@
           "type": "ability",
           "id": "axe",
           "displayName": "Axe Ability",
-          "icon": "assets/items/axe.png"
+          "icon": "assets/items/equipment/axe.png"
         },
         "conditions": {
           "requiresAbsence": ["axe"]

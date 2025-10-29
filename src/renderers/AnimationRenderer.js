@@ -20,7 +20,7 @@ export class AnimationRenderer {
                     const per = Math.max(1, Math.floor(anim.totalFrames / ANIMATION_CONSTANTS.SPLODE_FRAME_DIVISOR));
                     frameNumber = Math.min(8, Math.floor(elapsed / per) + 1);
                 }
-                const splodeImage = this.textureManager.getImage(`fx/splode/splode_${frameNumber}`);
+                const splodeImage = this.textureManager.getImage(`splode_${frameNumber}`);
                 if (splodeImage && splodeImage.complete) {
                     // Draw the splode visual as a 3x3 tile block centered on the bomb location
                     const size = TILE_SIZE * 3;

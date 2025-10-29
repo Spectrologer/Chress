@@ -86,7 +86,7 @@ export async function loadAllNPCs() {
 
     const loadPromises = npcFiles.map(async (npcId) => {
         try {
-            const response = await fetch(`characters/${npcId}.json`);
+            const response = await fetch(`/src/characters/${npcId}.json`);
             if (!response.ok) {
                 console.warn(`[NPCLoader] Failed to load ${npcId}.json: ${response.status}`);
                 return;

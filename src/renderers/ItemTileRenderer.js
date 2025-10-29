@@ -28,7 +28,7 @@ export class ItemTileRenderer {
 
         // Try to draw the food image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, foodKey)) {
-            if (foodAsset === 'food/aguamelin.png') {
+            if (foodAsset === 'items/consumables/aguamelin.png') {
                 // Draw aguamelin pixel-perfect, no scaling, aligned to tile
                 ctx.drawImage(this.images[foodKey], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
