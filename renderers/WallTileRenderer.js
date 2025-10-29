@@ -14,20 +14,20 @@ export class WallTileRenderer {
             return;
         }
 
-        // Underground zones use boulder.png for walls
+        // Underground zones use rockwall.png for walls
         if (zoneLevel === 6) {
-            // First draw dirt background
-            if (RendererUtils.isImageLoaded(this.images, 'dircle')) {
-                ctx.drawImage(this.images.dircle, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            // First draw gravel background
+            if (RendererUtils.isImageLoaded(this.images, 'gravel')) {
+                ctx.drawImage(this.images.gravel, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
                 ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
-            // Then overlay boulder on top
-            if (RendererUtils.isImageLoaded(this.images, 'boulder')) {
-                ctx.drawImage(this.images.boulder, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            // Then overlay rockwall on top
+            if (RendererUtils.isImageLoaded(this.images, 'rockwall')) {
+                ctx.drawImage(this.images.rockwall, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
-                ctx.fillStyle = '#8B4513'; // Brown fallback
+                ctx.fillStyle = '#696969'; // Dark gray fallback
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
             return;
@@ -51,9 +51,9 @@ export class WallTileRenderer {
         }
         // Wilds zones (level 3) use blocklily.png for walls
         else if (zoneLevel === 3) {
-            // First draw dirt background
-            if (RendererUtils.isImageLoaded(this.images, 'dircle')) {
-                ctx.drawImage(this.images.dircle, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            // First draw grass background
+            if (RendererUtils.isImageLoaded(this.images, 'grass')) {
+                ctx.drawImage(this.images.grass, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
                 ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
@@ -69,9 +69,9 @@ export class WallTileRenderer {
         }
         // Woods zones (level 2) use stump.png for walls
         else if (zoneLevel === 2) {
-            // First draw dirt background
-            if (RendererUtils.isImageLoaded(this.images, 'dircle')) {
-                ctx.drawImage(this.images.dircle, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            // First draw mulch background
+            if (RendererUtils.isImageLoaded(this.images, 'mulch')) {
+                ctx.drawImage(this.images.mulch, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
                 ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
@@ -86,8 +86,8 @@ export class WallTileRenderer {
             return;
         }
         // First draw background dirt
-        if (RendererUtils.isImageLoaded(this.images, 'dircle')) {
-            ctx.drawImage(this.images.dircle, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        if (RendererUtils.isImageLoaded(this.images, 'dirt')) {
+            ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
@@ -137,76 +137,12 @@ export class WallTileRenderer {
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
 
-        const middleEnd = GRID_SIZE - 1; // 9
-        const isPerimeter = (x === 0 || x === middleEnd || y === 0 || y === middleEnd);
-
-        // For interior walls (not on perimeter), just draw a simple wall texture
-        if (!isPerimeter) {
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_side')) {
-                ctx.drawImage(this.images.house_wall_side, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-            } else {
-                ctx.fillStyle = '#8B4513'; // Brown fallback
-                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-            }
-            return;
-        }
-
-        if (x === 0 && y === 0) {
-            // Top-left corner
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_corner')) {
-                ctx.drawImage(this.images.house_wall_corner, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-            }
-        } else if (x === middleEnd && y === 0) {
-            // Top-right corner
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_corner')) {
-                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_corner, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
-            }
-        } else if (x === middleEnd && y === middleEnd) {
-            // Bottom-right corner
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_corner')) {
-                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_corner, pixelX, pixelY, Math.PI, TILE_SIZE);
-            }
-        } else if (x === 0 && y === middleEnd) {
-            // Bottom-left corner
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_corner')) {
-                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_corner, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
-            }
-        } else if (x === 0 && y > 0 && y < middleEnd) {
-            // Left wall
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_side')) {
-                ctx.drawImage(this.images.house_wall_side, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-            }
-        } else if (x === middleEnd && y > 0 && y < middleEnd) {
-            // Right wall, flipped horizontally
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_side')) {
-                RendererUtils.drawFlippedImage(ctx, this.images.house_wall_side, pixelX, pixelY, true, false, TILE_SIZE);
-            }
-        } else if (y === 0 && x > 0 && x < middleEnd) {
-            // Top wall, rotated 90°
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_side')) {
-                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_side, pixelX, pixelY, Math.PI / 2, TILE_SIZE);
-            }
-        } else if (x === 3 && y === middleEnd) {
-            // Special case for the open wall next to the door
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_open')) {
-                RendererUtils.drawFlippedImage(ctx, this.images.house_wall_open, pixelX, pixelY, false, true, TILE_SIZE);
-            } else if (RendererUtils.isImageLoaded(this.images, 'house_wall_side')) {
-                // Fallback to the regular bottom wall if the special texture isn't loaded
-                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_side, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
-            }
-        } else if (x === 5 && y === middleEnd) {
-            // Special case for the open wall two tiles to the right of the door
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_open')) {
-                RendererUtils.drawFlippedImage(ctx, this.images.house_wall_open, pixelX, pixelY, true, true, TILE_SIZE);
-            } else if (RendererUtils.isImageLoaded(this.images, 'house_wall_side')) {
-                // Fallback to the regular bottom wall if the special texture isn't loaded
-                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_side, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
-            }
-        } else if (y === middleEnd && x > 0 && x < middleEnd) {
-            // Bottom wall, rotated 270°
-            if (RendererUtils.isImageLoaded(this.images, 'house_wall_side')) {
-                RendererUtils.drawRotatedImage(ctx, this.images.house_wall_side, pixelX, pixelY, -Math.PI / 2, TILE_SIZE);
-            }
+        // Draw clubwall on top
+        if (RendererUtils.isImageLoaded(this.images, 'clubwall')) {
+            ctx.drawImage(this.images.clubwall, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        } else {
+            ctx.fillStyle = '#8B4513'; // Brown fallback
+            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
     }
 }

@@ -36,6 +36,10 @@ export class TextureLoader {
                     imageKey = 'boulder';
                 } else if (assetName.startsWith('floors/dirt/')) {
                     imageKey = assetName.replace('floors/dirt/', '').replace('.png', '');
+                } else if (assetName.startsWith('floors/grass/')) {
+                    imageKey = assetName.replace('floors/grass/', '').replace('.png', '');
+                } else if (assetName.startsWith('walls/')) {
+                    imageKey = assetName.replace('walls/', '').replace('.png', '');
                 } else if (assetName.startsWith('items/')) {
                     imageKey = assetName.replace('items/', '').replace('.png', '');
                 } else if (assetName.startsWith('fauna/')) {

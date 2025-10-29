@@ -288,6 +288,9 @@ export class RenderManager {
             // 2. Draw the fog on top of the dark overlay
             this.fogRenderer.updateAndDrawFog();
         }
+
+        // Draw darkened exterior border overlay (after all other rendering)
+        this.drawExteriorBorderOverlay();
     }
 
     drawGrid() {
@@ -324,6 +327,64 @@ export class RenderManager {
                 this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         });
+    }
+
+    // Draw a darkened border overlay on the exterior edge of the 8x8 playable area
+    // (excluding the wall tiles at the edges of the 10x10 grid)
+    drawExteriorBorderOverlay() {
+        this.ctx.save();
+
+        // The playable 8x8 area is from (1,1) to (8,8) in grid coordinates
+        // We'll draw a gradient shadow inward from the edges of this area
+        const borderWidth = TILE_SIZE * 0.4; // Width of the darkened border in pixels
+        const playableStartX = TILE_SIZE; // x pixel coordinate where playable area starts
+        const playableStartY = TILE_SIZE; // y pixel coordinate where playable area starts
+        const playableWidth = TILE_SIZE * 8; // Width of playable area in pixels
+        const playableHeight = TILE_SIZE * 8; // Height of playable area in pixels
+
+        // Create gradients for each edge of the playable area
+
+        // Top edge gradient (dark at top, transparent at bottom)
+        let gradient = this.ctx.createLinearGradient(
+            playableStartX, playableStartY,
+            playableStartX, playableStartY + borderWidth
+        );
+        gradient.addColorStop(0, 'rgba(0, 0, 0, 0.2)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(playableStartX, playableStartY, playableWidth, borderWidth);
+
+        // Bottom edge gradient (transparent at top, dark at bottom)
+        gradient = this.ctx.createLinearGradient(
+            playableStartX, playableStartY + playableHeight - borderWidth,
+            playableStartX, playableStartY + playableHeight
+        );
+        gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.2)');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(playableStartX, playableStartY + playableHeight - borderWidth, playableWidth, borderWidth);
+
+        // Left edge gradient (dark at left, transparent at right)
+        gradient = this.ctx.createLinearGradient(
+            playableStartX, playableStartY,
+            playableStartX + borderWidth, playableStartY
+        );
+        gradient.addColorStop(0, 'rgba(0, 0, 0, 0.2)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(playableStartX, playableStartY, borderWidth, playableHeight);
+
+        // Right edge gradient (transparent at left, dark at right)
+        gradient = this.ctx.createLinearGradient(
+            playableStartX + playableWidth - borderWidth, playableStartY,
+            playableStartX + playableWidth, playableStartY
+        );
+        gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.2)');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(playableStartX + playableWidth - borderWidth, playableStartY, borderWidth, playableHeight);
+
+        this.ctx.restore();
     }
 
 
