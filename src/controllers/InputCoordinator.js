@@ -207,12 +207,12 @@ export class InputCoordinator {
             const currentTileType = getTileType(currentTile);
             const portKind = isTileObject(currentTile) ? currentTile.portKind : null;
 
-            console.log('[InputCoordinator] Single tap on player tile:', {
-                currentTileType,
-                portKind,
-                isExit: currentTileType === TILE_TYPES.EXIT,
-                isPort: currentTileType === TILE_TYPES.PORT
-            });
+            // console.log('[InputCoordinator] Single tap on player tile:', {
+            //     currentTileType,
+            //     portKind,
+            //     isExit: currentTileType === TILE_TYPES.EXIT,
+            //     isPort: currentTileType === TILE_TYPES.PORT
+            // });
 
             // Handle EXIT/PORT tiles immediately on single tap
             if (currentTileType === TILE_TYPES.EXIT) {
@@ -224,7 +224,7 @@ export class InputCoordinator {
             }
 
             // Otherwise emit event for radial menu
-            console.log('[InputCoordinator] Emitting INPUT_PLAYER_TILE_TAP event');
+            // console.log('[InputCoordinator] Emitting INPUT_PLAYER_TILE_TAP event');
             eventBus.emit(EventTypes.INPUT_PLAYER_TILE_TAP, {
                 gridCoords,
                 tileType: currentTileType,

@@ -96,7 +96,7 @@ export async function loadAllNPCs() {
             const registryConfig = loadNPCFromJSON(npcData);
 
             ContentRegistry.registerNPC(npcId, registryConfig);
-            console.log(`[NPCLoader] Loaded NPC: ${npcId}`);
+            // console.log(`[NPCLoader] Loaded NPC: ${npcId}`);
         } catch (error) {
             console.error(`[NPCLoader] Error loading ${npcId}:`, error);
         }

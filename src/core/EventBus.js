@@ -26,9 +26,9 @@ export class EventBus {
 
     this.listeners.get(eventName).push(callback);
 
-    if (this.debug) {
-      console.log(`[EventBus] Subscribed to '${eventName}'`);
-    }
+    // if (this.debug) {
+    //   console.log(`[EventBus] Subscribed to '${eventName}'`);
+    // }
 
     // Return unsubscribe function
     return () => this.off(eventName, callback);
@@ -47,9 +47,9 @@ export class EventBus {
 
     this.onceListeners.get(eventName).push(callback);
 
-    if (this.debug) {
-      console.log(`[EventBus] Subscribed once to '${eventName}'`);
-    }
+    // if (this.debug) {
+    //   console.log(`[EventBus] Subscribed once to '${eventName}'`);
+    // }
 
     // Return unsubscribe function
     return () => {
@@ -75,9 +75,9 @@ export class EventBus {
       if (index > -1) {
         listeners.splice(index, 1);
 
-        if (this.debug) {
-          console.log(`[EventBus] Unsubscribed from '${eventName}'`);
-        }
+        // if (this.debug) {
+        //   console.log(`[EventBus] Unsubscribed from '${eventName}'`);
+        // }
       }
     }
   }
@@ -88,9 +88,9 @@ export class EventBus {
    * @param {*} data - The data to pass to subscribers
    */
   emit(eventName, data) {
-    if (this.debug) {
-      console.log(`[EventBus] Emitting '${eventName}'`, data);
-    }
+    // if (this.debug) {
+    //   console.log(`[EventBus] Emitting '${eventName}'`, data);
+    // }
 
     // Call regular listeners
     const listeners = this.listeners.get(eventName);
@@ -130,16 +130,16 @@ export class EventBus {
       this.listeners.delete(eventName);
       this.onceListeners.delete(eventName);
 
-      if (this.debug) {
-        console.log(`[EventBus] Cleared all listeners for '${eventName}'`);
-      }
+      // if (this.debug) {
+      //   console.log(`[EventBus] Cleared all listeners for '${eventName}'`);
+      // }
     } else {
       this.listeners.clear();
       this.onceListeners.clear();
 
-      if (this.debug) {
-        console.log(`[EventBus] Cleared all listeners`);
-      }
+      // if (this.debug) {
+      //   console.log(`[EventBus] Cleared all listeners`);
+      // }
     }
   }
 
@@ -170,8 +170,8 @@ export const eventBus = new EventBus();
 // Note: Import is done dynamically to avoid circular dependencies
 if (typeof window !== 'undefined' && window.location?.hostname === 'localhost') {
   import('./EventValidator.js').then(({ wrapEventBusWithValidation }) => {
-    wrapEventBusWithValidation(eventBus);
-    console.log('[EventBus] Event validation enabled (development mode)');
+  wrapEventBusWithValidation(eventBus);
+  // console.log('[EventBus] Event validation enabled (development mode)');
   }).catch(err => {
     console.warn('[EventBus] Could not load event validation:', err);
   });

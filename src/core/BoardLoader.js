@@ -80,7 +80,7 @@ export class BoardLoader {
 
         // Check cache first
         if (this.boardCache.has(boardName)) {
-            logger.log(`Loading custom board "${boardName}" from cache`);
+            // logger.log(`Loading custom board "${boardName}" from cache`);
             return this.boardCache.get(boardName);
         }
 
@@ -104,7 +104,7 @@ export class BoardLoader {
 
             // Cache the board
             this.boardCache.set(boardName, boardData);
-            logger.log(`Loaded custom board "${boardName}" for zone (${zoneX},${zoneY}) dimension ${dimension}`);
+            // logger.log(`Loaded custom board "${boardName}" for zone (${zoneX},${zoneY}) dimension ${dimension}`);
 
             return boardData;
         } catch (error) {

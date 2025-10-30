@@ -101,23 +101,23 @@ export class ActionManager {
 
         bombs.forEach(({ tile, x, y }) => {
             // Skip primitive bombs - they're inactive pickup items
-            if (typeof tile !== 'object') {
-                console.log(`[ActionManager] Bomb at (${x},${y}) is primitive, skipping`);
-                return;
-            }
+			if (typeof tile !== 'object') {
+				// console.log(`[ActionManager] Bomb at (${x},${y}) is primitive, skipping`);
+				return;
+			}
 
-            console.log(`[ActionManager] Bomb at (${x},${y}) before: actionsSincePlaced=${tile.actionsSincePlaced}, justPlaced=${tile.justPlaced}`);
+			// console.log(`[ActionManager] Bomb at (${x},${y}) before: actionsSincePlaced=${tile.actionsSincePlaced}, justPlaced=${tile.justPlaced}`);
 
             // First turn after placement: clear justPlaced flag but don't increment
-            if (tile.justPlaced) {
-                tile.justPlaced = false;
-                console.log(`[ActionManager] Cleared justPlaced flag for bomb at (${x},${y})`);
-                return;
-            }
+			if (tile.justPlaced) {
+				tile.justPlaced = false;
+				// console.log(`[ActionManager] Cleared justPlaced flag for bomb at (${x},${y})`);
+				return;
+			}
 
             // Subsequent turns: increment timer
             tile.actionsSincePlaced = (tile.actionsSincePlaced || 0) + 1;
-            console.log(`[ActionManager] Incremented bomb at (${x},${y}) to actionsSincePlaced=${tile.actionsSincePlaced}`);
+            // console.log(`[ActionManager] Incremented bomb at (${x},${y}) to actionsSincePlaced=${tile.actionsSincePlaced}`);
         });
     }
 

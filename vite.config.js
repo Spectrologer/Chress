@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
   // Base URL for GitHub Pages deployment
@@ -134,6 +135,14 @@ export default defineConfig({
 
   // Plugin configuration
   plugins: [
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'src/characters/*.json',
+          dest: 'src/characters'
+        }
+      ]
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['**/*'],
@@ -172,6 +181,7 @@ export default defineConfig({
 
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,gif,svg,woff,woff2,ttf}'],
+        sourcemap: false, // Disable source map generation for service worker and workbox
 
         // Cache strategy configuration
         runtimeCaching: [

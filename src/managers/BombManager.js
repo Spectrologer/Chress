@@ -137,23 +137,23 @@ export class BombManager {
 
         bombs.forEach(({ tile, x, y }) => {
             // Skip primitive bombs - they're inactive pickup items
-            if (!isTileObject(tile)) {
-                console.log(`[BombManager] Bomb at (${x},${y}) is primitive, skipping`);
-                return;
-            }
+			if (!isTileObject(tile)) {
+				// console.log(`[BombManager] Bomb at (${x},${y}) is primitive, skipping`);
+				return;
+			}
 
-            console.log(`[BombManager] Bomb at (${x},${y}): actionsSincePlaced=${tile.actionsSincePlaced}, justPlaced=${tile.justPlaced}`);
+			// console.log(`[BombManager] Bomb at (${x},${y}): actionsSincePlaced=${tile.actionsSincePlaced}, justPlaced=${tile.justPlaced}`);
 
             if (tile.actionsSincePlaced >= 2) {
                 // Double-check that the tile is still a bomb before exploding
                 // (in case it was already exploded earlier in this iteration)
                 const currentTile = this.game.gridManager.getTile(x, y);
                 if (!isBomb(currentTile)) {
-                    console.log(`[BombManager] Bomb at (${x},${y}) already exploded, skipping`);
+                    // console.log(`[BombManager] Bomb at (${x},${y}) already exploded, skipping`);
                     return;
                 }
 
-                console.log(`[BombManager] Exploding bomb at (${x},${y})`);
+                // console.log(`[BombManager] Exploding bomb at (${x},${y})`);
                 safeCall(this.game, 'explodeBomb', x, y);
             }
         });
@@ -220,7 +220,7 @@ export class BombManager {
         const placedPos = Position.from(placed);
         this.game.gridManager.setTile(placedPos.x, placedPos.y, { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true });
 
-        console.log('[BombManager] Placed bomb at', placed, 'tile:', this.game.gridManager.getTile(placed.x, placed.y));
+    // console.log('[BombManager] Placed bomb at', placed, 'tile:', this.game.gridManager.getTile(placed.x, placed.y));
 
         // Remove one bomb from either inventory (prefer main inventory)
         this.itemRepository.decrementItemByType(this.game.player, 'bomb');

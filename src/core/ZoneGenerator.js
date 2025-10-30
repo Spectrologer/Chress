@@ -60,11 +60,11 @@ export class ZoneGenerator {
 
         // Check for custom board first (synchronous - boards must be pre-loaded)
         if (boardLoader.hasBoard(zoneX, zoneY, dimension)) {
-            logger.log(`Loading custom board for zone (${zoneX},${zoneY}) dimension ${dimension}`);
+            // logger.log(`Loading custom board for zone (${zoneX},${zoneY}) dimension ${dimension}`);
             const boardData = boardLoader.getBoardSync(zoneX, zoneY, dimension);
             if (boardData) {
                 const result = boardLoader.convertBoardToGrid(boardData, this.foodAssets);
-                logger.log(`Custom board loaded successfully for zone (${zoneX},${zoneY})`);
+                // logger.log(`Custom board loaded successfully for zone (${zoneX},${zoneY})`);
                 return result;
             } else {
                 logger.warn(`Custom board not pre-loaded, falling back to procedural generation`);
