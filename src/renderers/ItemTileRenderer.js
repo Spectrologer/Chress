@@ -21,7 +21,8 @@ export class ItemTileRenderer {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.FOOD], '🥖');
             return;
         }
-        const foodKey = foodAsset.replace('.png', '').replace('/', '_');
+        // Extract just the filename for the image key (e.g., 'items/consumables/beaf.png' -> 'beaf')
+        const foodKey = foodAsset.split('/').pop().replace('.png', '');
 
         // First draw the base tile
         baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);

@@ -1,6 +1,36 @@
+// @ts-check
 /**
  * Line-of-Sight Utilities
  * Provides shared LOS checking functionality for combat, AI, and pathfinding systems
+ */
+
+/**
+ * @typedef {Object} StepDirection
+ * @property {number} stepX - Direction on X axis (-1, 0, or 1)
+ * @property {number} stepY - Direction on Y axis (-1, 0, or 1)
+ */
+
+/**
+ * @typedef {Object} Enemy
+ * @property {number} x - X coordinate
+ * @property {number} y - Y coordinate
+ */
+
+/**
+ * @callback IsWalkableFunction
+ * @param {number} x - X coordinate to check
+ * @param {number} y - Y coordinate to check
+ * @param {Array<Array<any>>} grid - The game grid
+ * @returns {boolean} True if the tile is walkable
+ */
+
+/**
+ * @typedef {Object} LineOfSightOptions
+ * @property {IsWalkableFunction} [isWalkable] - Function to check if a tile is walkable
+ * @property {boolean} [checkEnemies=false] - Whether to check for enemy blocking
+ * @property {Enemy[]} [enemies=[]] - Array of enemies to check for blocking
+ * @property {boolean} [includeEndpoint=false] - Whether to check walkability of the target tile
+ * @property {('orthogonal'|'diagonal'|null)} [allowedLineType=null] - Restrict to specific line type
  */
 
 /**
@@ -9,7 +39,7 @@
  * @param {number} fromY - Starting Y coordinate
  * @param {number} toX - Target X coordinate
  * @param {number} toY - Target Y coordinate
- * @returns {{stepX: number, stepY: number}} Direction vector (-1, 0, or 1 for each axis)
+ * @returns {StepDirection} Direction vector (-1, 0, or 1 for each axis)
  */
 export function calculateStepDirection(fromX, fromY, toX, toY) {
     return {
@@ -24,7 +54,7 @@ export function calculateStepDirection(fromX, fromY, toX, toY) {
  * @param {number} fromY - Starting Y coordinate
  * @param {number} toX - Target X coordinate
  * @param {number} toY - Target Y coordinate
- * @returns {string|null} 'orthogonal', 'diagonal', or null if neither
+ * @returns {'orthogonal'|'diagonal'|null} 'orthogonal', 'diagonal', or null if neither
  */
 export function getLineType(fromX, fromY, toX, toY) {
     const dx = Math.abs(toX - fromX);
@@ -45,13 +75,8 @@ export function getLineType(fromX, fromY, toX, toY) {
  * @param {number} fromY - Starting Y coordinate
  * @param {number} toX - Target X coordinate
  * @param {number} toY - Target Y coordinate
- * @param {Array} grid - The game grid
- * @param {Object} options - Configuration options
- * @param {Function} options.isWalkable - Function to check if a tile is walkable: (x, y, grid) => boolean
- * @param {boolean} [options.checkEnemies=false] - Whether to check for enemy blocking
- * @param {Array} [options.enemies=[]] - Array of enemies to check for blocking
- * @param {boolean} [options.includeEndpoint=false] - Whether to check walkability of the target tile
- * @param {string|null} [options.allowedLineType=null] - Restrict to 'orthogonal', 'diagonal', or null for any
+ * @param {Array<Array<any>>} grid - The game grid
+ * @param {LineOfSightOptions} options - Configuration options
  * @returns {boolean} True if line of sight is clear
  */
 export function checkLineOfSight(fromX, fromY, toX, toY, grid, options = {}) {
@@ -131,8 +156,8 @@ export function checkLineOfSight(fromX, fromY, toX, toY, grid, options = {}) {
  * @param {number} fromY - Starting Y coordinate
  * @param {number} toX - Target X coordinate
  * @param {number} toY - Target Y coordinate
- * @param {Array} grid - The game grid
- * @param {Object} options - Configuration options (same as checkLineOfSight)
+ * @param {Array<Array<any>>} grid - The game grid
+ * @param {LineOfSightOptions} options - Configuration options (same as checkLineOfSight)
  * @returns {boolean} True if orthogonal line of sight is clear
  */
 export function checkOrthogonalLineOfSight(fromX, fromY, toX, toY, grid, options = {}) {
@@ -148,8 +173,8 @@ export function checkOrthogonalLineOfSight(fromX, fromY, toX, toY, grid, options
  * @param {number} fromY - Starting Y coordinate
  * @param {number} toX - Target X coordinate
  * @param {number} toY - Target Y coordinate
- * @param {Array} grid - The game grid
- * @param {Object} options - Configuration options (same as checkLineOfSight)
+ * @param {Array<Array<any>>} grid - The game grid
+ * @param {LineOfSightOptions} options - Configuration options (same as checkLineOfSight)
  * @returns {boolean} True if diagonal line of sight is clear
  */
 export function checkDiagonalLineOfSight(fromX, fromY, toX, toY, grid, options = {}) {
@@ -165,8 +190,8 @@ export function checkDiagonalLineOfSight(fromX, fromY, toX, toY, grid, options =
  * @param {number} fromY - Starting Y coordinate
  * @param {number} toX - Target X coordinate
  * @param {number} toY - Target Y coordinate
- * @param {Array} grid - The game grid
- * @param {Object} options - Configuration options (same as checkLineOfSight)
+ * @param {Array<Array<any>>} grid - The game grid
+ * @param {LineOfSightOptions} options - Configuration options (same as checkLineOfSight)
  * @returns {boolean} True if queen-like line of sight is clear
  */
 export function checkQueenLineOfSight(fromX, fromY, toX, toY, grid, options = {}) {

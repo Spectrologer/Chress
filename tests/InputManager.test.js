@@ -10,6 +10,7 @@ describe('InputManager', () => {
   beforeEach(() => {
     mockPlayer = {
       getPosition: jest.fn().mockReturnValue({ x: 1, y: 1 }),
+      getPositionObject: jest.fn().mockReturnValue({ x: 2, y: 1 }),
       isDead: jest.fn().mockReturnValue(false),
       isWalkable: jest.fn().mockReturnValue(true),
       move: jest.fn(),
@@ -38,6 +39,15 @@ describe('InputManager', () => {
       interactionManager: mockInteractionManager,
       canvas: { getBoundingClientRect: jest.fn().mockReturnValue({ left: 0, top: 0, width: 360, height: 360 }) },
       grid: Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)),
+      gridManager: {
+        getTile: jest.fn((x, y) => {
+          if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) {
+            return null;
+          }
+          return mockGame.grid[y][x];
+        }),
+        setTile: jest.fn()
+      },
       enemies: [],
       pendingCharge: null,
       bombPlacementMode: false,

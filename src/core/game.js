@@ -4,6 +4,8 @@ import { AnimationManager } from './DataContracts.js';
 import { GameContext } from './GameContext.js';
 import { isFloor } from '../utils/TileUtils.js';
 import { registerAllContent } from '../config/ContentRegistrations.js';
+import { initializePWA } from '../utils/pwa-register.js';
+import { preloadCriticalModules } from '../utils/LazyLoader.js';
 
 // Game state - now extends GameContext for better organization
 class Game extends GameContext {
@@ -27,8 +29,8 @@ class Game extends GameContext {
         // Animation scheduler
         // Created by ServiceContainer
 
-        // Consent check on load
-        this.audio.initializeConsent();
+        // Consent check on load (disabled - tracking not active)
+        // this.audio.initializeConsent();
 
         // Load and start
         this.gameInitializer.loadAssets();
@@ -43,6 +45,12 @@ class Game extends GameContext {
     
 // Initialize game when the page loads
 window.addEventListener('DOMContentLoaded', async () => {
+    // Initialize PWA features (service worker, install prompt)
+    initializePWA().catch(err => console.warn('[PWA] Initialization failed:', err));
+
+    // Preload critical modules in background
+    preloadCriticalModules();
+
     // Register all game content before creating the game (including preloading boards)
     await registerAllContent();
 

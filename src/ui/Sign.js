@@ -1,9 +1,67 @@
+// @ts-check
 import { TILE_TYPES } from '../core/constants/index.js';
 import { getNPCCharacterData } from '../core/NPCLoader.js';
 
+/**
+ * @typedef {Object} SignData
+ * @property {string} message - The message to display
+ * @property {number} [x] - X coordinate of the sign
+ * @property {number} [y] - Y coordinate of the sign
+ */
+
+/**
+ * @typedef {Object} StatueData
+ * @property {string} message - HTML message for the statue
+ */
+
+/**
+ * @typedef {Object} BarterNpcData
+ * @property {string} name - NPC name
+ * @property {string} portrait - Portrait image path
+ * @property {string} message - Greeting message
+ * @property {string} subclass - NPC subclass (merchant)
+ * @property {number} [voicePitch] - Voice pitch for audio
+ * @property {Array<Trade>} trades - Available trades
+ */
+
+/**
+ * @typedef {Object} Trade
+ * @property {string} id - Trade identifier
+ * @property {string} requiredItem - Required item type
+ * @property {number} requiredAmount - Required quantity
+ * @property {string} requiredItemName - Display name of required item
+ * @property {string} requiredItemImg - Icon path for required item
+ * @property {string} receivedItemName - Display name of received item
+ * @property {string} receivedItemImg - Icon path for received item
+ */
+
+/**
+ * @typedef {Object} DialogueNpcData
+ * @property {string} name - NPC name
+ * @property {string} portrait - Portrait image path
+ * @property {string} subclass - NPC subclass (dialogue)
+ * @property {number} [voicePitch] - Voice pitch for audio
+ * @property {number} currentMessageIndex - Current message index
+ * @property {string} cycleMode - Cycle mode (loop, once, etc.)
+ * @property {Array<string>} messages - Dialogue messages
+ */
+
+/**
+ * @typedef {Object} GameInstance
+ * @property {any} transientGameState - Transient game state
+ * @property {any} gridManager - Grid manager
+ * @property {any} npcManager - NPC manager
+ * @property {Array<Array<any>>} grid - Game grid
+ * @property {Function} showSignMessage - Show sign message
+ * @property {Function} hideOverlayMessage - Hide overlay message
+ * @property {Function} render - Render game
+ * @property {any} [displayingMessageForSign] - Legacy property
+ * @property {Map<string, DialogueNpcData>} [dialogueState] - Dialogue state cache
+ */
+
 // Sign class, refactored to be a static utility class for message handling.
 export class Sign {
-    // Static properties for message generation
+    /** @type {Set<string>} */
     static spawnedMessages = new Set();
 
     // Area definitions for messages
@@ -90,6 +148,13 @@ export class Sign {
     };
 
 
+    /**
+     * Get a procedural message for a zone
+     * @param {number} zoneX - Zone X coordinate
+     * @param {number} zoneY - Zone Y coordinate
+     * @param {Set<string>} [usedMessagesSet] - Set of already used messages
+     * @returns {string} A message string
+     */
     static getProceduralMessage(zoneX, zoneY, usedMessagesSet = Sign.spawnedMessages) {
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
         let area = 'wilds'; // Default to wilds as it's the only level with procedural notes.
@@ -106,19 +171,39 @@ export class Sign {
         return messages[0]; // Fallback
     }
 
+    /**
+     * Get a message by area and index
+     * @param {string} area - Area name (home, woods, wilds, frontier, canyon)
+     * @param {number} index - Message index
+     * @returns {string} The message
+     */
     static getMessageByIndex(area, index) {
         return Sign.messageSets[area][index];
     }
 
+    /**
+     * Get a random canyon message
+     * @returns {string} A canyon message
+     */
     static getCanyonMessage() {
         const messages = Sign.messageSets.canyon;
         return messages[Math.floor(Math.random() * messages.length)];
     }
 
+    /**
+     * Get statue data by type
+     * @param {string} statueType - Statue type (lizardy, lizardo, bomb, etc.)
+     * @returns {StatueData} Statue data with message
+     */
     static getStatueData(statueType) {
         return Sign.statueData[statueType] || Sign.statueData.default;
     }
 
+    /**
+     * Get barter NPC data
+     * @param {string} npcType - NPC type
+     * @returns {BarterNpcData|null} Barter NPC data or null
+     */
     static getBarterNpcData(npcType) {
         // Get from loaded JSON data
         const characterData = getNPCCharacterData(npcType);
@@ -145,7 +230,13 @@ export class Sign {
         return null;
     }
 
-    // Handle click interaction (toggle message display)
+    /**
+     * Handle click interaction (toggle message display)
+     * @param {SignData} signData - Sign data
+     * @param {GameInstance} gameInstance - Game instance
+     * @param {boolean} playerAdjacent - Whether player is adjacent
+     * @returns {void}
+     */
     static handleClick(signData, gameInstance, playerAdjacent) {
         if (!playerAdjacent) {
             return; // Only respond to clicks when adjacent
@@ -170,14 +261,23 @@ export class Sign {
         }
     }
 
-    // Static method to display message for a sign object
+    /**
+     * Static method to display message for a sign object
+     * @param {SignData} signData - Sign data
+     * @param {GameInstance} gameInstance - Game instance
+     * @returns {void}
+     */
     static displayMessageForSign(signData, gameInstance) {
         // Use the dedicated sign message method for persistent display
-        gameInstance.showSignMessage(signData.message, 'assets/sign.png');
+        gameInstance.showSignMessage(signData.message, 'assets/environment/doodads/sign.png');
         gameInstance.transientGameState.setDisplayingSignMessage(signData);
     }
 
-    // Static method to hide the currently displayed sign message
+    /**
+     * Static method to hide the currently displayed sign message
+     * @param {GameInstance} gameInstance - Game instance
+     * @returns {void}
+     */
     static hideMessageForSign(gameInstance) {
         const transientState = gameInstance.transientGameState;
 
@@ -214,7 +314,11 @@ export class Sign {
         }
     }
 
-    // Helper method to make axolotl walk to exit and disappear
+    /**
+     * Helper method to make axolotl walk to exit and disappear
+     * @param {GameInstance} gameInstance - Game instance
+     * @returns {void}
+     */
     static makeAxolotlLeave(gameInstance) {
         const grid = gameInstance.grid;
         const npcManager = gameInstance.npcManager;
@@ -302,8 +406,8 @@ export class Sign {
      * Get or create dialogue data for an NPC
      * Uses a cache to persist dialogue state across interactions
      * @param {string} npcType - The type of NPC (e.g., 'felt', 'crayn')
-     * @param {Object} [gameInstance] - Optional game instance for persistent state
-     * @returns {Object|null} - Dialogue data with persistent currentMessageIndex
+     * @param {GameInstance} [gameInstance] - Optional game instance for persistent state
+     * @returns {DialogueNpcData|null} - Dialogue data with persistent currentMessageIndex
      */
     static getDialogueNpcData(npcType, gameInstance = null) {
         // Initialize dialogue state cache if not present
@@ -341,6 +445,11 @@ export class Sign {
         return null;
     }
 
+    /**
+     * Get NPC character data from loader
+     * @param {string} npcType - NPC type
+     * @returns {any} Character data from JSON
+     */
     static getNPCCharacterData(npcType) {
         return getNPCCharacterData(npcType);
     }

@@ -4,9 +4,7 @@
  */
 
 import { Sign } from '../ui/Sign.js';
-
-// Mock getNPCCharacterData since we're testing without the full system
-const originalGetNPCCharacterData = await import('../core/NPCLoader.js').then(m => m.getNPCCharacterData);
+import * as NPCLoader from '../core/NPCLoader.js';
 
 // Mock character data for testing
 const mockCharacterData = {
@@ -24,58 +22,72 @@ const mockCharacterData = {
     }
 };
 
-console.log('Test: NPC Dialogue Progression with Sequential Mode');
-console.log('====================================================\n');
+describe('NPC Dialogue Progression with Sequential Mode', () => {
+    let mockGame;
+    let originalGetNPCCharacterData;
 
-// Test 1: Initial dialogue data creation
-console.log('Test 1: Initial dialogue data creation');
-const mockGame = { dialogueState: new Map() };
+    beforeEach(() => {
+        mockGame = { dialogueState: new Map() };
 
-// Temporarily mock getNPCCharacterData
-import('../core/NPCLoader.js').then(module => {
-    const originalFn = module.getNPCCharacterData;
-    module.getNPCCharacterData = (npcType) => mockCharacterData;
+        // Mock getNPCCharacterData
+        originalGetNPCCharacterData = NPCLoader.getNPCCharacterData;
+        NPCLoader.getNPCCharacterData = jest.fn().mockReturnValue(mockCharacterData);
+    });
 
-    const data1 = Sign.getDialogueNpcData('testnpc', mockGame);
-    console.log('  ✓ Initial currentMessageIndex:', data1.currentMessageIndex);
-    console.log('  ✓ Cycle mode:', data1.cycleMode);
-    console.log('  ✓ Number of messages:', data1.messages.length);
-    console.assert(data1.currentMessageIndex === 0, 'Initial index should be 0');
-    console.assert(data1.cycleMode === 'sequential', 'Cycle mode should be sequential');
+    afterEach(() => {
+        // Restore original function
+        NPCLoader.getNPCCharacterData = originalGetNPCCharacterData;
+    });
 
-    // Test 2: State persistence after advancing
-    console.log('\nTest 2: State persistence after advancing');
-    if (data1.cycleMode === 'sequential' && data1.currentMessageIndex < data1.messages.length - 1) {
-        data1.currentMessageIndex++;
-    }
-    console.log('  ✓ After increment:', data1.currentMessageIndex);
+    test('Initial dialogue data creation', () => {
+        const data1 = Sign.getDialogueNpcData('testnpc', mockGame);
 
-    const data2 = Sign.getDialogueNpcData('testnpc', mockGame);
-    console.log('  ✓ Retrieved currentMessageIndex:', data2.currentMessageIndex);
-    console.log('  ✓ Same object reference?', data1 === data2);
-    console.assert(data2.currentMessageIndex === 1, 'Index should persist at 1');
-    console.assert(data1 === data2, 'Should return cached object');
+        expect(data1.currentMessageIndex).toBe(0);
+        expect(data1.cycleMode).toBe('sequential');
+        expect(data1.messages.length).toBe(3);
+    });
 
-    // Test 3: Advancing through all messages
-    console.log('\nTest 3: Advancing through all messages');
-    for (let i = 0; i < 5; i++) {
-        if (data2.cycleMode === 'sequential' && data2.currentMessageIndex < data2.messages.length - 1) {
-            data2.currentMessageIndex++;
+    test('State persistence after advancing', () => {
+        const data1 = Sign.getDialogueNpcData('testnpc', mockGame);
+
+        // Advance the dialogue
+        if (data1.cycleMode === 'sequential' && data1.currentMessageIndex < data1.messages.length - 1) {
+            data1.currentMessageIndex++;
         }
-        console.log(`  Interaction ${i + 2}: currentMessageIndex = ${data2.currentMessageIndex}`);
-    }
-    console.assert(data2.currentMessageIndex === 2, 'Should stop at last message (index 2)');
 
-    // Test 4: Different NPC has independent state
-    console.log('\nTest 4: Different NPC has independent state');
-    const data3 = Sign.getDialogueNpcData('anothernpc', mockGame);
-    console.log('  ✓ New NPC currentMessageIndex:', data3.currentMessageIndex);
-    console.log('  ✓ Original NPC currentMessageIndex:', data2.currentMessageIndex);
-    console.assert(data3.currentMessageIndex === 0, 'New NPC should start at 0');
-    console.assert(data2.currentMessageIndex === 2, 'Original NPC should remain at 2');
+        expect(data1.currentMessageIndex).toBe(1);
 
-    console.log('\n✅ All tests passed!');
+        // Get the dialogue data again
+        const data2 = Sign.getDialogueNpcData('testnpc', mockGame);
 
-    // Restore original function
-    module.getNPCCharacterData = originalFn;
+        expect(data2.currentMessageIndex).toBe(1);
+        expect(data1).toBe(data2); // Same object reference
+    });
+
+    test('Advancing through all messages', () => {
+        const data = Sign.getDialogueNpcData('testnpc', mockGame);
+
+        // Advance through all messages (5 times)
+        for (let i = 0; i < 5; i++) {
+            if (data.cycleMode === 'sequential' && data.currentMessageIndex < data.messages.length - 1) {
+                data.currentMessageIndex++;
+            }
+        }
+
+        // Should stop at last message (index 2)
+        expect(data.currentMessageIndex).toBe(2);
+    });
+
+    test('Different NPC has independent state', () => {
+        const data1 = Sign.getDialogueNpcData('testnpc', mockGame);
+
+        // Advance testnpc to index 2
+        data1.currentMessageIndex = 2;
+
+        // Create another NPC
+        const data2 = Sign.getDialogueNpcData('anothernpc', mockGame);
+
+        expect(data2.currentMessageIndex).toBe(0); // New NPC starts at 0
+        expect(data1.currentMessageIndex).toBe(2); // Original NPC remains at 2
+    });
 });

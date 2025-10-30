@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * ZoneKeyUtils.js
  *
@@ -9,6 +10,14 @@
  *   Interior zone (1,2): "1,2:1"
  *   Underground zone (0,0) depth 1: "0,0:2:z-1"
  *   Underground zone (0,0) depth 3: "0,0:2:z-3"
+ */
+
+/**
+ * @typedef {Object} ParsedZoneKey
+ * @property {number} x - The x coordinate
+ * @property {number} y - The y coordinate
+ * @property {number} dimension - The dimension (0=surface, 1=interior, 2=underground)
+ * @property {number|null} depth - The depth level (for underground zones only)
  */
 
 /**
@@ -29,7 +38,7 @@ export function createZoneKey(x, y, dimension, depth) {
  * Parses a zone key string into its component parts.
  *
  * @param {string} zoneKey - The zone key to parse (format: "x,y:dimension" or "x,y:dimension:z-depth")
- * @returns {{x: number, y: number, dimension: number, depth: number|null}} The parsed zone data
+ * @returns {ParsedZoneKey} The parsed zone data
  * @throws {Error} If the zone key format is invalid
  */
 export function parseZoneKey(zoneKey) {

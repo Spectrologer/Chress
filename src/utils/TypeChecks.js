@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * TypeChecks - Standardized type checking utilities for the Chress codebase
  *
@@ -18,6 +19,11 @@
  * ❌ BAD:  tile === TILE_TYPES.BOMB (when tile could be an object)
  *
  * Import and use these utilities throughout the codebase for consistent type checking.
+ */
+
+/**
+ * @typedef {number|{type: number, [key: string]: any}|null|undefined} Tile
+ * A tile can be either a primitive number (tile type) or an object with a type property
  */
 
 import { TILE_TYPES } from '../core/constants/index.js';

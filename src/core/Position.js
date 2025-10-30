@@ -1,3 +1,39 @@
+// @ts-check
+
+/**
+ * @typedef {Object} Coordinates
+ * @property {number} x - X coordinate
+ * @property {number} y - Y coordinate
+ */
+
+/**
+ * @typedef {Object} Delta
+ * @property {number} dx - Delta X
+ * @property {number} dy - Delta Y
+ */
+
+/**
+ * @typedef {Object} Offset
+ * @property {number} x - X offset
+ * @property {number} y - Y offset
+ */
+
+/**
+ * @callback PositionPredicate
+ * @param {Position} pos - Position to validate
+ * @returns {boolean}
+ */
+
+/**
+ * @typedef {Array<Array<*>>} Grid
+ */
+
+/**
+ * @typedef {Object} GridManager
+ * @property {(x: number, y: number) => *} getTile - Get tile at position
+ * @property {(x: number, y: number, value: *) => void} setTile - Set tile at position
+ */
+
 /**
  * Position.js
  *
@@ -32,7 +68,9 @@ export class Position {
      * @param {number} y - Y coordinate
      */
     constructor(x, y) {
+        /** @type {number} */
         this.x = x;
+        /** @type {number} */
         this.y = y;
     }
 
@@ -42,7 +80,7 @@ export class Position {
 
     /**
      * Creates a Position from an object with x and y properties
-     * @param {{x: number, y: number}} obj - Object with x and y properties
+     * @param {Coordinates|Position} obj - Object with x and y properties
      * @returns {Position}
      */
     static from(obj) {
@@ -52,7 +90,7 @@ export class Position {
 
     /**
      * Creates a Position from separate x, y parameters or an object
-     * @param {number|{x: number, y: number}} xOrObj - X coordinate or object
+     * @param {number|Coordinates} xOrObj - X coordinate or object
      * @param {number} [y] - Y coordinate (if first param is number)
      * @returns {Position}
      */
@@ -60,7 +98,7 @@ export class Position {
         if (typeof xOrObj === 'object') {
             return Position.from(xOrObj);
         }
-        return new Position(xOrObj, y);
+        return new Position(xOrObj, /** @type {number} */(y));
     }
 
     /**
@@ -95,13 +133,13 @@ export class Position {
 
     /**
      * Checks if this position equals another position
-     * @param {Position|{x: number, y: number}|number} xOrPos - Position, object, or x coordinate
+     * @param {Position|Coordinates|number} xOrPos - Position, object, or x coordinate
      * @param {number} [y] - Y coordinate (if first param is number)
      * @returns {boolean}
      */
     equals(xOrPos, y) {
         if (typeof xOrPos === 'number') {
-            return PositionValidator.equals(this, { x: xOrPos, y });
+            return PositionValidator.equals(this, { x: xOrPos, y: /** @type {number} */(y) });
         }
         return PositionValidator.equals(this, xOrPos);
     }
@@ -121,7 +159,7 @@ export class Position {
     /**
      * Calculates Chebyshev distance (8-way grid distance) to another position
      * This is the standard movement distance in the game.
-     * @param {Position|{x: number, y: number}} other - Target position
+     * @param {Position|Coordinates} other - Target position
      * @returns {number}
      */
     chebyshevDistance(other) {
@@ -130,7 +168,7 @@ export class Position {
 
     /**
      * Calculates Manhattan distance (4-way grid distance) to another position
-     * @param {Position|{x: number, y: number}} other - Target position
+     * @param {Position|Coordinates} other - Target position
      * @returns {number}
      */
     manhattanDistance(other) {
@@ -139,7 +177,7 @@ export class Position {
 
     /**
      * Calculates Euclidean distance (straight-line distance) to another position
-     * @param {Position|{x: number, y: number}} other - Target position
+     * @param {Position|Coordinates} other - Target position
      * @returns {number}
      */
     euclideanDistance(other) {
@@ -148,7 +186,7 @@ export class Position {
 
     /**
      * Alias for chebyshevDistance - the default movement distance in the game
-     * @param {Position|{x: number, y: number}} other - Target position
+     * @param {Position|Coordinates} other - Target position
      * @returns {number}
      */
     distanceTo(other) {
@@ -161,8 +199,8 @@ export class Position {
 
     /**
      * Gets the delta (difference) between this position and another
-     * @param {Position|{x: number, y: number}} other - Target position
-     * @returns {{dx: number, dy: number}}
+     * @param {Position|Coordinates} other - Target position
+     * @returns {Delta}
      */
     delta(other) {
         return PositionCalculator.delta(this, other);
@@ -170,8 +208,8 @@ export class Position {
 
     /**
      * Gets the absolute delta between this position and another
-     * @param {Position|{x: number, y: number}} other - Target position
-     * @returns {{dx: number, dy: number}}
+     * @param {Position|Coordinates} other - Target position
+     * @returns {Delta}
      */
     absDelta(other) {
         return PositionCalculator.absDelta(this, other);
@@ -179,7 +217,7 @@ export class Position {
 
     /**
      * Gets the direction string from this position to another
-     * @param {Position|{x: number, y: number}} other - Target position
+     * @param {Position|Coordinates} other - Target position
      * @returns {string|null} Direction string (e.g., 'arrowright') or null if same position
      */
     directionTo(other) {
@@ -203,7 +241,7 @@ export class Position {
 
     /**
      * Creates a new position by adding an offset
-     * @param {number|{x: number, y: number}} dxOrOffset - Delta x or offset object
+     * @param {number|Offset} dxOrOffset - Delta x or offset object
      * @param {number} [dy] - Delta y (if first param is number)
      * @returns {Position}
      */
@@ -211,12 +249,12 @@ export class Position {
         if (typeof dxOrOffset === 'object') {
             return new Position(this.x + dxOrOffset.x, this.y + dxOrOffset.y);
         }
-        return new Position(this.x + dxOrOffset, this.y + dy);
+        return new Position(this.x + dxOrOffset, this.y + /** @type {number} */(dy));
     }
 
     /**
      * Creates a new position by subtracting an offset
-     * @param {number|{x: number, y: number}} dxOrOffset - Delta x or offset object
+     * @param {number|Offset} dxOrOffset - Delta x or offset object
      * @param {number} [dy] - Delta y (if first param is number)
      * @returns {Position}
      */
@@ -224,7 +262,7 @@ export class Position {
         if (typeof dxOrOffset === 'object') {
             return new Position(this.x - dxOrOffset.x, this.y - dxOrOffset.y);
         }
-        return new Position(this.x - dxOrOffset, this.y - dy);
+        return new Position(this.x - dxOrOffset, this.y - /** @type {number} */(dy));
     }
 
     // ==========================================
@@ -233,7 +271,7 @@ export class Position {
 
     /**
      * Checks if another position is adjacent to this one (including diagonals)
-     * @param {Position|{x: number, y: number}} other - Position to check
+     * @param {Position|Coordinates} other - Position to check
      * @param {boolean} [allowDiagonal=true] - Whether to consider diagonal adjacency
      * @returns {boolean}
      */
@@ -253,12 +291,12 @@ export class Position {
 
     /**
      * Gets neighbors filtered by a validation function
-     * @param {Function} validator - Function that takes (pos) and returns boolean
+     * @param {PositionPredicate} validator - Function that takes (pos) and returns boolean
      * @param {boolean} [allowDiagonal=true] - Whether to include diagonal neighbors
      * @returns {Position[]} Array of valid adjacent positions
      */
     getValidNeighbors(validator, allowDiagonal = true) {
-        return this.getNeighbors(allowDiagonal).filter(validator);
+        return this.getNeighbors(allowDiagonal).filter((/** @type {Position} */ pos) => validator(pos));
     }
 
     // ==========================================
@@ -301,38 +339,41 @@ export class Position {
     /**
      * Gets the tile at this position from a grid or gridManager
      * Note: Grid access is always grid[y][x] (row-major order)
-     * @param {Array<Array>|GridManager} gridOrManager - 2D grid array or GridManager instance
+     * @param {Grid|GridManager} gridOrManager - 2D grid array or GridManager instance
      * @returns {*} The tile at this position, or undefined if out of bounds
      */
     getTile(gridOrManager) {
         // Support both GridManager and raw grid arrays
-        if (gridOrManager && typeof gridOrManager.getTile === 'function') {
-            return gridOrManager.getTile(this.x, this.y);
+        if (gridOrManager && typeof /** @type {any} */(gridOrManager).getTile === 'function') {
+            return /** @type {GridManager} */(gridOrManager).getTile(this.x, this.y);
         }
-        return PositionValidator.getTile(this, gridOrManager);
+        return PositionValidator.getTile(this, /** @type {Grid} */(gridOrManager));
     }
 
     /**
      * Sets the tile at this position in a grid or gridManager
-     * @param {Array<Array>|GridManager} gridOrManager - 2D grid array or GridManager instance
+     * @param {Grid|GridManager} gridOrManager - 2D grid array or GridManager instance
      * @param {*} value - Value to set
+     * @returns {void}
      */
     setTile(gridOrManager, value) {
         // Support both GridManager and raw grid arrays
-        if (gridOrManager && typeof gridOrManager.setTile === 'function') {
-            gridOrManager.setTile(this.x, this.y, value);
+        const anyGrid = /** @type {any} */(gridOrManager);
+        if (gridOrManager && typeof anyGrid.setTile === 'function') {
+            anyGrid.setTile(this.x, this.y, value);
             return;
         }
-        if (!gridOrManager[this.y]) {
-            gridOrManager[this.y] = [];
+        const grid = /** @type {Grid} */(gridOrManager);
+        if (!grid[this.y]) {
+            grid[this.y] = [];
         }
-        gridOrManager[this.y][this.x] = value;
+        grid[this.y][this.x] = value;
     }
 
     /**
      * Checks if this position is a valid tile type in the grid
-     * @param {Array<Array>} grid - 2D grid array
-     * @param {Function} validator - Function that takes (tile) and returns boolean
+     * @param {Grid} grid - 2D grid array
+     * @param {(tile: *) => boolean} validator - Function that takes (tile) and returns boolean
      * @returns {boolean}
      */
     isValidTile(grid, validator) {
@@ -346,7 +387,7 @@ export class Position {
     /**
      * Converts this position to a plain object
      * Useful for events, serialization, and compatibility with existing code
-     * @returns {{x: number, y: number}}
+     * @returns {Coordinates}
      */
     toObject() {
         return { x: this.x, y: this.y };
@@ -381,7 +422,7 @@ export class Position {
 
     /**
      * JSON serialization
-     * @returns {{x: number, y: number}}
+     * @returns {Coordinates}
      */
     toJSON() {
         return this.toObject();
@@ -401,7 +442,7 @@ export class Position {
 
     /**
      * Checks if this position is on the same row as another
-     * @param {Position|{x: number, y: number}} other - Position to compare
+     * @param {Position|Coordinates} other - Position to compare
      * @returns {boolean}
      */
     isSameRow(other) {
@@ -410,7 +451,7 @@ export class Position {
 
     /**
      * Checks if this position is on the same column as another
-     * @param {Position|{x: number, y: number}} other - Position to compare
+     * @param {Position|Coordinates} other - Position to compare
      * @returns {boolean}
      */
     isSameColumn(other) {
@@ -420,7 +461,7 @@ export class Position {
     /**
      * Checks if this position is orthogonally aligned with another
      * (same row or same column)
-     * @param {Position|{x: number, y: number}} other - Position to compare
+     * @param {Position|Coordinates} other - Position to compare
      * @returns {boolean}
      */
     isOrthogonalTo(other) {
@@ -429,7 +470,7 @@ export class Position {
 
     /**
      * Checks if this position is diagonally aligned with another
-     * @param {Position|{x: number, y: number}} other - Position to compare
+     * @param {Position|Coordinates} other - Position to compare
      * @returns {boolean}
      */
     isDiagonalTo(other) {
@@ -439,7 +480,7 @@ export class Position {
     /**
      * Gets all positions in a line from this position to another
      * Uses Bresenham's line algorithm
-     * @param {Position|{x: number, y: number}} target - Target position
+     * @param {Position|Coordinates} target - Target position
      * @param {boolean} [includeStart=false] - Whether to include starting position
      * @param {boolean} [includeEnd=true] - Whether to include ending position
      * @returns {Position[]} Array of positions along the line
@@ -451,7 +492,7 @@ export class Position {
 
     /**
      * Gets all positions in a rectangular area
-     * @param {Position|{x: number, y: number}} corner - Opposite corner of rectangle
+     * @param {Position|Coordinates} corner - Opposite corner of rectangle
      * @param {boolean} [includeEdges=true] - Whether to include edge positions
      * @returns {Position[]} Array of positions in the rectangle
      */

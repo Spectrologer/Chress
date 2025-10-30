@@ -1,8 +1,57 @@
+// @ts-check
 import { GRID_SIZE } from '../core/constants/index.js';
 import { GridIterator } from '../utils/GridIterator.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
 import { getTileType, isTileType, isWalkable as isWalkableTile } from '../utils/TileUtils.js';
 import { logger } from '../core/logger.js';
+
+/**
+ * @typedef {number|Object} Tile
+ */
+
+/**
+ * @typedef {Array<Array<Tile>>} Grid
+ */
+
+/**
+ * @typedef {Object} TileWithPosition
+ * @property {Tile} tile - The tile value
+ * @property {number} x - X coordinate
+ * @property {number} y - Y coordinate
+ */
+
+/**
+ * @typedef {Object} NeighborTile
+ * @property {Tile} tile - The tile value
+ * @property {number} x - X coordinate
+ * @property {number} y - Y coordinate
+ * @property {string} direction - Direction name (e.g., 'up', 'down', 'left', 'right')
+ */
+
+/**
+ * @typedef {Object} GridIteratorOptions
+ * @property {number} [startX] - Start X coordinate
+ * @property {number} [endX] - End X coordinate
+ * @property {number} [startY] - Start Y coordinate
+ * @property {number} [endY] - End Y coordinate
+ * @property {boolean} [skipBorders] - Skip border tiles
+ */
+
+/**
+ * @callback TilePredicate
+ * @param {Tile} tile - The tile to test
+ * @param {number} x - X coordinate
+ * @param {number} y - Y coordinate
+ * @returns {boolean} True if tile matches predicate
+ */
+
+/**
+ * @callback TileCallback
+ * @param {Tile} tile - The tile
+ * @param {number} x - X coordinate
+ * @param {number} y - Y coordinate
+ * @returns {void}
+ */
 
 /**
  * GridManager - Centralized abstraction layer for grid operations
@@ -27,12 +76,14 @@ import { logger } from '../core/logger.js';
  */
 export class GridManager {
     /**
-     * @param {Array<Array>} grid - The 2D grid array (9x9)
+     * @param {Grid} grid - The 2D grid array (9x9)
      */
     constructor(grid) {
         if (!grid || !Array.isArray(grid)) {
             throw new Error('GridManager requires a valid grid array');
         }
+
+        /** @type {Grid} */
         this.grid = grid;
     }
 
@@ -41,7 +92,7 @@ export class GridManager {
      *
      * @param {number} x - X coordinate (column)
      * @param {number} y - Y coordinate (row)
-     * @returns {number|Object|undefined} The tile at the coordinates, or undefined if out of bounds
+     * @returns {Tile|undefined} The tile at the coordinates, or undefined if out of bounds
      */
     getTile(x, y) {
         if (!isWithinGrid(x, y)) {
@@ -56,7 +107,7 @@ export class GridManager {
      *
      * @param {number} x - X coordinate (column)
      * @param {number} y - Y coordinate (row)
-     * @param {number|Object} tile - The tile value or object to set
+     * @param {Tile} tile - The tile value or object to set
      * @returns {boolean} True if tile was set successfully
      */
     setTile(x, y, tile) {
@@ -121,7 +172,7 @@ export class GridManager {
      *
      * @param {number} x - X coordinate
      * @param {number} y - Y coordinate
-     * @returns {number|Object|undefined} Copy of the tile
+     * @returns {Tile|undefined} Copy of the tile
      */
     cloneTile(x, y) {
         const tile = this.getTile(x, y);
@@ -138,9 +189,9 @@ export class GridManager {
     /**
      * Find all tiles matching a predicate
      *
-     * @param {Function} predicate - Function(tile, x, y) => boolean
-     * @param {Object} options - GridIterator options (startX, endX, startY, endY, skipBorders)
-     * @returns {Array<{tile, x, y}>} Array of matching tiles with coordinates
+     * @param {TilePredicate} predicate - Function(tile, x, y) => boolean
+     * @param {GridIteratorOptions} [options] - GridIterator options (startX, endX, startY, endY, skipBorders)
+     * @returns {Array<TileWithPosition>} Array of matching tiles with coordinates
      *
      * @example
      * // Find all bombs on the grid
@@ -153,9 +204,9 @@ export class GridManager {
     /**
      * Find first tile matching a predicate
      *
-     * @param {Function} predicate - Function(tile, x, y) => boolean
-     * @param {Object} options - GridIterator options
-     * @returns {{tile, x, y}|null} First matching tile or null
+     * @param {TilePredicate} predicate - Function(tile, x, y) => boolean
+     * @param {GridIteratorOptions} [options] - GridIterator options
+     * @returns {TileWithPosition|null} First matching tile or null
      */
     findFirst(predicate, options = {}) {
         return GridIterator.findFirst(this.grid, predicate, options);
@@ -165,8 +216,8 @@ export class GridManager {
      * Find all tiles of a specific type
      *
      * @param {number} tileType - TILE_TYPES value
-     * @param {Object} options - GridIterator options
-     * @returns {Array<{tile, x, y}>} Array of matching tiles
+     * @param {GridIteratorOptions} [options] - GridIterator options
+     * @returns {Array<TileWithPosition>} Array of matching tiles
      *
      * @example
      * // Find all exits
@@ -179,8 +230,8 @@ export class GridManager {
     /**
      * Count tiles matching a predicate
      *
-     * @param {Function} predicate - Function(tile, x, y) => boolean
-     * @param {Object} options - GridIterator options
+     * @param {TilePredicate} predicate - Function(tile, x, y) => boolean
+     * @param {GridIteratorOptions} [options] - GridIterator options
      * @returns {number} Count of matching tiles
      */
     count(predicate, options = {}) {
@@ -190,8 +241,9 @@ export class GridManager {
     /**
      * Iterate over each tile in the grid
      *
-     * @param {Function} callback - Function(tile, x, y) => void
-     * @param {Object} options - GridIterator options
+     * @param {TileCallback} callback - Function(tile, x, y) => void
+     * @param {GridIteratorOptions} [options] - GridIterator options
+     * @returns {void}
      *
      * @example
      * gridManager.forEach((tile, x, y) => {
@@ -199,14 +251,14 @@ export class GridManager {
      * });
      */
     forEach(callback, options = {}) {
-        GridIterator.forEach(this.grid, callback, options);
+        GridIterator.forEach(this.grid, callback, /** @type {any} */ (options));
     }
 
     /**
      * Check if any tile matches a predicate
      *
-     * @param {Function} predicate - Function(tile, x, y) => boolean
-     * @param {Object} options - GridIterator options
+     * @param {TilePredicate} predicate - Function(tile, x, y) => boolean
+     * @param {GridIteratorOptions} [options] - GridIterator options
      * @returns {boolean} True if any tile matches
      */
     some(predicate, options = {}) {
@@ -216,8 +268,8 @@ export class GridManager {
     /**
      * Check if all tiles match a predicate
      *
-     * @param {Function} predicate - Function(tile, x, y) => boolean
-     * @param {Object} options - GridIterator options
+     * @param {TilePredicate} predicate - Function(tile, x, y) => boolean
+     * @param {GridIteratorOptions} [options] - GridIterator options
      * @returns {boolean} True if all tiles match
      */
     every(predicate, options = {}) {
@@ -231,7 +283,8 @@ export class GridManager {
      * @param {number} y - Top-left Y coordinate
      * @param {number} width - Width of region
      * @param {number} height - Height of region
-     * @param {*|Function} value - Tile value or Function(x, y) => tile
+     * @param {Tile|Function} value - Tile value or Function(x, y) => tile
+     * @returns {void}
      *
      * @example
      * // Fill 3x3 area with floor tiles
@@ -248,7 +301,7 @@ export class GridManager {
      * @param {number} y - Top-left Y coordinate
      * @param {number} width - Width of region
      * @param {number} height - Height of region
-     * @param {Function} predicate - Function(tile, x, y) => boolean
+     * @param {TilePredicate} predicate - Function(tile, x, y) => boolean
      * @returns {boolean} True if region fits and all tiles match predicate
      */
     canPlaceRegion(x, y, width, height, predicate) {
@@ -262,7 +315,7 @@ export class GridManager {
      * @param {number} centerY - Center Y coordinate
      * @param {number} width - Width of region
      * @param {number} height - Height of region
-     * @param {Function} callback - Function(tile, x, y) => void
+     * @param {TileCallback} callback - Function(tile, x, y) => void
      * @returns {boolean} True if all tiles were within bounds
      */
     forEachInRegion(centerX, centerY, width, height, callback) {
@@ -272,8 +325,8 @@ export class GridManager {
     /**
      * Get all tiles in the grid as a flat array
      *
-     * @param {Object} options - GridIterator options
-     * @returns {Array<{tile, x, y}>} Flat array of tiles with coordinates
+     * @param {GridIteratorOptions} [options] - GridIterator options
+     * @returns {Array<TileWithPosition>} Flat array of tiles with coordinates
      */
     toArray(options = {}) {
         return GridIterator.toArray(this.grid, options);
@@ -284,8 +337,8 @@ export class GridManager {
      *
      * @param {number} x - X coordinate
      * @param {number} y - Y coordinate
-     * @param {boolean} includeDiagonals - Include diagonal neighbors (default: false)
-     * @returns {Array<{tile, x, y, direction}>} Array of neighbor tiles
+     * @param {boolean} [includeDiagonals] - Include diagonal neighbors (default: false)
+     * @returns {Array<NeighborTile>} Array of neighbor tiles
      *
      * @example
      * const neighbors = gridManager.getNeighbors(4, 4);
@@ -361,7 +414,7 @@ export class GridManager {
     /**
      * Get the raw grid reference (use sparingly, prefer abstraction methods)
      *
-     * @returns {Array<Array>} The underlying grid array
+     * @returns {Grid} The underlying grid array
      * @deprecated Use GridManager methods instead of direct grid access
      */
     getRawGrid() {
@@ -372,7 +425,8 @@ export class GridManager {
     /**
      * Replace the entire grid reference (useful for zone transitions)
      *
-     * @param {Array<Array>} newGrid - The new grid to use
+     * @param {Grid} newGrid - The new grid to use
+     * @returns {void}
      */
     setGrid(newGrid) {
         if (!newGrid || !Array.isArray(newGrid)) {
@@ -384,7 +438,7 @@ export class GridManager {
     /**
      * Create a deep copy of the current grid
      *
-     * @returns {Array<Array>} Deep copy of the grid
+     * @returns {Grid} Deep copy of the grid
      */
     cloneGrid() {
         return this.grid.map(row =>
@@ -409,7 +463,8 @@ export class GridManager {
     /**
      * Debug: Log grid state to console
      *
-     * @param {string} label - Optional label for the log
+     * @param {string} [label] - Optional label for the log
+     * @returns {void}
      */
     debugLog(label = 'Grid State') {
         logger.debug(`${label}:`);

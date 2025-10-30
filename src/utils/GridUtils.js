@@ -1,3 +1,4 @@
+// @ts-check
 import { GRID_SIZE } from '../core/constants/index.js';
 
 /**

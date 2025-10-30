@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chress State Management Demo</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      background: #1a1a1a;
+      color: #00ff00;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #00ff00;
+      text-align: center;
+      border-bottom: 2px solid #00ff00;
+      padding-bottom: 10px;
+    }
+
+    .section {
+      background: #0a0a0a;
+      border: 2px solid #00ff00;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .section h2 {
+      color: #ffff00;
+      margin-top: 0;
+    }
+
+    button {
+      background: #003300;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: #005500;
+    }
+
+    button:active {
+      background: #00ff00;
+      color: black;
+    }
+
+    .output {
+      background: #000;
+      border: 1px solid #00ff00;
+      padding: 10px;
+      margin: 10px 0;
+      max-height: 400px;
+      overflow-y: auto;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .success {
+      color: #00ff00;
+    }
+
+    .error {
+      color: #ff0000;
+    }
+
+    .info {
+      color: #00ffff;
+    }
+
+    .warning {
+      color: #ffff00;
+    }
+
+    .key {
+      color: #ffff00;
+      font-weight: bold;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      background: #003300;
+      border: 1px solid #00ff00;
+      border-radius: 3px;
+      font-size: 11px;
+      margin-left: 10px;
+    }
+
+    .progress {
+      margin: 10px 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: #0a0a0a;
+      border: 1px solid #00ff00;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #00ff00;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏪 Chress State Management System Demo</h1>
+
+    <div class="section">
+      <h2>📚 Quick Info</h2>
+      <p>Press <strong>Ctrl+Shift+D</strong> to open the visual debugger!</p>
+      <p>This demo lets you test all features of the centralized state system.</p>
+      <div>
+        <button onclick="window.chressDebugger.toggle()">Toggle Visual Debugger</button>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="clearOutput()">Clear Output</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>1️⃣ Basic Functionality Tests</h2>
+      <div>
+        <button onclick="testImports()">Test Imports</button>
+        <button onclick="testStateReadWrite()">Test Read/Write</button>
+        <button onclick="testSelectors()">Test Selectors</button>
+        <button onclick="testActions()">Test Actions</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>2️⃣ Persistence Tests</h2>
+      <div>
+        <button onclick="testSave()">Test Save</button>
+        <button onclick="testLoad()">Test Load</button>
+        <button onclick="testClear()">Test Clear</button>
+        <button onclick="testExport()">Test Export</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>3️⃣ Advanced Tests</h2>
+      <div>
+        <button onclick="testCompression()">Test Compression</button>
+        <button onclick="testZonePruning()">Test Zone Pruning</button>
+        <button onclick="testMutations()">Test Mutation History</button>
+        <button onclick="testSnapshots()">Test Snapshots</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>4️⃣ State Slice Tests</h2>
+      <div>
+        <button onclick="testPersistentState()">Test Persistent State</button>
+        <button onclick="testSessionState()">Test Session State</button>
+        <button onclick="testTransientState()">Test Transient State</button>
+        <button onclick="testUIState()">Test UI State</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📊 Test Progress</h2>
+      <div class="progress">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+        </div>
+        <div id="progressText" style="margin-top: 5px;">
+          <span class="info">No tests run yet</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📋 Test Output</h2>
+      <div class="output" id="output">
+        <div class="info">Ready to run tests. Click any button above to start.</div>
+        <div class="warning">Press Ctrl+Shift+D to open the visual debugger!</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { store, StateActions, StateSelectors, persistence, stateDebugger } from './src/state/index.js';
+
+    // Make available globally for button handlers
+    window.store = store;
+    window.StateActions = StateActions;
+    window.StateSelectors = StateSelectors;
+    window.persistence = persistence;
+    window.stateDebugger = stateDebugger;
+
+    // Test tracking
+    let testsRun = 0;
+    let testsPassed = 0;
+    let testsFailed = 0;
+
+    function log(message, type = 'info') {
+      const output = document.getElementById('output');
+      const div = document.createElement('div');
+      div.className = type;
+      div.textContent = message;
+      output.appendChild(div);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function updateProgress() {
+      const total = testsRun;
+      const progressBar = document.getElementById('progressBar');
+      const progressText = document.getElementById('progressText');
+
+      const percentage = total > 0 ? Math.round((testsPassed / total) * 100) : 0;
+      progressBar.style.width = percentage + '%';
+
+      progressText.innerHTML = `
+        <span class="success">✓ ${testsPassed} passed</span>
+        <span class="error">✗ ${testsFailed} failed</span>
+        <span class="info">(${total} total)</span>
+      `;
+    }
+
+    function assert(condition, message) {
+      testsRun++;
+      if (condition) {
+        testsPassed++;
+        log(`✓ ${message}`, 'success');
+      } else {
+        testsFailed++;
+        log(`✗ ${message}`, 'error');
+      }
+      updateProgress();
+    }
+
+    // Test functions
+    window.testImports = function() {
+      log('=== Testing Imports ===', 'key');
+      assert(typeof store !== 'undefined', 'store imported');
+      assert(typeof StateActions !== 'undefined', 'StateActions imported');
+      assert(typeof StateSelectors !== 'undefined', 'StateSelectors imported');
+      assert(typeof persistence !== 'undefined', 'persistence imported');
+      assert(typeof stateDebugger !== 'undefined', 'stateDebugger imported');
+      assert(typeof window.chressStore !== 'undefined', 'window.chressStore available');
+      assert(typeof window.chressDebugger !== 'undefined', 'window.chressDebugger available');
+    };
+
+    window.testStateReadWrite = function() {
+      log('=== Testing State Read/Write ===', 'key');
+
+      // Write state
+      StateActions.movePlayer(42, 99);
+
+      // Read state
+      const pos = StateSelectors.getPlayerPosition();
+      assert(pos.x === 42, 'Position X set correctly');
+      assert(pos.y === 99, 'Position Y set correctly');
+
+      // Update stats
+      StateActions.updatePlayerStats({ health: 75, hunger: 80 });
+      const stats = StateSelectors.getPlayerStats();
+      assert(stats.health === 75, 'Health updated correctly');
+      assert(stats.hunger === 80, 'Hunger updated correctly');
+    };
+
+    window.testSelectors = function() {
+      log('=== Testing Selectors ===', 'key');
+
+      // Setup test data
+      StateActions.movePlayer(10, 20);
+      StateActions.addAbility('axe');
+      StateActions.addToInventory({ type: 'potion', name: 'Health Potion' });
+
+      // Test selectors
+      assert(StateSelectors.getPlayerPosition().x === 10, 'getPlayerPosition works');
+      assert(StateSelectors.hasAbility('axe'), 'hasAbility works');
+      assert(StateSelectors.getPlayerInventory().length > 0, 'getPlayerInventory works');
+      assert(StateSelectors.getPlayer() !== null, 'getPlayer works');
+      assert(StateSelectors.getPlayerStats() !== null, 'getPlayerStats works');
+    };
+
+    window.testActions = function() {
+      log('=== Testing Actions ===', 'key');
+
+      // Player actions
+      StateActions.movePlayer(5, 5);
+      assert(StateSelectors.getPlayerPosition().x === 5, 'movePlayer works');
+
+      StateActions.addToInventory({ type: 'test' });
+      assert(StateSelectors.getPlayerInventory().some(i => i.type === 'test'), 'addToInventory works');
+
+      StateActions.addAbility('test_ability');
+      assert(StateSelectors.hasAbility('test_ability'), 'addAbility works');
+
+      StateActions.changeZone(1, 2, 'overworld');
+      const zone = StateSelectors.getPlayerCurrentZone();
+      assert(zone.x === 1 && zone.y === 2, 'changeZone works');
+
+      StateActions.toggleStatsPanel(true);
+      assert(StateSelectors.isStatsPanelOpen(), 'toggleStatsPanel works');
+    };
+
+    window.testSave = async function() {
+      log('=== Testing Save ===', 'key');
+
+      // Setup some state
+      StateActions.movePlayer(77, 88);
+      StateActions.updatePlayerStats({ health: 55 });
+
+      // Save
+      const success = await persistence.save();
+      assert(success, 'Save succeeded');
+
+      const saveCount = StateSelectors.getSaveCount();
+      log(`Save count: ${saveCount}`, 'info');
+    };
+
+    window.testLoad = async function() {
+      log('=== Testing Load ===', 'key');
+
+      // Save current state
+      StateActions.movePlayer(111, 222);
+      await persistence.save();
+
+      // Change state
+      StateActions.movePlayer(999, 999);
+      assert(StateSelectors.getPlayerPosition().x === 999, 'State changed before load');
+
+      // Load
+      const success = await persistence.load();
+      assert(success, 'Load succeeded');
+
+      // Verify restored
+      const pos = StateSelectors.getPlayerPosition();
+      assert(pos.x === 111, 'Position X restored');
+      assert(pos.y === 222, 'Position Y restored');
+    };
+
+    window.testClear = async function() {
+      log('=== Testing Clear ===', 'key');
+
+      // Save something
+      await persistence.save();
+
+      // Clear
+      await persistence.clear();
+
+      // Check cleared
+      const hasSave = await persistence.hasSavedState();
+      assert(!hasSave, 'Save cleared successfully');
+    };
+
+    window.testExport = async function() {
+      log('=== Testing Export ===', 'key');
+
+      try {
+        await persistence.exportSave();
+        log('Export initiated (check downloads)', 'success');
+      } catch (error) {
+        log(`Export error: ${error.message}`, 'error');
+      }
+    };
+
+    window.testCompression = async function() {
+      log('=== Testing Compression ===', 'key');
+
+      // Create large state
+      for (let i = 0; i < 10; i++) {
+        StateActions.cacheZone(i, 0, 'overworld', 0, {
+          grid: Array(16).fill(null).map(() => Array(16).fill({ type: 'grass' })),
+          enemies: []
+        });
+      }
+
+      log('Created 10 zones with full grids', 'info');
+
+      // Save and check compression
+      await persistence.save();
+      log('Check console for compression stats', 'info');
+
+      const zones = StateSelectors.getZones();
+      assert(zones.size >= 10, 'Zones cached correctly');
+    };
+
+    window.testZonePruning = async function() {
+      log('=== Testing Zone Pruning ===', 'key');
+
+      // Create 150 zones
+      for (let i = 0; i < 150; i++) {
+        StateActions.cacheZone(i, 0, 'overworld', 0, {
+          grid: [],
+          enemies: []
+        });
+      }
+
+      log('Created 150 zones', 'info');
+
+      // Save (should trigger pruning)
+      await persistence.save();
+
+      // Reload
+      await persistence.load();
+
+      const zones = StateSelectors.getZones();
+      log(`Zones after pruning: ${zones.size}`, 'info');
+      assert(zones.size <= 100, 'Zones pruned to 100 or less');
+    };
+
+    window.testMutations = function() {
+      log('=== Testing Mutation History ===', 'key');
+
+      // Make some changes
+      StateActions.movePlayer(1, 1);
+      StateActions.movePlayer(2, 2);
+      StateActions.movePlayer(3, 3);
+
+      // Get mutations
+      const mutations = store.getMutations(5);
+      assert(mutations.length > 0, 'Mutations recorded');
+      assert(mutations[0].hasOwnProperty('path'), 'Mutation has path');
+      assert(mutations[0].hasOwnProperty('oldValue'), 'Mutation has oldValue');
+      assert(mutations[0].hasOwnProperty('newValue'), 'Mutation has newValue');
+
+      log(`Recorded ${mutations.length} mutations`, 'info');
+    };
+
+    window.testSnapshots = function() {
+      log('=== Testing Snapshots ===', 'key');
+
+      // Take snapshot
+      const snapshot = store.getSnapshot();
+      assert(snapshot.state !== null, 'Snapshot created');
+
+      // Make changes
+      StateActions.movePlayer(999, 999);
+      assert(StateSelectors.getPlayerPosition().x === 999, 'State changed');
+
+      // Restore
+      store.restoreSnapshot(snapshot);
+      const pos = StateSelectors.getPlayerPosition();
+      assert(pos.x !== 999, 'Snapshot restored (position reverted)');
+
+      log('Snapshot restored successfully', 'success');
+    };
+
+    window.testPersistentState = async function() {
+      log('=== Testing Persistent State ===', 'key');
+
+      // Set persistent data
+      StateActions.addToInventory({ type: 'persistent_test' });
+      StateActions.addAbility('persistent_ability');
+
+      // Save
+      await persistence.save();
+
+      // Reload page simulation
+      await persistence.load();
+
+      // Check persistent data survived
+      const hasItem = StateSelectors.getPlayerInventory().some(i => i.type === 'persistent_test');
+      const hasAbility = StateSelectors.hasAbility('persistent_ability');
+
+      assert(hasItem, 'Inventory persisted');
+      assert(hasAbility, 'Abilities persisted');
+    };
+
+    window.testSessionState = function() {
+      log('=== Testing Session State ===', 'key');
+
+      // Set session data
+      StateActions.startGame();
+      StateActions.incrementZoneCounter();
+      const counter = StateSelectors.getZoneCounter();
+
+      // Reset session
+      StateActions.resetSession();
+      const newCounter = StateSelectors.getZoneCounter();
+
+      assert(newCounter === 0, 'Session state reset');
+      assert(!StateSelectors.isGameStarted(), 'Game started flag reset');
+    };
+
+    window.testTransientState = function() {
+      log('=== Testing Transient State ===', 'key');
+
+      // Set transient data
+      StateActions.setPlayerAttacked(true);
+      assert(StateSelectors.hasPlayerJustAttacked(), 'Attack flag set');
+
+      // Reset transient
+      StateActions.resetTransient();
+      assert(!StateSelectors.hasPlayerJustAttacked(), 'Attack flag reset');
+
+      StateActions.setPendingCharge(true);
+      assert(StateSelectors.isPendingCharge(), 'Charge flag set');
+
+      StateActions.resetTransient();
+      assert(!StateSelectors.isPendingCharge(), 'Charge flag reset after transient reset');
+    };
+
+    window.testUIState = async function() {
+      log('=== Testing UI State ===', 'key');
+
+      // Set UI state
+      StateActions.toggleStatsPanel(true);
+      StateActions.toggleRadialMenu(true);
+      StateActions.updateSettings({ musicEnabled: false });
+
+      assert(StateSelectors.isStatsPanelOpen(), 'Stats panel opened');
+      assert(StateSelectors.isRadialMenuOpen(), 'Radial menu opened');
+      assert(!StateSelectors.isMusicEnabled(), 'Music disabled');
+
+      // Save and reload (UI state should NOT persist)
+      await persistence.save();
+      await persistence.load();
+
+      // UI state should be reset
+      // Note: This depends on how you handle UI state on load
+      log('UI state tested (check if it persists or resets as expected)', 'info');
+    };
+
+    window.runAllTests = async function() {
+      log('', 'info');
+      log('═══════════════════════════════════════', 'key');
+      log('   RUNNING ALL TESTS', 'key');
+      log('═══════════════════════════════════════', 'key');
+      log('', 'info');
+
+      testsRun = 0;
+      testsPassed = 0;
+      testsFailed = 0;
+
+      // Run all tests
+      testImports();
+      testStateReadWrite();
+      testSelectors();
+      testActions();
+      await testSave();
+      await testLoad();
+      testMutations();
+      testSnapshots();
+      testPersistentState();
+      testSessionState();
+      testTransientState();
+      await testCompression();
+
+      log('', 'info');
+      log('═══════════════════════════════════════', 'key');
+      log(`   TEST SUMMARY: ${testsPassed}/${testsRun} PASSED`, testsFailed === 0 ? 'success' : 'warning');
+      log('═══════════════════════════════════════', 'key');
+
+      if (testsFailed === 0) {
+        log('🎉 All tests passed! System is ready to use.', 'success');
+      } else {
+        log(`⚠️ ${testsFailed} test(s) failed. Check output above.`, 'warning');
+      }
+    };
+
+    window.clearOutput = function() {
+      document.getElementById('output').innerHTML = '';
+      testsRun = 0;
+      testsPassed = 0;
+      testsFailed = 0;
+      updateProgress();
+    };
+
+    // Initial message
+    log('🏪 State Management System loaded successfully!', 'success');
+    log('Press Ctrl+Shift+D to open visual debugger', 'info');
+    log('Click "Run All Tests" to verify everything works', 'info');
+  </script>
+</body>
+</html>

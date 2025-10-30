@@ -1,6 +1,25 @@
+// @ts-check
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { logger } from '../core/logger.js';
+
+/**
+ * @typedef {Object} PlayerStats
+ * @property {number} [health] - Health points
+ * @property {number} [hunger] - Hunger level
+ * @property {number} [thirst] - Thirst level
+ * @property {number} [maxHealth] - Maximum health
+ * @property {number} [points] - Player points
+ * @property {number} [spentDiscoveries] - Spent discoveries count
+ * @property {Function} [takeDamage] - Take damage function
+ */
+
+/**
+ * @typedef {Object} InteractTarget
+ * @property {number} x - Target X coordinate
+ * @property {number} y - Target Y coordinate
+ * @property {*} [data] - Additional interaction data
+ */
 
 /**
  * PlayerStatsFacade - Stats, animations, and interaction management for player
@@ -19,7 +38,7 @@ import { logger } from '../core/logger.js';
  */
 export class PlayerStatsFacade {
     /**
-     * @param {Object} player - The player entity
+     * @param {any} player - The player entity
      */
     constructor(player) {
         if (!player) {
@@ -34,7 +53,7 @@ export class PlayerStatsFacade {
 
     /**
      * Get stats object (returns copy to prevent direct mutations)
-     * @returns {Object} Copy of stats
+     * @returns {PlayerStats} Copy of stats
      */
     getStats() {
         return this.player.stats ? { ...this.player.stats } : {};
@@ -263,7 +282,7 @@ export class PlayerStatsFacade {
 
     /**
      * Get interact on reach target
-     * @returns {Object|null}
+     * @returns {InteractTarget|null}
      */
     getInteractOnReach() {
         return this.player.interactOnReach;
@@ -271,7 +290,7 @@ export class PlayerStatsFacade {
 
     /**
      * Set interact on reach target
-     * @param {Object} target - Target coordinates
+     * @param {InteractTarget|null} target - Target coordinates
      */
     setInteractOnReach(target) {
         this.player.interactOnReach = target;

@@ -17,7 +17,7 @@ export class SimpleOverlayRenderStrategy extends TileRenderStrategy {
 
     render(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
         // First draw the base tile
-        if (zoneLevel >= 4 && baseRenderer.images.desert && baseRenderer.images.desert.complete) {
+        if (zoneLevel >= 4 && zoneLevel !== 5 && zoneLevel !== 6 && baseRenderer.images.desert && baseRenderer.images.desert.complete) {
             ctx.drawImage(baseRenderer.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);

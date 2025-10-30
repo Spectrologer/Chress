@@ -87,7 +87,8 @@ export class TextureLoader {
 
             // Load food assets
             FOOD_ASSETS.forEach(assetName => {
-                const imageKey = assetName.replace(/items\/consumables\//, '').replace('.png', '').replace('/', '_');
+                // Extract just the filename for the image key (e.g., 'items/consumables/beaf.png' -> 'beaf')
+                const imageKey = assetName.split('/').pop().replace('.png', '');
                 this.loadImage(imageKey, assetName);
             });
 

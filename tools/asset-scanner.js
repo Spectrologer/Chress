@@ -1,10 +1,63 @@
+// @ts-check
 // Asset Scanner Module - Dynamically reads game asset definitions
 // v2.1 - Feltface moved to portraits folder
-import { IMAGE_ASSETS, FOOD_ASSETS } from '/src/core/constants/index.js?v=5';
-import { loadAllNPCs, getAllNPCCharacterData } from '/src/core/NPCLoader.js?v=5';
+import { IMAGE_ASSETS, FOOD_ASSETS } from '/src/core/constants/index.js';
+import { loadAllNPCs, getAllNPCCharacterData } from '/src/core/NPCLoader.js';
 
+/**
+ * @typedef {Object} AssetCategory
+ * @property {string} asset - The asset path
+ * @property {string} name - The display name
+ * @property {string} path - The full path to the asset
+ * @property {string} [type] - The type of asset
+ * @property {string} [itemType] - For items: 'equipment', 'consumable', 'misc'
+ * @property {string} [foodType] - For food items
+ * @property {string} [floorType] - For floor tiles
+ * @property {string} [effectType] - For effects: 'smoke', 'explosion', 'general'
+ * @property {string|null} [frame] - Animation frame number
+ */
+
+/**
+ * @typedef {Object} NPCAsset
+ * @property {string} name - NPC name
+ * @property {string} type - NPC type
+ * @property {string|null} sprite - Path to sprite asset
+ * @property {string|null} portrait - Path to portrait asset
+ * @property {any} [trades] - Trade information if applicable
+ * @property {string} key - NPC key identifier
+ */
+
+/**
+ * @typedef {Object} NPCInfo
+ * @property {string} name - NPC name
+ * @property {string|null} portrait - Portrait path
+ * @property {string|null} sprite - Sprite path
+ * @property {string} type - NPC type
+ * @property {any} [trades] - Trade information
+ * @property {string} key - NPC key identifier
+ */
+
+/**
+ * @typedef {Object} AssetCategories
+ * @property {NPCAsset[]} npcs
+ * @property {AssetCategory[]} enemies
+ * @property {AssetCategory[]} items
+ * @property {AssetCategory[]} food
+ * @property {AssetCategory[]} ui
+ * @property {AssetCategory[]} flora
+ * @property {AssetCategory[]} doodads
+ * @property {AssetCategory[]} floors
+ * @property {AssetCategory[]} effects
+ * @property {AssetCategory[]} protag
+ * @property {AssetCategory[]} misc
+ */
+
+/**
+ * AssetScanner class - Scans and categorizes game assets
+ */
 export class AssetScanner {
     constructor() {
+        /** @type {AssetCategories} */
         this.categories = {
             npcs: [],
             enemies: [],
@@ -19,11 +72,20 @@ export class AssetScanner {
             misc: []
         };
 
+        /** @type {Record<string, NPCInfo>} */
         this.npcData = {};
+
+        /** @type {boolean} */
         this.npcDataLoaded = false;
+
+        /** @type {string[]} */
         this.enemyTypes = ['lizardy', 'lizardo', 'lizardeaux', 'lizord', 'lazerd', 'zard'];
     }
 
+    /**
+     * Load NPC data from JSON files
+     * @returns {Promise<void>}
+     */
     async loadNPCData() {
         if (this.npcDataLoaded) return;
 
@@ -33,6 +95,7 @@ export class AssetScanner {
             const allNPCData = getAllNPCCharacterData();
 
             // Convert to the format we need
+            /** @type {Record<string, NPCInfo>} */
             const npcs = {};
             allNPCData.forEach((data, key) => {
                 if (data.name) {
@@ -71,6 +134,11 @@ export class AssetScanner {
         }
     }
 
+    /**
+     * Categorize an asset based on its path
+     * @param {string} path - The asset path to categorize
+     * @returns {void}
+     */
     categorizeAsset(path) {
         const category = {
             asset: path,
@@ -308,16 +376,30 @@ export class AssetScanner {
         }
     }
 
+    /**
+     * Extract the display name from an asset path
+     * @param {string} path - The asset path
+     * @returns {string} The extracted display name
+     */
     extractName(path) {
         const parts = path.split('/');
         const filename = parts[parts.length - 1];
         return filename.replace('.png', '').replace(/_/g, ' ');
     }
 
+    /**
+     * Capitalize a string and replace underscores with spaces
+     * @param {string} str - The string to capitalize
+     * @returns {string} The capitalized string
+     */
     capitalize(str) {
         return str.charAt(0).toUpperCase() + str.slice(1).replace(/_/g, ' ');
     }
 
+    /**
+     * Scan and categorize all game assets
+     * @returns {Promise<AssetCategories>} The categorized assets
+     */
     async scanAssets() {
         // Load NPC data first
         await this.loadNPCData();
@@ -356,6 +438,10 @@ export class AssetScanner {
         return this.categories;
     }
 
+    /**
+     * Get statistics about scanned assets
+     * @returns {{total: number, byCategory: Record<string, number>}} Statistics object
+     */
     getStats() {
         const stats = {
             total: IMAGE_ASSETS.length + FOOD_ASSETS.length,
@@ -371,6 +457,11 @@ export class AssetScanner {
         return stats;
     }
 
+    /**
+     * Search for assets by query string
+     * @param {string} query - The search query
+     * @returns {Array<AssetCategory & {category: string}>} Array of matching assets with their category
+     */
     searchAssets(query) {
         const results = [];
         const searchTerm = query.toLowerCase();

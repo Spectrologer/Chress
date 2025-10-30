@@ -257,13 +257,13 @@ export class BoardLoader {
         // Convert feature name to TILE_TYPES constant
         const tileTypeName = featureType.toUpperCase();
 
-        if (TILE_TYPES[tileTypeName]) {
+        if (tileTypeName in TILE_TYPES) {
             return TILE_TYPES[tileTypeName];
         }
 
         // Try with underscores converted
         const normalizedName = featureType.replace(/-/g, '_').toUpperCase();
-        if (TILE_TYPES[normalizedName]) {
+        if (normalizedName in TILE_TYPES) {
             return TILE_TYPES[normalizedName];
         }
 

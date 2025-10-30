@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Chress: Chess 2: The Sequel to Chess</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="A browser-based RPG game with turn-based combat, zone exploration, and procedural generation">
+    <meta name="theme-color" content="#3d2845">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Chress">
+
+    <!-- PWA Icons -->
+    <link rel="apple-touch-icon" href="icon-apple-touch.png">
+    <link rel="manifest" href="manifest.webmanifest">
     <script>
         // Set random NPC favicon
         const npcSprites = [
@@ -19,16 +31,19 @@
         document.head.appendChild(link);
     </script>
 
-    <!-- Sentry CDN -->
-    <script
-      src="https://js-de.sentry-cdn.com/2d2383cc5fdaf52165ff0b7c57dfa857.min.js"
-      crossorigin="anonymous"
-    ></script>
-
-    <!-- Defer Sentry Initialization -->
+    <!-- Sentry CDN - Only load in production -->
     <script>
-        if (typeof Sentry !== 'undefined') {
-            Sentry.onLoad(function() { Sentry.init({ enabled: false }); });
+        // Only load Sentry in production
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            const script = document.createElement('script');
+            script.src = 'https://js-de.sentry-cdn.com/2d2383cc5fdaf52165ff0b7c57dfa857.min.js';
+            script.crossOrigin = 'anonymous';
+            script.onload = function() {
+                if (typeof Sentry !== 'undefined') {
+                    Sentry.init({ enabled: true });
+                }
+            };
+            document.head.appendChild(script);
         }
     </script>
 
@@ -288,5 +303,5 @@
             </div>
         </div>
 </body>
-    <script src="src/ui/overlayAnimations.js"></script>
+    <script type="module" src="src/ui/overlayAnimations.js"></script>
 </html>

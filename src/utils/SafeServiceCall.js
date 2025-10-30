@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * SafeServiceCall - Utility for safely calling service methods with defensive checks
  *
@@ -10,7 +11,7 @@
  * Safely calls a method on a service object with defensive checks.
  * Returns undefined if the service or method doesn't exist.
  *
- * @param {Object} service - The service object to call the method on
+ * @param {Object|null|undefined} service - The service object to call the method on
  * @param {string} methodName - The name of the method to call
  * @param {...*} args - Arguments to pass to the method
  * @returns {*} The return value of the method, or undefined if the service/method doesn't exist
@@ -48,7 +49,7 @@ export function safeCall(service, methodName, ...args) {
  * Safely calls an async method on a service object with defensive checks.
  * Returns a promise that resolves to undefined if the service or method doesn't exist.
  *
- * @param {Object} service - The service object to call the method on
+ * @param {Object|null|undefined} service - The service object to call the method on
  * @param {string} methodName - The name of the async method to call
  * @param {...*} args - Arguments to pass to the method
  * @returns {Promise<*>} Promise that resolves to the return value, or undefined if service/method doesn't exist
@@ -82,7 +83,7 @@ export async function safeCallAsync(service, methodName, ...args) {
 /**
  * Safely gets a property value with nested path support.
  *
- * @param {Object} obj - The object to get the property from
+ * @param {Object|null|undefined} obj - The object to get the property from
  * @param {string} path - Dot-separated property path (e.g., 'player.stats.musicEnabled')
  * @param {*} defaultValue - Default value to return if property doesn't exist
  * @returns {*} The property value or defaultValue
@@ -115,7 +116,7 @@ export function safeGet(obj, path, defaultValue = undefined) {
 /**
  * Checks if a service has a specific method.
  *
- * @param {Object} service - The service object to check
+ * @param {Object|null|undefined} service - The service object to check
  * @param {string} methodName - The name of the method to check for
  * @returns {boolean} True if the service has the method
  *

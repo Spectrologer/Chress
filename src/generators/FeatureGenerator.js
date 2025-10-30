@@ -135,54 +135,116 @@ export class FeatureGenerator {
         return Math.random() < probability;
     }
 
+    /**
+     * Generates a maze using recursive backtracking algorithm.
+     *
+     * Algorithm Overview:
+     * 1. Fill entire interior with walls
+     * 2. Pick random starting position (on odd coordinates)
+     * 3. Recursively carve passages through walls
+     * 4. Add blockages to increase difficulty
+     *
+     * Why Odd Coordinates:
+     * The algorithm works on a grid with 2-tile spacing to ensure proper
+     * wall placement between passages. Starting at odd coordinates (1, 3, 5...)
+     * ensures the maze has walls between all passages.
+     *
+     * Maze Structure:
+     * - Passages: Floor tiles at odd coordinates (1,1), (1,3), (3,1), etc.
+     * - Walls: Between passages, creating a perfect maze
+     * - Border: Outer edge remains walls
+     */
     generateMaze() {
-        // Fill interior with walls first
+        // Step 1: Fill interior with walls (leaves border intact)
         for (let y = 1; y < GRID_SIZE - 1; y++) {
             for (let x = 1; x < GRID_SIZE - 1; x++) {
                 this.gridManager.setTile(x, y, TILE_TYPES.WALL);
             }
         }
 
-        // Generate maze using recursive backtracking
-        // Start from a random interior position
+        // Step 2: Pick random starting position on odd coordinates
+        // Formula: random(0 to maxCells/2) * 2 + 1 gives odd numbers
+        // Example: GRID_SIZE=20 -> picks from {1, 3, 5, 7, 9, 11, 13, 15, 17}
         const startX = Math.floor(Math.random() * ((GRID_SIZE - 3) / 2)) * 2 + 1;
         const startY = Math.floor(Math.random() * ((GRID_SIZE - 3) / 2)) * 2 + 1;
 
+        // Step 3: Carve maze passages recursively
         this.carveMaze(startX, startY);
 
-        // Add some random blockages with rocks or shrubbery to make it more challenging
+        // Step 4: Add strategic blockages for increased difficulty
         this.addMazeBlockages();
     }
 
+    /**
+     * Recursively carves maze passages using depth-first backtracking.
+     *
+     * Algorithm (Recursive Backtracking):
+     * 1. Mark current cell as passage (floor)
+     * 2. Shuffle directions randomly
+     * 3. For each direction:
+     *    a. Check if neighbor 2 tiles away is unvisited (still a wall)
+     *    b. If yes, carve the wall between current and neighbor
+     *    c. Recursively carve from neighbor
+     * 4. Backtrack when all directions explored
+     *
+     * Why Distance = 2:
+     * Moving 2 tiles at a time (dx/dy = ±2) ensures there's always a wall
+     * between passages. This creates proper maze structure:
+     *
+     * Example: From (5,5), moving right with dx=2:
+     * - Current: (5,5) -> Becomes FLOOR
+     * - Wall: (6,5) -> Becomes FLOOR (carved via dx/2)
+     * - Next: (7,5) -> Recursively processed
+     *
+     * Why Divide by 2:
+     * `x + dir.dx / 2` carves the wall tile between current and neighbor.
+     * - dir.dx = 2 -> wall at +1
+     * - dir.dx = -2 -> wall at -1
+     *
+     * Direction Shuffling:
+     * Randomizing direction order creates varied maze patterns. Without
+     * shuffling, mazes would have predictable structure.
+     *
+     * @param {number} x - Current X position (must be odd)
+     * @param {number} y - Current Y position (must be odd)
+     */
     carveMaze(x, y) {
+        // Mark current position as passage
         this.gridManager.setTile(x, y, TILE_TYPES.FLOOR);
 
-        // Directions: up, right, down, left
+        // Define 4 directions with 2-tile spacing (orthogonal only)
         const directions = [
-            { dx: 0, dy: -2 }, // up
-            { dx: 2, dy: 0 },  // right
-            { dx: 0, dy: 2 },  // down
-            { dx: -2, dy: 0 }  // left
+            { dx: 0, dy: -2 }, // North (up)
+            { dx: 2, dy: 0 },  // East (right)
+            { dx: 0, dy: 2 },  // South (down)
+            { dx: -2, dy: 0 }  // West (left)
         ];
 
-        // Shuffle directions for random maze generation
+        // Fisher-Yates shuffle for random maze generation
         for (let i = directions.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [directions[i], directions[j]] = [directions[j], directions[i]];
         }
 
-        // Try each direction
+        // Try each direction in random order
         for (const dir of directions) {
-            const nx = x + dir.dx;
+            const nx = x + dir.dx;  // Neighbor 2 tiles away
             const ny = y + dir.dy;
 
-            if (nx > 0 && nx < GRID_SIZE - 1 && ny > 0 && ny < GRID_SIZE - 1 &&
+            // Check if neighbor is within bounds and unvisited (still a wall)
+            if (nx > 0 && nx < GRID_SIZE - 1 &&
+                ny > 0 && ny < GRID_SIZE - 1 &&
                 isWall(this.gridManager.getTile(nx, ny))) {
+
                 // Carve the wall between current and neighbor
+                // dir.dx/2 gives the wall position (1 tile away)
                 this.gridManager.setTile(x + dir.dx / 2, y + dir.dy / 2, TILE_TYPES.FLOOR);
+
+                // Recursively carve from neighbor
                 this.carveMaze(nx, ny);
             }
         }
+        // When all directions exhausted, backtrack (function returns)
     }
 
     addMazeBlockages() {
@@ -203,15 +265,53 @@ export class FeatureGenerator {
         }
     }
 
+    /**
+     * Probabilistically blocks zone exits with obstacles to increase difficulty.
+     * Uses different blocking strategies based on zone type and difficulty level.
+     *
+     * Blocking Strategy by Zone Type:
+     *
+     * 1. Underground Zones:
+     *    - Only rocks (permanent obstacles requiring tools)
+     *    - Base 55% chance, scaled by depth multiplier
+     *    - Deeper levels = more blocked exits
+     *    - Thematic: caves have rockfalls blocking passages
+     *
+     * 2. Surface Frontier Zones (Level 4):
+     *    - 20% chance of rock (permanent)
+     *    - 40% chance of shrubbery (destructible)
+     *    - Provides varied difficulty
+     *    - Player can clear shrubbery with tools
+     *
+     * 3. Other Surface Zones:
+     *    - No exit blocking (easier navigation)
+     *
+     * Connection Format:
+     * connections = { north: x, south: x, east: y, west: y }
+     * - null means no exit in that direction
+     * - number means exit at that coordinate on the edge
+     *
+     * @param {number} zoneLevel - Zone difficulty level (1-4)
+     * @param {Object} connections - Exit positions {north, south, east, west}
+     * @param {boolean} [isUnderground=false] - Whether this is an underground zone
+     */
     blockExitsWithShrubbery(zoneLevel, connections, isUnderground = false) {
         if (!connections) {
             return;
         }
 
-        // Underground zones use only rocks for exit blocking (no shrubbery)
+        // Underground Strategy: Use only rocks, scaled by depth
         if (isUnderground) {
-            // Block exits with rocks in underground zones (base 55% chance), scaled by depth
-            const rockChance = Math.min(GENERATOR_CONSTANTS.ROCK_CHANCE_MULTIPLIER, GENERATOR_CONSTANTS.FEATURE_CHANCE_MULTIPLIER * this.depthMultiplier);
+            // Calculate rock chance with depth scaling
+            // Base: 55% (FEATURE_CHANCE_MULTIPLIER)
+            // Increases with depth via depthMultiplier
+            // Capped at 80% (ROCK_CHANCE_MULTIPLIER) to keep some exits open
+            const rockChance = Math.min(
+                GENERATOR_CONSTANTS.ROCK_CHANCE_MULTIPLIER,
+                GENERATOR_CONSTANTS.FEATURE_CHANCE_MULTIPLIER * this.depthMultiplier
+            );
+
+            // Apply to each exit direction if it exists
             if (connections.north !== null && Math.random() < rockChance) {
                 this.gridManager.setTile(connections.north, 0, TILE_TYPES.ROCK);
             }
@@ -224,10 +324,11 @@ export class FeatureGenerator {
             if (connections.east !== null && Math.random() < rockChance) {
                 this.gridManager.setTile(GRID_SIZE - 1, connections.east, TILE_TYPES.ROCK);
             }
-        } else if (zoneLevel === 4) {
-            // Surface frontier zones (maintain existing behavior)
-            const rockChance = 0.2;
-            const shrubberyChance = 0.4;
+        }
+        // Surface Frontier Strategy: Mix of rocks and shrubbery
+        else if (zoneLevel === 4) {
+            const rockChance = 0.2;        // 20% permanent obstacle
+            const shrubberyChance = 0.4;   // 40% destructible obstacle
 
             if (connections.north !== null) {
                 if (Math.random() < rockChance) {

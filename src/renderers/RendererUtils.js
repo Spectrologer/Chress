@@ -1,8 +1,30 @@
+// @ts-check
 // Shared utility functions for tile rendering
 import { TILE_SIZE, TILE_COLORS } from '../core/constants/index.js';
 
+/**
+ * @typedef {Object} ScaledDimensions
+ * @property {number} width - Scaled width in pixels
+ * @property {number} height - Scaled height in pixels
+ */
+
+/**
+ * @typedef {Object} ImageCache
+ * @property {Record<string, HTMLImageElement>} [key] - Loaded images indexed by name
+ */
+
 export class RendererUtils {
-    // Utility methods moved from TileRenderer
+    /**
+     * Draw an image rotated around its center
+     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
+     * @param {HTMLImageElement} image - Image to draw
+     * @param {number} x - X coordinate
+     * @param {number} y - Y coordinate
+     * @param {number} rotation - Rotation in radians
+     * @param {number} [width] - Width of the image
+     * @param {number} [height] - Height of the image
+     * @returns {void}
+     */
     static drawRotatedImage(ctx, image, x, y, rotation, width = TILE_SIZE, height = TILE_SIZE) {
         ctx.save();
         ctx.translate(x + width / 2, y + height / 2);
@@ -11,6 +33,17 @@ export class RendererUtils {
         ctx.restore();
     }
 
+    /**
+     * Draw an image flipped horizontally or vertically
+     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
+     * @param {HTMLImageElement} image - Image to draw
+     * @param {number} x - X coordinate
+     * @param {number} y - Y coordinate
+     * @param {boolean} [flipX] - Flip horizontally
+     * @param {boolean} [flipY] - Flip vertically
+     * @param {number} [tileSize] - Size of the tile
+     * @returns {void}
+     */
     static drawFlippedImage(ctx, image, x, y, flipX = false, flipY = false, tileSize = TILE_SIZE) {
         ctx.save();
         ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
@@ -20,19 +53,35 @@ export class RendererUtils {
         ctx.restore();
     }
 
+    /**
+     * Configure canvas for pixel-perfect rendering
+     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
+     * @returns {void}
+     */
     static configureCanvas(ctx) {
         ctx.imageSmoothingEnabled = false;
-        ctx.webkitImageSmoothingEnabled = false;
-        ctx.mozImageSmoothingEnabled = false;
-        ctx.msImageSmoothingEnabled = false;
+        /** @type {any} */ (ctx).webkitImageSmoothingEnabled = false;
+        /** @type {any} */ (ctx).mozImageSmoothingEnabled = false;
+        /** @type {any} */ (ctx).msImageSmoothingEnabled = false;
     }
 
+    /**
+     * Check if an image is loaded and ready to use
+     * @param {ImageCache} images - Image cache
+     * @param {string} key - Image key
+     * @returns {boolean} True if image is loaded
+     */
     static isImageLoaded(images, key) {
         const image = images[key];
         return image && image.complete && image.naturalWidth > 0;
     }
 
-    // Calculate scaled dimensions maintaining aspect ratio and pixel perfection
+    /**
+     * Calculate scaled dimensions maintaining aspect ratio and pixel perfection
+     * @param {HTMLImageElement} image - Image to scale
+     * @param {number} maxSize - Maximum size for width or height
+     * @returns {ScaledDimensions} Scaled width and height
+     */
     static calculateScaledDimensions(image, maxSize) {
         const aspectRatio = image.width / image.height;
         let scaledWidth, scaledHeight;
@@ -52,16 +101,16 @@ export class RendererUtils {
 
     /**
      * Renders a slice of an image corresponding to a part of a multi-tile structure.
-     * @param {CanvasRenderingContext2D} ctx - The rendering context.
-     * @param {Image} image - The image to slice from.
-     * @param {number} partX - The x-index of the part within the cols.
-     * @param {number} partY - The y-index of the part within the rows.
-     * @param {number} cols - Total columns in the structure (e.g., 3 for shack).
-     * @param {number} rows - Total rows in the structure (e.g., 3 for shack, 3 for house).
-     * @param {number} pixelX - The destination x-coordinate.
-     * @param {number} pixelY - The destination y-coordinate.
-     * @param {number} destSize - The destination width and height (usually TILE_SIZE).
-     * @returns {boolean} True if rendered successfully, false otherwise.
+     * @param {CanvasRenderingContext2D} ctx - The rendering context
+     * @param {HTMLImageElement} image - The image to slice from
+     * @param {number} partX - The x-index of the part within the cols
+     * @param {number} partY - The y-index of the part within the rows
+     * @param {number} cols - Total columns in the structure (e.g., 3 for shack)
+     * @param {number} rows - Total rows in the structure (e.g., 3 for shack, 3 for house)
+     * @param {number} pixelX - The destination x-coordinate
+     * @param {number} pixelY - The destination y-coordinate
+     * @param {number} destSize - The destination width and height (usually TILE_SIZE)
+     * @returns {boolean} True if rendered successfully, false otherwise
      */
     static renderImageSlice(ctx, image, partX, partY, cols, rows, pixelX, pixelY, destSize) {
         // Validate part coordinates
@@ -91,13 +140,14 @@ export class RendererUtils {
     }
 
     /**
-     * Draws a fallback tile with a solid color and an optional emoji/text.
-     * @param {CanvasRenderingContext2D} ctx - The rendering context.
-     * @param {number} pixelX - The x-coordinate of the tile's top-left corner.
-     * @param {number} pixelY - The y-coordinate of the tile's top-left corner.
-     * @param {number} tileSize - The size of the tile.
-     * @param {string|number} colorOrKey - A hex color string or a key for TILE_COLORS.
-     * @param {string|null} emoji - The optional emoji or text to display.
+     * Draws a fallback tile with a solid color and an optional emoji/text
+     * @param {CanvasRenderingContext2D} ctx - The rendering context
+     * @param {number} pixelX - The x-coordinate of the tile's top-left corner
+     * @param {number} pixelY - The y-coordinate of the tile's top-left corner
+     * @param {number} tileSize - The size of the tile
+     * @param {string|number} colorOrKey - A hex color string or a key for TILE_COLORS
+     * @param {string|null} [emoji] - The optional emoji or text to display
+     * @returns {void}
      */
     static drawFallbackTile(ctx, pixelX, pixelY, tileSize, colorOrKey, emoji = null) {
         ctx.fillStyle = TILE_COLORS[colorOrKey] || colorOrKey;

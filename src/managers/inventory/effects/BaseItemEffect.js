@@ -1,6 +1,47 @@
+// @ts-check
 import audioManager from '../../../utils/AudioManager.js';
 import { TILE_TYPES } from '../../../core/constants/index.js';
 import { isFloor } from '../../../utils/TileUtils.js';
+
+/**
+ * @typedef {Object} ItemEffectContext
+ * @property {boolean} [fromRadial] - Whether item is used from radial menu
+ * @property {number} [targetX] - Target X coordinate
+ * @property {number} [targetY] - Target Y coordinate
+ * @property {*} [data] - Additional context data
+ */
+
+/**
+ * @typedef {Object} ItemEffectResult
+ * @property {boolean} consumed - Whether the item was consumed
+ * @property {number} [quantity] - Remaining quantity
+ * @property {number} [uses] - Remaining uses
+ * @property {boolean} success - Whether the effect was successful
+ */
+
+/**
+ * @typedef {Object} Item
+ * @property {string} type - Item type identifier
+ * @property {string} [name] - Item name
+ * @property {number} [quantity] - Item quantity
+ * @property {number} [uses] - Item uses
+ * @property {*} [data] - Additional item data
+ */
+
+/**
+ * @typedef {Object} Game
+ * @property {any} player - Player instance
+ * @property {Array<Array<number>>} grid - Game grid
+ * @property {any} [uiManager] - UI manager instance
+ * @property {boolean} [playerJustAttacked] - Whether player just attacked
+ */
+
+/**
+ * @typedef {Object} RadialPatternConfig
+ * @property {((game: Game, item: Item) => void)} [onRadial] - Callback for radial behavior
+ * @property {string} [message] - Message to show in radial mode
+ * @property {number|Object} dropTileType - Tile type to drop (for non-radial)
+ */
 
 /**
  * BaseItemEffect - Abstract base class for all item effects
@@ -10,10 +51,10 @@ import { isFloor } from '../../../utils/TileUtils.js';
 export class BaseItemEffect {
     /**
      * Apply the item effect
-     * @param {Object} game - Game instance
-     * @param {Object} item - Item being used
-     * @param {Object} context - Context (fromRadial, targetX, targetY, etc.)
-     * @returns {Object} - { consumed: bool, quantity/uses: number, success: bool }
+     * @param {Game} game - Game instance
+     * @param {Item} item - Item being used
+     * @param {ItemEffectContext} context - Context (fromRadial, targetX, targetY, etc.)
+     * @returns {ItemEffectResult} - { consumed: bool, quantity/uses: number, success: bool }
      */
     apply(game, item, context = {}) {
         throw new Error('BaseItemEffect.apply() must be implemented by subclass');
@@ -22,6 +63,9 @@ export class BaseItemEffect {
     /**
      * Play sound effect for item usage
      * @protected
+     * @param {Game} game - Game instance
+     * @param {string} soundName - Sound name
+     * @returns {void}
      */
     _playSound(game, soundName) {
         audioManager.playSound(soundName, { game });
@@ -30,6 +74,12 @@ export class BaseItemEffect {
     /**
      * Show overlay message
      * @protected
+     * @param {Game} game - Game instance
+     * @param {string} text - Message text
+     * @param {string|null} [imageSrc=null] - Image source URL
+     * @param {boolean} [instant=true] - Whether to show instantly
+     * @param {boolean} [noTypewriter=false] - Whether to disable typewriter effect
+     * @returns {void}
      */
     _showMessage(game, text, imageSrc = null, instant = true, noTypewriter = false) {
         if (game.uiManager && typeof game.uiManager.showOverlayMessage === 'function') {
@@ -40,9 +90,9 @@ export class BaseItemEffect {
     /**
      * Drop item on current tile (player's position)
      * @protected
-     * @param {Object} game - Game instance
+     * @param {Game} game - Game instance
      * @param {string} itemType - Item type name (for logging/debugging)
-     * @param {*} tileType - Tile type to place (can be constant or object)
+     * @param {number|Object} tileType - Tile type to place (can be constant or object)
      * @returns {boolean} - True if item was dropped successfully
      */
     _dropItem(game, itemType, tileType) {
@@ -64,14 +114,11 @@ export class BaseItemEffect {
      * - If non-radial: Drop item on floor
      *
      * @protected
-     * @param {Object} game - Game instance
-     * @param {Object} item - Item being used
-     * @param {Object} context - Context (fromRadial, etc.)
-     * @param {Object} config - Configuration object
-     * @param {Function} config.onRadial - Callback for radial behavior: (game, item) => void
-     * @param {string} config.message - Message to show in radial mode
-     * @param {*} config.dropTileType - Tile type to drop (for non-radial)
-     * @returns {Object} - { consumed: bool, quantity/uses: number, success: bool }
+     * @param {Game} game - Game instance
+     * @param {Item} item - Item being used
+     * @param {ItemEffectContext} context - Context (fromRadial, etc.)
+     * @param {RadialPatternConfig} config - Configuration object
+     * @returns {ItemEffectResult} - { consumed: bool, quantity/uses: number, success: bool }
      */
     _applyRadialPattern(game, item, context, config) {
         const { fromRadial = false } = context;

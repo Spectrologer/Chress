@@ -15,7 +15,7 @@ export class StructureTileRenderer {
         // First draw the base tile - statues need special handling for zones
         if (zoneLevel === 5 && RendererUtils.isImageLoaded(baseRenderer.images, 'housetile')) {
             ctx.drawImage(baseRenderer.images.housetile, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else if (zoneLevel >= 4 && RendererUtils.isImageLoaded(baseRenderer.images, 'desert')) {
+        } else if (zoneLevel >= 4 && zoneLevel !== 6 && RendererUtils.isImageLoaded(baseRenderer.images, 'desert')) {
             ctx.drawImage(baseRenderer.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
@@ -171,7 +171,7 @@ export class StructureTileRenderer {
         let enemyKey = 'lizardy';
 
         // First draw the base tile
-        if (zoneLevel >= 4 && RendererUtils.isImageLoaded(this.images, 'desert')) {
+        if (zoneLevel >= 4 && zoneLevel !== 5 && zoneLevel !== 6 && RendererUtils.isImageLoaded(this.images, 'desert')) {
             ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel);

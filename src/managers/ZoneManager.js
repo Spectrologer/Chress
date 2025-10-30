@@ -1,3 +1,98 @@
+// @ts-check
+
+/**
+ * @typedef {Object} Game
+ * @property {any} player
+ * @property {any} playerFacade
+ * @property {any} gridManager
+ * @property {any} enemyCollection
+ * @property {any} npcManager
+ * @property {any} npcRenderer
+ * @property {any} zoneRepository
+ * @property {any} zoneGenerator
+ * @property {any} connectionManager
+ * @property {any} transientGameState
+ * @property {any} Enemy
+ * @property {Array<Array<any>>} grid
+ * @property {Object} zones
+ * @property {Array<string>} availableFoodAssets
+ * @property {string} [lastExitSide]
+ * @property {Set<string>} defeatedEnemies
+ * @property {any} [_services]
+ * @property {any} [_newGameSpawnPosition]
+ * @property {Function} generateZone
+ */
+
+/**
+ * @typedef {Object} ZoneData
+ * @property {Array<Array<any>>} grid - Zone grid
+ * @property {Array<EnemyData>} enemies - Enemy list
+ * @property {PlayerSpawn|null} playerSpawn - Spawn position
+ * @property {ReturnCoords} [returnToSurface] - Surface return coords
+ * @property {ReturnCoords} [returnToInterior] - Interior return coords
+ */
+
+/**
+ * @typedef {Object} EnemyData
+ * @property {number} x - X position
+ * @property {number} y - Y position
+ * @property {string} enemyType - Enemy type
+ * @property {number} health - Health points
+ * @property {string} id - Unique identifier
+ */
+
+/**
+ * @typedef {Object} PlayerSpawn
+ * @property {number} x - Spawn X coordinate
+ * @property {number} y - Spawn Y coordinate
+ */
+
+/**
+ * @typedef {Object} ReturnCoords
+ * @property {number} x - X coordinate
+ * @property {number} y - Y coordinate
+ * @property {number} [zoneX] - Zone X coordinate
+ * @property {number} [zoneY] - Zone Y coordinate
+ */
+
+/**
+ * @typedef {Object} Treasure
+ * @property {number} x - Grid X coordinate
+ * @property {number} y - Grid Y coordinate
+ * @property {string} type - Item type to spawn
+ */
+
+/**
+ * ZoneManager - Orchestrates zone transitions and world navigation.
+ *
+ * Responsibilities:
+ * 1. Zone Transitions: Moving between adjacent zones
+ * 2. Zone Generation: Creating new zones or loading existing ones
+ * 3. Player Positioning: Placing player at correct entrance/exit
+ * 4. State Persistence: Saving/loading zone data
+ * 5. Special Features: Treasure spawning, port transitions
+ *
+ * Architecture (Delegation Pattern):
+ * - ZoneTransitionCoordinator: Handles player positioning logic
+ * - ZoneTreasureManager: Manages special item spawns
+ * - ZoneEventEmitter: Emits events and saves state
+ *
+ * Zone Types:
+ * - Surface (dimension 0): Procedurally generated overworld
+ * - Interior (dimension 1): Building interiors accessed via ports
+ * - Underground (dimension 2): Cave systems with depth levels
+ *
+ * Transition Types:
+ * - Exit: Move to adjacent zone via edge exit
+ * - Port: Teleport to interior/underground
+ * - Pitfall: Fall to underground level
+ * - Stairs: Return from interior/underground
+ *
+ * State Management:
+ * - Existing zones loaded from ZoneRepository
+ * - New zones generated and saved
+ * - Return coordinates preserved for ports/pitfalls
+ */
 import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
 import { logger } from '../core/logger.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
@@ -8,62 +103,164 @@ import { ZoneTreasureManager } from './ZoneTreasureManager.js';
 import { ZoneEventEmitter } from './ZoneEventEmitter.js';
 
 export class ZoneManager {
+    /**
+     * Creates a new ZoneManager instance.
+     *
+     * @param {Game} game - The main game instance
+     */
     constructor(game) {
+        /** @type {Game} */
         this.game = game;
+
+        /** @type {ZoneTransitionCoordinator} */
         this.transitionCoordinator = new ZoneTransitionCoordinator(game);
+
+        /** @type {ZoneTreasureManager} */
         this.treasureManager = new ZoneTreasureManager(game);
+
+        /** @type {ZoneEventEmitter} */
         this.eventEmitter = new ZoneEventEmitter(game);
     }
 
 
+    /**
+     * Executes a complete zone transition sequence.
+     * Handles player movement from one zone to another.
+     *
+     * Transition Sequence:
+     * 1. Initialize transition state (record exit side)
+     * 2. Update player's zone coordinates
+     * 3. Apply zone transition penalties (hunger/thirst, except ports)
+     * 4. Generate or load target zone
+     * 5. Position player at appropriate entrance
+     * 6. Clear blocking tiles if necessary
+     * 7. Validate player position
+     * 8. Check for special treasures
+     * 9. Emit events and save state
+     *
+     * Exit Side Effects:
+     * - 'north', 'south', 'east', 'west': Normal zone transition
+     *   - Player spawns at opposite edge
+     *   - Hunger/thirst decrease
+     * - 'port': Teleport to interior/underground
+     *   - No hunger/thirst penalty
+     *   - Spawn at port location or safe position
+     * - 'pitfall': Fall to underground
+     *   - Spawn at emergence point
+     *
+     * Position Validation:
+     * - If player spawns on shrubbery: Replace with exit
+     * - Ensure walkable tile (fallback to nearby valid tile)
+     * - Sync lastX/lastY to prevent visual interpolation glitches
+     *
+     * @param {number} newZoneX - Target zone X coordinate
+     * @param {number} newZoneY - Target zone Y coordinate
+     * @param {string} exitSide - Exit used ('north', 'south', 'east', 'west', 'port', 'pitfall')
+     * @param {number} exitX - X coordinate of exit used
+     * @param {number} exitY - Y coordinate of exit used
+     * @returns {void}
+     */
     transitionToZone(newZoneX, newZoneY, exitSide, exitX, exitY) {
         const playerFacade = this.game.playerFacade;
         const gridManager = this.game.gridManager;
 
+        // Step 1: Initialize transition state
         this.transitionCoordinator.initializeTransitionState(exitSide);
 
         const zoneKey = `${newZoneX},${newZoneY}`;
 
-        // Update player's current zone (keep dimension)
+        // Step 2: Update player's current zone coordinates (maintains dimension)
         playerFacade.setCurrentZone(newZoneX, newZoneY);
 
-        // Decrease thirst and hunger when moving to a new zone, unless using a port
+        // Step 3: Apply survival penalties for normal transitions
+        // Port transitions are instant teleports (no time passes)
         if (exitSide !== 'port') {
-            playerFacade.onZoneTransition();
+            playerFacade.onZoneTransition();  // Decrease hunger/thirst
         }
 
-        // Generate or load the new zone
+        // Step 4: Generate or load the target zone
         this.game.generateZone();
 
+        // Debug logging for port transitions
         try {
             const transientState = this.game.transientGameState;
             const portData = transientState.getPortTransitionData();
             logger?.debug?.(`Transition complete: lastExitSide=${exitSide}, portTransitionData=${JSON.stringify(portData)}`);
         } catch (e) {}
 
-        // Position player based on which exit they used
+        // Step 5: Position player at appropriate entrance
         this.transitionCoordinator.positionPlayerAfterTransition(exitSide, exitX, exitY);
 
-        // If player spawned on shrubbery, remove it (restore exit)
+        // Step 6: Clear blocking tiles at spawn position
         const playerPos = playerFacade.getPosition();
         if (gridManager.isTileType(playerPos.x, playerPos.y, TILE_TYPES.SHRUBBERY)) {
+            // Shrubbery sometimes blocks exits - remove it to restore access
             gridManager.setTile(playerPos.x, playerPos.y, TILE_TYPES.EXIT);
         }
 
-        // Ensure player is on a walkable tile
+        // Step 7: Validate player position (move to nearest walkable if needed)
         this.game.player.ensureValidPosition(this.game.grid);
 
-        // Prevent cross-zone interpolation - sync lastX/lastY with current position
+        // Prevent visual glitch: sync lastX/lastY with current position
+        // Without this, player sprite interpolates from old zone position
         playerFacade.setLastPosition(playerPos.x, playerPos.y);
 
-        // Check for special zone treasures
+        // Step 8: Check for special treasures (one-time spawns)
         this.treasureManager.handleSpecialZoneTreasures(zoneKey);
 
-        // Emit events and save state
+        // Step 9: Emit events and persist state
         this.eventEmitter.finalizeTransition(newZoneX, newZoneY);
     }
 
 
+    /**
+     * Generates or loads a zone at the player's current location.
+     * Manages the full zone lifecycle from generation to entity initialization.
+     *
+     * Zone Generation Flow:
+     * 1. Determine zone key (includes dimension + depth for underground)
+     * 2. Generate chunk connections for this area
+     * 3. Load existing zone OR generate new zone
+     * 4. Apply grid to game state
+     * 5. Initialize managers (gridManager, enemyCollection, npcManager)
+     * 6. Handle new game spawn positioning
+     * 7. Patch emergence tiles for port transitions
+     * 8. Filter defeated enemies from zone
+     * 9. Sync zoneGenerator grid reference
+     *
+     * Zone Key Strategy:
+     * - Surface/Interior: (x, y, dimension)
+     * - Underground: (x, y, dimension, depth)
+     * - Underground zones store each depth layer separately to preserve
+     *   distinct layouts for each cave level
+     *
+     * Port Transition Handling:
+     * When entering via port, the zone must have correct return coordinates:
+     * - Interior (dimension 1): Save surface port coords in returnToSurface
+     * - Underground from hole/pitfall: Save surface hole coords
+     * - Underground from stairdown: Save interior stair coords
+     *
+     * Emergence Tile Patching:
+     * If entering via port, ensure the spawn tile has the correct port type:
+     * - stairdown -> stairup (and vice versa)
+     * - hole/pitfall -> stairup (converts primitive to object-style PORT)
+     * - cistern -> ensure cistern tile below port
+     *
+     * Entity Initialization:
+     * - gridManager: Wraps grid array for tile operations
+     * - enemyCollection: Wraps enemies array, recreated to capture new reference
+     * - npcManager: Scans grid for NPC tiles and converts to entities
+     *
+     * New Game Spawn:
+     * On first zone entry (no lastExitSide), position player off-screen
+     * for entrance animation, then animate walking to playerSpawn exit.
+     *
+     * Defeated Enemy Filtering:
+     * Enemies in defeatedEnemies set are filtered out when loading zones.
+     * This preserves permanent enemy defeats across zone re-entries.
+     *
+     * @returns {void}
+     */
     generateZone() {
         const currentZone = this.game.player.getCurrentZone();
         // For underground zones (dimension 2), include the player's depth so each depth layer is stored separately
@@ -250,11 +447,57 @@ export class ZoneManager {
         this.game.zoneGenerator.grid = this.game.grid;
     }
 
+    /**
+     * Spawns treasure items on the grid at specified positions.
+     * Delegates to ZoneTreasureManager for implementation.
+     *
+     * Treasure Types:
+     * - Special zone treasures (one-time spawns)
+     * - Randomly generated loot
+     * - Story/quest items
+     *
+     * Use Case:
+     * Called after zone generation to place special items or
+     * during gameplay for dynamic loot spawning.
+     *
+     * @param {Array<Treasure>} treasures - Array of treasure definitions
+     * @returns {void}
+     */
     spawnTreasuresOnGrid(treasures) {
         // Delegate to treasure manager
         this.treasureManager.spawnTreasuresOnGrid(treasures);
     }
 
+    /**
+     * Saves the current zone's state to the zone repository.
+     * Preserves grid changes and enemy positions for future visits.
+     *
+     * State Preservation:
+     * - Grid: Deep cloned to prevent reference issues
+     * - Enemies: Serialized with position, type, health, and ID
+     * - playerSpawn: Not saved (only needed for generation)
+     *
+     * Why Save State:
+     * 1. Player modifications: Bombed walls, collected items, etc.
+     * 2. Enemy positions: Preserve combat state if player leaves mid-fight
+     * 3. Zone changes: Opened doors, triggered events, etc.
+     *
+     * Defeated Enemies:
+     * Defeated enemies are tracked separately in game.defeatedEnemies.
+     * When loading a zone, this set is used to filter out permanently
+     * defeated enemies. This method saves all living enemies in the zone.
+     *
+     * Zone Key Strategy:
+     * - Surface/Interior: (x, y, dimension)
+     * - Underground: (x, y, dimension, depth)
+     * - Ensures each depth level has separate saved state
+     *
+     * Use Case:
+     * Called before zone transitions to ensure current zone state is
+     * preserved before loading the new zone.
+     *
+     * @returns {void}
+     */
     saveCurrentZoneState() {
         // Save the current zone's grid and enemies to the zones map
         const currentZone = this.game.player.getCurrentZone();

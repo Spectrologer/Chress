@@ -56,6 +56,9 @@ export class BaseTileRenderer {
         } else if (zoneLevel === 5) { // Interior/Home - subtle checkerboard on housetile
             darkTint = 'rgba(0, 0, 0, 0.1)';
             lightTint = 'rgba(255, 255, 255, 0.05)';
+        } else if (zoneLevel === 6) { // Underground - strong white tint for visibility on dark gravel
+            darkTint = 'rgba(0, 0, 0, 0.2)';
+            lightTint = 'rgba(255, 255, 255, 0.15)'; // Increased white opacity for dark background
         } else if (zoneLevel >= 4) { // Frontier
             darkTint = 'rgba(0, 0, 0, 0.12)';
             lightTint = 'rgba(255, 255, 255, 0.02)'; // Reduce white opacity on bright desert tiles
@@ -73,8 +76,8 @@ export class BaseTileRenderer {
     }
 
     renderExitTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
-        // Frontier zones (level >=4) use desert background for exit tiles
-        if (zoneLevel >= 4 && zoneLevel !== 5 && RendererUtils.isImageLoaded(this.images, 'desert')) {
+        // Frontier zones (level >=4, but not interior or underground) use desert background for exit tiles
+        if (zoneLevel >= 4 && zoneLevel !== 5 && zoneLevel !== 6 && RendererUtils.isImageLoaded(this.images, 'desert')) {
             ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             return;
         }
@@ -89,8 +92,10 @@ export class BaseTileRenderer {
             return;
         }
         // Underground zones (level 6) use gravel background for exit tiles
-        if (zoneLevel === 6 && RendererUtils.isImageLoaded(this.images, 'gravel')) {
-            ctx.drawImage(this.images.gravel, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        if (zoneLevel === 6) {
+            if (RendererUtils.isImageLoaded(this.images, 'gravel')) {
+                ctx.drawImage(this.images.gravel, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
             return;
         }
         // Just use simple dirt texture for all other exit tiles
@@ -121,8 +126,8 @@ export class BaseTileRenderer {
             return;
         }
 
-        // Frontier zones (level >=4) use desert texture for all passable tiles
-        if (zoneLevel >= 4) {
+        // Frontier zones (level >=4, but not interior or underground) use desert texture for all passable tiles
+        if (zoneLevel >= 4 && zoneLevel !== 5 && zoneLevel !== 6) {
             if (RendererUtils.isImageLoaded(this.images, 'desert')) {
                 ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
@@ -206,7 +211,7 @@ export class BaseTileRenderer {
 
     // Utility method to render base floor tiles for items and structures (reduces duplication)
     renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
-        if (zoneLevel >= 4 && RendererUtils.isImageLoaded(this.images, 'desert')) {
+        if (zoneLevel >= 4 && zoneLevel !== 5 && zoneLevel !== 6 && RendererUtils.isImageLoaded(this.images, 'desert')) {
             ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             this.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);

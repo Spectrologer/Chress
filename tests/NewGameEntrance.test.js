@@ -65,7 +65,7 @@ describe('New Game Entrance', () => {
             // Add exit tiles to the grid
             mockZoneGen.grid[0][4] = TILE_TYPES.EXIT; // Top edge
             mockZoneGen.grid[3][0] = TILE_TYPES.EXIT; // Left edge
-            mockZoneGen.grid[8][5] = TILE_TYPES.EXIT; // Bottom edge
+            mockZoneGen.grid[9][5] = TILE_TYPES.EXIT; // Bottom edge (GRID_SIZE - 1)
 
             // Simulate the logic from findValidPlayerSpawn
             const exitTiles = [];
@@ -81,7 +81,7 @@ describe('New Game Entrance', () => {
             expect(exitTiles).toHaveLength(3);
             expect(exitTiles).toContainEqual({ x: 4, y: 0 });
             expect(exitTiles).toContainEqual({ x: 0, y: 3 });
-            expect(exitTiles).toContainEqual({ x: 5, y: 8 });
+            expect(exitTiles).toContainEqual({ x: 5, y: 9 });
         });
 
         it('should select from available exit tiles', () => {
@@ -89,7 +89,7 @@ describe('New Game Entrance', () => {
             const exitPositions = [
                 { x: 4, y: 0 },
                 { x: 0, y: 3 },
-                { x: 8, y: 5 }
+                { x: 9, y: 5 } // Right edge (GRID_SIZE - 1)
             ];
 
             exitPositions.forEach(pos => {
@@ -219,7 +219,7 @@ describe('New Game Entrance', () => {
         });
 
         it('should position player off-screen for bottom edge exit', () => {
-            const exitSpawn = { x: 5, y: 8 }; // Bottom edge (GRID_SIZE - 1)
+            const exitSpawn = { x: 5, y: 9 }; // Bottom edge (GRID_SIZE - 1)
 
             const zoneData = {
                 grid: mockGame.grid,
@@ -246,11 +246,11 @@ describe('New Game Entrance', () => {
             // Verify player is off-screen below the exit
             expect(mockPlayer.x).toBe(5);
             expect(mockPlayer.y).toBe(GRID_SIZE);
-            expect(mockGame._newGameSpawnPosition).toEqual({ x: 5, y: 8 });
+            expect(mockGame._newGameSpawnPosition).toEqual({ x: 5, y: 9 });
         });
 
         it('should position player off-screen for right edge exit', () => {
-            const exitSpawn = { x: 8, y: 4 }; // Right edge (GRID_SIZE - 1)
+            const exitSpawn = { x: 9, y: 4 }; // Right edge (GRID_SIZE - 1)
 
             const zoneData = {
                 grid: mockGame.grid,
@@ -277,7 +277,7 @@ describe('New Game Entrance', () => {
             // Verify player is off-screen to the right
             expect(mockPlayer.x).toBe(GRID_SIZE);
             expect(mockPlayer.y).toBe(4);
-            expect(mockGame._newGameSpawnPosition).toEqual({ x: 8, y: 4 });
+            expect(mockGame._newGameSpawnPosition).toEqual({ x: 9, y: 4 });
         });
 
         it('should not position off-screen for loaded games', () => {

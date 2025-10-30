@@ -1,3 +1,4 @@
+// @ts-check
 import { TILE_TYPES } from '../core/constants/index.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 import audioManager from '../utils/AudioManager.js';
@@ -7,25 +8,88 @@ import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
 import { safeCall, safeGet } from '../utils/SafeServiceCall.js';
 import { EnemyAttackHelper } from '../enemy/EnemyAttackHelper.js';
 
+/**
+ * @typedef {Object} ZoneInfo
+ * @property {number} x - Zone X coordinate
+ * @property {number} y - Zone Y coordinate
+ * @property {number} dimension - Dimension (0=surface, 1=interior, 2=underground)
+ * @property {number} depth - Underground depth
+ */
+
+/**
+ * @typedef {Object} DefeatResult
+ * @property {boolean} defeated - Whether the enemy was defeated
+ * @property {number} consecutiveKills - Number of consecutive kills
+ */
+
+/**
+ * @typedef {Object} Enemy
+ * @property {string} id - Enemy ID
+ * @property {number} x - Enemy X position
+ * @property {number} y - Enemy Y position
+ * @property {number} [lastX] - Previous X position
+ * @property {number} [lastY] - Previous Y position
+ * @property {number} health - Enemy health
+ * @property {number} attack - Enemy attack power
+ * @property {string} enemyType - Enemy type identifier
+ * @property {boolean} [justAttacked] - Whether enemy just attacked
+ * @property {number} [attackAnimation] - Attack animation frames
+ * @property {number} [liftFrames] - Lift animation frames
+ * @property {boolean} [_suppressAttackSound] - Suppress attack sound flag
+ * @property {Function} startBump - Start bump animation
+ * @property {Function} takeDamage - Take damage
+ * @property {Function} [isDead] - Check if dead
+ * @property {Function} planMoveTowards - Plan movement towards target
+ * @property {Function} serialize - Serialize enemy data
+ */
+
+/**
+ * @typedef {Object} PlayerPos
+ * @property {number} x - Player X position
+ * @property {number} y - Player Y position
+ */
+
+/**
+ * @typedef {Object} Game
+ * @property {any} player - Player instance
+ * @property {any} playerFacade - Player facade
+ * @property {any} enemyCollection - Enemy collection
+ * @property {any} gridManager - Grid manager
+ * @property {any} zoneRepository - Zone repository
+ * @property {Array<Array<number|Object>>} grid - Game grid
+ * @property {any} [turnManager] - Turn manager
+ * @property {Set<string>} [initialEnemyTilesThisTurn] - Initial enemy tiles this turn
+ */
+
 export class CombatManager {
     /**
      * CombatManager handles all combat-related logic including enemy movements,
      * collisions, and defeat flow. Dependencies are injected to enable testing
      * and avoid circular dependencies.
      *
-     * @param {Object} game - The main game instance
-     * @param {Set} occupiedTiles - Set of tiles occupied during enemy turns
-     * @param {Object} bombManager - Manages bomb timing and explosions
-     * @param {Object} defeatFlow - Handles enemy defeat logic and rewards
+     * @param {Game} game - The main game instance
+     * @param {Set<string>} occupiedTiles - Set of tiles occupied during enemy turns
+     * @param {any} bombManager - Manages bomb timing and explosions
+     * @param {any} defeatFlow - Handles enemy defeat logic and rewards
      */
     constructor(game, occupiedTiles, bombManager, defeatFlow) {
+        /** @type {Game} */
         this.game = game;
+
+        /** @type {Set<string>} */
         this.occupiedTiles = occupiedTiles;
+
+        /** @type {any} */
         this.bombManager = bombManager;
+
+        /** @type {any} */
         this.defeatFlow = defeatFlow;
     }
 
-    // Safe accessor for player's current zone to support tests/mocks
+    /**
+     * Safe accessor for player's current zone to support tests/mocks
+     * @returns {ZoneInfo}
+     */
     getCurrentZone() {
         try {
             const zone = safeCall(this.game.player, 'getCurrentZone');
@@ -34,7 +98,7 @@ export class CombatManager {
             const currentZone = safeGet(this.game, 'player.currentZone');
             if (currentZone) return currentZone;
         } catch (e) {
-            errorHandler.handle(e, ErrorSeverity.WARNING, {
+            errorHandler.handle(e, /** @type {any} */ (ErrorSeverity.WARNING), {
                 component: 'CombatManager',
                 action: 'get current zone'
             });
@@ -42,18 +106,35 @@ export class CombatManager {
         return { x: 0, y: 0, dimension: 0, depth: 0 };
     }
 
+    /**
+     * Add point animation at position
+     * @param {number} x - X coordinate
+     * @param {number} y - Y coordinate
+     * @param {number} amount - Point amount
+     * @returns {void}
+     */
     addPointAnimation(x, y, amount) {
         // Delegate to defeatFlow
         this.defeatFlow.addPointAnimation(x, y, amount);
     }
 
+    /**
+     * Handle enemy defeated (without combo tracking)
+     * @param {Enemy} enemy - The defeated enemy
+     * @param {ZoneInfo} currentZone - Current zone
+     * @returns {void}
+     */
     handleEnemyDefeated(enemy, currentZone) {
         // Delegate to defeatFlow without combo tracking (initiator=null)
         this.defeatFlow.executeDefeat(enemy, currentZone, null);
     }
 
-    // initiator: optional string e.g. 'player', 'bomb', null
-    // Returns an object { defeated: bool, consecutiveKills: number }
+    /**
+     * Defeat an enemy with optional combo tracking
+     * @param {Enemy} enemy - The enemy to defeat
+     * @param {string|null} [initiator=null] - Optional initiator ('player', 'bomb', etc.)
+     * @returns {DefeatResult} Result including defeated status and consecutive kills
+     */
     defeatEnemy(enemy, initiator = null) {
         const currentZone = this.getCurrentZone();
         // Delegate to defeatFlow for all defeat logic including combo tracking
@@ -62,9 +143,9 @@ export class CombatManager {
 
     /**
      * Handle player attack on an enemy
-     * @param {Object} enemy - The enemy being attacked
-     * @param {Object} playerPos - Current player position {x, y}
-     * @returns {Object} Result of the attack including defeated status
+     * @param {Enemy} enemy - The enemy being attacked
+     * @param {PlayerPos} playerPos - Current player position {x, y}
+     * @returns {DefeatResult} Result of the attack including defeated status
      */
     handlePlayerAttack(enemy, playerPos) {
         // Emit player attack animation event
@@ -110,6 +191,11 @@ export class CombatManager {
         return result;
     }
 
+    /**
+     * Handle movement for a single enemy
+     * @param {Enemy} enemy - The enemy to move
+     * @returns {void}
+     */
     handleSingleEnemyMovement(enemy) {
         const enemyCollection = this.game.enemyCollection;
         // Ensure we are not trying to move a dead or non-existent enemy
@@ -223,11 +309,19 @@ export class CombatManager {
         }
     }
 
+    /**
+     * Handle enemy movements after player actions
+     * @returns {void}
+     */
     handleEnemyMovements() {
         // Handle enemy movements after player actions
          // This is a placeholder for now as the main enemy movement logic might be in game.js
     }
 
+    /**
+     * Check for collisions between enemies and player, handle combat
+     * @returns {boolean} True if player was attacked (needs pause), false otherwise
+     */
     checkCollisions() {
         // Delegate bomb timing checks to BombManager
         safeCall(this.bombManager, 'tickBombsAndExplode');

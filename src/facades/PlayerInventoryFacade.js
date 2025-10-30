@@ -1,6 +1,22 @@
+// @ts-check
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { logger } from '../core/logger.js';
+
+/**
+ * @typedef {Object} InventoryItem
+ * @property {string} [id] - Item ID
+ * @property {string} [name] - Item name
+ * @property {string} [type] - Item type
+ * @property {number} [quantity] - Item quantity
+ * @property {*} [data] - Additional item data
+ */
+
+/**
+ * @callback InventoryPredicate
+ * @param {InventoryItem} item - Inventory item
+ * @returns {boolean} True if item matches criteria
+ */
 
 /**
  * PlayerInventoryFacade - Inventory and abilities management for player
@@ -17,7 +33,7 @@ import { logger } from '../core/logger.js';
  */
 export class PlayerInventoryFacade {
     /**
-     * @param {Object} player - The player entity
+     * @param {any} player - The player entity
      */
     constructor(player) {
         if (!player) {
@@ -32,7 +48,7 @@ export class PlayerInventoryFacade {
 
     /**
      * Get inventory (returns a copy to prevent direct mutations)
-     * @returns {Array<Object>} Copy of inventory array
+     * @returns {InventoryItem[]} Copy of inventory array
      */
     getInventory() {
         return [...(this.player.inventory || [])];
@@ -50,7 +66,7 @@ export class PlayerInventoryFacade {
 
     /**
      * Add item to inventory with event emission
-     * @param {Object} item - Item to add
+     * @param {InventoryItem} item - Item to add
      * @returns {boolean} True if added successfully
      */
     addToInventory(item) {
@@ -78,7 +94,7 @@ export class PlayerInventoryFacade {
     /**
      * Remove item from inventory by index
      * @param {number} index - Index to remove
-     * @returns {Object|null} Removed item or null
+     * @returns {InventoryItem|null} Removed item or null
      */
     removeFromInventory(index) {
         if (!this.player.inventory || index < 0 || index >= this.player.inventory.length) {
@@ -101,8 +117,8 @@ export class PlayerInventoryFacade {
 
     /**
      * Find item in inventory by predicate
-     * @param {Function} predicate - Function(item) => boolean
-     * @returns {Object|undefined} Found item
+     * @param {InventoryPredicate} predicate - Function(item) => boolean
+     * @returns {InventoryItem|undefined} Found item
      */
     findInInventory(predicate) {
         return this.player.inventory?.find(predicate);
@@ -132,7 +148,7 @@ export class PlayerInventoryFacade {
 
     /**
      * Get radial inventory
-     * @returns {Array<Object>}
+     * @returns {InventoryItem[]}
      */
     getRadialInventory() {
         return [...(this.player.radialInventory || [])];
@@ -140,7 +156,7 @@ export class PlayerInventoryFacade {
 
     /**
      * Set radial inventory
-     * @param {Array<Object>} items - Items for radial inventory
+     * @param {InventoryItem[]} items - Items for radial inventory
      */
     setRadialInventory(items) {
         this.player.radialInventory = items;

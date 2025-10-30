@@ -1,3 +1,4 @@
+// @ts-check
 import { TILE_TYPES } from '../core/constants/index.js';
 
 /**
@@ -9,10 +10,15 @@ import { TILE_TYPES } from '../core/constants/index.js';
  */
 
 /**
+ * @typedef {number|{type: number, [key: string]: any}|null|undefined} Tile
+ * A tile can be either a primitive number (tile type) or an object with a type property and additional properties
+ */
+
+/**
  * Normalizes tile to its type value
  * Handles both primitive tile types (numbers) and tile objects
  *
- * @param {number|Object|null|undefined} tile - Tile value or object
+ * @param {Tile} tile - Tile value or object
  * @returns {number|undefined} The tile type number, or undefined if invalid
  */
 export function getTileType(tile) {

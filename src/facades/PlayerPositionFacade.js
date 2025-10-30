@@ -1,6 +1,31 @@
+// @ts-check
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';
 import { logger } from '../core/logger.js';
+
+/**
+ * @typedef {Object} Position
+ * @property {number} x - X coordinate
+ * @property {number} y - Y coordinate
+ */
+
+/**
+ * @typedef {Object} ZoneInfo
+ * @property {number} x - Zone X coordinate
+ * @property {number} y - Zone Y coordinate
+ * @property {number} dimension - Dimension (0=surface, 1=interior, 2=underground)
+ * @property {number} depth - Underground depth level
+ * @property {string} [portType] - Port type (optional)
+ */
+
+/**
+ * @typedef {Object} ZoneUpdate
+ * @property {number} [x] - Zone X coordinate
+ * @property {number} [y] - Zone Y coordinate
+ * @property {number} [dimension] - Dimension (0, 1, or 2)
+ * @property {number} [depth] - Depth level
+ * @property {string} [portType] - Port type (optional)
+ */
 
 /**
  * PlayerPositionFacade - Position and zone management for player
@@ -19,7 +44,7 @@ import { logger } from '../core/logger.js';
  */
 export class PlayerPositionFacade {
     /**
-     * @param {Object} player - The player entity
+     * @param {any} player - The player entity
      */
     constructor(player) {
         if (!player) {
@@ -34,7 +59,7 @@ export class PlayerPositionFacade {
 
     /**
      * Get player position as object
-     * @returns {{x: number, y: number}} Position coordinates
+     * @returns {Position} Position coordinates
      */
     getPosition() {
         return this.player.getPosition();
@@ -68,7 +93,7 @@ export class PlayerPositionFacade {
 
     /**
      * Get last position (for interpolation/animation)
-     * @returns {{x: number, y: number}}
+     * @returns {Position}
      */
     getLastPosition() {
         return { x: this.player.lastX, y: this.player.lastY };
@@ -122,7 +147,7 @@ export class PlayerPositionFacade {
 
     /**
      * Get current zone information (returns a copy)
-     * @returns {{x: number, y: number, dimension: number, depth: number, portType: string}}
+     * @returns {ZoneInfo}
      */
     getCurrentZone() {
         return this.player.getCurrentZone();
@@ -213,12 +238,7 @@ export class PlayerPositionFacade {
 
     /**
      * Atomically update zone state (prevents drift between related properties)
-     * @param {Object} zoneUpdate - Zone properties to update
-     * @param {number} zoneUpdate.x - Zone X coordinate
-     * @param {number} zoneUpdate.y - Zone Y coordinate
-     * @param {number} zoneUpdate.dimension - Dimension (0, 1, or 2)
-     * @param {number} zoneUpdate.depth - Depth level
-     * @param {string} zoneUpdate.portType - Port type (optional)
+     * @param {ZoneUpdate} zoneUpdate - Zone properties to update
      */
     updateZoneState(zoneUpdate) {
         const { x, y, dimension, depth, portType } = zoneUpdate;

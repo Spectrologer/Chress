@@ -1,3 +1,42 @@
+// @ts-check
+/**
+ * ActionManager - Executes player actions and special item effects.
+ *
+ * Responsibilities:
+ * - Managing bomb timers and placement
+ * - Executing special weapon attacks (Bishop Spear, Horse Icon, etc.)
+ * - Handling action-triggered events
+ * - Coordinating with combat and inventory systems
+ *
+ * Action Flow:
+ * Player input -> ActionManager -> Game systems (Combat, Inventory, etc.) -> Visual feedback
+ */
+
+/**
+ * @typedef {Object} Item
+ * @property {string} type - Item type identifier
+ * @property {number} [uses] - Remaining uses
+ */
+
+/**
+ * @typedef {Object} Enemy
+ * @property {number} x - Enemy X position
+ * @property {number} y - Enemy Y position
+ */
+
+/**
+ * @typedef {Object} Game
+ * @property {any} playerFacade - Player facade
+ * @property {any} combatManager - Combat manager
+ * @property {any} player - Player instance
+ * @property {Array<Array<number|Object>>} grid - Game grid
+ * @property {any} gridManager - Grid manager
+ * @property {any} enemyCollection - Enemy collection
+ * @property {any} [animationScheduler] - Animation scheduler
+ * @property {any} [transientGameState] - Transient game state
+ * @property {Function} [startEnemyTurns] - Start enemy turns function
+ */
+
 import { TILE_TYPES, TILE_SIZE, GRID_SIZE, ANIMATION_CONSTANTS, TIMING_CONSTANTS, GAMEPLAY_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants/index.js';
 import audioManager from '../utils/AudioManager.js';
 import { eventBus } from '../core/EventBus.js';
@@ -8,12 +47,29 @@ import { isBomb, isTileType } from '../utils/TileUtils.js';
 import GridIterator from '../utils/GridIterator.js';
 
 export class ActionManager {
+    /**
+     * Creates a new ActionManager instance.
+     *
+     * @param {Game} game - The main game instance
+     */
     constructor(game) {
+        /** @type {Game} */
         this.game = game;
+
+        /** @type {number} */
         this.bombActionCounter = 0;
+
+        /** @type {ItemRepository} */
         this.itemRepository = new ItemRepository(game);
     }
 
+    /**
+     * Adds a bomb item to the player's inventory.
+     * Used by debug commands or special game events.
+     *
+     * @emits EventTypes.UI_UPDATE_STATS When bomb is successfully added
+     * @returns {void}
+     */
     addBomb() {
         if (this.game.playerFacade.getInventoryCount() < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE) {
             this.game.playerFacade.addToInventory({ type: 'bomb' });
@@ -21,14 +77,30 @@ export class ActionManager {
         }
     }
 
+    /**
+     * Increments the timer on all active (placed) bombs on the grid.
+     * Called each turn to advance bomb countdowns toward explosion.
+     *
+     * Bomb States:
+     * - Primitive (number): Inactive pickup item on ground
+     * - Object with timer: Active bomb placed by player
+     *
+     * Timer Logic:
+     * - justPlaced flag: Set when bomb is placed, prevents immediate increment
+     * - actionsSincePlaced: Counts turns since placement
+     * - Explosion happens when actionsSincePlaced >= threshold (handled by BombManager)
+     *
+     * Note: This method only increments timers. Actual explosion logic
+     * is in BombManager.tickBombsAndExplode() to avoid duplicate explosions.
+     *
+     * @returns {void}
+     */
     incrementBombActions() {
-        // Find any placed bombs (objects with timers) on the grid and increment their timer
-        // Primitive bombs (just the number TILE_TYPES.BOMB) are inactive pickup items
-        // NOTE: This method ONLY increments timers. BombManager.tickBombsAndExplode() handles explosions.
+        // Find all bomb tiles on the grid
         const bombs = GridIterator.findTiles(this.game.grid, isBomb);
 
         bombs.forEach(({ tile, x, y }) => {
-            // Skip primitive bombs - they're inactive until placed by player
+            // Skip primitive bombs - they're inactive pickup items
             if (typeof tile !== 'object') {
                 console.log(`[ActionManager] Bomb at (${x},${y}) is primitive, skipping`);
                 return;
@@ -36,45 +108,83 @@ export class ActionManager {
 
             console.log(`[ActionManager] Bomb at (${x},${y}) before: actionsSincePlaced=${tile.actionsSincePlaced}, justPlaced=${tile.justPlaced}`);
 
+            // First turn after placement: clear justPlaced flag but don't increment
             if (tile.justPlaced) {
-                // This is the turn the bomb was placed, don't increment the timer yet.
                 tile.justPlaced = false;
                 console.log(`[ActionManager] Cleared justPlaced flag for bomb at (${x},${y})`);
                 return;
             }
-            tile.actionsSincePlaced = (tile.actionsSincePlaced || 0) + 1; // Increment on subsequent actions
+
+            // Subsequent turns: increment timer
+            tile.actionsSincePlaced = (tile.actionsSincePlaced || 0) + 1;
             console.log(`[ActionManager] Incremented bomb at (${x},${y}) to actionsSincePlaced=${tile.actionsSincePlaced}`);
-            // Explosion check moved to BombManager.tickBombsAndExplode() to avoid duplicate explosions
         });
     }
 
+    /**
+     * Executes a Bishop Spear diagonal charge attack.
+     * Player charges diagonally, defeating enemies in the path and ending at target.
+     *
+     * Attack Pattern:
+     * - Diagonal movement only (like chess bishop)
+     * - Travels until hitting enemy, obstacle, or max range
+     * - Defeats enemy at endpoint
+     * - Creates smoke trail along path
+     *
+     * Visual Effects:
+     * - Smoke animations at each tile along the path
+     * - Backflip animation for combo kills (2+)
+     * - Bump animation for single kills
+     * - Whoosh sound effect
+     *
+     * @param {Item} item - The Bishop Spear item being used
+     * @param {number} targetX - Destination X coordinate
+     * @param {number} targetY - Destination Y coordinate
+     * @param {Enemy|null} enemy - Enemy at target position (if any)
+     * @param {number} dx - Delta X (direction)
+     * @param {number} dy - Delta Y (direction)
+     * @returns {void}
+     */
     performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy) {
         const playerPos = this.game.playerFacade.getPosition();
         const startX = playerPos.x;
         const startY = playerPos.y;
 
+        // Consume one use of the item
         item.uses--;
         if (item.uses <= 0) {
             this.itemRepository.removeItem(this.game.player, item);
         }
 
-        // Add smoke animations along the diagonal charge path
+        // Add smoke trail along the charge path
         if (this.game.player.animations?.smokeAnimations) {
             for (let i = 1; i < Math.abs(dx); i++) {
                 const px = startX + i * Math.sign(dx);
                 const py = startY + i * Math.sign(dy);
-                this.game.player.animations.smokeAnimations.push({ x: px, y: py, frame: ANIMATION_CONSTANTS.SMOKE_ANIMATION_FRAMES });
+                this.game.player.animations.smokeAnimations.push({
+                    x: px,
+                    y: py,
+                    frame: ANIMATION_CONSTANTS.SMOKE_ANIMATION_FRAMES
+                });
             }
         }
 
+        // Handle enemy at target position
         if (enemy) {
             this.game.playerFacade.setAction('attack');
             const res = this.game.combatManager.defeatEnemy(enemy, 'player');
+
             if (res && res.defeated) {
-                if (res.consecutiveKills >= 2) this.game.playerFacade.startBackflip(); else this.game.playerFacade.startBump(enemy.x - startX, enemy.y - startY);
+                // Backflip for combo kills, bump for single kills
+                if (res.consecutiveKills >= 2) {
+                    this.game.playerFacade.startBackflip();
+                } else {
+                    this.game.playerFacade.startBump(enemy.x - startX, enemy.y - startY);
+                }
             }
         }
 
+        // Move player to target position
         this.game.playerFacade.setPosition(targetX, targetY);
         this.game.playerFacade.startSmokeAnimation();
         audioManager.playSound('whoosh', { game: this.game });
@@ -83,6 +193,16 @@ export class ActionManager {
         eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
     }
 
+    /**
+     * Perform a Horse Icon L-shaped knight charge attack
+     * @param {Item} item - The Horse Icon item
+     * @param {number} targetX - Target X coordinate
+     * @param {number} targetY - Target Y coordinate
+     * @param {Enemy|null} enemy - Enemy at target (if any)
+     * @param {number} dx - Delta X
+     * @param {number} dy - Delta Y
+     * @returns {void}
+     */
     performHorseIconCharge(item, targetX, targetY, enemy, dx, dy) {
         item.uses--;
         if (item.uses <= 0) {
@@ -169,6 +289,14 @@ export class ActionManager {
         eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
     }
 
+    /**
+     * Perform a bow shot ranged attack with arrow animation
+     * @param {Item} item - The bow item
+     * @param {number} targetX - Target X coordinate
+     * @param {number} targetY - Target Y coordinate
+     * @param {Enemy|null} [enemy=null] - Enemy at target (if any)
+     * @returns {void}
+     */
     performBowShot(item, targetX, targetY, enemy = null) {
         item.uses--;
         if (item.uses <= 0) {
@@ -220,6 +348,12 @@ export class ActionManager {
             .start();
     }
 
+    /**
+     * Explode a bomb at the specified position with blast radius damage
+     * @param {number} bx - Bomb X coordinate
+     * @param {number} by - Bomb Y coordinate
+     * @returns {void}
+     */
     explodeBomb(bx, by) {
         const gridManager = this.game.gridManager;
         gridManager.setTile(bx, by, TILE_TYPES.FLOOR);

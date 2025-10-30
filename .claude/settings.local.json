@@ -2,7 +2,31 @@
   "permissions": {
     "allow": [
       "Bash(move:*)",
-      "Bash(npx browser-sync:*)"
+      "Bash(npx browser-sync:*)",
+      "Bash(dir:*)",
+      "Bash(tree:*)",
+      "Bash(npm test:*)",
+      "Bash(test:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(cat:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run test:coverage:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run dev:*)",
+      "Bash(node test-state-system.js:*)",
+      "Bash(python -m http.server:*)",
+      "Bash(node --version:*)",
+      "Bash(node:*)",
+      "Bash(copy \"c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\assets\\ui\\icon-192.png\" \"c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\assets\\icon-192.png\")",
+      "Bash(copy:*)",
+      "Bash(mkdir:*)",
+      "Bash(if not exist demos mkdir demos)",
+      "Bash(del state-demo.html)",
+      "Bash(del:*)",
+      "Bash(mv:*)",
+      "Bash(awk:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []
