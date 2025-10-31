@@ -56,6 +56,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     const game = new Game();
 
+    // Initialize storage adapter (IndexedDB with compression + localStorage fallback)
+    await game.storageAdapter.init();
+
     // Debug: Q spawns aguamelin
     window.addEventListener('keydown', (e) => {
         if (e.key === 'q' || e.key === 'Q') {

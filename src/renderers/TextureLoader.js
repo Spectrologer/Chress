@@ -27,13 +27,13 @@ export class TextureLoader {
                     imageKey = 'house_wall_open';
                 } else if (assetName === 'environment/floors/house_wall_side.png') {
                     imageKey = 'house_wall_side';
-                } else if (assetName === 'environment/flora/succulent.png') {
+                } else if (assetName === 'environment/walls/succulent.png') {
                     imageKey = 'succulent';
-                } else if (assetName === 'environment/flora/stump.png') {
+                } else if (assetName === 'environment/walls/stump.png') {
                     imageKey = 'stump';
-                } else if (assetName === 'environment/flora/blocklily.png') {
+                } else if (assetName === 'environment/walls/blocklily.png') {
                     imageKey = 'blocklily';
-                } else if (assetName === 'environment/flora/boulder.png') {
+                } else if (assetName === 'environment/walls/boulder.png') {
                     imageKey = 'boulder';
                 } else if (assetName.startsWith('environment/floors/')) {
                     imageKey = assetName.replace('environment/floors/', '').replace('.png', '');
@@ -65,13 +65,13 @@ export class TextureLoader {
                 } else if (assetName === 'environment/doodads/stairup.png') {
                     // stairup doodad
                     imageKey = 'stairup';
-                } else if (assetName === 'environment/doodads/rock.png') {
+                } else if (assetName === 'environment/obstacles/rock.png') {
                     imageKey = 'rock';
                 } else if (assetName === 'environment/doodads/sign.png') {
                     imageKey = 'sign';
-                } else if (assetName === 'environment/flora/shrubbery.png') {
+                } else if (assetName === 'environment/obstacles/shrubbery.png') {
                     imageKey = 'shrubbery';
-                } else if (assetName === 'environment/flora/bush.png') {
+                } else if (assetName === 'environment/walls/bush.png') {
                     imageKey = 'bush';
                 } else if (assetName === 'environment/doodads/club.png') {
                     imageKey = 'doodads/club';

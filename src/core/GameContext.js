@@ -2,6 +2,8 @@ import { GameWorld } from './GameWorld.js';
 import { GameUI } from './GameUI.js';
 import { GameAudio } from './GameAudio.js';
 import { UI_TIMING_CONSTANTS } from './constants/ui.js';
+import { ZoneGenerationState } from '../state/ZoneGenerationState.js';
+import { storageAdapter } from '../state/StorageAdapter.js';
 
 /**
  * GameContext
@@ -21,6 +23,10 @@ export class GameContext {
         this.world = new GameWorld();
         this.ui = new GameUI();
         this.audio = new GameAudio();
+
+        // State management (replaces ZoneStateManager static properties)
+        this.zoneGenState = new ZoneGenerationState();
+        this.storageAdapter = storageAdapter; // Singleton instance
 
         // Turn-based system state
         this.isPlayerTurn = true;

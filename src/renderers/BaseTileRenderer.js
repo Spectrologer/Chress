@@ -28,7 +28,7 @@ export class BaseTileRenderer {
     }
 
     // Main tile rendering dispatcher for basic tiles
-    renderTile(ctx, x, y, tileType, grid, zoneLevel) {
+    renderTile(ctx, x, y, tileType, grid, zoneLevel, terrainTextures = {}, rotations = {}) {
         const pixelX = x * TILE_SIZE;
         const pixelY = y * TILE_SIZE;
 
@@ -38,10 +38,10 @@ export class BaseTileRenderer {
         // Try to use strategy pattern
         const strategy = this.strategyRegistry.getStrategy(actualType);
         if (strategy) {
-            strategy.render(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this, tileType);
+            strategy.render(ctx, x, y, pixelX, pixelY, grid, zoneLevel, this, tileType, terrainTextures, rotations);
         } else {
             // Fallback to floor tile for unknown types
-            this.renderFloorTile(ctx, pixelX, pixelY, actualType);
+            this.renderFloorTile(ctx, pixelX, pixelY, actualType, terrainTextures, rotations, x, y);
         }
     }
 
@@ -102,8 +102,34 @@ export class BaseTileRenderer {
         this.renderFloorTile(ctx, pixelX, pixelY, TILE_TYPES.FLOOR);
     }
 
-    renderFloorTile(ctx, pixelX, pixelY, tileType) {
-        // Use dirt image for normal floor, or fall back to colors for tinted floors
+    renderFloorTile(ctx, pixelX, pixelY, tileType, terrainTextures = {}, rotations = {}, x, y) {
+        // Check if there's a custom terrain texture for this position
+        const coord = `${x},${y}`;
+        const customTexture = terrainTextures[coord];
+        const rotation = rotations[coord] || 0;
+
+        if (customTexture) {
+            // Strip folder prefix if present (e.g., 'floors/dirt' -> 'dirt')
+            const textureName = customTexture.includes('/') ? customTexture.split('/')[1] : customTexture;
+
+            if (RendererUtils.isImageLoaded(this.images, textureName)) {
+                ctx.save();
+                // Apply rotation if present
+                if (rotation !== 0) {
+                    const centerX = pixelX + TILE_SIZE / 2;
+                    const centerY = pixelY + TILE_SIZE / 2;
+                    ctx.translate(centerX, centerY);
+                    ctx.rotate((rotation * Math.PI) / 180);
+                    ctx.drawImage(this.images[textureName], -TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
+                } else {
+                    ctx.drawImage(this.images[textureName], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                }
+                ctx.restore();
+                return;
+            }
+        }
+
+        // Fallback to default rendering
         if (tileType === TILE_TYPES.FLOOR && RendererUtils.isImageLoaded(this.images, 'dirt')) {
             ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {

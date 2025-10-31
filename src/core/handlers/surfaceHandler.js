@@ -36,9 +36,9 @@ class SurfaceHandler extends BaseZoneHandler {
     }
 
     handleFrontierSign() {
-        if (this.zoneLevel === 4 && !ZoneStateManager.firstFrontierSignPlaced) {
+        if (this.zoneLevel === 4 && !this.game.zoneGenState.hasSpawned('firstFrontierSign')) {
             this.structureGenerator.addSign("TURN BACK");
-            ZoneStateManager.firstFrontierSignPlaced = true;
+            this.game.zoneGenState.setSpawnFlag('firstFrontierSign', true);
         }
     }
 
@@ -55,26 +55,26 @@ class SurfaceHandler extends BaseZoneHandler {
 
     handleLevelSpecificStructures() {
         // Level 4: Well
-        if (this.zoneLevel === 4 && !ZoneStateManager.wellSpawned) {
+        if (this.zoneLevel === 4 && !this.game.zoneGenState.hasSpawned('well')) {
             this.structureGenerator.addWell(this.zoneX, this.zoneY);
         }
 
         // Level 3: Wilds Shack
-        if (this.zoneLevel === 3 && !ZoneStateManager.wildsShackSpawned) {
-            if (!ZoneStateManager.firstWildsZonePlaced) {
+        if (this.zoneLevel === 3 && !this.game.zoneGenState.hasSpawned('wildsShack')) {
+            if (!this.game.zoneGenState.firstWildsZonePlaced) {
                 this.zoneGen.clearZoneForShackOnly();
                 if (this.zoneGen.forcePlaceShackInCenter(this.zoneX, this.zoneY)) {
-                    ZoneStateManager.wildsShackSpawned = true;
-                    ZoneStateManager.wildsShackSpawnZone = { x: this.zoneX, y: this.zoneY };
-                    ZoneStateManager.firstWildsZonePlaced = true;
+                    this.game.zoneGenState.setSpawnFlag('wildsShack', true);
+                    this.game.zoneGenState.setSpawnLocation('wildsShack', { x: this.zoneX, y: this.zoneY });
+                    this.game.zoneGenState.firstWildsZonePlaced = true;
                     // Register and load the gouges board for this shack's interior
                     this.registerGougesBoard();
                     logger.log(`FIRST WILDS ZONE: Shack placed in zone (${this.zoneX}, ${this.zoneY}) - no other features`);
                 }
             } else {
                 if (this.structureGenerator.addShack(this.zoneX, this.zoneY)) {
-                    ZoneStateManager.wildsShackSpawned = true;
-                    ZoneStateManager.wildsShackSpawnZone = { x: this.zoneX, y: this.zoneY };
+                    this.game.zoneGenState.setSpawnFlag('wildsShack', true);
+                    this.game.zoneGenState.setSpawnLocation('wildsShack', { x: this.zoneX, y: this.zoneY });
                     // Register and load the gouges board for this shack's interior
                     this.registerGougesBoard();
                 }
@@ -83,12 +83,12 @@ class SurfaceHandler extends BaseZoneHandler {
 
         // Level 2: Dead Tree and Hammer Warning Sign
         if (this.zoneLevel === 2) {
-            if (!ZoneStateManager.deadTreeSpawned) {
+            if (!this.game.zoneGenState.hasSpawned('deadTree')) {
                 this.structureGenerator.addDeadTree(this.zoneX, this.zoneY);
             }
-            if (!ZoneStateManager.hammerWarningSignPlaced) {
+            if (!this.game.zoneGenState.hasSpawned('hammerWarningSign')) {
                 this.structureGenerator.addSign("FIND THE HAMMER<br>IN THE WOODS");
-                ZoneStateManager.hammerWarningSignPlaced = true;
+                this.game.zoneGenState.setSpawnFlag('hammerWarningSign', true);
             }
         }
     }

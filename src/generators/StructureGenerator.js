@@ -6,8 +6,9 @@ import { logger } from '../core/logger.js';
 import { isTileType, isTileObjectOfType, isFloor, isSign } from '../utils/TypeChecks.js';
 
 export class StructureGenerator {
-    constructor(gridManager) {
+    constructor(gridManager, game = null) {
         this.gridManager = gridManager;
+        this.game = game; // For accessing zoneGenState
     }
 
     addHouse(zoneX, zoneY) {
@@ -104,12 +105,14 @@ export class StructureGenerator {
     }
 
     addWell(zoneX, zoneY) {
-        this._placeStructure(2, 2, TILE_TYPES.WELL, () => { ZoneStateManager.wellSpawned = true; });
+        this._placeStructure(2, 2, TILE_TYPES.WELL, () => {
+            this.game.zoneGenState.setSpawnFlag('well', true);
+        });
     }
 
     addDeadTree(zoneX, zoneY) {
         this._placeStructure(2, 2, TILE_TYPES.DEADTREE, () => {
-            ZoneStateManager.deadTreeSpawned = true;
+            this.game.zoneGenState.setSpawnFlag('deadTree', true);
             logger.log(`Dead tree spawned at zone (${zoneX}, ${zoneY})`);
         });
     }

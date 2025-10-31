@@ -73,9 +73,12 @@ export class GameInitializer {
      * Delegates to AssetLoader for asset management and OverlayManager for overlay display.
      */
     async loadAssets() {
+        console.log('[GameInitializer] loadAssets() called');
         try {
             // Delegate to AssetLoader
+            console.log('[GameInitializer] Starting asset loading...');
             await this.game.assetLoader.loadAssets();
+            console.log('[GameInitializer] Asset loading complete');
 
             // Show overlay
             this.game.overlayManager.showStartOverlay();
@@ -87,19 +90,64 @@ export class GameInitializer {
 
         // Preview render loop
         // Draws board behind overlay
+        console.log('[GameInitializer] Checking if preview setup is needed...');
+        console.log(`[GameInitializer] gameStarted=${this.game.gameStarted}, grid=${!!this.game.grid}`);
         if (!this.game.gameStarted) {
             // Temp zone for preview
+            console.log('[GameInitializer] Game not started, setting up preview');
             if (!this.game.grid) {
-                // Try to load saved game first to show last board
-                const hasSavedGame = this.game.gameStateManager.loadGameState();
-                if (!hasSavedGame) {
-                    // No saved game, generate new zone for preview
-                    this.game.generateZone();
+                console.log('[GameInitializer] Grid is null, attempting to load or generate');
+                try {
+                    // Try to load saved game first to show last board
+                    console.log('[GameInitializer] Attempting to load saved game...');
+                    const hasSavedGame = await this.game.gameStateManager.loadGameState();
+                    console.log(`[GameInitializer] Load saved game result: ${hasSavedGame}`);
+                    if (!hasSavedGame) {
+                        // No saved game, generate surface zone (0,0 dimension 0) for preview
+                        console.log('[Preview] No saved game, generating surface zone 0,0 for preview');
+
+                        // Ensure player is at surface zone (0,0 dimension 0)
+                        this.game.player.currentZone = { x: 0, y: 0, dimension: 0, depth: 0 };
+                        console.log(`[Preview] Set player zone to surface: (0,0,0)`);
+
+                        this.game.generateZone();
+
+                        // Verify grid was created
+                        if (!this.game.grid) {
+                            logger.error('[Preview] Zone generation failed - grid is null');
+                        } else {
+                            const playerPos = this.game.player.getPosition();
+                            const zone = this.game.player.getCurrentZone();
+                            console.log(`[Preview] Zone generated successfully - grid exists, player at (${playerPos.x},${playerPos.y}), zone (${zone.x},${zone.y},${zone.dimension})`);
+                            console.log(`[Preview] Terrain textures: ${Object.keys(this.game.zoneGenerator?.terrainTextures || {}).length} entries`);
+                        }
+                    } else {
+                        console.log('[Preview] Loaded saved game for preview');
+                    }
+                } catch (error) {
+                    logger.error('[Preview] Error during preview zone generation:', error);
+                    // Attempt fallback generation
+                    try {
+                        this.game.generateZone();
+                    } catch (fallbackError) {
+                        logger.error('[Preview] Fallback generation also failed:', fallbackError);
+                    }
                 }
+            } else {
+                console.log('[GameInitializer] Grid already exists, skipping generation');
             }
-            this.game.previewMode = true;
-            // Start loop (respects preview)
-            this.game.gameLoop();
+
+            // Only start game loop if grid was successfully created
+            if (this.game.grid) {
+                this.game.previewMode = true;
+                // Start loop (respects preview)
+                console.log('[Preview] Starting game loop in preview mode');
+                this.game.gameLoop();
+            } else {
+                logger.error('[Preview] Cannot start game loop - grid is null after generation attempts');
+            }
+        } else {
+            console.log('[GameInitializer] Game already started, skipping preview setup');
         }
     }
 
@@ -480,7 +528,7 @@ export class GameInitializer {
      */
     resetGame() {
         // Reset session data
-        ZoneStateManager.resetSessionData();
+        this.game.zoneGenState.reset(); // Use instance method (replaces ZoneStateManager.resetSessionData())
         this.game.gameStateManager.resetGame();
     }
 }

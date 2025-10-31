@@ -122,6 +122,9 @@
         }
 
         .cell-feature {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             line-height: 1;
@@ -129,6 +132,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .cell-feature.terrain-layer {
+            z-index: 1;
+        }
+
+        .cell-feature.feature-layer {
+            z-index: 2;
         }
 
         .controls {
@@ -297,16 +308,31 @@
             z-index: 2;
         }
 
-        /* TILE - light sandy beige */
-        .layer-button[data-category="TILE"] {
+        /* FLOOR - light sandy beige */
+        .layer-button[data-category="FLOOR"] {
             background: #d9cdb3;
             border-color: #c4b8a0;
         }
-        .layer-button[data-category="TILE"]:hover {
+        .layer-button[data-category="FLOOR"]:hover {
             background: #e6dac0;
         }
-        .layer-button[data-category="TILE"].active {
+        .layer-button[data-category="FLOOR"].active {
             background: #d9cdb3;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        /* WALL - stone gray */
+        .layer-button[data-category="WALL"] {
+            background: #b8b0a0;
+            border-color: #a6a090;
+        }
+        .layer-button[data-category="WALL"]:hover {
+            background: #c5bdad;
+        }
+        .layer-button[data-category="WALL"].active {
+            background: #b8b0a0;
             border-color: #8B4513;
             box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
             z-index: 3;
@@ -397,6 +423,21 @@
         }
         .layer-button[data-category="STATUE"].active {
             background: #b8b0a0;
+            border-color: #8B4513;
+            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+            z-index: 3;
+        }
+
+        /* TRIM - gold accent */
+        .layer-button[data-category="TRIM"] {
+            background: #d4af37;
+            border-color: #c09d2a;
+        }
+        .layer-button[data-category="TRIM"]:hover {
+            background: #e0bb44;
+        }
+        .layer-button[data-category="TRIM"].active {
+            background: #d4af37;
             border-color: #8B4513;
             box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
             z-index: 3;
@@ -513,7 +554,9 @@
 
         <div class="controls">
             <div class="layer-toggle">
-                <button class="layer-button active" data-category="TILE">TILE</button>
+                <button class="layer-button active" data-category="FLOOR">FLOOR</button>
+                <button class="layer-button" data-category="WALL">WALL</button>
+                <button class="layer-button" data-category="TRIM">TRIM</button>
                 <button class="layer-button" data-category="STRUCTURE">STRUCTURE</button>
                 <button class="layer-button" data-category="PORT">PORT</button>
                 <button class="layer-button" data-category="ITEM">ITEM</button>
@@ -551,11 +594,21 @@
         const GRID_SIZE = 10;
         let currentLayer = 'terrain';
         let isPainting = false;
-        let gridData = Array(GRID_SIZE * GRID_SIZE).fill(null);
+        let lastPaintedIndex = -1; // Track last painted cell to prevent rotation during drag
+
+        // Layered grid system: terrain layer (floors/walls) + feature layer (items/npcs/etc) + overlay layer (trim) + rotations
+        let terrainLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+        let featureLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+        let overlayLayer = Array(GRID_SIZE * GRID_SIZE).fill(null); // For decorative overlays like trim
+
+        // Track rotation separately for each layer since a position can have multiple layers
+        let rotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0); // Rotation for terrain layer
+        let overlayRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0); // Rotation for overlay layer
+        let featureRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0); // Rotation for feature layer
 
         // Store selected value and current category
         let selectedValue = null;
-        let currentCategory = 'TILE';
+        let currentCategory = 'FLOOR';
 
         // Multi-tile structure definitions (width, height)
         const multiTileStructures = {
@@ -567,14 +620,58 @@
         };
 
         // Asset path mappings for tiles
+        // Supports both 'folder/filename' and legacy 'filename' formats
         const tileAssets = {
-            // TILE
-            'floor': '../assets/environment/floors/dirt.png',
-            'grass': '../assets/environment/floors/dirt.png',
+            // FLOOR - Walkable floor tiles
+            'floors/bones': '../assets/environment/floors/bones.png',
+            'floors/clouds': '../assets/environment/floors/clouds.png',
+            'floors/crackedseaice': '../assets/environment/floors/crackedseaice.png',
+            'floors/crag': '../assets/environment/floors/crag.png',
+            'floors/desert': '../assets/environment/floors/desert.png',
+            'floors/dirt': '../assets/environment/floors/dirt.png',
+            'floors/dirtpatch': '../assets/environment/floors/dirtpatch.png',
+            'floors/grass': '../assets/environment/floors/grass.png',
+            'floors/gravel': '../assets/environment/floors/gravel.png',
+            'floors/housetile': '../assets/environment/floors/housetile.png',
+            'floors/mulch': '../assets/environment/floors/mulch.png',
+            'floors/seaice': '../assets/environment/floors/seaice.png',
+            'floors/underbrush': '../assets/environment/floors/underbrush.png',
+            'floors/water': '../assets/environment/floors/water.png',
+
+            // WALL - Non-walkable walls
+            'walls/90s': '../assets/environment/walls/90s.png',
+            'walls/astrocrag': '../assets/environment/walls/astrocrag.png',
+            'walls/blocklily': '../assets/environment/walls/blocklily.png',
+            'walls/boulder': '../assets/environment/walls/boulder.png',
+            'walls/bush': '../assets/environment/walls/bush.png',
+            'walls/chargedwall': '../assets/environment/walls/chargedwall.png',
+            'walls/clubwall': '../assets/environment/walls/clubwall.png',
+            'walls/clubwall1': '../assets/environment/walls/clubwall1.png',
+            'walls/clubwall2': '../assets/environment/walls/clubwall2.png',
+            'walls/clubwall4': '../assets/environment/walls/clubwall4.png',
+            'walls/clubwall5': '../assets/environment/walls/clubwall5.png',
+            'walls/clubwall6': '../assets/environment/walls/clubwall6.png',
+            'walls/cobble': '../assets/environment/walls/cobble.png',
+            'walls/coralwall': '../assets/environment/walls/coralwall.png',
+            'walls/cube': '../assets/environment/walls/cube.png',
+            'walls/deco': '../assets/environment/walls/deco.png',
+            'walls/fortwall': '../assets/environment/walls/fortwall.png',
+            'walls/heartstone': '../assets/environment/walls/heartstone.png',
+            'walls/lavawall': '../assets/environment/walls/lavawall.png',
+            'walls/rockwall': '../assets/environment/walls/rockwall.png',
+            'walls/stump': '../assets/environment/walls/stump.png',
+            'walls/succulent': '../assets/environment/walls/succulent.png',
+            'walls/wall': '../assets/environment/walls/rockwall.png',
+            'walls/zydeco': '../assets/environment/walls/zydeco.png',
+
+            // TRIM - Walkable decorative tiles
+            'trim/bordertrim': '../assets/environment/trim/bordertrim.png',
+
+            // OBSTACLES - Blocking objects
+            'obstacles/rock': '../assets/environment/obstacles/rock.png',
+            'obstacles/shrubbery': '../assets/environment/obstacles/shrubbery.png',
+            'hole': '../assets/environment/doodads/hole.png',
             'pitfall': '../assets/environment/doodads/pitfall.png',
-            'rock': '../assets/environment/doodads/rock.png',
-            'shrubbery': '../assets/environment/flora/shrubbery.png',
-            'wall': '⬛',
 
             // STRUCTURE
             'cistern': '../assets/environment/doodads/cistern.png',
@@ -591,7 +688,7 @@
             'exit_right': '../assets/ui/arrow.png',
             'exit_up': '../assets/ui/arrow.png',
             'port_cistern': '../assets/environment/doodads/cistern.png',
-            'port_interior': '🚪',
+            'port_interior': '⬇',
             'port_stairdown': '../assets/environment/doodads/stairdown.png',
             'port_stairup': '../assets/environment/doodads/stairup.png',
 
@@ -610,7 +707,7 @@
             'random_radial_item': '🎯',
             'random_food_water': '🍎',
             'shovel': '../assets/items/equipment/shovel.png',
-            'water': '../assets/items/consumables/water.png',
+            'water_item': '../assets/items/consumables/water.png',
 
             // ENEMY
             'lazerd': '../assets/characters/enemies/lazerd.png',
@@ -668,12 +765,28 @@
         }
 
         const defaultPalettes = {
-            TILE: [
-                'floor', 'pitfall', 'rock', 'shrubbery', 'wall',
+            FLOOR: [
+                'floors/dirt', 'floors/grass', 'floors/water', 'floors/desert', 'floors/gravel', 'floors/mulch', 'floors/crag',
+                'floors/bones', 'floors/clouds', 'floors/crackedseaice', 'floors/seaice', 'floors/dirtpatch', 'floors/housetile', 'floors/underbrush',
+                null
+            ],
+            WALL: [
+                // Wall tiles
+                'walls/wall', 'walls/rockwall', 'walls/cobble', 'walls/clubwall', 'walls/clubwall1', 'walls/clubwall2', 'walls/clubwall4', 'walls/clubwall5', 'walls/clubwall6',
+                'walls/fortwall', 'walls/coralwall', 'walls/lavawall', 'walls/heartstone', 'walls/chargedwall',
+                'walls/90s', 'walls/astrocrag', 'walls/cube', 'walls/deco', 'walls/zydeco',
+                // Flora/obstacles in walls folder
+                'walls/blocklily', 'walls/boulder', 'walls/bush', 'walls/stump', 'walls/succulent',
+                null
+            ],
+            TRIM: [
+                'trim/bordertrim',
                 null
             ],
             STRUCTURE: [
                 'cistern', 'deadtree', 'house', 'shack', 'sign', 'table', 'well',
+                // Obstacles
+                'obstacles/rock', 'obstacles/shrubbery', 'hole', 'pitfall',
                 null
             ],
             PORT: [
@@ -683,7 +796,7 @@
             ],
             ITEM: [
                 'axe', 'bishop_spear', 'bomb', 'book_of_time_travel', 'bow', 'food', 'hammer',
-                'heart', 'horse_icon', 'note', 'random_item', 'random_radial_item', 'random_food_water', 'shovel', 'water',
+                'heart', 'horse_icon', 'note', 'random_item', 'random_radial_item', 'random_food_water', 'shovel', 'water_item',
                 null
             ],
             ENEMY: [
@@ -702,7 +815,9 @@
         };
 
         let customPalettes = {
-            TILE: [],
+            FLOOR: [],
+            WALL: [],
+            TRIM: [],
             STRUCTURE: [],
             PORT: [],
             ITEM: [],
@@ -721,7 +836,7 @@
                 const col = i % GRID_SIZE;
                 // Add wall if on border (first/last row or first/last column)
                 if (row === 0 || row === GRID_SIZE - 1 || col === 0 || col === GRID_SIZE - 1) {
-                    gridData[i] = 'wall';
+                    terrainLayer[i] = 'wall';
                 }
             }
 
@@ -782,14 +897,17 @@
         // Stop painting when mouse/touch is released anywhere
         document.addEventListener('mouseup', () => {
             isPainting = false;
+            lastPaintedIndex = -1; // Reset to allow rotation on next click
         });
 
         document.addEventListener('touchend', () => {
             isPainting = false;
+            lastPaintedIndex = -1; // Reset to allow rotation on next click
         });
 
         document.addEventListener('touchcancel', () => {
             isPainting = false;
+            lastPaintedIndex = -1; // Reset to allow rotation on next click
         });
 
         function updateCoordDisplay(row, col) {
@@ -802,6 +920,43 @@
             const col = parseInt(cell.dataset.col);
 
             console.log(`Painting cell [${col},${row}] with value: "${selectedValue}" from ${currentCategory}`);
+
+            // Determine which layer to paint on and which rotation layer to use
+            // FLOOR and WALL paint on terrain layer, TRIM paints on overlay layer, everything else on feature layer
+            let targetLayer, targetRotationLayer;
+            if (currentCategory === 'TRIM') {
+                targetLayer = overlayLayer;
+                targetRotationLayer = overlayRotationLayer;
+            } else if (currentCategory === 'FLOOR' || currentCategory === 'WALL') {
+                targetLayer = terrainLayer;
+                targetRotationLayer = rotationLayer;
+            } else {
+                targetLayer = featureLayer;
+                targetRotationLayer = featureRotationLayer;
+            }
+            const currentValue = targetLayer[index];
+
+            // Check if clicking the same tile with the same value -> rotate it
+            // Don't rotate if we're dragging to a different cell (lastPaintedIndex is different and isPainting is true)
+            const isDragging = isPainting && lastPaintedIndex !== -1 && lastPaintedIndex !== index;
+
+            if (currentValue === selectedValue && selectedValue !== null && !isDragging) {
+                // Rotate by 90 degrees
+                targetRotationLayer[index] = (targetRotationLayer[index] + 90) % 360;
+                console.log(`Rotating tile at [${col},${row}] to ${targetRotationLayer[index]}°`);
+                updateGrid();
+                lastPaintedIndex = index; // Update for next click
+                return;
+            }
+
+            // Update last painted index
+            lastPaintedIndex = index;
+
+            // Reset rotation when placing a new tile (only if replacing existing value on this layer)
+            if (currentValue !== null && currentValue !== selectedValue) {
+                // Replacing a different tile, reset rotation
+                targetRotationLayer[index] = 0;
+            }
 
             // Check if this is a multi-tile structure
             if (selectedValue && multiTileStructures[selectedValue]) {
@@ -817,122 +972,155 @@
                 for (let dy = 0; dy < structure.height; dy++) {
                     for (let dx = 0; dx < structure.width; dx++) {
                         const cellIndex = (row + dy) * GRID_SIZE + (col + dx);
-                        gridData[cellIndex] = selectedValue;
+                        targetLayer[cellIndex] = selectedValue;
+                        targetRotationLayer[cellIndex] = 0;
                     }
                 }
             } else {
                 // Single-tile placement
-                gridData[index] = selectedValue;
+                targetLayer[index] = selectedValue;
             }
 
             updateGrid();
         }
 
+        function renderTile(value, index, container, layerClass, rotation = 0) {
+            if (!value) return;
+
+            const row = Math.floor(index / GRID_SIZE);
+            const col = index % GRID_SIZE;
+
+            const assetPath = getAssetPath(value);
+
+            // Check if assetPath is an emoji/unicode character (not a file path)
+            const isEmoji = assetPath && assetPath.length <= 3 && !assetPath.includes('/') && !assetPath.includes('.');
+
+            if (isEmoji) {
+                // Display emoji directly
+                const emojiDiv = document.createElement('div');
+                emojiDiv.className = `cell-feature ${layerClass}`;
+                emojiDiv.textContent = assetPath;
+                emojiDiv.title = value;
+                emojiDiv.style.fontSize = '20px';
+                emojiDiv.style.display = 'flex';
+                emojiDiv.style.alignItems = 'center';
+                emojiDiv.style.justifyContent = 'center';
+                emojiDiv.style.width = '100%';
+                emojiDiv.style.height = '100%';
+                if (rotation !== 0) {
+                    emojiDiv.style.transform = `rotate(${rotation}deg)`;
+                }
+                container.appendChild(emojiDiv);
+            } else if (assetPath && loadedImages[value]) {
+                // Check if this is a multi-tile structure
+                const structure = multiTileStructures[value];
+
+                if (structure) {
+                    // Find the top-left corner of this structure
+                    const terrainOrFeature = terrainLayer[index] === value ? terrainLayer : featureLayer;
+                    const topLeftCol = findStructureTopLeft(col, row, value, structure, terrainOrFeature).col;
+                    const topLeftRow = findStructureTopLeft(col, row, value, structure, terrainOrFeature).row;
+
+                    // Calculate this cell's position within the structure
+                    const offsetX = col - topLeftCol;
+                    const offsetY = row - topLeftRow;
+
+                    // Create a container div for the sliced sprite
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `cell-feature ${layerClass}`;
+                    wrapper.style.width = '100%';
+                    wrapper.style.height = '100%';
+                    wrapper.style.overflow = 'hidden';
+                    wrapper.style.position = 'relative';
+                    wrapper.title = value;
+
+                    // Create the image and position it to show only the relevant slice
+                    const img = document.createElement('img');
+                    img.src = assetPath;
+                    img.style.position = 'absolute';
+                    img.style.imageRendering = 'pixelated';
+
+                    // Scale the image to be structure.width times the cell width
+                    img.style.width = `${structure.width * 100}%`;
+                    img.style.height = `${structure.height * 100}%`;
+
+                    // Offset to show the correct slice
+                    img.style.left = `${-offsetX * 100}%`;
+                    img.style.top = `${-offsetY * 100}%`;
+
+                    wrapper.appendChild(img);
+                    container.appendChild(wrapper);
+                } else {
+                    // Single-tile rendering
+                    const img = document.createElement('img');
+                    img.src = assetPath;
+                    img.className = `cell-feature ${layerClass}`;
+                    img.title = value;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'contain';
+                    img.style.imageRendering = 'pixelated';
+
+                    // Apply gray filter for statues
+                    if (value.endsWith('_statue')) {
+                        img.style.filter = 'grayscale(100%) brightness(0.7)';
+                    }
+
+                    // Apply rotation
+                    if (rotation !== 0) {
+                        img.style.transform = `rotate(${rotation}deg)`;
+                    } else {
+                        // Rotate arrow for directional exits (only if no custom rotation)
+                        if (value === 'exit_left') img.style.transform = 'rotate(-90deg)';
+                        else if (value === 'exit_down') img.style.transform = 'rotate(180deg)';
+                        else if (value === 'exit_right') img.style.transform = 'rotate(90deg)';
+                        // exit_up is default (0deg)
+                    }
+
+                    container.appendChild(img);
+                }
+            } else {
+                // Fallback to text if no asset
+                const valueDiv = document.createElement('div');
+                valueDiv.className = `cell-feature ${layerClass}`;
+                valueDiv.textContent = value;
+                valueDiv.title = value;
+                valueDiv.style.fontSize = '8px';
+                valueDiv.style.wordBreak = 'break-all';
+                if (rotation !== 0) {
+                    valueDiv.style.transform = `rotate(${rotation}deg)`;
+                }
+                container.appendChild(valueDiv);
+            }
+        }
+
         function updateGrid() {
             const cells = document.querySelectorAll('.cell');
             cells.forEach((cell, index) => {
-                const value = gridData[index];
-                const row = Math.floor(index / GRID_SIZE);
-                const col = index % GRID_SIZE;
+                const terrainValue = terrainLayer[index];
+                const overlayValue = overlayLayer[index];
+                const featureValue = featureLayer[index];
                 cell.innerHTML = '';
 
-                if (value) {
-                    const assetPath = getAssetPath(value);
+                // Render terrain layer first (floors/walls)
+                if (terrainValue) {
+                    renderTile(terrainValue, index, cell, 'terrain-layer', rotationLayer[index] || 0);
+                }
 
-                    // Check if assetPath is an emoji/unicode character (not a file path)
-                    const isEmoji = assetPath && assetPath.length <= 3 && !assetPath.includes('/') && !assetPath.includes('.');
+                // Render overlay layer on top of terrain (trim/decorative)
+                if (overlayValue) {
+                    renderTile(overlayValue, index, cell, 'terrain-layer', overlayRotationLayer[index] || 0);
+                }
 
-                    if (isEmoji) {
-                        // Display emoji directly
-                        const emojiDiv = document.createElement('div');
-                        emojiDiv.className = 'cell-feature';
-                        emojiDiv.textContent = assetPath;
-                        emojiDiv.title = value;
-                        emojiDiv.style.fontSize = '20px';
-                        emojiDiv.style.display = 'flex';
-                        emojiDiv.style.alignItems = 'center';
-                        emojiDiv.style.justifyContent = 'center';
-                        emojiDiv.style.width = '100%';
-                        emojiDiv.style.height = '100%';
-                        cell.appendChild(emojiDiv);
-                    } else if (assetPath && loadedImages[value]) {
-                        // Check if this is a multi-tile structure
-                        const structure = multiTileStructures[value];
-
-                        if (structure) {
-                            // Find the top-left corner of this structure
-                            const topLeftCol = findStructureTopLeft(col, row, value, structure).col;
-                            const topLeftRow = findStructureTopLeft(col, row, value, structure).row;
-
-                            // Calculate this cell's position within the structure
-                            const offsetX = col - topLeftCol;
-                            const offsetY = row - topLeftRow;
-
-                            // Create a container div for the sliced sprite
-                            const container = document.createElement('div');
-                            container.className = 'cell-feature';
-                            container.style.width = '100%';
-                            container.style.height = '100%';
-                            container.style.overflow = 'hidden';
-                            container.style.position = 'relative';
-                            container.title = value;
-
-                            // Create the image and position it to show only the relevant slice
-                            const img = document.createElement('img');
-                            img.src = assetPath;
-                            img.style.position = 'absolute';
-                            img.style.imageRendering = 'pixelated';
-
-                            // Scale the image to be structure.width times the cell width
-                            img.style.width = `${structure.width * 100}%`;
-                            img.style.height = `${structure.height * 100}%`;
-
-                            // Offset to show the correct slice
-                            img.style.left = `${-offsetX * 100}%`;
-                            img.style.top = `${-offsetY * 100}%`;
-
-                            container.appendChild(img);
-                            cell.appendChild(container);
-                        } else {
-                            // Single-tile rendering
-                            const img = document.createElement('img');
-                            img.src = assetPath;
-                            img.className = 'cell-feature';
-                            img.title = value;
-                            img.style.width = '100%';
-                            img.style.height = '100%';
-                            img.style.objectFit = 'contain';
-                            img.style.imageRendering = 'pixelated';
-
-                            // Apply gray filter for statues
-                            if (value.endsWith('_statue')) {
-                                img.style.filter = 'grayscale(100%) brightness(0.7)';
-                            }
-
-                            // Rotate arrow for directional exits
-                            if (value === 'exit_left') img.style.transform = 'rotate(-90deg)';
-                            else if (value === 'exit_down') img.style.transform = 'rotate(180deg)';
-                            else if (value === 'exit_right') img.style.transform = 'rotate(90deg)';
-                            // exit_up is default (0deg)
-
-                            cell.appendChild(img);
-                        }
-                    } else {
-                        // Fallback to text if no asset
-                        const valueDiv = document.createElement('div');
-                        valueDiv.className = 'cell-feature';
-                        valueDiv.textContent = value;
-                        valueDiv.title = value;
-                        valueDiv.style.fontSize = '8px';
-                        valueDiv.style.wordBreak = 'break-all';
-                        cell.appendChild(valueDiv);
-                    }
+                // Render feature layer on top (items/npcs/etc)
+                if (featureValue) {
+                    renderTile(featureValue, index, cell, 'feature-layer', featureRotationLayer[index] || 0);
                 }
             });
         }
 
         // Helper function to find the top-left corner of a multi-tile structure
-        function findStructureTopLeft(col, row, value, structure) {
+        function findStructureTopLeft(col, row, value, structure, layer) {
             // Search backwards to find where this structure starts
             for (let testRow = Math.max(0, row - structure.height + 1); testRow <= row; testRow++) {
                 for (let testCol = Math.max(0, col - structure.width + 1); testCol <= col; testCol++) {
@@ -941,7 +1129,7 @@
                     for (let dy = 0; dy < structure.height; dy++) {
                         for (let dx = 0; dx < structure.width; dx++) {
                             const checkIndex = (testRow + dy) * GRID_SIZE + (testCol + dx);
-                            if (gridData[checkIndex] !== value) {
+                            if (layer[checkIndex] !== value) {
                                 allMatch = false;
                                 break;
                             }
@@ -1042,13 +1230,18 @@
 
         function clearGrid() {
             if (confirm('Clear entire grid? This cannot be undone.')) {
-                gridData = Array(GRID_SIZE * GRID_SIZE).fill(null);
+                terrainLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+                featureLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+                overlayLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+                rotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
+                overlayRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
+                featureRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
                 // Add default walls on borders
                 for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
                     const row = Math.floor(i / GRID_SIZE);
                     const col = i % GRID_SIZE;
                     if (row === 0 || row === GRID_SIZE - 1 || col === 0 || col === GRID_SIZE - 1) {
-                        gridData[i] = 'wall';
+                        terrainLayer[i] = 'wall';
                     }
                 }
                 updateGrid();
@@ -1057,7 +1250,21 @@
 
         function fillAll() {
             if (selectedValue) {
-                gridData = Array(GRID_SIZE * GRID_SIZE).fill(selectedValue);
+                let targetLayer, targetRotationLayer;
+                if (currentCategory === 'TRIM') {
+                    targetLayer = overlayLayer;
+                    targetRotationLayer = overlayRotationLayer;
+                } else if (currentCategory === 'FLOOR' || currentCategory === 'WALL') {
+                    targetLayer = terrainLayer;
+                    targetRotationLayer = rotationLayer;
+                } else {
+                    targetLayer = featureLayer;
+                    targetRotationLayer = featureRotationLayer;
+                }
+                for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+                    targetLayer[i] = selectedValue;
+                    targetRotationLayer[i] = 0;
+                }
                 updateGrid();
             } else {
                 alert('Select a value first!');
@@ -1072,33 +1279,52 @@
             const level = document.getElementById('zoneLevel').value; // String: home, woods, wilds, frontier
             const rarity = parseInt(document.getElementById('zoneRarity').value);
 
-            // Separate terrain and features based on tile types
+            // Build terrain, overlays, and features from layers
             const terrain = [];
+            const overlays = {};
             const features = {};
+            const rotations = {};
+            const overlayRotations = {};
 
-            gridData.forEach((value, index) => {
+            for (let index = 0; index < GRID_SIZE * GRID_SIZE; index++) {
                 const row = Math.floor(index / GRID_SIZE);
                 const col = index % GRID_SIZE;
+                const terrainValue = terrainLayer[index];
+                const overlayValue = overlayLayer[index];
+                const featureValue = featureLayer[index];
 
-                // Terrain types that go in terrain array
-                const terrainTypes = ['floor', 'grass', 'water'];
+                // Push terrain (or null if empty)
+                terrain.push(terrainValue || null);
 
-                if (!value) {
-                    terrain.push(null);
-                } else if (terrainTypes.includes(value)) {
-                    terrain.push(value);
-                } else {
-                    // Everything else is a feature
-                    terrain.push('floor'); // Default terrain under features
-                    features[`${col},${row}`] = value;
+                // Add overlay if present
+                if (overlayValue) {
+                    overlays[`${col},${row}`] = overlayValue;
                 }
-            });
+
+                // Add feature if present
+                if (featureValue) {
+                    features[`${col},${row}`] = featureValue;
+                }
+
+                // Add terrain rotation if non-zero
+                if (terrainValue && rotationLayer[index] && rotationLayer[index] !== 0) {
+                    rotations[`${col},${row}`] = rotationLayer[index];
+                }
+
+                // Add overlay rotation if non-zero
+                if (overlayValue && overlayRotationLayer[index] && overlayRotationLayer[index] !== 0) {
+                    overlayRotations[`${col},${row}`] = overlayRotationLayer[index];
+                }
+            }
 
             const zoneData = {
                 name: zoneName,
                 size: [GRID_SIZE, GRID_SIZE],
                 terrain: terrain,
+                overlays: Object.keys(overlays).length > 0 ? overlays : undefined,
                 features: features,
+                rotations: Object.keys(rotations).length > 0 ? rotations : undefined,
+                overlayRotations: Object.keys(overlayRotations).length > 0 ? overlayRotations : undefined,
                 metadata: {
                     description: description || undefined,
                     tags: tags.length > 0 ? tags : undefined,
@@ -1126,6 +1352,41 @@
             URL.revokeObjectURL(url);
         }
 
+        function migrateTerrainFormat(terrain) {
+            // If already has folder prefix, return as-is
+            if (terrain.includes('/')) {
+                return terrain;
+            }
+
+            // Wall items -> add 'walls/' prefix
+            const wallItems = [
+                'wall', '90s', 'astrocrag', 'blocklily', 'bordertrim', 'boulder', 'bush',
+                'chargedwall', 'clubwall', 'clubwall1', 'clubwall2', 'clubwall4', 'clubwall5',
+                'cobble', 'coralwall', 'cube', 'deco', 'fortwall', 'heartstone',
+                'lavawall', 'rockwall', 'stump', 'succulent', 'zydeco'
+            ];
+
+            // Obstacle items -> add 'obstacles/' prefix
+            const obstacleItems = ['rock', 'shrubbery'];
+
+            // Floor items -> add 'floors/' prefix
+            const floorItems = [
+                'dirt', 'grass', 'water', 'desert', 'gravel', 'mulch', 'crag',
+                'bones', 'clouds', 'crackedseaice', 'seaice', 'dirtpatch', 'housetile', 'underbrush'
+            ];
+
+            if (wallItems.includes(terrain)) {
+                return `walls/${terrain}`;
+            } else if (obstacleItems.includes(terrain)) {
+                return `obstacles/${terrain}`;
+            } else if (floorItems.includes(terrain)) {
+                return `floors/${terrain}`;
+            }
+
+            // Unknown terrain, return as-is
+            return terrain;
+        }
+
         function importZone() {
             document.getElementById('fileInput').click();
         }
@@ -1147,21 +1408,55 @@
                     document.getElementById('zoneLevel').value = zoneData.metadata?.level || 'home';
                     document.getElementById('zoneRarity').value = zoneData.metadata?.rarity || 5;
 
-                    // Merge terrain and features into single grid
-                    gridData = Array(GRID_SIZE * GRID_SIZE).fill(null);
+                    // Load into separate layers
+                    terrainLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+                    featureLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+                    overlayLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+                    rotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
+                    overlayRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
+                    featureRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
 
-                    // First apply terrain
+                    // Apply terrain layer with format migration
                     (zoneData.terrain || []).forEach((terrain, index) => {
                         if (terrain) {
-                            gridData[index] = terrain;
+                            // Migrate old format to new format (add folder prefix if missing)
+                            terrainLayer[index] = migrateTerrainFormat(terrain);
                         }
                     });
 
-                    // Then overlay features
+                    // Apply overlay layer (trim tiles)
+                    Object.entries(zoneData.overlays || {}).forEach(([coord, overlay]) => {
+                        const [col, row] = coord.split(',').map(Number);
+                        const index = row * GRID_SIZE + col;
+                        overlayLayer[index] = overlay;
+                    });
+
+                    // Apply feature layer
                     Object.entries(zoneData.features || {}).forEach(([coord, feature]) => {
                         const [col, row] = coord.split(',').map(Number);
                         const index = row * GRID_SIZE + col;
-                        gridData[index] = feature; // Features override terrain
+                        featureLayer[index] = feature;
+                    });
+
+                    // Apply terrain rotations
+                    Object.entries(zoneData.rotations || {}).forEach(([coord, rotation]) => {
+                        const [col, row] = coord.split(',').map(Number);
+                        const index = row * GRID_SIZE + col;
+                        rotationLayer[index] = rotation;
+                    });
+
+                    // Apply overlay rotations
+                    Object.entries(zoneData.overlayRotations || {}).forEach(([coord, rotation]) => {
+                        const [col, row] = coord.split(',').map(Number);
+                        const index = row * GRID_SIZE + col;
+                        overlayRotationLayer[index] = rotation;
+                    });
+
+                    // Apply feature rotations
+                    Object.entries(zoneData.featureRotations || {}).forEach(([coord, rotation]) => {
+                        const [col, row] = coord.split(',').map(Number);
+                        const index = row * GRID_SIZE + col;
+                        featureRotationLayer[index] = rotation;
                     });
 
                     updateGrid();

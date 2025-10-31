@@ -163,14 +163,62 @@ export class BoardLoader {
     }
 
     /**
+     * Determine if a terrain value is a wall (non-walkable) based on folder path
+     *
+     * Format can be either:
+     * - 'walls/clubwall5' (with folder prefix - preferred)
+     * - 'clubwall5' (legacy format - falls back to lookup)
+     *
+     * Rules:
+     * - walls/* = non-walkable
+     * - obstacles/* = non-walkable
+     * - floors/* = walkable
+     * - trim/* = walkable (decorative overlay)
+     */
+    isWallTerrain(terrain) {
+        if (!terrain) return false;
+
+        // Check if terrain includes folder path
+        if (terrain.includes('/')) {
+            const folder = terrain.split('/')[0];
+            // trim/* is walkable, so it's not a wall
+            if (folder === 'trim') return false;
+            return folder === 'walls' || folder === 'obstacles';
+        }
+
+        // Legacy format without folder - use lookup table
+        // Items in the walls/ folder (non-walkable)
+        const wallFolderItems = [
+            '90s', 'astrocrag', 'blocklily', 'boulder', 'bush',
+            'chargedwall', 'clubwall', 'clubwall1', 'clubwall2', 'clubwall4', 'clubwall5',
+            'cobble', 'coralwall', 'cube', 'deco', 'fortwall', 'heartstone',
+            'lavawall', 'rockwall', 'stump', 'succulent', 'wall', 'zydeco'
+        ];
+
+        // Items in the obstacles/ folder (non-walkable)
+        const obstacleFolderItems = ['rock', 'shrubbery'];
+
+        // Items in doodads/ that block movement
+        const blockingDoodads = ['hole', 'pitfall'];
+
+        return wallFolderItems.includes(terrain) ||
+               obstacleFolderItems.includes(terrain) ||
+               blockingDoodads.includes(terrain);
+    }
+
+    /**
      * Convert board data into a game grid
      * @param {Object} boardData - The loaded board JSON
      * @param {Array} foodAssets - Available food assets for random items
-     * @returns {Object} { grid, playerSpawn, enemies }
+     * @returns {Object} { grid, playerSpawn, enemies, terrainTextures, rotations, overlayRotations }
      */
     convertBoardToGrid(boardData, foodAssets = []) {
         const [width, height] = boardData.size;
         const grid = [];
+        const terrainTextures = {}; // Store terrain texture names
+        const overlayTextures = {}; // Store overlay texture names (trim, etc.)
+        const rotations = {}; // Store rotation data for terrain
+        const overlayRotations = {}; // Store rotation data for overlays
 
         // Initialize grid from terrain data
         for (let y = 0; y < height; y++) {
@@ -179,19 +227,96 @@ export class BoardLoader {
                 const index = y * width + x;
                 const terrain = boardData.terrain[index];
 
-                // Convert terrain string to tile type
-                // null or missing = default walkable floor
-                // 'wall' = explicit wall
-                // 'floor' = explicit floor
-                if (grid[y]) {
-                    if (terrain === 'wall') {
-                        grid[y][x] = TILE_TYPES.WALL;
-                    } else {
-                        // Default to floor for null, 'floor', or unknown terrain
-                        grid[y][x] = TILE_TYPES.FLOOR;
+                // Determine if this terrain is a wall (non-walkable) based on naming
+                if (this.isWallTerrain(terrain)) {
+                    grid[y][x] = TILE_TYPES.WALL;
+                } else {
+                    // Default to floor for null, floor types, or unknown terrain
+                    grid[y][x] = TILE_TYPES.FLOOR;
+                }
+
+                // Store terrain texture if present
+                if (terrain) {
+                    terrainTextures[`${x},${y}`] = terrain;
+                }
+            }
+        }
+
+        // Load overlay data (trim tiles) - these render on top of terrain but don't affect walkability
+        if (boardData.overlays) {
+            Object.entries(boardData.overlays).forEach(([coord, overlay]) => {
+                overlayTextures[coord] = overlay;
+            });
+        }
+
+        // Apply automatic rotations for corner wall pieces based on their position
+        // clubwall5 = top-left corner piece, clubwall6 = top-right corner piece
+        // These need to be rotated when placed in other corner positions
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const coord = `${x},${y}`;
+                const terrain = terrainTextures[coord];
+
+                if (terrain && !rotations[coord]) { // Only auto-rotate if no explicit rotation
+                    const isTopLeft = (x === 0 && y === 0);
+                    const isTopRight = (x === width - 1 && y === 0);
+                    const isBottomLeft = (x === 0 && y === height - 1);
+                    const isBottomRight = (x === width - 1 && y === height - 1);
+
+                    const terrainName = terrain.includes('/') ? terrain.split('/')[1] : terrain;
+
+                    // clubwall5 is designed for top-left corner
+                    if (terrainName === 'clubwall5') {
+                        if (isTopRight) rotations[coord] = 90;
+                        else if (isBottomRight) rotations[coord] = 180;
+                        else if (isBottomLeft) rotations[coord] = 270;
+                    }
+                    // clubwall6 is designed for top-right corner
+                    else if (terrainName === 'clubwall6') {
+                        if (isBottomRight) rotations[coord] = 90;
+                        else if (isBottomLeft) rotations[coord] = 180;
+                        else if (isTopLeft) rotations[coord] = 270;
                     }
                 }
             }
+        }
+
+        // Load rotation data from board (these override automatic rotations)
+        // Apply terrain rotations only to terrain tiles
+        if (boardData.rotations) {
+            Object.entries(boardData.rotations).forEach(([coord, rotation]) => {
+                // Apply to terrain if it exists at this position
+                if (terrainTextures[coord]) {
+                    rotations[coord] = rotation;
+                }
+            });
+        }
+
+        // Support separate overlay rotations for backward compatibility
+        if (boardData.overlayRotations) {
+            Object.entries(boardData.overlayRotations).forEach(([coord, rotation]) => {
+                overlayRotations[coord] = rotation;
+            });
+        }
+
+        // Debug logging for museum board
+        if (boardData.name === 'custom_zone_1') {
+            console.log('[BoardLoader] Museum board loaded');
+            console.log('[BoardLoader] Terrain rotations:', Object.keys(rotations).length, 'entries');
+            console.log('[BoardLoader] Overlay rotations:', Object.keys(overlayRotations).length, 'entries');
+            console.log('[BoardLoader] Overlays:', Object.keys(overlayTextures).length, 'entries');
+            console.log('[BoardLoader] Sample - 1,9:', {
+                terrain: terrainTextures['1,9'],
+                overlay: overlayTextures['1,9'],
+                terrainRotation: rotations['1,9'],
+                overlayRotation: overlayRotations['1,9']
+            });
+            console.log('[BoardLoader] Sample - 0,9:', {
+                terrain: terrainTextures['0,9'],
+                overlay: overlayTextures['0,9'],
+                terrainRotation: rotations['0,9'],
+                overlayRotation: overlayRotations['0,9']
+            });
         }
 
         // Place features on the grid
@@ -220,7 +345,11 @@ export class BoardLoader {
         return {
             grid: grid,
             playerSpawn: playerSpawn,
-            enemies: [] // Custom boards don't spawn enemies by default
+            enemies: [], // Custom boards don't spawn enemies by default
+            terrainTextures: terrainTextures, // Terrain texture names
+            overlayTextures: overlayTextures, // Overlay texture names (trim, etc.)
+            rotations: rotations, // Rotation data for terrain tiles
+            overlayRotations: overlayRotations // Rotation data for overlay tiles
         };
     }
 

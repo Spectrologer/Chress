@@ -2,6 +2,7 @@
 // Asset Scanner Module - Dynamically reads game asset definitions
 // v2.1 - Feltface moved to portraits folder
 import { IMAGE_ASSETS, FOOD_ASSETS } from '/src/core/constants/index.js';
+import { ContentRegistry } from '/src/core/ContentRegistry.js';
 import { loadAllNPCs, getAllNPCCharacterData } from '/src/core/NPCLoader.js';
 
 /**
@@ -91,7 +92,7 @@ export class AssetScanner {
 
         try {
             // Load all NPC character data from JSON files
-            await loadAllNPCs();
+            await loadAllNPCs(ContentRegistry);
             const allNPCData = getAllNPCCharacterData();
 
             // Convert to the format we need

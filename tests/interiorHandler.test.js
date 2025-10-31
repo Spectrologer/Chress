@@ -1,4 +1,4 @@
-import { handleInterior } from '../core/handlers/interiorHandler.js';
+import { handleInterior } from '../core/handlers/InteriorHandler.js';
 import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
 
 function makeEmptyGrid() {

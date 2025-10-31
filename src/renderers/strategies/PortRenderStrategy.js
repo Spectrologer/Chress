@@ -35,12 +35,22 @@ export class PortRenderStrategy extends TileRenderStrategy {
             // Render the underlying floor/house texture for interior tiles
             baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-            // If this PORT has a portKind (stairdown/stairup), draw the corresponding doodad on top
+            // If this PORT has a portKind (stairdown/stairup/interior), draw the corresponding doodad on top
             if (tileType && tileType.portKind) {
                 if (tileType.portKind === 'stairdown' && RendererUtils.isImageLoaded(this.images, 'stairdown')) {
                     ctx.drawImage(this.images.stairdown, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
                 } else if (tileType.portKind === 'stairup' && RendererUtils.isImageLoaded(this.images, 'stairup')) {
                     ctx.drawImage(this.images.stairup, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                } else if (tileType.portKind === 'interior') {
+                    // Draw a visual indicator for interior exit ports
+                    // Draw a darker rectangle with a lighter border to indicate the exit
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(139, 69, 19, 0.4)'; // Semi-transparent brown
+                    ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+                    ctx.strokeStyle = 'rgba(205, 133, 63, 0.7)'; // Lighter brown border
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+                    ctx.restore();
                 }
             }
             return;

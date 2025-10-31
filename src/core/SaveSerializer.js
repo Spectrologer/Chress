@@ -1,5 +1,4 @@
 import { Sign } from '../ui/Sign.js';
-import { ZoneStateManager } from '../generators/ZoneStateManager.js';
 
 /**
  * Helper class for serializing game state to a save format.
@@ -26,8 +25,7 @@ export class SaveSerializer {
             messageLog: game.messageLog,
             currentRegion: game.currentRegion,
             // Note: Transient state (bomb placement, pitfall, etc.) is NOT persisted - managed by TransientGameState
-            // Zone state manager counters and flags
-            zoneStateManager: SaveSerializer.serializeZoneStateManager(),
+            // Note: Zone generation state is now saved directly via game.zoneGenState.serialize() in GameStateManager
             signSpawnedMessages: Array.from(Sign.spawnedMessages)
         };
     }
@@ -89,31 +87,6 @@ export class SaveSerializer {
         }));
     }
 
-    /**
-     * Serializes ZoneStateManager static data.
-     * @returns {Object} Serialized zone state manager data
-     */
-    static serializeZoneStateManager() {
-        return {
-            zoneCounter: ZoneStateManager.zoneCounter,
-            enemyCounter: ZoneStateManager.enemyCounter,
-            axeSpawned: ZoneStateManager.axeSpawned,
-            hammerSpawned: ZoneStateManager.hammerSpawned,
-            noteSpawned: ZoneStateManager.noteSpawned,
-            spearSpawned: ZoneStateManager.spearSpawned,
-            horseIconSpawned: ZoneStateManager.horseIconSpawned,
-            penneSpawned: ZoneStateManager.penneSpawned,
-            squigSpawned: ZoneStateManager.squigSpawned,
-            wellSpawned: ZoneStateManager.wellSpawned,
-            deadTreeSpawned: ZoneStateManager.deadTreeSpawned,
-            axeWarningSignPlaced: ZoneStateManager.axeWarningSignPlaced,
-            hammerWarningSignPlaced: ZoneStateManager.hammerWarningSignPlaced,
-            firstFrontierSignPlaced: ZoneStateManager.firstFrontierSignPlaced,
-            axeSpawnZone: ZoneStateManager.axeSpawnZone,
-            hammerSpawnZone: ZoneStateManager.hammerSpawnZone,
-            noteSpawnZone: ZoneStateManager.noteSpawnZone,
-            spearSpawnZone: ZoneStateManager.spearSpawnZone,
-            horseIconSpawnZone: ZoneStateManager.horseIconSpawnZone
-        };
-    }
+    // Note: serializeZoneStateManager() removed - zone generation state is now
+    // saved via game.zoneGenState.serialize() in GameStateManager
 }

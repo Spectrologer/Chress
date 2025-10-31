@@ -1,6 +1,6 @@
 import { GRID_SIZE, TILE_TYPES, DIMENSION_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants/index.js';
 import { MultiTileHandler } from '../renderers/MultiTileHandler.js';
-import { getExitDirection } from '../core/utils/transitionUtils.js';
+import { getExitDirection } from '../core/utils/TransitionUtils.js';
 import audioManager from '../utils/AudioManager.js';
 import { eventBus } from '../core/EventBus.js';
 import { EventTypes } from '../core/EventTypes.js';

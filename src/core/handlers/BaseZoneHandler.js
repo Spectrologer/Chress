@@ -13,6 +13,7 @@ import { PathGenerator } from '../../generators/PathGenerator.js';
 export class BaseZoneHandler {
     constructor(zoneGen, zoneX, zoneY, foodAssets, dimension = 0, depth = 0) {
         this.zoneGen = zoneGen;
+        this.game = zoneGen.game; // Store game reference for state access
         this.zoneX = zoneX;
         this.zoneY = zoneY;
         this.foodAssets = foodAssets;
@@ -30,8 +31,8 @@ export class BaseZoneHandler {
      * Initialize all generator instances with appropriate parameters
      */
     initializeGenerators() {
-        this.structureGenerator = new StructureGenerator(this.zoneGen.gridManager);
-        this.featureGenerator = new FeatureGenerator(this.zoneGen.gridManager, this.foodAssets, this.depth);
+        this.structureGenerator = new StructureGenerator(this.zoneGen.gridManager, this.game);
+        this.featureGenerator = new FeatureGenerator(this.zoneGen.gridManager, this.foodAssets, this.depth, this.game);
         this.itemGenerator = new ItemGenerator(
             this.zoneGen.gridManager,
             this.foodAssets,
@@ -111,7 +112,8 @@ export class BaseZoneHandler {
      */
     calculateEnemyProbability(baseProbabilities, multiplier = 1) {
         const baseEnemyProbability = baseProbabilities[this.zoneLevel] || baseProbabilities[1];
-        return (baseEnemyProbability + Math.floor(ZoneStateManager.zoneCounter / 10) * 0.01) * multiplier;
+        const zoneCounter = this.game.zoneGenState.getZoneCounter();
+        return (baseEnemyProbability + Math.floor(zoneCounter / 10) * 0.01) * multiplier;
     }
 
     /**
@@ -133,7 +135,7 @@ export class BaseZoneHandler {
      * Increment the zone counter (typically called for non-home zones)
      */
     incrementZoneCounter() {
-        ZoneStateManager.zoneCounter++;
+        this.game.zoneGenState.incrementZoneCounter();
     }
 
     /**

@@ -26,7 +26,18 @@
       "Bash(del:*)",
       "Bash(mv:*)",
       "Bash(awk:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(find:*)",
+      "Read(//c/**)",
+      "Bash(cmd /c \"del C:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\utils\\ZoneKeyUtils.js && del C:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\utils\\SafeServiceCall.js && del C:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\utils\\GridIterator.js && del C:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\utils\\MethodChecker.js\")",
+      "Bash(git add:*)",
+      "Bash(npx vite preview)",
+      "Bash(if exist docsPHASE2_MIGRATION_STATUS.md del docsPHASE2_MIGRATION_STATUS.md)",
+      "Bash(cmd /c \"del src\\utils\\LazyLoader.ts\")",
+      "Bash(/dev/null)",
+      "Bash(cmd /c \"echo console.log(localStorage.getItem(''chress_game_state'') ? ''Save exists'' : ''No save'') > check_save.js\")",
+      "Bash(timeout 3 bash -c 'until curl -s http://localhost:5173 > /dev/null; do sleep 0.5; done; echo \"\"Server is ready\"\"')",
+      "Bash(timeout 5 bash:*)"
     ],
     "deny": [],
     "ask": []

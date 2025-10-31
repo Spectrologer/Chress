@@ -14,7 +14,7 @@ class UndergroundHandler extends BaseZoneHandler {
     }
 
     generate() {
-        logger.log(`[ZONE SPAWN DEBUG] Generating zone (${this.zoneX}, ${this.zoneY}) - Level: ${this.zoneLevel}, Dimension: 2, FirstWildsPlaced: ${ZoneStateManager.firstWildsZonePlaced}, hasExits: ${this.exitSide !== null}`);
+        logger.log(`[ZONE SPAWN DEBUG] Generating zone (${this.zoneX}, ${this.zoneY}) - Level: ${this.zoneLevel}, Dimension: 2, FirstWildsPlaced: ${this.game.zoneGenState.firstWildsZonePlaced}, hasExits: ${this.exitSide !== null}`);
 
         this.generateExits(this.zoneConnections);
         this.incrementZoneCounter();

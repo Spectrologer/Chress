@@ -1,5 +1,5 @@
 import { TILE_TYPES } from '../core/constants/index.js';
-import { getExitDirection } from '../core/utils/transitionUtils.js';
+import { getExitDirection } from '../core/utils/TransitionUtils.js';
 import { getDeltaToDirection, getOffset, isAdjacent } from '../core/utils/DirectionUtils.js';
 import audioManager from '../utils/AudioManager.js';
 import { GestureDetector } from './GestureDetector.js';
@@ -32,6 +32,9 @@ export class InputCoordinator {
         this.keyboardHandler = new KeyboardHandler(game);
         this.stateManager = new InputStateManager(game);
 
+        // Track accumulated turns during path execution
+        this.accumulatedTurns = 0;
+
         // Set up inter-module communication
         this._unsubscribers = [];
         this._setupModuleCommunication();
@@ -60,6 +63,25 @@ export class InputCoordinator {
         this._unsubscribers.push(
             eventBus.on(EventTypes.INPUT_EXIT_REACHED, ({ x, y }) => {
                 this.performExitTap(x, y);
+            })
+        );
+
+        // Subscribe to path execution events
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.INPUT_PATH_STARTED, () => {
+                this.accumulatedTurns = 0;
+            })
+        );
+
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.INPUT_PATH_COMPLETED, () => {
+                this._processAccumulatedTurns();
+            })
+        );
+
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.INPUT_PATH_CANCELLED, () => {
+                this._processAccumulatedTurns();
             })
         );
 
@@ -287,6 +309,24 @@ export class InputCoordinator {
     }
 
     // ========================================
+    // TURN ACCUMULATION
+    // ========================================
+
+    /**
+     * Process accumulated turns after path execution completes
+     * This ensures enemies get the correct number of turns equal to player moves
+     */
+    _processAccumulatedTurns() {
+        if (this.accumulatedTurns > 0) {
+            // Process exactly the number of turns that accumulated
+            for (let i = 0; i < this.accumulatedTurns; i++) {
+                this.game.turnManager?.handleTurnCompletion();
+            }
+            this.accumulatedTurns = 0;
+        }
+    }
+
+    // ========================================
     // KEY PRESS HANDLING
     // ========================================
 
@@ -324,8 +364,14 @@ export class InputCoordinator {
                 });
             }
 
-            // Handle turn completion - managed by TurnManager
-            this.game.turnManager?.handleTurnCompletion();
+            // Handle turn completion - defer if executing path
+            if (this.pathfindingController.isExecutingPath) {
+                // Accumulate turns during path execution
+                this.accumulatedTurns++;
+            } else {
+                // Process turn immediately for direct input
+                this.game.turnManager?.handleTurnCompletion();
+            }
 
             this.game.updatePlayerPosition();
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});

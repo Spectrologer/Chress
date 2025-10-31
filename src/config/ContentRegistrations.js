@@ -25,7 +25,7 @@ import { registerBoards } from './registrations/BoardRegistrations.js';
  */
 export async function registerAllContent() {
     registerItems();
-    await loadAllNPCs(); // Load NPCs from JSON files
+    await loadAllNPCs(ContentRegistry); // Load NPCs from JSON files, passing ContentRegistry as dependency
     registerEnemies();
     registerBoards();
     // Zone handlers registered separately in ZoneGenerator

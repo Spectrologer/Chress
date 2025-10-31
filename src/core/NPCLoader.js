@@ -5,8 +5,8 @@
  * and converting them to the format expected by ContentRegistry.
  */
 
-import { ContentRegistry } from './ContentRegistry.js';
 import { TILE_TYPES } from './constants/index.js';
+import { npcList } from 'virtual:npc-list';
 
 /**
  * NPC character data loaded from JSON files
@@ -68,25 +68,26 @@ function loadNPCFromJSON(npcData) {
 
 /**
  * Load all NPC JSON files
+ * Auto-discovers NPCs from src/characters/*.json files
+ * @param {Object} registry - ContentRegistry instance to register NPCs to
  * @returns {Promise<void>}
  */
-export async function loadAllNPCs() {
-    const npcFiles = [
-        'crayn',
-        'mark',
-        'axolotl',
-        'penne',
-        'squig',
-        'rune',
-        'nib',
-        'gouge',
-        'felt',
-        'forge'
-    ];
+export async function loadAllNPCs(registry) {
+    if (!registry || typeof registry.registerNPC !== 'function') {
+        throw new Error('NPCLoader.loadAllNPCs requires a valid ContentRegistry instance');
+    }
+
+    const npcFiles = npcList;
 
     const loadPromises = npcFiles.map(async (npcId) => {
         try {
-            const response = await fetch(`/src/characters/${npcId}.json`);
+            // Use relative path that works with base URL configuration
+            // In dev, files are at /src/characters/
+            // In production (after viteStaticCopy), files are at /characters/ (relative to base)
+            const basePath = import.meta.env.BASE_URL || '/';
+            const isProduction = import.meta.env.PROD;
+            const characterPath = isProduction ? 'characters' : 'src/characters';
+            const response = await fetch(`${basePath}${characterPath}/${npcId}.json`);
             if (!response.ok) {
                 console.warn(`[NPCLoader] Failed to load ${npcId}.json: ${response.status}`);
                 return;
@@ -95,7 +96,7 @@ export async function loadAllNPCs() {
             const npcData = await response.json();
             const registryConfig = loadNPCFromJSON(npcData);
 
-            ContentRegistry.registerNPC(npcId, registryConfig);
+            registry.registerNPC(npcId, registryConfig);
             // console.log(`[NPCLoader] Loaded NPC: ${npcId}`);
         } catch (error) {
             console.error(`[NPCLoader] Error loading ${npcId}:`, error);

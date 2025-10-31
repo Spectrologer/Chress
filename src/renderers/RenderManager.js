@@ -8,6 +8,7 @@ import { UIRenderer } from './UIRenderer.js';
 import { FogRenderer } from './FogRenderer.js';
 import GridIterator from '../utils/GridIterator.js';
 import { isTileType } from '../utils/TileUtils.js';
+import { logger } from '../core/logger.js';
 
 export class RenderManager {
     constructor(game) {
@@ -295,6 +296,7 @@ export class RenderManager {
 
     drawGrid() {
         if (!this.game.grid) {
+            logger.warn('[RenderManager] drawGrid called but grid is null');
             return;
         }
 
@@ -310,21 +312,85 @@ export class RenderManager {
             zoneLevel = getZoneLevelFromDistance(dist);
         }
 
+        // Get terrain textures, overlay textures, rotations, and overlay rotations from zone generator
+        const terrainTextures = this.game.zoneGenerator?.terrainTextures || {};
+        const overlayTextures = this.game.zoneGenerator?.overlayTextures || {};
+        const rotations = this.game.zoneGenerator?.rotations || {};
+        const overlayRotations = this.game.zoneGenerator?.overlayRotations || {};
+
+        // Three-pass rendering to ensure proper layering:
+        // Pass 1: Render terrain only (floors and walls)
         GridIterator.forEach(this.game.grid, (tile, x, y) => {
             try {
-                // Handle bomb tiles specially
-                if (isTileType(tile, TILE_TYPES.BOMB)) {
-                    // Primitive bomb (randomly generated) - render normally
-                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel);
-                } else if (tile && tile.type === 'food') {
-                    this.textureManager.renderTile(this.ctx, x, y, tile.type, this.game.gridManager, zoneLevel);
-                } else {
-                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel);
+                // Only render terrain in this pass
+                if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.WALL) {
+                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
                 }
             } catch (error) {
                 // Fallback rendering
                 this.ctx.fillStyle = '#ffcb8d';
                 this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        });
+
+        // Pass 2: Render overlay textures (trim, etc.) on top of terrain but below features
+        // Debug logging
+        if (!this._overlayDebugLogged && Object.keys(overlayTextures).length > 0) {
+            console.log('[RenderManager] Rendering overlays:', Object.keys(overlayTextures).length);
+            console.log('[RenderManager] Overlay rotations:', Object.keys(overlayRotations).length);
+            console.log('[RenderManager] Terrain rotations:', Object.keys(rotations).length);
+            console.log('[RenderManager] Sample 1,9 overlay:', overlayTextures['1,9'], 'rotation:', overlayRotations['1,9']);
+            this._overlayDebugLogged = true;
+        }
+
+        for (const [coord, overlayTexture] of Object.entries(overlayTextures)) {
+            const [x, y] = coord.split(',').map(Number);
+
+            // For overlays, use the full path with environment/ prefix
+            // e.g., "trim/bordertrim" becomes "environment/trim/bordertrim"
+            const textureName = overlayTexture.includes('/')
+                ? `environment/${overlayTexture}`
+                : overlayTexture;
+            const rotation = overlayRotations[coord] || 0;
+
+            if (this.textureManager.renderer?.images && this.textureManager.renderer.images[textureName]) {
+                const pixelX = x * TILE_SIZE;
+                const pixelY = y * TILE_SIZE;
+
+                this.ctx.save();
+                if (rotation !== 0) {
+                    const centerX = pixelX + TILE_SIZE / 2;
+                    const centerY = pixelY + TILE_SIZE / 2;
+                    this.ctx.translate(centerX, centerY);
+                    this.ctx.rotate((rotation * Math.PI) / 180);
+                    this.ctx.drawImage(this.textureManager.renderer.images[textureName], -TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
+                } else {
+                    this.ctx.drawImage(this.textureManager.renderer.images[textureName], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                }
+                this.ctx.restore();
+            } else if (!this._missingTextureLogged) {
+                console.warn('[RenderManager] Missing overlay texture:', textureName, 'at', coord);
+                console.warn('[RenderManager] Available textures containing "border" or "trim":',
+                    Object.keys(this.textureManager.renderer?.images || {}).filter(k => k.includes('border') || k.includes('trim')));
+                this._missingTextureLogged = true;
+            }
+        }
+
+        // Pass 3: Render features (statues, items, NPCs, etc.) on top of overlays
+        GridIterator.forEach(this.game.grid, (tile, x, y) => {
+            try {
+                // Only render features in this pass (not terrain)
+                if (tile && tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.WALL) {
+                    if (isTileType(tile, TILE_TYPES.BOMB)) {
+                        this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
+                    } else if (tile && tile.type === 'food') {
+                        this.textureManager.renderTile(this.ctx, x, y, tile.type, this.game.gridManager, zoneLevel, terrainTextures, rotations);
+                    } else {
+                        this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
+                    }
+                }
+            } catch (error) {
+                // Fallback rendering (skip for features to avoid double rendering)
             }
         });
     }

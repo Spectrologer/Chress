@@ -206,6 +206,8 @@ export class PlayerRenderer {
 
     drawExitIndicator() {
         // Draw visual indicator if player is on an exit tile
+        if (!this.game.grid) return; // Grid not yet loaded
+
         const playerGridX = this.game.player.x;
         const playerGridY = this.game.player.y;
         const tileUnderPlayer = this.game.grid[playerGridY]?.[playerGridX];

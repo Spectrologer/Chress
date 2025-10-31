@@ -7,10 +7,11 @@ import { logger } from '../core/logger.js';
 import { isFloor, isWall } from '../utils/TypeChecks.js';
 
 export class FeatureGenerator {
-    constructor(gridManager, foodAssets, depth = 0) {
+    constructor(gridManager, foodAssets, depth = 0, game = null) {
         this.gridManager = gridManager;
         this.foodAssets = foodAssets;
         this.depth = depth || 0;
+        this.game = game; // For accessing zoneGenState
         // depthMultiplier: +2% per underground depth beyond the first (depth 1 -> 1.0)
         this.depthMultiplier = 1 + Math.max(0, (this.depth - 1)) * GENERATOR_CONSTANTS.FEATURE_EXTRA_MULTIPLIER;
     }
@@ -43,7 +44,8 @@ export class FeatureGenerator {
         } else if (zoneLevel === 3) {
             featureCount += GENERATOR_CONSTANTS.FEATURE_EXTRA_DIVISOR;
         }
-        featureCount += Math.floor(ZoneStateManager.zoneCounter / 10);
+        const zoneCounter = this.game ? this.game.zoneGenState.getZoneCounter() : 0;
+        featureCount += Math.floor(zoneCounter / 10);
 
         let placedCount = 0;
         while (placedCount < featureCount) {

@@ -10,7 +10,7 @@ export class WallRenderStrategy extends TileRenderStrategy {
         this.wallRenderer = wallRenderer;
     }
 
-    render(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
-        this.wallRenderer.renderWallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+    render(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer, tileType, terrainTextures, rotations) {
+        this.wallRenderer.renderWallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, terrainTextures, rotations);
     }
 }

@@ -7,7 +7,39 @@ export class WallTileRenderer {
         this.tileSize = tileSize;
     }
 
-    renderWallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel) {
+    renderWallTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, terrainTextures = {}, rotations = {}) {
+        // Check if there's a custom terrain texture for this wall position
+        const coord = `${x},${y}`;
+        const customTexture = terrainTextures[coord];
+        const rotation = rotations[coord] || 0;
+
+        // Debug logging for bottom row walls
+        if (y === 9 && x >= 1 && x <= 8 && !this._debugLogged) {
+            console.log(`[WallTileRenderer] Rendering wall at ${coord}: texture=${customTexture}, rotation=${rotation}`);
+            this._debugLogged = true;
+        }
+
+        if (customTexture) {
+            // Strip folder prefix if present (e.g., 'walls/clubwall5' -> 'clubwall5')
+            const textureName = customTexture.includes('/') ? customTexture.split('/')[1] : customTexture;
+
+            if (RendererUtils.isImageLoaded(this.images, textureName)) {
+                ctx.save();
+                // Apply rotation if present
+                if (rotation !== 0) {
+                    const centerX = pixelX + this.tileSize / 2;
+                    const centerY = pixelY + this.tileSize / 2;
+                    ctx.translate(centerX, centerY);
+                    ctx.rotate((rotation * Math.PI) / 180);
+                    ctx.drawImage(this.images[textureName], -this.tileSize / 2, -this.tileSize / 2, this.tileSize, this.tileSize);
+                } else {
+                    ctx.drawImage(this.images[textureName], pixelX, pixelY, this.tileSize, this.tileSize);
+                }
+                ctx.restore();
+                return;
+            }
+        }
+
         // Interior zones use house wall textures based on position
         if (zoneLevel === 5) {
             this.renderInteriorWallTile(ctx, x, y, pixelX, pixelY, grid);

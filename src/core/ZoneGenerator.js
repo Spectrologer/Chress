@@ -10,9 +10,9 @@ import { initializeGrid, validateAndSetTile } from '../generators/GeneratorUtils
 import { findValidPlayerSpawn as _findValidPlayerSpawn, isTileFree as _isTileFree, findOpenNpcSpawn as _findOpenNpcSpawn } from './zoneSpawnManager.js';
 import { generateExits as _generateExits, clearPathToExit as _clearPathToExit, clearPathToCenter as _clearPathToCenter, clearZoneForShackOnly as _clearZoneForShackOnly, forcePlaceShackInCenter as _forcePlaceShackInCenter } from './zoneMutators.js';
 import { addRegionNotes as _addRegionNotes } from './regionNotes.js';
-import { handleInterior } from './handlers/interiorHandler.js';
-import { handleUnderground } from './handlers/undergroundHandler.js';
-import { handleSurface } from './handlers/surfaceHandler.js';
+import { handleInterior } from './handlers/InteriorHandler.js';
+import { handleUnderground } from './handlers/UndergroundHandler.js';
+import { handleSurface } from './handlers/SurfaceHandler.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 import { boardLoader } from './BoardLoader.js';
 import { GridManager } from '../managers/GridManager.js';
@@ -27,8 +27,12 @@ export class ZoneGenerator {
         this.currentZoneX = null;
         this.currentZoneY = null;
         this.playerSpawn = null; // {x, y}
+        this.terrainTextures = {}; // Store terrain texture names (e.g., 'clubwall5', 'housetile')
+        this.overlayTextures = {}; // Store overlay texture names (e.g., 'trim/bordertrim')
+        this.rotations = {}; // Store rotation data for terrain tiles
+        this.overlayRotations = {}; // Store rotation data for overlay tiles
         // Initialize item locations if they haven't been set for this session
-        ZoneStateManager.initializeItemLocations();
+        this.game.zoneGenState.initializeItemLocations();
     }
     /**
      * Find a valid spawn tile for the player that is not occupied by an enemy, item, or impassable tile.
@@ -64,6 +68,13 @@ export class ZoneGenerator {
             const boardData = boardLoader.getBoardSync(zoneX, zoneY, dimension);
             if (boardData) {
                 const result = boardLoader.convertBoardToGrid(boardData, this.foodAssets);
+
+                // Store terrain textures, overlay textures, rotations, and overlay rotations in the zone generator
+                this.terrainTextures = result.terrainTextures || {};
+                this.overlayTextures = result.overlayTextures || {};
+                this.rotations = result.rotations || {};
+                this.overlayRotations = result.overlayRotations || {};
+
                 // logger.log(`Custom board loaded successfully for zone (${zoneX},${zoneY})`);
                 return result;
             } else {
@@ -102,6 +113,10 @@ export class ZoneGenerator {
         this.grid = initializeGrid();
         this.gridManager = new GridManager(this.grid);
         this.enemies = [];
+        this.terrainTextures = {}; // Reset for procedural zones
+        this.overlayTextures = {}; // Reset for procedural zones
+        this.rotations = {}; // Reset for procedural zones
+        this.overlayRotations = {}; // Reset for procedural zones
         this.addWallBorders();
     }
 

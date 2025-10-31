@@ -11,6 +11,8 @@ import { SaveSerializer } from './SaveSerializer.js';
 import { SaveDeserializer } from './SaveDeserializer.js';
 import { ZoneStateRestorer } from './ZoneStateRestorer.js';
 import { ZoneRepository } from '../repositories/ZoneRepository.js';
+import { boardLoader } from './BoardLoader.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 const GAME_STATE_KEY = 'chress_game_state';
 const SAVE_VERSION = 2; // bump if save format changes
@@ -72,7 +74,7 @@ export class GameStateManager {
         // Reset all game state
         this.game.zoneRepository.clear();
         this.game.connectionManager.clear();
-        ZoneStateManager.resetSessionData(); // Reset all zone generation state
+        this.game.zoneGenState.reset(); // Reset zone generation state (replaces ZoneStateManager.resetSessionData())
         Sign.spawnedMessages.clear(); // Reset spawned message tracking
         this.game.specialZones.clear(); // Reset special zones
         this.game.messageLog = []; // Reset message log
@@ -216,7 +218,7 @@ export class GameStateManager {
     }
 
     saveGameStateImmediate() {
-        // Immediately write state to localStorage (used by periodic flush and unload handlers)
+        // Immediately write state to storage (used by periodic flush and unload handlers)
         if (this._saveTimer) {
             clearTimeout(this._saveTimer);
             this._saveTimer = null;
@@ -225,6 +227,9 @@ export class GameStateManager {
         try {
             const gameState = SaveSerializer.serializeGameState(this.game);
 
+            // Add zone generation state to save
+            gameState.zoneGeneration = this.game.zoneGenState.serialize();
+
             // add metadata
             const payload = {
                 version: SAVE_VERSION,
@@ -232,26 +237,43 @@ export class GameStateManager {
                 state: gameState
             };
 
-            // Try to use requestIdleCallback when available to avoid jank
-            const write = () => localStorage.setItem(GAME_STATE_KEY, JSON.stringify(payload));
+            // Use StorageAdapter (IndexedDB + compression) with requestIdleCallback when available
+            const write = async () => {
+                try {
+                    await this.game.storageAdapter.save(GAME_STATE_KEY, payload);
+                } catch (e) {
+                    logger.warn('Failed to save with StorageAdapter, trying localStorage fallback:', e);
+                    // Emergency fallback to direct localStorage
+                    localStorage.setItem(GAME_STATE_KEY, JSON.stringify(payload));
+                }
+            };
+
             if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
                 window.requestIdleCallback(() => {
-                    try { write(); } catch (e) { logger.warn('Failed to save (idle):', e); }
+                    write().catch(e => logger.warn('Failed to save (idle):', e));
                 }, { timeout: 2000 });
             } else {
-                write();
+                write().catch(e => logger.warn('Failed to save:', e));
             }
         } catch (error) {
             logger.warn('Failed to save game state:', error);
         }
     }
 
-    loadGameState() {
+    async loadGameState() {
         try {
-            const savedState = localStorage.getItem(GAME_STATE_KEY);
-            if (!savedState) return false; // No saved state
+            // Try StorageAdapter first (IndexedDB with compression)
+            let payload = await this.game.storageAdapter.load(GAME_STATE_KEY);
 
-            const payload = JSON.parse(savedState);
+            // Fallback to localStorage if StorageAdapter didn't find anything
+            if (!payload) {
+                const savedState = localStorage.getItem(GAME_STATE_KEY);
+                if (!savedState) return false; // No saved state
+                payload = JSON.parse(savedState);
+            }
+
+            if (!payload) return false;
+
             // Support older saves that stored state directly (back-compat)
             const gameState = payload && payload.state ? payload.state : payload;
             const version = payload && payload.version ? payload.version : 1;
@@ -270,23 +292,44 @@ export class GameStateManager {
             // Restore game state with validation for grid data
             SaveDeserializer.deserializeGameState(this.game, gameState);
 
-            // Restore zone state manager statics
-            ZoneStateRestorer.restoreZoneState(gameState.zoneStateManager);
+            // Repair board-based zones that are missing terrain textures (from old saves)
+            this._repairBoardZones();
+
+            // Restore current zone's texture and rotation data to zoneGenerator
+            this._restoreCurrentZoneTextures();
+
+            // Restore zone generation state (new centralized system)
+            if (gameState.zoneGeneration) {
+                this.game.zoneGenState.deserialize(gameState.zoneGeneration);
+            } else {
+                // Backward compatibility: migrate from old ZoneStateManager format
+                ZoneStateRestorer.restoreZoneState(this.game, gameState.zoneStateManager);
+            }
 
             // Restore Sign spawned messages
             SaveDeserializer.deserializeSignMessages(gameState.signSpawnedMessages);
 
             return true;
         } catch (error) {
-            logger.warn('Failed to load game state:', error);
+            logger.error('Failed to load game state:', error);
+            logger.error('Error stack:', error.stack);
             // If loading fails, clear corrupted data
-            localStorage.removeItem(GAME_STATE_KEY);
+            try {
+                await this.game.storageAdapter.remove(GAME_STATE_KEY);
+            } catch (e) {
+                localStorage.removeItem(GAME_STATE_KEY);
+            }
             return false;
         }
     }
 
-    clearSavedState() {
-        localStorage.removeItem(GAME_STATE_KEY);
+    async clearSavedState() {
+        try {
+            await this.game.storageAdapter.remove(GAME_STATE_KEY);
+        } catch (e) {
+            // Fallback to localStorage
+            localStorage.removeItem(GAME_STATE_KEY);
+        }
     }
 
     // Start periodic autosave
@@ -309,6 +352,74 @@ export class GameStateManager {
         if (this._saveTimer) {
             clearTimeout(this._saveTimer);
             this._saveTimer = null;
+        }
+    }
+
+    /**
+     * Repair board-based zones that are missing terrain textures
+     * This fixes saves created before the InteriorHandler fix
+     * @private
+     */
+    _repairBoardZones() {
+        // Get all zones from the repository
+        const allZones = this.game.zoneRepository.entries();
+
+        for (const [zoneKey, zoneData] of allZones) {
+            // Parse the zone key to get coordinates
+            // Format: "x,y:dimension" or "x,y:dimension:depth"
+            const parts = zoneKey.split(':');
+            const [x, y] = parts[0].split(',').map(Number);
+            const dimension = parseInt(parts[1]);
+
+            // Check if this zone should use a board and is missing terrain textures
+            const hasBoard = boardLoader.hasBoard(x, y, dimension);
+
+            if (hasBoard && (!zoneData.terrainTextures || Object.keys(zoneData.terrainTextures).length === 0)) {
+                // This zone uses a board but is missing terrain textures - regenerate them
+                const boardData = boardLoader.getBoardSync(x, y, dimension);
+                if (boardData) {
+                    const result = boardLoader.convertBoardToGrid(boardData, this.game.availableFoodAssets);
+                    // Merge the terrain textures, overlays, rotations, and overlay rotations into the existing zone data
+                    zoneData.terrainTextures = result.terrainTextures;
+                    zoneData.overlayTextures = result.overlayTextures;
+                    zoneData.rotations = result.rotations;
+                    zoneData.overlayRotations = result.overlayRotations;
+                    // Update playerSpawn if it was missing
+                    if (!zoneData.playerSpawn && result.playerSpawn) {
+                        zoneData.playerSpawn = result.playerSpawn;
+                    }
+                    // Update the zone in the repository
+                    this.game.zoneRepository.setByKey(zoneKey, zoneData);
+                }
+            }
+        }
+    }
+
+    /**
+     * Restore the current zone's terrain textures, overlay textures, rotations, and overlay rotations to zoneGenerator
+     * This ensures custom board tiles are displayed correctly after loading a save
+     * @private
+     */
+    _restoreCurrentZoneTextures() {
+        if (!this.game.zoneGenerator || !this.game.player) return;
+
+        // Get the current zone key based on player's currentZone object
+        const currentZone = this.game.player.currentZone;
+        if (!currentZone) return;
+
+        const zoneX = currentZone.x;
+        const zoneY = currentZone.y;
+        const dimension = currentZone.dimension || 0;
+        const zoneKey = `${zoneX},${zoneY}:${dimension}`;
+
+        // Get the current zone data from repository
+        const zoneData = this.game.zoneRepository.getByKey(zoneKey);
+        if (zoneData) {
+            // Apply the zone's texture and rotation data to zoneGenerator
+            this.game.zoneGenerator.terrainTextures = zoneData.terrainTextures || {};
+            this.game.zoneGenerator.overlayTextures = zoneData.overlayTextures || {};
+            this.game.zoneGenerator.rotations = zoneData.rotations || {};
+            this.game.zoneGenerator.overlayRotations = zoneData.overlayRotations || {};
         }
     }
 }

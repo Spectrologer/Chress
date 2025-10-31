@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { npcDiscoveryPlugin } from './vite-plugin-npc-discovery.js';
+import { assetDiscoveryPlugin } from './vite-plugin-asset-discovery.js';
 
 export default defineConfig({
   // Base URL for GitHub Pages deployment
@@ -135,11 +137,13 @@ export default defineConfig({
 
   // Plugin configuration
   plugins: [
+    assetDiscoveryPlugin(), // Auto-discover image assets
+    npcDiscoveryPlugin(), // Auto-discover NPC JSON files
     viteStaticCopy({
       targets: [
         {
           src: 'src/characters/*.json',
-          dest: 'src/characters'
+          dest: 'characters'
         }
       ]
     }),
@@ -180,8 +184,8 @@ export default defineConfig({
       },
 
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,gif,svg,woff,woff2,ttf}'],
-        sourcemap: false, // Disable source map generation for service worker and workbox
+        globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,gif,svg,woff,woff2,ttf,json}'],
+        sourcemap: process.env.NODE_ENV !== 'production', // Enable source maps in dev for debugging
 
         // Cache strategy configuration
         runtimeCaching: [

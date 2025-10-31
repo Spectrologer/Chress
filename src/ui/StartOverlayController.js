@@ -21,7 +21,7 @@ export class StartOverlayController {
      * @param {Function} setupMusicToggle - Callback to setup music toggle
      * @param {Function} setupButtonHandlers - Callback to setup button handlers
      */
-    showStartOverlay(configureContinueBtn, setupMusicToggle, setupButtonHandlers) {
+    async showStartOverlay(configureContinueBtn, setupMusicToggle, setupButtonHandlers) {
         try {
             const overlay = document.getElementById('startOverlay');
             if (!overlay) return;
@@ -30,7 +30,7 @@ export class StartOverlayController {
             overlay.style.visibility = 'hidden';
 
             // Configure continue button based on saved game state
-            const hasSaved = this.hasSavedGame();
+            const hasSaved = await this.hasSavedGame();
             configureContinueBtn(overlay, hasSaved);
 
             // Set up music toggle
@@ -57,13 +57,21 @@ export class StartOverlayController {
     }
 
     /**
-     * Checks if a saved game exists.
-     * @returns {boolean}
+     * Checks if a saved game exists in IndexedDB or localStorage.
+     * @returns {Promise<boolean>}
      */
-    hasSavedGame() {
+    async hasSavedGame() {
         try {
+            // Check StorageAdapter (IndexedDB) first
+            if (this.game.storageAdapter) {
+                const hasInStorage = await this.game.storageAdapter.has('chress_game_state');
+                if (hasInStorage) return true;
+            }
+
+            // Fallback to localStorage check
             return !!(localStorage && localStorage.getItem && localStorage.getItem('chress_game_state'));
         } catch (e) {
+            logger.error('Error checking for saved game:', e);
             return false;
         }
     }

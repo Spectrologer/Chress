@@ -19,11 +19,16 @@ class InteriorHandler extends BaseZoneHandler {
         const { boardLoader } = await import('../BoardLoader.js');
         const boardData = boardLoader.getBoardSync(0, 0, 1);
         if (boardData) {
-            const grid = boardLoader.convertBoardToGrid(boardData, this.foodAssets);
+            const result = boardLoader.convertBoardToGrid(boardData, this.foodAssets);
+            // Return the full result including terrainTextures, overlayTextures, rotations, and overlayRotations
             return {
-                grid,
+                grid: result.grid,
                 enemies: [],
-                playerSpawn: this.zoneGen.playerSpawn
+                playerSpawn: result.playerSpawn,
+                terrainTextures: result.terrainTextures,
+                overlayTextures: result.overlayTextures,
+                rotations: result.rotations,
+                overlayRotations: result.overlayRotations
             };
         } else {
             // Fallback to previous behavior if board is missing
