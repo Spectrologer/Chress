@@ -91,7 +91,7 @@ The game uses a turn-based system where:
 
 - **Build**: Vite 6.x
 - **Language**: JavaScript (ES Modules) + TypeScript migration in progress
-- **Testing**: Jest with JSDOM
+- **Testing**: Vitest with happy-dom
 - **Linting**: ESLint 9.x
 - **PWA**: Workbox via vite-plugin-pwa
 
@@ -162,13 +162,19 @@ See [vite.config.js](vite.config.js) for build configuration:
 
 ## 🌐 Deployment
 
-### GitHub Pages
+### GitHub Pages (Automated)
+The project uses GitHub Actions for automatic deployment:
+- Pushes to `main` automatically build and deploy
+- View workflow status: [Actions tab](https://github.com/Spectrologer/Chress/actions)
+- Live site: https://spectrologer.github.io/Chress/
+
+### Manual Build
 ```bash
-# Build
+# Build for production
 npm run build
 
-# Deploy (if gh-pages installed)
-npx gh-pages -d dist
+# Output directory
+dist/
 ```
 
 ### Other Platforms
