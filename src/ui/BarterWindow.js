@@ -98,7 +98,7 @@ export class BarterWindow {
     this.barterNPCName.textContent = name;
     // Ensure the NPC name fits within its container on mobile devices
     try { fitTextToContainer(this.barterNPCName, { minFontSize: 12 }); } catch (e) {}
-        this.barterNPCPortrait.src = portrait;
+        this.barterNPCPortrait.src = `assets/${portrait}`;
         this.barterNPCPortrait.alt = `Portrait of ${name}`;
 
         // Add a specific class for squig and penne to adjust their size
@@ -154,7 +154,10 @@ export class BarterWindow {
         offerDiv.className = 'barter-offer';
 
         const requiredAmount = tradeData.requiredAmount || 1;
-        const requiredImgHtml = tradeData.requiredItemImg ? `<img src="${tradeData.requiredItemImg}" alt="Trade ${tradeData.requiredItemName}..." class="barter-exchange-item">` : '';
+        // Add assets/ prefix if not already present
+        const requiredImg = tradeData.requiredItemImg && !tradeData.requiredItemImg.startsWith('assets/') ? `assets/${tradeData.requiredItemImg}` : tradeData.requiredItemImg;
+        const receivedImg = tradeData.receivedItemImg && !tradeData.receivedItemImg.startsWith('assets/') ? `assets/${tradeData.receivedItemImg}` : tradeData.receivedItemImg;
+        const requiredImgHtml = requiredImg ? `<img src="${requiredImg}" alt="Trade ${tradeData.requiredItemName}..." class="barter-exchange-item">` : '';
 
         offerDiv.innerHTML = `
             <div class="barter-exchange">
@@ -164,7 +167,7 @@ export class BarterWindow {
                 </div>
                 <span class="barter-exchange-arrow">→</span>
                 <div class="barter-item-wrapper">
-                    <img src="${tradeData.receivedItemImg}" alt="to receive ${tradeData.receivedItemName}" class="barter-exchange-item">
+                    <img src="${receivedImg}" alt="to receive ${tradeData.receivedItemName}" class="barter-exchange-item">
                     <span class="barter-item-label">${tradeData.receivedItemName}</span>
                 </div>
             </div>

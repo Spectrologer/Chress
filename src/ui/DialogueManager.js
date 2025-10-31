@@ -93,30 +93,33 @@ export class DialogueManager {
      * @param {string} btnText - Button text
      */
     _buildDialogueHTML(text, imageSrc, name, btnText) {
-        if (name && imageSrc) {
+        // Add assets/ prefix if imageSrc doesn't already include it
+        const imgPath = imageSrc && !imageSrc.startsWith('assets/') ? `assets/${imageSrc}` : imageSrc;
+
+        if (name && imgPath) {
             // NPC dialogue with name and portrait
             this.messageOverlay.innerHTML = /*html*/`
                 <span class="character-name" style="font-size: 1.5em; margin-bottom: 10px; display:block; text-align:center;">${name}</span>
                 <div class="barter-portrait-container large-portrait" style="margin: 0 auto 10px auto; text-align:center;">
-                    <img src="${imageSrc}" class="barter-portrait">
+                    <img src="${imgPath}" class="barter-portrait">
                 </div>
                 <div class="dialogue-text" style="text-align:center;">${text}</div>
                 <div id="dialogue-button-container" style="text-align: center; margin-top: 20px; display: none;">
                     <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
                 </div>`;
-        } else if (imageSrc) {
+        } else if (imgPath) {
             // Sign with image
             let imgStyle = 'width: 128px; height: auto; max-height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;';
 
             // Special handling for bow asset
             try {
-                if (typeof imageSrc === 'string' && imageSrc.toLowerCase().endsWith('/bow.png')) {
+                if (typeof imgPath === 'string' && imgPath.toLowerCase().endsWith('/bow.png')) {
                     imgStyle += ' transform: rotate(-90deg); transform-origin: center center;';
                 }
             } catch (e) {}
 
             this.messageOverlay.innerHTML = /*html*/`
-                <img src="${imageSrc}" style="${imgStyle}">
+                <img src="${imgPath}" style="${imgStyle}">
                 <div class="dialogue-text" style="text-align:center;">${text}</div>
                 <div id="dialogue-button-container" style="text-align: center; margin-top: 20px;">
                     <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
