@@ -12,14 +12,14 @@ export default defineConfig({
   // Build optimizations
   build: {
     target: 'esnext',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: false, // Keep console for debugging, set to true to remove
-        drop_debugger: true,
-        pure_funcs: ['console.debug'], // Remove console.debug in production
-      },
-    },
+    minify: 'esbuild', // Changed from 'terser' to 'esbuild' - faster and avoids some minification issues
+    // terserOptions: {
+    //   compress: {
+    //     drop_console: false, // Keep console for debugging, set to true to remove
+    //     drop_debugger: true,
+    //     pure_funcs: ['console.debug'], // Remove console.debug in production
+    //   },
+    // },
 
     // Code splitting configuration
     rollupOptions: {
@@ -113,6 +113,8 @@ export default defineConfig({
     port: 4173,
     host: '0.0.0.0',
     open: true,
+    // Important: Preview server should use the same base as production to test correctly
+    // This ensures assets load from the correct /Chress/ path during preview
   },
 
   // Module resolution

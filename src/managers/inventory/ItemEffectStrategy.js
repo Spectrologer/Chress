@@ -23,20 +23,28 @@ import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect } from './effects/Spec
  * - ItemUsageManager.useItem()
  */
 export class ItemEffectStrategy {
-    static effects = {
-        'food': new FoodEffect(),
-        'water': new WaterEffect(),
-        'heart': new HeartEffect(),
-        'axe': new AxeEffect(),
-        'hammer': new HammerEffect(),
-        'bomb': new BombEffect(),
-        'bow': new BowEffect(),
-        'bishop_spear': new BishopSpearEffect(),
-        'horse_icon': new HorseIconEffect(),
-        'shovel': new ShovelEffect(),
-        'note': new NoteEffect(),
-        'book_of_time_travel': new BookOfTimeTravelEffect()
-    };
+    // Lazy initialization - effects are created on first access to avoid circular dependency issues
+    static _effects = null;
+
+    static get effects() {
+        if (!this._effects) {
+            this._effects = {
+                'food': new FoodEffect(),
+                'water': new WaterEffect(),
+                'heart': new HeartEffect(),
+                'axe': new AxeEffect(),
+                'hammer': new HammerEffect(),
+                'bomb': new BombEffect(),
+                'bow': new BowEffect(),
+                'bishop_spear': new BishopSpearEffect(),
+                'horse_icon': new HorseIconEffect(),
+                'shovel': new ShovelEffect(),
+                'note': new NoteEffect(),
+                'book_of_time_travel': new BookOfTimeTravelEffect()
+            };
+        }
+        return this._effects;
+    }
 
     /**
      * Apply item effect using the appropriate strategy
