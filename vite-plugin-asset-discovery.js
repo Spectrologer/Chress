@@ -96,8 +96,9 @@ export function assetDiscoveryPlugin() {
 
         configResolved(config) {
             // Get the assets directory from Vite config
-            // config.publicDir is already an absolute path
-            assetsDir = config.publicDir || join(config.root, 'assets');
+            // Scan from public/assets/ subdirectory, not public/ root
+            const publicDir = config.publicDir || join(config.root, 'public');
+            assetsDir = join(publicDir, 'assets');
             console.log('[Asset Discovery] Scanning assets directory:', assetsDir);
 
             // Scan the assets directory
