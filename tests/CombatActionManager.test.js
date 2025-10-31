@@ -6,6 +6,8 @@ describe('CombatActionManager', () => {
   let cam;
 
   beforeEach(() => {
+    const grid = Array(9).fill().map(() => Array(9).fill(TILE_TYPES.FLOOR));
+
     const mockPlayer = {
       x: 4,
       y: 4,
@@ -14,34 +16,44 @@ describe('CombatActionManager', () => {
         { type: 'horse_icon', uses: 1, disabled: false },
         { type: 'bow', uses: 1, disabled: false }
       ],
-      isWalkable: jest.fn().mockReturnValue(true)
+      isWalkable: vi.fn().mockReturnValue(true)
     };
 
     game = {
       player: mockPlayer,
       enemies: [ { x: 7, y: 7, id: 'e1' } ],
-      grid: Array(9).fill().map(() => Array(9).fill(TILE_TYPES.FLOOR)),
+      grid: grid,
       pendingCharge: null,
-      hideOverlayMessage: jest.fn(),
-      performBishopSpearCharge: jest.fn(),
-      performHorseIconCharge: jest.fn(),
-      actionManager: { performBowShot: jest.fn() },
+      hideOverlayMessage: vi.fn(),
+      performBishopSpearCharge: vi.fn(),
+      performHorseIconCharge: vi.fn(),
+      actionManager: { performBowShot: vi.fn() },
+      // Add gridManager mock
+      gridManager: {
+        getTile: vi.fn((x, y) => {
+          if (x < 0 || y < 0 || x >= 9 || y >= 9) return undefined;
+          return grid[y][x];
+        }),
+        setTile: vi.fn(),
+        isWalkable: vi.fn().mockReturnValue(true)
+      },
       // Add playerFacade mock for Vitest compatibility
       playerFacade: {
-        getInventory: jest.fn().mockReturnValue([
+        getInventory: vi.fn().mockReturnValue([
           { type: 'bishop_spear', uses: 1, disabled: false },
           { type: 'horse_icon', uses: 1, disabled: false },
           { type: 'bow', uses: 1, disabled: false }
         ]),
-        getRadialInventory: jest.fn().mockReturnValue([])
+        getRadialInventory: vi.fn().mockReturnValue([]),
+        isWalkable: vi.fn().mockReturnValue(true)
       },
       // Add transientGameState mock
       transientGameState: {
-        clearPendingCharge: jest.fn(() => { game.pendingCharge = null; })
+        clearPendingCharge: vi.fn(() => { game.pendingCharge = null; })
       },
       // Add enemyCollection mock
       enemyCollection: {
-        findAt: jest.fn((x, y) => game.enemies.find(e => e.x === x && e.y === y))
+        findAt: vi.fn((x, y) => game.enemies.find(e => e.x === x && e.y === y))
       }
     };
 

@@ -133,7 +133,7 @@ describe('EventBus System Integration', () => {
     test('event types follow naming convention', () => {
       Object.entries(EventTypes).forEach(([key, value]) => {
         expect(typeof value).toBe('string');
-        expect(value).toMatch(/^[a-z]+:[a-z:]+$/); // e.g., "enemy:defeated"
+        expect(value).toMatch(/^[a-z_]+:[a-z_:]+$/); // e.g., "enemy:defeated" or "game:exit:shovel_mode"
         expect(key).toMatch(/^[A-Z_]+$/); // e.g., "ENEMY_DEFEATED"
       });
     });

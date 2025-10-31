@@ -23,12 +23,12 @@ describe('BarterWindow discovery trades', () => {
     mockGame = {
       player,
       uiManager: {
-        addMessageToLog: jest.fn(),
-        showOverlayMessage: jest.fn(),
-        updateZoneDisplay: jest.fn()
+        addMessageToLog: vi.fn(),
+        showOverlayMessage: vi.fn(),
+        updateZoneDisplay: vi.fn()
       },
-      soundManager: { playSound: jest.fn() },
-      updatePlayerStats: jest.fn()
+      soundManager: { playSound: vi.fn() },
+      updatePlayerStats: vi.fn()
     };
 
     // Make player have some discovered zones
