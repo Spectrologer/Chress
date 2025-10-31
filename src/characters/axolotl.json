@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/characters/npcs/axolotl.png",
-    "portrait": "assets/characters/npcs/portraits/axolotlface.png",
+    "sprite": "characters/npcs/axolotl.png",
+    "portrait": "characters/npcs/portraits/axolotlface.png",
     "tileType": "AXELOTL"
   },
   "placement": {
@@ -29,13 +29,13 @@
           "resource": "DISCOVERED",
           "amount": 10,
           "displayName": "Discoveries",
-          "icon": "assets/ui/talk.png"
+          "icon": "ui/talk.png"
         },
         "gives": {
           "type": "ability",
           "id": "axe",
           "displayName": "Axe Ability",
-          "icon": "assets/items/equipment/axe.png"
+          "icon": "items/equipment/axe.png"
         },
         "conditions": {
           "requiresAbsence": ["axe"]

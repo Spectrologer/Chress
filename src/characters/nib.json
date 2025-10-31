@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/characters/npcs/nib.png",
-    "portrait": "assets/characters/npcs/portraits/nibface.png",
+    "sprite": "characters/npcs/nib.png",
+    "portrait": "characters/npcs/portraits/nibface.png",
     "tileType": "NIB"
   },
   "placement": {
@@ -29,14 +29,14 @@
           "resource": "points",
           "amount": 10,
           "displayName": "Points",
-          "icon": "assets/items/points.png"
+          "icon": "items/points.png"
         },
         "gives": {
           "type": "item",
           "id": "random_trinket",
           "amount": 1,
           "displayName": "Random Trinket",
-          "icon": "assets/items/chest.png"
+          "icon": "items/chest.png"
         },
         "repeatable": false
       }

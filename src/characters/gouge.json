@@ -10,8 +10,8 @@
     "notes": "Spawns in a dynamically placed shack in level 3 (wilds). The board is registered at runtime when the shack spawns."
   },
   "display": {
-    "sprite": "assets/characters/npcs/gouge.png",
-    "portrait": "assets/characters/npcs/portraits/gougeface.png",
+    "sprite": "characters/npcs/gouge.png",
+    "portrait": "characters/npcs/portraits/gougeface.png",
     "tileType": "GOUGE"
   },
   "placement": {
@@ -32,14 +32,14 @@
           "resource": "DISCOVERED",
           "amount": 35,
           "displayName": "Discoveries",
-          "icon": "assets/ui/talk.png"
+          "icon": "ui/talk.png"
         },
         "gives": {
           "type": "ability",
           "id": "hammer",
           "amount": 1,
           "displayName": "Hammer Ability",
-          "icon": "assets/items/equipment/hammer.png"
+          "icon": "items/equipment/hammer.png"
         },
         "repeatable": false
       }

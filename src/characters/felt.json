@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/characters/npcs/felt.png",
-    "portrait": "assets/characters/npcs/portraits/feltface.png",
+    "sprite": "characters/npcs/felt.png",
+    "portrait": "characters/npcs/portraits/feltface.png",
     "tileType": "FELT"
   },
   "placement": {

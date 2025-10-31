@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/characters/npcs/rune.png",
-    "portrait": "assets/characters/npcs/portraits/runeface.png",
+    "sprite": "characters/npcs/rune.png",
+    "portrait": "characters/npcs/portraits/runeface.png",
     "tileType": "RUNE"
   },
   "placement": {
@@ -29,14 +29,14 @@
           "resource": "points",
           "amount": 10,
           "displayName": "Points",
-          "icon": "assets/items/points.png"
+          "icon": "items/points.png"
         },
         "gives": {
           "type": "item",
           "id": "random_weapon",
           "amount": 1,
           "displayName": "Random Weapon",
-          "icon": "assets/items/chest.png"
+          "icon": "items/chest.png"
         },
         "repeatable": false
       }

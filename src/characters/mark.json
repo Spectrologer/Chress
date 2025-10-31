@@ -8,8 +8,8 @@
     "version": "1.0.0"
   },
   "display": {
-    "sprite": "assets/characters/npcs/mark.png",
-    "portrait": "assets/characters/npcs/portraits/markface.png",
+    "sprite": "characters/npcs/mark.png",
+    "portrait": "characters/npcs/portraits/markface.png",
     "tileType": "MARK"
   },
   "placement": {
@@ -29,14 +29,14 @@
           "resource": "DISCOVERED",
           "amount": 10,
           "displayName": "Discoveries",
-          "icon": "assets/ui/talk.png"
+          "icon": "ui/talk.png"
         },
         "gives": {
           "type": "item",
           "id": "items/consumables/beaf",
           "amount": 1,
           "displayName": "Meat",
-          "icon": "assets/items/consumables/beaf.png"
+          "icon": "items/consumables/beaf.png"
         },
         "repeatable": true
       }
