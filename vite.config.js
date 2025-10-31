@@ -146,14 +146,6 @@ export default defineConfig({
         {
           src: 'src/characters/*.json',
           dest: 'characters'
-        },
-        {
-          src: 'boards/**/*',
-          dest: 'boards'
-        },
-        {
-          src: 'sfx/**/*',
-          dest: 'sfx'
         }
       ]
     }),
@@ -269,5 +261,5 @@ export default defineConfig({
   assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
 
   // Public directory for static assets
-  publicDir: 'assets',
+  publicDir: 'public',
 });
