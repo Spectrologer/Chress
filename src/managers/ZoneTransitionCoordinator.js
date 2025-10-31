@@ -64,14 +64,45 @@ export class ZoneTransitionCoordinator {
     /**
      * Position player after entering an interior
      */
-    _positionAfterInteriorEntry() {
+    _positionAfterInteriorEntry(exitX, exitY) {
         const playerFacade = this.game.playerFacade;
         const gridManager = this.game.gridManager;
+        const transientState = this.game.transientGameState;
         const currentZone = playerFacade.getCurrentZone();
-        const portX = Math.floor(GRID_SIZE / 2);
-        const portY = GRID_SIZE - 1; // bottom edge
 
-        // First, check if the zone has custom playerSpawn metadata (from board JSON)
+        // Get the surface port coordinates from transient state
+        const portData = transientState.getPortTransitionData();
+        const surfacePortX = portData?.x ?? exitX;
+        const surfacePortY = portData?.y ?? exitY;
+
+        // Default fallback position
+        const defaultPortX = Math.floor(GRID_SIZE / 2);
+        const defaultPortY = GRID_SIZE - 1; // bottom edge
+
+        // PRIORITY 1: Try to use the surface port coordinates if they're valid
+        if (surfacePortX != null && surfacePortY != null &&
+            surfacePortX >= 0 && surfacePortX < GRID_SIZE &&
+            surfacePortY >= 0 && surfacePortY < GRID_SIZE) {
+
+            // If there's no PORT at this position, create one
+            if (!gridManager.isTileType(surfacePortX, surfacePortY, TILE_TYPES.PORT)) {
+                // Only create if the tile is walkable/replaceable
+                const currentTile = gridManager.getTile(surfacePortX, surfacePortY);
+                if (!currentTile || currentTile === TILE_TYPES.FLOOR ||
+                    gridManager.isTileType(surfacePortX, surfacePortY, TILE_TYPES.FLOOR)) {
+                    this.validateAndSetTile(this.game.grid, surfacePortX, surfacePortY, TILE_TYPES.PORT);
+                }
+            }
+
+            // Place player at the corresponding interior port position
+            if (gridManager.isTileType(surfacePortX, surfacePortY, TILE_TYPES.PORT)) {
+                playerFacade.setPosition(surfacePortX, surfacePortY);
+                return;
+            }
+        }
+
+        // PRIORITY 2: Check if the zone has custom playerSpawn metadata (from board JSON)
+        // Only use this if we don't have valid surface coordinates
         const zoneKey = createZoneKey(
             currentZone.x,
             currentZone.y,
@@ -80,12 +111,14 @@ export class ZoneTransitionCoordinator {
         );
         const zoneData = this.game.zoneRepository.getByKey(zoneKey);
 
-        if (zoneData?.playerSpawn) {
-            playerFacade.setPosition(zoneData.playerSpawn.x, zoneData.playerSpawn.y);
+        // Only use board's playerSpawn if it's explicitly defined in metadata
+        // (not the default center position from BoardLoader)
+        if (zoneData?.metadata?.playerSpawn) {
+            playerFacade.setPosition(zoneData.metadata.playerSpawn.x, zoneData.metadata.playerSpawn.y);
             return;
         }
 
-        // Check if a PORT with portKind 'interior' exists (entrance from surface)
+        // PRIORITY 3: Check if a PORT with portKind 'interior' exists (entrance from surface)
         let interiorPortX = null;
         let interiorPortY = null;
         let anyPortX = null;
@@ -111,15 +144,15 @@ export class ZoneTransitionCoordinator {
             if (interiorPortX !== null) break;
         }
 
-        // Prefer interior port, then any port, then create default
+        // PRIORITY 4: Prefer interior port, then any port, then create default
         if (interiorPortX !== null) {
             playerFacade.setPosition(interiorPortX, interiorPortY);
         } else if (anyPortX !== null) {
             playerFacade.setPosition(anyPortX, anyPortY);
         } else {
             // No PORT exists, create one at the default position
-            this.validateAndSetTile(this.game.grid, portX, portY, TILE_TYPES.PORT);
-            playerFacade.setPosition(portX, portY);
+            this.validateAndSetTile(this.game.grid, defaultPortX, defaultPortY, TILE_TYPES.PORT);
+            playerFacade.setPosition(defaultPortX, defaultPortY);
         }
     }
 
@@ -258,7 +291,7 @@ export class ZoneTransitionCoordinator {
             this._positionAfterUndergroundToInterior(exitX, exitY);
         } else if (currentZone.dimension === 1) {
             // Entering interior from surface
-            this._positionAfterInteriorEntry();
+            this._positionAfterInteriorEntry(exitX, exitY);
         } else if (currentZone.dimension === 0 && currentZone.portType === 'underground') {
             this._positionAfterUndergroundExit(exitX, exitY);
         } else if (currentZone.dimension === 0) {

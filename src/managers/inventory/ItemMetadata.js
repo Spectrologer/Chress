@@ -118,7 +118,9 @@ export class ItemMetadata {
         if (!item) return null;
 
         if (item.type === 'food' && item.foodType) {
-            return item.foodType.replace('.png', '').replace('/', '_');
+            // Extract just the filename to match TextureLoader's food asset registration
+            // e.g., 'items/consumables/aguamelin.png' -> 'aguamelin'
+            return item.foodType.split('/').pop().replace('.png', '');
         }
 
         const keyMap = {

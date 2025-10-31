@@ -24,19 +24,19 @@ const mockCharacterData = {
 
 describe('NPC Dialogue Progression with Sequential Mode', () => {
     let mockGame;
-    let originalGetNPCCharacterData;
+    let getNPCCharacterDataSpy;
 
     beforeEach(() => {
         mockGame = { dialogueState: new Map() };
 
-        // Mock getNPCCharacterData
-        originalGetNPCCharacterData = NPCLoader.getNPCCharacterData;
-        NPCLoader.getNPCCharacterData = jest.fn().mockReturnValue(mockCharacterData);
+        // Mock getNPCCharacterData using vi.spyOn for Vitest compatibility
+        getNPCCharacterDataSpy = vi.spyOn(NPCLoader, 'getNPCCharacterData')
+            .mockReturnValue(mockCharacterData);
     });
 
     afterEach(() => {
         // Restore original function
-        NPCLoader.getNPCCharacterData = originalGetNPCCharacterData;
+        getNPCCharacterDataSpy.mockRestore();
     });
 
     test('Initial dialogue data creation', () => {

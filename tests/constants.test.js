@@ -1,8 +1,8 @@
 import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, UI_CONSTANTS, SIMULATION_CONSTANTS, INPUT_CONSTANTS, ZONE_CONSTANTS } from '../core/constants/index.js';
 
 describe('Constants', () => {
-  test('GRID_SIZE should be 9', () => {
-    expect(GRID_SIZE).toBe(9);
+  test('GRID_SIZE should be 10', () => {
+    expect(GRID_SIZE).toBe(10);
   });
 
   test('TILE_TYPES.FLOOR should be 0', () => {

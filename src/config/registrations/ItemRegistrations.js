@@ -33,7 +33,9 @@ export function registerItems() {
         },
         getImageKey: (item) => {
             if (item.foodType) {
-                return item.foodType.replace('.png', '').replace('/', '_');
+                // Extract just the filename to match TextureLoader's food asset registration
+                // e.g., 'items/consumables/aguamelin.png' -> 'aguamelin'
+                return item.foodType.split('/').pop().replace('.png', '');
             }
             return 'food';
         }

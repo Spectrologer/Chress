@@ -1,26 +1,27 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
 import { ItemGenerator } from '../generators/ItemGenerator.js';
-
-// Mock dependencies
-jest.mock('../generators/ZoneStateManager.js');
-import { ZoneStateManager } from '../generators/ZoneStateManager.js';
+import * as ZoneStateManagerModule from '../generators/ZoneStateManager.js';
 
 describe('ItemGenerator', () => {
   let grid;
   let foodAssets;
+  let getZoneLevelSpy;
+  let hashCodeSpy;
 
   beforeEach(() => {
     // Create a 10x10 grid filled with FLOOR tiles
     grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR));
     foodAssets = ['food/meat/beaf.png', 'food/veg/nut.png'];
 
-    // Mock ZoneStateManager
-    ZoneStateManager.getZoneLevel.mockReturnValue(1);
-    ZoneStateManager.hashCode.mockReturnValue(0);
+    // Mock ZoneStateManager methods using vi.spyOn
+    getZoneLevelSpy = vi.spyOn(ZoneStateManagerModule.ZoneStateManager, 'getZoneLevel')
+      .mockReturnValue(1);
+    hashCodeSpy = vi.spyOn(ZoneStateManagerModule.ZoneStateManager, 'hashCode')
+      .mockReturnValue(0);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('addLevelBasedFoodAndWater introduces variation', () => {

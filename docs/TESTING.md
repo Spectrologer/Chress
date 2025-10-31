@@ -66,6 +66,9 @@ npm test
 # Run tests in watch mode
 npm run test:watch
 
+# Run tests with interactive UI
+npm run test:ui
+
 # Run tests with coverage
 npm run test:coverage
 
@@ -73,7 +76,7 @@ npm run test:coverage
 npm test -- Position.test.js
 
 # Run tests matching a pattern
-npm test -- --testNamePattern="Position"
+npm test -- --grep="Position"
 ```
 
 ### Viewing Coverage Reports
@@ -142,9 +145,6 @@ tests/
 All tests follow this pattern:
 
 ```javascript
-/**
- * @jest-environment jsdom  // Only for DOM-dependent tests
- */
 import { MyClass } from '../src/path/to/MyClass.js';
 import { TILE_TYPES } from '../src/core/constants/index.js';
 
@@ -154,7 +154,7 @@ describe('MyClass', () => {
 
   beforeEach(() => {
     // Setup fresh instance for each test
-    mockDependency = { method: jest.fn() };
+    mockDependency = { method: vi.fn() };
     instance = new MyClass(mockDependency);
   });
 
@@ -187,19 +187,19 @@ const mockGame = {
   player: {
     x: 5,
     y: 5,
-    getPosition: jest.fn(() => ({ x: 5, y: 5 })),
-    move: jest.fn(),
+    getPosition: vi.fn(() => ({ x: 5, y: 5 })),
+    move: vi.fn(),
   },
-  grid: Array(9).fill().map(() => Array(9).fill(TILE_TYPES.FLOOR)),
+  grid: Array(10).fill().map(() => Array(10).fill(TILE_TYPES.FLOOR)),
   enemies: [],
   uiManager: {
-    showMessage: jest.fn(),
-    hideMessage: jest.fn(),
+    showMessage: vi.fn(),
+    hideMessage: vi.fn(),
   },
   eventBus: {
-    on: jest.fn(),
-    emit: jest.fn(),
-    off: jest.fn(),
+    on: vi.fn(),
+    emit: vi.fn(),
+    off: vi.fn(),
   },
 };
 ```
@@ -230,10 +230,10 @@ beforeEach(() => {
   global.window = {
     gameInstance: {
       player: mockPlayer,
-      startEnemyTurns: jest.fn(),
+      startEnemyTurns: vi.fn(),
     },
     soundManager: {
-      playSound: jest.fn(),
+      playSound: vi.fn(),
     },
   };
 });
@@ -258,7 +258,7 @@ test('should handle promises', () => {
 
 ```javascript
 test('should emit event when action occurs', () => {
-  const emitSpy = jest.spyOn(eventBus, 'emit');
+  const emitSpy = vi.spyOn(eventBus, 'emit');
 
   instance.performAction();
 
@@ -275,25 +275,27 @@ test('should emit event when action occurs', () => {
 
 ## Configuration
 
-### Jest Configuration
+### Vitest Configuration
 
-Located in [jest.config.cjs](../jest.config.cjs):
+Located in [vitest.config.js](../vitest.config.js):
 
-- **Test Environment:** jsdom (for DOM testing)
-- **Transform:** Babel for ES6+ modules
+- **Test Environment:** happy-dom (fast DOM implementation)
+- **Transform:** Vite's native ESM support (no Babel needed)
 - **Module Mapping:** Path aliases (@/, @core/, @managers/, etc.)
+- **Coverage Provider:** v8 (faster than istanbul)
 - **Coverage Thresholds:**
   - Statements: 30%
   - Branches: 30%
   - Functions: 30%
   - Lines: 30%
 
-### Babel Configuration
+### Benefits of Vitest
 
-Located in [babel.config.cjs](../babel.config.cjs):
-
-- **Preset:** @babel/preset-env targeting current Node version
-- **Purpose:** Transform ES6+ module syntax for Jest
+- **Faster:** Uses Vite's transformation pipeline
+- **Better DX:** Hot Module Reloading for tests
+- **Native ESM:** No transpilation needed
+- **UI Mode:** Run `npm run test:ui` for interactive testing
+- **Compatible:** Drop-in replacement for Jest API
 
 ---
 
@@ -406,17 +408,19 @@ echo "npm test" > .husky/pre-commit
 - Use real network calls or file I/O
 - Commit failing tests
 - Skip writing tests for "simple" code
-- Use setTimeout in tests (use Jest's timer mocks)
+- Use setTimeout in tests (use vi.useFakeTimers())
 - Test third-party library code
 
 ---
 
 ## Resources
 
-- [Jest Documentation](https://jestjs.io/docs/getting-started)
-- [Jest DOM Matchers](https://github.com/testing-library/jest-dom)
+- [Vitest Documentation](https://vitest.dev/guide/)
+- [Vitest API Reference](https://vitest.dev/api/)
+- [Happy DOM](https://github.com/capricorn86/happy-dom)
 - [Testing Best Practices](https://testingjavascript.com/)
 - [Test Coverage Interpretation](https://martinfowler.com/bliki/TestCoverage.html)
+- [Migrating from Jest](https://vitest.dev/guide/migration.html)
 
 ---
 

@@ -25,7 +25,24 @@ describe('CombatActionManager', () => {
       hideOverlayMessage: jest.fn(),
       performBishopSpearCharge: jest.fn(),
       performHorseIconCharge: jest.fn(),
-      actionManager: { performBowShot: jest.fn() }
+      actionManager: { performBowShot: jest.fn() },
+      // Add playerFacade mock for Vitest compatibility
+      playerFacade: {
+        getInventory: jest.fn().mockReturnValue([
+          { type: 'bishop_spear', uses: 1, disabled: false },
+          { type: 'horse_icon', uses: 1, disabled: false },
+          { type: 'bow', uses: 1, disabled: false }
+        ]),
+        getRadialInventory: jest.fn().mockReturnValue([])
+      },
+      // Add transientGameState mock
+      transientGameState: {
+        clearPendingCharge: jest.fn(() => { game.pendingCharge = null; })
+      },
+      // Add enemyCollection mock
+      enemyCollection: {
+        findAt: jest.fn((x, y) => game.enemies.find(e => e.x === x && e.y === y))
+      }
     };
 
     cam = new CombatActionManager(game);

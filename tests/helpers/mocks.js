@@ -1,6 +1,9 @@
 /**
  * Common mock factories for testing
  * Provides reusable mock objects to standardize testing patterns
+ *
+ * Note: Uses jest.fn() which is mapped to vi.fn() via tests/setup.js
+ * This maintains compatibility with Vitest while keeping familiar Jest syntax
  */
 
 import { TILE_TYPES, GRID_SIZE } from '../../src/core/constants/index.js';
