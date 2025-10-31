@@ -146,6 +146,14 @@ export default defineConfig({
         {
           src: 'src/characters/*.json',
           dest: 'characters'
+        },
+        {
+          src: 'boards/**/*',
+          dest: 'boards'
+        },
+        {
+          src: 'sfx/**/*',
+          dest: 'sfx'
         }
       ]
     }),
