@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/micron.png",
+    "sprite": "characters/npcs/gossip/micron.png",
     "portrait": "characters/npcs/portraits/micronface.png",
     "tileType": "MICRON"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I argue with my microwave. It started it. I'm ending it."
+        "text": "I argue with my microwave. It started it. I'm ending it.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Raccoons are just goth squirrels with better hand hygiene."
+        "text": "Raccoons are just goth squirrels with better hand hygiene.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I tried meditation. My brain filed a noise complaint against itself."
+        "text": "I tried meditation. My brain filed a noise complaint against itself.",
+        "buttonText": "Okay..."
       }
     ]
   },

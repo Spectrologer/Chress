@@ -5,10 +5,11 @@
   "metadata": {
     "description": "A friendly underground merchant who trades the axe ability for discoveries. After trading, says farewell and walks away.",
     "created": "2025-10-27T00:00:00.000Z",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "category": "merchant"
   },
   "display": {
-    "sprite": "characters/npcs/axolotl.png",
+    "sprite": "characters/npcs/merchant/axolotl.png",
     "portrait": "characters/npcs/portraits/axolotlface.png",
     "tileType": "AXELOTL"
   },
@@ -38,7 +39,9 @@
           "icon": "items/equipment/axe.png"
         },
         "conditions": {
-          "requiresAbsence": ["axe"]
+          "requiresAbsence": [
+            "axe"
+          ]
         },
         "onComplete": {
           "message": "Thanks for showing me around!",
@@ -54,6 +57,7 @@
       {
         "id": "post_trade",
         "text": "Thanks a lot'l.",
+        "buttonText": "You're welcome!",
         "condition": "hasAbility:axe"
       }
     ]

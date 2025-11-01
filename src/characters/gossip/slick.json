@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/slick.png",
+    "sprite": "characters/npcs/gossip/slick.png",
     "portrait": "characters/npcs/portraits/slickface.png",
     "tileType": "SLICK"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I tried to cancel my gym membership. They said I never had one. Checkmate."
+        "text": "I tried to cancel my gym membership. They said I never had one. Checkmate.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Chameleons are just indecisive lizards with commitment issues."
+        "text": "Chameleons are just indecisive lizards with commitment issues.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm opening a store that sells regret. Business is booming."
+        "text": "I'm opening a store that sells regret. Business is booming.",
+        "buttonText": "Okay..."
       }
     ]
   },

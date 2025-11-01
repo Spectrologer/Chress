@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/slate.png",
+    "sprite": "characters/npcs/gossip/slate.png",
     "portrait": "characters/npcs/portraits/slateface.png",
     "tileType": "SLATE"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've convinced three people that I can read minds. I can't. They believe harder now."
+        "text": "I've convinced three people that I can read minds. I can't. They believe harder now.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My ceiling fan is plotting against me. Circumstantial evidence, strong vibes."
+        "text": "My ceiling fan is plotting against me. Circumstantial evidence, strong vibes.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm fluent in gibberish and struggling with English."
+        "text": "I'm fluent in gibberish and struggling with English.",
+        "buttonText": "Okay..."
       }
     ]
   },

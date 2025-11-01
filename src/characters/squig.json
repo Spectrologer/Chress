@@ -5,10 +5,11 @@
   "metadata": {
     "description": "A merchant who trades nuts for water. Found in the home interior.",
     "created": "2025-10-27T00:00:00.000Z",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "category": "merchant"
   },
   "display": {
-    "sprite": "characters/npcs/squig.png",
+    "sprite": "characters/npcs/merchant/squig.png",
     "portrait": "characters/npcs/portraits/squigface.png",
     "tileType": "SQUIG"
   },

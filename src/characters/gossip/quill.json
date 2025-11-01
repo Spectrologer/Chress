@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/quill.png",
+    "sprite": "characters/npcs/gossip/quill.png",
     "portrait": "characters/npcs/portraits/quillface.png",
     "tileType": "QUILL"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been preparing for a zombie apocalypse since 2003. Zombies are late. Rude."
+        "text": "I've been preparing for a zombie apocalypse since 2003. Zombies are late. Rude.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My shower has better acoustics than Carnegie Hall. Equally expensive too."
+        "text": "My shower has better acoustics than Carnegie Hall. Equally expensive too.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm writing a self-help book titled 'Give Up: It's Fine.' Pre-orders are strong."
+        "text": "I'm writing a self-help book titled 'Give Up: It's Fine.' Pre-orders are strong.",
+        "buttonText": "Okay..."
       }
     ]
   },

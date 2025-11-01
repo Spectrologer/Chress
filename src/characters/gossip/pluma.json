@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/pluma.png",
+    "sprite": "characters/npcs/gossip/pluma.png",
     "portrait": "characters/npcs/portraits/plumaface.png",
     "tileType": "PLUMA"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been waiting for my Hogwarts letter for thirty-eight years. Still checking."
+        "text": "I've been waiting for my Hogwarts letter for thirty-eight years. Still checking.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Mitochondria is the powerhouse of the cell. This is all I remember from school."
+        "text": "Mitochondria is the powerhouse of the cell. This is all I remember from school.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm hosting a party for introverts. Nobody's coming. Perfect."
+        "text": "I'm hosting a party for introverts. Nobody's coming. Perfect.",
+        "buttonText": "Okay..."
       }
     ]
   },

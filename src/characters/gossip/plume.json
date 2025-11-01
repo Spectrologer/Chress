@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/plume.png",
+    "sprite": "characters/npcs/gossip/plume.png",
     "portrait": "characters/npcs/portraits/plumeface.png",
     "tileType": "PLUME"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I speak to plants. They asked me to stop. I respect their boundaries."
+        "text": "I speak to plants. They asked me to stop. I respect their boundaries.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My life coach is a motivational poster that fell off the wall. Still inspires me."
+        "text": "My life coach is a motivational poster that fell off the wall. Still inspires me.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm allergic to common sense. Doctor says it's terminal stupidity."
+        "text": "I'm allergic to common sense. Doctor says it's terminal stupidity.",
+        "buttonText": "Okay..."
       }
     ]
   },

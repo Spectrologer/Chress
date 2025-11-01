@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/crock.png",
+    "sprite": "characters/npcs/gossip/crock.png",
     "portrait": "characters/npcs/portraits/crockface.png",
     "tileType": "CROCK"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been holding my breath for three years. Forgot why I started."
+        "text": "I've been holding my breath for three years. Forgot why I started.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My autobiography is three words: \"It Gets Worse.\" Bestseller."
+        "text": "My autobiography is three words: \"It Gets Worse.\" Bestseller.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm learning to juggle invisible balls. Going great. I think."
+        "text": "I'm learning to juggle invisible balls. Going great. I think.",
+        "buttonText": "Okay..."
       }
     ]
   },

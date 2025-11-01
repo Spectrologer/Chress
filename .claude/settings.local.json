@@ -15,7 +15,9 @@
       "Bash(findstr:*)",
       "Bash(dir:*)",
       "Bash(npm run dev:build:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(for file in src/characters/gossip/*.json)",
+      "Bash(do)"
     ],
     "deny": [],
     "ask": []

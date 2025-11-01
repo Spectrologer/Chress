@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/kraft.png",
+    "sprite": "characters/npcs/gossip/kraft.png",
     "portrait": "characters/npcs/portraits/kraftface.png",
     "tileType": "KRAFT"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been photosynthesizing wrong my entire life. I'm not even a plant."
+        "text": "I've been photosynthesizing wrong my entire life. I'm not even a plant.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My dentist is a conspiracy theorist. Says teeth aren't real. Still goes to work."
+        "text": "My dentist is a conspiracy theorist. Says teeth aren't real. Still goes to work.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I have a PhD in procrastination. Will get the diploma later."
+        "text": "I have a PhD in procrastination. Will get the diploma later.",
+        "buttonText": "Okay..."
       }
     ]
   },

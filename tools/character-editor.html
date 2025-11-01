@@ -442,6 +442,15 @@
                     <label>Description:</label>
                     <textarea id="charDescription" placeholder="A wise woodcutter who shares knowledge..."></textarea>
                 </div>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <select id="charCategory">
+                        <option value="">None</option>
+                        <option value="gossip">Gossip</option>
+                        <option value="merchant">Merchant</option>
+                        <option value="tutorial">Tutorial</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -691,7 +700,7 @@
 
         function addDialogue() {
             const id = `msg_${dialogues.length}`;
-            dialogues.push({ id, text: '' });
+            dialogues.push({ id, text: '', buttonText: 'Okay...' });
             renderDialogues();
         }
 
@@ -707,15 +716,20 @@
             dialogues.forEach((dialogue, index) => {
                 const item = document.createElement('div');
                 item.className = 'dialogue-item';
+                const dialogueText = escapeHtml(dialogue.text || '');
+                const buttonText = escapeHtml(dialogue.buttonText || 'Okay...');
+
                 item.innerHTML = `<button class="remove-btn" onclick="removeDialogue(${index})">Remove</button>
                     <label>Message ${index + 1}:</label>
-                    <textarea onchange="updateDialogue(${index}, this.value)">${escapeHtml(dialogue.text || '')}</textarea>`;
+                    <textarea onchange="updateDialogue(${index}, 'text', this.value)">${dialogueText}</textarea>
+                    <label>Button Text:</label>
+                    <input type="text" value="${buttonText}" onchange="updateDialogue(${index}, 'buttonText', this.value)" placeholder="Okay...">`;
                 container.appendChild(item);
             });
         }
 
-        function updateDialogue(index, text) {
-            dialogues[index].text = text;
+        function updateDialogue(index, field, value) {
+            dialogues[index][field] = value;
         }
 
         function addTrade() {
@@ -850,7 +864,7 @@
 
         function addHybridDialogue() {
             const id = `post_trade_${hybridDialogues.length}`;
-            hybridDialogues.push({ id, text: '', condition: '' });
+            hybridDialogues.push({ id, text: '', buttonText: 'Okay...', condition: '' });
             renderHybridDialogues();
         }
 
@@ -867,11 +881,14 @@
                 const item = document.createElement('div');
                 item.className = 'dialogue-item';
                 const dialogueText = escapeHtml(dialogue.text || '');
+                const buttonText = escapeHtml(dialogue.buttonText || 'Okay...');
                 const dialogueCondition = escapeHtml(dialogue.condition || '');
 
                 item.innerHTML = `<button class="remove-btn" onclick="removeHybridDialogue(${index})">Remove</button>
                     <label>Post-Trade Message ${index + 1}:</label>
                     <textarea onchange="updateHybridDialogue(${index}, 'text', this.value)">${dialogueText}</textarea>
+                    <label>Button Text:</label>
+                    <input type="text" value="${buttonText}" onchange="updateHybridDialogue(${index}, 'buttonText', this.value)" placeholder="Okay...">
                     <label>Condition (optional):</label>
                     <input type="text" value="${dialogueCondition}" onchange="updateHybridDialogue(${index}, 'condition', this.value)" placeholder="hasAbility:axe">`;
                 container.appendChild(item);
@@ -887,6 +904,7 @@
 
             document.getElementById('charName').value = '';
             document.getElementById('charDescription').value = '';
+            document.getElementById('charCategory').value = '';
             document.getElementById('charSprite').value = '';
             document.getElementById('charPortrait').value = '';
             document.getElementById('charZoneX').value = '0';
@@ -923,15 +941,23 @@
                 zone = `${zoneX},${zoneY}`;
             }
 
+            const category = document.getElementById('charCategory').value.trim();
+
+            const metadata = {
+                description: description || '',
+                created: new Date().toISOString(),
+                version: '1.0.0'
+            };
+
+            if (category) {
+                metadata.category = category;
+            }
+
             const character = {
                 id: charId || 'unnamed_character',
                 name: charName || 'Unnamed Character',
                 type: currentType,
-                metadata: {
-                    description: description || '',
-                    created: new Date().toISOString(),
-                    version: '1.0.0'
-                },
+                metadata: metadata,
                 display: {
                     sprite: document.getElementById('charSprite').value.trim(),
                     portrait: document.getElementById('charPortrait').value.trim(),
@@ -1033,6 +1059,7 @@
         function loadCharacterData(character) {
             document.getElementById('charName').value = character.name || '';
             document.getElementById('charDescription').value = character.metadata?.description || '';
+            document.getElementById('charCategory').value = character.metadata?.category || '';
             document.getElementById('charSprite').value = character.display?.sprite || '';
             document.getElementById('charPortrait').value = character.display?.portrait || '';
 

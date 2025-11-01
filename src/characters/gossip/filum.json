@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/filum.png",
+    "sprite": "characters/npcs/gossip/filum.png",
     "portrait": "characters/npcs/portraits/filumface.png",
     "tileType": "FILUM"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I tried yoga once. Got stuck in downward dog. Fire department came."
+        "text": "I tried yoga once. Got stuck in downward dog. Fire department came.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Trees are just violent broccoli trying to escape the ground."
+        "text": "Trees are just violent broccoli trying to escape the ground.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm writing a cookbook for people who can't cook. It's one page. Says \"Don't.\""
+        "text": "I'm writing a cookbook for people who can't cook. It's one page. Says \"Don't.\"",
+        "buttonText": "Okay..."
       }
     ]
   },

@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/cap.png",
+    "sprite": "characters/npcs/gossip/cap.png",
     "portrait": "characters/npcs/portraits/capface.png",
     "tileType": "CAP"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I tried to return a boomerang once. Kept coming back. We live together now."
+        "text": "I tried to return a boomerang once. Kept coming back. We live together now.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Dolphins are just wet dogs with better PR. Change my mind."
+        "text": "Dolphins are just wet dogs with better PR. Change my mind.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I invested all my money in invisible socks. Can't find them anywhere."
+        "text": "I invested all my money in invisible socks. Can't find them anywhere.",
+        "buttonText": "Okay..."
       }
     ]
   },

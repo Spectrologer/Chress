@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/fork.png",
+    "sprite": "characters/npcs/gossip/fork.png",
     "portrait": "characters/npcs/portraits/forkface.png",
     "tileType": "FORK"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm in a chess match with a potato. It's winning. The potato is winning."
+        "text": "We're nesting partners.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My imaginary friend got an imaginary restraining order against me."
+        "text": "Want to be our third?",
+        "buttonText": "Maybe..."
       },
       {
         "id": "msg_2",
-        "text": "I invented a new emotion. It's like Tuesday, but angry."
+        "text": "We're securely attached.",
+        "buttonText": "Nice."
       }
     ]
   },

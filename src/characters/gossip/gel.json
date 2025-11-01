@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/gel.png",
+    "sprite": "characters/npcs/gossip/gel.png",
     "portrait": "characters/npcs/portraits/gelface.png",
     "tileType": "GEL"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm lactose intolerant of Mondays. They make me sick for days."
+        "text": "I'm lactose intolerant of Mondays. They make me sick for days.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My neighbor is a time traveler. Terrible at parallel parking though."
+        "text": "My neighbor is a time traveler. Terrible at parallel parking though.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I've been banned from seventeen libraries for reorganizing by color."
+        "text": "I've been banned from seventeen libraries for reorganizing by color.",
+        "buttonText": "Okay..."
       }
     ]
   },

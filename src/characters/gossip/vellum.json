@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/vellum.png",
+    "sprite": "characters/npcs/gossip/vellum.png",
     "portrait": "characters/npcs/portraits/vellumface.png",
     "tileType": "VELLUM"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been moonwalking everywhere for two months. Can't stop. Won't stop."
+        "text": "I've been moonwalking everywhere for two months. Can't stop. Won't stop.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My therapist retired after our third session. I take that as a compliment."
+        "text": "My therapist retired after our third session. I take that as a compliment.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm hosting a seminar on how to avoid seminars. It's mandatory."
+        "text": "I'm hosting a seminar on how to avoid seminars. It's mandatory.",
+        "buttonText": "Okay..."
       }
     ]
   },

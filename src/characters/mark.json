@@ -5,10 +5,11 @@
   "metadata": {
     "description": "A simple merchant who trades meat for discoveries. Encourages exploration of the world.",
     "created": "2025-10-27T00:00:00.000Z",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "category": "merchant"
   },
   "display": {
-    "sprite": "characters/npcs/mark.png",
+    "sprite": "characters/npcs/merchant/mark.png",
     "portrait": "characters/npcs/portraits/markface.png",
     "tileType": "MARK"
   },

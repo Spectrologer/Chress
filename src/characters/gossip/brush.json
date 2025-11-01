@@ -9,7 +9,7 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/brush.png",
+    "sprite": "characters/npcs/gossip/brush.png",
     "portrait": "characters/npcs/portraits/brushface.png",
     "tileType": "BRUSH"
   },
@@ -27,15 +27,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I ate a dictionary once. It gave me thesaurus throat. Get it? Get it?"
+        "text": "I ate a dictionary once. It gave me thesaurus throat. Get it? Get it?",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Gravity is just a theory. I've been ignoring it. Not working yet."
+        "text": "Gravity is just a theory. I've been ignoring it. Not working yet.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm writing an autobiography in second person. You were born in 1987..."
+        "text": "I'm writing an autobiography in second person. You were born in 1987...",
+        "buttonText": "Okay..."
       }
     ]
   },

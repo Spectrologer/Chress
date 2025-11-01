@@ -5,10 +5,11 @@
   "metadata": {
     "description": "A wise woodcutter who shares knowledge about the game world. Provides helpful tips and tutorials to new players.",
     "created": "2025-10-27T00:00:00.000Z",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "category": "tutorial"
   },
   "display": {
-    "sprite": "characters/npcs/crayn.png",
+    "sprite": "characters/npcs/tutorial/crayn.png",
     "portrait": "characters/npcs/portraits/craynface.png",
     "tileType": "CRAYN"
   },
@@ -25,47 +26,58 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "You dropped your axe down the well."
+        "text": "You dropped your axe down the well.",
+        "buttonText": "Oh..."
       },
       {
         "id": "msg_1",
-        "text": "Point at places you want to go."
+        "text": "Point at places you want to go.",
+        "buttonText": "Got it."
       },
       {
         "id": "msg_2",
-        "text": "Sometimes I chop a tree to pass the time."
+        "text": "Sometimes I chop a tree to pass the time.",
+        "buttonText": "Cool."
       },
       {
         "id": "msg_3",
-        "text": "They say you are descended from a King."
+        "text": "They say you are descended from a King.",
+        "buttonText": "Really?"
       },
       {
         "id": "msg_4",
-        "text": "The Museum is members only."
+        "text": "The Museum is members only.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_5",
-        "text": "Spears can be used to get past obstacles."
+        "text": "Spears can be used to get past obstacles.",
+        "buttonText": "Thanks."
       },
       {
         "id": "msg_6",
-        "text": "Bombs can send you flying."
+        "text": "Bombs can send you flying.",
+        "buttonText": "Whoa."
       },
       {
         "id": "msg_7",
-        "text": "You can use as many items as you like."
+        "text": "You can use as many items as you like.",
+        "buttonText": "Good to know."
       },
       {
         "id": "msg_8",
-        "text": "The path gets harder the farther you go."
+        "text": "The path gets harder the farther you go.",
+        "buttonText": "I see."
       },
       {
         "id": "msg_9",
-        "text": "Sometimes fighting is a bad choice."
+        "text": "Sometimes fighting is a bad choice.",
+        "buttonText": "True."
       },
       {
         "id": "msg_10",
-        "text": "There is no end to the frontier."
+        "text": "There is no end to the frontier.",
+        "buttonText": "Understood."
       }
     ]
   },

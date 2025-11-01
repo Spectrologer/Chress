@@ -6,11 +6,12 @@
     "description": "A merchant who trades discoveries for the hammer ability. Found in a shack in the wilds.",
     "created": "2025-10-27T00:00:00.000Z",
     "version": "1.0.0",
+    "category": "merchant",
     "board": "boards/canon/gouges.json",
     "notes": "Spawns in a dynamically placed shack in level 3 (wilds). The board is registered at runtime when the shack spawns."
   },
   "display": {
-    "sprite": "characters/npcs/gouge.png",
+    "sprite": "characters/npcs/merchant/gouge.png",
     "portrait": "characters/npcs/portraits/gougeface.png",
     "tileType": "GOUGE"
   },
@@ -48,7 +49,8 @@
       {
         "id": "post_trade",
         "text": "Mind the cracks. The hammer helps, but it won't fix everything.",
-        "condition": "hasAbility:hammer"
+        "condition": "hasAbility:hammer",
+        "buttonText": "Okay..."
       }
     ]
   },
