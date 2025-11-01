@@ -6,13 +6,13 @@
  */
 
 import { TILE_TYPES, GRID_SIZE, ANIMATION_CONSTANTS } from '../core/constants/index.js';
-import { Position } from '../core/Position.js';
+import { Position } from '../core/Position.ts';
 import { TileRegistry } from '../core/TileRegistry.js';
 import { isBomb, isTileType } from '../utils/TileUtils.js';
 import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.ts';
 
 /**
  * Handles player movement logic

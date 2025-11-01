@@ -22,7 +22,7 @@
   },
   "interaction": {
     "type": "barter",
-    "greeting": "Give me meat!",
+    "greeting": "Who said I don't like meat, hand it over!",
     "trades": [
       {
         "id": "penne_water",

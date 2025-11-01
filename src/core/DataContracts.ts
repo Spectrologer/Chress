@@ -1,6 +1,6 @@
-import { ANIMATION_SCHEMAS } from './constants/index.js';
-import { eventBus } from './EventBus.js';
-import { EventTypes } from './EventTypes.js';
+import { ANIMATION_SCHEMAS } from './constants/index.ts';
+import { eventBus } from './EventBus.ts';
+import { EventTypes } from './EventTypes.ts';
 
 interface TileBase {
   type: number | string;

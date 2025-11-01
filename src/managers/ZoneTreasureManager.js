@@ -1,6 +1,6 @@
 import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 import { isFloor, isTileType } from '../utils/TypeChecks.js';
 
 /**

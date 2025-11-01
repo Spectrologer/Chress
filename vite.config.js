@@ -151,8 +151,20 @@ export default defineConfig({
         {
           src: 'src/characters/*.json',
           dest: 'characters'
+        },
+        {
+          src: 'src/characters/gossip/*.json',
+          dest: 'characters/gossip'
+        },
+        {
+          src: 'assets/**/*',
+          dest: 'assets'
         }
-      ]
+      ],
+      // Watch for changes in development
+      watch: {
+        reloadPageOnChange: true
+      }
     }),
     VitePWA({
       registerType: 'autoUpdate',
@@ -256,7 +268,7 @@ export default defineConfig({
       },
 
       devOptions: {
-        enabled: true, // Enable in dev to test PWA functionality
+        enabled: false, // Disable in dev to prevent aggressive caching of assets
         type: 'module'
       }
     })

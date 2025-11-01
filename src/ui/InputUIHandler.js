@@ -1,8 +1,8 @@
 import { TILE_TYPES } from '../core/constants/index.js';
 import { Sign } from './Sign.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { isAdjacent } from '../core/utils/DirectionUtils.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
+import { isAdjacent } from '../core/utils/DirectionUtils.ts';
 import { getTileType } from '../utils/TileUtils.js';
 import { TileRegistry } from '../core/TileRegistry.js';
 

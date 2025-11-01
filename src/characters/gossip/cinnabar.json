@@ -1,0 +1,49 @@
+{
+  "id": "cinnabar",
+  "name": "Cinnabar",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A character who works with vibrant red pigments.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/cinnabar.png",
+    "portrait": "characters/npcs/portraits/cinnabarface.png",
+    "tileType": "CINNABAR"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I taught my refrigerator to beatbox. It only does it when I'm not home."
+      },
+      {
+        "id": "msg_1",
+        "text": "Time is a flat circle. I ironed it myself. Took three hours."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm opening a restaurant that only serves room temperature water. Five stars."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 102
+  }
+}

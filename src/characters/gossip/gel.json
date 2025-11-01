@@ -1,0 +1,49 @@
+{
+  "id": "gel",
+  "name": "Gel",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A viscous character with a fluid personality.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gel.png",
+    "portrait": "characters/npcs/portraits/gelface.png",
+    "tileType": "GEL"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I'm lactose intolerant of Mondays. They make me sick for days."
+      },
+      {
+        "id": "msg_1",
+        "text": "My neighbor is a time traveler. Terrible at parallel parking though."
+      },
+      {
+        "id": "msg_2",
+        "text": "I've been banned from seventeen libraries for reorganizing by color."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 108
+  }
+}

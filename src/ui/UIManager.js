@@ -4,8 +4,8 @@ import { PlayerStatsUI } from './PlayerStatsUI.js';
 import { Sign } from './Sign.js';
 import { MiniMap } from './MiniMap.js';
 import { UIEventCoordinator } from './UIEventCoordinator.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 
 export class UIManager {
     constructor(game) {

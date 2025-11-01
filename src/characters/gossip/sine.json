@@ -1,0 +1,49 @@
+{
+  "id": "sine",
+  "name": "Sine",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A wavy character who follows sinuous patterns.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/sine.png",
+    "portrait": "characters/npcs/portraits/sineface.png",
+    "tileType": "SINE"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I'm learning Morse code to communicate with my blinking ceiling light."
+      },
+      {
+        "id": "msg_1",
+        "text": "Sandwiches are just bread-based hostage situations for ingredients."
+      },
+      {
+        "id": "msg_2",
+        "text": "I've been training for a marathon. The Netflix kind. Very competitive."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 110
+  }
+}

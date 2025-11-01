@@ -636,7 +636,7 @@
             'floors/mulch': '../assets/environment/floors/mulch.png',
             'floors/seaice': '../assets/environment/floors/seaice.png',
             'floors/underbrush': '../assets/environment/floors/underbrush.png',
-            'floors/water': '../assets/environment/floors/water.png',
+            'floors/aqua': '../assets/environment/floors/aqua.png',
 
             // WALL - Non-walkable walls
             'walls/90s': '../assets/environment/walls/90s.png',
@@ -727,8 +727,40 @@
             'nib': '../assets/characters/npcs/nib.png',
             'penne': '../assets/characters/npcs/penne.png',
             'random_merchant': '🛒',
+            'random_gossip_npc': '💬',
             'rune': '../assets/characters/npcs/rune.png',
             'squig': '../assets/characters/npcs/squig.png',
+            // Gossip NPCs
+            'aster': '../assets/characters/npcs/aster.png',
+            'blot': '../assets/characters/npcs/blot.png',
+            'blotter': '../assets/characters/npcs/blotter.png',
+            'brush': '../assets/characters/npcs/brush.png',
+            'burin': '../assets/characters/npcs/burin.png',
+            'calamus': '../assets/characters/npcs/calamus.png',
+            'cap': '../assets/characters/npcs/cap.png',
+            'cinnabar': '../assets/characters/npcs/cinnabar.png',
+            'crock': '../assets/characters/npcs/crock.png',
+            'filum': '../assets/characters/npcs/filum.png',
+            'fork': '../assets/characters/npcs/fork.png',
+            'gel': '../assets/characters/npcs/gel.png',
+            'gouache': '../assets/characters/npcs/gouache.png',
+            'hane': '../assets/characters/npcs/hane.png',
+            'kraft': '../assets/characters/npcs/kraft.png',
+            'merki': '../assets/characters/npcs/merki.png',
+            'micron': '../assets/characters/npcs/micron.png',
+            'penni': '../assets/characters/npcs/penni.png',
+            'pluma': '../assets/characters/npcs/pluma.png',
+            'plume': '../assets/characters/npcs/plume.png',
+            'quill': '../assets/characters/npcs/quill.png',
+            'raddle': '../assets/characters/npcs/raddle.png',
+            'scritch': '../assets/characters/npcs/scritch.png',
+            'silver': '../assets/characters/npcs/silver.png',
+            'sine': '../assets/characters/npcs/sine.png',
+            'slate': '../assets/characters/npcs/slate.png',
+            'slick': '../assets/characters/npcs/slick.png',
+            'slug': '../assets/characters/npcs/slug.png',
+            'stylet': '../assets/characters/npcs/stylet.png',
+            'vellum': '../assets/characters/npcs/vellum.png',
 
             // STATUE (using same assets with overlay indicator)
             'bomb_statue': '../assets/items/misc/bomb.png',
@@ -766,7 +798,7 @@
 
         const defaultPalettes = {
             FLOOR: [
-                'floors/dirt', 'floors/grass', 'floors/water', 'floors/desert', 'floors/gravel', 'floors/mulch', 'floors/crag',
+                'floors/dirt', 'floors/grass', 'floors/aqua', 'floors/desert', 'floors/gravel', 'floors/mulch', 'floors/crag',
                 'floors/bones', 'floors/clouds', 'floors/crackedseaice', 'floors/seaice', 'floors/dirtpatch', 'floors/housetile', 'floors/underbrush',
                 null
             ],
@@ -804,7 +836,12 @@
                 null
             ],
             NPC: [
-                'axelotl', 'crayn', 'felt', 'forge', 'gouge', 'mark', 'nib', 'penne', 'rune', 'squig', 'random_merchant',
+                'axelotl', 'crayn', 'felt', 'forge', 'gouge', 'mark', 'nib', 'penne', 'rune', 'squig', 'random_merchant', 'random_gossip_npc',
+                // Gossip NPCs
+                'aster', 'blot', 'blotter', 'brush', 'burin', 'calamus', 'cap', 'cinnabar', 'crock',
+                'filum', 'fork', 'gel', 'gouache', 'hane', 'kraft', 'merki', 'micron', 'penni',
+                'pluma', 'plume', 'quill', 'raddle', 'scritch', 'silver', 'sine', 'slate', 'slick',
+                'slug', 'stylet', 'vellum',
                 null
             ],
             STATUE: [
@@ -1371,7 +1408,7 @@
 
             // Floor items -> add 'floors/' prefix
             const floorItems = [
-                'dirt', 'grass', 'water', 'desert', 'gravel', 'mulch', 'crag',
+                'dirt', 'grass', 'aqua', 'desert', 'gravel', 'mulch', 'crag',
                 'bones', 'clouds', 'crackedseaice', 'seaice', 'dirtpatch', 'housetile', 'underbrush'
             ];
 

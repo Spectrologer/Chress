@@ -2,7 +2,7 @@ import { Sign } from '../ui/Sign.js';
 import { TILE_TYPES, GRID_SIZE, ZONE_CONSTANTS } from '../core/constants/index.js';
 import { randomInt, findValidPlacement, isAllowedTile, validateAndSetTile } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 import { isTileType, isTileObjectOfType, isFloor, isSign } from '../utils/TypeChecks.js';
 
 export class StructureGenerator {

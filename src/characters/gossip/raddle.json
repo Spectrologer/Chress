@@ -1,0 +1,49 @@
+{
+  "id": "raddle",
+  "name": "Raddle",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A character who marks and colors with red ochre.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/raddle.png",
+    "portrait": "characters/npcs/portraits/raddleface.png",
+    "tileType": "RADDLE"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I iron my jeans. My friends staged an intervention. I ironed the intervention pamphlet."
+      },
+      {
+        "id": "msg_1",
+        "text": "Butterflies are just moths with good marketing teams."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm afraid of palindromes. Mom won't talk to me. See the problem?"
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 94
+  }
+}

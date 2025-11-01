@@ -1,9 +1,9 @@
 import { Sign } from './Sign.js';
 import { FOOD_ASSETS, TILE_TYPES } from '../core/constants/index.js';
-import { fitTextToContainer } from './TextFitter.js';
+import { fitTextToContainer } from './TextFitter.ts';
 import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 import { safeCall } from '../utils/SafeServiceCall.js';
 
 export class BarterWindow {
@@ -35,9 +35,13 @@ export class BarterWindow {
             category: 'trade',
             priority: 'info'
         });
+        // Add assets/ prefix if not already present
+        const imageSrc = imageAsset && !imageAsset.startsWith('assets/')
+            ? `assets/${imageAsset}`
+            : imageAsset;
         eventBus.emit(EventTypes.UI_OVERLAY_MESSAGE_SHOW, {
             text: 'Trade successful!',
-            imageSrc: imageAsset,
+            imageSrc: imageSrc,
             persistent: false,
             largeText: false,
             useTypewriter: false
@@ -363,9 +367,14 @@ export class BarterWindow {
                 });
             }
 
+            // Add assets/ prefix if not already present
+            const axeImg = tradeData.receivedItemImg && !tradeData.receivedItemImg.startsWith('assets/')
+                ? `assets/${tradeData.receivedItemImg}`
+                : tradeData.receivedItemImg;
+
             eventBus.emit(EventTypes.UI_OVERLAY_MESSAGE_SHOW, {
                 text: 'Trade successful!',
-                imageSrc: tradeData.receivedItemImg,
+                imageSrc: axeImg,
                 persistent: false,
                 largeText: false,
                 useTypewriter: false

@@ -1,0 +1,49 @@
+{
+  "id": "blotter",
+  "name": "Blotter",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A careful character who cleans up ink spills.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/blotter.png",
+    "portrait": "characters/npcs/portraits/blotterface.png",
+    "tileType": "BLOTTER"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've been stuck in this Tuesday for four months. Nobody else seems to notice."
+      },
+      {
+        "id": "msg_1",
+        "text": "The ocean called. They want their water back. I said no. Hung up."
+      },
+      {
+        "id": "msg_2",
+        "text": "My houseplant judges me. It's not even alive anymore. Still judging."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 95
+  }
+}

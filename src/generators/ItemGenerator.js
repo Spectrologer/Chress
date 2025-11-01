@@ -4,7 +4,7 @@ import { randomInt, findValidPlacement, getGridCenter, isWithinBounds } from './
 import { ZoneStateManager } from './ZoneStateManager.js';
 import { PathGenerator } from './PathGenerator.js';
 import { ContentRegistry } from '../core/ContentRegistry.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 
 export class ItemGenerator {
     constructor(gridManager, foodAssets, zoneX, zoneY, dimension, depth) {

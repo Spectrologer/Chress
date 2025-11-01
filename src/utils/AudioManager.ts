@@ -10,8 +10,8 @@
  * 3. Silent failure (graceful degradation)
  */
 
-import { logger } from '../core/logger.js';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { logger } from '../core/logger.ts';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.ts';
 import MethodChecker from './MethodChecker.js';
 
 interface SoundManager {

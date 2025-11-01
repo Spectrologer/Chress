@@ -1,0 +1,49 @@
+{
+  "id": "burin",
+  "name": "Burin",
+  "type": "dialogue",
+  "metadata": {
+    "description": "An engraver who carves intricate designs.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/burin.png",
+    "portrait": "characters/npcs/portraits/burinface.png",
+    "tileType": "BURIN"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've been screaming into the void for years. The void just screamed back. We're dating now."
+      },
+      {
+        "id": "msg_1",
+        "text": "Did you know penguins have knees? This has ruined my entire worldview."
+      },
+      {
+        "id": "msg_2",
+        "text": "I started a business selling dehydrated water. Just add water!"
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 90
+  }
+}

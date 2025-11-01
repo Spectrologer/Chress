@@ -3,7 +3,7 @@ import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/in
 import { GENERATOR_CONSTANTS } from '../core/constants/ui.js';
 import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 import { isFloor, isWall } from '../utils/TypeChecks.js';
 
 export class FeatureGenerator {

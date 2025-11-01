@@ -1,0 +1,49 @@
+{
+  "id": "penni",
+  "name": "Penni",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A cheerful writer who loves the written word.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/penni.png",
+    "portrait": "characters/npcs/portraits/penniface.png",
+    "tileType": "PENNI"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I'm teaching a masterclass on overthinking. First session: Is this necessary?"
+      },
+      {
+        "id": "msg_1",
+        "text": "My coffee machine achieved sentience. Now it judges my life choices."
+      },
+      {
+        "id": "msg_2",
+        "text": "I invented silent screaming. It's just thinking really loud."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 120
+  }
+}

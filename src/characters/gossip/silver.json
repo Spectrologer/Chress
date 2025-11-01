@@ -1,0 +1,49 @@
+{
+  "id": "silver",
+  "name": "Silver",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A shiny character who works with metallic pigments.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/silver.png",
+    "portrait": "characters/npcs/portraits/silverface.png",
+    "tileType": "SILVER"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've been in a staring contest with a painting for six days. It blinked first."
+      },
+      {
+        "id": "msg_1",
+        "text": "My nemesis is a guy who returns shopping carts. We've never met. It's complicated."
+      },
+      {
+        "id": "msg_2",
+        "text": "I tried to high-five a ghost. Went right through. We're both disappointed."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 106
+  }
+}

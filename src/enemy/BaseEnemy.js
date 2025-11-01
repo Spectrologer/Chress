@@ -1,6 +1,6 @@
 // @ts-check
 import { TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '../core/constants/index.js';
-import { Position } from '../core/Position.js';
+import { Position } from '../core/Position.ts';
 
 /**
  * @typedef {Object} EnemyData

@@ -1,7 +1,7 @@
 import { PlayerPositionFacade } from './PlayerPositionFacade.js';
 import { PlayerInventoryFacade } from './PlayerInventoryFacade.js';
 import { PlayerStatsFacade } from './PlayerStatsFacade.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 
 /**
  * PlayerFacade - Centralized abstraction layer for player operations

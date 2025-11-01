@@ -1,4 +1,4 @@
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 import { TILE_TYPES, GRID_SIZE, getZoneLevelFromDistance } from '../core/constants/index.js';
 
 /**

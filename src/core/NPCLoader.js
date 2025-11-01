@@ -6,7 +6,7 @@
  */
 
 import { TILE_TYPES } from './constants/index.js';
-import { npcList } from 'virtual:npc-list';
+import { npcList, npcPaths } from 'virtual:npc-list';
 
 /**
  * NPC character data loaded from JSON files
@@ -77,9 +77,12 @@ export async function loadAllNPCs(registry) {
         throw new Error('NPCLoader.loadAllNPCs requires a valid ContentRegistry instance');
     }
 
-    const npcFiles = npcList;
+    // Use npcPaths if available (supports subdirectories), fallback to npcList
+    const npcs = npcPaths && npcPaths.length > 0
+        ? npcPaths
+        : npcList.map(id => ({ id, path: id }));
 
-    const loadPromises = npcFiles.map(async (npcId) => {
+    const loadPromises = npcs.map(async (npc) => {
         try {
             // Use relative path that works with base URL configuration
             // In dev, files are at /src/characters/
@@ -87,19 +90,19 @@ export async function loadAllNPCs(registry) {
             const basePath = import.meta.env.BASE_URL || '/';
             const isProduction = import.meta.env.PROD;
             const characterPath = isProduction ? 'characters' : 'src/characters';
-            const response = await fetch(`${basePath}${characterPath}/${npcId}.json`);
+            const response = await fetch(`${basePath}${characterPath}/${npc.path}.json`);
             if (!response.ok) {
-                console.warn(`[NPCLoader] Failed to load ${npcId}.json: ${response.status}`);
+                console.warn(`[NPCLoader] Failed to load ${npc.path}.json: ${response.status}`);
                 return;
             }
 
             const npcData = await response.json();
             const registryConfig = loadNPCFromJSON(npcData);
 
-            registry.registerNPC(npcId, registryConfig);
-            // console.log(`[NPCLoader] Loaded NPC: ${npcId}`);
+            registry.registerNPC(npc.id, registryConfig);
+            // console.log(`[NPCLoader] Loaded NPC: ${npc.id}`);
         } catch (error) {
-            console.error(`[NPCLoader] Error loading ${npcId}:`, error);
+            console.error(`[NPCLoader] Error loading ${npc.id}:`, error);
         }
     });
 

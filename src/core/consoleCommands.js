@@ -2,10 +2,11 @@
 // This file uses a registry pattern to reduce repetitive code
 
 import { TILE_TYPES, GRID_SIZE } from './constants/index.js';
-import { logger } from './logger.js';
+import { logger } from './logger.ts';
 import { customZoneLoader } from '../loaders/CustomZoneLoader.js';
+import { boardLoader } from './BoardLoader.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import { PositionValidator } from './PositionValidator.js';
+import { PositionValidator } from './PositionValidator.ts';
 import {
   generateSpawnCommands,
   generateEnemyCommands,
@@ -282,6 +283,12 @@ const utilityCommands = {
     if (confirm('Are you sure you want to restart the game? All progress will be lost.')) {
       game.resetGame();
     }
+  },
+
+  // Clear board cache
+  clearBoardCache: function(game) {
+    boardLoader.clearCache();
+    logger.log('Board cache cleared. Custom boards will be reloaded from files.');
   }
 };
 

@@ -1,0 +1,49 @@
+{
+  "id": "fork",
+  "name": "Fork",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A character who represents choices and diverging paths.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/fork.png",
+    "portrait": "characters/npcs/portraits/forkface.png",
+    "tileType": "FORK"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I'm in a chess match with a potato. It's winning. The potato is winning."
+      },
+      {
+        "id": "msg_1",
+        "text": "My imaginary friend got an imaginary restraining order against me."
+      },
+      {
+        "id": "msg_2",
+        "text": "I invented a new emotion. It's like Tuesday, but angry."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 92
+  }
+}

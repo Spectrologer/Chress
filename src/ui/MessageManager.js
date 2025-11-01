@@ -1,13 +1,13 @@
-import { logger } from '../core/logger.js';
-import { NoteStack } from './NoteStack.js';
-import { RegionNotification } from './RegionNotification.js';
-import { OverlayMessageHandler } from './OverlayMessageHandler.js';
-import { TypewriterController } from './TypewriterController.js';
-import { DialogueManager } from './DialogueManager.js';
-import { MessageLog } from './MessageLog.js';
-import { PenneMessageHandler } from './PenneMessageHandler.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { logger } from '../core/logger.ts';
+import { NoteStack } from './NoteStack.ts';
+import { RegionNotification } from './RegionNotification.ts';
+import { OverlayMessageHandler } from './OverlayMessageHandler.ts';
+import { TypewriterController } from './TypewriterController.ts';
+import { DialogueManager } from './DialogueManager.ts';
+import { MessageLog } from './MessageLog.ts';
+import { PenneMessageHandler } from './PenneMessageHandler.ts';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 import { UI_TIMING_CONSTANTS } from '../core/constants/ui.js';
 
 /**

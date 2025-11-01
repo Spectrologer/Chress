@@ -1,9 +1,9 @@
 import { TILE_TYPES } from '../core/constants/index.js';
 import { Sign } from '../ui/Sign.js';
 import { TileRegistry } from '../core/TileRegistry.js';
-import { isAdjacent } from '../core/utils/DirectionUtils.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { isAdjacent } from '../core/utils/DirectionUtils.ts';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 import { isTileObjectOfType } from '../utils/TypeChecks.js';
 
 export class EnvironmentalInteractionManager {

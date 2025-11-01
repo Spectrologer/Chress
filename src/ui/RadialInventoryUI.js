@@ -1,8 +1,8 @@
 import { TILE_SIZE, TILE_TYPES, UI_CONSTANTS, TIMING_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants/index.js';
 import { saveRadialInventory } from '../managers/RadialPersistence.js';
 import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 
 export class RadialInventoryUI {
     constructor(game, inventoryService) {

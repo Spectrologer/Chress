@@ -1,0 +1,49 @@
+{
+  "id": "pluma",
+  "name": "Pluma",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A feathered character who represents quill writing.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/pluma.png",
+    "portrait": "characters/npcs/portraits/plumaface.png",
+    "tileType": "PLUMA"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've been waiting for my Hogwarts letter for thirty-eight years. Still checking."
+      },
+      {
+        "id": "msg_1",
+        "text": "Mitochondria is the powerhouse of the cell. This is all I remember from school."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm hosting a party for introverts. Nobody's coming. Perfect."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 114
+  }
+}

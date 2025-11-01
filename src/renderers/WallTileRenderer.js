@@ -13,23 +13,9 @@ export class WallTileRenderer {
         const customTexture = terrainTextures[coord];
         const rotation = rotations[coord] || 0;
 
-        // Debug logging for specific tiles
-        if ((coord === '9,0' || coord === '4,1' || coord === '0,9') && !this._debuggedCoords) {
-            this._debuggedCoords = this._debuggedCoords || new Set();
-            if (!this._debuggedCoords.has(coord)) {
-                console.log(`[WallTileRenderer] Rendering wall at ${coord}: texture=${customTexture}, rotation=${rotation}`);
-                this._debuggedCoords.add(coord);
-            }
-        }
-
         if (customTexture) {
             // Strip folder prefix if present (e.g., 'walls/clubwall5' -> 'clubwall5')
             const textureName = customTexture.includes('/') ? customTexture.split('/')[1] : customTexture;
-
-            // Debug logging for clubwall6
-            if (textureName === 'clubwall6') {
-                console.log(`[WallTileRenderer] Checking clubwall6 at ${coord}: isLoaded=${RendererUtils.isImageLoaded(this.images, textureName)}, images.clubwall6=${!!this.images.clubwall6}`);
-            }
 
             if (RendererUtils.isImageLoaded(this.images, textureName)) {
                 ctx.save();

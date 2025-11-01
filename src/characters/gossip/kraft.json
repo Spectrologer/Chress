@@ -1,0 +1,49 @@
+{
+  "id": "kraft",
+  "name": "Kraft",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A sturdy character made of strong paper materials.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/kraft.png",
+    "portrait": "characters/npcs/portraits/kraftface.png",
+    "tileType": "KRAFT"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've been photosynthesizing wrong my entire life. I'm not even a plant."
+      },
+      {
+        "id": "msg_1",
+        "text": "My dentist is a conspiracy theorist. Says teeth aren't real. Still goes to work."
+      },
+      {
+        "id": "msg_2",
+        "text": "I have a PhD in procrastination. Will get the diploma later."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 78
+  }
+}

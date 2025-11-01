@@ -1,8 +1,8 @@
 import { TILE_TYPES } from '../core/constants/index.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 import { TileRegistry } from '../core/TileRegistry.js';
-import { isAdjacent } from '../core/utils/DirectionUtils.js';
+import { isAdjacent } from '../core/utils/DirectionUtils.ts';
 
 export class TerrainInteractionManager {
     constructor(game) {

@@ -14,7 +14,7 @@ export const IMAGE_ASSETS = [
     'environment/floors/mulch.png',
     'environment/floors/seaice.png',
     'environment/floors/underbrush.png',
-    'environment/floors/water.png',
+    'environment/floors/aqua.png',
     // Wall textures
     'environment/walls/rockwall.png',
     'environment/walls/clubwall.png',

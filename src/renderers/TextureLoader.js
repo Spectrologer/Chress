@@ -1,5 +1,5 @@
 import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES } from '../core/constants/index.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 
 export class TextureLoader {
     constructor() {

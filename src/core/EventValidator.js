@@ -1,4 +1,4 @@
-import { EventTypes } from './EventTypes.js';
+import { EventTypes } from './EventTypes.ts';
 
 /**
  * EventValidator - Validates event data against registered schemas

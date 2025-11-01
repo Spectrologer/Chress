@@ -1,0 +1,49 @@
+{
+  "id": "micron",
+  "name": "Micron",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A precise character who works with ultra-fine lines.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/micron.png",
+    "portrait": "characters/npcs/portraits/micronface.png",
+    "tileType": "MICRON"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I argue with my microwave. It started it. I'm ending it."
+      },
+      {
+        "id": "msg_1",
+        "text": "Raccoons are just goth squirrels with better hand hygiene."
+      },
+      {
+        "id": "msg_2",
+        "text": "I tried meditation. My brain filed a noise complaint against itself."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 112
+  }
+}

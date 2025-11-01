@@ -1,5 +1,5 @@
 import { GRID_SIZE, TILE_TYPES, ZONE_CONSTANTS, GAMEPLAY_CONSTANTS } from './constants/index.js';
-import { logger } from './logger.js';
+import { logger } from './logger.ts';
 import GridIterator from '../utils/GridIterator.js';
 import { isTileType } from '../utils/TileUtils.js';
 

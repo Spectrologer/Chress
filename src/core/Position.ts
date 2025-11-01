@@ -17,11 +17,11 @@
  * for mathematical operations and validation logic.
  */
 
-import { getOffset, getDeltaToDirection } from './utils/DirectionUtils.js';
-import type { ArrowDirection } from './utils/DirectionUtils.js';
-import { GRID_SIZE } from './constants/index.js';
-import { PositionCalculator } from './PositionCalculator.js';
-import { PositionValidator } from './PositionValidator.js';
+import { getOffset, getDeltaToDirection } from './utils/DirectionUtils.ts';
+import type { ArrowDirection } from './utils/DirectionUtils.ts';
+import { GRID_SIZE } from './constants/index.ts';
+import { PositionCalculator } from './PositionCalculator.ts';
+import { PositionValidator } from './PositionValidator.ts';
 
 // Re-export the utility classes for convenience
 export { PositionCalculator, PositionValidator };

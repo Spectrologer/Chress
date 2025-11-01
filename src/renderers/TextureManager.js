@@ -3,7 +3,7 @@ import { TextureLoader } from './TextureLoader.js'; // This seems to be a duplic
 import { TextureDetector } from './TextureDetector.js';
 import { TileRenderer } from './TileRenderer.js';
 import { MultiTileHandler } from './MultiTileHandler.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 
 export class TextureManager {
     constructor() {

@@ -1,0 +1,49 @@
+{
+  "id": "plume",
+  "name": "Plume",
+  "type": "dialogue",
+  "metadata": {
+    "description": "An elegant character with flowing feathered writing tools.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/plume.png",
+    "portrait": "characters/npcs/portraits/plumeface.png",
+    "tileType": "PLUME"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I speak to plants. They asked me to stop. I respect their boundaries."
+      },
+      {
+        "id": "msg_1",
+        "text": "My life coach is a motivational poster that fell off the wall. Still inspires me."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm allergic to common sense. Doctor says it's terminal stupidity."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 116
+  }
+}

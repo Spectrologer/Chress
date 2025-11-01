@@ -1,4 +1,4 @@
-import type { EventType, EventDataMap } from './EventTypes.js';
+import type { EventType, EventDataMap } from './EventTypes.ts';
 
 /**
  * EventBus - A centralized publish-subscribe event system for decoupling managers

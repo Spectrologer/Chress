@@ -1,4 +1,4 @@
-import { logger } from './logger.js';
+import { logger } from './logger.ts';
 
 interface UIManager {
   showOverlayMessage?(html: string, duration: number | null, isPersistent: boolean, isLargeText: boolean): void;

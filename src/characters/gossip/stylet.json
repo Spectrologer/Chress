@@ -1,0 +1,49 @@
+{
+  "id": "stylet",
+  "name": "Stylet",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A pointed character used for ancient writing on wax tablets.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/stylet.png",
+    "portrait": "characters/npcs/portraits/styletface.png",
+    "tileType": "STYLET"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I taught my parrot to say 'existential crisis.' Now we're both having one."
+      },
+      {
+        "id": "msg_1",
+        "text": "My vacuum cleaner has performance anxiety. Only works when nobody's watching."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm starting a religion based on naps. First commandment: Thou shalt snooze."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 88
+  }
+}

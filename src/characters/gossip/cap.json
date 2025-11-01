@@ -1,0 +1,49 @@
+{
+  "id": "cap",
+  "name": "Cap",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A character who keeps everything sealed and protected.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/cap.png",
+    "portrait": "characters/npcs/portraits/capface.png",
+    "tileType": "CAP"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I tried to return a boomerang once. Kept coming back. We live together now."
+      },
+      {
+        "id": "msg_1",
+        "text": "Dolphins are just wet dogs with better PR. Change my mind."
+      },
+      {
+        "id": "msg_2",
+        "text": "I invested all my money in invisible socks. Can't find them anywhere."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 98
+  }
+}

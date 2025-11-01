@@ -29,7 +29,7 @@
       },
       {
         "id": "msg_1",
-        "text": "Press down on items to disable them."
+        "text": "Point at places you want to go."
       },
       {
         "id": "msg_2",
@@ -41,7 +41,7 @@
       },
       {
         "id": "msg_4",
-        "text": "The Woodcutter's Club is members only."
+        "text": "The Museum is members only."
       },
       {
         "id": "msg_5",
@@ -53,7 +53,7 @@
       },
       {
         "id": "msg_7",
-        "text": "You can only hold six items, but you can use as many as you like."
+        "text": "You can use as many items as you like."
       },
       {
         "id": "msg_8",
@@ -61,15 +61,11 @@
       },
       {
         "id": "msg_9",
-        "text": "Sometimes enemies simply have a better position."
+        "text": "Sometimes fighting is a bad choice."
       },
       {
         "id": "msg_10",
         "text": "There is no end to the frontier."
-      },
-      {
-        "id": "msg_11",
-        "text": "Beyond the frontier is the adjudicator"
       }
     ]
   },

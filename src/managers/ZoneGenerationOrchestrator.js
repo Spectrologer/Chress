@@ -7,7 +7,7 @@
  */
 
 import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 import { boardLoader } from '../core/BoardLoader.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 import { isWithinGrid } from '../utils/GridUtils.js';

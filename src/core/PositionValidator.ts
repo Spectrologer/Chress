@@ -11,7 +11,7 @@
  * All methods are static and work with position-like objects {x, y}.
  */
 
-import { GRID_SIZE } from './constants/index.js';
+import { GRID_SIZE } from './constants/index.ts';
 
 export interface Coordinates {
   x: number;

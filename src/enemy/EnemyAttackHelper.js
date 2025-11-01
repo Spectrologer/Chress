@@ -1,7 +1,7 @@
 import audioManager from '../utils/AudioManager.js';
 import { ANIMATION_CONSTANTS } from '../core/constants/index.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 
 /**
  * EnemyAttackHelper - Centralized utility for enemy attack animations and events

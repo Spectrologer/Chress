@@ -9,7 +9,7 @@
  */
 import { GRID_SIZE } from '../core/constants/index.js';
 import { getTileType } from '../utils/TileUtils.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 import { GridCoreOperations } from './grid/GridCoreOperations.js';
 import { GridQueryOperations } from './grid/GridQueryOperations.js';
 import { GridIterationOperations } from './grid/GridIterationOperations.js';

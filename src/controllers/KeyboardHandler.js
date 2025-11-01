@@ -1,7 +1,7 @@
 import { Sign } from '../ui/Sign.js';
 import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 
 /**
  * KeyboardHandler - Handles keyboard input and key mapping

@@ -1,5 +1,5 @@
 import { FOOD_ASSETS } from './constants/index.js';
-import { logger } from './logger.js';
+import { logger } from './logger.ts';
 
 /**
  * AssetLoader

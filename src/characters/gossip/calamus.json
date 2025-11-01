@@ -1,0 +1,49 @@
+{
+  "id": "calamus",
+  "name": "Calamus",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A traditional scribe who uses reed pens.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/calamus.png",
+    "portrait": "characters/npcs/portraits/calamusface.png",
+    "tileType": "CALAMUS"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I'm allergic to Wednesdays. Breaks out in existential dread every week."
+      },
+      {
+        "id": "msg_1",
+        "text": "My shadow filed for divorce. Said I was too two-dimensional."
+      },
+      {
+        "id": "msg_2",
+        "text": "I collect belly button lint from famous people. It's worth nothing. I have jars."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 88
+  }
+}

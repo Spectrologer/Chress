@@ -7,7 +7,7 @@
  * - PlayerCombatHandler: Player attack handling
  * - CollisionDetectionSystem: Collision detection and resolution
  */
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.ts';
 import { safeCall, safeGet } from '../utils/SafeServiceCall.js';
 import { EnemyMovementHandler } from './combat/EnemyMovementHandler.js';
 import { PlayerCombatHandler } from './combat/PlayerCombatHandler.js';

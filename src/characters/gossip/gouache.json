@@ -1,0 +1,49 @@
+{
+  "id": "gouache",
+  "name": "Gouache",
+  "type": "dialogue",
+  "metadata": {
+    "description": "An opaque painter who works with thick, vibrant colors.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gouache.png",
+    "portrait": "characters/npcs/portraits/gouacheface.png",
+    "tileType": "GOUACHE"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I trained my alarm clock to lie to me. Now we both sleep in."
+      },
+      {
+        "id": "msg_1",
+        "text": "Clouds are just sky mistakes that we pretend to like."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm starting a support group for people who are too well-adjusted. Empty so far."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 96
+  }
+}

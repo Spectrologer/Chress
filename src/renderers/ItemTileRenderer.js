@@ -1,6 +1,6 @@
 import { TILE_COLORS, TILE_TYPES, TILE_SIZE, SCALE_CONSTANTS, PULSATE_CONSTANTS } from '../core/constants/index.js';
 import { RendererUtils } from './RendererUtils.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 import { isBomb, isTileObject } from '../utils/TypeChecks.js';
 
 export class ItemTileRenderer {

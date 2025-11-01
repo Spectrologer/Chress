@@ -25,13 +25,13 @@ import { PlayerAbilities } from './PlayerAbilities.js';
 import { PlayerZoneTracking } from './PlayerZoneTracking.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.ts';
 import { TileRegistry } from '../core/TileRegistry.js';
 import { isBomb, isTileType } from '../utils/TileUtils.js';
 import GridIterator from '../utils/GridIterator.js';
-import { Position } from '../core/Position.js';
+import { Position } from '../core/Position.ts';
 
 export class Player {
     constructor() {

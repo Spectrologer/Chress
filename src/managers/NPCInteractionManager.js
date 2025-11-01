@@ -1,7 +1,7 @@
 import { Sign } from '../ui/Sign.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { isAdjacent } from '../core/utils/DirectionUtils.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
+import { isAdjacent } from '../core/utils/DirectionUtils.ts';
 import { NPC_CONFIG } from '../config/NPCConfig.js';
 
 export class NPCInteractionManager {

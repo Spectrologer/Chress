@@ -232,6 +232,13 @@ export class PlayerRenderer {
                 if (tileUnderPlayer && tileUnderPlayer.type === TILE_TYPES.PORT && tileUnderPlayer.portKind) {
                     if (tileUnderPlayer.portKind === 'stairdown') rotationAngle = Math.PI; // point down to indicate descend
                     else if (tileUnderPlayer.portKind === 'stairup') rotationAngle = 0; // point up to indicate ascend
+                    else if (tileUnderPlayer.portKind === 'cistern') {
+                        // For cisterns, arrow points down to enter, and up to exit
+                        rotationAngle = this.game.player.currentZone.dimension === 0 ? Math.PI : 0;
+                    } else if (tileUnderPlayer.portKind === 'interior') {
+                        // For interior doors, arrow points up to enter, and down to exit
+                        rotationAngle = this.game.player.currentZone.dimension === 0 ? 0 : Math.PI;
+                    }
                 } else if (tileUnderPlayer === TILE_TYPES.PORT) {
                     const isCistern = MultiTileHandler.findCisternPosition(playerGridX, playerGridY, this.game.gridManager);
                     const isHole = !isCistern && !MultiTileHandler.findShackPosition(playerGridX, playerGridY, this.game.gridManager) && !MultiTileHandler.findHousePosition(playerGridX, playerGridY, this.game.gridManager);

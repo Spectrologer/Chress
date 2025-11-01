@@ -1,4 +1,4 @@
-import { TILE_TYPES } from '../core/constants/index.js';
+import { TILE_TYPES } from '../core/constants/index.ts';
 
 /**
  * TileUtils - Centralized tile type checking and normalization

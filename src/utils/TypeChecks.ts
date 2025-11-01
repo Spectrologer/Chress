@@ -15,7 +15,7 @@
  * ❌ BAD:  tile === TILE_TYPES.BOMB (when tile could be an object)
  */
 
-import { TILE_TYPES, TileType } from '../core/constants/index.js';
+import { TILE_TYPES, TileType } from '../core/constants/index.ts';
 
 /**
  * A tile can be either a primitive number (tile type) or an object with a type property

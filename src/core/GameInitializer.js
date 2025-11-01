@@ -1,12 +1,12 @@
 // @ts-check
 
 import { GRID_SIZE, CANVAS_SIZE, TILE_TYPES } from './constants/index.js';
-import { logger } from './logger.js';
+import { logger } from './logger.ts';
 import { TextureManager } from '../renderers/TextureManager.js';
 import { ZoneStateManager } from '../generators/ZoneStateManager.js';
-import { eventBus } from './EventBus.js';
-import { EventTypes } from './EventTypes.js';
-import { errorHandler, ErrorSeverity } from './ErrorHandler.js';
+import { eventBus } from './EventBus.ts';
+import { EventTypes } from './EventTypes.ts';
+import { errorHandler, ErrorSeverity } from './ErrorHandler.ts';
 import { isWithinGrid } from '../utils/GridUtils.js';
 import { safeCall, safeCallAsync, safeGet } from '../utils/SafeServiceCall.js';
 
@@ -103,13 +103,10 @@ export class GameInitializer {
      * @returns {Promise<void>}
      */
     async loadAssets() {
-        console.log('[GameInitializer] loadAssets() called');
         try {
             // Delegate to AssetLoader
-            console.log('[GameInitializer] Starting asset loading...');
             // @ts-ignore - assetLoader is set by ServiceContainer
             await this.game.assetLoader.loadAssets();
-            console.log('[GameInitializer] Asset loading complete');
 
             // Show overlay
             // @ts-ignore - overlayManager is set by ServiceContainer
@@ -123,41 +120,24 @@ export class GameInitializer {
 
         // Preview render loop
         // Draws board behind overlay
-        console.log('[GameInitializer] Checking if preview setup is needed...');
-        console.log(`[GameInitializer] gameStarted=${this.game.gameStarted}, grid=${!!this.game.grid}`);
         if (!this.game.gameStarted) {
             // Temp zone for preview
-            console.log('[GameInitializer] Game not started, setting up preview');
             if (!this.game.grid) {
-                console.log('[GameInitializer] Grid is null, attempting to load or generate');
                 try {
                     // Try to load saved game first to show last board
-                    console.log('[GameInitializer] Attempting to load saved game...');
                     // @ts-ignore - gameStateManager is set by ServiceContainer
                     const hasSavedGame = await this.game.gameStateManager.loadGameState();
-                    console.log(`[GameInitializer] Load saved game result: ${hasSavedGame}`);
                     if (!hasSavedGame) {
                         // No saved game, generate surface zone (0,0 dimension 0) for preview
-                        console.log('[Preview] No saved game, generating surface zone 0,0 for preview');
-
                         // Ensure player is at surface zone (0,0 dimension 0)
                         this.game.player.currentZone = { x: 0, y: 0, dimension: 0, depth: 0 };
-                        console.log(`[Preview] Set player zone to surface: (0,0,0)`);
 
                         this.game.generateZone();
 
                         // Verify grid was created
                         if (!this.game.grid) {
                             logger.error('[Preview] Zone generation failed - grid is null');
-                        } else {
-                            const playerPos = this.game.player.getPosition();
-                            const zone = this.game.player.getCurrentZone();
-                            console.log(`[Preview] Zone generated successfully - grid exists, player at (${playerPos.x},${playerPos.y}), zone (${zone.x},${zone.y},${zone.dimension})`);
-                            // @ts-ignore - zoneGenerator is set by ServiceContainer
-                            console.log(`[Preview] Terrain textures: ${Object.keys(this.game.zoneGenerator?.terrainTextures || {}).length} entries`);
                         }
-                    } else {
-                        console.log('[Preview] Loaded saved game for preview');
                     }
                 } catch (error) {
                     logger.error('[Preview] Error during preview zone generation:', error);
@@ -168,21 +148,16 @@ export class GameInitializer {
                         logger.error('[Preview] Fallback generation also failed:', fallbackError);
                     }
                 }
-            } else {
-                console.log('[GameInitializer] Grid already exists, skipping generation');
             }
 
             // Only start game loop if grid was successfully created
             if (this.game.grid) {
                 this.game.previewMode = true;
                 // Start loop (respects preview)
-                console.log('[Preview] Starting game loop in preview mode');
                 this.game.gameLoop();
             } else {
                 logger.error('[Preview] Cannot start game loop - grid is null after generation attempts');
             }
-        } else {
-            console.log('[GameInitializer] Game already started, skipping preview setup');
         }
     }
 
@@ -559,8 +534,7 @@ export class GameInitializer {
         window.gameInstance = this.game;
 
         // Console commands
-        // @ts-ignore - errorHandler.try exists
-        errorHandler.try(() => {
+        try {
             import('./consoleCommands.js')
                 .then(module => {
                     // @ts-ignore - Adding consoleCommands to window
@@ -575,6 +549,8 @@ export class GameInitializer {
                     window.gotoInterior = () => module.default.gotoInterior(this.game);
                     // @ts-ignore - Adding gotoWorld to window
                     window.gotoWorld = () => module.default.gotoWorld(this.game);
+                    // @ts-ignore - Adding clearBoardCache to window
+                    window.clearBoardCache = () => module.default.clearBoardCache(this.game);
                 })
                 .catch(err => {
                     errorHandler.handle(err, ErrorSeverity.WARNING, {
@@ -582,11 +558,12 @@ export class GameInitializer {
                         action: 'load console commands module'
                     });
                 });
-        }, {
-            component: 'GameInitializer',
-            action: 'import consoleCommands',
-            severity: ErrorSeverity.WARNING
-        });
+        } catch (err) {
+            errorHandler.handle(err, ErrorSeverity.WARNING, {
+                component: 'GameInitializer',
+                action: 'import consoleCommands'
+            });
+        }
     }
 
     /**

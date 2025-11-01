@@ -1,8 +1,8 @@
 import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS } from '../core/constants/index.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 import { isWithinGrid } from '../utils/GridUtils.js';
-import { Position } from '../core/Position.js';
+import { Position } from '../core/Position.ts';
 import { isSign, getTileType } from '../utils/TypeChecks.js';
 
 /**

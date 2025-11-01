@@ -1,0 +1,49 @@
+{
+  "id": "slate",
+  "name": "Slate",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A solid character who serves as a writing surface.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/slate.png",
+    "portrait": "characters/npcs/portraits/slateface.png",
+    "tileType": "SLATE"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've convinced three people that I can read minds. I can't. They believe harder now."
+      },
+      {
+        "id": "msg_1",
+        "text": "My ceiling fan is plotting against me. Circumstantial evidence, strong vibes."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm fluent in gibberish and struggling with English."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 82
+  }
+}

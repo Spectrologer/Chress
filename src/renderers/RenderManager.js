@@ -8,7 +8,7 @@ import { UIRenderer } from './UIRenderer.js';
 import { FogRenderer } from './FogRenderer.js';
 import GridIterator from '../utils/GridIterator.js';
 import { isTileType } from '../utils/TileUtils.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 
 export class RenderManager {
     constructor(game) {
@@ -334,14 +334,6 @@ export class RenderManager {
         });
 
         // Pass 2: Render overlay textures (trim, etc.) on top of terrain but below features
-        // Debug logging
-        if (!this._overlayDebugLogged && Object.keys(overlayTextures).length > 0) {
-            console.log('[RenderManager] Rendering overlays:', Object.keys(overlayTextures).length);
-            console.log('[RenderManager] Overlay rotations:', Object.keys(overlayRotations).length);
-            console.log('[RenderManager] Terrain rotations:', Object.keys(rotations).length);
-            console.log('[RenderManager] Sample 1,9 overlay:', overlayTextures['1,9'], 'rotation:', overlayRotations['1,9']);
-            this._overlayDebugLogged = true;
-        }
 
         for (const [coord, overlayTexture] of Object.entries(overlayTextures)) {
             const [x, y] = coord.split(',').map(Number);

@@ -270,7 +270,19 @@ export class StructureTileRenderer {
     }
 
     renderCisternTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer) {
-        // This is the BOTTOM part of the cistern.
+        // This renders a CISTERN tile.
+        // Check if this is part of a double-bottom cistern (CISTERN + CISTERN)
+        // or a traditional cistern (PORT + CISTERN)
+        const cisternInfo = this.multiTileHandler.findCisternPosition(x, y, grid);
+
+        // Determine if this is the top tile of the cistern structure
+        const isTopTile = cisternInfo && cisternInfo.startY === y;
+
+        // Check if both tiles are CISTERN (double-bottom mode)
+        const tileAbove = y > 0 ? grid.getTile(x, y - 1) : null;
+        const tileBelow = y < 9 ? grid.getTile(x, y + 1) : null;
+        const isDoubleBottom = (tileAbove === TILE_TYPES.CISTERN || tileBelow === TILE_TYPES.CISTERN);
+
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
@@ -285,6 +297,7 @@ export class StructureTileRenderer {
             const destX = pixelX; // Left justified
             const destY = pixelY; // Top of tile
 
+            // Always use the bottom part of the sprite for CISTERN tiles
             ctx.drawImage(
                 cisternImage,
                 0, partHeight, // Source position (bottom part)

@@ -1,5 +1,5 @@
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 import { UI_RENDERING_CONSTANTS } from '../core/constants/rendering.js';
 
 export class PlayerStatsUI {

@@ -2,7 +2,7 @@
 
 import { TILE_TYPES } from './constants/index.js';
 import { ServiceContainer } from './ServiceContainer.js';
-import { AnimationManager } from './DataContracts.js';
+import { AnimationManager } from './DataContracts.ts';
 import { GameContext } from './GameContext.js';
 import { isFloor } from '../utils/TileUtils.js';
 import { registerAllContent } from '../config/ContentRegistrations.js';

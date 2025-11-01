@@ -1,0 +1,49 @@
+{
+  "id": "merki",
+  "name": "Merki",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A character who leaves distinctive marks and signatures.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/merki.png",
+    "portrait": "characters/npcs/portraits/merkiface.png",
+    "tileType": "MERKI"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've replaced all my furniture with beanbags. I'm a CEO. It's not going well."
+      },
+      {
+        "id": "msg_1",
+        "text": "Elevators are just vertical cars that forgot how to be interesting."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm convinced that déjà vu is just God's buffering screen."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

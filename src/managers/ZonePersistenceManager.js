@@ -6,7 +6,7 @@
  * Manages saving current zone state to the zone repository.
  */
 
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 export class ZonePersistenceManager {

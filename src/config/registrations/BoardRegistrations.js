@@ -9,6 +9,9 @@ import { boardLoader } from '../../core/BoardLoader.js';
  * These boards override procedural generation for canon/custom zones
  */
 export function registerBoards() {
+    // Zero - The home surface starting area at zone (0,0) dimension 0
+    boardLoader.registerBoard(0, 0, 0, 'zero', 'canon');
+
     // Museum - The home interior at zone (0,0) dimension 1
     boardLoader.registerBoard(0, 0, 1, 'museum', 'canon');
 

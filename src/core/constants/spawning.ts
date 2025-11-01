@@ -27,6 +27,7 @@ interface SpecialItemsProbabilities {
 interface InteriorProbabilities {
     HOME_PENNE_NPC: number;
     HOME_SQUIG_NPC: number;
+    GOSSIP_NPC: number;
     SHACK_ITEM_1: number;
     SHACK_ITEM_2: number;
     SHACK_ITEM_3: number;
@@ -115,6 +116,7 @@ export const SPAWN_PROBABILITIES = {
     INTERIOR: {
         HOME_PENNE_NPC: 0.2, // 20% chance for Penne NPC in home
         HOME_SQUIG_NPC: 0.1, // 10% chance for Squig NPC in home
+        GOSSIP_NPC: 0.01, // 1% chance for gossip NPCs across levels
         SHACK_ITEM_1: 0.25, // First additional item
         SHACK_ITEM_2: 0.20, // Second additional item
         SHACK_ITEM_3: 0.15, // Third additional item

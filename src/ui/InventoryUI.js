@@ -1,8 +1,8 @@
 import { TILE_TYPES, INVENTORY_CONSTANTS, TIMING_CONSTANTS, UI_CONSTANTS, GRID_SIZE } from '../core/constants/index.js';
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 
 export class InventoryUI {
     constructor(game, inventoryService) {

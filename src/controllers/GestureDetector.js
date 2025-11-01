@@ -1,7 +1,7 @@
 import { INPUT_CONSTANTS, TILE_TYPES, TILE_SIZE } from '../core/constants/index.js';
-import { getDeltaToDirection } from '../core/utils/DirectionUtils.js';
+import { getDeltaToDirection } from '../core/utils/DirectionUtils.ts';
 import audioManager from '../utils/AudioManager.js';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.ts';
 import { getTileType, isTileObject } from '../utils/TypeChecks.js';
 
 /**

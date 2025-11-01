@@ -1,0 +1,49 @@
+{
+  "id": "crock",
+  "name": "Crock",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A sturdy character who stores valuable supplies.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/crock.png",
+    "portrait": "characters/npcs/portraits/crockface.png",
+    "tileType": "CROCK"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've been holding my breath for three years. Forgot why I started."
+      },
+      {
+        "id": "msg_1",
+        "text": "My autobiography is three words: \"It Gets Worse.\" Bestseller."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm learning to juggle invisible balls. Going great. I think."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 80
+  }
+}

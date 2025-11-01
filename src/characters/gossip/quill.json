@@ -1,0 +1,49 @@
+{
+  "id": "quill",
+  "name": "Quill",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A classic character who represents traditional writing with feather pens.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/quill.png",
+    "portrait": "characters/npcs/portraits/quillface.png",
+    "tileType": "QUILL"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've been preparing for a zombie apocalypse since 2003. Zombies are late. Rude."
+      },
+      {
+        "id": "msg_1",
+        "text": "My shower has better acoustics than Carnegie Hall. Equally expensive too."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm writing a self-help book titled 'Give Up: It's Fine.' Pre-orders are strong."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 86
+  }
+}

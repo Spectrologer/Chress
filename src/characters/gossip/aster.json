@@ -1,0 +1,49 @@
+{
+  "id": "aster",
+  "name": "Aster",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A mysterious character with knowledge of the stars.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/aster.png",
+    "portrait": "characters/npcs/portraits/asterface.png",
+    "tileType": "ASTER"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've been practicing telekinesis for six years. Still can't move the salt shaker."
+      },
+      {
+        "id": "msg_1",
+        "text": "My therapist is a sentient cloud. Very insightful, terrible at keeping appointments."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm starting a religion based on expired coupons. We have three followers."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 100
+  }
+}

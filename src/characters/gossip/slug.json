@@ -1,0 +1,49 @@
+{
+  "id": "slug",
+  "name": "Slug",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A slow and steady character who takes their time.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/slug.png",
+    "portrait": "characters/npcs/portraits/slugface.png",
+    "tileType": "SLUG"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've been arguing with a scarecrow for three hours. We're both winning."
+      },
+      {
+        "id": "msg_1",
+        "text": "My favorite hobby is pretending to understand the stock market."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm writing an opera about expired yogurt. Critics call it 'bold.'"
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 75
+  }
+}

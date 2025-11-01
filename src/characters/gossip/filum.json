@@ -1,0 +1,49 @@
+{
+  "id": "filum",
+  "name": "Filum",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A thread-like character who connects things together.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/filum.png",
+    "portrait": "characters/npcs/portraits/filumface.png",
+    "tileType": "FILUM"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I tried yoga once. Got stuck in downward dog. Fire department came."
+      },
+      {
+        "id": "msg_1",
+        "text": "Trees are just violent broccoli trying to escape the ground."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm writing a cookbook for people who can't cook. It's one page. Says \"Don't.\""
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 115
+  }
+}

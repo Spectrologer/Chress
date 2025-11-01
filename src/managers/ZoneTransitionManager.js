@@ -1,9 +1,9 @@
 import { GRID_SIZE, TILE_TYPES, DIMENSION_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants/index.js';
 import { MultiTileHandler } from '../renderers/MultiTileHandler.js';
-import { getExitDirection } from '../core/utils/TransitionUtils.js';
+import { getExitDirection } from '../core/utils/TransitionUtils.ts';
 import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 
 export class ZoneTransitionManager {

@@ -11,7 +11,7 @@
  * @module StorageAdapter
  */
 
-import { logger } from '../core/logger.js';
+import { logger } from '../core/logger.ts';
 
 // Simple LZ-String implementation for compression
 // Based on: https://pieroxy.net/blog/pages/lz-string/index.html

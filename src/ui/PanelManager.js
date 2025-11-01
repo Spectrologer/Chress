@@ -1,8 +1,8 @@
 import { BarterWindow } from './BarterWindow.js';
 import { StatueInfoWindow } from './StatueInfoWindow.js';
-import { ConfigPanelManager } from './ConfigPanelManager.js';
-import { RecordsPanelManager } from './RecordsPanelManager.js';
-import { StatsPanelManager } from './StatsPanelManager.js';
+import { ConfigPanelManager } from './ConfigPanelManager.ts';
+import { RecordsPanelManager } from './RecordsPanelManager.ts';
+import { StatsPanelManager } from './StatsPanelManager.ts';
 
 /**
  * PanelManager

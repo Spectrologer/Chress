@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../core/constants/index.js';
+import { GRID_SIZE } from '../core/constants/index.ts';
 
 /**
  * GridIterator - Utility for iterating over game grids

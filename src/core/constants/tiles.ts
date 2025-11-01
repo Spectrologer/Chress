@@ -51,6 +51,37 @@ export const TILE_TYPES = {
     PITFALL: 49,
     TABLE: 56,
     HOLE: 57, // Hole tile type
+    // New NPCs
+    ASTER: 58,
+    BLOT: 59,
+    BLOTTER: 60,
+    BRUSH: 61,
+    BURIN: 62,
+    CALAMUS: 63,
+    CAP: 64,
+    CINNABAR: 65,
+    CROCK: 66,
+    FILUM: 67,
+    FORK: 68,
+    GEL: 69,
+    GOUACHE: 70,
+    HANE: 71,
+    KRAFT: 72,
+    MERKI: 73,
+    MICRON: 74,
+    PENNI: 75,
+    PLUMA: 76,
+    PLUME: 77,
+    QUILL: 78,
+    RADDLE: 79,
+    SCRITCH: 80,
+    SILVER: 81,
+    SINE: 82,
+    SLATE: 83,
+    SLICK: 84,
+    SLUG: 85,
+    STYLET: 86,
+    VELLUM: 87,
     // Item statue tile types (stone statues of activated items)
     BOMB_STATUE: 50,
     SPEAR_STATUE: 51,
@@ -108,6 +139,37 @@ export const TILE_COLORS: Record<number, string> = {
     [TILE_TYPES.GOUGE]: '#8A2BE2', // Blueviolet for Gouge
     [TILE_TYPES.PITFALL]: '#ffcb8d', // Same as floor, should be mostly invisible
     [TILE_TYPES.TABLE]: '#A0522D', // Sienna for table fallback
+    // New NPC colors
+    [TILE_TYPES.ASTER]: '#9370DB', // Medium purple for Aster
+    [TILE_TYPES.BLOT]: '#2F4F4F', // Dark slate gray for Blot
+    [TILE_TYPES.BLOTTER]: '#D3D3D3', // Light gray for Blotter
+    [TILE_TYPES.BRUSH]: '#FF6347', // Tomato for Brush
+    [TILE_TYPES.BURIN]: '#A9A9A9', // Dark gray for Burin
+    [TILE_TYPES.CALAMUS]: '#8FBC8F', // Dark sea green for Calamus
+    [TILE_TYPES.CAP]: '#4682B4', // Steel blue for Cap
+    [TILE_TYPES.CINNABAR]: '#DC143C', // Crimson for Cinnabar
+    [TILE_TYPES.CROCK]: '#8B4513', // Saddle brown for Crock
+    [TILE_TYPES.FILUM]: '#F0E68C', // Khaki for Filum
+    [TILE_TYPES.FORK]: '#C0C0C0', // Silver for Fork
+    [TILE_TYPES.GEL]: '#7FFFD4', // Aquamarine for Gel
+    [TILE_TYPES.GOUACHE]: '#FF69B4', // Hot pink for Gouache
+    [TILE_TYPES.HANE]: '#FFE4E1', // Misty rose for Hane
+    [TILE_TYPES.KRAFT]: '#D2691E', // Chocolate for Kraft
+    [TILE_TYPES.MERKI]: '#BA55D3', // Medium orchid for Merki
+    [TILE_TYPES.MICRON]: '#000000', // Black for Micron
+    [TILE_TYPES.PENNI]: '#4169E1', // Royal blue for Penni
+    [TILE_TYPES.PLUMA]: '#FAEBD7', // Antique white for Pluma
+    [TILE_TYPES.PLUME]: '#DDA0DD', // Plum for Plume
+    [TILE_TYPES.QUILL]: '#F5DEB3', // Wheat for Quill
+    [TILE_TYPES.RADDLE]: '#CD5C5C', // Indian red for Raddle
+    [TILE_TYPES.SCRITCH]: '#696969', // Dim gray for Scritch
+    [TILE_TYPES.SILVER]: '#C0C0C0', // Silver for Silver
+    [TILE_TYPES.SINE]: '#00CED1', // Dark turquoise for Sine
+    [TILE_TYPES.SLATE]: '#708090', // Slate gray for Slate
+    [TILE_TYPES.SLICK]: '#20B2AA', // Light sea green for Slick
+    [TILE_TYPES.SLUG]: '#556B2F', // Dark olive green for Slug
+    [TILE_TYPES.STYLET]: '#B8860B', // Dark goldenrod for Stylet
+    [TILE_TYPES.VELLUM]: '#FFFAF0', // Floral white for Vellum
     // Stone statue fallbacks (grey) for item statues
     [TILE_TYPES.BOMB_STATUE]: '#A0A0A0',
     [TILE_TYPES.SPEAR_STATUE]: '#A0A0A0',

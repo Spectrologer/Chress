@@ -1,0 +1,49 @@
+{
+  "id": "vellum",
+  "name": "Vellum",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A fine character made from calf skin parchment.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/vellum.png",
+    "portrait": "characters/npcs/portraits/vellumface.png",
+    "tileType": "VELLUM"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I've been moonwalking everywhere for two months. Can't stop. Won't stop."
+      },
+      {
+        "id": "msg_1",
+        "text": "My therapist retired after our third session. I take that as a compliment."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm hosting a seminar on how to avoid seminars. It's mandatory."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 92
+  }
+}

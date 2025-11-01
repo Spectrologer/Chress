@@ -1,5 +1,5 @@
 import { TILE_TYPES } from './constants/index.js';
-import { logger } from './logger.js';
+import { logger } from './logger.ts';
 
 /**
  * BoardLoader - Loads custom board definitions from JSON files
@@ -172,7 +172,7 @@ export class BoardLoader {
      * Rules:
      * - walls/* = non-walkable
      * - obstacles/* = non-walkable
-     * - floors/* = walkable
+     * - floors/* = walkable (except floors/aqua which is a special case)
      * - trim/* = walkable (decorative overlay)
      */
     isWallTerrain(terrain) {
@@ -181,6 +181,10 @@ export class BoardLoader {
         // Check if terrain includes folder path
         if (terrain.includes('/')) {
             const folder = terrain.split('/')[0];
+
+            // Special case: aqua tiles are non-walkable (water)
+            if (terrain === 'floors/aqua') return true;
+
             // trim/* is walkable, so it's not a wall
             if (folder === 'trim') return false;
             return folder === 'walls' || folder === 'obstacles';
@@ -201,9 +205,13 @@ export class BoardLoader {
         // Items in doodads/ that block movement
         const blockingDoodads = ['hole', 'pitfall'];
 
+        // Special floor tiles that are non-walkable
+        const nonWalkableFloors = ['aqua'];
+
         return wallFolderItems.includes(terrain) ||
                obstacleFolderItems.includes(terrain) ||
-               blockingDoodads.includes(terrain);
+               blockingDoodads.includes(terrain) ||
+               nonWalkableFloors.includes(terrain);
     }
 
     /**
@@ -342,7 +350,7 @@ export class BoardLoader {
 
     /**
      * Convert a feature string to a tile type or object
-     * Handles special cases like "random_item", "random_radial_item", "random_food_water"
+     * Handles special cases like "random_item", "random_radial_item", "random_food_water", "random_gossip_npc"
      */
     convertFeatureToTile(featureType, foodAssets) {
         // Handle special random item placeholders
@@ -357,6 +365,9 @@ export class BoardLoader {
         }
         if (featureType === 'random_merchant') {
             return this.generateRandomMerchant();
+        }
+        if (featureType === 'random_gossip_npc') {
+            return this.generateRandomGossipNPC();
         }
 
         // Handle special port_* format (port_stairup, port_stairdown, port_interior, port_cistern)
@@ -462,6 +473,45 @@ export class BoardLoader {
             TILE_TYPES.SQUIG
         ];
         return merchants[Math.floor(Math.random() * merchants.length)];
+    }
+
+    /**
+     * Generate a random gossip NPC
+     */
+    generateRandomGossipNPC() {
+        const gossipNPCs = [
+            TILE_TYPES.ASTER,
+            TILE_TYPES.BLOT,
+            TILE_TYPES.BLOTTER,
+            TILE_TYPES.BRUSH,
+            TILE_TYPES.BURIN,
+            TILE_TYPES.CALAMUS,
+            TILE_TYPES.CAP,
+            TILE_TYPES.CINNABAR,
+            TILE_TYPES.CROCK,
+            TILE_TYPES.FILUM,
+            TILE_TYPES.FORK,
+            TILE_TYPES.GEL,
+            TILE_TYPES.GOUACHE,
+            TILE_TYPES.HANE,
+            TILE_TYPES.KRAFT,
+            TILE_TYPES.MERKI,
+            TILE_TYPES.MICRON,
+            TILE_TYPES.PENNI,
+            TILE_TYPES.PLUMA,
+            TILE_TYPES.PLUME,
+            TILE_TYPES.QUILL,
+            TILE_TYPES.RADDLE,
+            TILE_TYPES.SCRITCH,
+            TILE_TYPES.SILVER,
+            TILE_TYPES.SINE,
+            TILE_TYPES.SLATE,
+            TILE_TYPES.SLICK,
+            TILE_TYPES.SLUG,
+            TILE_TYPES.STYLET,
+            TILE_TYPES.VELLUM
+        ];
+        return gossipNPCs[Math.floor(Math.random() * gossipNPCs.length)];
     }
 
     /**

@@ -43,7 +43,7 @@ export const DISCOVERED_FLOORS = [
   "environment/floors/mulch.png",
   "environment/floors/seaice.png",
   "environment/floors/underbrush.png",
-  "environment/floors/water.png"
+  "environment/floors/aqua.png"
 ];
 
 // Trim assets discovered from environment/trim/

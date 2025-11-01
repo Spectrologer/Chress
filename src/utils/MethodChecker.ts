@@ -1,4 +1,4 @@
-import errorHandler, { ErrorSeverity } from '../core/ErrorHandler.js';
+import errorHandler, { ErrorSeverity } from '../core/ErrorHandler.ts';
 
 /**
  * MethodChecker - Utility for safely calling methods with defensive checks

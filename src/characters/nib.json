@@ -21,7 +21,7 @@
   },
   "interaction": {
     "type": "barter",
-    "greeting": "I offer knowledge for your points.",
+    "greeting": "I offer stuff for your points.",
     "trades": [
       {
         "id": "nib_item",

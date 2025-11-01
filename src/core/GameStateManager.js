@@ -1,10 +1,10 @@
 import { GRID_SIZE, TILE_TYPES } from './constants/index.js';
 import { UI_TIMING_CONSTANTS } from './constants/ui.js';
-import { logger } from './logger.js';
+import { logger } from './logger.ts';
 import { Sign } from '../ui/Sign.js';
 import { validateLoadedGrid } from '../generators/GeneratorUtils.js';
-import { eventBus } from './EventBus.js';
-import { EventTypes } from './EventTypes.js';
+import { eventBus } from './EventBus.ts';
+import { EventTypes } from './EventTypes.ts';
 import { ZoneStateManager } from '../generators/ZoneStateManager.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
 import { SaveSerializer } from './SaveSerializer.js';

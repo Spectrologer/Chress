@@ -1,0 +1,49 @@
+{
+  "id": "brush",
+  "name": "Brush",
+  "type": "dialogue",
+  "metadata": {
+    "description": "An artistic character who paints the world with color.",
+    "created": "2025-10-31T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/brush.png",
+    "portrait": "characters/npcs/portraits/brushface.png",
+    "tileType": "BRUSH"
+  },
+  "placement": {
+    "zone": "0,0",
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.01
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I ate a dictionary once. It gave me thesaurus throat. Get it? Get it?"
+      },
+      {
+        "id": "msg_1",
+        "text": "Gravity is just a theory. I've been ignoring it. Not working yet."
+      },
+      {
+        "id": "msg_2",
+        "text": "I'm writing an autobiography in second person. You were born in 1987..."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 105
+  }
+}

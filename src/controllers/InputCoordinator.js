@@ -1,16 +1,16 @@
 import { TILE_TYPES } from '../core/constants/index.js';
-import { getExitDirection } from '../core/utils/TransitionUtils.js';
-import { getDeltaToDirection, getOffset, isAdjacent } from '../core/utils/DirectionUtils.js';
+import { getExitDirection } from '../core/utils/TransitionUtils.ts';
+import { getDeltaToDirection, getOffset, isAdjacent } from '../core/utils/DirectionUtils.ts';
 import audioManager from '../utils/AudioManager.js';
 import { GestureDetector } from './GestureDetector.js';
 import { PathfindingController } from './PathfindingController.js';
 import { KeyboardHandler } from './KeyboardHandler.js';
 import { InputStateManager } from './InputStateManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 import { TileRegistry } from '../core/TileRegistry.js';
 import { getTileType, isTileObject } from '../utils/TileUtils.js';
-import { Position } from '../core/Position.js';
+import { Position } from '../core/Position.ts';
 
 /**
  * InputCoordinator - Thin coordination layer for input management

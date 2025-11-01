@@ -1,5 +1,5 @@
 import { TILE_TYPES, GRID_SIZE } from './constants/index.js';
-import { logger } from './logger.js';
+import { logger } from './logger.ts';
 import { ZoneStateManager } from '../generators/ZoneStateManager.js';
 import { FeatureGenerator } from '../generators/FeatureGenerator.js';
 import { ItemGenerator } from '../generators/ItemGenerator.js';

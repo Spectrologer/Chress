@@ -39,8 +39,8 @@
 
 import { TILE_TYPES, TILE_SIZE, GRID_SIZE, ANIMATION_CONSTANTS, TIMING_CONSTANTS, GAMEPLAY_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants/index.js';
 import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '../core/EventBus.ts';
+import { EventTypes } from '../core/EventTypes.ts';
 import { isWithinGrid } from '../utils/GridUtils.js';
 import { ItemRepository } from './inventory/ItemRepository.js';
 import { isBomb, isTileType } from '../utils/TileUtils.js';
