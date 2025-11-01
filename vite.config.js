@@ -5,9 +5,11 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { npcDiscoveryPlugin } from './vite-plugin-npc-discovery.js';
 import { assetDiscoveryPlugin } from './vite-plugin-asset-discovery.js';
 
+const baseUrl = process.env.NODE_ENV === 'production' ? '/Chress/' : '/';
+
 export default defineConfig({
   // Base URL for GitHub Pages deployment
-  base: process.env.NODE_ENV === 'production' ? '/Chress/' : '/',
+  base: baseUrl,
 
   // Build optimizations
   build: {
@@ -178,8 +180,8 @@ export default defineConfig({
         background_color: '#2d1b3d',
         display: 'standalone',
         orientation: 'any',
-        scope: process.env.NODE_ENV === 'production' ? '/Chress/' : '/',
-        start_url: process.env.NODE_ENV === 'production' ? '/Chress/' : '/',
+        scope: baseUrl,
+        start_url: baseUrl,
         icons: [
           {
             src: 'icon-192.png',
@@ -278,5 +280,5 @@ export default defineConfig({
   assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
 
   // Public directory for static assets
-  publicDir: 'public',
+  publicDir: 'public', 
 });
