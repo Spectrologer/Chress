@@ -1,3 +1,5 @@
+// @ts-check
+
 import { TextureManager } from '../renderers/TextureManager.js';
 import { ConnectionManager } from '../managers/ConnectionManager.js';
 import { ZoneGenerator } from './ZoneGenerator.js';
@@ -46,21 +48,34 @@ import { CombatFacade } from '../facades/CombatFacade.js';
 import { WorldFacade } from '../facades/WorldFacade.js';
 
 /**
+ * @typedef {import('./GameContext.js').GameContext} GameContext
+ * @typedef {() => any} ServiceFactory
+ */
+
+/**
  * Lightweight service container with lazy initialization for better testability.
  * Services are only instantiated when first accessed, allowing tests to mock
  * or partially initialize the game without creating all 30+ dependencies.
  */
 export class ServiceContainer {
+    /**
+     * @param {GameContext} game
+     */
     constructor(game) {
+        /** @type {GameContext} */
         this.game = game;
+
+        /** @type {Map<string, any>} */
         this._instances = new Map();
+
+        /** @type {Record<string, ServiceFactory>} */
         this._serviceRegistry = this._buildServiceRegistry();
     }
 
     /**
      * Get or create a service instance by name.
      * @param {string} serviceName - Name of the service to retrieve
-     * @returns {*} The service instance
+     * @returns {any} The service instance
      */
     get(serviceName) {
         if (!this._instances.has(serviceName)) {
@@ -72,7 +87,8 @@ export class ServiceContainer {
     /**
      * Set a service instance (useful for testing/mocking)
      * @param {string} serviceName - Name of the service
-     * @param {*} instance - The service instance to set
+     * @param {any} instance - The service instance to set
+     * @returns {void}
      */
     set(serviceName, instance) {
         this._instances.set(serviceName, instance);
@@ -89,6 +105,7 @@ export class ServiceContainer {
 
     /**
      * Clear all service instances (useful for testing)
+     * @returns {void}
      */
     clear() {
         this._instances.clear();
@@ -97,6 +114,7 @@ export class ServiceContainer {
     /**
      * Build the service registry - a map of service names to factory functions.
      * Each factory function receives the ServiceContainer instance and returns the service.
+     * @returns {Record<string, ServiceFactory>}
      */
     _buildServiceRegistry() {
         return {
@@ -157,6 +175,7 @@ export class ServiceContainer {
             renderManager: () => new RenderManager(this.game),
 
             // Core managers
+            // @ts-ignore - game type compatibility
             actionManager: () => new ActionManager(this.game),
             consentManager: () => new ConsentManager(this.game),
 
@@ -169,6 +188,7 @@ export class ServiceContainer {
             npcInteractionManager: () => new NPCInteractionManager(this.game),
             itemPickupManager: () => new ItemPickupManager(this.game),
             combatActionManager: () => new CombatActionManager(this.game),
+            // @ts-ignore - game type compatibility
             bombManager: () => new BombManager(this.game),
             terrainInteractionManager: () => new TerrainInteractionManager(this.game),
             environmentalInteractionManager: () => new EnvironmentalInteractionManager(this.game),
@@ -178,6 +198,7 @@ export class ServiceContainer {
             interactionFacade: () => new InteractionFacade(
                 this.get('npcInteractionManager'),
                 this.get('environmentalInteractionManager'),
+                // @ts-ignore - inputManager type compatibility
                 this.get('inputManager')
             ),
             combatFacade: () => new CombatFacade(
@@ -186,6 +207,7 @@ export class ServiceContainer {
             ),
             worldFacade: () => new WorldFacade(
                 this.get('terrainInteractionManager'),
+                // @ts-ignore - zoneTransitionManager type compatibility
                 this.get('zoneTransitionManager'),
                 this.get('itemPickupManager')
             ),
@@ -205,12 +227,15 @@ export class ServiceContainer {
             ),
 
             // Zone management
+            // @ts-ignore - game type compatibility
             zoneManager: () => new ZoneManager(this.game),
             zoneTransitionManager: () => new ZoneTransitionManager(this.game, this.get('inputManager')),
             zoneTransitionController: () => new ZoneTransitionController(this.game),
 
             // Error and state management
+            // @ts-ignore - game type compatibility
             globalErrorHandler: () => new GlobalErrorHandler(this.game),
+            // @ts-ignore - game type compatibility
             gameStateManager: () => new GameStateManager(this.game)
         };
     }
@@ -218,6 +243,8 @@ export class ServiceContainer {
     /**
      * Factory method that creates services based on name.
      * This maintains the same initialization order and dependencies as before.
+     * @param {string} serviceName
+     * @returns {any}
      */
     _createService(serviceName) {
         const factory = this._serviceRegistry[serviceName];
@@ -231,6 +258,7 @@ export class ServiceContainer {
      * Initialize all core services eagerly (maintains backward compatibility).
      * This method creates all services at once, like the original implementation.
      * Use this for production to ensure everything is initialized at startup.
+     * @returns {ServiceContainer}
      */
     createCoreServices() {
         // Define initialization order (some services depend on others)
@@ -323,7 +351,9 @@ export class ServiceContainer {
         });
 
         // Initialize global error handlers early (after service creation)
+        // @ts-ignore - globalErrorHandler exists after service creation
         if (this.game.globalErrorHandler) {
+            // @ts-ignore - globalErrorHandler exists after service creation
             this.game.globalErrorHandler.initialize();
         }
 

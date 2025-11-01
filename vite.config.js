@@ -23,6 +23,11 @@ export default defineConfig({
 
     // Code splitting configuration
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        'zone-editor': resolve(__dirname, 'tools/zone-editor.html'),
+        'character-editor': resolve(__dirname, 'tools/character-editor.html'),
+      },
       output: {
         manualChunks: {
           // Core game logic

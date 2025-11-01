@@ -1,3 +1,10 @@
+// @ts-check
+
+/**
+ * @typedef {{x: number, y: number}} Coordinates
+ * @typedef {{dx: number, dy: number}} Delta
+ */
+
 /**
  * PositionCalculator.js
  *
@@ -19,8 +26,8 @@ export class PositionCalculator {
     /**
      * Calculates Chebyshev distance (8-way grid distance) between two positions
      * This is the standard movement distance in the game.
-     * @param {{x: number, y: number}} pos1 - First position
-     * @param {{x: number, y: number}} pos2 - Second position
+     * @param {Coordinates} pos1 - First position
+     * @param {Coordinates} pos2 - Second position
      * @returns {number}
      */
     static chebyshevDistance(pos1, pos2) {
@@ -29,8 +36,8 @@ export class PositionCalculator {
 
     /**
      * Calculates Manhattan distance (4-way grid distance) between two positions
-     * @param {{x: number, y: number}} pos1 - First position
-     * @param {{x: number, y: number}} pos2 - Second position
+     * @param {Coordinates} pos1 - First position
+     * @param {Coordinates} pos2 - Second position
      * @returns {number}
      */
     static manhattanDistance(pos1, pos2) {
@@ -39,8 +46,8 @@ export class PositionCalculator {
 
     /**
      * Calculates Euclidean distance (straight-line distance) between two positions
-     * @param {{x: number, y: number}} pos1 - First position
-     * @param {{x: number, y: number}} pos2 - Second position
+     * @param {Coordinates} pos1 - First position
+     * @param {Coordinates} pos2 - Second position
      * @returns {number}
      */
     static euclideanDistance(pos1, pos2) {
@@ -55,9 +62,9 @@ export class PositionCalculator {
 
     /**
      * Gets the delta (difference) between two positions
-     * @param {{x: number, y: number}} from - Starting position
-     * @param {{x: number, y: number}} to - Target position
-     * @returns {{dx: number, dy: number}}
+     * @param {Coordinates} from - Starting position
+     * @param {Coordinates} to - Target position
+     * @returns {Delta}
      */
     static delta(from, to) {
         return {
@@ -68,9 +75,9 @@ export class PositionCalculator {
 
     /**
      * Gets the absolute delta between two positions
-     * @param {{x: number, y: number}} from - Starting position
-     * @param {{x: number, y: number}} to - Target position
-     * @returns {{dx: number, dy: number}}
+     * @param {Coordinates} from - Starting position
+     * @param {Coordinates} to - Target position
+     * @returns {Delta}
      */
     static absDelta(from, to) {
         return {
@@ -85,8 +92,8 @@ export class PositionCalculator {
 
     /**
      * Checks if two positions are adjacent (including diagonals)
-     * @param {{x: number, y: number}} pos1 - First position
-     * @param {{x: number, y: number}} pos2 - Second position
+     * @param {Coordinates} pos1 - First position
+     * @param {Coordinates} pos2 - Second position
      * @param {boolean} [allowDiagonal=true] - Whether to consider diagonal adjacency
      * @returns {boolean}
      */
@@ -103,8 +110,8 @@ export class PositionCalculator {
 
     /**
      * Checks if two positions are on the same row
-     * @param {{x: number, y: number}} pos1 - First position
-     * @param {{x: number, y: number}} pos2 - Second position
+     * @param {Coordinates} pos1 - First position
+     * @param {Coordinates} pos2 - Second position
      * @returns {boolean}
      */
     static isSameRow(pos1, pos2) {
@@ -113,8 +120,8 @@ export class PositionCalculator {
 
     /**
      * Checks if two positions are on the same column
-     * @param {{x: number, y: number}} pos1 - First position
-     * @param {{x: number, y: number}} pos2 - Second position
+     * @param {Coordinates} pos1 - First position
+     * @param {Coordinates} pos2 - Second position
      * @returns {boolean}
      */
     static isSameColumn(pos1, pos2) {
@@ -123,8 +130,8 @@ export class PositionCalculator {
 
     /**
      * Checks if two positions are orthogonally aligned (same row or column)
-     * @param {{x: number, y: number}} pos1 - First position
-     * @param {{x: number, y: number}} pos2 - Second position
+     * @param {Coordinates} pos1 - First position
+     * @param {Coordinates} pos2 - Second position
      * @returns {boolean}
      */
     static isOrthogonal(pos1, pos2) {
@@ -133,8 +140,8 @@ export class PositionCalculator {
 
     /**
      * Checks if two positions are diagonally aligned
-     * @param {{x: number, y: number}} pos1 - First position
-     * @param {{x: number, y: number}} pos2 - Second position
+     * @param {Coordinates} pos1 - First position
+     * @param {Coordinates} pos2 - Second position
      * @returns {boolean}
      */
     static isDiagonal(pos1, pos2) {
@@ -149,11 +156,11 @@ export class PositionCalculator {
     /**
      * Gets all positions in a line from one position to another
      * Uses Bresenham's line algorithm
-     * @param {{x: number, y: number}} from - Starting position
-     * @param {{x: number, y: number}} to - Target position
+     * @param {Coordinates} from - Starting position
+     * @param {Coordinates} to - Target position
      * @param {boolean} [includeStart=false] - Whether to include starting position
      * @param {boolean} [includeEnd=true] - Whether to include ending position
-     * @returns {Array<{x: number, y: number}>} Array of positions along the line
+     * @returns {Array<Coordinates>} Array of positions along the line
      */
     static lineTo(from, to, includeStart = false, includeEnd = true) {
         const positions = [];
@@ -194,10 +201,10 @@ export class PositionCalculator {
 
     /**
      * Gets all positions in a rectangular area between two corners
-     * @param {{x: number, y: number}} corner1 - First corner of rectangle
-     * @param {{x: number, y: number}} corner2 - Opposite corner of rectangle
+     * @param {Coordinates} corner1 - First corner of rectangle
+     * @param {Coordinates} corner2 - Opposite corner of rectangle
      * @param {boolean} [includeEdges=true] - Whether to include edge positions
-     * @returns {Array<{x: number, y: number}>} Array of positions in the rectangle
+     * @returns {Array<Coordinates>} Array of positions in the rectangle
      */
     static rectangleBetween(corner1, corner2, includeEdges = true) {
         const positions = [];
@@ -222,10 +229,10 @@ export class PositionCalculator {
 
     /**
      * Gets all positions within a radius (Chebyshev distance) of a center position
-     * @param {{x: number, y: number}} center - Center position
+     * @param {Coordinates} center - Center position
      * @param {number} radius - Radius to search within
      * @param {boolean} [includeCenter=false] - Whether to include the center position
-     * @returns {Array<{x: number, y: number}>} Array of positions within radius
+     * @returns {Array<Coordinates>} Array of positions within radius
      */
     static positionsWithinRadius(center, radius, includeCenter = false) {
         const positions = [];
@@ -241,7 +248,7 @@ export class PositionCalculator {
     /**
      * Gets all neighbor offsets for 8-way or 4-way movement
      * @param {boolean} [allowDiagonal=true] - Whether to include diagonal neighbors
-     * @returns {Array<{x: number, y: number}>} Array of offset objects
+     * @returns {Array<Coordinates>} Array of offset objects
      */
     static getNeighborOffsets(allowDiagonal = true) {
         if (allowDiagonal) {
@@ -267,9 +274,9 @@ export class PositionCalculator {
 
     /**
      * Gets all neighbor positions around a center position
-     * @param {{x: number, y: number}} center - Center position
+     * @param {Coordinates} center - Center position
      * @param {boolean} [allowDiagonal=true] - Whether to include diagonal neighbors
-     * @returns {Array<{x: number, y: number}>} Array of neighbor positions
+     * @returns {Array<Coordinates>} Array of neighbor positions
      */
     static getNeighbors(center, allowDiagonal = true) {
         const offsets = this.getNeighborOffsets(allowDiagonal);

@@ -1,10 +1,39 @@
+// @ts-check
+
+/**
+ * @typedef {import('./GameContext.js').GameContext} GameContext
+ * @typedef {import('../entities/Enemy.js').Enemy} Enemy
+ * @typedef {import('../facades/EnemyCollection.js').EnemyCollection} EnemyCollection
+ */
+
+/**
+ * TurnManager
+ *
+ * Manages the turn-based game loop including:
+ * - Turn queue processing for enemy movements
+ * - Exit tile freeze mechanics
+ * - Occupied tile tracking
+ * - Pitfall turn counting
+ */
 export class TurnManager {
+    /**
+     * @param {GameContext} game
+     */
     constructor(game) {
+        /** @type {GameContext} */
         this.game = game;
+
+        /** @type {Enemy[]} */
         this.turnQueue = [];
+
+        /** @type {Set<string>} Tiles occupied during current turn */
         this.occupiedTilesThisTurn = new Set();
+
+        /** @type {Set<string>} Initial enemy positions at turn start */
         this.initialEnemyTilesThisTurn = new Set();
-        this.wasPlayerOnExitLastTurn = false; // Track player's previous exit tile state
+
+        /** @type {boolean} Track player's previous exit tile state */
+        this.wasPlayerOnExitLastTurn = false;
     }
 
     /**
@@ -14,6 +43,7 @@ export class TurnManager {
      */
     handleTurnCompletion() {
         this.startEnemyTurns();
+        // @ts-ignore - transientGameState exists on game
         const transientState = this.game.transientGameState;
         if (transientState.isInPitfallZone()) {
             transientState.incrementPitfallTurnsSurvived();
@@ -21,7 +51,12 @@ export class TurnManager {
         return true;
     }
 
+    /**
+     * Start enemy turns and set up turn queue
+     * @returns {void}
+     */
     startEnemyTurns() {
+        // @ts-ignore - transientGameState exists on game
         const transientState = this.game.transientGameState;
         // If the player just attacked and an attack has delay, enemy turns will
         // be started by the attack resolution elsewhere.
@@ -30,7 +65,7 @@ export class TurnManager {
         // Check if player is on exit tile - if so, freeze all enemies
         const playerOnExit = this.game.isPlayerOnExitTile();
 
-        const enemyCollection = this.game.enemyCollection;
+        const enemyCollection = /** @type {EnemyCollection} */ (this.game.enemyCollection);
 
         this.game.isPlayerTurn = false;
         this.occupiedTilesThisTurn.clear();
@@ -66,9 +101,15 @@ export class TurnManager {
         this.processTurnQueue();
     }
 
+    /**
+     * Process the turn queue recursively
+     * Handles enemy movement and collision detection
+     * @returns {void}
+     */
     processTurnQueue() {
         if (this.turnQueue.length === 0) {
             this.game.isPlayerTurn = true;
+            // @ts-ignore - playerJustAttacked exists on game
             this.game.playerJustAttacked = false;
             // After all enemy moves, run collision and pickup checks
             let playerWasAttacked = false;
@@ -81,6 +122,7 @@ export class TurnManager {
             // Add a pause if player was attacked for dramatic effect
             if (playerWasAttacked) {
                 // Use animation scheduler to actually pause the game
+                // @ts-ignore - animationScheduler exists
                 this.game.animationScheduler.createSequence()
                     .wait(500)
                     .start();
@@ -89,15 +131,17 @@ export class TurnManager {
         }
 
         const enemy = this.turnQueue.shift();
-        const enemyCollection = this.game.enemyCollection;
+        const enemyCollection = /** @type {EnemyCollection} */ (this.game.enemyCollection);
         const isStillValid = enemy && !enemy.isDead() && enemyCollection.includes(enemy);
 
         // Frozen enemies process faster since they don't actually move
         const waitTime = (isStillValid && enemy.isFrozen) ? 50 : 400;
 
+        // @ts-ignore - animationScheduler exists
         this.game.animationScheduler.createSequence()
             .then(() => {
                 if (isStillValid && !enemy.isFrozen) {
+                    // @ts-ignore - handleSingleEnemyMovement exists
                     this.game.combatManager.handleSingleEnemyMovement(enemy);
                 }
             })

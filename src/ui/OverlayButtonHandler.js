@@ -159,12 +159,12 @@ export class OverlayButtonHandler {
                 return;
             }
 
-            // Get base path for GitHub Pages or local
-            const basePath = document.querySelector('base')?.href || window.location.origin + '/';
-            const editorPath = 'tools/zone-editor.html';
+            // Get base path - use import.meta.env.BASE_URL which comes from Vite config
+            const basePath = import.meta.env.BASE_URL;
+            const editorPath = `${basePath}tools/zone-editor.html`;
 
             // Set iframe source
-            iframe.src = new URL(editorPath, basePath).href;
+            iframe.src = editorPath;
 
             // Show the overlay
             overlay.style.display = 'flex';
@@ -215,12 +215,12 @@ export class OverlayButtonHandler {
                 return;
             }
 
-            // Get base path for GitHub Pages or local
-            const basePath = document.querySelector('base')?.href || window.location.origin + '/';
-            const editorPath = 'tools/character-editor.html';
+            // Get base path - use import.meta.env.BASE_URL which comes from Vite config
+            const basePath = import.meta.env.BASE_URL;
+            const editorPath = `${basePath}tools/character-editor.html`;
 
             // Set iframe source
-            iframe.src = new URL(editorPath, basePath).href;
+            iframe.src = editorPath;
 
             // Show the overlay
             overlay.style.display = 'flex';

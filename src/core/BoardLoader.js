@@ -190,7 +190,7 @@ export class BoardLoader {
         // Items in the walls/ folder (non-walkable)
         const wallFolderItems = [
             '90s', 'astrocrag', 'blocklily', 'boulder', 'bush',
-            'chargedwall', 'clubwall', 'clubwall1', 'clubwall2', 'clubwall4', 'clubwall5',
+            'chargedwall', 'clubwall', 'clubwall1', 'clubwall2', 'clubwall4', 'clubwall5', 'clubwall6',
             'cobble', 'coralwall', 'cube', 'deco', 'fortwall', 'heartstone',
             'lavawall', 'rockwall', 'stump', 'succulent', 'wall', 'zydeco'
         ];
@@ -221,6 +221,8 @@ export class BoardLoader {
         const overlayRotations = {}; // Store rotation data for overlays
 
         // Initialize grid from terrain data
+        // NOTE: The zone editor exports terrain in row-major order where:
+        // index = row * width + col (i.e., y * width + x)
         for (let y = 0; y < height; y++) {
             grid[y] = [];
             for (let x = 0; x < width; x++) {
@@ -238,6 +240,9 @@ export class BoardLoader {
                 // Store terrain texture if present
                 if (terrain) {
                     terrainTextures[`${x},${y}`] = terrain;
+                    if (terrain.includes('clubwall6')) {
+                        logger.log(`[BoardLoader] Found clubwall6 at [${x},${y}]: ${terrain}`);
+                    }
                 }
             }
         }
@@ -288,6 +293,7 @@ export class BoardLoader {
                 // Apply to terrain if it exists at this position
                 if (terrainTextures[coord]) {
                     rotations[coord] = rotation;
+                    logger.log(`[BoardLoader] Applied rotation ${rotation}° to terrain ${terrainTextures[coord]} at ${coord}`);
                 }
             });
         }
@@ -299,25 +305,6 @@ export class BoardLoader {
             });
         }
 
-        // Debug logging for museum board
-        if (boardData.name === 'custom_zone_1') {
-            console.log('[BoardLoader] Museum board loaded');
-            console.log('[BoardLoader] Terrain rotations:', Object.keys(rotations).length, 'entries');
-            console.log('[BoardLoader] Overlay rotations:', Object.keys(overlayRotations).length, 'entries');
-            console.log('[BoardLoader] Overlays:', Object.keys(overlayTextures).length, 'entries');
-            console.log('[BoardLoader] Sample - 1,9:', {
-                terrain: terrainTextures['1,9'],
-                overlay: overlayTextures['1,9'],
-                terrainRotation: rotations['1,9'],
-                overlayRotation: overlayRotations['1,9']
-            });
-            console.log('[BoardLoader] Sample - 0,9:', {
-                terrain: terrainTextures['0,9'],
-                overlay: overlayTextures['0,9'],
-                terrainRotation: rotations['0,9'],
-                overlayRotation: overlayRotations['0,9']
-            });
-        }
 
         // Place features on the grid
         for (const [posKey, featureType] of Object.entries(boardData.features)) {

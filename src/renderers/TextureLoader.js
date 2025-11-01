@@ -39,6 +39,9 @@ export class TextureLoader {
                     imageKey = assetName.replace('environment/floors/', '').replace('.png', '');
                 } else if (assetName.startsWith('environment/walls/')) {
                     imageKey = assetName.replace('environment/walls/', '').replace('.png', '');
+                } else if (assetName.startsWith('environment/trim/')) {
+                    // Keep the full path for trim textures to match overlay rendering expectations
+                    imageKey = assetName.replace('.png', '');
                 } else if (assetName.startsWith('items/')) {
                     imageKey = assetName.replace(/items\/(equipment|misc|consumables)\//, '').replace('.png', '');
                 } else if (assetName.startsWith('characters/npcs/')) {

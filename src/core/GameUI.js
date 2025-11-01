@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * GameUI
  *
@@ -10,37 +12,60 @@
 export class GameUI {
     constructor() {
         // Canvas elements and contexts
+        /** @type {HTMLCanvasElement | null} */
         this.canvas = null;
+
+        /** @type {CanvasRenderingContext2D | null} */
         this.ctx = null;
+
+        /** @type {HTMLCanvasElement | null} */
         this.mapCanvas = null;
+
+        /** @type {CanvasRenderingContext2D | null} */
         this.mapCtx = null;
 
         // UI Managers (set by ServiceContainer)
+        /** @type {any} */
         this.uiManager = null;
+
+        /** @type {any} */
         this.overlayManager = null;
+
+        /** @type {any} */
         this.inventoryUI = null;
+
+        /** @type {any} */
         this.radialInventoryUI = null;
 
         // Game state flags
+        /** @type {boolean} */
         this.gameStarted = false;
+
+        /** @type {boolean} */
         this.previewMode = false;
 
         // Player position tracking for UI updates
+        /** @type {{x: number, y: number} | null} */
         this._lastPlayerPos = null;
     }
 
     /**
      * Initialize canvas references
+     * @param {string} [canvasId]
+     * @param {string} [mapCanvasId]
+     * @returns {void}
      */
     initializeCanvas(canvasId = 'gameCanvas', mapCanvasId = 'zoneMap') {
-        this.canvas = document.getElementById(canvasId);
-        this.ctx = this.canvas?.getContext('2d');
-        this.mapCanvas = document.getElementById(mapCanvasId);
-        this.mapCtx = this.mapCanvas?.getContext('2d');
+        this.canvas = /** @type {HTMLCanvasElement | null} */ (document.getElementById(canvasId));
+        this.ctx = this.canvas?.getContext('2d') || null;
+        this.mapCanvas = /** @type {HTMLCanvasElement | null} */ (document.getElementById(mapCanvasId));
+        this.mapCtx = this.mapCanvas?.getContext('2d') || null;
     }
 
     /**
      * Update last known player position
+     * @param {any} player
+     * @returns {void}
      */
     updateLastPlayerPosition(player) {
         try {
@@ -52,6 +77,8 @@ export class GameUI {
 
     /**
      * Check if player has moved since last update
+     * @param {any} player
+     * @returns {boolean}
      */
     hasPlayerMoved(player) {
         try {
@@ -65,6 +92,7 @@ export class GameUI {
 
     /**
      * Reset UI state (for new game)
+     * @returns {void}
      */
     reset() {
         this.gameStarted = false;

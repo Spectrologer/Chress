@@ -1,3 +1,9 @@
+// @ts-check
+
+/**
+ * @typedef {{x: number, y: number}} Coordinates
+ */
+
 /**
  * PositionValidator.js
  *
@@ -20,7 +26,7 @@ export class PositionValidator {
 
     /**
      * Checks if a position is within the grid bounds
-     * @param {{x: number, y: number}} pos - Position to check
+     * @param {Coordinates} pos - Position to check
      * @param {number} [gridSize=GRID_SIZE] - Grid size to check against
      * @returns {boolean}
      */
@@ -31,7 +37,7 @@ export class PositionValidator {
     /**
      * Checks if a position is within the inner bounds (not on the edge)
      * Useful for placement validation where edges are walls
-     * @param {{x: number, y: number}} pos - Position to check
+     * @param {Coordinates} pos - Position to check
      * @param {number} [gridSize=GRID_SIZE] - Grid size to check against
      * @returns {boolean}
      */
@@ -41,7 +47,7 @@ export class PositionValidator {
 
     /**
      * Checks if a position is at the origin (0, 0)
-     * @param {{x: number, y: number}} pos - Position to check
+     * @param {Coordinates} pos - Position to check
      * @returns {boolean}
      */
     static isZero(pos) {
@@ -54,8 +60,8 @@ export class PositionValidator {
 
     /**
      * Checks if two positions are equal
-     * @param {{x: number, y: number}} pos1 - First position
-     * @param {{x: number, y: number}} pos2 - Second position
+     * @param {Coordinates} pos1 - First position
+     * @param {Coordinates} pos2 - Second position
      * @returns {boolean}
      */
     static equals(pos1, pos2) {
@@ -68,9 +74,9 @@ export class PositionValidator {
 
     /**
      * Clamps a position to be within grid bounds
-     * @param {{x: number, y: number}} pos - Position to clamp
+     * @param {Coordinates} pos - Position to clamp
      * @param {number} [gridSize=GRID_SIZE] - Grid size to clamp to
-     * @returns {{x: number, y: number}} New position clamped to bounds
+     * @returns {Coordinates} New position clamped to bounds
      */
     static clampToBounds(pos, gridSize = GRID_SIZE) {
         return {
@@ -86,8 +92,8 @@ export class PositionValidator {
     /**
      * Gets the tile at a position from a grid
      * Note: Grid access is always grid[y][x] (row-major order)
-     * @param {{x: number, y: number}} pos - Position to get tile from
-     * @param {Array<Array>} grid - 2D grid array
+     * @param {Coordinates} pos - Position to get tile from
+     * @param {Array<Array<any>>} grid - 2D grid array
      * @returns {*} The tile at this position, or undefined if out of bounds
      */
     static getTile(pos, grid) {
@@ -96,9 +102,9 @@ export class PositionValidator {
 
     /**
      * Checks if a position is a valid tile type in the grid
-     * @param {{x: number, y: number}} pos - Position to check
-     * @param {Array<Array>} grid - 2D grid array
-     * @param {Function} validator - Function that takes (tile) and returns boolean
+     * @param {Coordinates} pos - Position to check
+     * @param {Array<Array<any>>} grid - 2D grid array
+     * @param {(tile: any) => boolean} validator - Function that takes (tile) and returns boolean
      * @returns {boolean}
      */
     static isValidTile(pos, grid, validator) {
@@ -108,9 +114,9 @@ export class PositionValidator {
 
     /**
      * Filters an array of positions to only valid ones
-     * @param {Array<{x: number, y: number}>} positions - Array of positions to filter
-     * @param {Function} validator - Function that takes (pos) and returns boolean
-     * @returns {Array<{x: number, y: number}>} Array of valid positions
+     * @param {Array<Coordinates>} positions - Array of positions to filter
+     * @param {(pos: Coordinates) => boolean} validator - Function that takes (pos) and returns boolean
+     * @returns {Array<Coordinates>} Array of valid positions
      */
     static filterValid(positions, validator) {
         return positions.filter(validator);
@@ -118,9 +124,9 @@ export class PositionValidator {
 
     /**
      * Filters positions to only those within bounds
-     * @param {Array<{x: number, y: number}>} positions - Array of positions to filter
+     * @param {Array<Coordinates>} positions - Array of positions to filter
      * @param {number} [gridSize=GRID_SIZE] - Grid size to check against
-     * @returns {Array<{x: number, y: number}>} Array of in-bounds positions
+     * @returns {Array<Coordinates>} Array of in-bounds positions
      */
     static filterInBounds(positions, gridSize = GRID_SIZE) {
         return positions.filter(pos => this.isInBounds(pos, gridSize));
@@ -128,9 +134,9 @@ export class PositionValidator {
 
     /**
      * Filters positions to only those within inner bounds
-     * @param {Array<{x: number, y: number}>} positions - Array of positions to filter
+     * @param {Array<Coordinates>} positions - Array of positions to filter
      * @param {number} [gridSize=GRID_SIZE] - Grid size to check against
-     * @returns {Array<{x: number, y: number}>} Array of in-inner-bounds positions
+     * @returns {Array<Coordinates>} Array of in-inner-bounds positions
      */
     static filterInInnerBounds(positions, gridSize = GRID_SIZE) {
         return positions.filter(pos => this.isInInnerBounds(pos, gridSize));

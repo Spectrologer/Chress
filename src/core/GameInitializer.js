@@ -1,3 +1,5 @@
+// @ts-check
+
 import { GRID_SIZE, CANVAS_SIZE, TILE_TYPES } from './constants/index.js';
 import { logger } from './logger.js';
 import { TextureManager } from '../renderers/TextureManager.js';
@@ -7,6 +9,10 @@ import { EventTypes } from './EventTypes.js';
 import { errorHandler, ErrorSeverity } from './ErrorHandler.js';
 import { isWithinGrid } from '../utils/GridUtils.js';
 import { safeCall, safeCallAsync, safeGet } from '../utils/SafeServiceCall.js';
+
+/**
+ * @typedef {import('./GameContext.js').GameContext} GameContext
+ */
 
 /**
  * GameInitializer
@@ -21,18 +27,28 @@ import { safeCall, safeCallAsync, safeGet } from '../utils/SafeServiceCall.js';
  * and zone transitions are delegated to specialized classes.
  */
 export class GameInitializer {
+    /**
+     * @param {GameContext} game
+     */
     constructor(game) {
+        /** @type {GameContext} */
         this.game = game;
         this.setupCanvasSize();
     }
 
+    /**
+     * Set up canvas sizes and configuration
+     * @returns {void}
+     */
     setupCanvasSize() {
         // Internal canvas for pixel-perfect rendering
         // Stored in GameUI
         this.game.ui.initializeCanvas('gameCanvas', 'zoneMap');
 
         // Canvas sizes
+        // @ts-ignore - canvas is checked by ui.initializeCanvas
         this.game.canvas.width = CANVAS_SIZE;
+        // @ts-ignore - canvas is checked by ui.initializeCanvas
         this.game.canvas.height = CANVAS_SIZE;
 
         // Map canvas from CSS
@@ -43,25 +59,38 @@ export class GameInitializer {
         this.handleResize();
     }
 
+    /**
+     * Update map canvas size from CSS
+     * @returns {void}
+     */
     updateMapCanvasSize() {
         // Match CSS sizing
+        // @ts-ignore - mapCanvas is checked by ui.initializeCanvas
         const computedStyle = window.getComputedStyle(this.game.mapCanvas);
         const cssWidth = parseInt(computedStyle.width);
         const cssHeight = parseInt(computedStyle.height);
 
         // Match CSS for crisp rendering
+        // @ts-ignore - mapCanvas is checked by ui.initializeCanvas
         this.game.mapCanvas.width = cssWidth;
+        // @ts-ignore - mapCanvas is checked by ui.initializeCanvas
         this.game.mapCanvas.height = cssHeight;
 
         // Crisp rendering config
+        // @ts-ignore - mapCtx is checked by ui.initializeCanvas
         TextureManager.configureCanvas(this.game.mapCtx);
     }
 
+    /**
+     * Handle window resize event
+     * @returns {void}
+     */
     handleResize() {
         // Update canvas on resize
         this.updateMapCanvasSize();
         // Re-render zone map
         if (this.game.gameStarted) {
+            // @ts-ignore - uiManager is set by ServiceContainer
             this.game.uiManager.renderZoneMap();
         }
         // CSS handles display size
@@ -71,20 +100,24 @@ export class GameInitializer {
     /**
      * Loads all game assets and sets up the initial game state.
      * Delegates to AssetLoader for asset management and OverlayManager for overlay display.
+     * @returns {Promise<void>}
      */
     async loadAssets() {
         console.log('[GameInitializer] loadAssets() called');
         try {
             // Delegate to AssetLoader
             console.log('[GameInitializer] Starting asset loading...');
+            // @ts-ignore - assetLoader is set by ServiceContainer
             await this.game.assetLoader.loadAssets();
             console.log('[GameInitializer] Asset loading complete');
 
             // Show overlay
+            // @ts-ignore - overlayManager is set by ServiceContainer
             this.game.overlayManager.showStartOverlay();
         } catch (error) {
             logger.error('Error loading assets:', error);
             // Show overlay on failure
+            // @ts-ignore - overlayManager is set by ServiceContainer
             this.game.overlayManager.showStartOverlay();
         }
 
@@ -100,6 +133,7 @@ export class GameInitializer {
                 try {
                     // Try to load saved game first to show last board
                     console.log('[GameInitializer] Attempting to load saved game...');
+                    // @ts-ignore - gameStateManager is set by ServiceContainer
                     const hasSavedGame = await this.game.gameStateManager.loadGameState();
                     console.log(`[GameInitializer] Load saved game result: ${hasSavedGame}`);
                     if (!hasSavedGame) {
@@ -119,6 +153,7 @@ export class GameInitializer {
                             const playerPos = this.game.player.getPosition();
                             const zone = this.game.player.getCurrentZone();
                             console.log(`[Preview] Zone generated successfully - grid exists, player at (${playerPos.x},${playerPos.y}), zone (${zone.x},${zone.y},${zone.dimension})`);
+                            // @ts-ignore - zoneGenerator is set by ServiceContainer
                             console.log(`[Preview] Terrain textures: ${Object.keys(this.game.zoneGenerator?.terrainTextures || {}).length} entries`);
                         }
                     } else {
@@ -155,6 +190,7 @@ export class GameInitializer {
     /**
      * Starts the game after the overlay is dismissed.
      * Prevents multiple initializations and delegates to init().
+     * @returns {void}
      */
     startGame() {
         if (this.game.gameStarted) return; // Prevent multiple inits
@@ -164,20 +200,25 @@ export class GameInitializer {
 
     /**
      * Initializes the game state, event listeners, and UI.
+     * @returns {void}
      */
     init() {
         // Initialize transient game state (no longer need scattered flags)
+        // @ts-ignore - transientGameState exists on game
         if (this.game.transientGameState) {
+            // @ts-ignore - transientGameState exists on game
             this.game.transientGameState.resetAll();
         }
 
         // Load saved state or generate zone
         // Food assets must be ready
+        // @ts-ignore - assetLoader is set by ServiceContainer
         this.game.assetLoader.refreshFoodAssets();
 
         // Check if game was already loaded during preview (to avoid double loading)
         let loaded = this.game.grid !== null && this.game.grid !== undefined;
         if (!loaded) {
+            // @ts-ignore - gameStateManager is set by ServiceContainer
             loaded = this.game.gameStateManager.loadGameState();
         }
         let isNewGame = false;
@@ -191,11 +232,17 @@ export class GameInitializer {
             const playerY = this.game.player.y;
             const playerX = this.game.player.x;
             if (isWithinGrid(playerX, playerY)) {
+                // @ts-ignore - gridManager is set by ServiceContainer
                 const startTile = this.game.gridManager.getTile(playerX, playerY);
                 // Don't overwrite SIGN or EXIT tiles
-                if (!startTile ||
-                    (typeof startTile === 'string' && startTile !== TILE_TYPES.SIGN && startTile !== TILE_TYPES.EXIT) ||
-                    (typeof startTile === 'object' && startTile.type !== TILE_TYPES.SIGN)) {
+                const isSign = (typeof startTile === 'object' && startTile.type === TILE_TYPES.SIGN);
+                // @ts-ignore - TILE_TYPES are numbers but tiles can be strings
+                const isSignString = (typeof startTile === 'string' && startTile === TILE_TYPES.SIGN);
+                // @ts-ignore - TILE_TYPES are numbers but tiles can be strings
+                const isExitString = (typeof startTile === 'string' && startTile === TILE_TYPES.EXIT);
+                const shouldSetFloor = !startTile || (!isSign && !isSignString && !isExitString);
+                if (shouldSetFloor) {
+                    // @ts-ignore - gridManager is set by ServiceContainer
                     this.game.gridManager.setTile(playerX, playerY, TILE_TYPES.FLOOR);
                 }
             }
@@ -203,6 +250,7 @@ export class GameInitializer {
             // Initial region (0,0 = Home)
             const initialZone = this.game.player.getCurrentZone();
             try {
+                // @ts-ignore - uiManager is set by ServiceContainer
                 this.game.currentRegion = this.game.uiManager.generateRegionName(initialZone.x, initialZone.y);
             } catch (error) {
                 this.game.currentRegion = 'Home'; // Fallback
@@ -213,8 +261,10 @@ export class GameInitializer {
             if (this.game.grid) {
                 this.game.player.ensureValidPosition(this.game.grid);
                 const currentZone = this.game.player.getCurrentZone();
+                // @ts-ignore - uiManager is set by ServiceContainer
                 this.game.currentRegion = this.game.uiManager.generateRegionName(currentZone.x, currentZone.y);
                 // Point to loaded grid
+                // @ts-ignore - zoneGenerator is set by ServiceContainer
                 this.game.zoneGenerator.grid = this.game.grid;
             } else {
                 // Fallback if grid failed
@@ -223,14 +273,17 @@ export class GameInitializer {
                 const playerY = this.game.player.y;
                 const playerX = this.game.player.x;
                 if (isWithinGrid(playerX, playerY)) {
+                    // @ts-ignore - gridManager is set by ServiceContainer
                     this.game.gridManager.setTile(playerX, playerY, TILE_TYPES.FLOOR);
                 }
                 const initialZone = this.game.player.getCurrentZone();
+                // @ts-ignore - uiManager is set by ServiceContainer
                 this.game.currentRegion = this.game.uiManager.generateRegionName(initialZone.x, initialZone.y);
             }
         }
 
         // Initialize AnimationCoordinator to handle animation events
+        // @ts-ignore - animationCoordinator and _services exist on game
         this.game.animationCoordinator = this.game._services.get('animationCoordinator');
 
         // Event listeners
@@ -246,7 +299,9 @@ export class GameInitializer {
         this.exposeToConsole();
 
         // Update initial UI
+        // @ts-ignore - uiManager is set by ServiceContainer
         this.game.uiManager.updatePlayerPosition();
+        // @ts-ignore - uiManager is set by ServiceContainer
         this.game.uiManager.updateZoneDisplay();
         eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
 
@@ -259,24 +314,30 @@ export class GameInitializer {
     /**
      * Triggers the cinematic entrance sequence for new games.
      * Player hops from off-screen onto exit tile, then paths to club entrance.
+     * @returns {void}
      */
     triggerNewGameEntrance() {
         logger.debug(`[Entrance] triggerNewGameEntrance called`);
         // Disable input during entrance animation (may already be set by resetGame)
+        // @ts-ignore - _entranceAnimationInProgress exists on game
         if (!this.game._entranceAnimationInProgress) {
+            // @ts-ignore - _entranceAnimationInProgress exists on game
             this.game._entranceAnimationInProgress = true;
         }
 
         // Disable pointer events on canvas to prevent any mouse clicks from interfering
         const gameCanvas = document.getElementById('gameCanvas');
         if (gameCanvas) {
+            // @ts-ignore - style exists on HTMLElement
             gameCanvas.style.pointerEvents = 'none';
         }
 
         // Helper to re-enable everything
         const enableInput = () => {
+            // @ts-ignore - _entranceAnimationInProgress exists on game
             this.game._entranceAnimationInProgress = false;
             if (gameCanvas) {
+                // @ts-ignore - style exists on HTMLElement
                 gameCanvas.style.pointerEvents = 'auto';
             }
         };
@@ -297,6 +358,7 @@ export class GameInitializer {
                 // Only trigger for home surface zone (0,0,0,0)
                 if (currentZone.x === 0 && currentZone.y === 0 && currentZone.dimension === 0) {
                     // Get the stored spawn position (the exit tile)
+                    // @ts-ignore - _newGameSpawnPosition exists on game
                     const exitSpawn = this.game._newGameSpawnPosition;
                     logger.debug(`[Entrance] Exit spawn position: ${exitSpawn ? `(${exitSpawn.x},${exitSpawn.y})` : 'null'}`);
 
@@ -315,6 +377,7 @@ export class GameInitializer {
                     const clubEntranceY = houseStartY + 3; // Front of house (6)
 
                     // Stage 1: Path from off-screen to exit tile
+                    // @ts-ignore - inputManager is set by ServiceContainer
                     const pathToExit = this.game.inputManager?.findPath(
                         playerPos.x,
                         playerPos.y,
@@ -345,6 +408,7 @@ export class GameInitializer {
 
                         // Stage 2: Path from exit tile to club entrance
                         logger.debug(`[Entrance] Stage 2 - finding path from (${currentPos.x},${currentPos.y}) to club entrance (${clubEntranceX},${clubEntranceY})`);
+                        // @ts-ignore - inputManager is set by ServiceContainer
                         const pathToClub = this.game.inputManager?.findPath(
                             currentPos.x,
                             currentPos.y,
@@ -378,10 +442,12 @@ export class GameInitializer {
                             enableInput();
                         });
 
+                        // @ts-ignore - inputManager is set by ServiceContainer
                         this.game.inputManager.executePath(pathToClub);
                     });
 
                     logger.debug(`[Entrance] Starting entrance animation - executing path to exit tile`);
+                    // @ts-ignore - inputManager is set by ServiceContainer
                     this.game.inputManager.executePath(pathToExit);
                 } else {
                     clearTimeout(safetyTimeout);
@@ -397,13 +463,17 @@ export class GameInitializer {
 
     /**
      * Sets up all event listeners for the game.
+     * @returns {void}
      */
     setupEventListeners() {
         // Input
+        // @ts-ignore - inputManager is set by ServiceContainer
         this.game.inputManager.setupControls();
 
         // UI
+        // @ts-ignore - uiManager is set by ServiceContainer
         this.game.uiManager.setupGameOverHandler();
+        // @ts-ignore - uiManager is set by ServiceContainer
         this.game.uiManager.setupBarterHandlers();
 
         // Autosave
@@ -435,9 +505,11 @@ export class GameInitializer {
 
     /**
      * Sets up audio and music for the current zone.
+     * @returns {void}
      */
     setupAudio() {
         // Global soundManager
+        // @ts-ignore - Adding soundManager to window
         window.soundManager = this.game.soundManager;
 
         // Resume audio (autoplay policy)
@@ -478,20 +550,30 @@ export class GameInitializer {
 
     /**
      * Exposes game instance and console commands for debugging.
+     * @returns {void}
      */
     exposeToConsole() {
+        // @ts-ignore - Adding game to window
         window.game = this.game;
+        // @ts-ignore - Adding gameInstance to window
         window.gameInstance = this.game;
 
         // Console commands
+        // @ts-ignore - errorHandler.try exists
         errorHandler.try(() => {
             import('./consoleCommands.js')
                 .then(module => {
+                    // @ts-ignore - Adding consoleCommands to window
                     window.consoleCommands = module.default;
+                    // @ts-ignore - Adding tp to window
                     window.tp = (x, y) => module.default.tp(this.game, x, y);
+                    // @ts-ignore - Adding spawnHorseIcon to window
                     window.spawnHorseIcon = () => module.default.spawnHorseIcon(this.game);
+                    // @ts-ignore - Adding spawnTimedBomb to window
                     window.spawnTimedBomb = () => module.default.spawnTimedBomb(this.game);
+                    // @ts-ignore - Adding gotoInterior to window
                     window.gotoInterior = () => module.default.gotoInterior(this.game);
+                    // @ts-ignore - Adding gotoWorld to window
                     window.gotoWorld = () => module.default.gotoWorld(this.game);
                 })
                 .catch(err => {
@@ -510,25 +592,36 @@ export class GameInitializer {
     /**
      * Generates the current zone.
      * Delegates to ZoneTransitionController.
+     * @returns {void}
      */
     generateZone() {
+        // @ts-ignore - zoneTransitionController is set by ServiceContainer
         this.game.zoneTransitionController.generateZone();
     }
 
     /**
      * Transitions to a new zone.
      * Delegates to ZoneTransitionController.
+     * @param {number} newZoneX - New zone X coordinate
+     * @param {number} newZoneY - New zone Y coordinate
+     * @param {string} exitSide - Exit side direction
+     * @param {number} exitX - Exit X coordinate
+     * @param {number} exitY - Exit Y coordinate
+     * @returns {void}
      */
     transitionToZone(newZoneX, newZoneY, exitSide, exitX, exitY) {
+        // @ts-ignore - zoneTransitionController is set by ServiceContainer
         this.game.zoneTransitionController.transitionToZone(newZoneX, newZoneY, exitSide, exitX, exitY);
     }
 
     /**
      * Resets the entire game state.
+     * @returns {void}
      */
     resetGame() {
         // Reset session data
         this.game.zoneGenState.reset(); // Use instance method (replaces ZoneStateManager.resetSessionData())
+        // @ts-ignore - gameStateManager is set by ServiceContainer
         this.game.gameStateManager.resetGame();
     }
 }

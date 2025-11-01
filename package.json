@@ -24,11 +24,12 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run boards:sync && vite build",
     "preview": "vite preview",
     "build:analyze": "vite build --mode analyze",
     "asset-viewer": "vite --open=/asset-viewer.html",
     "assets:discover": "node tools/generate-editor-assets.js",
+    "boards:sync": "node scripts/sync-boards.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",

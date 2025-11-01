@@ -1,3 +1,10 @@
+// @ts-check
+
+/**
+ * @typedef {(data: any) => void} EventCallback
+ * @typedef {() => void} UnsubscribeFunction
+ */
+
 /**
  * EventBus - A centralized publish-subscribe event system for decoupling managers
  *
@@ -8,16 +15,21 @@
  */
 export class EventBus {
   constructor() {
+    /** @type {Map<string, EventCallback[]>} */
     this.listeners = new Map();
+
+    /** @type {Map<string, EventCallback[]>} */
     this.onceListeners = new Map();
+
+    /** @type {boolean} */
     this.debug = false;
   }
 
   /**
    * Subscribe to an event
    * @param {string} eventName - The name of the event
-   * @param {Function} callback - The callback function to execute
-   * @returns {Function} Unsubscribe function
+   * @param {EventCallback} callback - The callback function to execute
+   * @returns {UnsubscribeFunction} Unsubscribe function
    */
   on(eventName, callback) {
     if (!this.listeners.has(eventName)) {
@@ -37,8 +49,8 @@ export class EventBus {
   /**
    * Subscribe to an event that will only fire once
    * @param {string} eventName - The name of the event
-   * @param {Function} callback - The callback function to execute
-   * @returns {Function} Unsubscribe function
+   * @param {EventCallback} callback - The callback function to execute
+   * @returns {UnsubscribeFunction} Unsubscribe function
    */
   once(eventName, callback) {
     if (!this.onceListeners.has(eventName)) {
@@ -66,7 +78,8 @@ export class EventBus {
   /**
    * Unsubscribe from an event
    * @param {string} eventName - The name of the event
-   * @param {Function} callback - The callback function to remove
+   * @param {EventCallback} callback - The callback function to remove
+   * @returns {void}
    */
   off(eventName, callback) {
     const listeners = this.listeners.get(eventName);
@@ -85,7 +98,8 @@ export class EventBus {
   /**
    * Emit an event to all subscribers
    * @param {string} eventName - The name of the event
-   * @param {*} data - The data to pass to subscribers
+   * @param {any} data - The data to pass to subscribers
+   * @returns {void}
    */
   emit(eventName, data) {
     // if (this.debug) {
@@ -124,6 +138,7 @@ export class EventBus {
   /**
    * Clear all listeners for a specific event or all events
    * @param {string} [eventName] - Optional event name to clear. If not provided, clears all.
+   * @returns {void}
    */
   clear(eventName) {
     if (eventName) {
@@ -157,6 +172,7 @@ export class EventBus {
   /**
    * Enable or disable debug logging
    * @param {boolean} enabled - Whether to enable debug mode
+   * @returns {void}
    */
   setDebug(enabled) {
     this.debug = enabled;

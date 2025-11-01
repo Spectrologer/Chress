@@ -20,6 +20,9 @@
 import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANTS } from '../core/constants/index.js';
 import { PlayerStats } from './PlayerStats.js';
 import { PlayerAnimations } from './PlayerAnimations.js';
+import { PlayerMovement } from './PlayerMovement.js';
+import { PlayerAbilities } from './PlayerAbilities.js';
+import { PlayerZoneTracking } from './PlayerZoneTracking.js';
 import { createZoneKey } from '../utils/ZoneKeyUtils.js';
 import audioManager from '../utils/AudioManager.js';
 import { eventBus } from '../core/EventBus.js';
@@ -72,6 +75,12 @@ export class Player {
         this.stats = new PlayerStats(this);
         /** @type {PlayerAnimations} */
         this.animations = new PlayerAnimations(this);
+        /** @type {PlayerMovement} */
+        this.movement = new PlayerMovement(this);
+        /** @type {PlayerAbilities} */
+        this.abilityManager = new PlayerAbilities(this);
+        /** @type {PlayerZoneTracking} */
+        this.zoneTracking = new PlayerZoneTracking(this);
         /** @type {number} track consecutive kills by player */
         this.consecutiveKills = 0;
         /** @type {string|null} e.g. 'attack', 'move' */
@@ -85,7 +94,7 @@ export class Player {
         this.interactOnReach = null;
         /** @type {number} 0 == surface, 1 == first underground, 2 == deeper, etc. */
         this.undergroundDepth = 0;
-        this.markZoneVisited(0, 0, 0); // Start in surface dimension 0
+        this.zoneTracking.markZoneVisited(0, 0, 0); // Start in surface dimension 0
     }
 
     /**
@@ -97,124 +106,15 @@ export class Player {
      * @returns {boolean} True if move was successful
      */
     move(newX, newY, grid, onZoneTransition) {
-        const newPos = new Position(newX, newY);
+        // First try to move
+        const moved = this.movement.move(newX, newY, grid, onZoneTransition);
 
-        // Check if the new position is off-grid while player is on an exit tile
-        if (!newPos.isInBounds(GRID_SIZE)) {
-            // Only allow off-grid movement if player is currently on an exit tile
-            if (isTileType(this._position.getTile(grid), TILE_TYPES.EXIT)) {
-                // Determine which zone boundary was crossed and transition
-                let newZoneX = this.currentZone.x;
-                let newZoneY = this.currentZone.y;
-                let exitSide = '';
-
-                if (newX < 0) {
-                    // Moving left to adjacent zone
-                    newZoneX--;
-                    exitSide = 'left';
-                } else if (newX >= GRID_SIZE) {
-                    // Moving right to adjacent zone
-                    newZoneX++;
-                    exitSide = 'right';
-                } else if (newY < 0) {
-                    // Moving up to adjacent zone
-                    newZoneY--;
-                    exitSide = 'top';
-                } else if (newY >= GRID_SIZE) {
-                    // Moving down to adjacent zone
-                    newZoneY++;
-                    exitSide = 'bottom';
-                }
-
-                // Trigger zone transition
-                if (onZoneTransition) {
-                    onZoneTransition(newZoneX, newZoneY, exitSide);
-                }
-                return true;
-            }
-        return false; // Can't move off-grid unless on exit
+        // If can't move, try using abilities on the target tile
+        if (!moved) {
+            return this.abilityManager.tryUseAbility(newX, newY, grid);
         }
 
-        // Check if the new position is walkable
-        if (this.isWalkable(newX, newY, grid)) {
-            // Check if moving to active player-placed bomb (object bomb, not primitive pickup)
-            const tile = newPos.getTile(grid);
-            if (typeof tile === 'object' && isBomb(tile)) {
-                // Explode the bomb and prevent the move
-                // The bomb will launch the player away as part of the explosion
-                /** @type {any} */(window).gameInstance.explodeBomb(newX, newY);
-                return false; // Explode and launch, don't complete the move
-            }
-
-            // Delegate item pickup logic to ItemManager
-            this.itemManager?.handleItemPickup(this, newX, newY, grid);
-
-            // Record previous position so renderer can interpolate movement
-            this._lastPosition = this._position.clone();
-
-            // Update position
-            this._position = newPos;
-
-            // Emit player moved event
-            eventBus.emit(EventTypes.PLAYER_MOVED, this._position.toObject());
-
-            // Check for pitfall trap after moving
-            const newTile = this._position.getTile(grid);
-            if (isTileType(newTile, TILE_TYPES.PITFALL)) {
-                /** @type {any} */(window).gameInstance.interactionManager.zoneManager.handlePitfallTransition(this.x, this.y);
-                return true; // Movement was successful, but transition is happening
-            }
-
-            this.animations.liftFrames = ANIMATION_CONSTANTS.LIFT_FRAMES; // Start lift animation
-            audioManager.playSound('move');
-
-            // Movement interrupts attack combos
-            try {
-                this.setAction('move');
-            } catch (e) {
-                errorHandler.handle(e, /** @type {any} */(ErrorSeverity).WARNING, {
-                    component: 'Player',
-                    action: 'set action to move'
-                });
-            }
-
-            return true;
-        } else {
-            // Check if can chop/smash the target tile (only orthogonal adjacent positions)
-            const tile = newPos.getTile(grid);
-            const isAdjacentOrthogonal = this._position.isAdjacentTo(newPos, false);
-
-            if (isAdjacentOrthogonal) {
-                const hasAxe = this.abilities.has('axe');
-                if (hasAxe && (isTileType(tile, TILE_TYPES.GRASS) || isTileType(tile, TILE_TYPES.SHRUBBERY))) {
-                    // Chop at target position without moving
-                    const isBorder = newX === 0 || newX === GRID_SIZE - 1 || newY === 0 || newY === GRID_SIZE - 1;
-                    newPos.setTile(grid, isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR);
-                    this.stats.decreaseHunger(); // Cutting costs hunger
-                    this.animations.startActionAnimation(); // Start action animation
-                    this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the chopped tile
-                    // Play the slash SFX (file-backed) when chopping shrubbery/grass
-                    audioManager.playSound('slash');
-                    /** @type {any} */(window).gameInstance.startEnemyTurns(); // Chopping takes a turn
-                    return false; // Don't move, just attack
-                }
-
-                const hasHammer = this.abilities.has('hammer');
-                if (hasHammer && isTileType(tile, TILE_TYPES.ROCK)) {
-                    // Break at target position without moving
-                    const isBorder = newY === 0 || newY === GRID_SIZE - 1 || newX === 0 || newX === GRID_SIZE - 1;
-                    newPos.setTile(grid, isBorder ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR);
-                    this.stats.decreaseHunger(2); // Breaking costs 2 hunger
-                    this.animations.startActionAnimation(); // Start action animation
-                    this.animations.startBump(newX - this.x, newY - this.y); // Bump towards the smashed tile
-                    audioManager.playSound('smash');
-                    /** @type {any} */(window).gameInstance.startEnemyTurns(); // Smashing takes a turn
-                    return false; // Don't move, just attack
-                }
-            }
-
-            return false; // Can't move
-        }
+        return moved;
     }
 
     /**
@@ -227,17 +127,7 @@ export class Player {
      * @returns {boolean} True if position is walkable
      */
     isWalkable(x, y, grid, fromX = this.x, fromY = this.y) {
-        const pos = new Position(x, y);
-
-        // Check if position is within bounds
-        if (!pos.isInBounds(GRID_SIZE)) {
-            return false;
-        }
-
-        const tile = pos.getTile(grid);
-
-        // Use centralized TileRegistry for walkability checks
-        return TileRegistry.isWalkable(tile);
+        return this.movement.isWalkable(x, y, grid, fromX, fromY);
     }
 
     /**
@@ -247,14 +137,7 @@ export class Player {
      * @returns {void}
      */
     setPosition(x, y) {
-        // Keep previous position for interpolation/hop animations
-        this._lastPosition = this._position.clone();
-
-        // Update position
-        this._position = new Position(x, y);
-
-        // Emit player moved event
-        eventBus.emit(EventTypes.PLAYER_MOVED, this._position.toObject());
+        this.movement.setPosition(x, y);
     }
 
     /**
@@ -278,7 +161,7 @@ export class Player {
      * @returns {ZoneCoords}
      */
     getCurrentZone() {
-        return { ...this.currentZone };
+        return this.zoneTracking.getCurrentZone();
     }
 
     /**
@@ -289,20 +172,7 @@ export class Player {
      * @returns {void}
      */
     setCurrentZone(x, y, dimension = this.currentZone.dimension) {
-        this.currentZone.x = x;
-        this.currentZone.y = y;
-        // Coerce dimension to a number to avoid cases where saved/loaded
-        // state supplies a string ("2"). Default to 0 if coercion fails.
-        this.currentZone.dimension = (typeof dimension === 'number') ? dimension : Number(dimension) || 0;
-        // Attach depth for underground zones (use coerced numeric value)
-        if (Number(this.currentZone.dimension) === 2) {
-            // If an explicit depth exists on the zone object, use it; otherwise fallback to player's current depth
-            this.currentZone.depth = this.currentZone.depth || (this.undergroundDepth || 1);
-        } else {
-            this.currentZone.depth = 0;
-        }
-        // Persist visited using numeric dimension
-        this.markZoneVisited(x, y, this.currentZone.dimension);
+        this.zoneTracking.setCurrentZone(x, y, dimension);
     }
 
     /**
@@ -313,13 +183,7 @@ export class Player {
      * @returns {void}
      */
     markZoneVisited(x, y, dimension) {
-        // For underground zones, include depth in the saved key so different depths are tracked separately
-        const numericDim = Number(dimension);
-        const depth = (numericDim === 2)
-            ? (this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1))
-            : undefined;
-        const zoneKey = createZoneKey(x, y, numericDim, depth);
-        this.visitedZones.add(zoneKey);
+        this.zoneTracking.markZoneVisited(x, y, dimension);
     }
 
     /**
@@ -330,11 +194,7 @@ export class Player {
      * @returns {boolean}
      */
     hasVisitedZone(x, y, dimension) {
-        const depth = (dimension === 2)
-            ? (this.currentZone && this.currentZone.depth ? this.currentZone.depth : (this.undergroundDepth || 1))
-            : undefined;
-        const zoneKey = createZoneKey(x, y, dimension, depth);
-        return this.visitedZones.has(zoneKey);
+        return this.zoneTracking.hasVisitedZone(x, y, dimension);
     }
 
     /**
@@ -342,7 +202,7 @@ export class Player {
      * @returns {Set<string>}
      */
     getVisitedZones() {
-        return new Set(this.visitedZones);
+        return this.zoneTracking.getVisitedZones();
     }
 
     /**
@@ -351,19 +211,7 @@ export class Player {
      * @returns {void}
      */
     ensureValidPosition(grid) {
-        // Ensure player is on a walkable tile
-        if (!this.isWalkable(this.x, this.y, grid)) {
-            // Find nearest walkable tile using Position's positionsWithinRadius
-            for (let radius = 1; radius < GRID_SIZE; radius++) {
-                const positions = this._position.positionsWithinRadius(radius);
-                for (const pos of positions) {
-                    if (this.isWalkable(pos.x, pos.y, grid)) {
-                        this.setPosition(pos.x, pos.y);
-                        return;
-                    }
-                }
-            }
-        }
+        this.movement.ensureValidPosition(grid);
     }
 
     /**
@@ -378,13 +226,13 @@ export class Player {
         this.currentZone = { x: 0, y: 0, dimension: 0 };
         this.inventory = [];
         this.radialInventory = [];
-        this.abilities.clear();
+        this.abilityManager.clearAbilities();
         this.sprite = 'SeparateAnim/Special2';
-        this.visitedZones.clear();
+        this.zoneTracking.clearVisitedZones();
         this.stats.reset();
         this.animations.reset();
         this.interactOnReach = null;
-        this.markZoneVisited(0, 0, 0);
+        this.zoneTracking.markZoneVisited(0, 0, 0);
     }
 
     // Thirst and Hunger management
@@ -515,9 +363,7 @@ export class Player {
      * @returns {void}
      */
     onZoneTransition() {
-        // Called when player moves to a new zone
-        this.stats.decreaseThirst();
-        this.stats.decreaseHunger();
+        this.zoneTracking.onZoneTransition();
     }
 
     /**

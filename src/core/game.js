@@ -1,3 +1,5 @@
+// @ts-check
+
 import { TILE_TYPES } from './constants/index.js';
 import { ServiceContainer } from './ServiceContainer.js';
 import { AnimationManager } from './DataContracts.js';
@@ -7,7 +9,14 @@ import { registerAllContent } from '../config/ContentRegistrations.js';
 import { initializePWA } from '../utils/pwa-register.js';
 import { preloadCriticalModules } from '../utils/LazyLoader.js';
 
-// Game state - now extends GameContext for better organization
+/**
+ * Game
+ *
+ * Main game class that extends GameContext.
+ * Initializes all game services and starts the game loop.
+ *
+ * All game logic methods are inherited from GameContext.
+ */
 class Game extends GameContext {
     constructor() {
         super();
