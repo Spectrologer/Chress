@@ -24,7 +24,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "vite",
-    "build": "npm run boards:sync && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "build:analyze": "vite build --mode analyze",
     "asset-viewer": "vite --open=/asset-viewer.html",

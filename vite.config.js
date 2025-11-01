@@ -158,10 +158,6 @@ export default defineConfig({
           src: 'src/characters/gossip/*.json',
           dest: 'characters/gossip'
         },
-        {
-          src: 'assets/**/*',
-          dest: 'assets'
-        }
       ],
       // Watch for changes in development
       watch: {
@@ -280,5 +276,5 @@ export default defineConfig({
   assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
 
   // Public directory for static assets
-  publicDir: 'public', 
+  publicDir: 'static', 
 });
