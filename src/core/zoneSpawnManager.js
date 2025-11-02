@@ -45,15 +45,19 @@ export function findValidPlayerSpawn(zoneGen, avoidEntrance = false) {
         // Spawn on a random exit tile if any exist
         if (exitTiles.length > 0) {
             const spawnPos = exitTiles[Math.floor(Math.random() * exitTiles.length)];
+            logger.debug(`[SpawnManager] Spawning on EXIT tile at (${spawnPos.x},${spawnPos.y})`);
             return spawnPos;
         }
 
         // Fallback to original behavior if no exits found
+        logger.warn('[SpawnManager] No EXIT tiles found, using fallback spawn logic');
         const houseStartX = 3;
         const houseStartY = 3;
         const frontY = houseStartY + 3;
         for (let x = houseStartX; x < houseStartX + 4; x++) {
-            if (isTileFree(zoneGen, x, frontY)) return { x, y: frontY };
+            if (isTileFree(zoneGen, x, frontY)) {
+                return { x, y: frontY };
+            }
         }
     }
 

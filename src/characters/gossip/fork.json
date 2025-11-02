@@ -3,7 +3,7 @@
   "name": "Fork",
   "type": "dialogue",
   "metadata": {
-    "description": "A character who represents choices and diverging paths.",
+    "description": "A pair of lonely snakes.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -29,17 +29,22 @@
       {
         "id": "msg_0",
         "text": "We're nesting partners.",
-        "buttonText": "Okay..."
+        "buttonText": "True..."
       },
       {
         "id": "msg_1",
-        "text": "Want to be our third?",
-        "buttonText": "Maybe..."
+        "text": "We noticed you from across the board and loved your vibe.",
+        "buttonText": "Listen..."
       },
       {
         "id": "msg_2",
         "text": "We're securely attached.",
-        "buttonText": "Nice."
+        "buttonText": "Good for you."
+      },
+      {
+        "id": "msg_3",
+        "text": "We actually met here.",
+        "buttonText": "But..."
       }
     ]
   },

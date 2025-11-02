@@ -344,12 +344,35 @@ export class GameInitializer {
                         return;
                     }
 
-                    // Find the house position - house starts at (3,3)
-                    const houseStartX = 3;
-                    const houseStartY = 3;
-                    // Final target is in front of the house
-                    const clubEntranceX = houseStartX + 1; // Middle of house width (4)
-                    const clubEntranceY = houseStartY + 3; // Front of house (6)
+                    // Find the interior port dynamically from the grid
+                    let clubEntranceX = null;
+                    let clubEntranceY = null;
+
+                    // Search for interior port tile
+                    logger.debug(`[Entrance] Searching for interior port in grid...`);
+                    for (let y = 0; y < GRID_SIZE; y++) {
+                        for (let x = 0; x < GRID_SIZE; x++) {
+                            const tile = this.game.gridManager?.getTile(x, y);
+                            const isPort = this.game.gridManager?.isTileType(x, y, TILE_TYPES.PORT);
+
+                            if (isPort && tile && typeof tile === 'object' && tile.portKind === 'interior') {
+                                clubEntranceX = x;
+                                clubEntranceY = y;
+                                logger.debug(`[Entrance] Found interior port at (${x},${y})`);
+                                break;
+                            }
+                        }
+                        if (clubEntranceX !== null) break;
+                    }
+
+                    // Fallback to old hardcoded position if interior port not found
+                    if (clubEntranceX === null) {
+                        logger.warn(`[Entrance] No interior port found in grid, using fallback position`);
+                        clubEntranceX = 4;
+                        clubEntranceY = 6;
+                    } else {
+                        logger.debug(`[Entrance] Club entrance target: (${clubEntranceX},${clubEntranceY})`);
+                    }
 
                     // Stage 1: Path from off-screen to exit tile
                     // @ts-ignore - inputManager is set by ServiceContainer

@@ -127,6 +127,9 @@
     "0,8": "exit_left",
     "8,9": "exit_down"
   },
+  "signMessages": {
+    "2,4": "Tap to move. Tap adjacent tiles to interact."
+  },
   "metadata": {
     "description": "The start.",
     "dimension": 0,

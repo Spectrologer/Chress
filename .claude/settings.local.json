@@ -22,7 +22,8 @@
       "Bash(node:*)",
       "Bash(xargs:*)",
       "Bash(test:*)",
-      "Bash(identify:*)"
+      "Bash(identify:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

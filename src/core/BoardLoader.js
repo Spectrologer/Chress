@@ -227,6 +227,7 @@ export class BoardLoader {
         const overlayTextures = {}; // Store overlay texture names (trim, etc.)
         const rotations = {}; // Store rotation data for terrain
         const overlayRotations = {}; // Store rotation data for overlays
+        const signMessages = boardData.signMessages || {}; // Map of coordinate -> message for signs
 
         // Initialize grid from terrain data
         // NOTE: The zone editor exports terrain in row-major order where:
@@ -319,7 +320,7 @@ export class BoardLoader {
             const [x, y] = posKey.split(',').map(Number);
 
             if (x >= 0 && x < width && y >= 0 && y < height && grid[y]) {
-                const tile = this.convertFeatureToTile(featureType, foodAssets);
+                const tile = this.convertFeatureToTile(featureType, foodAssets, signMessages, posKey);
                 if (tile !== null) {
                     grid[y][x] = tile;
                 }
@@ -337,6 +338,30 @@ export class BoardLoader {
             playerSpawn = boardData.metadata.playerSpawn;
         }
 
+        // Special handling for home zone (0,0,0) - spawn on random EXIT tile for entrance animation
+        // Only do this if metadata doesn't explicitly set playerSpawn
+        if (boardData.metadata &&
+            boardData.metadata.dimension === 0 &&
+            !boardData.metadata.playerSpawn) {
+            // Find all EXIT tiles in the grid
+            const exitTiles = [];
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    if (grid[y][x] === TILE_TYPES.EXIT) {
+                        exitTiles.push({ x, y });
+                    }
+                }
+            }
+
+            // If EXIT tiles exist, spawn on a random one
+            if (exitTiles.length > 0) {
+                playerSpawn = exitTiles[Math.floor(Math.random() * exitTiles.length)];
+                logger.debug(`[BoardLoader] Home zone: spawning on EXIT tile at (${playerSpawn.x},${playerSpawn.y}) out of ${exitTiles.length} exits`);
+            } else {
+                logger.warn(`[BoardLoader] Home zone: no EXIT tiles found, using center spawn`);
+            }
+        }
+
         return {
             grid: grid,
             playerSpawn: playerSpawn,
@@ -350,9 +375,13 @@ export class BoardLoader {
 
     /**
      * Convert a feature string to a tile type or object
-     * Handles special cases like "random_item", "random_radial_item", "random_food_water", "random_gossip_npc"
+     * Handles special cases like "random_item", "random_radial_item", "random_food_water", "random_gossip_npc", and "sign"
+     * @param {string} featureType - The feature type string
+     * @param {Array} foodAssets - Available food assets
+     * @param {Object} signMessages - Map of coordinates to sign messages
+     * @param {string} posKey - Position key (e.g., "2,4") for looking up sign messages
      */
-    convertFeatureToTile(featureType, foodAssets) {
+    convertFeatureToTile(featureType, foodAssets, signMessages = {}, posKey = null) {
         // Handle special random item placeholders
         if (featureType === 'random_item') {
             return this.generateRandomItem(foodAssets);
@@ -379,6 +408,16 @@ export class BoardLoader {
         // Handle exit_* format (exit_up, exit_down, exit_left, exit_right)
         if (featureType.startsWith('exit_')) {
             return TILE_TYPES.EXIT;
+        }
+
+        // Handle sign with message
+        if (featureType === 'sign' || featureType.toUpperCase() === 'SIGN') {
+            const message = signMessages[posKey];
+            if (!message) {
+                logger.warn(`Sign at ${posKey} has no message defined in signMessages`);
+                return { type: TILE_TYPES.SIGN, message: 'A blank sign.' };
+            }
+            return { type: TILE_TYPES.SIGN, message: message };
         }
 
         // Convert feature name to TILE_TYPES constant
