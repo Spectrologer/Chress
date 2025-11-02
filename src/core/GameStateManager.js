@@ -410,7 +410,8 @@ export class GameStateManager {
         const zoneX = currentZone.x;
         const zoneY = currentZone.y;
         const dimension = currentZone.dimension || 0;
-        const zoneKey = `${zoneX},${zoneY}:${dimension}`;
+        const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
+        const zoneKey = createZoneKey(zoneX, zoneY, dimension, depth);
 
         // Get the current zone data from repository
         const zoneData = this.game.zoneRepository.getByKey(zoneKey);
