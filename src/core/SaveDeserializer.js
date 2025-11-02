@@ -76,7 +76,10 @@ export class SaveDeserializer {
         }
 
         game.grid = validateLoadedGrid(gameStateData.grid);
-        game.enemies = (gameStateData.enemies || []).map(e => new game.Enemy(e));
+        // Modify enemies array in-place to preserve enemyCollection reference
+        const loadedEnemies = (gameStateData.enemies || []).map(e => new game.Enemy(e));
+        game.enemies.length = 0;
+        game.enemies.push(...loadedEnemies);
         game.defeatedEnemies = new Set(gameStateData.defeatedEnemies || []);
         game.specialZones = new Map(gameStateData.specialZones || []);
         game.messageLog = gameStateData.messageLog || [];

@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(where /r . styles.css 2)"
+      "Bash(where /r . styles.css 2)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []
