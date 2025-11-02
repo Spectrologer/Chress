@@ -64,10 +64,7 @@ export class SaveSerializer {
                 : true,
             sfxEnabled: (player.stats && typeof player.stats.sfxEnabled !== 'undefined')
                 ? !!player.stats.sfxEnabled
-                : true,
-            autoPathWithEnemies: (player.stats && typeof player.stats.autoPathWithEnemies !== 'undefined')
-                ? !!player.stats.autoPathWithEnemies
-                : false
+                : true
         };
     }
 

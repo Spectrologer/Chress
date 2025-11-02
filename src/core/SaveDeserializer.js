@@ -46,9 +46,6 @@ export class SaveDeserializer {
             game.player.stats.sfxEnabled = typeof statsData.sfxEnabled !== 'undefined'
                 ? !!statsData.sfxEnabled
                 : true;
-            game.player.stats.autoPathWithEnemies = typeof statsData.autoPathWithEnemies !== 'undefined'
-                ? !!statsData.autoPathWithEnemies
-                : false;
 
             // Do NOT call into SoundManager here. Applying audio settings may start
             // playback or create/resume an AudioContext before a user gesture which

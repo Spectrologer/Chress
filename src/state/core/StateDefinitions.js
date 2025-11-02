@@ -148,7 +148,6 @@
  * @property {Object} settings
  * @property {boolean} settings.musicEnabled
  * @property {boolean} settings.sfxEnabled
- * @property {boolean} settings.autoPathWithEnemies
  * @property {boolean} settings.verboseAnimations
  */
 
@@ -307,7 +306,6 @@ export function createInitialState() {
       settings: {
         musicEnabled: true,
         sfxEnabled: true,
-        autoPathWithEnemies: false,
         verboseAnimations: true
       }
     },

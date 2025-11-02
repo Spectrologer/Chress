@@ -34,7 +34,6 @@ export class OverlayManager {
     showStartOverlay(): void {
         this.startOverlayController.showStartOverlay(
             (overlay, hasSaved) => this.startOverlayController.configureContinueButton(overlay, hasSaved),
-            (overlay) => this.musicToggle.setupMusicToggle(overlay),
             (overlay, hasSaved) => this.buttonHandler.setupButtonHandlers(overlay, hasSaved)
         );
     }

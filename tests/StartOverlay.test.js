@@ -6,9 +6,6 @@ beforeEach(() => {
     <canvas id="gameCanvas"></canvas>
     <canvas id="zoneMap"></canvas>
     <div id="startOverlay" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:30;">
-      <label id="overlayMusicToggleWrap">
-        <input id="overlay-music-toggle" type="checkbox" aria-label="Music on/off" checked />
-      </label>
       <div class="start-overlay-title">
         <div class="start-overlay-main">Chress</div>
       </div>
@@ -33,10 +30,6 @@ describe('Start overlay', () => {
       },
       gameStateManager: { resetGame: jest.fn() }
     };
-
-    // Uncheck the overlay toggle to verify preference is applied
-    const overlayToggle = document.getElementById('overlay-music-toggle');
-    overlayToggle.checked = false;
 
     // Create instance without invoking constructor side-effects
     const gi = Object.create(GameInitializer.prototype);
@@ -67,8 +60,6 @@ describe('Start overlay', () => {
     expect(mockGame.previewMode).toBe(false);
     expect(gi.startGame).toHaveBeenCalled();
 
-    // music preference (unchecked) should have been passed to setMusicEnabled
-    expect(mockGame.soundManager.setMusicEnabled).toHaveBeenCalledWith(false);
     // Overlay should be hidden
     expect(overlay.style.display).toBe('none');
   });

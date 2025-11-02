@@ -53,16 +53,14 @@ export class PathfindingController {
             return null;
         }
 
-        // Enemy at target
+        // Enemy at target - no autopathing allowed
         const enemyAtTarget = this.game.enemies?.find(e => e.getPositionObject().equals(targetPos) && e.health > 0);
         if (enemyAtTarget) {
-            if (!(this.game.player.stats?.autoPathWithEnemies)) {
-                return null;
-            }
-        } else {
-            if (!this.game.player.isWalkable(targetX, targetY, this.game.grid, startX, startY)) {
-                return null;
-            }
+            return null;
+        }
+
+        if (!this.game.player.isWalkable(targetX, targetY, this.game.grid, startX, startY)) {
+            return null;
         }
 
         if (startPos.equals(targetPos)) {
