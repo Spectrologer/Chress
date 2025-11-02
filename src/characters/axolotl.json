@@ -18,6 +18,7 @@
     "x": null,
     "y": null,
     "dimension": 2,
+    "level": 1,
     "spawnLogic": "special"
   },
   "interaction": {

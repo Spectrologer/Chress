@@ -3,7 +3,6 @@ import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { npcDiscoveryPlugin } from './vite-plugin-npc-discovery.js';
-import { assetDiscoveryPlugin } from './vite-plugin-asset-discovery.js';
 
 const baseUrl = process.env.NODE_ENV === 'production' ? '/Chress/' : '/';
 
@@ -146,7 +145,6 @@ export default defineConfig({
 
   // Plugin configuration
   plugins: [
-    assetDiscoveryPlugin(), // Auto-discover image assets
     npcDiscoveryPlugin(), // Auto-discover NPC JSON files
     viteStaticCopy({
       targets: [

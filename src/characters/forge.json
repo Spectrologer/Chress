@@ -18,6 +18,7 @@
     "x": 3,
     "y": 3,
     "dimension": 1,
+    "level": "HOME",
     "spawnLogic": "fixed"
   },
   "interaction": {

@@ -14,12 +14,13 @@
     "tileType": "BLOT"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 2
   },
   "interaction": {
     "type": "dialogue",

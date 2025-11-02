@@ -12,6 +12,12 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     return null;
   }
 
+  // Check for secure context (HTTPS or localhost)
+  if (!window.isSecureContext) {
+    console.log('[PWA] Service workers require a secure context (HTTPS or localhost)');
+    return null;
+  }
+
   try {
     // Determine the correct path based on environment
     const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';

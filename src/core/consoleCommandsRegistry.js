@@ -96,4 +96,5 @@ export const SPECIAL_COMMANDS = [
   { commandName: 'spawnCistern', hotkey: 'c' },
   { commandName: 'spawnStairdown', hotkey: 't' },
   { commandName: 'spawnFoodRandom', hotkey: 'f' }, // Random food spawner
+  { commandName: 'spawnGossipNPC', hotkey: 'o' }, // Random gossip NPC spawner
 ];

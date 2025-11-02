@@ -17,7 +17,12 @@
       "Bash(npm run dev:build:*)",
       "Bash(npm run:*)",
       "Bash(for file in src/characters/gossip/*.json)",
-      "Bash(do)"
+      "Bash(do)",
+      "Bash(nul)",
+      "Bash(node:*)",
+      "Bash(xargs:*)",
+      "Bash(test:*)",
+      "Bash(identify:*)"
     ],
     "deny": [],
     "ask": []

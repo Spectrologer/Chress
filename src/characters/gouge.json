@@ -20,6 +20,7 @@
     "x": 4,
     "y": 4,
     "dimension": 1,
+    "level": 3,
     "spawnLogic": "board",
     "board": "gouges"
   },

@@ -17,8 +17,10 @@
     "zone": null,
     "x": null,
     "y": null,
-    "dimension": null,
-    "spawnLogic": "procedural"
+    "dimension": 2,
+    "level": null,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.1
   },
   "interaction": {
     "type": "barter",

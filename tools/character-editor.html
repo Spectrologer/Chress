@@ -492,12 +492,21 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label>Level:</label>
+                    <input type="text" id="charLevel" placeholder="HOME, 1, 2, 3, etc. or null">
+                </div>
+                <div class="form-group">
                     <label>Spawn Logic:</label>
                     <select id="charSpawnLogic">
                         <option value="fixed">Fixed Position</option>
                         <option value="procedural">Procedural</option>
                         <option value="special">Special Logic</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label>Spawn Weight:</label>
+                    <input type="number" id="charSpawnWeight" step="0.001" placeholder="0.01" min="0" max="1">
+                    <small style="color: #8B4513; font-size: 10px;">Probability for procedural spawns (0-1)</small>
                 </div>
                 <div class="form-group full-width">
                     <label>Grid Position:</label>
@@ -909,6 +918,10 @@
             document.getElementById('charPortrait').value = '';
             document.getElementById('charZoneX').value = '0';
             document.getElementById('charZoneY').value = '0';
+            document.getElementById('charDimension').value = 'null';
+            document.getElementById('charLevel').value = '';
+            document.getElementById('charSpawnLogic').value = 'fixed';
+            document.getElementById('charSpawnWeight').value = '';
             document.getElementById('merchantGreeting').value = '';
             document.getElementById('hybridGreeting').value = '';
             document.getElementById('charVoicePitch').value = '120';
@@ -953,6 +966,19 @@
                 metadata.category = category;
             }
 
+            // Parse level - can be string (HOME) or number (1, 2, 3)
+            const levelValue = document.getElementById('charLevel').value.trim();
+            let level = null;
+            if (levelValue !== '' && levelValue !== 'null') {
+                // Try to parse as number, otherwise keep as string
+                const numLevel = parseInt(levelValue);
+                level = isNaN(numLevel) ? levelValue : numLevel;
+            }
+
+            // Parse spawn weight
+            const spawnWeightValue = document.getElementById('charSpawnWeight').value.trim();
+            const spawnWeight = spawnWeightValue !== '' ? parseFloat(spawnWeightValue) : null;
+
             const character = {
                 id: charId || 'unnamed_character',
                 name: charName || 'Unnamed Character',
@@ -968,6 +994,7 @@
                     x: selectedPosition.x,
                     y: selectedPosition.y,
                     dimension: document.getElementById('charDimension').value === 'null' ? null : parseInt(document.getElementById('charDimension').value),
+                    level: level,
                     spawnLogic: document.getElementById('charSpawnLogic').value
                 },
                 behavior: {
@@ -978,6 +1005,11 @@
                     voicePitch: parseInt(document.getElementById('charVoicePitch').value) || 120
                 }
             };
+
+            // Add spawn weight if present
+            if (spawnWeight !== null) {
+                character.placement.spawnWeight = spawnWeight;
+            }
 
             // Add type-specific data
             if (currentType === 'dialogue') {
@@ -1083,7 +1115,13 @@
             }
 
             document.getElementById('charDimension').value = character.placement?.dimension !== null ? character.placement.dimension : 'null';
+
+            // Load level field
+            const level = character.placement?.level;
+            document.getElementById('charLevel').value = level !== null && level !== undefined ? level : '';
+
             document.getElementById('charSpawnLogic').value = character.placement?.spawnLogic || 'fixed';
+            document.getElementById('charSpawnWeight').value = character.placement?.spawnWeight !== undefined ? character.placement.spawnWeight : '';
             document.getElementById('charVoicePitch').value = character.audio?.voicePitch || 120;
 
             // Determine type based on interaction structure

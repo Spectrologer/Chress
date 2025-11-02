@@ -14,12 +14,13 @@
     "tileType": "BRUSH"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 4
   },
   "interaction": {
     "type": "dialogue",
@@ -27,13 +28,13 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I ate a dictionary once. It gave me thesaurus throat. Get it? Get it?",
-        "buttonText": "Okay..."
+        "text": "You saw nothing.",
+        "buttonText": "Right"
       },
       {
         "id": "msg_1",
-        "text": "Gravity is just a theory. I've been ignoring it. Not working yet.",
-        "buttonText": "Okay..."
+        "text": "*Bush Sounds*",
+        "buttonText": "..."
       },
       {
         "id": "msg_2",
