@@ -162,7 +162,7 @@
     font-family: 'MedievalSharp';
     font-style: normal;
     font-weight: 400;
-    src: url('fonts/MedievalSharp-Regular.ttf') format('truetype');
+    src: url('/fonts/MedievalSharp-Regular.ttf') format('truetype');
     font-display: swap;
 }
 

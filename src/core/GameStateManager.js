@@ -306,9 +306,6 @@ export class GameStateManager {
                 ZoneStateRestorer.restoreZoneState(this.game, gameState.zoneStateManager);
             }
 
-            // Restore Sign spawned messages
-            SaveDeserializer.deserializeSignMessages(gameState.signSpawnedMessages);
-
             return true;
         } catch (error) {
             logger.error('Failed to load game state:', error);

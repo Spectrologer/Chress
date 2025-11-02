@@ -23,10 +23,9 @@ export class SaveSerializer {
             defeatedEnemies: Array.from(game.defeatedEnemies),
             specialZones: Array.from(game.specialZones.entries()),
             messageLog: game.messageLog,
-            currentRegion: game.currentRegion,
+            currentRegion: game.currentRegion
             // Note: Transient state (bomb placement, pitfall, etc.) is NOT persisted - managed by TransientGameState
             // Note: Zone generation state is now saved directly via game.zoneGenState.serialize() in GameStateManager
-            signSpawnedMessages: Array.from(Sign.spawnedMessages)
         };
     }
 

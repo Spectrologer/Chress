@@ -12,7 +12,12 @@
       "Bash(node -e:*)",
       "Bash(git rm:*)",
       "Bash(node fix-test-imports.js:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(for f in \"C:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\managers\"/*.js)",
+      "Bash(done)",
+      "Bash(sort:*)",
+      "Bash(npx eslint:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

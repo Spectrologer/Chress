@@ -62,6 +62,9 @@ import { getNPCCharacterData } from '../core/NPCLoader.js';
 // Sign class, refactored to be a static utility class for NPC and statue message handling.
 export class Sign {
 
+    // Track spawned messages to avoid duplicates
+    static spawnedMessages = new Set();
+
     // Statue dialogue content
     static statueData = {
         lizardy: {
