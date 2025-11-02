@@ -3,8 +3,8 @@
  */
 
 import { PathGenerator } from '../generators/PathGenerator.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
-import { isTileType } from '../utils/TileUtils.js';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index.js';
+import { isTileType } from '@utils/TileUtils.js';
 
 /**
  * Tests to ensure that pitfall zones always have accessible escape routes.

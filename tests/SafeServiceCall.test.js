@@ -2,7 +2,7 @@
  * Tests for SafeServiceCall utility
  */
 
-import { safeCall, safeCallAsync, safeGet, hasMethod } from '../utils/SafeServiceCall.js';
+import { safeCall, safeCallAsync, safeGet, hasMethod } from '@utils/SafeServiceCall.js';
 
 describe('SafeServiceCall', () => {
     describe('safeCall', () => {

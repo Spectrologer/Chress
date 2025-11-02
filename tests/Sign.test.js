@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { Sign } from '../ui/Sign.js';
-import { TILE_TYPES } from '../core/constants/index.js';
+import { TILE_TYPES } from '@core/constants/index.js';
 import { createMockGame, setupDOMFixture, teardownDOMFixture } from './helpers/mocks.js';
 
 describe('Sign', () => {

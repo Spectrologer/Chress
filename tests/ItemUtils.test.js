@@ -1,4 +1,4 @@
-import { ItemMetadata } from '../managers/inventory/ItemMetadata.js';
+import { ItemMetadata } from '@managers/inventory/ItemMetadata.js';
 
 describe('ItemMetadata.getTooltipText', () => {
   test('food tooltip', () => {

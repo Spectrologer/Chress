@@ -200,7 +200,7 @@ export default defineConfig({
 
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,gif,svg,woff,woff2,ttf,json}'],
-        sourcemap: process.env.NODE_ENV !== 'production', // Enable source maps in dev for debugging
+        sourcemap: false, // Disable workbox source maps to prevent browser parsing errors
 
         // Cache strategy configuration
         runtimeCaching: [

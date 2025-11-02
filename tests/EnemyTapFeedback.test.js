@@ -4,7 +4,7 @@
 
 import { GestureDetector } from '../controllers/GestureDetector.js';
 import { InputCoordinator } from '../controllers/InputCoordinator.js';
-import { Position } from '../core/Position.js';
+import { Position } from '@core/Position.js';
 
 describe('Enemy tap feedback', () => {
     let mockGame, gestureDetector, inputCoordinator;

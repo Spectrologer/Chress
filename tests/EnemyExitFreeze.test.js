@@ -1,7 +1,7 @@
-import { TurnManager } from '../core/TurnManager.js';
-import { GameContext } from '../core/GameContext.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
-import { BaseEnemy } from '../enemy/BaseEnemy.js';
+import { TurnManager } from '@core/TurnManager.js';
+import { GameContext } from '@core/GameContext.js';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index.js';
+import { BaseEnemy } from '@enemy/BaseEnemy.js';
 
 describe('Enemy Exit Freeze Feature', () => {
     let turnManager;

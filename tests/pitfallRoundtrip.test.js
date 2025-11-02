@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { ZoneTransitionManager } from '../managers/ZoneTransitionManager.js';
-import { ZoneManager } from '../managers/ZoneManager.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
+import { ZoneTransitionManager } from '@managers/ZoneTransitionManager.js';
+import { ZoneManager } from '@managers/ZoneManager.js';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index.js';
 
 // This test simulates falling into a pitfall and then exiting back to surface,
 // asserting the player returns to the original hole coordinates.

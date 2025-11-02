@@ -1,5 +1,5 @@
-import { EnemyMoveCalculatorFactory } from '../enemy/MoveCalculators.js';
-import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
+import { EnemyMoveCalculatorFactory } from '@enemy/MoveCalculators.js';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index.js';
 
 describe('Zard movement and attack behavior', () => {
   let mockPlayer;

@@ -1,5 +1,5 @@
-import { AnimationRenderer } from '../renderers/AnimationRenderer.js';
-import { TILE_SIZE } from '../core/constants/index.js';
+import { AnimationRenderer } from '@renderers/AnimationRenderer.js';
+import { TILE_SIZE } from '@core/constants/index.js';
 
 describe('AnimationRenderer - splode', () => {
   let mockGame;

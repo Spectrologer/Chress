@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "Bash(where /r . styles.css 2)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(xargs grep:*)",
+      "Bash(grep:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run test:*)",
+      "Bash(npm test:*)",
+      "Bash(node -e:*)",
+      "Bash(git rm:*)",
+      "Bash(node fix-test-imports.js:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

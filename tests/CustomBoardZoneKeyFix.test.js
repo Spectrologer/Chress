@@ -2,7 +2,7 @@
  * Test to verify the custom board persistence fix uses correct zone keys
  */
 
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
+import { createZoneKey } from '@utils/ZoneKeyUtils.js';
 
 describe('Custom Board Zone Key Fix', () => {
     describe('Zone key format for underground zones', () => {

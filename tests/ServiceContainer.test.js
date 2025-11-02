@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { ServiceContainer } from '../core/ServiceContainer.js';
+import { ServiceContainer } from '@core/ServiceContainer.js';
 
 describe('ServiceContainer - Lazy Initialization', () => {
   let mockGame;

@@ -1,5 +1,5 @@
 import { InventoryUI } from '../ui/InventoryUI.js';
-import { InventoryService } from '../managers/inventory/InventoryService.js';
+import { InventoryService } from '@managers/inventory/InventoryService.js';
 
 function makeMockGame() {
   const mockGame = {

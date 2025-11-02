@@ -1,5 +1,5 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index.js';
 
 // Mock logger before imports
 const mockLogger = {
