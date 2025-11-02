@@ -119,16 +119,12 @@
     "4,3": "house",
     "5,3": "house",
     "6,3": "house",
-    "2,4": "sign",
     "3,4": "house",
     "4,4": "port_interior",
     "5,4": "house",
     "6,4": "house",
     "0,8": "exit_left",
     "8,9": "exit_down"
-  },
-  "signMessages": {
-    "2,4": "Tap to move. Tap adjacent tiles to interact."
   },
   "metadata": {
     "description": "The start.",

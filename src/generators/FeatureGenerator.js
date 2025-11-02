@@ -1,4 +1,3 @@
-import { Sign } from '../ui/Sign.js';
 import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index.js';
 import { GENERATOR_CONSTANTS } from '../core/constants/ui.js';
 import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './GeneratorUtils.js';
@@ -83,7 +82,7 @@ export class FeatureGenerator {
     }
 
     addChanceTile(zoneX, zoneY) {
-        // Add a chance tile: could be an extra water, food, or sign
+        // Add a chance tile: could be an extra water or food
         const pos = findValidPlacement({
             maxAttempts: 20,
             validate: (x, y) => isFloor(this.gridManager.getTile(x, y))
@@ -91,24 +90,15 @@ export class FeatureGenerator {
         if (!pos) return;
         const { x, y } = pos;
         const chanceType = Math.random();
-        let tilePlaced = false;
-        if (chanceType < SPAWN_PROBABILITIES.CHANCE_TILES.SIGN) {
-            if (!this.checkSignExists()) {
-                const message = Sign.getProceduralMessage(zoneX, zoneY);
-                Sign.spawnedMessages.add(message);
-                this.gridManager.setTile(x, y, { type: TILE_TYPES.SIGN, message: message });
-                tilePlaced = true;
-            }
-        }
-        if (!tilePlaced) {
-            if (chanceType < SPAWN_PROBABILITIES.CHANCE_TILES.WATER) {
-                this.gridManager.setTile(x, y, TILE_TYPES.WATER);
-            } else {
-                const zoneKey = `${zoneX},${zoneY}`;
-                const seed = ZoneStateManager.hashCode(zoneKey) % this.foodAssets.length;
-                const selectedFood = this.foodAssets[seed];
-                this.gridManager.setTile(x, y, { type: TILE_TYPES.FOOD, foodType: selectedFood });
-            }
+
+        // 35% water, 65% food
+        if (chanceType < SPAWN_PROBABILITIES.CHANCE_TILES.WATER) {
+            this.gridManager.setTile(x, y, TILE_TYPES.WATER);
+        } else {
+            const zoneKey = `${zoneX},${zoneY}`;
+            const seed = ZoneStateManager.hashCode(zoneKey) % this.foodAssets.length;
+            const selectedFood = this.foodAssets[seed];
+            this.gridManager.setTile(x, y, { type: TILE_TYPES.FOOD, foodType: selectedFood });
         }
     }
 
@@ -423,16 +413,4 @@ export class FeatureGenerator {
         }
     }
 
-    checkSignExists() {
-        const gridSize = this.gridManager.getSize();
-        for (let y = 0; y < gridSize; y++) {
-            for (let x = 0; x < gridSize; x++) {
-                const tile = this.gridManager.getTile(x, y);
-                if (tile && tile.type === TILE_TYPES.SIGN) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }

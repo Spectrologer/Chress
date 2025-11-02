@@ -34,14 +34,10 @@ class SurfaceHandler extends BaseZoneHandler {
 
     handleHomeZone() {
         this.structureGenerator.addHouse(this.zoneX, this.zoneY);
-        this.structureGenerator.addSign("WOODCUTTERS<br>CLUB", this.zoneX, this.zoneY);
     }
 
     handleFrontierSign() {
-        if (this.zoneLevel === 4 && !this.game.zoneGenState.hasSpawned('firstFrontierSign')) {
-            this.structureGenerator.addSign("TURN BACK");
-            this.game.zoneGenState.setSpawnFlag('firstFrontierSign', true);
-        }
+        // Signs are being phased out - no longer spawning frontier warning sign
     }
 
     handleNonHomeZone() {
@@ -84,14 +80,10 @@ class SurfaceHandler extends BaseZoneHandler {
             }
         }
 
-        // Level 2: Dead Tree and Hammer Warning Sign
+        // Level 2: Dead Tree
         if (this.zoneLevel === 2) {
             if (!this.game.zoneGenState.hasSpawned('deadTree')) {
                 this.structureGenerator.addDeadTree(this.zoneX, this.zoneY);
-            }
-            if (!this.game.zoneGenState.hasSpawned('hammerWarningSign')) {
-                this.structureGenerator.addSign("FIND THE HAMMER<br>IN THE WOODS");
-                this.game.zoneGenState.setSpawnFlag('hammerWarningSign', true);
             }
         }
     }

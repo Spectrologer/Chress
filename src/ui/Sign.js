@@ -59,49 +59,8 @@ import { getNPCCharacterData } from '../core/NPCLoader.js';
  * @property {Map<string, DialogueNpcData>} [dialogueState] - Dialogue state cache
  */
 
-// Sign class, refactored to be a static utility class for message handling.
+// Sign class, refactored to be a static utility class for NPC and statue message handling.
 export class Sign {
-    /** @type {Set<string>} */
-    static spawnedMessages = new Set();
-
-    // Area definitions for messages
-    static messageSets = {
-        home: [
-            "Tap to move. Tap adjacent tiles to interact.",
-            "Manage your hunger and thirst to survive.",
-            "Find aguamelin to restore both hunger and thirst.",
-            "The Club has tutorials and helpful NPCs.",
-            "Double tap to quickly exit zones."
-        ],
-        woods: [
-            "Hammer breaks rocks. Axe clears grass and shrubbery.",
-            "The Lizord moves in L-shapes like a knight.",
-            "Watch your resources. Food and water are vital.",
-            "Some enemies charge in straight lines.",
-            "Defeating enemies earns you points."
-        ],
-        wilds: [
-            "Tap yourself to open the radial menu for weapons.",
-            "Bombs blast walls and can launch you to new areas.",
-            "Trade discoveries with NPCs for useful items.",
-            "The bow fires arrows orthogonally. The spear charges diagonally.",
-            "Items stack in your 6-slot inventory."
-        ],
-        frontier: [
-            "Weapons have limited charges. Use them carefully.",
-            "The shovel digs holes into the underground.",
-            "Map notes reveal distant unexplored zones.",
-            "The further you go, the harder it gets.",
-            "Some say there's no true end to the frontier."
-        ],
-        canyon: [
-            "The underground holds dangers and secrets.",
-            "Watch for cracks in the floor.",
-            "The hammer helps, but won't fix everything.",
-            "Tread carefully in the depths.",
-            "What you seek may not be what you find."
-        ]
-    };
 
     // Statue dialogue content
     static statueData = {
@@ -147,48 +106,6 @@ export class Sign {
         }
     };
 
-
-    /**
-     * Get a procedural message for a zone
-     * @param {number} zoneX - Zone X coordinate
-     * @param {number} zoneY - Zone Y coordinate
-     * @param {Set<string>} [usedMessagesSet] - Set of already used messages
-     * @returns {string} A message string
-     */
-    static getProceduralMessage(zoneX, zoneY, usedMessagesSet = Sign.spawnedMessages) {
-        const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
-        let area = 'wilds'; // Default to wilds as it's the only level with procedural notes.
-        // The logic could be expanded if other levels get procedural notes.
-
-        const messages = Sign.messageSets[area];
-        // Find an unused message from 'messages' that is not in 'usedMessagesSet'
-        const availableMessages = messages.filter(msg => !usedMessagesSet.has(msg));
-        if (availableMessages.length > 0) {
-            const index = Math.floor(Math.random() * availableMessages.length);
-            return availableMessages[index];
-        }
-
-        return messages[0]; // Fallback
-    }
-
-    /**
-     * Get a message by area and index
-     * @param {string} area - Area name (home, woods, wilds, frontier, canyon)
-     * @param {number} index - Message index
-     * @returns {string} The message
-     */
-    static getMessageByIndex(area, index) {
-        return Sign.messageSets[area][index];
-    }
-
-    /**
-     * Get a random canyon message
-     * @returns {string} A canyon message
-     */
-    static getCanyonMessage() {
-        const messages = Sign.messageSets.canyon;
-        return messages[Math.floor(Math.random() * messages.length)];
-    }
 
     /**
      * Get statue data by type
