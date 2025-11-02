@@ -1,29 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run dev:*)",
-      "Bash(node update-gossip-npcs.js:*)",
-      "Bash(npm run build:*)",
-      "Bash(node update_gossip.js:*)",
-      "Bash(cat:*)",
-      "Bash(cp:*)",
-      "Bash(find:*)",
-      "Bash(for tile in cobble water gravel)",
-      "Bash(do echo \"=== $tile ===\")",
-      "Bash(done)",
-      "Bash(tasklist:*)",
-      "Bash(findstr:*)",
-      "Bash(dir:*)",
-      "Bash(npm run dev:build:*)",
-      "Bash(npm run:*)",
-      "Bash(for file in src/characters/gossip/*.json)",
-      "Bash(do)",
-      "Bash(nul)",
-      "Bash(node:*)",
-      "Bash(xargs:*)",
-      "Bash(test:*)",
-      "Bash(identify:*)",
-      "Bash(grep:*)"
+      "Bash(where /r . styles.css 2)"
     ],
     "deny": [],
     "ask": []

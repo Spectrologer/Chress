@@ -264,8 +264,9 @@ export default defineConfig({
       },
 
       devOptions: {
-        enabled: false, // Disable in dev to prevent aggressive caching of assets
-        type: 'module'
+        enabled: true, // Enable in dev to test PWA features (set to false if caching becomes an issue)
+        type: 'module',
+        navigateFallback: 'index.html'
       }
     })
   ],

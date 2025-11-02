@@ -438,7 +438,26 @@ export class StorageAdapter {
             const request = indexedDB.open(this.dbName, 1);
 
             request.onerror = () => reject(request.error);
-            request.onsuccess = () => resolve(request.result);
+            request.onsuccess = () => {
+                const db = request.result;
+
+                // Handle database being closed externally
+                db.onclose = () => {
+                    logger.warn('StorageAdapter: IndexedDB connection closed unexpectedly');
+                    this.db = null;
+                    this.useIndexedDB = false;
+                };
+
+                // Handle version change from another tab
+                db.onversionchange = () => {
+                    logger.warn('StorageAdapter: IndexedDB version change detected, closing connection');
+                    db.close();
+                    this.db = null;
+                    this.useIndexedDB = false;
+                };
+
+                resolve(db);
+            };
 
             request.onupgradeneeded = (event) => {
                 const db = event.target.result;
@@ -574,36 +593,94 @@ export class StorageAdapter {
 
     // Private IndexedDB methods
 
-    async _saveToIndexedDB(key, data) {
-        return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction([this.storeName], 'readwrite');
-            const store = transaction.objectStore(this.storeName);
-            const request = store.put(data, key);
+    /**
+     * Ensure database is open and reconnect if needed
+     * @private
+     * @returns {Promise<boolean>} Whether database is ready
+     */
+    async _ensureDBOpen() {
+        // Check if database is open
+        if (this.db && !this.db.objectStoreNames) {
+            // Database is closed, mark as invalid
+            this.db = null;
+        }
 
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
+        if (!this.db) {
+            // Try to reconnect
+            try {
+                this.db = await this._openIndexedDB();
+                this.useIndexedDB = true;
+                logger.info('StorageAdapter: Reconnected to IndexedDB');
+                return true;
+            } catch (error) {
+                logger.warn('StorageAdapter: Failed to reconnect to IndexedDB:', error);
+                this.useIndexedDB = false;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    async _saveToIndexedDB(key, data) {
+        // Ensure database is open
+        if (!(await this._ensureDBOpen())) {
+            throw new Error('IndexedDB not available');
+        }
+
+        return new Promise((resolve, reject) => {
+            try {
+                const transaction = this.db.transaction([this.storeName], 'readwrite');
+                const store = transaction.objectStore(this.storeName);
+                const request = store.put(data, key);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            } catch (error) {
+                // Handle case where transaction fails due to closed database
+                reject(error);
+            }
         });
     }
 
     async _loadFromIndexedDB(key) {
-        return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction([this.storeName], 'readonly');
-            const store = transaction.objectStore(this.storeName);
-            const request = store.get(key);
+        // Ensure database is open
+        if (!(await this._ensureDBOpen())) {
+            throw new Error('IndexedDB not available');
+        }
 
-            request.onsuccess = () => resolve(request.result || null);
-            request.onerror = () => reject(request.error);
+        return new Promise((resolve, reject) => {
+            try {
+                const transaction = this.db.transaction([this.storeName], 'readonly');
+                const store = transaction.objectStore(this.storeName);
+                const request = store.get(key);
+
+                request.onsuccess = () => resolve(request.result || null);
+                request.onerror = () => reject(request.error);
+            } catch (error) {
+                // Handle case where transaction fails due to closed database
+                reject(error);
+            }
         });
     }
 
     async _removeFromIndexedDB(key) {
-        return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction([this.storeName], 'readwrite');
-            const store = transaction.objectStore(this.storeName);
-            const request = store.delete(key);
+        // Ensure database is open
+        if (!(await this._ensureDBOpen())) {
+            throw new Error('IndexedDB not available');
+        }
 
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
+        return new Promise((resolve, reject) => {
+            try {
+                const transaction = this.db.transaction([this.storeName], 'readwrite');
+                const store = transaction.objectStore(this.storeName);
+                const request = store.delete(key);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            } catch (error) {
+                // Handle case where transaction fails due to closed database
+                reject(error);
+            }
         });
     }
 

@@ -35,8 +35,8 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       if (!isDevelopment) {
         throw e;
       }
-      return doRegister("'/Chress/sw.js", {
-        scope: "/Chress",
+      return doRegister('/Chress/sw.js', {
+        scope: '/Chress/',
         type: 'classic'
       });
     });
@@ -254,6 +254,17 @@ function showInstallBanner(deferredPrompt: any): void {
  */
 export async function initializePWA(): Promise<void> {
   console.log('[PWA] Initializing...');
+
+  // Only initialize PWA features if service workers are supported and in secure context
+  if (!('serviceWorker' in navigator)) {
+    console.log('[PWA] Service workers not supported - skipping PWA initialization');
+    return;
+  }
+
+  if (!window.isSecureContext) {
+    console.log('[PWA] Not in secure context - skipping PWA initialization');
+    return;
+  }
 
   // Register service worker
   await registerServiceWorker();

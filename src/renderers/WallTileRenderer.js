@@ -18,6 +18,15 @@ export class WallTileRenderer {
             const textureName = customTexture.includes('/') ? customTexture.split('/')[1] : customTexture;
 
             if (RendererUtils.isImageLoaded(this.images, textureName)) {
+                // First draw background dirt so transparency works properly
+                if (RendererUtils.isImageLoaded(this.images, 'dirt')) {
+                    ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                } else {
+                    ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                    ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                }
+
+                // Then draw the wall texture on top
                 ctx.save();
                 // Apply rotation if present
                 if (rotation !== 0) {
