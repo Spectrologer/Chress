@@ -14,9 +14,6 @@ export class PlayerStats {
         this.spentDiscoveries = 0;
         this.dead = false;
         this.verbosePathAnimations = true; // Toggle for step-by-step movement animations
-        // Whether auto-pathing should be allowed to target tiles containing enemies.
-        // Default: OFF (false)
-        this.autoPathWithEnemies = false;
         // Audio preferences default to ON. Actual playback will only start after a user gesture.
         this.musicEnabled = true;
         this.sfxEnabled = true;

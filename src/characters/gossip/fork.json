@@ -3,23 +3,24 @@
   "name": "Fork",
   "type": "dialogue",
   "metadata": {
-    "description": "A character who represents choices and diverging paths.",
+    "description": "A pair of lonely snakes.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/fork.png",
+    "sprite": "characters/npcs/gossip/fork.png",
     "portrait": "characters/npcs/portraits/forkface.png",
     "tileType": "FORK"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 1
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,23 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm in a chess match with a potato. It's winning. The potato is winning."
+        "text": "We're nesting partners.",
+        "buttonText": "True..."
       },
       {
         "id": "msg_1",
-        "text": "My imaginary friend got an imaginary restraining order against me."
+        "text": "We noticed you from across the board and loved your vibe.",
+        "buttonText": "Listen..."
       },
       {
         "id": "msg_2",
-        "text": "I invented a new emotion. It's like Tuesday, but angry."
+        "text": "We're securely attached.",
+        "buttonText": "Good for you."
+      },
+      {
+        "id": "msg_3",
+        "text": "We actually met here.",
+        "buttonText": "But..."
       }
     ]
   },

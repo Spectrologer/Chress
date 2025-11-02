@@ -4,9 +4,9 @@
 import { PathfindingController } from '../controllers/PathfindingController.js';
 import { InputController } from '../controllers/InputController.js';
 import { KeyboardHandler } from '../controllers/KeyboardHandler.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { TILE_TYPES } from '../core/constants/index.js';
+import { eventBus } from '@core/EventBus.js';
+import { EventTypes } from '@core/EventTypes.js';
+import { TILE_TYPES } from '@core/constants/index.js';
 
 describe('Event Bus Refactoring', () => {
     let mockGame;

@@ -442,6 +442,15 @@
                     <label>Description:</label>
                     <textarea id="charDescription" placeholder="A wise woodcutter who shares knowledge..."></textarea>
                 </div>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <select id="charCategory">
+                        <option value="">None</option>
+                        <option value="gossip">Gossip</option>
+                        <option value="merchant">Merchant</option>
+                        <option value="tutorial">Tutorial</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -483,12 +492,21 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label>Level:</label>
+                    <input type="text" id="charLevel" placeholder="HOME, 1, 2, 3, etc. or null">
+                </div>
+                <div class="form-group">
                     <label>Spawn Logic:</label>
                     <select id="charSpawnLogic">
                         <option value="fixed">Fixed Position</option>
                         <option value="procedural">Procedural</option>
                         <option value="special">Special Logic</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label>Spawn Weight:</label>
+                    <input type="number" id="charSpawnWeight" step="0.001" placeholder="0.01" min="0" max="1">
+                    <small style="color: #8B4513; font-size: 10px;">Probability for procedural spawns (0-1)</small>
                 </div>
                 <div class="form-group full-width">
                     <label>Grid Position:</label>
@@ -691,7 +709,7 @@
 
         function addDialogue() {
             const id = `msg_${dialogues.length}`;
-            dialogues.push({ id, text: '' });
+            dialogues.push({ id, text: '', buttonText: 'Okay...' });
             renderDialogues();
         }
 
@@ -707,15 +725,20 @@
             dialogues.forEach((dialogue, index) => {
                 const item = document.createElement('div');
                 item.className = 'dialogue-item';
+                const dialogueText = escapeHtml(dialogue.text || '');
+                const buttonText = escapeHtml(dialogue.buttonText || 'Okay...');
+
                 item.innerHTML = `<button class="remove-btn" onclick="removeDialogue(${index})">Remove</button>
                     <label>Message ${index + 1}:</label>
-                    <textarea onchange="updateDialogue(${index}, this.value)">${escapeHtml(dialogue.text || '')}</textarea>`;
+                    <textarea onchange="updateDialogue(${index}, 'text', this.value)">${dialogueText}</textarea>
+                    <label>Button Text:</label>
+                    <input type="text" value="${buttonText}" onchange="updateDialogue(${index}, 'buttonText', this.value)" placeholder="Okay...">`;
                 container.appendChild(item);
             });
         }
 
-        function updateDialogue(index, text) {
-            dialogues[index].text = text;
+        function updateDialogue(index, field, value) {
+            dialogues[index][field] = value;
         }
 
         function addTrade() {
@@ -850,7 +873,7 @@
 
         function addHybridDialogue() {
             const id = `post_trade_${hybridDialogues.length}`;
-            hybridDialogues.push({ id, text: '', condition: '' });
+            hybridDialogues.push({ id, text: '', buttonText: 'Okay...', condition: '' });
             renderHybridDialogues();
         }
 
@@ -867,11 +890,14 @@
                 const item = document.createElement('div');
                 item.className = 'dialogue-item';
                 const dialogueText = escapeHtml(dialogue.text || '');
+                const buttonText = escapeHtml(dialogue.buttonText || 'Okay...');
                 const dialogueCondition = escapeHtml(dialogue.condition || '');
 
                 item.innerHTML = `<button class="remove-btn" onclick="removeHybridDialogue(${index})">Remove</button>
                     <label>Post-Trade Message ${index + 1}:</label>
                     <textarea onchange="updateHybridDialogue(${index}, 'text', this.value)">${dialogueText}</textarea>
+                    <label>Button Text:</label>
+                    <input type="text" value="${buttonText}" onchange="updateHybridDialogue(${index}, 'buttonText', this.value)" placeholder="Okay...">
                     <label>Condition (optional):</label>
                     <input type="text" value="${dialogueCondition}" onchange="updateHybridDialogue(${index}, 'condition', this.value)" placeholder="hasAbility:axe">`;
                 container.appendChild(item);
@@ -887,10 +913,15 @@
 
             document.getElementById('charName').value = '';
             document.getElementById('charDescription').value = '';
+            document.getElementById('charCategory').value = '';
             document.getElementById('charSprite').value = '';
             document.getElementById('charPortrait').value = '';
             document.getElementById('charZoneX').value = '0';
             document.getElementById('charZoneY').value = '0';
+            document.getElementById('charDimension').value = 'null';
+            document.getElementById('charLevel').value = '';
+            document.getElementById('charSpawnLogic').value = 'fixed';
+            document.getElementById('charSpawnWeight').value = '';
             document.getElementById('merchantGreeting').value = '';
             document.getElementById('hybridGreeting').value = '';
             document.getElementById('charVoicePitch').value = '120';
@@ -923,15 +954,36 @@
                 zone = `${zoneX},${zoneY}`;
             }
 
+            const category = document.getElementById('charCategory').value.trim();
+
+            const metadata = {
+                description: description || '',
+                created: new Date().toISOString(),
+                version: '1.0.0'
+            };
+
+            if (category) {
+                metadata.category = category;
+            }
+
+            // Parse level - can be string (HOME) or number (1, 2, 3)
+            const levelValue = document.getElementById('charLevel').value.trim();
+            let level = null;
+            if (levelValue !== '' && levelValue !== 'null') {
+                // Try to parse as number, otherwise keep as string
+                const numLevel = parseInt(levelValue);
+                level = isNaN(numLevel) ? levelValue : numLevel;
+            }
+
+            // Parse spawn weight
+            const spawnWeightValue = document.getElementById('charSpawnWeight').value.trim();
+            const spawnWeight = spawnWeightValue !== '' ? parseFloat(spawnWeightValue) : null;
+
             const character = {
                 id: charId || 'unnamed_character',
                 name: charName || 'Unnamed Character',
                 type: currentType,
-                metadata: {
-                    description: description || '',
-                    created: new Date().toISOString(),
-                    version: '1.0.0'
-                },
+                metadata: metadata,
                 display: {
                     sprite: document.getElementById('charSprite').value.trim(),
                     portrait: document.getElementById('charPortrait').value.trim(),
@@ -942,6 +994,7 @@
                     x: selectedPosition.x,
                     y: selectedPosition.y,
                     dimension: document.getElementById('charDimension').value === 'null' ? null : parseInt(document.getElementById('charDimension').value),
+                    level: level,
                     spawnLogic: document.getElementById('charSpawnLogic').value
                 },
                 behavior: {
@@ -952,6 +1005,11 @@
                     voicePitch: parseInt(document.getElementById('charVoicePitch').value) || 120
                 }
             };
+
+            // Add spawn weight if present
+            if (spawnWeight !== null) {
+                character.placement.spawnWeight = spawnWeight;
+            }
 
             // Add type-specific data
             if (currentType === 'dialogue') {
@@ -1033,6 +1091,7 @@
         function loadCharacterData(character) {
             document.getElementById('charName').value = character.name || '';
             document.getElementById('charDescription').value = character.metadata?.description || '';
+            document.getElementById('charCategory').value = character.metadata?.category || '';
             document.getElementById('charSprite').value = character.display?.sprite || '';
             document.getElementById('charPortrait').value = character.display?.portrait || '';
 
@@ -1056,7 +1115,13 @@
             }
 
             document.getElementById('charDimension').value = character.placement?.dimension !== null ? character.placement.dimension : 'null';
+
+            // Load level field
+            const level = character.placement?.level;
+            document.getElementById('charLevel').value = level !== null && level !== undefined ? level : '';
+
             document.getElementById('charSpawnLogic').value = character.placement?.spawnLogic || 'fixed';
+            document.getElementById('charSpawnWeight').value = character.placement?.spawnWeight !== undefined ? character.placement.spawnWeight : '';
             document.getElementById('charVoicePitch').value = character.audio?.voicePitch || 120;
 
             // Determine type based on interaction structure

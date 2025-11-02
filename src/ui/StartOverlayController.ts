@@ -27,7 +27,6 @@ export class StartOverlayController {
      */
     async showStartOverlay(
         configureContinueBtn: (overlay: HTMLElement, hasSaved: boolean) => void,
-        setupMusicToggle: (overlay: HTMLElement) => void,
         setupButtonHandlers: (overlay: HTMLElement, hasSaved: boolean) => void
     ): Promise<void> {
         try {
@@ -40,9 +39,6 @@ export class StartOverlayController {
             // Configure continue button based on saved game state
             const hasSaved = await this.hasSavedGame();
             configureContinueBtn(overlay, hasSaved);
-
-            // Set up music toggle
-            setupMusicToggle(overlay);
 
             // Set up button handlers
             setupButtonHandlers(overlay, hasSaved);

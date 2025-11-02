@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/sine.png",
+    "sprite": "characters/npcs/gossip/sine.png",
     "portrait": "characters/npcs/portraits/sineface.png",
     "tileType": "SINE"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 5
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm learning Morse code to communicate with my blinking ceiling light."
+        "text": "I'm learning Morse code to communicate with my blinking ceiling light.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Sandwiches are just bread-based hostage situations for ingredients."
+        "text": "Sandwiches are just bread-based hostage situations for ingredients.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I've been training for a marathon. The Netflix kind. Very competitive."
+        "text": "I've been training for a marathon. The Netflix kind. Very competitive.",
+        "buttonText": "Okay..."
       }
     ]
   },

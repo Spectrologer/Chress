@@ -39,7 +39,12 @@ export class ZonePersistenceManager {
                 health: enemy.health,
                 id: enemy.id
             })),
-            playerSpawn: null
+            playerSpawn: null,
+            // Preserve terrain textures, overlay textures, rotations, and overlay rotations for custom boards
+            terrainTextures: this.game.zoneGenerator.terrainTextures || {},
+            overlayTextures: this.game.zoneGenerator.overlayTextures || {},
+            rotations: this.game.zoneGenerator.rotations || {},
+            overlayRotations: this.game.zoneGenerator.overlayRotations || {}
         });
 
         logger.debug(`Saved current zone state for ${zoneKey}`);

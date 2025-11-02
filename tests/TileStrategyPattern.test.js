@@ -1,5 +1,5 @@
-import { TILE_TYPES } from '../core/constants/index.js';
-import { BaseTileRenderer } from '../renderers/BaseTileRenderer.js';
+import { TILE_TYPES } from '@core/constants/index.js';
+import { BaseTileRenderer } from '@renderers/BaseTileRenderer.js';
 
 describe('Tile Strategy Pattern', () => {
     let renderer;

@@ -3,23 +3,24 @@
   "name": "Micron",
   "type": "dialogue",
   "metadata": {
-    "description": "A precise character who works with ultra-fine lines.",
+    "description": "A tiny bug wary of new technology.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/micron.png",
+    "sprite": "characters/npcs/gossip/micron.png",
     "portrait": "characters/npcs/portraits/micronface.png",
     "tileType": "MICRON"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 2
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,33 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I argue with my microwave. It started it. I'm ending it."
+        "text": "I told him, of course the game has bugs, it's vibe coded.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Raccoons are just goth squirrels with better hand hygiene."
+        "text": "The bubble is gonna burst, man.",
+        "buttonText": "Feel that."
       },
       {
         "id": "msg_2",
-        "text": "I tried meditation. My brain filed a noise complaint against itself."
+        "text": "I  code my games off top in assembly.",
+        "buttonText": "Me too."
+      },
+      {
+        "id": "msg_3",
+        "text": "I wrote a blockchain once. Took me six months. Stored one username. Still think it was worth it.",
+        "buttonText": "Sry."
+      },
+      {
+        "id": "msg_4",
+        "text": "My nephew asked me to help with his Python homework. I rewrote it in COBOL to teach him respect.",
+        "buttonText": "Mmm."
+      },
+      {
+        "id": "msg_5",
+        "text": "Real programmers don't need syntax highlighting. I code in white text on white background. Builds character.",
+        "buttonText": "Okay..."
       }
     ]
   },

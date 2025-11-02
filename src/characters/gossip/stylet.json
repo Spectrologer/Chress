@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/stylet.png",
+    "sprite": "characters/npcs/gossip/stylet.png",
     "portrait": "characters/npcs/portraits/styletface.png",
     "tileType": "STYLET"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 4
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I taught my parrot to say 'existential crisis.' Now we're both having one."
+        "text": "I taught my parrot to say 'existential crisis.' Now we're both having one.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My vacuum cleaner has performance anxiety. Only works when nobody's watching."
+        "text": "My vacuum cleaner has performance anxiety. Only works when nobody's watching.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm starting a religion based on naps. First commandment: Thou shalt snooze."
+        "text": "I'm starting a religion based on naps. First commandment: Thou shalt snooze.",
+        "buttonText": "Okay..."
       }
     ]
   },

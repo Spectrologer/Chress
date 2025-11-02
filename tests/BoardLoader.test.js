@@ -1,5 +1,5 @@
-import { BoardLoader } from '../core/BoardLoader.js';
-import { TILE_TYPES } from '../core/constants/index.js';
+import { BoardLoader } from '@core/BoardLoader.js';
+import { TILE_TYPES } from '@core/constants/index.js';
 
 describe('BoardLoader', () => {
     let boardLoader;

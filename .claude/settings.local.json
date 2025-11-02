@@ -1,21 +1,23 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run dev:*)",
-      "Bash(node update-gossip-npcs.js:*)",
+      "Bash(where /r . styles.css 2)",
       "Bash(npm run build:*)",
-      "Bash(node update_gossip.js:*)",
-      "Bash(cat:*)",
-      "Bash(cp:*)",
-      "Bash(find:*)",
-      "Bash(for tile in cobble water gravel)",
-      "Bash(do echo \"=== $tile ===\")",
+      "Bash(xargs grep:*)",
+      "Bash(grep:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run test:*)",
+      "Bash(npm test:*)",
+      "Bash(node -e:*)",
+      "Bash(git rm:*)",
+      "Bash(node fix-test-imports.js:*)",
+      "Bash(npm run dev:*)",
+      "Bash(for f in \"C:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\managers\"/*.js)",
       "Bash(done)",
-      "Bash(tasklist:*)",
-      "Bash(findstr:*)",
-      "Bash(dir:*)",
-      "Bash(npm run dev:build:*)",
-      "Bash(npm run:*)"
+      "Bash(sort:*)",
+      "Bash(npx eslint:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

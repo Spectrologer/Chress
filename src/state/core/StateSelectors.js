@@ -233,10 +233,6 @@ export const StateSelectors = {
     return store.get('ui.settings.sfxEnabled');
   },
 
-  isAutoPathWithEnemies() {
-    return store.get('ui.settings.autoPathWithEnemies');
-  },
-
   isVerboseAnimations() {
     return store.get('ui.settings.verboseAnimations');
   },

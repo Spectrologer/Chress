@@ -1,0 +1,224 @@
+HARDCODED ZONE DATA & CUSTOM BOARD ANALYSIS - FINDINGS SUMMARY
+==============================================================
+
+SEARCH COMPLETED: Thorough analysis of zone data, custom boards, and sign interactions.
+
+KEY FILES IDENTIFIED:
+====================
+
+1. ZONE DATA DEFINITIONS
+   - src/core/constants/zones.ts
+     * ZONE_LEVEL_DISTANCES for difficulty mapping
+     * Zone (0,0) always = level 1
+   
+   - src/core/handlers/BaseZoneHandler.js (line 24)
+     * isHomeZone = (zoneX === 0 && zoneY === 0)
+     * Used throughout codebase for special handling
+
+2. HOME ZONE (0,0) HARDCODING
+   - src/generators/StructureGenerator.js
+     * addHouse() - places at (2-5, 2-4)
+     * addSign() - places at (2,5) with message
+     * addCistern() - places at (2, 3-4)
+     * All ONLY run if no custom board loaded
+   
+   - src/core/handlers/SurfaceHandler.js
+     * Skips random features for home zone
+     * Special initialization for dimension 0
+   
+   - src/core/handlers/UndergroundHandler.js
+     * Avoids stairs down in home zone
+     * Special handling for dimension 2
+
+3. CUSTOM BOARD SYSTEM
+   - src/config/registrations/BoardRegistrations.js
+     * Registers "zero" (0,0,0), "museum" (0,0,1), "well" (0,0,2)
+     * All three dimensions of home zone have custom boards
+   
+   - src/core/BoardLoader.js
+     * registerBoard(zoneX, zoneY, dimension, boardName, type)
+     * hasBoard() - check if custom board exists
+     * getBoardSync() - retrieve pre-loaded board
+     * preloadAllBoards() - load all registered boards
+   
+   - src/core/ZoneGenerator.js (lines 66-82)
+     * CRITICAL: Checks for custom board FIRST
+     * If found: return boardLoader.convertBoardToGrid() [EARLY RETURN]
+     * If not found: proceed with procedural generation
+
+4. NPC ZONE MAPPING
+   - src/core/NPCLoader.js (lines 36-42)
+     * Maps zone "0,0" to "home_interior" or "home_underground"
+     * Hardcoded in: penne.json, squig.json
+   
+   - src/characters/penne.json, squig.json
+     * "zone": "0,0" designation
+
+5. SIGN INTERACTIONS
+   - src/ui/Sign.js
+     * Static class with message handling
+     * getProceduralMessage() - generates messages by zone distance
+     * hardcoded message sets for home/woods/wilds/frontier/canyon
+   
+   - src/managers/EnvironmentalInteractionManager.js
+     * handleSignTap(gridCoords) - coordinate-agnostic
+     * Works with sign at ANY location
+     * Uses tile data, NOT hardcoded coordinates
+   
+   - src/generators/StructureGenerator.js (lines 61-71)
+     * addSign() places sign at fixed (2,5) for home zone
+     * Hardcoded message position
+     * ONLY runs if no custom board
+
+CONFLICTS IDENTIFIED:
+====================
+
+CONFLICT 1: Board Overrides Procedural [HIGH - INTENTIONAL]
+- Custom boards take precedence via early return pattern
+- House/sign/cistern code never runs for (0,0) if board loaded
+- This is correct behavior - boards meant to replace generation
+- Status: WORKING AS DESIGNED
+
+CONFLICT 2: Hardcoded NPC Zones [MEDIUM]
+- Penne/Squig hardcoded to zone (0,0)
+- Spawned separately from board generation
+- If custom board lacks valid spawn points, NPCs fail silently
+- No validation that NPCs successfully place
+- Status: REAL RISK - ADD VALIDATION
+
+CONFLICT 3: Sign at Fixed (2,5) [MEDIUM - MITIGATED]
+- StructureGenerator.addSign() hardcodes (2,5) for (0,0)
+- Code never runs if board loaded (early return at line 79)
+- Sign interaction handler is coordinate-agnostic
+- Status: LOW RISK DUE TO ARCHITECTURE
+
+CONFLICT 4: Zone Level Inheritance [LOW]
+- Zone (0,0) always level 1 regardless of board
+- Boards are static, don't use level-based spawning
+- Status: NO CONFLICT
+
+CONFLICT 5: Sign Interaction Coordinates [NONE]
+- Sign handler uses tile data, NOT coordinates
+- Works with sign at ANY location
+- Coordinate agnostic design
+- Status: NO CONFLICT
+
+EXECUTION FLOW:
+==============
+
+For Zone (0,0) Dimension 0 (Surface):
+1. registerAllContent() called during init
+2. registerBoards() registers "zero" board
+3. boardLoader.preloadAllBoards() loads "zero.json"
+4. Player enters zone (0,0,0)
+5. ZoneGenerator.generateZone(0,0,0) called
+6. boardLoader.hasBoard(0,0,0) = true
+7. boardData = boardLoader.getBoardSync()
+8. return boardLoader.convertBoardToGrid(boardData) <-- EARLY RETURN
+9. Procedural StructureGenerator code NEVER RUNS
+10. Custom board structure rendered
+
+For Dimensions 1 & 2:
+- Same flow for (0,0,1) "museum" and (0,0,2) "well"
+- NPCManager spawns Penne/Squig AFTER board loads
+- NPCs placed on top of board structure
+
+ZONE DATA STRUCTURE:
+===================
+
+Custom Boards Include:
+- Complete grid (terrain types)
+- Terrain textures by coordinate
+- Overlay textures (decorations)
+- Features at coordinates (items, ports, exits, signs)
+- Rotation data for terrain pieces
+- Player spawn position metadata
+- Optional embedded items/NPCs
+
+Procedural Generation Adds:
+- Grid of base tiles
+- Special structures (house, cistern, well, etc.)
+- NPCs and statues
+- Items based on zone level
+- Enemies based on zone level
+- Exit connections to adjacent zones
+
+KEY INSIGHT: Custom boards are COMPLETE - they don't need procedural generation.
+Procedural generation is FALLBACK - only used if no board loaded.
+
+SAFETY MECHANISMS:
+=================
+
+✓ Early Return Pattern
+  - Boards checked before procedural generation
+  - If board exists, return immediately
+  - Procedural code never interferes
+
+✓ Null Check Fallback
+  - If boardData is null, code checks "if (boardData)"
+  - Falls through to procedural generation
+  - Safe behavior if board not pre-loaded
+
+✓ Coordinate-Agnostic Sign System
+  - Sign handler doesn't assume coordinate
+  - Works with sign at ANY location
+  - No hardcoding in interaction layer
+
+✓ Independent NPC Spawning
+  - NPCs spawned after zone loaded
+  - Uses separate zone mapping system
+  - Doesn't depend on procedural generation
+
+RECOMMENDATIONS:
+================
+
+HIGH PRIORITY:
+1. Add validation that canonical boards load successfully
+   Location: src/core/ZoneGenerator.js or GameInitializer.js
+   Risk if not done: Silent failure with fallback generation
+
+2. Add NPC spawn validation in custom zones
+   Location: src/managers/NPCManager.js
+   Risk if not done: Missing NPCs without warning
+
+MEDIUM PRIORITY:
+3. Document custom board specifications
+   Create: CUSTOM_BOARD_SPEC.md
+   Include: Required features, spawn points, coordinate system
+
+4. Add board loading debug logs
+   Location: src/core/ZoneGenerator.js
+   Info: Which board loaded, fallback decisions
+
+LOW PRIORITY:
+5. Refactor hardcoded zone checks
+   Replace: zoneX === 0 && zoneY === 0
+   With: Zone name constants
+   Improve: Maintainability for future changes
+
+CONCLUSION:
+===========
+
+STATUS: No Critical Conflicts Found
+
+The custom board system and hardcoded zone data are well-designed with proper
+separation of concerns. The early return pattern prevents any interference
+between the two systems.
+
+Strengths:
+✓ Clean early return architecture
+✓ Fallback behavior exists
+✓ Sign system is coordinate-agnostic
+✓ NPC system is independent
+✓ Complete documentation in code
+
+Weaknesses:
+⚠ No validation that NPCs spawn in custom layouts
+⚠ No warning if canonical boards fail to load
+⚠ Limited end-user documentation on board requirements
+
+Overall Assessment: WELL-DESIGNED SYSTEM WITH MINOR VALIDATION GAPS
+
+Recommendation: Implement recommended validations and documentation improvements.
+Current architecture is solid and should be maintained.
+

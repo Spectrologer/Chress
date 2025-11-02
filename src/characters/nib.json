@@ -5,10 +5,11 @@
   "metadata": {
     "description": "A merchant who trades points for random trinkets.",
     "created": "2025-10-27T00:00:00.000Z",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "category": "merchant"
   },
   "display": {
-    "sprite": "characters/npcs/nib.png",
+    "sprite": "characters/npcs/merchant/nib.png",
     "portrait": "characters/npcs/portraits/nibface.png",
     "tileType": "NIB"
   },
@@ -16,8 +17,10 @@
     "zone": null,
     "x": null,
     "y": null,
-    "dimension": null,
-    "spawnLogic": "procedural"
+    "dimension": 2,
+    "level": null,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.1
   },
   "interaction": {
     "type": "barter",

@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/blot.png",
+    "sprite": "characters/npcs/gossip/blot.png",
     "portrait": "characters/npcs/portraits/blotface.png",
     "tileType": "BLOT"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 2
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I tried to rob a bank but they only had fiscal responsibility pamphlets. Took twelve."
+        "text": "I tried to rob a bank but they only had fiscal responsibility pamphlets. Took twelve.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Pigeons are just homeless chickens. Think about it. Don't think too hard though."
+        "text": "Pigeons are just homeless chickens. Think about it. Don't think too hard though.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I speak three languages. None of them fluently. Two of them I made up."
+        "text": "I speak three languages. None of them fluently. Two of them I made up.",
+        "buttonText": "Okay..."
       }
     ]
   },

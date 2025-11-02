@@ -48,6 +48,8 @@ export class InteractionManager {
             (gridCoords, playerPos) => this.npcManager.interactWithAxelotl(gridCoords),
             (gridCoords, playerPos) => this.npcManager.interactWithGouge(gridCoords),
             (gridCoords, playerPos) => this.npcManager.interactWithForge(gridCoords),
+            // Dynamic NPC handler for all NPCs registered in ContentRegistry (e.g., gossip NPCs)
+            (gridCoords, playerPos) => this.npcManager.interactWithDynamicNPC(gridCoords),
             (gridCoords, playerPos) => this.environmentManager.handleSignTap(gridCoords),
             (gridCoords, playerPos) => this.environmentManager.handleStatueTap(gridCoords),
             (gridCoords, playerPos) => this.bombManager.triggerBombExplosion(gridCoords, playerPos),

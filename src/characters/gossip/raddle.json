@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/raddle.png",
+    "sprite": "characters/npcs/gossip/raddle.png",
     "portrait": "characters/npcs/portraits/raddleface.png",
     "tileType": "RADDLE"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 2
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I iron my jeans. My friends staged an intervention. I ironed the intervention pamphlet."
+        "text": "I iron my jeans. My friends staged an intervention. I ironed the intervention pamphlet.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Butterflies are just moths with good marketing teams."
+        "text": "Butterflies are just moths with good marketing teams.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm afraid of palindromes. Mom won't talk to me. See the problem?"
+        "text": "I'm afraid of palindromes. Mom won't talk to me. See the problem?",
+        "buttonText": "Okay..."
       }
     ]
   },

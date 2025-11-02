@@ -5,10 +5,11 @@
   "metadata": {
     "description": "A dialogue NPC who tells lies and shares false information. Found in the home interior.",
     "created": "2025-10-27T00:00:00.000Z",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "category": "tutorial"
   },
   "display": {
-    "sprite": "characters/npcs/forge.png",
+    "sprite": "characters/npcs/tutorial/forge.png",
     "portrait": "characters/npcs/portraits/forgeface.png",
     "tileType": "FORGE"
   },
@@ -17,6 +18,7 @@
     "x": 3,
     "y": 3,
     "dimension": 1,
+    "level": "HOME",
     "spawnLogic": "fixed"
   },
   "interaction": {
@@ -25,63 +27,78 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I can move between tiles."
+        "text": "I can move between tiles.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "I'm not in your way, am I?"
+        "text": "I'm not in your way, am I?",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "There was so much food in here earlier. Yumm!"
+        "text": "There was so much food in here earlier. Yumm!",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_3",
-        "text": "Did you get a chance to play with the horse icons in here a minute ago?"
+        "text": "Did you get a chance to play with the horse icons in here a minute ago?",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_4",
-        "text": "If you stand still for long enough, enemies can't hurt you."
+        "text": "If you stand still for long enough, enemies can't hurt you.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_5",
-        "text": "The walls are edible. Too bad you can't pick them up."
+        "text": "The walls are edible. Too bad you can't pick them up.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_6",
-        "text": "Water actually makes you thirstier the more you drink it."
+        "text": "Water actually makes you thirstier the more you drink it.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_7",
-        "text": "I taught Crayn everything he knows."
+        "text": "I taught Crayn everything he knows.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_8",
-        "text": "The further you go, the easier it gets."
+        "text": "The further you go, the easier it gets.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_9",
-        "text": "I invented moving in an L-shape."
+        "text": "I invented moving in an L-shape.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_10",
-        "text": "Sometimes Crayn goes fishing."
+        "text": "Sometimes Crayn goes fishing.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_11",
-        "text": "If you drop food, it turns into gold."
+        "text": "If you drop food, it turns into gold.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_12",
-        "text": "Enemies are friendly if you're only holding water."
+        "text": "Enemies are friendly if you're only holding water.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_13",
-        "text": "The world is a sphere. Go far enough east, you'll end up back at the start from the west."
+        "text": "The world is a sphere. Go far enough east, you'll end up back at the start from the west.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_14",
-        "text": "If you don't score points for 100 boards, you might find a secret."
+        "text": "If you don't score points for 100 boards, you might find a secret.",
+        "buttonText": "Okay..."
       }
     ]
   },

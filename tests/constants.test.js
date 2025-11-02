@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, UI_CONSTANTS, SIMULATION_CONSTANTS, INPUT_CONSTANTS, ZONE_CONSTANTS } from '../core/constants/index.js';
+import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, UI_CONSTANTS, SIMULATION_CONSTANTS, INPUT_CONSTANTS, ZONE_CONSTANTS } from '@core/constants/index.js';
 
 describe('Constants', () => {
   test('GRID_SIZE should be 10', () => {

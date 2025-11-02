@@ -4,6 +4,7 @@ import { Enemy } from '../entities/Enemy.js';
 import { logger } from './logger.ts';
 import { TILE_TYPES, GRID_SIZE } from './constants/index.js';
 import { SharedStructureSpawner } from '../utils/SharedStructureSpawner.js';
+import { ContentRegistry } from './ContentRegistry.js';
 
 /**
  * Generic spawn utility that reduces code duplication
@@ -149,6 +150,44 @@ export function generateSpecialCommands() {
       spawnAtPosition(game, { type: TILE_TYPES.FOOD, foodType: 'items/consumables/beaf.png' }, 'meat');
     } else {
       spawnAtPosition(game, { type: TILE_TYPES.FOOD, foodType: 'items/consumables/nut.png' }, 'nut');
+    }
+  };
+
+  // Random gossip NPC spawner
+  commands.spawnGossipNPC = function(game) {
+    const allNPCs = ContentRegistry.getAllNPCs();
+    const gossipNPCs = allNPCs.filter(npc =>
+      npc.metadata &&
+      npc.metadata.characterData &&
+      npc.metadata.characterData.metadata &&
+      npc.metadata.characterData.metadata.category === 'gossip'
+    );
+
+    if (gossipNPCs.length === 0) {
+      logger.log('No gossip NPCs found in registry');
+      return;
+    }
+
+    // Pick a random gossip NPC
+    const randomNPC = gossipNPCs[Math.floor(Math.random() * gossipNPCs.length)];
+    const pos = findSpawnPosition(game);
+
+    if (pos) {
+      game.gridManager.setTile(pos.x, pos.y, randomNPC.tileType);
+      // Extract sprite key from metadata.sprite path
+      // TextureLoader removes 'characters/npcs/' prefix from NPC paths
+      // e.g., "characters/npcs/gossip/aster.png" -> "gossip/aster"
+      let spriteKey = randomNPC.id;
+      if (randomNPC.metadata?.sprite) {
+        const spritePath = randomNPC.metadata.sprite;
+        if (spritePath.startsWith('characters/npcs/')) {
+          spriteKey = spritePath.replace('characters/npcs/', '').replace('.png', '');
+        }
+      }
+      game.npcManager.createNPC(pos.x, pos.y, randomNPC.id, spriteKey);
+      logger.log('Spawned gossip NPC', randomNPC.id, 'at', pos);
+    } else {
+      logger.log('No valid spawn position found for gossip NPC');
     }
   };
 

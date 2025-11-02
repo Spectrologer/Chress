@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/penni.png",
+    "sprite": "characters/npcs/gossip/penni.png",
     "portrait": "characters/npcs/portraits/penniface.png",
     "tileType": "PENNI"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
-    "dimension": 0,
+    "dimension": 2,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 3
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm teaching a masterclass on overthinking. First session: Is this necessary?"
+        "text": "I'm teaching a masterclass on overthinking. First session: Is this necessary?",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My coffee machine achieved sentience. Now it judges my life choices."
+        "text": "My coffee machine achieved sentience. Now it judges my life choices.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I invented silent screaming. It's just thinking really loud."
+        "text": "I invented silent screaming. It's just thinking really loud.",
+        "buttonText": "Okay..."
       }
     ]
   },

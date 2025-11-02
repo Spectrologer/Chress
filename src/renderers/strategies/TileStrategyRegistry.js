@@ -74,36 +74,42 @@ export class TileStrategyRegistry {
         this.register(TILE_TYPES.ENEMY, new SimpleOverlayRenderStrategy(
             this.images, this.tileSize, 'lizardy', TILE_TYPES.ENEMY, '🦎', { font: '32px Arial', fillStyle: '#FF1493' }
         ));
+        // Merchant NPCs (in merchant/ subdirectory)
         this.register(TILE_TYPES.PENNE, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'penne', TILE_TYPES.PENNE, '🍝', { font: '32px Arial', fillStyle: '#FFD700' }
+            this.images, this.tileSize, 'merchant/penne', TILE_TYPES.PENNE, '🍝', { font: '32px Arial', fillStyle: '#FFD700' }
         ));
         this.register(TILE_TYPES.SQUIG, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'squig', TILE_TYPES.SQUIG, '🐸', null
+            this.images, this.tileSize, 'merchant/squig', TILE_TYPES.SQUIG, '🐸', null
         ));
         this.register(TILE_TYPES.RUNE, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'rune', TILE_TYPES.RUNE, '🧙', null
+            this.images, this.tileSize, 'merchant/rune', TILE_TYPES.RUNE, '🧙', null
         ));
         this.register(TILE_TYPES.NIB, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'nib', TILE_TYPES.NIB, '📖', null
+            this.images, this.tileSize, 'merchant/nib', TILE_TYPES.NIB, '📖', null
         ));
         this.register(TILE_TYPES.MARK, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'mark', TILE_TYPES.MARK, '🗺️', null
-        ));
-        this.register(TILE_TYPES.CRAYN, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'crayn', TILE_TYPES.CRAYN, '🦎', null
-        ));
-        this.register(TILE_TYPES.FELT, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'felt', TILE_TYPES.FELT, '🙋', null
-        ));
-        this.register(TILE_TYPES.FORGE, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'forge', TILE_TYPES.FORGE, '🛠️', null
+            this.images, this.tileSize, 'merchant/mark', TILE_TYPES.MARK, '🗺️', null
         ));
         this.register(TILE_TYPES.AXELOTL, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'axolotl', TILE_TYPES.AXELOTL, 'AXL', { font: '20px Arial', fillStyle: '#000000' }
+            this.images, this.tileSize, 'merchant/axolotl', TILE_TYPES.AXELOTL, 'AXL', { font: '20px Arial', fillStyle: '#000000' }
         ));
         this.register(TILE_TYPES.GOUGE, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'gouge', TILE_TYPES.GOUGE, 'GOU', { font: '20px Arial', fillStyle: '#FFFFFF' }
+            this.images, this.tileSize, 'merchant/gouge', TILE_TYPES.GOUGE, 'GOU', { font: '20px Arial', fillStyle: '#FFFFFF' }
         ));
+
+        // Tutorial NPCs (in tutorial/ subdirectory)
+        this.register(TILE_TYPES.CRAYN, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'tutorial/crayn', TILE_TYPES.CRAYN, '🦎', null
+        ));
+        this.register(TILE_TYPES.FELT, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'tutorial/felt', TILE_TYPES.FELT, '🙋', null
+        ));
+        this.register(TILE_TYPES.FORGE, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'tutorial/forge', TILE_TYPES.FORGE, '🛠️', null
+        ));
+
+        // Gossip NPCs - register all gossip NPC tile types dynamically
+        this.registerGossipNPCs();
 
         // Items
         this.register(TILE_TYPES.FOOD, new FoodRenderStrategy(this.images, this.tileSize));
@@ -153,6 +159,35 @@ export class TileStrategyRegistry {
         ));
         this.register(TILE_TYPES.CISTERN, new CisternRenderStrategy(this.images, this.tileSize, this.structureRenderer));
         this.register(TILE_TYPES.PITFALL, new PitfallRenderStrategy(this.images, this.tileSize, this.structureRenderer));
+    }
+
+    /**
+     * Register all gossip NPC tile types dynamically.
+     * Gossip NPCs are stored in characters/npcs/gossip/ and use the pattern "gossip/name" for sprite keys.
+     */
+    registerGossipNPCs() {
+        // List of all gossip NPC names (matching the tile type names in TILE_TYPES)
+        const gossipNPCs = [
+            'ASTER', 'BLOT', 'BLOTTER', 'BRUSH', 'BURIN', 'CALAMUS', 'CAP', 'CINNABAR',
+            'CROCK', 'FILUM', 'FORK', 'GEL', 'GOUACHE', 'HANE', 'KRAFT', 'MERKI',
+            'MICRON', 'PENNI', 'PLUMA', 'PLUME', 'QUILL', 'RADDLE', 'SCRITCH',
+            'SILVER', 'SINE', 'SLATE', 'SLICK', 'SLUG', 'STYLET', 'VELLUM'
+        ];
+
+        gossipNPCs.forEach(npcName => {
+            const tileType = TILE_TYPES[npcName];
+            if (tileType !== undefined) {
+                // Sprite key is "gossip/lowercase-name" (e.g., "gossip/aster")
+                const spriteKey = `gossip/${npcName.toLowerCase()}`;
+                // Use the first 3 letters as fallback text
+                const fallbackText = npcName.substring(0, 3).toUpperCase();
+
+                this.register(tileType, new SimpleOverlayRenderStrategy(
+                    this.images, this.tileSize, spriteKey, tileType, fallbackText,
+                    { font: '12px Arial', fillStyle: '#FFFFFF' }
+                ));
+            }
+        });
     }
 
     /**

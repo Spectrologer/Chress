@@ -1,9 +1,8 @@
-import { Sign } from '../ui/Sign.js';
 import { TILE_TYPES, GRID_SIZE, ZONE_CONSTANTS } from '../core/constants/index.js';
 import { randomInt, findValidPlacement, isAllowedTile, validateAndSetTile } from './GeneratorUtils.js';
 import { ZoneStateManager } from './ZoneStateManager.js';
 import { logger } from '../core/logger.ts';
-import { isTileType, isTileObjectOfType, isFloor, isSign } from '../utils/TypeChecks.js';
+import { isTileType, isTileObjectOfType, isFloor } from '../utils/TypeChecks.js';
 
 export class StructureGenerator {
     constructor(gridManager, game = null) {
@@ -56,18 +55,6 @@ export class StructureGenerator {
             this.gridManager.setTile(2, 3, TILE_TYPES.PORT);     // Top part (entrance) - two tiles above the sign
             this.gridManager.setTile(2, 4, TILE_TYPES.CISTERN); // Bottom part
         }
-    }
-
-    addSign(message, zoneX, zoneY) {
-        // Special case for home zone (0,0) to place sign at specific position
-        if (zoneX === 0 && zoneY === 0) {
-            const signX = 2;
-            const signY = 5;
-            this.gridManager.setTile(signX, signY, { type: TILE_TYPES.SIGN, message: message });
-            return; // Placed successfully
-        }
-
-        this._placeSignRandomly(message);
     }
 
     _placeStructure(width, height, tileType, onPlacedCallback) {
@@ -207,80 +194,4 @@ export class StructureGenerator {
         }
     }
 
-    checkSignExists() {
-        const gridSize = this.gridManager.getSize();
-        for (let y = 0; y < gridSize; y++) {
-            for (let x = 0; x < gridSize; x++) {
-                if (isSign(this.gridManager.getTile(x, y))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    addSpecificNote(messageIndex, zoneX, zoneY) {
-        let area;
-        const level = ZoneStateManager.getZoneLevel(zoneX, zoneY);
-        if (level === 1) area = 'home';
-        else if (level === 2) area = 'woods';
-        else if (level === 3) area = 'wilds';
-        else if (level === 4) area = 'frontier';
-        else return;
-
-        const message = Sign.getMessageByIndex(area, messageIndex);
-        logger.log('[Note Debug] addSpecificNote:', { area, messageIndex, message });
-        if (Sign.spawnedMessages.has(message)) return;
-
-        // Try to place the note in a valid location (max 50 attempts)
-        let x, y;
-        if (zoneX === 0 && zoneY === 0) {
-            // Fixed location for home zone, at tile 3,4
-            x = 3;
-            y = 4;
-            // Override any tile here to place the sign
-            this.gridManager.setTile(x, y, {
-                type: TILE_TYPES.SIGN,
-                message: message
-            });
-            Sign.spawnedMessages.add(message);
-            logger.log(`Home note sign placed at tile 3,4 in zone (0,0)`);
-            return;
-        }
-
-        // For other zones, use random placement
-        this._placeSignRandomly(message, () => Sign.spawnedMessages.add(message));
-    }
-
-    addRandomSign(zoneX, zoneY) {
-        // Try to place the sign in a valid location (max 50 attempts)
-        const pos = findValidPlacement({
-            maxAttempts: 50,
-            validate: (x, y) => isFloor(this.gridManager.getTile(x, y))
-        });
-        if (pos) {
-            const { x, y } = pos;
-            const message = Sign.getProceduralMessage(zoneX, zoneY);
-            this.gridManager.setTile(x, y, {
-                type: TILE_TYPES.SIGN,
-                message: message
-            });
-        }
-    }
-
-    _placeSignRandomly(message, onPlacedCallback = null) {
-        const pos = findValidPlacement({
-            maxAttempts: 50,
-            validate: (x, y) => isFloor(this.gridManager.getTile(x, y))
-        });
-        if (pos) {
-            const { x, y } = pos;
-            this.gridManager.setTile(x, y, { type: TILE_TYPES.SIGN, message: message });
-            if (onPlacedCallback) {
-                onPlacedCallback();
-            }
-            return true;
-        }
-        return false;
-    }
 }

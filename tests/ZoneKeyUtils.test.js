@@ -1,4 +1,4 @@
-import { createZoneKey, parseZoneKey, isValidZoneKey } from '../utils/ZoneKeyUtils.js';
+import { createZoneKey, parseZoneKey, isValidZoneKey } from '@utils/ZoneKeyUtils.js';
 
 describe('ZoneKeyUtils', () => {
     describe('createZoneKey', () => {

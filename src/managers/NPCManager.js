@@ -1,5 +1,6 @@
 import { BaseNPC } from '../npc/BaseNPC.js';
 import { TILE_TYPES } from '../core/constants/index.js';
+import { ContentRegistry } from '../core/ContentRegistry.js';
 
 export class NPCManager {
     constructor(game) {
@@ -159,20 +160,39 @@ export class NPCManager {
                 let npcType = null;
                 let spriteKey = null;
 
-                switch (tileType) {
-                    case TILE_TYPES.AXELOTL:
-                        npcType = 'axelotl';
-                        spriteKey = 'axolotl';
-                        break;
-                    case TILE_TYPES.CRAYN:
-                        npcType = 'crayn';
-                        spriteKey = 'crayn';
-                        break;
-                    case TILE_TYPES.FELT:
-                        npcType = 'felt';
-                        spriteKey = 'felt';
-                        break;
-                    // Add more NPC types as needed
+                // First, try to look up NPC config from ContentRegistry
+                const npcConfig = ContentRegistry.getNPCByTileType(tileType);
+                if (npcConfig && npcConfig.metadata && npcConfig.metadata.sprite) {
+                    // Extract sprite path and convert to image key
+                    // TextureLoader removes 'characters/npcs/' prefix from NPC paths
+                    // e.g., "characters/npcs/gossip/aster.png" -> "gossip/aster"
+                    const spritePath = npcConfig.metadata.sprite;
+                    if (spritePath.startsWith('characters/npcs/')) {
+                        spriteKey = spritePath.replace('characters/npcs/', '').replace('.png', '');
+                    } else {
+                        // Fallback: just use the filename
+                        const parts = spritePath.split('/');
+                        const filename = parts[parts.length - 1];
+                        spriteKey = filename.replace('.png', '');
+                    }
+                    npcType = npcConfig.metadata.characterData?.id || spriteKey;
+                } else {
+                    // Fallback to hardcoded NPC types
+                    switch (tileType) {
+                        case TILE_TYPES.AXELOTL:
+                            npcType = 'axelotl';
+                            spriteKey = 'axolotl';
+                            break;
+                        case TILE_TYPES.CRAYN:
+                            npcType = 'crayn';
+                            spriteKey = 'crayn';
+                            break;
+                        case TILE_TYPES.FELT:
+                            npcType = 'felt';
+                            spriteKey = 'felt';
+                            break;
+                        // Add more NPC types as needed
+                    }
                 }
 
                 if (npcType) {

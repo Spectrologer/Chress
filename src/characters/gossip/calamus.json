@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/calamus.png",
+    "sprite": "characters/npcs/gossip/calamus.png",
     "portrait": "characters/npcs/portraits/calamusface.png",
     "tileType": "CALAMUS"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
-    "dimension": 0,
+    "dimension": 2,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 1
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm allergic to Wednesdays. Breaks out in existential dread every week."
+        "text": "I'm allergic to Wednesdays. Breaks out in existential dread every week.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My shadow filed for divorce. Said I was too two-dimensional."
+        "text": "My shadow filed for divorce. Said I was too two-dimensional.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I collect belly button lint from famous people. It's worth nothing. I have jars."
+        "text": "I collect belly button lint from famous people. It's worth nothing. I have jars.",
+        "buttonText": "Okay..."
       }
     ]
   },

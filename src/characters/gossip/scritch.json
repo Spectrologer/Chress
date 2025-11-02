@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/scritch.png",
+    "sprite": "characters/npcs/gossip/scritch.png",
     "portrait": "characters/npcs/portraits/scritchface.png",
     "tileType": "SCRITCH"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 3
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I trained a goldfish to fetch. Took four years. Worth it? No."
+        "text": "I trained a goldfish to fetch. Took four years. Worth it? No.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My toaster has trust issues. Won't commit to a darkness setting."
+        "text": "My toaster has trust issues. Won't commit to a darkness setting.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm writing a horror novel about spreadsheets. The pivot tables... terrifying."
+        "text": "I'm writing a horror novel about spreadsheets. The pivot tables... terrifying.",
+        "buttonText": "Okay..."
       }
     ]
   },

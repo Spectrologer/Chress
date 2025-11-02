@@ -125,20 +125,6 @@
     mix-blend-mode: multiply;
     z-index: 0;
 }
-.overlay-music-toggle {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.92rem;
-    color: #2b2b1f;
-}
-.overlay-music-label {
-    font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
-}
 .start-overlay-action {
     margin: 0;
     padding: clamp(10px, 2.8vh, 16px) clamp(16px, 4vw, 24px);
@@ -162,7 +148,7 @@
     font-family: 'MedievalSharp';
     font-style: normal;
     font-weight: 400;
-    src: url('fonts/MedievalSharp-Regular.ttf') format('truetype');
+    src: url('/fonts/MedievalSharp-Regular.ttf') format('truetype');
     font-display: swap;
 }
 
@@ -622,7 +608,7 @@ body {
 }
 
 #toggle-attack-range-button {
-    background-image: url('assets/ui/target-icon.png');
+    background-image: url('/assets/ui/target-icon.png');
 }
 
 #toggle-attack-range-button.active {
@@ -640,7 +626,7 @@ body {
 .player-portrait-container {
     width: 88px;
     height: 88px;
-    background: url('assets/ui/facesetbox.png') no-repeat center/contain;
+    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
     align-items: center;
@@ -830,7 +816,7 @@ body {
 .inventory-slot {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: #f5e6c0 url('assets/ui/cell.png') no-repeat center / contain;
+    background: #f5e6c0 url('/assets/ui/cell.png') no-repeat center / contain;
     border: 1px solid #e2cfa2;
     border-radius: 6px;
     image-rendering: pixelated;
@@ -1091,21 +1077,21 @@ body {
 }
 
 .inventory-slot.item-water {
-    background-image: url('assets/items/consumables/water.png'), url('assets/ui/cell.png');
+    background-image: url('/assets/items/consumables/water.png'), url('/assets/ui/cell.png');
     background-size: 70%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-note {
-    background-image: url('assets/items/misc/note.png'), url('assets/ui/cell.png');
+    background-image: url('/assets/items/misc/note.png'), url('/assets/ui/cell.png');
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-heart {
-    background-image: url('assets/items/misc/heart.png'), url('assets/ui/cell.png');
+    background-image: url('/assets/items/misc/heart.png'), url('/assets/ui/cell.png');
     /* make heart visually smaller in inventory */
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
@@ -1117,35 +1103,35 @@ body {
 
 
 .inventory-slot.item-axe {
-    background-image: url('assets/items/equipment/axe.png'), url('assets/ui/cell.png');
+    background-image: url('/assets/items/equipment/axe.png'), url('/assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-hammer {
-    background-image: url('assets/items/equipment/hammer.png'), url('assets/ui/cell.png');
+    background-image: url('/assets/items/equipment/hammer.png'), url('/assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-spear {
-    background-image: url('assets/items/equipment/spear.png'), url('assets/ui/cell.png');
+    background-image: url('/assets/items/equipment/spear.png'), url('/assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-bomb {
-    background-image: url('assets/items/misc/bomb.png'), url('assets/ui/cell.png');
+    background-image: url('/assets/items/misc/bomb.png'), url('/assets/ui/cell.png');
     background-size: contain, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-heart {
-    background-image: url('assets/items/misc/heart.png'), url('assets/ui/cell.png');
+    background-image: url('/assets/items/misc/heart.png'), url('/assets/ui/cell.png');
     /* tighter size for crispness in inventory */
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
@@ -1153,14 +1139,14 @@ body {
 }
 
 .inventory-slot.item-note {
-    background-image: url('assets/items/misc/note.png'), url('assets/ui/cell.png');
+    background-image: url('/assets/items/misc/note.png'), url('/assets/ui/cell.png');
     background-size: 50%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
 }
 
 .inventory-slot.item-book {
-    background-image: url('assets/items/misc/book.png'), url('assets/ui/cell.png');
+    background-image: url('/assets/items/misc/book.png'), url('/assets/ui/cell.png');
     background-size: 70%, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: center, center;
@@ -2342,7 +2328,7 @@ h1 {
     max-width: 160px;
     height: auto;
     aspect-ratio: 1 / 1;
-    background: url('assets/ui/facesetbox.png') no-repeat center/contain;
+    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
     align-items: center;
@@ -2817,7 +2803,7 @@ h1 {
 .stats-portrait-container {
     width: 84px; /* Slightly reduce portrait size to free horizontal space */
     height: 84px;
-    background: url('assets/ui/facesetbox.png') no-repeat center/contain;
+    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px;
     display: flex;
     align-items: center;
@@ -3039,7 +3025,7 @@ input:checked + .toggle-slider::after {
 .statue-portrait-container {
     width: 120px;
     height: 120px;
-    background: url('assets/ui/facesetbox.png') no-repeat center/contain;
+    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px;
     display: flex;
     align-items: center;

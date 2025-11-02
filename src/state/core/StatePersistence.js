@@ -422,7 +422,6 @@ export class StatePersistence {
         newState.ui.settings = {
           musicEnabled: old.playerStats.musicEnabled ?? true,
           sfxEnabled: old.playerStats.sfxEnabled ?? true,
-          autoPathWithEnemies: old.playerStats.autoPathWithEnemies ?? false,
           verboseAnimations: true
         };
       }

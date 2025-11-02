@@ -3,11 +3,12 @@ import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { npcDiscoveryPlugin } from './vite-plugin-npc-discovery.js';
-import { assetDiscoveryPlugin } from './vite-plugin-asset-discovery.js';
+
+const baseUrl = process.env.NODE_ENV === 'production' ? '/Chress/' : '/';
 
 export default defineConfig({
   // Base URL for GitHub Pages deployment
-  base: process.env.NODE_ENV === 'production' ? '/Chress/' : '/',
+  base: baseUrl,
 
   // Build optimizations
   build: {
@@ -144,7 +145,6 @@ export default defineConfig({
 
   // Plugin configuration
   plugins: [
-    assetDiscoveryPlugin(), // Auto-discover image assets
     npcDiscoveryPlugin(), // Auto-discover NPC JSON files
     viteStaticCopy({
       targets: [
@@ -156,10 +156,6 @@ export default defineConfig({
           src: 'src/characters/gossip/*.json',
           dest: 'characters/gossip'
         },
-        {
-          src: 'assets/**/*',
-          dest: 'assets'
-        }
       ],
       // Watch for changes in development
       watch: {
@@ -178,8 +174,8 @@ export default defineConfig({
         background_color: '#2d1b3d',
         display: 'standalone',
         orientation: 'any',
-        scope: process.env.NODE_ENV === 'production' ? '/Chress/' : '/',
-        start_url: process.env.NODE_ENV === 'production' ? '/Chress/' : '/',
+        scope: baseUrl,
+        start_url: baseUrl,
         icons: [
           {
             src: 'icon-192.png',
@@ -204,7 +200,7 @@ export default defineConfig({
 
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,gif,svg,woff,woff2,ttf,json}'],
-        sourcemap: process.env.NODE_ENV !== 'production', // Enable source maps in dev for debugging
+        sourcemap: false, // Disable workbox source maps to prevent browser parsing errors
 
         // Cache strategy configuration
         runtimeCaching: [
@@ -268,8 +264,9 @@ export default defineConfig({
       },
 
       devOptions: {
-        enabled: false, // Disable in dev to prevent aggressive caching of assets
-        type: 'module'
+        enabled: true, // Enable in dev to test PWA features (set to false if caching becomes an issue)
+        type: 'module',
+        navigateFallback: 'index.html'
       }
     })
   ],
@@ -278,5 +275,5 @@ export default defineConfig({
   assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
 
   // Public directory for static assets
-  publicDir: 'public',
+  publicDir: 'static', 
 });

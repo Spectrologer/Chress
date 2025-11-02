@@ -1,4 +1,4 @@
-import { FogRenderer } from '../renderers/FogRenderer.js';
+import { FogRenderer } from '@renderers/FogRenderer.js';
 
 describe('FogRenderer', () => {
   let originalCreateElement;

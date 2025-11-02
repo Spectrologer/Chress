@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/slug.png",
+    "sprite": "characters/npcs/gossip/slug.png",
     "portrait": "characters/npcs/portraits/slugface.png",
     "tileType": "SLUG"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 3
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been arguing with a scarecrow for three hours. We're both winning."
+        "text": "I've been arguing with a scarecrow for three hours. We're both winning.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My favorite hobby is pretending to understand the stock market."
+        "text": "My favorite hobby is pretending to understand the stock market.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm writing an opera about expired yogurt. Critics call it 'bold.'"
+        "text": "I'm writing an opera about expired yogurt. Critics call it 'bold.'",
+        "buttonText": "Okay..."
       }
     ]
   },

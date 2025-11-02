@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/gouache.png",
+    "sprite": "characters/npcs/gossip/gouache.png",
     "portrait": "characters/npcs/portraits/gouacheface.png",
     "tileType": "GOUACHE"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 3
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I trained my alarm clock to lie to me. Now we both sleep in."
+        "text": "I trained my alarm clock to lie to me. Now we both sleep in.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Clouds are just sky mistakes that we pretend to like."
+        "text": "Clouds are just sky mistakes that we pretend to like.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm starting a support group for people who are too well-adjusted. Empty so far."
+        "text": "I'm starting a support group for people who are too well-adjusted. Empty so far.",
+        "buttonText": "Okay..."
       }
     ]
   },

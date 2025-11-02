@@ -113,13 +113,6 @@ export class InputStateManager {
     // ========================================
 
     /**
-     * Check if auto-path is allowed with enemies present
-     */
-    isAutoPathWithEnemiesAllowed() {
-        return !!(this.game.player.stats?.autoPathWithEnemies);
-    }
-
-    /**
      * Check if verbose path animations are enabled
      */
     hasVerbosePathAnimations() {

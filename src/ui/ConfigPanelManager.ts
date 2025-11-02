@@ -89,11 +89,9 @@ export class ConfigPanelManager {
     private _updateConfigInputs(): void {
         const music = this.configOverlay?.querySelector<HTMLInputElement>('#music-toggle');
         const sfx = this.configOverlay?.querySelector<HTMLInputElement>('#sfx-toggle');
-        const autoPath = this.configOverlay?.querySelector<HTMLInputElement>('#auto-path-enemies-toggle');
 
         if (music) music.checked = this.game.player.stats.musicEnabled !== false;
         if (sfx) sfx.checked = this.game.player.stats.sfxEnabled !== false;
-        if (autoPath) autoPath.checked = !!this.game.player.stats.autoPathWithEnemies;
     }
 
     /**
@@ -147,7 +145,7 @@ export class ConfigPanelManager {
     }
 
     /**
-     * Sets up audio and auto-path toggle handlers
+     * Sets up audio toggle handlers
      */
     private _setupAudioToggles(): void {
         // Music toggle
@@ -164,14 +162,8 @@ export class ConfigPanelManager {
             this.game.gameStateManager?.saveGameState?.();
         };
 
-        // Auto-path toggle
-        const applyAutoPathState = (checked: boolean): void => {
-            this.game.player.stats.autoPathWithEnemies = !!checked;
-        };
-
         // Use the event handler utility for all toggles
         PanelEventHandler.setupAudioToggle('music-toggle', applyMusicState);
         PanelEventHandler.setupAudioToggle('sfx-toggle', applySfxState);
-        PanelEventHandler.setupAudioToggle('auto-path-enemies-toggle', applyAutoPathState);
     }
 }

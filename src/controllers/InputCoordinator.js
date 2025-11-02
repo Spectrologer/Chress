@@ -388,11 +388,11 @@ export class InputCoordinator {
         const handled = this.game.interactionManager.handleTap(gridCoords);
 
         if (!handled) {
-            // Single step if enemies and no auto-path
+            // Disable autopathing entirely when enemies are present
             const enemiesExist = this.stateManager.hasLivingEnemies();
-            const allowAutoPath = this.stateManager.isAutoPathWithEnemiesAllowed();
 
-            if (enemiesExist && !allowAutoPath) {
+            if (enemiesExist) {
+                // Only allow single-step movement when enemies exist
                 if (playerPos.equals(clickedPos)) return;
 
                 // Choose cardinal direction using DirectionUtils
@@ -409,7 +409,7 @@ export class InputCoordinator {
                 return;
             }
 
-            // Auto-path or direct movement
+            // Auto-path or direct movement (only when no enemies)
             const isInteractive = this.isTileInteractive(clickedPos.x, clickedPos.y);
 
             if (isInteractive && !playerPos.isAdjacentTo(clickedPos)) {

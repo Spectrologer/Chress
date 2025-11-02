@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/aster.png",
+    "sprite": "characters/npcs/gossip/aster.png",
     "portrait": "characters/npcs/portraits/asterface.png",
     "tileType": "ASTER"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 1
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been practicing telekinesis for six years. Still can't move the salt shaker."
+        "text": "I've been practicing telekinesis for six years. Still can't move the salt shaker.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My therapist is a sentient cloud. Very insightful, terrible at keeping appointments."
+        "text": "My therapist is a sentient cloud. Very insightful, terrible at keeping appointments.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm starting a religion based on expired coupons. We have three followers."
+        "text": "I'm starting a religion based on expired coupons. We have three followers.",
+        "buttonText": "Okay..."
       }
     ]
   },

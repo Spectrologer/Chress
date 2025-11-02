@@ -109,55 +109,12 @@ export class TextureLoader {
         this.images[key] = new Image();
 
         this.images[key].onload = () => {
-                if (key === 'doodads/shack') {
+            if (key === 'doodads/shack') {
                 logger.debug('[TextureLoader] Shack image loaded successfully:', filename, `dimensions: ${this.images[key].width}x${this.images[key].height}`);
                 // Validate shack image is at least 3x3 sprite sheet
                 const img = this.images[key];
                 if (img.width < 48 || img.height < 48) {
                     logger.warn('[TextureLoader] Shack image too small for 3x3 sprite sheet, rendering may fail:', `got ${img.width}x${img.height}, need >=48x48`);
-                }
-            }
-                    // Targeted matte removal for known assets that use a solid background
-                    const keysWithMatte = new Set(['doodads/club', 'spear', 'shovel', 'axe', 'hammer', 'bow']);
-            if (keysWithMatte.has(key)) {
-                try {
-                    const img = this.images[key];
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const cx = canvas.getContext('2d');
-                    cx.drawImage(img, 0, 0);
-
-                    // Try to read pixel data; may throw for cross-origin images
-                    const imgData = cx.getImageData(0, 0, canvas.width, canvas.height);
-                    const data = imgData.data;
-
-                    // If image already has alpha anywhere, skip
-                    let hasAlpha = false;
-                    for (let i = 3; i < data.length; i += 4) {
-                        if (data[i] < 255) { hasAlpha = true; break; }
-                    }
-
-                    if (!hasAlpha && canvas.width > 0 && canvas.height > 0) {
-                        const r = data[0];
-                        const g = data[1];
-                        const b = data[2];
-                        const tolerance = 12; // slightly higher tolerance for compressed assets
-
-                        for (let i = 0; i < data.length; i += 4) {
-                            const dr = Math.abs(data[i] - r);
-                            const dg = Math.abs(data[i + 1] - g);
-                            const db = Math.abs(data[i + 2] - b);
-                            if (dr <= tolerance && dg <= tolerance && db <= tolerance) {
-                                data[i + 3] = 0;
-                            }
-                        }
-                        cx.putImageData(imgData, 0, 0);
-                        this.images[key] = canvas;
-                    }
-                } catch (e) {
-                    // Cross-origin or other error — leave original image untouched
-                    // console.warn('[TextureLoader] targeted matte removal failed for', key, e);
                 }
             }
 

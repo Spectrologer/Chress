@@ -1,6 +1,6 @@
 import { InputController } from '../controllers/InputController.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { eventBus } from '@core/EventBus.js';
+import { EventTypes } from '@core/EventTypes.js';
 
 // Minimal fake game/player similar to other tests
 function makeGame() {

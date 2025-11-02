@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/silver.png",
+    "sprite": "characters/npcs/gossip/silver.png",
     "portrait": "characters/npcs/portraits/silverface.png",
     "tileType": "SILVER"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
-    "dimension": 0,
+    "dimension": 2,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 4
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been in a staring contest with a painting for six days. It blinked first."
+        "text": "I've been in a staring contest with a painting for six days. It blinked first.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My nemesis is a guy who returns shopping carts. We've never met. It's complicated."
+        "text": "My nemesis is a guy who returns shopping carts. We've never met. It's complicated.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I tried to high-five a ghost. Went right through. We're both disappointed."
+        "text": "I tried to high-five a ghost. Went right through. We're both disappointed.",
+        "buttonText": "Okay..."
       }
     ]
   },

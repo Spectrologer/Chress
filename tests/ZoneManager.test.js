@@ -1,7 +1,7 @@
-import { ZoneManager } from '../managers/ZoneManager.js';
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
+import { ZoneManager } from '@managers/ZoneManager.js';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index.js';
+import { eventBus } from '@core/EventBus.js';
+import { EventTypes } from '@core/EventTypes.js';
 
 describe('ZoneManager', () => {
   let zoneManager;

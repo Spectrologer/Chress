@@ -1,4 +1,4 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index.js';
 import { ItemGenerator } from '../generators/ItemGenerator.js';
 import * as ZoneStateManagerModule from '../generators/ZoneStateManager.js';
 

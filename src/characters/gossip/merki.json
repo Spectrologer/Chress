@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/merki.png",
+    "sprite": "characters/npcs/gossip/merki.png",
     "portrait": "characters/npcs/portraits/merkiface.png",
     "tileType": "MERKI"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 1
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've replaced all my furniture with beanbags. I'm a CEO. It's not going well."
+        "text": "I've replaced all my furniture with beanbags. I'm a CEO. It's not going well.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Elevators are just vertical cars that forgot how to be interesting."
+        "text": "Elevators are just vertical cars that forgot how to be interesting.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm convinced that déjà vu is just God's buffering screen."
+        "text": "I'm convinced that déjà vu is just God's buffering screen.",
+        "buttonText": "Okay..."
       }
     ]
   },

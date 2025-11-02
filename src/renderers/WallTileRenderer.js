@@ -18,6 +18,15 @@ export class WallTileRenderer {
             const textureName = customTexture.includes('/') ? customTexture.split('/')[1] : customTexture;
 
             if (RendererUtils.isImageLoaded(this.images, textureName)) {
+                // First draw background dirt so transparency works properly
+                if (RendererUtils.isImageLoaded(this.images, 'dirt')) {
+                    ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                } else {
+                    ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                    ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                }
+
+                // Then draw the wall texture on top
                 ctx.save();
                 // Apply rotation if present
                 if (rotation !== 0) {
@@ -40,7 +49,7 @@ export class WallTileRenderer {
             return;
         }
 
-        // Underground zones use rockwall.png for walls
+        // Underground zones use cobble for walls
         if (zoneLevel === 6) {
             // First draw gravel background
             if (RendererUtils.isImageLoaded(this.images, 'gravel')) {
@@ -49,9 +58,9 @@ export class WallTileRenderer {
                 ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
-            // Then overlay rockwall on top
-            if (RendererUtils.isImageLoaded(this.images, 'rockwall')) {
-                ctx.drawImage(this.images.rockwall, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            // Then overlay cobble on top
+            if (RendererUtils.isImageLoaded(this.images, 'cobble')) {
+                ctx.drawImage(this.images.cobble, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
                 ctx.fillStyle = '#696969'; // Dark gray fallback
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);

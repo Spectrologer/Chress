@@ -25,9 +25,9 @@ import {
     isWalkable,
     isItem,
     isStatue
-} from '../utils/TypeChecks.js';
+} from '@utils/TypeChecks.js';
 
-import { TILE_TYPES } from '../core/constants/index.js';
+import { TILE_TYPES } from '@core/constants/index.js';
 
 // Test utilities
 let testsPassed = 0;

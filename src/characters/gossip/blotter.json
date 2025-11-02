@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/blotter.png",
+    "sprite": "characters/npcs/gossip/blotter.png",
     "portrait": "characters/npcs/portraits/blotterface.png",
     "tileType": "BLOTTER"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
-    "dimension": 0,
+    "dimension": 2,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 3
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been stuck in this Tuesday for four months. Nobody else seems to notice."
+        "text": "I've been stuck in this Tuesday for four months. Nobody else seems to notice.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "The ocean called. They want their water back. I said no. Hung up."
+        "text": "The ocean called. They want their water back. I said no. Hung up.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "My houseplant judges me. It's not even alive anymore. Still judging."
+        "text": "My houseplant judges me. It's not even alive anymore. Still judging.",
+        "buttonText": "Okay..."
       }
     ]
   },

@@ -64,8 +64,7 @@ export class GameStateManager {
         // Preserve config settings
         const prevConfig = {
             musicEnabled: this.game.player.stats && typeof this.game.player.stats.musicEnabled !== 'undefined' ? this.game.player.stats.musicEnabled : true,
-            sfxEnabled: this.game.player.stats && typeof this.game.player.stats.sfxEnabled !== 'undefined' ? this.game.player.stats.sfxEnabled : true,
-            autoPathWithEnemies: this.game.player.stats && typeof this.game.player.stats.autoPathWithEnemies !== 'undefined' ? this.game.player.stats.autoPathWithEnemies : false
+            sfxEnabled: this.game.player.stats && typeof this.game.player.stats.sfxEnabled !== 'undefined' ? this.game.player.stats.sfxEnabled : true
         };
 
         // Clear saved state since game over should reset everything
@@ -115,7 +114,6 @@ export class GameStateManager {
         if (!this.game.player.stats) this.game.player.stats = {};
         this.game.player.stats.musicEnabled = prevConfig.musicEnabled;
         this.game.player.stats.sfxEnabled = prevConfig.sfxEnabled;
-        this.game.player.stats.autoPathWithEnemies = prevConfig.autoPathWithEnemies;
 
         // Trigger entrance animation for new game BEFORE emitting events
         // This ensures input is blocked before any event handlers could process clicks
@@ -306,9 +304,6 @@ export class GameStateManager {
                 ZoneStateRestorer.restoreZoneState(this.game, gameState.zoneStateManager);
             }
 
-            // Restore Sign spawned messages
-            SaveDeserializer.deserializeSignMessages(gameState.signSpawnedMessages);
-
             return true;
         } catch (error) {
             logger.error('Failed to load game state:', error);
@@ -410,7 +405,8 @@ export class GameStateManager {
         const zoneX = currentZone.x;
         const zoneY = currentZone.y;
         const dimension = currentZone.dimension || 0;
-        const zoneKey = `${zoneX},${zoneY}:${dimension}`;
+        const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
+        const zoneKey = createZoneKey(zoneX, zoneY, dimension, depth);
 
         // Get the current zone data from repository
         const zoneData = this.game.zoneRepository.getByKey(zoneKey);

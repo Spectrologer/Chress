@@ -5,10 +5,11 @@
   "metadata": {
     "description": "A dialogue NPC who admires Crayn and shares humorous observations. Found in the home interior.",
     "created": "2025-10-27T00:00:00.000Z",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "category": "tutorial"
   },
   "display": {
-    "sprite": "characters/npcs/felt.png",
+    "sprite": "characters/npcs/tutorial/felt.png",
     "portrait": "characters/npcs/portraits/feltface.png",
     "tileType": "FELT"
   },
@@ -17,6 +18,7 @@
     "x": 6,
     "y": 3,
     "dimension": 1,
+    "level": "HOME",
     "spawnLogic": "fixed"
   },
   "interaction": {
@@ -25,27 +27,33 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Crayn is like, so smart."
+        "text": "Crayn is like, so smart.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "I want to be like Crayn."
+        "text": "I want to be like Crayn.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "Word around town is Crayn has 4 hearts."
+        "text": "Word around town is Crayn has 4 hearts.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_3",
-        "text": "I wonder if Crayn likes standing too."
+        "text": "I wonder if Crayn likes standing too.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_4",
-        "text": "I hear Crayn can put down food after he picks it up! Couldn't be me."
+        "text": "I hear Crayn can put down food after he picks it up! Couldn't be me.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_5",
-        "text": "Forge is a LIAR."
+        "text": "Forge is a LIAR.",
+        "buttonText": "Okay..."
       }
     ]
   },

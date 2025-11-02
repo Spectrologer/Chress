@@ -9,17 +9,18 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/hane.png",
+    "sprite": "characters/npcs/gossip/hane.png",
     "portrait": "characters/npcs/portraits/haneface.png",
     "tileType": "HANE"
   },
   "placement": {
-    "zone": "0,0",
+    "zone": null,
     "x": null,
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.01
+    "spawnWeight": 0.005,
+    "level": 4
   },
   "interaction": {
     "type": "dialogue",
@@ -27,15 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I tried to gaslight my GPS. Now it thinks we're in Belgium."
+        "text": "I tried to gaslight my GPS. Now it thinks we're in Belgium.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Socks disappear in the dryer to a parallel dimension. I have proof. Circumstantial."
+        "text": "Socks disappear in the dryer to a parallel dimension. I have proof. Circumstantial.",
+        "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm fluent in sarcasm and mediocre at sincerity."
+        "text": "I'm fluent in sarcasm and mediocre at sincerity.",
+        "buttonText": "Okay..."
       }
     ]
   },
