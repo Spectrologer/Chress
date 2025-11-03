@@ -1,0 +1,53 @@
+{
+  "id": "polly",
+  "name": "Polly",
+  "type": "dialogue",
+  "metadata": {
+    "description": "Two headed bird that gets along a little too well with itself. Hates the NPC 'Fork'. Steals its dialogue lines.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/polly.png",
+    "portrait": "characters/npcs/portraits/pollyface.png",
+    "tileType": "POLLY"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "We're nesting partners.",
+        "buttonText": "Cute."
+      },
+      {
+        "id": "msg_1",
+        "text": "We noticed you from across the board and loved your vibe.",
+        "buttonText": "Thanks?"
+      },
+      {
+        "id": "msg_2",
+        "text": "Fork? Don't even mention Fork to us. They STOLE our lines! We're the ORIGINAL!",
+        "buttonText": "Drama."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 115
+  }
+}

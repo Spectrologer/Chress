@@ -1,0 +1,53 @@
+{
+  "id": "shade",
+  "name": "Shade",
+  "type": "dialogue",
+  "metadata": {
+    "description": "Dark, mysterious, wisp who's best friends with the npc Vellum. Wants you to say NO to drugs.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/shade.png",
+    "portrait": "characters/npcs/portraits/shadeface.png",
+    "tileType": "SHADE"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Stay in the shadows, stay safe. And seriously, say NO to drugs. Vellum and I are on a mission.",
+        "buttonText": "Good message."
+      },
+      {
+        "id": "msg_1",
+        "text": "Vellum's my best friend. We go way back. Together we spread awareness about the dangers of substance abuse.",
+        "buttonText": "Noble cause."
+      },
+      {
+        "id": "msg_2",
+        "text": "Darkness isn't bad. It's protective. Just like making good life choices. NO DRUGS!",
+        "buttonText": "Got it."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 95
+  }
+}

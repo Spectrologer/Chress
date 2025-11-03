@@ -1,0 +1,53 @@
+{
+  "id": "stick",
+  "name": "Stick",
+  "type": "dialogue",
+  "metadata": {
+    "description": "Rigid and unbending. Believes in rules, structure, and the right way to do things.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/stick.png",
+    "portrait": "characters/npcs/portraits/stickface.png",
+    "tileType": "STICK"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "There's a right way and a wrong way. I always choose the right way.",
+        "buttonText": "Admirable."
+      },
+      {
+        "id": "msg_1",
+        "text": "Flexibility is overrated. Structure keeps everything in order!",
+        "buttonText": "Fair point."
+      },
+      {
+        "id": "msg_2",
+        "text": "Some call me rigid. I call it being consistent and principled.",
+        "buttonText": "Understood."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 110
+  }
+}

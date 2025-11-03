@@ -1,0 +1,53 @@
+{
+  "id": "bit",
+  "name": "Bit",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A pickpocket arachnid hermit crab living in a leprechaun hat. Wary of new people.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/bit.png",
+    "portrait": "characters/npcs/portraits/bitface.png",
+    "tileType": "BIT"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*eyes you suspiciously from inside hat* Who are you? What do you want? I wasn't doing anything.",
+        "buttonText": "Relax..."
+      },
+      {
+        "id": "msg_1",
+        "text": "This hat? Found it fair and square. The leprechaun didn't need it anymore. Trust me.",
+        "buttonText": "Sure..."
+      },
+      {
+        "id": "msg_2",
+        "text": "Keep your distance, pal. My claws are VERY grabby. Accidentally. Mostly accidentally.",
+        "buttonText": "Noted."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 140
+  }
+}

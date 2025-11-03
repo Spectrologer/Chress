@@ -1,0 +1,53 @@
+{
+  "id": "scrape",
+  "name": "Scrape",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A skull-headed butcher who doesn't know why people are so put off by him.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/scrape.png",
+    "portrait": "characters/npcs/portraits/scrapeface.png",
+    "tileType": "SCRAPE"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Welcome! Best cuts in town! Fresh meat daily! Why is everyone backing away?",
+        "buttonText": "Your... head..."
+      },
+      {
+        "id": "msg_1",
+        "text": "People keep running when they see me. Is it the cleaver? The apron? I'm very hygienic!",
+        "buttonText": "It's the skull."
+      },
+      {
+        "id": "msg_2",
+        "text": "I don't understand why folks find me intimidating. I'm just a friendly butcher! *waves cleaver*",
+        "buttonText": "Sure thing."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 85
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "id": "scroll",
+  "name": "Scroll",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A snail with legs that can't get over this fact.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/scroll.png",
+    "portrait": "characters/npcs/portraits/scrollface.png",
+    "tileType": "SCROLL"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I HAVE LEGS! Do you see them?! LEGS! On a SNAIL! This is WILD!",
+        "buttonText": "Very unique."
+      },
+      {
+        "id": "msg_1",
+        "text": "Everyone else is sliding around on slime and I'm just WALKING! Like, with ACTUAL LEGS!",
+        "buttonText": "That's... great?"
+      },
+      {
+        "id": "msg_2",
+        "text": "I can't stop thinking about it! I'm a snail! WITH LEGS! HOW IS THIS REAL?!",
+        "buttonText": "Calm down."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 110
+  }
+}

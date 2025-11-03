@@ -1,0 +1,53 @@
+{
+  "id": "calli",
+  "name": "Calli",
+  "type": "dialogue",
+  "metadata": {
+    "description": "An exciteable spider who wants to hang out.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/calli.png",
+    "portrait": "characters/npcs/portraits/calliface.png",
+    "tileType": "CALLI"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "OH MY GOSH HI!!! Do you want to hang out?! We could be best friends! This is so exciting!",
+        "buttonText": "Whoa..."
+      },
+      {
+        "id": "msg_1",
+        "text": "I've been waiting for someone to talk to ALL DAY! Well, actually just five minutes but it felt like forever!",
+        "buttonText": "Energetic."
+      },
+      {
+        "id": "msg_2",
+        "text": "We should totally hang out! Get it? HANG out? Because I'm a spider! *laughs at own joke*",
+        "buttonText": "Good one."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 110
+  }
+}

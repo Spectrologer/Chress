@@ -1,0 +1,53 @@
+{
+  "id": "gelinka",
+  "name": "Gelinka",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A winged wolf who thinks you're the chosen one.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/gelinka.png",
+    "portrait": "characters/npcs/portraits/gelinkaface.png",
+    "tileType": "GELINKA"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "It's YOU! The prophecy foretold your arrival! You are THE CHOSEN ONE!",
+        "buttonText": "Me?"
+      },
+      {
+        "id": "msg_1",
+        "text": "I have been waiting centuries for this moment! Your destiny awaits! Probably!",
+        "buttonText": "Um..."
+      },
+      {
+        "id": "msg_2",
+        "text": "The stars aligned, the moon whispered your name... or maybe that was just my imagination. Either way, YOU'RE SPECIAL!",
+        "buttonText": "Thanks?"
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 105
+  }
+}

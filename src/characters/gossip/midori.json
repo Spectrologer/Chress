@@ -1,0 +1,53 @@
+{
+  "id": "midori",
+  "name": "Midori",
+  "type": "dialogue",
+  "metadata": {
+    "description": "An onion leek guy that was born yesterday. Terrified.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/midori.png",
+    "portrait": "characters/npcs/portraits/midoriface.png",
+    "tileType": "MIDORI"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Everything is SO BIG and LOUD! I was just born yesterday and THIS IS TERRIFYING!",
+        "buttonText": "It's okay..."
+      },
+      {
+        "id": "msg_1",
+        "text": "What is that sound?! Is that normal?! Am I supposed to know what that is?! HELP!",
+        "buttonText": "Calm down."
+      },
+      {
+        "id": "msg_2",
+        "text": "I don't understand ANYTHING! Why is everything moving?! Why am I here?! AHHH!",
+        "buttonText": "Deep breaths."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 120
+  }
+}

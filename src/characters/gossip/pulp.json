@@ -1,0 +1,53 @@
+{
+  "id": "pulp",
+  "name": "Pulp",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A garlic head guy who loves pulp fiction.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/pulp.png",
+    "portrait": "characters/npcs/portraits/pulpface.png",
+    "tileType": "PULP"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "You ever read comics? The REAL stuff? Noir, crime, mystery... that's where it's at!",
+        "buttonText": "Classic."
+      },
+      {
+        "id": "msg_1",
+        "text": "People don't appreciate the old dime novels anymore. Cheap paper, great stories!",
+        "buttonText": "Fair point."
+      },
+      {
+        "id": "msg_2",
+        "text": "I've got a collection of vintage pulps. Detective stories, sci-fi... I'm talking GOLDEN AGE material!",
+        "buttonText": "Impressive."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 90
+  }
+}
