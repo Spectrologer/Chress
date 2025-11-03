@@ -1,10 +1,10 @@
-import { logger } from '../logger.js';
-import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
-import { BaseZoneHandler } from './BaseZoneHandler.js';
-import { SPAWN_PROBABILITIES, TILE_TYPES } from '../constants/index.js';
-import { boardLoader } from '../BoardLoader.js';
-import { ContentRegistry } from '../ContentRegistry.js';
-import { findValidPlacement } from '../../generators/GeneratorUtils.js';
+import { logger } from '../logger';
+import { ZoneStateManager } from '../../generators/ZoneStateManager';
+import { BaseZoneHandler } from './BaseZoneHandler';
+import { SPAWN_PROBABILITIES, TILE_TYPES } from '../constants/index';
+import { boardLoader } from '../BoardLoader';
+import { ContentRegistry } from '../ContentRegistry';
+import { findValidPlacement } from '../../generators/GeneratorUtils';
 
 class SurfaceHandler extends BaseZoneHandler {
     constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets) {

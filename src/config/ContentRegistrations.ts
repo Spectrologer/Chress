@@ -10,14 +10,14 @@
  * 3. Done! The content is now available throughout the game
  */
 
-import { ContentRegistry } from '../core/ContentRegistry.js';
-import { boardLoader } from '../core/BoardLoader.js';
-import { loadAllNPCs } from '../core/NPCLoader.js';
+import { ContentRegistry } from '../core/ContentRegistry';
+import { boardLoader } from '../core/BoardLoader';
+import { loadAllNPCs } from '../core/NPCLoader';
 
 // Import registration modules
-import { registerItems } from './registrations/ItemRegistrations.js';
-import { registerEnemies } from './registrations/EnemyRegistrations.ts';
-import { registerBoards } from './registrations/BoardRegistrations.ts';
+import { registerItems } from './registrations/ItemRegistrations';
+import { registerEnemies } from './registrations/EnemyRegistrations';
+import { registerBoards } from './registrations/BoardRegistrations';
 
 /**
  * Initialize all game content registrations

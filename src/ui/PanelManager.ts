@@ -1,12 +1,9 @@
+import type { IGame } from '../core/GameContext';
 import { BarterWindow } from './BarterWindow';
 import { StatueInfoWindow } from './StatueInfoWindow';
 import { ConfigPanelManager } from './ConfigPanelManager';
 import { RecordsPanelManager } from './RecordsPanelManager';
 import { StatsPanelManager } from './StatsPanelManager';
-
-interface Game {
-    // Add game-specific properties if needed
-}
 
 /**
  * PanelManager
@@ -14,14 +11,14 @@ interface Game {
  * Delegates to specialized managers for each panel type
  */
 export class PanelManager {
-    private game: Game;
+    private game: IGame;
     private configPanelManager: ConfigPanelManager;
     private recordsPanelManager: RecordsPanelManager;
     private statsPanelManager: StatsPanelManager;
     private barterWindow: BarterWindow;
     private statueInfoWindow: StatueInfoWindow;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
 
         // Initialize sub-managers

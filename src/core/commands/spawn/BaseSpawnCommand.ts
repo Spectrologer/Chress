@@ -1,6 +1,6 @@
-import { BaseCommand } from '../BaseCommand.js';
-import { SpawnPositionHelper } from '../SpawnPositionHelper.js';
-import { logger } from '../../logger.js';
+import { BaseCommand } from '../BaseCommand';
+import { SpawnPositionHelper } from '../SpawnPositionHelper';
+import { logger } from '../../logger';
 
 /**
  * BaseSpawnCommand - Base class for all spawn commands

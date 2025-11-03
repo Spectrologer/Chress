@@ -1,21 +1,10 @@
-import { TILE_TYPES } from '../../core/constants/index.js';
-import { eventBus } from '../../core/EventBus.js';
-import { EventTypes } from '../../core/EventTypes.js';
-import { isNote, isFood, isWater, isAxe, isHammer, isBishopSpear, isHorseIcon, isBomb, isHeart, isBow, isShovel } from '../../utils/TypeChecks.js';
-import type { InventoryItem } from './ItemMetadata.js';
-
-interface Game {
-    player: any;
-    gridManager: any;
-    uiManager: any;
-    inventoryService?: any;
-    [key: string]: any;
-}
-
-interface Position {
-    x: number;
-    y: number;
-}
+import { TILE_TYPES } from '../../core/constants/index';
+import { eventBus } from '../../core/EventBus';
+import { EventTypes } from '../../core/EventTypes';
+import { isNote, isFood, isWater, isAxe, isHammer, isBishopSpear, isHorseIcon, isBomb, isHeart, isBow, isShovel } from '../../utils/TypeChecks';
+import type { IGame } from '../../core/GameContext';
+import type { InventoryItem } from './ItemMetadata';
+import type { Position } from '../../core/Position';
 
 interface TileWithMeta {
     type?: number;
@@ -25,9 +14,9 @@ interface TileWithMeta {
 }
 
 export class ItemPickupManager {
-    private game: Game;
+    private game: IGame;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
     }
 

@@ -1,9 +1,9 @@
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
-import { Position } from '../core/Position.js';
-import { isTileType } from '../utils/TileUtils.js';
-import audioManager from '../utils/AudioManager.js';
-import type { Player } from './Player.js';
-import type { Grid } from './Player.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants/index';
+import { Position } from '../core/Position';
+import { isTileType } from '../utils/TileUtils';
+import audioManager from '../utils/AudioManager';
+import type { Player } from './Player';
+import type { Grid } from './Player';
 
 export class PlayerAbilities {
     private player: Player;

@@ -1,5 +1,10 @@
 // Type definitions for renderer classes
 
+import type { Position } from '../core/Position';
+import type { Grid, Tile } from '../core/SharedTypes';
+
+export type { Position, Grid, Tile };
+
 export interface ImageCache {
     [key: string]: HTMLImageElement;
 }
@@ -42,24 +47,19 @@ export interface SimpleItemRenderOptions {
 }
 
 export interface GridManager {
-    getTile(x: number, y: number): any;
+    getTile(x: number, y: number): Tile;
     getSize(): number;
-    [y: number]: any[];
+    [y: number]: Tile[];
 }
 
 export interface BaseRenderer {
     images: ImageCache;
     structureRenderer: any; // StructureTileRenderer - avoiding circular dependency
-    renderFloorTile(ctx: CanvasRenderingContext2D, pixelX: number, pixelY: number, tileType: any, terrainTextures?: Record<string, string>, rotations?: Record<string, number>, x?: number, y?: number): void;
-    renderFloorTileWithDirectionalTextures(ctx: CanvasRenderingContext2D, x: number, y: number, pixelX: number, pixelY: number, grid: GridManager | any[][], zoneLevel: number): void;
-    renderItemBaseTile(ctx: CanvasRenderingContext2D, x: number, y: number, pixelX: number, pixelY: number, grid: GridManager | any[][], zoneLevel: number): void;
-    renderExitTile(ctx: CanvasRenderingContext2D, x: number, y: number, pixelX: number, pixelY: number, grid: GridManager | any[][], zoneLevel: number): void;
+    renderFloorTile(ctx: CanvasRenderingContext2D, pixelX: number, pixelY: number, tileType: Tile, terrainTextures?: Record<string, string>, rotations?: Record<string, number>, x?: number, y?: number): void;
+    renderFloorTileWithDirectionalTextures(ctx: CanvasRenderingContext2D, x: number, y: number, pixelX: number, pixelY: number, grid: GridManager | Grid, zoneLevel: number): void;
+    renderItemBaseTile(ctx: CanvasRenderingContext2D, x: number, y: number, pixelX: number, pixelY: number, grid: GridManager | Grid, zoneLevel: number): void;
+    renderExitTile(ctx: CanvasRenderingContext2D, x: number, y: number, pixelX: number, pixelY: number, grid: GridManager | Grid, zoneLevel: number): void;
     applyCheckerShading(ctx: CanvasRenderingContext2D, x: number, y: number, pixelX: number, pixelY: number, zoneLevel: number): void;
-}
-
-export interface Position {
-    x: number;
-    y: number;
 }
 
 export interface SplodeAnimation {

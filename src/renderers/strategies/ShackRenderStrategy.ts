@@ -1,8 +1,8 @@
-import { TILE_TYPES, TILE_SIZE, TILE_COLORS } from '../../core/constants/index.js';
-import { RendererUtils } from '../RendererUtils.js';
-import { TileRenderStrategy } from './TileRenderStrategy.js';
-import type { BaseRenderer } from '../types.js';
-import type { MultiTileHandler } from '../MultiTileHandler.js';
+import { TILE_TYPES, TILE_SIZE, TILE_COLORS } from '../../core/constants/index';
+import { RendererUtils } from '../RendererUtils';
+import { TileRenderStrategy } from './TileRenderStrategy';
+import type { BaseRenderer } from '../types';
+import type { MultiTileHandler } from '../MultiTileHandler';
 
 export class ShackRenderStrategy extends TileRenderStrategy {
     private multiTileHandler: typeof MultiTileHandler;

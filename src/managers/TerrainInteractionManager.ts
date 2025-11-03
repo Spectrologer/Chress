@@ -1,28 +1,15 @@
-import { TILE_TYPES } from '../core/constants/index.js';
+import { TILE_TYPES } from '../core/constants/index';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
-import { TileRegistry } from '../core/TileRegistry.js';
+import { TileRegistry } from '../core/TileRegistry';
 import { isAdjacent } from '../core/utils/DirectionUtils';
-
-interface Position {
-    x: number;
-    y: number;
-}
-
-interface Game {
-    gridManager: any;
-    player: any;
-    handleEnemyMovements(): void;
-    checkCollisions(): void;
-    checkItemPickup(): void;
-    updatePlayerPosition(): void;
-    transitionToZone(zoneX: number, zoneY: number, exitSide: string, playerX: number, playerY: number): void;
-}
+import type { IGame } from '../core/GameContext';
+import type { Position } from '../core/Position';
 
 export class TerrainInteractionManager {
-    private game: Game;
+    private game: IGame;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
     }
 

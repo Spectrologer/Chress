@@ -6,11 +6,20 @@
  * - PlayerCombatHandler: Player attack handling
  * - CollisionDetectionSystem: Collision detection and resolution
  */
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
-import { safeCall, safeGet } from '../utils/SafeServiceCall.js';
-import { EnemyMovementHandler } from './combat/EnemyMovementHandler.js';
-import { PlayerCombatHandler } from './combat/PlayerCombatHandler.js';
-import { CollisionDetectionSystem } from './combat/CollisionDetectionSystem.js';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
+import { safeCall, safeGet } from '../utils/SafeServiceCall';
+import { EnemyMovementHandler } from './combat/EnemyMovementHandler';
+import { PlayerCombatHandler } from './combat/PlayerCombatHandler';
+import { CollisionDetectionSystem } from './combat/CollisionDetectionSystem';
+import type { IGame, ICoordinates } from '../core/GameContext';
+import type { Player } from '../entities/Player';
+import type { PlayerFacade } from '../facades/PlayerFacade';
+import type { EnemyCollection } from '../facades/EnemyCollection';
+import type { GridManager } from './GridManager';
+import type { ZoneRepository } from '../repositories/ZoneRepository';
+import type { BombManager } from './BombManager';
+import type { EnemyDefeatFlow } from './EnemyDefeatFlow';
+import type { TurnManager } from '../core/TurnManager';
 
 interface ZoneInfo {
     x: number;
@@ -40,31 +49,15 @@ interface Enemy {
     startBump: (dx: number, dy: number) => void;
     takeDamage: (amount: number) => void;
     isDead?: () => boolean;
-    planMoveTowards: (targetX: number, targetY: number, grid: any) => void;
-    serialize: () => any;
-}
-
-interface PlayerPos {
-    x: number;
-    y: number;
-}
-
-interface Game {
-    player: any;
-    playerFacade: any;
-    enemyCollection: any;
-    gridManager: any;
-    zoneRepository: any;
-    grid: Array<Array<number | object>>;
-    turnManager?: any;
-    initialEnemyTilesThisTurn?: Set<string>;
+    planMoveTowards: (targetX: number, targetY: number, grid: Array<Array<number | object>>) => void;
+    serialize: () => object;
 }
 
 export class CombatManager {
-    private game: Game;
+    private game: IGame;
     private occupiedTiles: Set<string>;
-    private bombManager: any;
-    private defeatFlow: any;
+    private bombManager: BombManager;
+    private defeatFlow: EnemyDefeatFlow;
     private movementHandler: EnemyMovementHandler;
     private playerCombatHandler: PlayerCombatHandler;
     private collisionSystem: CollisionDetectionSystem;
@@ -75,7 +68,7 @@ export class CombatManager {
      * @param bombManager - Manages bomb timing and explosions
      * @param defeatFlow - Handles enemy defeat logic and rewards
      */
-    constructor(game: Game, occupiedTiles: Set<string>, bombManager: any, defeatFlow: any) {
+    constructor(game: IGame, occupiedTiles: Set<string>, bombManager: BombManager, defeatFlow: EnemyDefeatFlow) {
         this.game = game;
         this.occupiedTiles = occupiedTiles;
         this.bombManager = bombManager;
@@ -134,7 +127,7 @@ export class CombatManager {
         return this.defeatFlow.executeDefeat(enemy, currentZone, initiator);
     }
 
-    handlePlayerAttack(enemy: Enemy, playerPos: PlayerPos): any {
+    handlePlayerAttack(enemy: Enemy, playerPos: ICoordinates): void {
         return this.playerCombatHandler.handlePlayerAttack(enemy, playerPos);
     }
 
@@ -150,7 +143,7 @@ export class CombatManager {
          // This is a placeholder for now as the main enemy movement logic might be in game.js
     }
 
-    checkCollisions(): any {
+    checkCollisions(): void {
         return this.collisionSystem.checkCollisions();
     }
 }

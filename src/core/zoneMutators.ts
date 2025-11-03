@@ -1,7 +1,8 @@
-import { GRID_SIZE, TILE_TYPES, ZONE_CONSTANTS, GAMEPLAY_CONSTANTS } from './constants/index.js';
-import { logger } from './logger.ts';
-import GridIterator from '../utils/GridIterator.js';
-import { isTileType } from '../utils/TileUtils.js';
+import { GRID_SIZE, TILE_TYPES, ZONE_CONSTANTS, GAMEPLAY_CONSTANTS } from './constants/index';
+import { logger } from './logger';
+import GridIterator from '../utils/GridIterator';
+import { isTileType } from '../utils/TileUtils';
+import { getGridManager } from '../utils/GridUtils';
 
 export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel) {
     const zoneKey = `${zoneX},${zoneY}`;
@@ -14,13 +15,8 @@ export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGen
             }
         }
 
-        // Use zoneGen.gridManager if available, otherwise use zoneGen.game.gridManager
-        const gridManager = zoneGen.gridManager || (zoneGen.game && zoneGen.game.gridManager);
-
-        if (!gridManager) {
-            logger.warn('generateExits: gridManager not available');
-            return;
-        }
+        const gridManager = getGridManager(zoneGen, 'generateExits');
+        if (!gridManager) return;
 
         let effectiveConnections = { ...connections };
         if (zoneGen.currentDimension === 2) {
@@ -55,14 +51,8 @@ export function clearPathToExit(zoneGen, exitX, exitY) {
     else if (exitX === 0) inwardX = 1;
     else if (exitX === GRID_SIZE - 1) inwardX = GRID_SIZE - 2;
 
-    // Use zoneGen.gridManager if available, otherwise use zoneGen.game.gridManager
-    // This handles both zone generation and zone transition after loading a saved game
-    const gridManager = zoneGen.gridManager || (zoneGen.game && zoneGen.game.gridManager);
-
-    if (!gridManager) {
-        logger.warn('clearPathToExit: gridManager not available');
-        return;
-    }
+    const gridManager = getGridManager(zoneGen, 'clearPathToExit');
+    if (!gridManager) return;
 
     const adjacentTile = gridManager.getTile(inwardX, inwardY);
     if (isTileType(adjacentTile, TILE_TYPES.WALL) || isTileType(adjacentTile, TILE_TYPES.ROCK) || isTileType(adjacentTile, TILE_TYPES.SHRUBBERY)) {
@@ -92,13 +82,8 @@ export function clearPathToCenter(zoneGen, startX, startY) {
     let currentX = startX;
     let currentY = startY;
 
-    // Use zoneGen.gridManager if available, otherwise use zoneGen.game.gridManager
-    const gridManager = zoneGen.gridManager || (zoneGen.game && zoneGen.game.gridManager);
-
-    if (!gridManager) {
-        logger.warn('clearPathToCenter: gridManager not available');
-        return;
-    }
+    const gridManager = getGridManager(zoneGen, 'clearPathToCenter');
+    if (!gridManager) return;
 
     while (Math.abs(currentX - centerX) > 1 || Math.abs(currentY - centerY) > 1) {
         if (currentX < centerX) currentX++;
@@ -117,13 +102,8 @@ export function clearPathToCenter(zoneGen, startX, startY) {
 export function clearZoneForShackOnly(zoneGen) {
     logger.log('Clearing first wilds zone for shack-only placement');
 
-    // Use zoneGen.gridManager if available, otherwise use zoneGen.game.gridManager
-    const gridManager = zoneGen.gridManager || (zoneGen.game && zoneGen.game.gridManager);
-
-    if (!gridManager) {
-        logger.warn('clearZoneForShackOnly: gridManager not available');
-        return;
-    }
+    const gridManager = getGridManager(zoneGen, 'clearZoneForShackOnly');
+    if (!gridManager) return;
 
     gridManager.forEach((tile, x, y) => {
         if (!isTileType(tile, TILE_TYPES.WALL) && !isTileType(tile, TILE_TYPES.EXIT) && !isTileType(tile, TILE_TYPES.FLOOR) && !isTileType(tile, TILE_TYPES.GRASS)) {
@@ -137,13 +117,8 @@ export function forcePlaceShackInCenter(zoneGen, zoneX, zoneY) {
     const startX = ZONE_CONSTANTS.SHACK_START_POSITION.x;
     const startY = ZONE_CONSTANTS.SHACK_START_POSITION.y;
 
-    // Use zoneGen.gridManager if available, otherwise use zoneGen.game.gridManager
-    const gridManager = zoneGen.gridManager || (zoneGen.game && zoneGen.game.gridManager);
-
-    if (!gridManager) {
-        logger.warn('forcePlaceShackInCenter: gridManager not available');
-        return false;
-    }
+    const gridManager = getGridManager(zoneGen, 'forcePlaceShackInCenter');
+    if (!gridManager) return false;
 
     for (let dy = 0; dy < ZONE_CONSTANTS.SHACK_SIZE; dy++) {
         for (let dx = 0; dx < ZONE_CONSTANTS.SHACK_SIZE; dx++) {

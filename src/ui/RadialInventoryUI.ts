@@ -1,8 +1,10 @@
+import type { IGame } from '../core/GameContext';
 import { TILE_SIZE, TILE_TYPES, UI_CONSTANTS, TIMING_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants/index';
 import { saveRadialInventory } from '../managers/RadialPersistence';
 import { ItemMetadata } from '../managers/inventory/ItemMetadata';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 interface InventoryItem {
     type: string;
@@ -29,36 +31,24 @@ interface InventoryInteractionHandler {
     handleItemUse(item: InventoryItem, options: any): void;
 }
 
-interface Game {
-    canvas: HTMLCanvasElement;
-    player: Player;
-    inputManager?: InputManager;
-    radialInventorySnapshot?: InventoryItem[];
-    inventoryInteractionHandler: InventoryInteractionHandler;
-}
-
 export class RadialInventoryUI {
-    private game: Game;
+    private game: IGame;
     private inventoryService: any;
     public open: boolean;
     private container: HTMLDivElement | null;
     // Map of slot elements to item indexes
     private _slotMap: Map<HTMLElement, number | string>;
     private _openedAt: number | null;
-    private _bodyClickHandler: ((ev: Event) => void) | null;
-    private _canvasPointerHandler: ((ev: PointerEvent) => void) | null;
-    private _bodyPointerDownHandler: ((ev: PointerEvent) => void) | null;
+    private eventManager: EventListenerManager;
 
-    constructor(game: Game, inventoryService: any) {
+    constructor(game: IGame, inventoryService: any) {
         this.game = game;
         this.inventoryService = inventoryService;
         this.open = false;
         this.container = null;
         this._slotMap = new Map();
         this._openedAt = null;
-        this._bodyClickHandler = null;
-        this._canvasPointerHandler = null;
-        this._bodyPointerDownHandler = null;
+        this.eventManager = new EventListenerManager();
     }
 
     private createContainer(): HTMLDivElement {
@@ -211,7 +201,7 @@ export class RadialInventoryUI {
             uses.style.fontWeight = '600';
             el.appendChild(uses);
 
-            el.addEventListener('click', (ev: Event) => {
+            this.eventManager.add(el, 'click', (ev: Event) => {
                 ev.stopPropagation();
                 if (this.game.player.isDead()) return;
 
@@ -234,11 +224,8 @@ export class RadialInventoryUI {
         this._openedAt = Date.now();
 
         // Add a document-level click handler so clicks on the player's own
-        // tile (which hit the canvas) will close the radial menu. We add
-        // the listener in capture phase so it runs even if other handlers
-        // stop propagation. Ignore clicks that occur very shortly after
-        // opening to avoid immediately closing from the same touch.
-        this._bodyClickHandler = (ev: Event): void => {
+        // tile (which hit the canvas) will close the radial menu.
+        const bodyClickHandler = (ev: Event): void => {
             const now = Date.now();
             // Ignore clicks that happen within 300ms of opening
             if (this._openedAt && (now - this._openedAt) < TIMING_CONSTANTS.RADIAL_MENU_OPEN_IGNORE_WINDOW) return;
@@ -251,12 +238,10 @@ export class RadialInventoryUI {
                 this.close();
             }
         };
-        document.addEventListener('click', this._bodyClickHandler, true);
+        this.eventManager.add(document, 'click', bodyClickHandler as EventListener, { capture: true });
 
-        // Also listen for pointerdown on the game canvas directly. Pointer
-        // events are more reliable on some platforms (they fire before click),
-        // so this helps ensure a tap on the player's tile will close the radial.
-        this._canvasPointerHandler = (ev: PointerEvent): void => {
+        // Also listen for pointerdown on the game canvas directly.
+        const canvasPointerHandler = (ev: PointerEvent): void => {
             const now = Date.now();
             if (this._openedAt && (now - this._openedAt) < TIMING_CONSTANTS.RADIAL_MENU_OPEN_IGNORE_WINDOW) return;
             if (!this.game?.inputManager) return;
@@ -267,14 +252,10 @@ export class RadialInventoryUI {
                 this.close();
             }
         };
-        this.game.canvas?.addEventListener('pointerdown', this._canvasPointerHandler, true);
+        this.eventManager.add(this.game.canvas, 'pointerdown', canvasPointerHandler as EventListener, { capture: true });
 
-        // Some environments may swallow 'click' events or other handlers may
-        // stop propagation. Also listen for document-level pointerdown in the
-        // capture phase so a single click/tap reliably closes the radial UI
-        // (this fires earlier than 'click'). Keep the small ignore window to
-        // avoid immediately closing from the same interaction that opened it.
-        this._bodyPointerDownHandler = (ev: PointerEvent): void => {
+        // Also listen for document-level pointerdown.
+        const bodyPointerDownHandler = (ev: PointerEvent): void => {
             const now = Date.now();
             if (this._openedAt && (now - this._openedAt) < TIMING_CONSTANTS.RADIAL_MENU_OPEN_IGNORE_WINDOW) return;
             const conv = this.game.inputManager?.convertScreenToGrid?.(ev.clientX, ev.clientY);
@@ -284,7 +265,7 @@ export class RadialInventoryUI {
                 this.close();
             }
         };
-        document.addEventListener('pointerdown', this._bodyPointerDownHandler, true);
+        this.eventManager.add(document, 'pointerdown', bodyPointerDownHandler as EventListener, { capture: true });
 
         this.open = true;
     }
@@ -304,20 +285,20 @@ export class RadialInventoryUI {
 
     close(): void {
         if (!this.container) return;
-        // Remove the global click handler if present
-        if (this._bodyClickHandler) {
-            document.removeEventListener('click', this._bodyClickHandler, true);
-        }
-        this._bodyClickHandler = null;
-        // Remove canvas pointer handler if present
-        if (this._canvasPointerHandler) {
-            this.game.canvas?.removeEventListener('pointerdown', this._canvasPointerHandler, true);
-        }
-        this._canvasPointerHandler = null;
+        // Cleanup all event listeners
+        this.eventManager.cleanup();
         this._openedAt = null;
         // Clear the container fully (remove any notes/slots)
         this.container.innerHTML = '';
         this._slotMap.clear();
         this.open = false;
+    }
+
+    /**
+     * Cleanup all event listeners and resources
+     * Call this when destroying the RadialInventoryUI instance
+     */
+    cleanup(): void {
+        this.close();
     }
 }

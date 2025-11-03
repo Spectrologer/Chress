@@ -1,23 +1,18 @@
-import { ItemRepository } from './ItemRepository.js';
-import { ItemEffectStrategy } from './ItemEffectStrategy.js';
-import { ItemMetadata, type InventoryItem } from './ItemMetadata.js';
-import { GRID_SIZE, TILE_TYPES } from '../../core/constants/index.js';
-import audioManager from '../../utils/AudioManager.js';
-import { eventBus } from '../../core/EventBus.js';
-import { EventTypes } from '../../core/EventTypes.js';
-import { isFloor } from '../../utils/TileUtils.js';
-
-interface Game {
-    player: any;
-    grid: any[][];
-    [key: string]: any;
-}
+import { ItemRepository } from './ItemRepository';
+import { ItemEffectStrategy } from './ItemEffectStrategy';
+import { ItemMetadata, type InventoryItem } from './ItemMetadata';
+import { GRID_SIZE, TILE_TYPES } from '../../core/constants/index';
+import audioManager from '../../utils/AudioManager';
+import { eventBus } from '../../core/EventBus';
+import { EventTypes } from '../../core/EventTypes';
+import { isFloor } from '../../utils/TileUtils';
+import type { Game } from '../../core/Game';
 
 interface UseItemContext {
     fromRadial?: boolean;
     targetX?: number;
     targetY?: number;
-    [key: string]: any;
+    data?: Record<string, any>;
 }
 
 interface InventorySpace {

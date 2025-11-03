@@ -1,4 +1,5 @@
-import { PanelEventHandler } from './PanelEventHandler.ts';
+import { PanelEventHandler } from './PanelEventHandler';
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 interface GameInstance {
     player: any;
@@ -15,11 +16,12 @@ export class ConfigPanelManager {
     private configOverlay: HTMLElement | null;
     private configHandlersAttached: boolean = false;
     private configOpenTime: number | null = null;
-    private _configGlobalHandler: ((ev: Event) => void) | null = null;
+    private eventManager: EventListenerManager;
 
     constructor(game: GameInstance) {
         this.game = game;
         this.configOverlay = document.getElementById('configOverlay');
+        this.eventManager = new EventListenerManager();
     }
 
     /**
@@ -74,11 +76,8 @@ export class ConfigPanelManager {
             PanelEventHandler.clearAnimations(inner);
         }
 
-        // Remove global click handler
-        if (this._configGlobalHandler) {
-            document.removeEventListener('pointerdown', this._configGlobalHandler, true);
-            this._configGlobalHandler = null;
-        }
+        // Cleanup all event listeners
+        this.eventManager.cleanup();
 
         this.configOpenTime = null;
     }
@@ -100,19 +99,11 @@ export class ConfigPanelManager {
     private _setupGlobalClickHandler(): void {
         if (!this.configOverlay) return;
 
-        // Remove existing handler if present
-        if (this._configGlobalHandler) {
-            document.removeEventListener('pointerdown', this._configGlobalHandler, true);
-            this._configGlobalHandler = null;
-        }
-
-        this._configGlobalHandler = PanelEventHandler.createOutsideClickHandler(
+        this.eventManager.addOutsideClickHandler(
             this.configOverlay,
             () => this.hideConfigOverlay(),
-            { debounceMs: 300, skipButtonId: 'stats-config-button' }
+            { debounceMs: 300, skipElementId: 'stats-config-button', capturePhase: true }
         );
-
-        document.addEventListener('pointerdown', this._configGlobalHandler, true);
     }
 
     /**
@@ -131,7 +122,7 @@ export class ConfigPanelManager {
         // Attach back button handler
         const backBtn = this.configOverlay?.querySelector<HTMLButtonElement>('#config-back-button');
         if (backBtn) {
-            backBtn.addEventListener('click', (e) => {
+            this.eventManager.add(backBtn, 'click', (e: MouseEvent) => {
                 e?.preventDefault?.();
                 e?.stopPropagation?.();
 
@@ -142,6 +133,14 @@ export class ConfigPanelManager {
                 }
             });
         }
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the ConfigPanelManager instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 
     /**

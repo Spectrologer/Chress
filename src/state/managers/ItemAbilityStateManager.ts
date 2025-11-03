@@ -1,6 +1,7 @@
-import { eventBus } from '../../core/EventBus.js';
-import { EventTypes } from '../../core/EventTypes.js';
-import { logger } from '../../core/logger.js';
+import { eventBus } from '../../core/EventBus';
+import { EventTypes } from '../../core/EventTypes';
+import { logger } from '../../core/logger';
+import type { Position } from '../../core/Position';
 
 /**
  * ItemAbilityStateManager - Manages item ability state (Horse charge, Bomb placement)
@@ -10,11 +11,6 @@ import { logger } from '../../core/logger.js';
  * - Bomb placement mode and positions
  * - Events and validation for item abilities
  */
-
-interface Position {
-    x: number;
-    y: number;
-}
 
 interface ChargeData {
     [key: string]: any;

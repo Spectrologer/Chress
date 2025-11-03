@@ -11,37 +11,33 @@
  * Player input -> ActionManager -> Game systems (Combat, Inventory, etc.) -> Visual feedback
  */
 
-import { TILE_TYPES, TILE_SIZE, GRID_SIZE, ANIMATION_CONSTANTS, TIMING_CONSTANTS, GAMEPLAY_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants/index.js';
-import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { isWithinGrid } from '../utils/GridUtils.js';
-import { ItemRepository } from './inventory/ItemRepository.js';
-import { isBomb, isTileType } from '../utils/TileUtils.js';
-import GridIterator from '../utils/GridIterator.js';
+import { TILE_TYPES, TILE_SIZE, GRID_SIZE, ANIMATION_CONSTANTS, TIMING_CONSTANTS, GAMEPLAY_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants/index';
+import audioManager from '../utils/AudioManager';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { isWithinGrid } from '../utils/GridUtils';
+import { ItemRepository } from './inventory/ItemRepository';
+import { isBomb, isTileType } from '../utils/TileUtils';
+import GridIterator from '../utils/GridIterator';
+import type { IGame } from '../core/GameContext';
+import type { PlayerFacade } from '../facades/PlayerFacade';
+import type { CombatManager } from './CombatManager';
+import type { Player } from '../entities/Player';
+import type { GridManager } from './GridManager';
+import type { EnemyCollection } from '../facades/EnemyCollection';
+import type { AnimationScheduler } from '../core/AnimationScheduler';
+import type { TransientGameState } from '../state/TransientGameState';
 
 interface Item {
     type: string;
     uses?: number;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 interface Enemy {
     x: number;
     y: number;
-    [key: string]: any;
-}
-
-interface Game {
-    playerFacade: any;
-    combatManager: any;
-    player: any;
-    grid: Array<Array<number | object>>;
-    gridManager: any;
-    enemyCollection: any;
-    animationScheduler?: any;
-    transientGameState?: any;
-    startEnemyTurns?: () => void;
+    [key: string]: unknown;
 }
 
 interface BombTile {
@@ -51,7 +47,7 @@ interface BombTile {
 }
 
 export class ActionManager {
-    private game: Game;
+    private game: IGame;
     private bombActionCounter: number;
     private itemRepository: ItemRepository;
 
@@ -60,7 +56,7 @@ export class ActionManager {
      *
      * @param game - The main game instance
      */
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.bombActionCounter = 0;
         this.itemRepository = new ItemRepository(game);

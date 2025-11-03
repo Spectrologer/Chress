@@ -5,21 +5,22 @@
  * Manages saving current zone state to the zone repository.
  */
 
-import { logger } from '../core/logger.ts';
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import type { Game } from '../core/Game.js';
+import { logger } from '../core/logger';
+import { createZoneKey } from '../utils/ZoneKeyUtils';
+import type { Game } from '../core/Game';
+import type { Grid } from '../core/SharedTypes';
+import type { Enemy as EnemyType } from '../entities/Enemy';
 
-interface Enemy {
+interface EnemyData {
     x: number;
     y: number;
     enemyType: string;
     health: number;
     id: string;
-    [key: string]: any;
 }
 
 interface ZoneState {
-    grid: any[][];
+    grid: Grid;
     enemies: Array<{
         x: number;
         y: number;

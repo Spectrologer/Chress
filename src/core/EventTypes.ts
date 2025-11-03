@@ -2,6 +2,20 @@
  * EventTypes - Centralized event type definitions for the event bus
  * This provides autocomplete support and prevents typos in event names
  */
+
+import type { Position } from './Position';
+import type {
+    Enemy,
+    InventoryItem,
+    SaveGameData,
+    Grid,
+    AnimationData,
+    TradeData,
+    GameStatistics,
+    ChargeStateData,
+    SavedEnemyData
+} from './SharedTypes';
+
 export const EventTypes = {
   // Combat Events
   ENEMY_DEFEATED: 'enemy:defeated',
@@ -132,13 +146,11 @@ export type EventType = typeof EventTypes[keyof typeof EventTypes];
  * Event data type definitions for documentation and type safety
  */
 
-export interface Position {
-  x: number;
-  y: number;
-}
+// Re-export Position for other modules
+export type { Position };
 
 export interface EnemyDefeatedEvent {
-  enemy: any; // Will be properly typed when Enemy class is migrated
+  enemy: Enemy;
   points: number;
   x: number;
   y: number;
@@ -154,7 +166,7 @@ export interface ComboAchievedEvent {
 export interface PlayerDamagedEvent {
   damage: number;
   currentHealth: number;
-  source: any;
+  source: Enemy | string;
 }
 
 export interface ZoneChangedEvent {
@@ -181,7 +193,7 @@ export interface AnimationRequestedEvent {
   type: string;
   x: number;
   y: number;
-  data: any;
+  data: AnimationData;
 }
 
 export interface UIShowMessageEvent {
@@ -194,15 +206,15 @@ export interface UIShowMessageEvent {
 
 export interface InventoryChangedEvent {
   action: string;
-  item?: any;
+  item?: InventoryItem;
   quantity?: number;
 }
 
 export interface ItemUsedEvent {
-  item: any;
+  item: InventoryItem;
   x: number;
   y: number;
-  result?: any;
+  result?: { success: boolean; message?: string };
 }
 
 export interface AnimationHorseChargeEvent {
@@ -277,7 +289,7 @@ export interface UIDialogHideEvent {
 export interface UIConfirmationShowEvent {
   message: string;
   action: string;
-  data?: any;
+  data?: Record<string, any>;
   persistent?: boolean;
   largeText?: boolean;
   useTypewriter?: boolean;
@@ -286,7 +298,7 @@ export interface UIConfirmationShowEvent {
 export interface UIConfirmationResponseEvent {
   action: string;
   confirmed: boolean;
-  data?: any;
+  data?: Record<string, any>;
 }
 
 export interface UIOverlayMessageShowEvent {
@@ -366,54 +378,472 @@ export interface PlayerKnockbackEvent {
 
 export interface TradeInitiatedEvent {
   npc: string;
-  tradeData: any;
+  tradeData: TradeData;
   playerPoints: number;
 }
 
 export interface TradeCompletedEvent {
   npc: string;
   cost: number;
-  reward: any;
+  reward: InventoryItem | number;
   remainingPoints: number;
+}
+
+// Additional event interfaces for missing event types
+
+export interface GameInitializedEvent {
+  timestamp: number;
+  version?: string;
+}
+
+export interface GameOverEvent {
+  finalScore: number;
+  reason: string;
+  statistics?: GameStatistics;
+}
+
+export interface GameStateLoadedEvent {
+  saveData: SaveGameData;
+  loadedAt: number;
+}
+
+export interface GameStateSavedEvent {
+  saveData: SaveGameData;
+  savedAt: number;
+}
+
+export interface ZoneInitializedEvent {
+  x: number;
+  y: number;
+  dimension: number;
+  tiles: Grid;
+  enemies: Enemy[];
+}
+
+export interface RegionChangedEvent {
+  oldRegion: string;
+  newRegion: string;
+  x: number;
+  y: number;
+}
+
+export interface PlayerPositionChangedEvent {
+  oldX: number;
+  oldY: number;
+  newX: number;
+  newY: number;
+}
+
+export interface ItemAddedEvent {
+  item: InventoryItem;
+  quantity: number;
+  source: string;
+}
+
+export interface MessageLoggedEvent {
+  message: string;
+  type: string;
+  timestamp: number;
+}
+
+export interface PanelOpenedEvent {
+  panelId: string;
+  panelType: string;
+}
+
+export interface PanelClosedEvent {
+  panelId: string;
+  panelType: string;
+}
+
+export interface UIUpdateStatsEvent {
+  // Empty payload - used as trigger for UI updates
+}
+
+export interface UIClosePanelEvent {
+  panelId?: string;
+}
+
+export interface AbilityLostEvent {
+  ability: string;
+  abilities: string[];
+}
+
+export interface StatsChangedEvent {
+  stat: string;
+  value: number | boolean | string;
+  stats: Record<string, any>;
+}
+
+export interface PointsChangedEvent {
+  points: number;
+}
+
+export interface InputPathCancelledEvent {
+  pathLength?: number;
+  reason?: string;
+}
+
+export interface InputPathCompletedEvent {
+  pathLength?: number;
+  endPosition?: Position;
+}
+
+export interface AnimationCompletedEvent {
+  type: string;
+  x?: number;
+  y?: number;
+}
+
+export interface SoundPlayEvent {
+  soundName: string;
+  volume?: number;
+  loop?: boolean;
+}
+
+export interface MusicChangeEvent {
+  dimension?: number;
+  trackName?: string;
+  volume?: number;
+}
+
+export interface GameExitShovelModeEvent {
+  itemsCollected?: number;
+}
+
+export interface GameIncrementBombActionsEvent {
+  currentCount: number;
+}
+
+export interface GameDecrementZoneEntryCountEvent {
+  currentCount: number;
+}
+
+export interface CombatStartedEvent {
+  enemies: Enemy[];
+  playerHealth: number;
+}
+
+export interface CombatEndedEvent {
+  victory: boolean;
+  enemiesDefeated: number;
+  damageDealt: number;
+  damageTaken: number;
+}
+
+export interface EnemySpawnedEvent {
+  enemy: Enemy;
+  x: number;
+  y: number;
+}
+
+export interface EnemyRemovedEvent {
+  enemy: Enemy;
+  x: number;
+  y: number;
+  reason: string;
+}
+
+export interface EnemiesClearedEvent {
+  count: number;
+  zoneCoords: { x: number; y: number };
+}
+
+export interface EnemiesReplacedEvent {
+  oldEnemies: Enemy[];
+  newEnemies: Enemy[];
+}
+
+export interface ChargeStateChangedEvent {
+  isPending: boolean;
+  data: ChargeStateData | null;
+}
+
+export interface BombPlacementModeChangedEvent {
+  active: boolean;
+  positions: Position[];
+}
+
+export interface SignMessageDisplayedEvent {
+  message?: string;
+  x?: number;
+  y?: number;
+}
+
+export interface SignMessageClearedEvent {
+  // Empty payload
+}
+
+export interface PlayerAttackedEvent {
+  damage?: number;
+  attacker?: Enemy | string;
+}
+
+export interface TransientStateResetEvent {
+  // Empty payload
+}
+
+export interface PointAwardedEvent {
+  points: number;
+  x: number;
+  y: number;
+  source: string;
+}
+
+export interface MultiplierChangedEvent {
+  oldMultiplier: number;
+  newMultiplier: number;
+  x?: number;
+  y?: number;
+}
+
+// Events discovered in code but not in EventTypes
+export interface PortTransitionDataSetEvent {
+  from: string;
+  x?: number;
+  y?: number;
+}
+
+export interface PortTransitionDataClearedEvent {
+  previousData: { from: string; x?: number; y?: number } | null;
+}
+
+export interface PitfallZoneEnteredEvent {
+  turnsSurvived: number;
+}
+
+export interface PitfallZoneExitedEvent {
+  turnsSurvived: number;
+}
+
+export interface PitfallTurnSurvivedEvent {
+  turnsSurvived: number;
+}
+
+export interface BombPlacementPositionAddedEvent {
+  position: Position;
+  totalPositions: number;
+}
+
+export interface BombPlacementPositionRemovedEvent {
+  position: Position;
+  totalPositions: number;
 }
 
 // Type map for event type to event data
 export interface EventDataMap {
+  // Combat Events
   [EventTypes.ENEMY_DEFEATED]: EnemyDefeatedEvent;
   [EventTypes.COMBO_ACHIEVED]: ComboAchievedEvent;
   [EventTypes.PLAYER_DAMAGED]: PlayerDamagedEvent;
+  [EventTypes.POINT_AWARDED]: PointAwardedEvent;
+  [EventTypes.MULTIPLIER_CHANGED]: MultiplierChangedEvent;
+
+  // Game State Events
+  [EventTypes.GAME_RESET]: { zone: { x: number; y: number; dimension: number }; regionName: string };
+  [EventTypes.GAME_INITIALIZED]: GameInitializedEvent;
+  [EventTypes.GAME_OVER]: GameOverEvent;
+  [EventTypes.GAME_STATE_LOADED]: GameStateLoadedEvent;
+  [EventTypes.GAME_STATE_SAVED]: GameStateSavedEvent;
+
+  // Zone Events
   [EventTypes.ZONE_CHANGED]: ZoneChangedEvent;
+  [EventTypes.ZONE_INITIALIZED]: ZoneInitializedEvent;
+  [EventTypes.REGION_CHANGED]: RegionChangedEvent;
+
+  // Player Events
+  [EventTypes.PLAYER_MOVED]: { x: number; y: number };
   [EventTypes.PLAYER_STATS_CHANGED]: PlayerStatsChangedEvent;
+  [EventTypes.PLAYER_POSITION_CHANGED]: PlayerPositionChangedEvent;
+
+  // Treasure Events
   [EventTypes.TREASURE_FOUND]: TreasureFoundEvent;
-  [EventTypes.ANIMATION_REQUESTED]: AnimationRequestedEvent;
+  [EventTypes.ITEM_ADDED]: ItemAddedEvent;
+
+  // UI Events
+  [EventTypes.MESSAGE_LOGGED]: MessageLoggedEvent;
+  [EventTypes.PANEL_OPENED]: PanelOpenedEvent;
+  [EventTypes.PANEL_CLOSED]: PanelClosedEvent;
+  [EventTypes.UI_UPDATE_STATS]: UIUpdateStatsEvent;
   [EventTypes.UI_SHOW_MESSAGE]: UIShowMessageEvent;
-  [EventTypes.INVENTORY_CHANGED]: InventoryChangedEvent;
-  [EventTypes.ITEM_USED]: ItemUsedEvent;
-  [EventTypes.ANIMATION_HORSE_CHARGE]: AnimationHorseChargeEvent;
-  [EventTypes.ANIMATION_ARROW]: AnimationArrowEvent;
-  [EventTypes.ANIMATION_POINT]: AnimationPointEvent;
-  [EventTypes.ANIMATION_MULTIPLIER]: AnimationMultiplierEvent;
-  [EventTypes.INPUT_KEY_PRESS]: InputKeyPressEvent;
-  [EventTypes.INPUT_PATH_STARTED]: InputPathStartedEvent;
-  [EventTypes.INPUT_EXIT_REACHED]: InputExitReachedEvent;
-  [EventTypes.INPUT_TAP]: InputTapEvent;
-  [EventTypes.INPUT_PLAYER_TILE_TAP]: InputPlayerTileTapEvent;
+  [EventTypes.UI_CLOSE_PANEL]: UIClosePanelEvent;
+
+  // UI Dialog Events
   [EventTypes.UI_DIALOG_SHOW]: UIDialogShowEvent;
   [EventTypes.UI_DIALOG_HIDE]: UIDialogHideEvent;
   [EventTypes.UI_CONFIRMATION_SHOW]: UIConfirmationShowEvent;
   [EventTypes.UI_CONFIRMATION_RESPONSE]: UIConfirmationResponseEvent;
   [EventTypes.UI_OVERLAY_MESSAGE_SHOW]: UIOverlayMessageShowEvent;
+  [EventTypes.UI_OVERLAY_MESSAGE_HIDE]: {};
+
+  // UI Message Events
   [EventTypes.UI_MESSAGE_LOG]: UIMessageLogEvent;
   [EventTypes.UI_REGION_NOTIFICATION_SHOW]: UIRegionNotificationShowEvent;
+
+  // Stats Events
   [EventTypes.STATS_HEALTH_CHANGED]: StatsHealthChangedEvent;
   [EventTypes.STATS_POINTS_CHANGED]: StatsPointsChangedEvent;
   [EventTypes.STATS_HUNGER_CHANGED]: StatsHungerChangedEvent;
   [EventTypes.STATS_THIRST_CHANGED]: StatsThirstChangedEvent;
+  [EventTypes.STATS_CHANGED]: StatsChangedEvent;
+  [EventTypes.POINTS_CHANGED]: PointsChangedEvent;
+
+  // Inventory Events
+  [EventTypes.INVENTORY_CHANGED]: InventoryChangedEvent;
+  [EventTypes.RADIAL_INVENTORY_CHANGED]: { inventory: InventoryItem[] };
+  [EventTypes.ITEM_USED]: ItemUsedEvent;
+
+  // Ability Events
+  [EventTypes.ABILITY_GAINED]: { ability: string; abilities: string[] };
+  [EventTypes.ABILITY_LOST]: AbilityLostEvent;
+
+  // Input Events
+  [EventTypes.INPUT_KEY_PRESS]: InputKeyPressEvent;
+  [EventTypes.INPUT_PATH_STARTED]: InputPathStartedEvent;
+  [EventTypes.INPUT_PATH_CANCELLED]: InputPathCancelledEvent;
+  [EventTypes.INPUT_PATH_COMPLETED]: InputPathCompletedEvent;
+  [EventTypes.INPUT_EXIT_REACHED]: InputExitReachedEvent;
+  [EventTypes.INPUT_TAP]: InputTapEvent;
+  [EventTypes.INPUT_PLAYER_TILE_TAP]: InputPlayerTileTapEvent;
+
+  // Animation Events
+  [EventTypes.ANIMATION_REQUESTED]: AnimationRequestedEvent;
+  [EventTypes.ANIMATION_COMPLETED]: AnimationCompletedEvent;
+  [EventTypes.ANIMATION_HORSE_CHARGE]: AnimationHorseChargeEvent;
+  [EventTypes.ANIMATION_ARROW]: AnimationArrowEvent;
+  [EventTypes.ANIMATION_POINT]: AnimationPointEvent;
+  [EventTypes.ANIMATION_MULTIPLIER]: AnimationMultiplierEvent;
   [EventTypes.ANIMATION_BUMP]: AnimationBumpEvent;
   [EventTypes.ANIMATION_BACKFLIP]: AnimationBackflipEvent;
   [EventTypes.ANIMATION_SMOKE]: AnimationSmokeEvent;
   [EventTypes.ANIMATION_ATTACK]: AnimationAttackEvent;
+
+  // Audio Events
+  [EventTypes.SOUND_PLAY]: SoundPlayEvent;
+  [EventTypes.MUSIC_CHANGE]: MusicChangeEvent;
+
+  // Game Mode Events
+  [EventTypes.GAME_EXIT_SHOVEL_MODE]: GameExitShovelModeEvent;
+  [EventTypes.GAME_INCREMENT_BOMB_ACTIONS]: GameIncrementBombActionsEvent;
+  [EventTypes.GAME_DECREMENT_ZONE_ENTRY_COUNT]: GameDecrementZoneEntryCountEvent;
+
+  // Combat State Events
+  [EventTypes.COMBAT_STARTED]: CombatStartedEvent;
+  [EventTypes.COMBAT_ENDED]: CombatEndedEvent;
   [EventTypes.PLAYER_KNOCKBACK]: PlayerKnockbackEvent;
+
+  // Trade Events
   [EventTypes.TRADE_INITIATED]: TradeInitiatedEvent;
   [EventTypes.TRADE_COMPLETED]: TradeCompletedEvent;
+
+  // Enemy Collection Events
+  [EventTypes.ENEMY_SPAWNED]: EnemySpawnedEvent;
+  [EventTypes.ENEMY_REMOVED]: EnemyRemovedEvent;
+  [EventTypes.ENEMIES_CLEARED]: EnemiesClearedEvent;
+  [EventTypes.ENEMIES_REPLACED]: EnemiesReplacedEvent;
+
+  // Transient State Events
+  [EventTypes.CHARGE_STATE_CHANGED]: ChargeStateChangedEvent;
+  [EventTypes.BOMB_PLACEMENT_MODE_CHANGED]: BombPlacementModeChangedEvent;
+  [EventTypes.SIGN_MESSAGE_DISPLAYED]: SignMessageDisplayedEvent;
+  [EventTypes.SIGN_MESSAGE_CLEARED]: SignMessageClearedEvent;
+  [EventTypes.PLAYER_ATTACKED]: PlayerAttackedEvent;
+  [EventTypes.TRANSIENT_STATE_RESET]: TransientStateResetEvent;
+}
+
+/**
+ * Type-safe event emission helper types
+ */
+
+// Extract the payload type for a specific event
+export type EventPayload<T extends EventType> = T extends keyof EventDataMap
+  ? EventDataMap[T]
+  : never;
+
+// Type guard to check if an event has a payload
+export function hasEventPayload<T extends EventType>(
+  eventType: T
+): eventType is T & keyof EventDataMap {
+  return eventType in EventTypes;
+}
+
+/**
+ * Type-safe event emission helper for EventBus
+ * Usage: emitTypedEvent(eventBus, EventTypes.TREASURE_FOUND, { itemType: 'gold', quantity: 10, message: 'Found gold!' })
+ */
+export function emitTypedEvent<T extends EventType>(
+  eventBus: { emit: (event: string, data?: any) => void },
+  eventType: T,
+  ...args: T extends keyof EventDataMap
+    ? EventDataMap[T] extends {}
+      ? [EventDataMap[T]]
+      : []
+    : [any?]
+): void {
+  const payload = args[0];
+  eventBus.emit(eventType, payload);
+}
+
+/**
+ * Type-safe event listener helper for EventBus
+ * Usage: onTypedEvent(eventBus, EventTypes.TREASURE_FOUND, (payload) => { ... })
+ */
+export function onTypedEvent<T extends EventType>(
+  eventBus: { on: (event: string, handler: (data?: any) => void) => void },
+  eventType: T,
+  handler: T extends keyof EventDataMap
+    ? (payload: EventDataMap[T]) => void
+    : (payload?: any) => void
+): void {
+  eventBus.on(eventType, handler as (data?: any) => void);
+}
+
+/**
+ * Type-safe event listener removal helper for EventBus
+ * Usage: offTypedEvent(eventBus, EventTypes.TREASURE_FOUND, handler)
+ */
+export function offTypedEvent<T extends EventType>(
+  eventBus: { off: (event: string, handler: (data?: any) => void) => void },
+  eventType: T,
+  handler: T extends keyof EventDataMap
+    ? (payload: EventDataMap[T]) => void
+    : (payload?: any) => void
+): void {
+  eventBus.off(eventType, handler as (data?: any) => void);
+}
+
+/**
+ * Create a typed event emitter wrapper for better type safety
+ * Usage: const typedEmitter = createTypedEventEmitter(eventBus);
+ *        typedEmitter.emit(EventTypes.TREASURE_FOUND, { ... });
+ */
+export function createTypedEventEmitter(eventBus: {
+  emit: (event: string, data?: any) => void;
+  on: (event: string, handler: (data?: any) => void) => void;
+  off: (event: string, handler: (data?: any) => void) => void;
+}) {
+  return {
+    emit: <T extends EventType>(
+      eventType: T,
+      ...args: T extends keyof EventDataMap
+        ? EventDataMap[T] extends {}
+          ? [EventDataMap[T]]
+          : []
+        : [any?]
+    ) => emitTypedEvent(eventBus, eventType, ...args),
+
+    on: <T extends EventType>(
+      eventType: T,
+      handler: T extends keyof EventDataMap
+        ? (payload: EventDataMap[T]) => void
+        : (payload?: any) => void
+    ) => onTypedEvent(eventBus, eventType, handler),
+
+    off: <T extends EventType>(
+      eventType: T,
+      handler: T extends keyof EventDataMap
+        ? (payload: EventDataMap[T]) => void
+        : (payload?: any) => void
+    ) => offTypedEvent(eventBus, eventType, handler)
+  };
 }

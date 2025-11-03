@@ -1,11 +1,11 @@
-import { TILE_TYPES, GRID_SIZE } from '../constants/index.js';
-import { logger } from '../logger.js';
-import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
-import { FeatureGenerator } from '../../generators/FeatureGenerator.js';
-import { ItemGenerator } from '../../generators/ItemGenerator.js';
-import { StructureGenerator } from '../../generators/StructureGenerator.js';
-import { EnemyGenerator } from '../../generators/EnemyGenerator.js';
-import { PathGenerator } from '../../generators/PathGenerator.js';
+import { TILE_TYPES, GRID_SIZE } from '../constants/index';
+import { logger } from '../logger';
+import { ZoneStateManager } from '../../generators/ZoneStateManager';
+import { FeatureGenerator } from '../../generators/FeatureGenerator';
+import { ItemGenerator } from '../../generators/ItemGenerator';
+import { StructureGenerator } from '../../generators/StructureGenerator';
+import { EnemyGenerator } from '../../generators/EnemyGenerator';
+import { PathGenerator } from '../../generators/PathGenerator';
 
 /**
  * Base class for zone handlers, providing shared initialization and common patterns

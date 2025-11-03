@@ -1,11 +1,11 @@
-import { TILE_COLORS, TILE_TYPES, TILE_SIZE, STROKE_CONSTANTS } from '../core/constants/index.js';
-import { RendererUtils } from './RendererUtils.js';
-import { TextureDetector } from './TextureDetector.js';
-import { WallTileRenderer } from './WallTileRenderer.js';
-import { ItemTileRenderer } from './ItemTileRenderer.js';
-import { StructureTileRenderer } from './StructureTileRenderer.js';
-import { TileStrategyRegistry } from './strategies/TileStrategyRegistry.js';
-import type { ImageCache, GridManager } from './types.js';
+import { TILE_COLORS, TILE_TYPES, TILE_SIZE, STROKE_CONSTANTS } from '../core/constants/index';
+import { RendererUtils } from './RendererUtils';
+import { TextureDetector } from './TextureDetector';
+import { WallTileRenderer } from './WallTileRenderer';
+import { ItemTileRenderer } from './ItemTileRenderer';
+import { StructureTileRenderer } from './StructureTileRenderer';
+import { TileStrategyRegistry } from './strategies/TileStrategyRegistry';
+import type { ImageCache, GridManager } from './types';
 
 interface MultiTileHandler {
     findHousePosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;

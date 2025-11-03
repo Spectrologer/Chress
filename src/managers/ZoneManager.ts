@@ -15,12 +15,24 @@
  * - ZoneGenerationOrchestrator: Zone generation and loading
  * - ZonePersistenceManager: Zone state saving
  */
-import { TILE_TYPES } from '../core/constants/index.js';
-import { ZoneTransitionCoordinator } from './ZoneTransitionCoordinator.js';
-import { ZoneTreasureManager } from './ZoneTreasureManager.js';
-import { ZoneEventEmitter } from './ZoneEventEmitter.js';
-import { ZoneGenerationOrchestrator } from './ZoneGenerationOrchestrator.js';
-import { ZonePersistenceManager } from './ZonePersistenceManager.js';
+import { TILE_TYPES } from '../core/constants/index';
+import { ZoneTransitionCoordinator } from './ZoneTransitionCoordinator';
+import { ZoneTreasureManager } from './ZoneTreasureManager';
+import { ZoneEventEmitter } from './ZoneEventEmitter';
+import { ZoneGenerationOrchestrator } from './ZoneGenerationOrchestrator';
+import { ZonePersistenceManager } from './ZonePersistenceManager';
+import type { IGame } from '../core/GameContext';
+import type { Player } from '../entities/Player';
+import type { PlayerFacade } from '../facades/PlayerFacade';
+import type { EnemyCollection } from '../facades/EnemyCollection';
+import type { GridManager } from './GridManager';
+import type { NPCManager } from './NPCManager';
+import type { ZoneRepository } from '../repositories/ZoneRepository';
+import type { ZoneGenerator } from '../core/ZoneGenerator';
+import type { ConnectionManager } from './ConnectionManager';
+import type { TransientGameState } from '../state/TransientGameState';
+import type { ServiceContainer } from '../core/ServiceContainer';
+import type { NPCRenderer } from '../renderers/NPCRenderer';
 
 interface EnemyData {
     x: number;
@@ -43,7 +55,7 @@ interface ReturnCoords {
 }
 
 interface ZoneData {
-    grid: Array<Array<any>>;
+    grid: Array<Array<number | object>>;
     enemies: EnemyData[];
     playerSpawn: PlayerSpawn | null;
     returnToSurface?: ReturnCoords;
@@ -56,30 +68,8 @@ export interface Treasure {
     type: string;
 }
 
-interface Game {
-    playerFacade: any;
-    player: any;
-    gridManager: any;
-    enemyCollection: any;
-    npcManager: any;
-    npcRenderer: any;
-    zoneRepository: any;
-    zoneGenerator: any;
-    connectionManager: any;
-    transientGameState: any;
-    Enemy: any;
-    grid: Array<Array<any>>;
-    zones: Record<string, any>;
-    availableFoodAssets: string[];
-    lastExitSide?: string;
-    defeatedEnemies: Set<string>;
-    _services?: any;
-    _newGameSpawnPosition?: any;
-    generateZone: () => void;
-}
-
 export class ZoneManager {
-    private game: Game;
+    private game: IGame;
     private transitionCoordinator: ZoneTransitionCoordinator;
     private treasureManager: ZoneTreasureManager;
     private eventEmitter: ZoneEventEmitter;
@@ -91,7 +81,7 @@ export class ZoneManager {
      *
      * @param game - The main game instance
      */
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.transitionCoordinator = new ZoneTransitionCoordinator(game);
         this.treasureManager = new ZoneTreasureManager(game);

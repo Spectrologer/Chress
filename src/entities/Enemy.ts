@@ -1,6 +1,6 @@
-import { BaseEnemy } from '../enemy/BaseEnemy.js';
-import { EnemyMovementMixin } from '../enemy/EnemyMovement.js';
-import { EnemyAttackMixin } from '../enemy/EnemyAttack.js';
+import { BaseEnemy } from '../enemy/BaseEnemy';
+import { EnemyMovementMixin } from '../enemy/EnemyMovement';
+import { EnemyAttackMixin } from '../enemy/EnemyAttack';
 
 export interface EnemyData {
     x: number;

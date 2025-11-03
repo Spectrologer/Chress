@@ -1,5 +1,5 @@
-import { GRID_SIZE, TILE_TYPES } from '../constants/index.js';
-import GridIterator from '../../utils/GridIterator.js';
+import { GRID_SIZE, TILE_TYPES } from '../constants/index';
+import GridIterator from '../../utils/GridIterator';
 
 /**
  * SpawnPositionHelper - Utilities for finding valid spawn positions

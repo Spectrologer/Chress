@@ -1,4 +1,4 @@
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils';
 
 /**
  * ZoneRepository centralizes zone caching logic.

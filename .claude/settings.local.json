@@ -36,7 +36,16 @@
       "Bash(node migrate_to_ts.mjs:*)",
       "Bash(git mv:*)",
       "Bash(npx tsc:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(dir:*)",
+      "Bash(nul)",
+      "Bash(cat:*)",
+      "Bash(git log:*)",
+      "Bash(awk:*)",
+      "Bash(for:*)",
+      "Bash(node fix-import-extensions.js:*)",
+      "Bash(node:*)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []

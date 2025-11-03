@@ -1,5 +1,6 @@
-import { TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS } from '../core/constants/index.js';
-import type { TextureManager } from './TextureManager.js';
+import { TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS } from '../core/constants/index';
+import type { TextureManager } from './TextureManager';
+import type { IGame } from '../core/GameContext';
 
 interface NPC {
     x: number;
@@ -18,18 +19,12 @@ interface NPCManager {
     getAll(): NPC[];
 }
 
-interface Game {
-    ctx: CanvasRenderingContext2D;
-    textureManager: TextureManager;
-    npcManager?: NPCManager;
-}
-
 export class NPCRenderer {
-    private game: Game;
+    private game: IGame;
     private ctx: CanvasRenderingContext2D;
     private textureManager: TextureManager;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.ctx = game.ctx;
         this.textureManager = game.textureManager;

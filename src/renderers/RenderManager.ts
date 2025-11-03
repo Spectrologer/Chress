@@ -1,15 +1,16 @@
-import { GRID_SIZE, TILE_SIZE, TILE_TYPES, CANVAS_SIZE, getZoneLevelFromDistance } from '../core/constants/index.js';
-import { COLOR_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/rendering.js';
-import type { TextureManager } from './TextureManager.js';
-import { PlayerRenderer } from './PlayerRenderer.js';
-import { EnemyRenderer } from './EnemyRenderer.js';
-import { AnimationRenderer } from './AnimationRenderer.js';
-import { UIRenderer } from './UIRenderer.js';
-import { FogRenderer } from './FogRenderer.js';
-import GridIterator from '../utils/GridIterator.js';
-import { isTileType } from '../utils/TileUtils.js';
-import { logger } from '../core/logger.ts';
-import type { TapFeedback } from './types.js';
+import { GRID_SIZE, TILE_SIZE, TILE_TYPES, CANVAS_SIZE, getZoneLevelFromDistance } from '../core/constants/index';
+import { COLOR_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/rendering';
+import type { TextureManager } from './TextureManager';
+import { PlayerRenderer } from './PlayerRenderer';
+import { EnemyRenderer } from './EnemyRenderer';
+import { AnimationRenderer } from './AnimationRenderer';
+import { UIRenderer } from './UIRenderer';
+import { FogRenderer } from './FogRenderer';
+import GridIterator from '../utils/GridIterator';
+import { isTileType } from '../utils/TileUtils';
+import { logger } from '../core/logger';
+import type { TapFeedback } from './types';
+import type { IGame } from '../core/GameContext';
 
 interface Zone {
     x: number;
@@ -54,22 +55,8 @@ interface NPCRenderer {
     drawNPCs(): void;
 }
 
-interface Game {
-    ctx: CanvasRenderingContext2D;
-    canvas: HTMLCanvasElement;
-    textureManager: TextureManager;
-    player: Player;
-    grid: any[][] | null;
-    gridManager: GridManager;
-    zoneGenerator: ZoneGenerator | null;
-    enemyCollection: EnemyCollection | null;
-    enemies: Enemy[];
-    npcRenderer?: NPCRenderer;
-    previewMode?: boolean;
-}
-
 export class RenderManager {
-    private game: Game;
+    private game: IGame;
     private ctx: CanvasRenderingContext2D;
     private textureManager: TextureManager;
     private tapFeedback: TapFeedback | null = null;
@@ -80,7 +67,7 @@ export class RenderManager {
     private fogRenderer: FogRenderer;
     private _missingTextureLogged?: boolean;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.ctx = game.ctx;
         this.textureManager = game.textureManager;

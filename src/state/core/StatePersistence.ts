@@ -9,7 +9,7 @@
  * - Chunk-based saving for large states
  */
 
-import { store } from './StateStore.js';
+import { store } from './StateStore';
 import LZString from 'lz-string';
 
 export class StatePersistence {

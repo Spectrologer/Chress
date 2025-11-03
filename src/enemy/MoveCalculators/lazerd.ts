@@ -1,6 +1,6 @@
-import { BaseMoveCalculator } from './base.js';
-import { EnemySpecialActions } from '../EnemySpecialActions.js';
-import { ChargeMoveHelpers } from './BaseAttackBehaviors.js';
+import { BaseMoveCalculator } from './base';
+import { EnemySpecialActions } from '../EnemySpecialActions';
+import { ChargeMoveHelpers } from './BaseAttackBehaviors';
 
 export class LazerdMoveCalculator extends BaseMoveCalculator {
     calculateMove(enemy, player, playerPos, grid, enemies, isSimulation = false, game = null) {

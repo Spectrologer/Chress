@@ -1,3 +1,4 @@
+import type { IGame } from '../core/GameContext';
 import { MessageManager } from './MessageManager';
 import { PanelManager } from './PanelManager';
 import { PlayerStatsUI } from './PlayerStatsUI';
@@ -6,6 +7,7 @@ import { MiniMap } from './MiniMap';
 import { UIEventCoordinator } from './UIEventCoordinator';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 interface Player {
     getPosition(): { x: number; y: number };
@@ -17,23 +19,18 @@ interface Player {
     isDead(): boolean;
 }
 
-interface Game {
-    player: Player;
-    resetGame(): void;
-    gameLoop(): void;
-    displayingMessageForSign?: any;
-}
-
 export class UIManager {
-    private game: Game;
+    private game: IGame;
     public messageManager: MessageManager;
     public panelManager: PanelManager;
     public playerStatsUI: PlayerStatsUI;
     public miniMap: MiniMap;
     private eventCoordinator: UIEventCoordinator;
+    private eventManager: EventListenerManager;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
+        this.eventManager = new EventListenerManager();
 
         // Managers
         this.messageManager = new MessageManager(game);
@@ -200,7 +197,7 @@ export class UIManager {
     setupGameOverHandler(): void {
         const restartButton = document.getElementById('restart-button');
         if (restartButton) {
-            restartButton.addEventListener('click', () => {
+            this.eventManager.add(restartButton, 'click', () => {
                 this.hideGameOverScreen();
                 this.game.resetGame();
                 // Restart loop (player alive)
@@ -247,5 +244,11 @@ export class UIManager {
         return this.panelManager.isStatsPanelOpen();
     }
 
-
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the UIManager instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
+    }
 }

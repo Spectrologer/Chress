@@ -63,14 +63,14 @@
  * @typedef {Array<Array<number>>} Grid
  */
 
-import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '../../core/constants/index.ts';
-import { EnemyPathfinding } from '../EnemyPathfinding.js';
-import { EnemySpecialActions } from '../EnemySpecialActions.js';
-import { logger } from '../../core/logger.ts';
+import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '../../core/constants/index';
+import { EnemyPathfinding } from '../EnemyPathfinding';
+import { EnemySpecialActions } from '../EnemySpecialActions';
+import { logger } from '../../core/logger';
 
-import { applyAggressiveMovement } from './aggressive.js';
-import { applyTacticalAdjustments, applyDefensiveMoves } from './tactics.js';
-import { handlePlayerInteraction, handlePitfallTransition } from './interaction.js';
+import { applyAggressiveMovement } from './aggressive';
+import { applyTacticalAdjustments, applyDefensiveMoves } from './tactics';
+import { handlePlayerInteraction, handlePitfallTransition } from './interaction';
 
 export class BaseMoveCalculator {
     constructor() {

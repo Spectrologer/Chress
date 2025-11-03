@@ -1,8 +1,8 @@
-import { INPUT_CONSTANTS, TILE_TYPES, TILE_SIZE } from '../core/constants/index.js';
-import { getDeltaToDirection } from '../core/utils/DirectionUtils.ts';
-import audioManager from '../utils/AudioManager.js';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.ts';
-import { getTileType, isTileObject } from '../utils/TypeChecks.js';
+import { INPUT_CONSTANTS, TILE_TYPES, TILE_SIZE } from '../core/constants/index';
+import { getDeltaToDirection } from '../core/utils/DirectionUtils';
+import audioManager from '../utils/AudioManager';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
+import { getTileType, isTileObject } from '../utils/TypeChecks';
 
 interface PointerInfo {
     startX: number;

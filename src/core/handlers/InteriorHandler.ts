@@ -1,4 +1,4 @@
-import { BaseZoneHandler } from './BaseZoneHandler.js';
+import { BaseZoneHandler } from './BaseZoneHandler';
 
 class InteriorHandler extends BaseZoneHandler {
     constructor(zoneGen, zoneX, zoneY, foodAssets) {
@@ -16,7 +16,7 @@ class InteriorHandler extends BaseZoneHandler {
     async generateHomeInterior() {
         // Home interior now uses custom board (boards/canon/museum.json)
         // Board system handles all layout, NPCs, statues, tables, and items
-        const { boardLoader } = await import('../BoardLoader.js');
+        const { boardLoader } = await import('../BoardLoader');
         const boardData = boardLoader.getBoardSync(0, 0, 1);
         if (boardData) {
             const result = boardLoader.convertBoardToGrid(boardData, this.foodAssets);

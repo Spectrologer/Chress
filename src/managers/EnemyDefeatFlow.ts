@@ -1,19 +1,14 @@
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.ts';
-import { EventTypes } from '../core/EventTypes.ts';
-import type { Game } from '../core/Game.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils';
+import audioManager from '../utils/AudioManager';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import type { Game } from '../core/Game';
+import type { Enemy as EnemyType } from '../entities/Enemy';
 
-interface Enemy {
-    x: number;
-    y: number;
-    id: string;
-    health: number;
-    enemyType: string;
+interface EnemyWithMethods extends EnemyType {
     _suppressAttackSound?: boolean;
     getPoints: () => number;
     takeDamage: (amount: number) => void;
-    [key: string]: any;
 }
 
 interface ZoneInfo {
@@ -68,7 +63,7 @@ export class EnemyDefeatFlow {
     /**
      * Plays attack sound if not suppressed by the enemy
      */
-    public playAttackSound(enemy: Enemy): void {
+    public playAttackSound(enemy: EnemyWithMethods): void {
         if (!enemy._suppressAttackSound) {
             audioManager.playSound('attack', { game: this.game });
         }
@@ -77,21 +72,21 @@ export class EnemyDefeatFlow {
     /**
      * Marks enemy as defeated in the global defeated enemies set
      */
-    public markAsDefeated(enemy: Enemy): void {
+    public markAsDefeated(enemy: EnemyWithMethods): void {
         (this.game as any).defeatedEnemies.add(`${enemy.id}`);
     }
 
     /**
      * Checks if an enemy has already been defeated
      */
-    public isAlreadyDefeated(enemy: Enemy): boolean {
+    public isAlreadyDefeated(enemy: EnemyWithMethods): boolean {
         return (this.game as any).defeatedEnemies.has(`${enemy.id}`);
     }
 
     /**
      * Removes enemy from zone data to prevent respawn
      */
-    public removeFromZoneData(enemy: Enemy, currentZone: ZoneInfo): void {
+    public removeFromZoneData(enemy: EnemyWithMethods, currentZone: ZoneInfo): void {
         const depth = currentZone.depth || ((this.game.player as any).undergroundDepth || 1);
         const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, depth);
 
@@ -105,7 +100,7 @@ export class EnemyDefeatFlow {
     /**
      * Handles combo kill logic for consecutive player kills
      */
-    public handleComboKills(enemy: Enemy, enemyX: number, enemyY: number, initiator: string | null): number {
+    public handleComboKills(enemy: EnemyWithMethods, enemyX: number, enemyY: number, initiator: string | null): number {
         if (initiator !== 'player' || !this.game.player) {
             // Non-player kills reset the streak
             if (this.game.player) {
@@ -189,7 +184,7 @@ export class EnemyDefeatFlow {
     /**
      * Emits an event notifying that an enemy was defeated
      */
-    public emitDefeatEvent(enemy: Enemy, x: number, y: number, consecutiveKills: number): void {
+    public emitDefeatEvent(enemy: EnemyWithMethods, x: number, y: number, consecutiveKills: number): void {
         eventBus.emit(EventTypes.ENEMY_DEFEATED, {
             enemy,
             points: enemy.getPoints(),
@@ -202,7 +197,7 @@ export class EnemyDefeatFlow {
     /**
      * Main method to execute the complete enemy defeat flow
      */
-    public executeDefeat(enemy: Enemy, currentZone: ZoneInfo, initiator: string | null = null): DefeatResult {
+    public executeDefeat(enemy: EnemyWithMethods, currentZone: ZoneInfo, initiator: string | null = null): DefeatResult {
         // Check if already defeated to prevent double defeat/points
         if (this.isAlreadyDefeated(enemy)) {
             return { defeated: false, consecutiveKills: 0 };

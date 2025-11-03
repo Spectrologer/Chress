@@ -1,14 +1,10 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
-import { logger } from '../core/logger.ts';
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import { isWithinGrid } from '../utils/GridUtils.js';
-import { isTileType, isTileObjectOfType, isTileObjectWithProperty } from '../utils/TypeChecks.js';
-import type { Game } from '../core/Game.js';
-
-interface Position {
-    x: number;
-    y: number;
-}
+import { GRID_SIZE, TILE_TYPES } from '../core/constants/index';
+import { logger } from '../core/logger';
+import { createZoneKey } from '../utils/ZoneKeyUtils';
+import { isWithinGrid } from '../utils/GridUtils';
+import { isTileType, isTileObjectOfType, isTileObjectWithProperty } from '../utils/TypeChecks';
+import type { Game } from '../core/Game';
+import type { Position } from '../core/Position';
 
 interface ZoneData {
     playerSpawn?: Position;

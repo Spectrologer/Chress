@@ -1,7 +1,7 @@
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.js';
-import { isWithinGrid } from '../utils/GridUtils.js';
-import { isTileType, isPort, isCistern, isShack } from '../utils/TileUtils.js';
-import type { GridManager } from './types.js';
+import { TILE_TYPES, GRID_SIZE } from '../core/constants/index';
+import { isWithinGrid } from '../utils/GridUtils';
+import { isTileType, isPort, isCistern, isShack } from '../utils/TileUtils';
+import type { GridManager } from './types';
 
 interface StructurePosition {
     startX: number;

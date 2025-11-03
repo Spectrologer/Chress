@@ -1,10 +1,10 @@
-import { LizardyMoveCalculator } from './lizardy.js';
-import { ZardMoveCalculator } from './zard.js';
-import { LizardeauxMoveCalculator } from './lizardeaux.js';
-import { LazerdMoveCalculator } from './lazerd.js';
-import { LizardoMoveCalculator } from './lizardo.js';
-import { LizordMoveCalculator } from './lizord.js';
-import { BaseMoveCalculator } from './base.js';
+import { LizardyMoveCalculator } from './lizardy';
+import { ZardMoveCalculator } from './zard';
+import { LizardeauxMoveCalculator } from './lizardeaux';
+import { LazerdMoveCalculator } from './lazerd';
+import { LizardoMoveCalculator } from './lizardo';
+import { LizordMoveCalculator } from './lizord';
+import { BaseMoveCalculator } from './base';
 
 export class EnemyMoveCalculatorFactory {
     static getCalculator(enemyType) {

@@ -1,16 +1,12 @@
-import { ItemMetadata, type InventoryItem } from './ItemMetadata.js';
-import { saveRadialInventory } from '../RadialPersistence.js';
+import { ItemMetadata, type InventoryItem } from './ItemMetadata';
+import { saveRadialInventory } from '../RadialPersistence';
+import type { IGame } from '../../core/GameContext';
 
 type InventoryType = 'main' | 'radial' | 'auto';
 
 interface Player {
     inventory: InventoryItem[];
     radialInventory?: InventoryItem[];
-    [key: string]: any;
-}
-
-interface Game {
-    player?: Player;
     [key: string]: any;
 }
 
@@ -36,9 +32,9 @@ interface InventorySpace {
  * (except radial inventory persistence).
  */
 export class ItemRepository {
-    private game: Game;
+    private game: IGame;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
     }
 

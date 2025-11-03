@@ -1,3 +1,4 @@
+import type { IGame } from '../core/GameContext';
 import { TILE_TYPES } from '../core/constants/index';
 import { Sign } from './Sign';
 import { eventBus } from '../core/EventBus';
@@ -5,6 +6,7 @@ import { EventTypes } from '../core/EventTypes';
 import { isAdjacent } from '../core/utils/DirectionUtils';
 import { getTileType } from '../utils/TileUtils';
 import { TileRegistry } from '../core/TileRegistry';
+import type { Position } from '../core/Position';
 
 interface GridCoords {
     x: number;
@@ -16,15 +18,19 @@ interface InputTapEvent {
     handled?: boolean;
 }
 
-interface InputPlayerTileTapEvent {
-    gridCoords: GridCoords;
-    tileType: any;
-    portKind?: string;
+interface ChargeDetails {
+    type: string;
+    item: object;
+    target: Position;
+    enemy: object | null;
+    dx?: number;
+    dy?: number;
 }
 
-interface Position {
-    x: number;
-    y: number;
+interface InputPlayerTileTapEvent {
+    gridCoords: GridCoords;
+    tileType: number | object;
+    portKind?: string;
 }
 
 interface Player {
@@ -33,7 +39,7 @@ interface Player {
 }
 
 interface InventoryService {
-    useItem(item: any, options?: any): boolean;
+    useItem(item: object, options?: Record<string, unknown>): boolean;
 }
 
 interface UIManager {
@@ -42,14 +48,14 @@ interface UIManager {
 }
 
 interface TransientGameState {
-    getPendingCharge(): any;
+    getPendingCharge(): ChargeDetails | null;
 }
 
 interface CombatActionManager {
-    isValidBishopSpearCharge(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): any;
-    isValidHorseIconCharge(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): any;
-    isValidBowShot(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): any;
-    confirmPendingCharge(chargeDetails: any): void;
+    isValidBishopSpearCharge(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): ChargeDetails | null;
+    isValidHorseIconCharge(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): ChargeDetails | null;
+    isValidBowShot(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): ChargeDetails | null;
+    confirmPendingCharge(chargeDetails: ChargeDetails): void;
     cancelPendingCharge(): void;
 }
 
@@ -62,19 +68,6 @@ interface RadialInventoryUI {
     open: boolean;
     close(): void;
     openAtPlayer(): void;
-}
-
-interface Game {
-    player: Player;
-    displayingMessageForSign?: any;
-    grid: any[][];
-    uiManager: UIManager;
-    transientGameState?: TransientGameState;
-    interactionManager: InteractionManager;
-    shovelMode?: boolean;
-    activeShovel?: any;
-    exitShovelMode?: () => void;
-    radialInventoryUI?: RadialInventoryUI;
 }
 
 /**
@@ -92,11 +85,11 @@ interface Game {
  * and handles all UI-related logic that was previously in InputController.
  */
 export class InputUIHandler {
-    private game: Game;
+    private game: IGame;
     private inventoryService: InventoryService;
     private _unsubscribers: Array<() => void>;
 
-    constructor(game: Game, inventoryService: InventoryService) {
+    constructor(game: IGame, inventoryService: InventoryService) {
         this.game = game;
         this.inventoryService = inventoryService;
         this._unsubscribers = [];
@@ -278,7 +271,7 @@ export class InputUIHandler {
         }
 
         const selType = pendingCharge.selectionType;
-        let chargeDetails: any = null;
+        let chargeDetails: ChargeDetails | null = null;
         const playerPos = this.game.player.getPosition();
 
         // Use interactionManager.combatManager (CombatActionManager) for charge validation

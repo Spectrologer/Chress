@@ -1,10 +1,6 @@
+import type { IGame } from '../core/GameContext';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
-
-interface Game {
-    pendingConfirmationAction?: string;
-    pendingConfirmationData?: any;
-}
 
 interface MessageManager {
     showSignMessage(message: string, portrait: string | null, name: string | null, buttonText: string | null): void;
@@ -80,11 +76,11 @@ interface UIRegionNotificationShowEvent {
  * - Single place to add logging, analytics, etc.
  */
 export class UIEventCoordinator {
-    private game: Game;
+    private game: IGame;
     private messageManager: MessageManager;
     private panelManager: PanelManager;
 
-    constructor(game: Game, messageManager: MessageManager, panelManager: PanelManager) {
+    constructor(game: IGame, messageManager: MessageManager, panelManager: PanelManager) {
         this.game = game;
         this.messageManager = messageManager;
         this.panelManager = panelManager;

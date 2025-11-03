@@ -1,38 +1,18 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { isAdjacent } from '../core/utils/DirectionUtils.js';
-import { ItemRepository } from './inventory/ItemRepository.js';
-import { isBomb, isTileObject, isTileObjectOfType } from '../utils/TypeChecks.js';
-import GridIterator from '../utils/GridIterator.js';
-import { safeCall } from '../utils/SafeServiceCall.js';
-import { Position } from '../core/Position.js';
-
-interface GridCoords {
-    x: number;
-    y: number;
-}
-
-interface PlayerPos {
-    x: number;
-    y: number;
-}
+import { GRID_SIZE, TILE_TYPES } from '../core/constants/index';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { isAdjacent } from '../core/utils/DirectionUtils';
+import { ItemRepository } from './inventory/ItemRepository';
+import { isBomb, isTileObject, isTileObjectOfType } from '../utils/TypeChecks';
+import GridIterator from '../utils/GridIterator';
+import { safeCall } from '../utils/SafeServiceCall';
+import { Position } from '../core/Position';
+import type { IGame, ICoordinates } from '../core/GameContext';
 
 interface BombTile {
     type: number;
     actionsSincePlaced: number;
     justPlaced: boolean;
-}
-
-interface Game {
-    transientGameState: any;
-    gridManager: any;
-    player: any;
-    grid: Array<Array<number | object>>;
-    incrementBombActions: () => void;
-    startEnemyTurns: () => void;
-    explodeBomb: (x: number, y: number) => void;
-    hideOverlayMessage: () => void;
 }
 
 /**
@@ -80,7 +60,7 @@ interface Game {
  * - Emits events for UI updates via EventBus
  */
 export class BombManager {
-    private game: Game;
+    private game: IGame;
     private itemRepository: ItemRepository;
 
     /**
@@ -88,7 +68,7 @@ export class BombManager {
      *
      * @param game - The main game instance
      */
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.itemRepository = new ItemRepository(game);
     }
@@ -198,7 +178,7 @@ export class BombManager {
      * @param gridCoords - {x, y} grid position to place bomb
      * @returns True if bomb was placed successfully, false otherwise
      */
-    handleBombPlacement(gridCoords: GridCoords): boolean {
+    handleBombPlacement(gridCoords: ICoordinates): boolean {
         const transientState = this.game.transientGameState;
 
         if (!transientState || !transientState.isBombPlacementMode()) {
@@ -266,7 +246,7 @@ export class BombManager {
      * @param playerPos - {x, y} player's current position
      * @returns True if bomb was successfully triggered, false if invalid
      */
-    triggerBombExplosion(gridCoords: GridCoords, playerPos: PlayerPos): boolean {
+    triggerBombExplosion(gridCoords: ICoordinates, playerPos: ICoordinates): boolean {
         const clickedPos = Position.from(gridCoords);
         const tapTile = clickedPos.getTile(this.game.grid);
         if (!isTileObjectOfType(tapTile, TILE_TYPES.BOMB)) return false;
@@ -321,7 +301,7 @@ export class BombManager {
      *
      * @param gridCoords - {x, y} grid position of bomb to force-trigger
      */
-    forceBombTrigger(gridCoords: GridCoords): void {
+    forceBombTrigger(gridCoords: ICoordinates): void {
         const clickedPos = Position.from(gridCoords);
         const tapTile = clickedPos.getTile(this.game.grid);
         if (!isTileObjectOfType(tapTile, TILE_TYPES.BOMB)) return;

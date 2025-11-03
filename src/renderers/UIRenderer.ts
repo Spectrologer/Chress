@@ -1,6 +1,7 @@
-import { TILE_SIZE } from '../core/constants/index.js';
-import { COLOR_CONSTANTS } from '../core/constants/rendering.js';
-import type { TextureManager } from './TextureManager.js';
+import { TILE_SIZE } from '../core/constants/index';
+import { COLOR_CONSTANTS } from '../core/constants/rendering';
+import type { TextureManager } from './TextureManager';
+import type { IGame } from '../core/GameContext';
 
 interface TransientGameState {
     isBombPlacementMode(): boolean;
@@ -8,18 +9,12 @@ interface TransientGameState {
     getPendingCharge(): { targetX: number; targetY: number } | null;
 }
 
-interface Game {
-    ctx: CanvasRenderingContext2D;
-    textureManager: TextureManager;
-    transientGameState?: TransientGameState;
-}
-
 export class UIRenderer {
-    private game: Game;
+    private game: IGame;
     private ctx: CanvasRenderingContext2D;
     private textureManager: TextureManager;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.ctx = game.ctx;
         this.textureManager = game.textureManager;

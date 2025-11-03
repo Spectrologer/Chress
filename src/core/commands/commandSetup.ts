@@ -1,4 +1,4 @@
-import { CommandRegistry } from './CommandRegistry.js';
+import { CommandRegistry } from './CommandRegistry';
 import {
     SpawnBombCommand,
     SpawnHorseIconCommand,
@@ -22,7 +22,7 @@ import {
     SpawnShackCommand,
     SpawnCisternCommand,
     SpawnStairdownCommand
-} from './spawn/SpawnCommands.js';
+} from './spawn/SpawnCommands';
 import {
     SpawnEnemyCommand,
     SpawnLizardyCommand,
@@ -31,8 +31,8 @@ import {
     SpawnLizordCommand,
     SpawnLazerdCommand,
     SpawnZardCommand
-} from './spawn/EnemySpawnCommands.js';
-import { RestartGameCommand } from './utility/UtilityCommands.js';
+} from './spawn/EnemySpawnCommands';
+import { RestartGameCommand } from './utility/UtilityCommands';
 
 /**
  * Creates and configures the command registry with all commands

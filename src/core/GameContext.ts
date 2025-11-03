@@ -1,43 +1,213 @@
 import { GameWorld } from './GameWorld';
 import { GameUI } from './GameUI';
 import { GameAudio } from './GameAudio';
-import { UI_TIMING_CONSTANTS } from './constants/ui.js';
-import { ZoneGenerationState } from '../state/ZoneGenerationState.js';
-import { storageAdapter, StorageAdapter } from '../state/StorageAdapter.js';
+import { UI_TIMING_CONSTANTS } from './constants/ui';
+import { ZoneGenerationState } from '../state/ZoneGenerationState';
+import { storageAdapter, StorageAdapter } from '../state/StorageAdapter';
+import type { Grid } from './SharedTypes';
 import type { ServiceContainer } from './ServiceContainer';
-import type { AnimationManager } from './DataContracts.js';
-import type { AnimationScheduler } from './AnimationScheduler.js';
+import type { AnimationManager } from './DataContracts';
+import type { AnimationScheduler } from './AnimationScheduler';
 import type { GameInitializer } from './GameInitializer';
-import type { AssetLoader } from './AssetLoader.js';
-import type { GridManager } from '../managers/GridManager.js';
-import type { ZoneManager } from '../managers/ZoneManager.js';
-import type { ZoneTransitionManager } from '../managers/ZoneTransitionManager.js';
+import type { AssetLoader } from './AssetLoader';
+import type { GridManager } from '../managers/GridManager';
+import type { ZoneManager } from '../managers/ZoneManager';
+import type { ZoneTransitionManager } from '../managers/ZoneTransitionManager';
 import type { ZoneTransitionController } from '../controllers/ZoneTransitionController';
-import type { CombatManager } from '../managers/CombatManager.js';
-import type { InteractionManager } from '../managers/InteractionManager.js';
-import type { ItemManager } from '../managers/ItemManager.js';
-import type { InventoryService } from '../managers/inventory/InventoryService.js';
-import type { ActionManager } from '../managers/ActionManager.js';
+import type { CombatManager } from '../managers/CombatManager';
+import type { InteractionManager } from '../managers/InteractionManager';
+import type { ItemManager } from '../managers/ItemManager';
+import type { InventoryService } from '../managers/inventory/InventoryService';
+import type { ActionManager } from '../managers/ActionManager';
 import type { TurnManager } from '../core/TurnManager';
 import type { GameStateManager } from '../core/GameStateManager';
-import type { InputManager } from '../managers/InputManager.js';
-import type { RenderManager } from '../renderers/RenderManager.js';
-import type { TextureManager } from '../renderers/TextureManager.js';
-import type { ConnectionManager } from '../managers/ConnectionManager.js';
-import type { ZoneGenerator } from '../core/ZoneGenerator.js';
-import type { UIManager } from '../ui/UIManager.js';
+import type { InputManager } from '../managers/InputManager';
+import type { RenderManager } from '../renderers/RenderManager';
+import type { TextureManager } from '../renderers/TextureManager';
+import type { ConnectionManager } from '../managers/ConnectionManager';
+import type { ZoneGenerator } from '../core/ZoneGenerator';
+import type { UIManager } from '../ui/UIManager';
 import type { OverlayManager } from '../ui/OverlayManager';
-import type { InventoryUI } from '../ui/InventoryUI.js';
-import type { RadialInventoryUI } from '../ui/RadialInventoryUI.js';
-import type { Player } from '../entities/Player.js';
-import type { Enemy } from '../entities/Enemy.js';
-import type { EnemyCollection } from '../facades/EnemyCollection.js';
-import type { NPCManager } from '../managers/NPCManager.js';
+import type { InventoryUI } from '../ui/InventoryUI';
+import type { RadialInventoryUI } from '../ui/RadialInventoryUI';
+import type { Player } from '../entities/Player';
+import type { Enemy } from '../entities/Enemy';
+import type { EnemyCollection } from '../facades/EnemyCollection';
+import type { NPCManager } from '../managers/NPCManager';
+import type { Treasure } from '../managers/ZoneManager';
+import type { TransientGameState } from '../state/TransientGameState';
+import type { PlayerFacade } from '../facades/PlayerFacade';
+import type { BombManager } from '../managers/BombManager';
+import type { UICoordinator } from '../ui/UICoordinator';
+import type { MessageManager } from '../ui/MessageManager';
+import type { PanelManager } from '../ui/PanelManager';
+import type { PlayerStatsUI } from '../ui/PlayerStatsUI';
+import type { DialogueManager } from '../ui/DialogueManager';
+import type { TurnFeedbackRenderer } from '../renderers/TurnFeedbackRenderer';
+import type { NPCInteractionManager } from '../managers/NPCInteractionManager';
+import type { TerrainInteractionManager } from '../managers/TerrainInteractionManager';
+import type { ItemRepository } from '../managers/inventory/ItemRepository';
+import type { InventoryInteractionHandler } from '../managers/inventory/InventoryInteractionHandler';
 
 export interface Item {
     name: string;
     type: string;
     uses?: number;
+}
+
+/**
+ * Coordinates type used throughout the game
+ */
+export interface ICoordinates {
+    x: number;
+    y: number;
+}
+
+/**
+ * Comprehensive Game interface that replaces all 29 duplicate definitions
+ * This interface represents the complete game state and all managers
+ */
+export interface IGame {
+    // Core subsystems
+    world: GameWorld;
+    ui: GameUI;
+    audio: GameAudio;
+
+    // State management
+    zoneGenState: ZoneGenerationState;
+    storageAdapter: StorageAdapter;
+    transientGameState?: TransientGameState;
+
+    // Dynamic properties (used by GameStateManager)
+    zoneRepository?: any; // ZoneRepository instance
+    messageLog?: string[];
+    dialogueState?: Map<string, any>;
+    lastExitSide?: string | null;
+    _newGameSpawnPosition?: { x: number; y: number } | null;
+
+    // Turn-based system state
+    isPlayerTurn: boolean;
+    justLeftExitTile: boolean;
+    turnQueue: Enemy[];
+    occupiedTilesThisTurn: Set<string>;
+    initialEnemyTilesThisTurn: Set<string>;
+
+    // Item usage modes
+    shovelMode: boolean;
+    activeShovel: Item | null;
+
+    // Assets
+    availableFoodAssets: string[];
+
+    // Core entities and collections
+    player: Player | null;
+    enemies: Enemy[];
+    enemyCollection: EnemyCollection | null;
+    playerFacade?: PlayerFacade;
+    Enemy: new (...args: unknown[]) => Enemy;
+
+    // Grid and world data
+    grid: Grid | null;
+    zones: Map<string, any>;
+    specialZones: Map<string, any>;
+    defeatedEnemies: Set<string>;
+    currentRegion: string | null;
+
+    // Canvas contexts
+    canvas: HTMLCanvasElement | null;
+    ctx: CanvasRenderingContext2D | null;
+    mapCanvas: HTMLCanvasElement | null;
+    mapCtx: CanvasRenderingContext2D | null;
+
+    // Game state flags
+    gameStarted: boolean;
+    previewMode: boolean;
+    playerDeathTimer: number | null;
+
+    // Managers - Core
+    gridManager: GridManager | null;
+    textureManager: TextureManager | null;
+    connectionManager: ConnectionManager | null;
+    zoneGenerator: ZoneGenerator | null;
+    inputManager: InputManager | null;
+    renderManager: RenderManager | null;
+    combatManager: CombatManager | null;
+    interactionManager: InteractionManager | null;
+    itemManager: ItemManager | null;
+    inventoryService: InventoryService | null;
+    zoneManager: ZoneManager | null;
+    zoneTransitionManager: ZoneTransitionManager | null;
+    zoneTransitionController: ZoneTransitionController | null;
+    actionManager: ActionManager | null;
+    turnManager: TurnManager | null;
+    gameStateManager: GameStateManager | null;
+    animationManager: AnimationManager | null;
+    animationScheduler: AnimationScheduler | null;
+    gameInitializer: GameInitializer | null;
+    assetLoader: AssetLoader | null;
+    npcManager: NPCManager | null;
+    bombManager?: BombManager;
+    npcInteractionManager?: NPCInteractionManager;
+    terrainInteractionManager?: TerrainInteractionManager;
+    itemRepository?: ItemRepository;
+    inventoryInteractionHandler?: InventoryInteractionHandler;
+
+    // UI Managers
+    uiManager: UIManager | null;
+    overlayManager: OverlayManager | null;
+    inventoryUI: InventoryUI | null;
+    radialInventoryUI: RadialInventoryUI | null;
+    uiCoordinator?: UICoordinator;
+    messageManager?: MessageManager;
+    panelManager?: PanelManager;
+    playerStatsUI?: PlayerStatsUI;
+    dialogueManager?: DialogueManager;
+
+    // Renderers
+    turnFeedbackRenderer?: TurnFeedbackRenderer;
+
+    // Audio
+    soundManager: object | null;
+    consentManager: object | null;
+
+    // Backward compatibility aliases
+    itemService: InventoryService | null;
+    inventoryManager: InventoryUI | null;
+    _lastPlayerPos: ICoordinates | null;
+
+    // Private/internal properties
+    _services?: ServiceContainer | null;
+
+    // Command methods
+    exitShovelMode(): void;
+    isPlayerOnExitTile(): boolean;
+    handleTurnCompletion(): void;
+    startEnemyTurns(): void;
+    processTurnQueue(): void;
+    render(): void;
+    handleEnemyMovements(): void;
+    checkCollisions(): void;
+    checkPenneInteraction(): void;
+    checkSquigInteraction(): void;
+    checkItemPickup(): void;
+    useMapNote(): void;
+    interactWithNPC(foodType: string): void;
+    addTreasureToInventory(): void;
+    addBomb(): void;
+    hideOverlayMessage(): void;
+    showSignMessage(text: string, imageSrc?: string | null, name?: string | null, buttonText?: string | null): void;
+    updatePlayerPosition(): void;
+    updatePlayerStats(): void;
+    incrementBombActions(): void;
+    performBishopSpearCharge(item: Item, targetX: number, targetY: number, enemy: Enemy, dx: number, dy: number): void;
+    performHorseIconCharge(item: Item, targetX: number, targetY: number, enemy: Enemy, dx: number, dy: number): void;
+    performBowShot(item: Item, targetX: number, targetY: number): void;
+    explodeBomb(bx: number, by: number): void;
+    transitionToZone(newZoneX: number, newZoneY: number, exitSide: string, exitX: number, exitY: number): void;
+    generateZone(): void;
+    spawnTreasuresOnGrid(treasures: Treasure[]): void;
+    resetGame(): void;
+    gameLoop(): void;
 }
 
 /**
@@ -52,7 +222,7 @@ export interface Item {
  * - audio: Sound and consent managers (GameAudio)
  * - Plus all managers and services (set by ServiceContainer)
  */
-export class GameContext {
+export class GameContext implements IGame {
     // Core subsystems
     world: GameWorld;
     ui: GameUI;
@@ -61,6 +231,14 @@ export class GameContext {
     // State management (replaces ZoneStateManager static properties)
     zoneGenState: ZoneGenerationState;
     storageAdapter: StorageAdapter;
+
+    // Dynamic properties (used by GameStateManager)
+    zoneRepository?: any; // ZoneRepository instance
+    messageLog?: string[];
+    dialogueState?: Map<string, any>;
+    lastExitSide?: string | null;
+    _newGameSpawnPosition?: { x: number; y: number } | null;
+    transientGameState?: any;
 
     // Turn-based system state
     isPlayerTurn: boolean;
@@ -103,8 +281,8 @@ export class GameContext {
     occupiedTilesThisTurn: Set<string>;
     initialEnemyTilesThisTurn: Set<string>;
 
-    // Enemy class reference
-    Enemy: any;
+    // Enemy class reference (constructor function)
+    Enemy: new (...args: unknown[]) => Enemy;
 
     // Additional properties used in gameLoop
     _services: ServiceContainer | null;
@@ -183,8 +361,8 @@ export class GameContext {
     get enemies(): Enemy[] { return this.world.enemies; }
     set enemies(value: Enemy[]) { this.world.enemies = value; }
 
-    get grid(): any[][] | null { return this.world.grid; }
-    set grid(value: any[][] | null) { this.world.grid = value; }
+    get grid(): Array<Array<number | object>> | null { return this.world.grid; }
+    set grid(value: Array<Array<number | object>> | null) { this.world.grid = value; }
 
     // Lazy-load gridManager from ServiceContainer
     get gridManager(): GridManager | null {
@@ -242,11 +420,11 @@ export class GameContext {
     get _lastPlayerPos(): {x: number, y: number} | null { return this.ui._lastPlayerPos; }
     set _lastPlayerPos(value: {x: number, y: number} | null) { this.ui._lastPlayerPos = value; }
 
-    get soundManager(): any { return this.audio.soundManager; }
-    set soundManager(value: any) { this.audio.soundManager = value; }
+    get soundManager(): object | null { return this.audio.soundManager; }
+    set soundManager(value: object | null) { this.audio.soundManager = value; }
 
-    get consentManager(): any { return this.audio.consentManager; }
-    set consentManager(value: any) { this.audio.consentManager = value; }
+    get consentManager(): object | null { return this.audio.consentManager; }
+    set consentManager(value: object | null) { this.audio.consentManager = value; }
 
     // ========================================
     // Command methods for state changes
@@ -358,11 +536,11 @@ export class GameContext {
         this.actionManager!.incrementBombActions();
     }
 
-    performBishopSpearCharge(item: Item, targetX: number, targetY: number, enemy: any, dx: number, dy: number): void {
+    performBishopSpearCharge(item: Item, targetX: number, targetY: number, enemy: Enemy, dx: number, dy: number): void {
         this.actionManager!.performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy);
     }
 
-    performHorseIconCharge(item: Item, targetX: number, targetY: number, enemy: any, dx: number, dy: number): void {
+    performHorseIconCharge(item: Item, targetX: number, targetY: number, enemy: Enemy, dx: number, dy: number): void {
         this.actionManager!.performHorseIconCharge(item, targetX, targetY, enemy, dx, dy);
     }
 
@@ -382,7 +560,7 @@ export class GameContext {
         this.zoneManager!.generateZone();
     }
 
-    spawnTreasuresOnGrid(treasures: any[]): void {
+    spawnTreasuresOnGrid(treasures: Treasure[]): void {
         this.zoneManager!.spawnTreasuresOnGrid(treasures);
     }
 

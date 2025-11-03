@@ -5,7 +5,8 @@
  * These provide a semantic API for updating state that maps to game events.
  */
 
-import { store } from './StateStore.js';
+import { store } from './StateStore';
+import type { Position } from '../../core/Position';
 
 interface PlayerStatsUpdate {
     health?: number;
@@ -26,11 +27,6 @@ interface SettingsUpdate {
 interface ZoneTransitionData {
     exitSide?: string | null;
     portData?: any;
-}
-
-interface Position {
-    x: number;
-    y: number;
 }
 
 export const StateActions = {

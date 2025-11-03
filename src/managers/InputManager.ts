@@ -1,4 +1,12 @@
-import { InputController } from '../controllers/InputController.js';
+import { InputController } from '../controllers/InputController';
+import type { GameContext } from '../core/GameContext';
+import type { InventoryService } from './inventory/InventoryService';
+import type { AnimationSequence } from '../core/AnimationScheduler';
+
+interface GridCoords {
+    x: number;
+    y: number;
+}
 
 /**
  * InputManager - Thin facade for backward compatibility
@@ -12,11 +20,11 @@ import { InputController } from '../controllers/InputController.js';
  * responsibilities with pointer events as the primary input method.
  */
 export class InputManager {
-    private game: any;
-    private inventoryService: any;
+    private game: GameContext;
+    private inventoryService: InventoryService;
     private controller: InputController;
 
-    constructor(game: any, inventoryService: any) {
+    constructor(game: GameContext, inventoryService: InventoryService) {
         this.game = game;
         this.inventoryService = inventoryService;
 
@@ -37,36 +45,36 @@ export class InputManager {
     }
 
     // Public API for tests
-    handleTap(screenX: number, screenY: number): any {
+    handleTap(screenX: number, screenY: number): void {
         return this.controller.handleTap(screenX, screenY);
     }
 
-    handleKeyPress(event: KeyboardEvent): any {
+    handleKeyPress(event: KeyboardEvent): void {
         // Direct controller call
         return this.controller.handleKeyPress(event);
     }
 
-    findPath(startX: number, startY: number, targetX: number, targetY: number): any {
+    findPath(startX: number, startY: number, targetX: number, targetY: number): string[] | null {
         return this.controller.findPath(startX, startY, targetX, targetY);
     }
 
-    executePath(path: any): any {
+    executePath(path: string[]): void {
         return this.controller.executePath(path);
     }
 
-    cancelPathExecution(): any {
+    cancelPathExecution(): void {
         return this.controller.cancelPathExecution();
     }
 
-    addShackAtPlayerPosition(): any {
+    addShackAtPlayerPosition(): null {
         return this.controller.addShackAtPlayerPosition();
     }
 
-    convertScreenToGrid(x: number, y: number): any {
+    convertScreenToGrid(x: number, y: number): GridCoords {
         return this.controller.convertScreenToGrid(x, y);
     }
 
-    handleExitTap(x: number, y: number): any {
+    handleExitTap(x: number, y: number): void {
         // Direct controller call
         return this.controller.handleExitTap(x, y);
     }
@@ -80,19 +88,19 @@ export class InputManager {
         this.controller.pathfindingController.isExecutingPath = v;
     }
 
-    get currentPathSequence(): any {
+    get currentPathSequence(): AnimationSequence | null {
         return this.controller.pathfindingController.currentPathSequence;
     }
 
-    set currentPathSequence(v: any) {
+    set currentPathSequence(v: AnimationSequence | null) {
         this.controller.pathfindingController.currentPathSequence = v;
     }
 
-    get currentPathSequenceFallback(): any {
+    get currentPathSequenceFallback(): NodeJS.Timeout | null {
         return this.controller.pathfindingController.currentPathSequenceFallback;
     }
 
-    set currentPathSequenceFallback(v: any) {
+    set currentPathSequenceFallback(v: NodeJS.Timeout | null) {
         this.controller.pathfindingController.currentPathSequenceFallback = v;
     }
 }

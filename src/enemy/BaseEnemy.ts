@@ -1,5 +1,5 @@
-import { TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '../core/constants/index.js';
-import { Position } from '../core/Position.js';
+import { TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '../core/constants/index';
+import { Position } from '../core/Position';
 
 export interface EnemyData {
     x: number;

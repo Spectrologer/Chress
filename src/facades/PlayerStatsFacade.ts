@@ -1,7 +1,7 @@
 // @ts-check
-import { eventBus } from '../core/EventBus.ts';
-import { EventTypes } from '../core/EventTypes.ts';
-import { logger } from '../core/logger.ts';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { logger } from '../core/logger';
 
 /**
  * @typedef {Object} PlayerStats

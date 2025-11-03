@@ -5,9 +5,9 @@
  * and converting them to the format expected by ContentRegistry.
  */
 
-import { TILE_TYPES } from './constants/index.js';
+import { TILE_TYPES } from './constants/index';
 import { npcList, npcPaths } from 'virtual:npc-list';
-import type { ContentRegistry } from './ContentRegistry.js';
+import type { ContentRegistry } from './ContentRegistry';
 
 interface NPCData {
     id: string;

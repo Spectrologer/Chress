@@ -1,7 +1,7 @@
-import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect.js';
-import { TILE_TYPES, GRID_SIZE } from '../../../core/constants/index.js';
-import { isWithinGrid } from '../../../utils/GridUtils.js';
-import type { InventoryItem, BombItem, BowItem, BishopSpearItem, HorseIconItem } from '../ItemMetadata.js';
+import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
+import { TILE_TYPES, GRID_SIZE } from '../../../core/constants/index';
+import { isWithinGrid } from '../../../utils/GridUtils';
+import type { InventoryItem, BombItem, BowItem, BishopSpearItem, HorseIconItem } from '../ItemMetadata';
 
 /**
  * Weapon effects - Bomb, Bow, Bishop Spear, Horse Icon

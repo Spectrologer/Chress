@@ -1,7 +1,8 @@
-import { TILE_TYPES, INVENTORY_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants/index.js';
-import { InventoryService } from './inventory/InventoryService.js';
-import { ItemMetadata } from './inventory/ItemMetadata.js';
-import { isTileType } from '../utils/TileUtils.js';
+import { TILE_TYPES, INVENTORY_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants/index';
+import { InventoryService } from './inventory/InventoryService';
+import { ItemMetadata } from './inventory/ItemMetadata';
+import { isTileType } from '../utils/TileUtils';
+import type { Game } from '../core/Game';
 
 interface Item {
     type: string;
@@ -21,10 +22,6 @@ interface Player {
 interface GridManager {
     getTile: (x: number, y: number) => any;
     setTile: (x: number, y: number, value: any) => void;
-}
-
-interface Game {
-    [key: string]: any;
 }
 
 /**

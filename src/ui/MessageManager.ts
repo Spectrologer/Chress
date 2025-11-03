@@ -1,3 +1,4 @@
+import type { IGame } from '../core/GameContext';
 import { logger } from '../core/logger';
 import { NoteStack } from './NoteStack';
 import { RegionNotification } from './RegionNotification';
@@ -10,17 +11,12 @@ import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
 import { UI_TIMING_CONSTANTS } from '../core/constants/ui';
 
-interface Game {
-    displayingMessageForSign?: any;
-    transientGameState?: any;
-}
-
 /**
  * Coordinates message display across the application.
  * Delegates to specialized handlers for different message types.
  */
 export class MessageManager {
-    private game: Game;
+    private game: IGame;
     public overlayHandler: OverlayMessageHandler;
     public typewriterController: TypewriterController;
     public dialogueManager: DialogueManager;
@@ -34,7 +30,7 @@ export class MessageManager {
     public _typingMasterGain: any;
     public _currentVoiceSettings: any;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
 
         // Initialize specialized handlers

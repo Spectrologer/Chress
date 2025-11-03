@@ -1,5 +1,5 @@
 // Simple localStorage-backed persistence for player's radial inventory
-import type { Game } from '../core/Game.js';
+import type { Game } from '../core/Game';
 
 const STORAGE_KEY = 'chress:radialInventory:v1';
 

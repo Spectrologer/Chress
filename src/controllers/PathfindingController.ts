@@ -1,9 +1,9 @@
-import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS } from '../core/constants/index.js';
-import { eventBus } from '../core/EventBus.ts';
-import { EventTypes } from '../core/EventTypes.ts';
-import { isWithinGrid } from '../utils/GridUtils.js';
-import { Position } from '../core/Position.ts';
-import { isSign, getTileType } from '../utils/TypeChecks.js';
+import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS } from '../core/constants/index';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { isWithinGrid } from '../utils/GridUtils';
+import { Position } from '../core/Position';
+import { isSign, getTileType } from '../utils/TypeChecks';
 
 interface PathNode {
     pos: Position;

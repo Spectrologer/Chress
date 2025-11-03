@@ -1,8 +1,9 @@
-import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/index.js';
-import { RENDERING_CONSTANTS } from '../core/constants/animation.js';
-import { RendererUtils } from './RendererUtils.js';
-import type { TextureManager } from './TextureManager.js';
-import type { SmokeAnimation } from './types.js';
+import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/index';
+import { RENDERING_CONSTANTS } from '../core/constants/animation';
+import { RendererUtils } from './RendererUtils';
+import type { TextureManager } from './TextureManager';
+import type { SmokeAnimation } from './types';
+import type { IGame } from '../core/GameContext';
 
 interface Enemy {
     x: number;
@@ -31,21 +32,12 @@ interface EnemyCollection {
     getAll(): Enemy[];
 }
 
-interface Game {
-    ctx: CanvasRenderingContext2D;
-    textureManager: TextureManager;
-    enemyCollection: EnemyCollection | null;
-    enemies: Enemy[];
-    isPlayerTurn?: boolean;
-    turnManager?: TurnManager;
-}
-
 export class EnemyRenderer {
-    private game: Game;
+    private game: IGame;
     private ctx: CanvasRenderingContext2D;
     private textureManager: TextureManager;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.ctx = game.ctx;
         this.textureManager = game.textureManager;

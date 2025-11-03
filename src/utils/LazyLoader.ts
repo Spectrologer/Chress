@@ -10,7 +10,7 @@ const moduleCache = new Map();
 
 /**
  * Lazy load a module with caching
- * @param {Function} importFn - Dynamic import function () => import('./module.js')
+ * @param {Function} importFn - Dynamic import function () => import('./module')
  * @param {string} cacheKey - Unique cache key for the module
  * @returns {Promise<any>} The loaded module
  */
@@ -64,37 +64,37 @@ export function isModuleLoaded(cacheKey) {
  */
 export const LazyUI = {
     loadBarterWindow: () => lazyLoad(
-        () => import('../ui/BarterWindow.ts'),
+        () => import('../ui/BarterWindow'),
         'BarterWindow'
     ),
 
     loadStatueInfoWindow: () => lazyLoad(
-        () => import('../ui/StatueInfoWindow.ts'),
+        () => import('../ui/StatueInfoWindow'),
         'StatueInfoWindow'
     ),
 
     loadMessageLog: () => lazyLoad(
-        () => import('../ui/MessageLog.ts'),
+        () => import('../ui/MessageLog'),
         'MessageLog'
     ),
 
     loadRadialMenu: () => lazyLoad(
-        () => import('../ui/RadialInventoryUI.ts'),
+        () => import('../ui/RadialInventoryUI'),
         'RadialInventoryUI'
     ),
 
     loadConfigPanel: () => lazyLoad(
-        () => import('../ui/ConfigPanelManager.ts'),
+        () => import('../ui/ConfigPanelManager'),
         'ConfigPanelManager'
     ),
 
     loadRecordsPanel: () => lazyLoad(
-        () => import('../ui/RecordsPanelManager.ts'),
+        () => import('../ui/RecordsPanelManager'),
         'RecordsPanelManager'
     ),
 
     loadStatsPanel: () => lazyLoad(
-        () => import('../ui/StatsPanelManager.ts'),
+        () => import('../ui/StatsPanelManager'),
         'StatsPanelManager'
     )
 };
@@ -122,14 +122,14 @@ export function preloadCriticalModules() {
     if ('requestIdleCallback' in window) {
         requestIdleCallback(() => {
             // Preload commonly used UI components
-            preloadModule(() => import('../ui/RadialInventoryUI.ts'), 'RadialInventoryUI');
-            preloadModule(() => import('../ui/MessageLog.ts'), 'MessageLog');
+            preloadModule(() => import('../ui/RadialInventoryUI'), 'RadialInventoryUI');
+            preloadModule(() => import('../ui/MessageLog'), 'MessageLog');
         }, { timeout: 2000 });
     } else {
         // Fallback for browsers without requestIdleCallback
         setTimeout(() => {
-            preloadModule(() => import('../ui/RadialInventoryUI.ts'), 'RadialInventoryUI');
-            preloadModule(() => import('../ui/MessageLog.ts'), 'MessageLog');
+            preloadModule(() => import('../ui/RadialInventoryUI'), 'RadialInventoryUI');
+            preloadModule(() => import('../ui/MessageLog'), 'MessageLog');
         }, 1000);
     }
 }
@@ -139,12 +139,12 @@ export function preloadCriticalModules() {
  */
 export const LazyUtils = {
     loadPathfinding: () => lazyLoad(
-        () => import('../enemy/EnemyPathfinding.ts'),
+        () => import('../enemy/EnemyPathfinding'),
         'EnemyPathfinding'
     ),
 
     loadLineOfSight: () => lazyLoad(
-        () => import('../utils/LineOfSightUtils.ts'),
+        () => import('../utils/LineOfSightUtils'),
         'LineOfSightUtils'
     )
 };

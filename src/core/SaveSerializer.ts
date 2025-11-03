@@ -1,5 +1,8 @@
-import { Sign } from '../ui/Sign.js';
-import type { GameContext } from './GameContext.js';
+import { Sign } from '../ui/Sign';
+import type { GameContext } from './GameContext';
+import type { SaveGameData, SavedPlayerData, SavedPlayerStats, SavedEnemyData, Grid } from './SharedTypes';
+import type { Player } from '../entities/Player';
+import type { Enemy } from '../entities/Enemy';
 
 /**
  * Helper class for serializing game state to a save format.
@@ -9,27 +12,27 @@ export class SaveSerializer {
     /**
      * Serializes the current game state into a plain object ready for JSON serialization.
      */
-    static serializeGameState(game: any): any {
+    static serializeGameState(game: GameContext & { zoneRepository?: any; messageLog?: string[] }): SaveGameData {
         return {
             // Player state
-            player: SaveSerializer.serializePlayer(game.player),
+            player: SaveSerializer.serializePlayer(game.world.player),
             // Player UI/settings (persist toggles - music/sfx)
-            playerStats: SaveSerializer.serializePlayerStats(game.player),
+            playerStats: SaveSerializer.serializePlayerStats(game.world.player),
             // Game state - save all zones across all dimensions
-            zones: game.zoneRepository.entries(),
-            grid: game.grid,
-            enemies: SaveSerializer.serializeEnemies(game.enemies),
-            defeatedEnemies: Array.from(game.defeatedEnemies),
-            specialZones: Array.from(game.specialZones.entries()),
-            messageLog: game.messageLog,
-            currentRegion: game.currentRegion
+            zones: game.zoneRepository?.entries() || Array.from(game.world.zones.entries()),
+            grid: game.world.grid as Grid,
+            enemies: SaveSerializer.serializeEnemies(game.world.enemies),
+            defeatedEnemies: Array.from(game.world.defeatedEnemies),
+            specialZones: Array.from(game.world.specialZones.entries()),
+            messageLog: game.messageLog || [],
+            currentRegion: game.world.currentRegion || ''
         };
     }
 
     /**
      * Serializes player data.
      */
-    static serializePlayer(player: any): any {
+    static serializePlayer(player: Player): SavedPlayerData {
         return {
             x: player.x,
             y: player.y,
@@ -50,7 +53,7 @@ export class SaveSerializer {
     /**
      * Serializes player settings/stats.
      */
-    static serializePlayerStats(player: any): any {
+    static serializePlayerStats(player: Player & { stats?: any }): SavedPlayerStats {
         return {
             musicEnabled: (player.stats && typeof player.stats.musicEnabled !== 'undefined')
                 ? !!player.stats.musicEnabled
@@ -64,7 +67,7 @@ export class SaveSerializer {
     /**
      * Serializes enemy data.
      */
-    static serializeEnemies(enemies: any[]): any[] {
+    static serializeEnemies(enemies: Enemy[]): SavedEnemyData[] {
         return enemies.map(enemy => ({
             x: enemy.x,
             y: enemy.y,

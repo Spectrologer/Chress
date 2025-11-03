@@ -8,13 +8,13 @@
  * - SoundLifecycleManager: Focus/blur handling and audio context lifecycle
  */
 
-import { logger } from './logger.ts';
-import { eventBus } from './EventBus.ts';
-import { EventTypes } from './EventTypes.ts';
-import { VOLUME_CONSTANTS } from './constants/audio.js';
-import { MusicController } from './sound/MusicController.js';
-import { ProceduralSoundGenerator } from './sound/ProceduralSoundGenerator.js';
-import { SoundLifecycleManager } from './sound/SoundLifecycleManager.js';
+import { logger } from './logger';
+import { eventBus } from './EventBus';
+import { EventTypes } from './EventTypes';
+import { VOLUME_CONSTANTS } from './constants/audio';
+import { MusicController } from './sound/MusicController';
+import { ProceduralSoundGenerator } from './sound/ProceduralSoundGenerator';
+import { SoundLifecycleManager } from './sound/SoundLifecycleManager';
 
 export class SoundManager {
     constructor() {

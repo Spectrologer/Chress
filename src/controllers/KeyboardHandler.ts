@@ -1,7 +1,7 @@
-import { Sign } from '../ui/Sign.js';
-import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.ts';
-import { EventTypes } from '../core/EventTypes.ts';
+import { Sign } from '../ui/Sign';
+import audioManager from '../utils/AudioManager';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
 
 interface KeyPressResult {
     type: 'cancel_path' | 'movement';

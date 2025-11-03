@@ -1,6 +1,7 @@
-import { ANIMATION_SCHEMAS } from './constants/index.ts';
-import { eventBus } from './EventBus.ts';
-import { EventTypes } from './EventTypes.ts';
+import { ANIMATION_SCHEMAS } from './constants/index';
+import { eventBus } from './EventBus';
+import { EventTypes } from './EventTypes';
+import type { Position } from './Position';
 
 interface TileBase {
   type: number | string;
@@ -29,11 +30,6 @@ interface FoodTile extends TileBase {
 }
 
 type Tile = number | TileBase;
-
-interface Position {
-  x: number;
-  y: number;
-}
 
 interface AnimationData {
   [key: string]: any;

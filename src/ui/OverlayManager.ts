@@ -1,6 +1,6 @@
-import { StartOverlayController } from './StartOverlayController.ts';
-import { OverlayButtonHandler } from './OverlayButtonHandler.ts';
-import { OverlayMusicToggle } from './OverlayMusicToggle.ts';
+import { StartOverlayController } from './StartOverlayController';
+import { OverlayButtonHandler } from './OverlayButtonHandler';
+import { OverlayMusicToggle } from './OverlayMusicToggle';
 
 interface GameInstance {
     [key: string]: any;

@@ -1,6 +1,6 @@
-import { ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '../core/constants/index.js';
-import { RENDERING_CONSTANTS } from '../core/constants/animation.js';
-import type { Player } from './Player.js';
+import { ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '../core/constants/index';
+import { RENDERING_CONSTANTS } from '../core/constants/animation';
+import type { Player } from './Player';
 
 interface PickupHover {
     imageKey: string;

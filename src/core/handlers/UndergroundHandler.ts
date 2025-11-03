@@ -1,9 +1,9 @@
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../constants/index.js';
-import { logger } from '../logger.js';
-import { ZoneStateManager } from '../../generators/ZoneStateManager.js';
-import { BaseZoneHandler } from './BaseZoneHandler.js';
-import { findValidPlayerSpawn as _findValidPlayerSpawn } from '../zoneSpawnManager.js';
-import { isPort, isTileType } from '../../utils/TileUtils.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../constants/index';
+import { logger } from '../logger';
+import { ZoneStateManager } from '../../generators/ZoneStateManager';
+import { BaseZoneHandler } from './BaseZoneHandler';
+import { findValidPlayerSpawn as _findValidPlayerSpawn } from '../zoneSpawnManager';
+import { isPort, isTileType } from '../../utils/TileUtils';
 
 class UndergroundHandler extends BaseZoneHandler {
     constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets, exitSide) {

@@ -5,27 +5,23 @@
  * Manages the full zone lifecycle from generation to entity initialization.
  */
 
-import { GRID_SIZE, TILE_TYPES } from '../core/constants/index.js';
-import { logger } from '../core/logger.ts';
-import { boardLoader } from '../core/BoardLoader.js';
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import { isWithinGrid } from '../utils/GridUtils.js';
-import { isTileObjectWithProperty, isPitfall } from '../utils/TypeChecks.js';
-import type { Game } from '../core/Game.js';
-import type { ZoneTransitionCoordinator } from './ZoneTransitionCoordinator.ts';
+import { GRID_SIZE, TILE_TYPES } from '../core/constants/index';
+import { logger } from '../core/logger';
+import { boardLoader } from '../core/BoardLoader';
+import { createZoneKey } from '../utils/ZoneKeyUtils';
+import { isWithinGrid } from '../utils/GridUtils';
+import { isTileObjectWithProperty, isPitfall } from '../utils/TypeChecks';
+import type { Game } from '../core/Game';
+import type { ZoneTransitionCoordinator } from './ZoneTransitionCoordinator';
+import type { Position } from '../core/Position';
+import type { Grid, Tile } from '../core/SharedTypes';
 
-interface Position {
-    x: number;
-    y: number;
-}
-
-interface Enemy {
+interface EnemyData {
     x: number;
     y: number;
     enemyType: string;
     health: number;
     id: string;
-    [key: string]: any;
 }
 
 interface ZoneInfo {
@@ -36,19 +32,19 @@ interface ZoneInfo {
 }
 
 interface ZoneData {
-    grid: any[][];
-    enemies: Enemy[];
+    grid: Grid;
+    enemies: EnemyData[];
     playerSpawn: Position | null;
-    terrainTextures?: Record<string, any>;
-    overlayTextures?: Record<string, any>;
-    rotations?: Record<string, any>;
-    overlayRotations?: Record<string, any>;
+    terrainTextures?: Record<string, string>;
+    overlayTextures?: Record<string, string>;
+    rotations?: Record<string, number>;
+    overlayRotations?: Record<string, number>;
     returnToSurface?: Position;
     returnToInterior?: { x: number; y: number; zoneX: number; zoneY: number };
     metadata?: {
         playerSpawn?: Position;
     };
-    [key: string]: any;
+    treasures?: Array<{ type: string; x: number; y: number }>;
 }
 
 interface PortTransitionData {
@@ -56,7 +52,7 @@ interface PortTransitionData {
     x?: number;
     y?: number;
     fromDimension?: number;
-    [key: string]: any;
+    returnToInterior?: boolean;
 }
 
 export class ZoneGenerationOrchestrator {

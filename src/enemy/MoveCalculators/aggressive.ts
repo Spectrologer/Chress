@@ -1,5 +1,5 @@
 // @ts-check
-import { EnemyPathfinding } from '../EnemyPathfinding.js';
+import { EnemyPathfinding } from '../EnemyPathfinding';
 
 /**
  * @typedef {Object} Direction

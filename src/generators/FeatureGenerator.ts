@@ -1,9 +1,9 @@
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index.ts';
-import { GENERATOR_CONSTANTS } from '../core/constants/ui.js';
-import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './GeneratorUtils.js';
-import { ZoneStateManager } from './ZoneStateManager.js';
-import { logger } from '../core/logger.ts';
-import { isFloor, isWall } from '../utils/TypeChecks.js';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index';
+import { GENERATOR_CONSTANTS } from '../core/constants/ui';
+import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './GeneratorUtils';
+import { ZoneStateManager } from './ZoneStateManager';
+import { logger } from '../core/logger';
+import { isFloor, isWall } from '../utils/TypeChecks';
 
 export class FeatureGenerator {
     constructor(gridManager, foodAssets, depth = 0, game = null) {

@@ -1,6 +1,7 @@
-import { eventBus } from '../../core/EventBus.js';
-import { EventTypes } from '../../core/EventTypes.js';
-import { logger } from '../../core/logger.js';
+import { eventBus } from '../../core/EventBus';
+import { EventTypes } from '../../core/EventTypes';
+import { logger } from '../../core/logger';
+import type { Position } from '../../core/Position';
 
 /**
  * InteractionStateManager - Manages world interaction state (Signs, NPCs)
@@ -10,11 +11,6 @@ import { logger } from '../../core/logger.js';
  * - NPC interaction position tracking
  * - Distance-based interaction validation
  */
-
-interface Position {
-    x: number;
-    y: number;
-}
 
 interface SignData {
     message?: string;

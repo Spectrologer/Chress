@@ -1,6 +1,7 @@
-import { logger } from '../core/logger.ts';
-import { fitTextToContainer } from './TextFitter.ts';
-import type { TypewriterController } from './TypewriterController.ts';
+import { logger } from '../core/logger';
+import { fitTextToContainer } from './TextFitter';
+import type { TypewriterController } from './TypewriterController';
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 interface GameInstance {
     messageManager?: any;
@@ -15,11 +16,13 @@ export class DialogueManager {
     private game: GameInstance;
     private typewriterController: TypewriterController;
     private messageOverlay: HTMLElement | null;
+    private eventManager: EventListenerManager;
 
     constructor(game: GameInstance, typewriterController: TypewriterController) {
         this.game = game;
         this.typewriterController = typewriterController;
         this.messageOverlay = document.getElementById('messageOverlay');
+        this.eventManager = new EventListenerManager();
     }
 
     /**
@@ -152,9 +155,9 @@ export class DialogueManager {
         try {
             const closeButton = this.messageOverlay?.querySelector('.dialogue-close-button');
             if (closeButton) {
-                closeButton.addEventListener('click', () => {
+                this.eventManager.add(closeButton, 'click', () => {
                     // Import Sign dynamically to avoid circular deps
-                    import('./Sign.js').then(({ Sign }) => {
+                    import('./Sign').then(({ Sign }) => {
                         Sign.hideMessageForSign(this.game);
                     });
                 });
@@ -172,5 +175,13 @@ export class DialogueManager {
         if (this.game.messageManager && this.game.messageManager.overlayHandler) {
             this.game.messageManager.overlayHandler.clearTimeout();
         }
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the DialogueManager instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

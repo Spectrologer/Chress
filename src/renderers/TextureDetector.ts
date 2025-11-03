@@ -1,4 +1,4 @@
-import type { GridManager } from './types.js';
+import type { GridManager } from './types';
 
 interface Direction {
     dx: number;

@@ -1,12 +1,12 @@
-import { GRID_SIZE, CANVAS_SIZE, TILE_TYPES } from './constants/index.js';
+import { GRID_SIZE, CANVAS_SIZE, TILE_TYPES } from './constants/index';
 import { logger } from './logger';
-import { TextureManager } from '../renderers/TextureManager.js';
-import { ZoneStateManager } from '../generators/ZoneStateManager.js';
+import { TextureManager } from '../renderers/TextureManager';
+import { ZoneStateManager } from '../generators/ZoneStateManager';
 import { eventBus } from './EventBus';
 import { EventTypes } from './EventTypes';
 import { errorHandler, ErrorSeverity } from './ErrorHandler';
-import { isWithinGrid } from '../utils/GridUtils.js';
-import { safeCall, safeCallAsync, safeGet } from '../utils/SafeServiceCall.js';
+import { isWithinGrid } from '../utils/GridUtils';
+import { safeCall, safeCallAsync, safeGet } from '../utils/SafeServiceCall';
 import type { GameContext } from './GameContext';
 
 /**
@@ -498,7 +498,7 @@ export class GameInitializer {
 
         // Console commands
         try {
-            import('./consoleCommands.js')
+            import('./consoleCommands')
                 .then(module => {
                     (window as any).consoleCommands = module.default;
                     (window as any).tp = (x: number, y: number) => module.default.tp(this.game, x, y);

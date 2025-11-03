@@ -1,4 +1,4 @@
-import { logger } from '../core/logger.ts';
+import { logger } from '../core/logger';
 
 /**
  * CustomZoneLoader - Loads custom zones from JSON files

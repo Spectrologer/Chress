@@ -6,8 +6,8 @@
  * Extracted from SoundManager to reduce file size.
  */
 
-import { errorHandler, ErrorSeverity } from '../ErrorHandler.js';
-import { VOLUME_CONSTANTS } from '../constants/audio.js';
+import { errorHandler, ErrorSeverity } from '../ErrorHandler';
+import { VOLUME_CONSTANTS } from '../constants/audio';
 
 export class MusicController {
     constructor() {

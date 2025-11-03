@@ -1,9 +1,10 @@
-import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS, SCALE_CONSTANTS, DAMAGE_FLASH_CONSTANTS } from '../core/constants/index.js';
-import { RENDERING_CONSTANTS } from '../core/constants/animation.js';
-import { MultiTileHandler } from './MultiTileHandler.js';
-import { RendererUtils } from './RendererUtils.js';
-import type { TextureManager } from './TextureManager.js';
-import type { Position } from './types.js';
+import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS, SCALE_CONSTANTS, DAMAGE_FLASH_CONSTANTS } from '../core/constants/index';
+import { RENDERING_CONSTANTS } from '../core/constants/animation';
+import { MultiTileHandler } from './MultiTileHandler';
+import { RendererUtils } from './RendererUtils';
+import type { TextureManager } from './TextureManager';
+import type { Position } from './types';
+import type { IGame } from '../core/GameContext';
 
 interface Zone {
     x: number;
@@ -56,21 +57,12 @@ interface GridManager {
     [y: number]: any[];
 }
 
-interface Game {
-    ctx: CanvasRenderingContext2D;
-    textureManager: TextureManager;
-    player: Player;
-    grid: any[][] | null;
-    gridManager: GridManager;
-    previewMode?: boolean;
-}
-
 export class PlayerRenderer {
-    private game: Game;
+    private game: IGame;
     private ctx: CanvasRenderingContext2D;
     private textureManager: TextureManager;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.ctx = game.ctx;
         this.textureManager = game.textureManager;

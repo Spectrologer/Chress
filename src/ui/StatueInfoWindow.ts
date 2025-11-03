@@ -1,34 +1,24 @@
+import type { IGame } from '../core/GameContext';
 import { Sign } from './Sign';
-
-interface Game {
-    // Add game-specific properties if needed
-}
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 export class StatueInfoWindow {
-    private game: Game;
+    private game: IGame;
     private statueOverlay: HTMLElement | null;
     private statueWindow: HTMLElement | null;
+    private eventManager: EventListenerManager;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
 
         // Statue Info UI elements - be defensive for tests that don't include full DOM
         this.statueOverlay = document.getElementById('statueOverlay') || null;
         this.statueWindow = this.statueOverlay ? this.statueOverlay.querySelector('.statue-window') : null;
+        this.eventManager = new EventListenerManager();
     }
 
     setupStatueInfoHandlers(): void {
         // The listener is added when the window is shown and removed when hidden
-    }
-
-    private handleOkayClick = (): void => {
-        this.hideStatueInfoWindow();
-    }
-
-    private handleKeyDown = (event: KeyboardEvent): void => {
-        if (event.key === 'Escape' || ['w', 'a', 's', 'd'].includes(event.key.toLowerCase())) {
-            this.hideStatueInfoWindow();
-        }
     }
 
     showStatueInfo(statueNpcType: string): void {
@@ -76,7 +66,9 @@ export class StatueInfoWindow {
         // Set up button click handler
         const okayButton = this.statueWindow.querySelector<HTMLButtonElement>('#okayStatueButton');
         if (okayButton) {
-            okayButton.addEventListener('click', this.handleOkayClick);
+            this.eventManager.add(okayButton, 'click', () => {
+                this.hideStatueInfoWindow();
+            });
         }
 
         this.showStatueInfoWindow();
@@ -87,7 +79,16 @@ export class StatueInfoWindow {
             return;
         }
         this.statueOverlay.classList.add('show');
-        document.addEventListener('keydown', this.handleKeyDown);
+
+        // Add keyboard handler for Escape and movement keys
+        this.eventManager.addKeyboardShortcut('Escape', () => {
+            this.hideStatueInfoWindow();
+        });
+        this.eventManager.add(document, 'keydown', (event: KeyboardEvent) => {
+            if (['w', 'a', 's', 'd'].includes(event.key.toLowerCase())) {
+                this.hideStatueInfoWindow();
+            }
+        });
     }
 
     hideStatueInfoWindow(): void {
@@ -97,12 +98,15 @@ export class StatueInfoWindow {
 
         if (this.statueOverlay.classList.contains('show')) {
             this.statueOverlay.classList.remove('show');
-            document.removeEventListener('keydown', this.handleKeyDown);
-
-            const okayButton = this.statueWindow.querySelector<HTMLButtonElement>('#okayStatueButton');
-            if (okayButton) {
-                okayButton.removeEventListener('click', this.handleOkayClick);
-            }
+            this.eventManager.cleanup();
         }
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the StatueInfoWindow instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

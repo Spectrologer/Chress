@@ -1,8 +1,8 @@
-import { TILE_TYPES } from '../../constants/index.js';
-import { BaseSpawnCommand } from './BaseSpawnCommand.js';
-import { SpawnPositionHelper } from '../SpawnPositionHelper.js';
-import { logger } from '../../logger.js';
-import { SharedStructureSpawner } from '../../../utils/SharedStructureSpawner.js';
+import { TILE_TYPES } from '../../constants/index';
+import { BaseSpawnCommand } from './BaseSpawnCommand';
+import { SpawnPositionHelper } from '../SpawnPositionHelper';
+import { logger } from '../../logger';
+import { SharedStructureSpawner } from '../../../utils/SharedStructureSpawner';
 
 /**
  * Simple spawn commands for basic items

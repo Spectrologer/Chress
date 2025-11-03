@@ -1,11 +1,11 @@
-import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect.js';
-import { TILE_TYPES } from '../../../core/constants/index.js';
-import { Sign } from '../../../ui/Sign.js';
-import { logger } from '../../../core/logger.js';
-import { eventBus } from '../../../core/EventBus.js';
-import { EventTypes } from '../../../core/EventTypes.js';
-import { isAdjacent } from '../../../core/utils/DirectionUtils.js';
-import type { InventoryItem, ShovelItem, NoteItem, BookOfTimeTravelItem } from '../ItemMetadata.js';
+import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
+import { TILE_TYPES } from '../../../core/constants/index';
+import { Sign } from '../../../ui/Sign';
+import { logger } from '../../../core/logger';
+import { eventBus } from '../../../core/EventBus';
+import { EventTypes } from '../../../core/EventTypes';
+import { isAdjacent } from '../../../core/utils/DirectionUtils';
+import type { InventoryItem, ShovelItem, NoteItem, BookOfTimeTravelItem } from '../ItemMetadata';
 
 /**
  * Special effects - Shovel, Note, Book of Time Travel
@@ -78,7 +78,7 @@ export class NoteEffect extends BaseItemEffect {
                 .wait(2000)
                 .then(() => {
                     if (game.displayingMessageForSign && game.displayingMessageForSign.message === noteMessageText) {
-                        Sign.hideMessageForSign(game);
+                        Sign.hideMessageForSign(game as any);
                     }
                 })
                 .start();

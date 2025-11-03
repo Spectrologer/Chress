@@ -1,16 +1,12 @@
-import { TILE_TYPES } from '../core/constants/index.js';
-import { Sign } from '../ui/Sign.js';
-import { TileRegistry } from '../core/TileRegistry.js';
-import { isAdjacent } from '../core/utils/DirectionUtils.ts';
-import { eventBus } from '../core/EventBus.ts';
-import { EventTypes } from '../core/EventTypes.ts';
-import { isTileObjectOfType } from '../utils/TypeChecks.js';
-import type { Game } from '../core/Game.js';
-
-interface Position {
-    x: number;
-    y: number;
-}
+import { TILE_TYPES } from '../core/constants/index';
+import { Sign } from '../ui/Sign';
+import { TileRegistry } from '../core/TileRegistry';
+import { isAdjacent } from '../core/utils/DirectionUtils';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { isTileObjectOfType } from '../utils/TypeChecks';
+import type { Game } from '../core/Game';
+import type { Position } from '../core/Position';
 
 interface SignTile {
     type: string;

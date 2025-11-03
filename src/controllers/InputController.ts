@@ -1,9 +1,9 @@
-import { InputCoordinator } from './InputCoordinator.js';
-import { InputUIHandler } from '../ui/InputUIHandler.js';
-import { GestureDetector } from './GestureDetector.js';
-import { PathfindingController } from './PathfindingController.js';
-import { KeyboardHandler } from './KeyboardHandler.js';
-import { InputStateManager } from './InputStateManager.js';
+import { InputCoordinator } from './InputCoordinator';
+import { InputUIHandler } from '../ui/InputUIHandler';
+import { GestureDetector } from './GestureDetector';
+import { PathfindingController } from './PathfindingController';
+import { KeyboardHandler } from './KeyboardHandler';
+import { InputStateManager } from './InputStateManager';
 
 interface GridCoords {
     x: number;

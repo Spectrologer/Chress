@@ -1,1 +1,1 @@
-export * from './MoveCalculators/index.js';
+export * from './MoveCalculators/index';

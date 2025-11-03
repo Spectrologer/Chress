@@ -1,10 +1,10 @@
-import { GRID_SIZE } from '../core/constants/index.ts';
-import { EnemyPathfinding } from './EnemyPathfinding.js';
-import { EnemyChargeBehaviors } from './EnemyChargeBehaviors.js';
-import { EnemyLineOfSight } from './EnemyLineOfSight.js';
-import { EnemySpecialActions } from './EnemySpecialActions.js';
-import { EnemyMoveCalculatorFactory } from './MoveCalculators.js';
-import { TacticalAI } from './TacticalAI.js';
+import { GRID_SIZE } from '../core/constants/index';
+import { EnemyPathfinding } from './EnemyPathfinding';
+import { EnemyChargeBehaviors } from './EnemyChargeBehaviors';
+import { EnemyLineOfSight } from './EnemyLineOfSight';
+import { EnemySpecialActions } from './EnemySpecialActions';
+import { EnemyMoveCalculatorFactory } from './MoveCalculators';
+import { TacticalAI } from './TacticalAI';
 
 export const EnemyMovementMixin = {
     // Initialize tactical AI system

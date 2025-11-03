@@ -1,13 +1,13 @@
-import { TILE_TYPES, GRID_SIZE, ANIMATION_CONSTANTS } from '../core/constants/index.js';
-import { Position } from '../core/Position.js';
-import { TileRegistry } from '../core/TileRegistry.js';
-import { isBomb, isTileType } from '../utils/TileUtils.js';
-import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
-import type { Player } from './Player.js';
-import type { Grid } from './Player.js';
+import { TILE_TYPES, GRID_SIZE, ANIMATION_CONSTANTS } from '../core/constants/index';
+import { Position } from '../core/Position';
+import { TileRegistry } from '../core/TileRegistry';
+import { isBomb, isTileType } from '../utils/TileUtils';
+import audioManager from '../utils/AudioManager';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
+import type { Player } from './Player';
+import type { Grid } from './Player';
 
 export class PlayerMovement {
     private player: Player;

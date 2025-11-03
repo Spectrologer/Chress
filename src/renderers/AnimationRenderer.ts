@@ -1,9 +1,10 @@
-import { TILE_SIZE, ANIMATION_CONSTANTS, SCALE_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/index.js';
-import { RENDERING_CONSTANTS } from '../core/constants/animation.js';
-import { COLOR_CONSTANTS, UI_RENDERING_CONSTANTS } from '../core/constants/rendering.js';
-import { RendererUtils } from './RendererUtils.js';
-import type { TextureManager } from './TextureManager.js';
-import type { SplodeAnimation, HorseChargeAnimation, ArrowAnimation, PointAnimation, MultiplierAnimation } from './types.js';
+import { TILE_SIZE, ANIMATION_CONSTANTS, SCALE_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/index';
+import { RENDERING_CONSTANTS } from '../core/constants/animation';
+import { COLOR_CONSTANTS, UI_RENDERING_CONSTANTS } from '../core/constants/rendering';
+import { RendererUtils } from './RendererUtils';
+import type { IGame } from '../core/GameContext';
+import type { TextureManager } from './TextureManager';
+import type { SplodeAnimation, HorseChargeAnimation, ArrowAnimation, PointAnimation, MultiplierAnimation } from './types';
 
 interface PlayerAnimations {
     splodeAnimations: SplodeAnimation[];
@@ -20,19 +21,12 @@ interface Player {
     animations: PlayerAnimations;
 }
 
-interface Game {
-    ctx: CanvasRenderingContext2D;
-    textureManager: TextureManager;
-    player: Player;
-    animationManager: AnimationManager;
-}
-
 export class AnimationRenderer {
-    private game: Game;
+    private game: IGame;
     private ctx: CanvasRenderingContext2D;
     private textureManager: TextureManager;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.ctx = game.ctx;
         this.textureManager = game.textureManager;

@@ -1,6 +1,6 @@
-import { TileRenderStrategy } from './TileRenderStrategy.js';
-import type { BaseRenderer } from '../types.js';
-import type { WallTileRenderer } from '../WallTileRenderer.js';
+import { TileRenderStrategy } from './TileRenderStrategy';
+import type { BaseRenderer } from '../types';
+import type { WallTileRenderer } from '../WallTileRenderer';
 
 /**
  * Strategy for rendering WALL tiles.

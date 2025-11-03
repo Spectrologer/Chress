@@ -1,6 +1,6 @@
-import { TileRenderStrategy } from './TileRenderStrategy.js';
-import { TILE_SIZE, TILE_TYPES } from '../../core/constants/index.js';
-import type { BaseRenderer } from '../types.js';
+import { TileRenderStrategy } from './TileRenderStrategy';
+import { TILE_SIZE, TILE_TYPES } from '../../core/constants/index';
+import type { BaseRenderer } from '../types';
 
 export class FloorRenderStrategy extends TileRenderStrategy {
     render(

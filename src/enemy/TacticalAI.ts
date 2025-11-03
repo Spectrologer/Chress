@@ -13,8 +13,8 @@
  * - Stacking: When enemies align in a line toward the player (inefficient positioning)
  * - Defensive Moves: Retreating when threatened to increase survival
  */
-import { GRID_SIZE, DIRECTION_QUADRANTS } from '../core/constants/index.ts';
-import { EnemyPathfinding } from './EnemyPathfinding.js';
+import { GRID_SIZE, DIRECTION_QUADRANTS } from '../core/constants/index';
+import { EnemyPathfinding } from './EnemyPathfinding';
 
 export class TacticalAI {
     /**

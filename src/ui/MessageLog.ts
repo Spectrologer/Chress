@@ -1,4 +1,5 @@
-import { logger } from '../core/logger.ts';
+import { logger } from '../core/logger';
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 interface GameInstance {
     messageLog: string[];
@@ -14,12 +15,14 @@ export class MessageLog {
     private messageLogOverlay: HTMLElement | null;
     private messageLogContent: HTMLElement | null;
     private closeMessageLogButton: HTMLElement | null;
+    private eventManager: EventListenerManager;
 
     constructor(game: GameInstance) {
         this.game = game;
         this.messageLogOverlay = document.getElementById('messageLogOverlay');
         this.messageLogContent = document.getElementById('messageLogContent');
         this.closeMessageLogButton = document.getElementById('closeMessageLogButton');
+        this.eventManager = new EventListenerManager();
 
         this.setupEventHandlers();
     }
@@ -30,7 +33,7 @@ export class MessageLog {
     private setupEventHandlers(): void {
         // Set up close button
         if (this.closeMessageLogButton) {
-            this.closeMessageLogButton.addEventListener('click', () => {
+            this.eventManager.add(this.closeMessageLogButton, 'click', () => {
                 this.hide();
                 this.game.gameLoop();
             });
@@ -40,12 +43,12 @@ export class MessageLog {
         const messageLogButton = document.getElementById('message-log-button');
         if (messageLogButton) {
             // Desktop click
-            messageLogButton.addEventListener('click', () => {
+            this.eventManager.add(messageLogButton, 'click', () => {
                 this.show();
             });
 
             // Mobile / pointer
-            messageLogButton.addEventListener('pointerdown', (e) => {
+            this.eventManager.add(messageLogButton, 'pointerdown', (e: PointerEvent) => {
                 try {
                     e.preventDefault();
                 } catch (err) {}
@@ -107,5 +110,13 @@ export class MessageLog {
         }
 
         return coordinates;
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the MessageLog instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

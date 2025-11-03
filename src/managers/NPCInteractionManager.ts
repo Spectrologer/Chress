@@ -1,36 +1,21 @@
-import { Sign } from '../ui/Sign.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { isAdjacent } from '../core/utils/DirectionUtils.js';
-import { NPC_CONFIG } from '../config/NPCConfig.js';
-import { ContentRegistry } from '../core/ContentRegistry.js';
-
-interface GridCoords {
-    x: number;
-    y: number;
-}
-
-interface PlayerPos {
-    x: number;
-    y: number;
-}
+import { Sign } from '../ui/Sign';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { isAdjacent } from '../core/utils/DirectionUtils';
+import { NPC_CONFIG } from '../config/NPCConfig';
+import { ContentRegistry } from '../core/ContentRegistry';
+import type { IGame, ICoordinates } from '../core/GameContext';
 
 interface NPCConfigEntry {
     tileType: number;
     action: 'barter' | 'dialogue';
 }
 
-interface Game {
-    player: any;
-    grid: Array<Array<number | object>>;
-    transientGameState: any;
-}
-
 export class NPCInteractionManager {
-    private game: Game;
+    private game: IGame;
     private npcConfig: Record<string, NPCConfigEntry>;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.npcConfig = NPC_CONFIG;
     }
@@ -39,7 +24,7 @@ export class NPCInteractionManager {
      * Dynamic NPC interaction handler for NPCs registered in ContentRegistry
      * This handles all NPCs defined in JSON files automatically
      */
-    interactWithDynamicNPC(gridCoords: GridCoords): boolean {
+    interactWithDynamicNPC(gridCoords: ICoordinates): boolean {
         const playerPos = this.game.player.getPosition();
         const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
 
@@ -132,11 +117,11 @@ export class NPCInteractionManager {
     }
 
     // Factory for NPC handlers
-    private _createNPCInteractionHandler(npcName: string): ((gridCoords: GridCoords) => boolean) | null {
+    private _createNPCInteractionHandler(npcName: string): ((gridCoords: ICoordinates) => boolean) | null {
         const config = this.npcConfig[npcName];
         if (!config) return null;
 
-        return (gridCoords: GridCoords) => {
+        return (gridCoords: ICoordinates) => {
             const playerPos = this.game.player.getPosition();
             const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
             if (targetTile !== config.tileType) return false;
@@ -197,25 +182,25 @@ export class NPCInteractionManager {
     }
 
     // Check adjacency and interact
-    private _interactWithNPC(gridCoords: GridCoords, npcName: string): boolean {
+    private _interactWithNPC(gridCoords: ICoordinates, npcName: string): boolean {
         const handler = this._createNPCInteractionHandler(npcName);
         return handler ? handler(gridCoords) : false;
     }
 
     // Factory pattern interactions
-    interactWithPenne(gridCoords: GridCoords): boolean { return this._interactWithNPC(gridCoords, 'penne'); }
-    interactWithSquig(gridCoords: GridCoords): boolean { return this._interactWithNPC(gridCoords, 'squig'); }
-    interactWithRune(gridCoords: GridCoords): boolean { return this._interactWithNPC(gridCoords, 'rune'); }
-    interactWithNib(gridCoords: GridCoords): boolean { return this._interactWithNPC(gridCoords, 'nib'); }
-    interactWithMark(gridCoords: GridCoords): boolean { return this._interactWithNPC(gridCoords, 'mark'); }
-    interactWithAxelotl(gridCoords: GridCoords): boolean { return this._interactWithNPC(gridCoords, 'axelotl'); }
-    interactWithGouge(gridCoords: GridCoords): boolean { return this._interactWithNPC(gridCoords, 'gouge'); }
-    interactWithCrayn(gridCoords: GridCoords): boolean { return this._interactWithNPC(gridCoords, 'crayn'); }
-    interactWithFelt(gridCoords: GridCoords): boolean { return this._interactWithNPC(gridCoords, 'felt'); }
-    interactWithForge(gridCoords: GridCoords): boolean { return this._interactWithNPC(gridCoords, 'forge'); }
+    interactWithPenne(gridCoords: ICoordinates): boolean { return this._interactWithNPC(gridCoords, 'penne'); }
+    interactWithSquig(gridCoords: ICoordinates): boolean { return this._interactWithNPC(gridCoords, 'squig'); }
+    interactWithRune(gridCoords: ICoordinates): boolean { return this._interactWithNPC(gridCoords, 'rune'); }
+    interactWithNib(gridCoords: ICoordinates): boolean { return this._interactWithNPC(gridCoords, 'nib'); }
+    interactWithMark(gridCoords: ICoordinates): boolean { return this._interactWithNPC(gridCoords, 'mark'); }
+    interactWithAxelotl(gridCoords: ICoordinates): boolean { return this._interactWithNPC(gridCoords, 'axelotl'); }
+    interactWithGouge(gridCoords: ICoordinates): boolean { return this._interactWithNPC(gridCoords, 'gouge'); }
+    interactWithCrayn(gridCoords: ICoordinates): boolean { return this._interactWithNPC(gridCoords, 'crayn'); }
+    interactWithFelt(gridCoords: ICoordinates): boolean { return this._interactWithNPC(gridCoords, 'felt'); }
+    interactWithForge(gridCoords: ICoordinates): boolean { return this._interactWithNPC(gridCoords, 'forge'); }
 
     // Force interaction for pathing
-    forceInteractAt(gridCoords: GridCoords): void {
+    forceInteractAt(gridCoords: ICoordinates): void {
         const playerPos = this.game.player.getPosition();
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);

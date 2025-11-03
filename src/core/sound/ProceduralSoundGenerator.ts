@@ -6,7 +6,7 @@
  * Extracted from SoundManager to reduce file size.
  */
 
-import { SFX_CONSTANTS } from '../constants/audio.js';
+import { SFX_CONSTANTS } from '../constants/audio';
 
 export class ProceduralSoundGenerator {
     /**

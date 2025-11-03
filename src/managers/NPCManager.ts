@@ -1,6 +1,7 @@
-import { BaseNPC } from '../npc/BaseNPC.js';
-import { TILE_TYPES } from '../core/constants/index.js';
-import { ContentRegistry } from '../core/ContentRegistry.js';
+import { BaseNPC } from '../npc/BaseNPC';
+import { TILE_TYPES } from '../core/constants/index';
+import { ContentRegistry } from '../core/ContentRegistry';
+import type { IGame } from '../core/GameContext';
 
 interface NPCConfig {
     x: number;
@@ -10,16 +11,12 @@ interface NPCConfig {
     id: number;
 }
 
-interface Game {
-    gridManager: any;
-}
-
 export class NPCManager {
-    private game: Game;
+    private game: IGame;
     private npcs: BaseNPC[];
     private nextId: number;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.npcs = [];
         this.nextId = 0;

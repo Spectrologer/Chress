@@ -1,23 +1,12 @@
+import type { IGame } from '../core/GameContext';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
 import { UI_RENDERING_CONSTANTS } from '../core/constants/rendering';
 
-interface Game {
-    player: {
-        getThirst(): number;
-        getHunger(): number;
-        getHealth(): number;
-        abilities: Set<string>;
-    };
-    inventoryManager?: {
-        updateInventoryDisplay(): void;
-    };
-}
-
 export class PlayerStatsUI {
-    private game: Game;
+    private game: IGame;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.setupEventListeners();
     }

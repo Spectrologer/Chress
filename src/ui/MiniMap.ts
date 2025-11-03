@@ -1,5 +1,7 @@
+import type { IGame } from '../core/GameContext';
 import { ZoneStateManager } from '../generators/ZoneStateManager';
 import { UI_RENDERING_CONSTANTS } from '../core/constants/rendering';
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 interface Zone {
     x: number;
@@ -20,14 +22,6 @@ interface TextureManager {
     getImage(name: string): HTMLImageElement | null;
 }
 
-interface Game {
-    canvas: HTMLCanvasElement;
-    player: Player;
-    mapCtx: CanvasRenderingContext2D;
-    specialZones: Set<string>;
-    textureManager: TextureManager;
-}
-
 interface RenderParams {
     ctx?: CanvasRenderingContext2D;
     offsetX?: number;
@@ -37,7 +31,7 @@ interface RenderParams {
 }
 
 export class MiniMap {
-    private game: Game;
+    private game: IGame;
     private isExpanded: boolean;
     private expandedCanvas: HTMLCanvasElement | null;
     private expandedCtx: CanvasRenderingContext2D | null;
@@ -49,8 +43,9 @@ export class MiniMap {
     private dragMoved: boolean;
     // highlights keyed by "x,y,dimension" -> shape string ("circle","triangle","star","diamond")
     private highlights: Record<string, string>;
+    private eventManager: EventListenerManager;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.isExpanded = false;
         this.expandedCanvas = null;
@@ -62,6 +57,7 @@ export class MiniMap {
         this.isDragging = false;
         this.dragMoved = false;
         this.highlights = {};
+        this.eventManager = new EventListenerManager();
     }
 
     setupEvents(): void {
@@ -78,53 +74,60 @@ export class MiniMap {
 
         // Expand on click/tap inside minimap
         // smallCanvas expand is handled via pointer events only
-        smallCanvas.addEventListener('pointerup', (e) => { e?.preventDefault?.(); this.expand(); });
+        this.eventManager.add(smallCanvas, 'pointerup', (e: PointerEvent) => {
+            e?.preventDefault?.();
+            this.expand();
+        });
 
         // Retract on click/tap outside expanded minimap
-        overlay.addEventListener('pointerup', (e) => { e?.preventDefault?.(); this.retract(); });
+        this.eventManager.add(overlay, 'pointerup', (e: PointerEvent) => {
+            e?.preventDefault?.();
+            this.retract();
+        });
 
         // Prevent retraction when clicking/tapping on the expanded minimap itself
-        this.expandedCanvas.addEventListener('pointerdown', (e) => e.stopPropagation());
+        this.eventManager.add(this.expandedCanvas, 'pointerdown', (e: PointerEvent) => e.stopPropagation());
 
         // Panning for expanded map
         // Pointer-based panning for expanded map canvas
-        this.expandedCanvas.addEventListener('pointerdown', (e) => {
-            this.isDragging = true;
-            this.dragMoved = false;
-            this.lastX = e.clientX;
-            this.lastY = e.clientY;
-            (e.target as any)?.setPointerCapture?.(e.pointerId);
-        });
-
-        this.expandedCanvas.addEventListener('pointermove', (e) => {
-            if (this.isDragging && e.pointerType) {
-                // If the pointer moved enough, mark as a drag so we don't interpret it as a click
-                const dx = Math.abs(this.lastX - e.clientX);
-                const dy = Math.abs(this.lastY - e.clientY);
-                if (dx > 2 || dy > 2) this.dragMoved = true;
-
-                // Invert pan direction for intuitive map movement
-                this.panX -= (this.lastX - e.clientX) / 90;
-                this.panY -= (this.lastY - e.clientY) / 90;
+        this.eventManager.addPointerSequence(this.expandedCanvas, {
+            onDown: (e: PointerEvent) => {
+                this.isDragging = true;
+                this.dragMoved = false;
                 this.lastX = e.clientX;
                 this.lastY = e.clientY;
-                this.renderExpanded();
+                (e.target as any)?.setPointerCapture?.(e.pointerId);
+            },
+            onMove: (e: PointerEvent) => {
+                if (this.isDragging && e.pointerType) {
+                    // If the pointer moved enough, mark as a drag so we don't interpret it as a click
+                    const dx = Math.abs(this.lastX - e.clientX);
+                    const dy = Math.abs(this.lastY - e.clientY);
+                    if (dx > 2 || dy > 2) this.dragMoved = true;
+
+                    // Invert pan direction for intuitive map movement
+                    this.panX -= (this.lastX - e.clientX) / 90;
+                    this.panY -= (this.lastY - e.clientY) / 90;
+                    this.lastX = e.clientX;
+                    this.lastY = e.clientY;
+                    this.renderExpanded();
+                }
+            },
+            onUp: (e: PointerEvent) => {
+                // Stop propagation so overlay doesn't immediately retract
+                e.stopPropagation();
+
+                // If this interaction was a drag, don't treat it as a click highlight
+                if (!this.dragMoved) {
+                    this.handleExpandedClick(e);
+                }
+
+                this.isDragging = false;
+                (e.target as any)?.releasePointerCapture?.(e.pointerId);
             }
         });
 
-        this.expandedCanvas.addEventListener('pointerup', (e) => {
-            // Stop propagation so overlay doesn't immediately retract
-            e.stopPropagation();
-
-            // If this interaction was a drag, don't treat it as a click highlight
-            if (!this.dragMoved) {
-                this.handleExpandedClick(e);
-            }
-
-            this.isDragging = false;
-            (e.target as any)?.releasePointerCapture?.(e.pointerId);
-        });
-        this.expandedCanvas.addEventListener('pointerleave', () => {
+        this.eventManager.add(this.expandedCanvas, 'pointerleave', () => {
             this.isDragging = false;
         });
     }
@@ -374,5 +377,13 @@ export class MiniMap {
 
             }
         }
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the MiniMap instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

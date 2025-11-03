@@ -1,27 +1,13 @@
-import { TILE_TYPES, GRID_SIZE } from '../../core/constants/index.js';
-import { eventBus } from '../../core/EventBus.js';
-import { EventTypes } from '../../core/EventTypes.js';
-import { isTileType } from '../../utils/TileUtils.js';
-import type { InventoryItem } from './ItemMetadata.js';
-
-interface Game {
-    player: any;
-    grid: any[][];
-    transientGameState: any;
-    uiManager?: any;
-    inventoryService?: any;
-    bombManager?: any;
-    [key: string]: any;
-}
+import { TILE_TYPES, GRID_SIZE } from '../../core/constants/index';
+import { eventBus } from '../../core/EventBus';
+import { EventTypes } from '../../core/EventTypes';
+import { isTileType } from '../../utils/TileUtils';
+import type { IGame, ICoordinates } from '../../core/GameContext';
+import type { InventoryItem } from './ItemMetadata';
 
 interface UseItemOptions {
     fromRadial?: boolean;
     isDoubleClick?: boolean;
-}
-
-interface GridCoordinates {
-    x: number;
-    y: number;
 }
 
 /**
@@ -41,9 +27,9 @@ interface GridCoordinates {
  * - RadialInventoryUI.js (bomb placement from radial)
  */
 export class InventoryInteractionHandler {
-    private game: Game;
+    private game: IGame;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
     }
 
@@ -180,7 +166,7 @@ export class InventoryInteractionHandler {
      * @param gridCoords - { x, y } grid position
      * @returns Success
      */
-    executeBombPlacement(gridCoords: GridCoordinates): boolean {
+    executeBombPlacement(gridCoords: ICoordinates): boolean {
         if (!this.game.bombManager) {
             console.warn('BombManager not available');
             return false;

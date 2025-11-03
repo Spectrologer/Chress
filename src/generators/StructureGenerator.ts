@@ -1,8 +1,8 @@
-import { TILE_TYPES, GRID_SIZE, ZONE_CONSTANTS } from '../core/constants/index.ts';
-import { randomInt, findValidPlacement, isAllowedTile, validateAndSetTile } from './GeneratorUtils.js';
-import { ZoneStateManager } from './ZoneStateManager.js';
-import { logger } from '../core/logger.ts';
-import { isTileType, isTileObjectOfType, isFloor } from '../utils/TypeChecks.js';
+import { TILE_TYPES, GRID_SIZE, ZONE_CONSTANTS } from '../core/constants/index';
+import { randomInt, findValidPlacement, isAllowedTile, validateAndSetTile } from './GeneratorUtils';
+import { ZoneStateManager } from './ZoneStateManager';
+import { logger } from '../core/logger';
+import { isTileType, isTileObjectOfType, isFloor } from '../utils/TypeChecks';
 
 export class StructureGenerator {
     constructor(gridManager, game = null) {

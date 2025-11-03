@@ -1,4 +1,4 @@
-import type { ImageCache, BaseRenderer } from '../types.js';
+import type { ImageCache, BaseRenderer } from '../types';
 
 /**
  * Base strategy interface for tile rendering.

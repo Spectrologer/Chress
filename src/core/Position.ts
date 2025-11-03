@@ -17,38 +17,32 @@
  * for mathematical operations and validation logic.
  */
 
-import { getOffset, getDeltaToDirection } from './utils/DirectionUtils.ts';
-import type { ArrowDirection } from './utils/DirectionUtils.ts';
-import { GRID_SIZE } from './constants/index.ts';
-import { PositionCalculator } from './PositionCalculator.ts';
-import { PositionValidator } from './PositionValidator.ts';
+import { getOffset, getDeltaToDirection } from './utils/DirectionUtils';
+import type { ArrowDirection } from './utils/DirectionUtils';
+import { GRID_SIZE } from './constants/index';
+import { PositionCalculator } from './PositionCalculator';
+import { PositionValidator } from './PositionValidator';
+import type {
+  Coordinates,
+  Delta,
+  Offset,
+  Grid,
+  GridManager
+} from './PositionTypes';
 
 // Re-export the utility classes for convenience
 export { PositionCalculator, PositionValidator };
 
-export interface Coordinates {
-  x: number;
-  y: number;
-}
-
-export interface Delta {
-  dx: number;
-  dy: number;
-}
-
-export interface Offset {
-  x: number;
-  y: number;
-}
+// Re-export types from PositionTypes for backward compatibility
+export type {
+  Coordinates,
+  Delta,
+  Offset,
+  Grid,
+  GridManager
+} from './PositionTypes';
 
 export type PositionPredicate = (pos: Position) => boolean;
-
-export type Grid<T = any> = T[][];
-
-export interface GridManager {
-  getTile(x: number, y: number): any;
-  setTile(x: number, y: number, value: any): void;
-}
 
 export class Position {
   x: number;

@@ -6,12 +6,12 @@
  * - GridQueryOperations: Finding, filtering, counting tiles
  * - GridIterationOperations: Iterating, filling, transforming regions
  */
-import { GRID_SIZE } from '../core/constants/index.js';
-import { getTileType } from '../utils/TileUtils.js';
-import { logger } from '../core/logger.js';
-import { GridCoreOperations } from './grid/GridCoreOperations.js';
-import { GridQueryOperations } from './grid/GridQueryOperations.js';
-import { GridIterationOperations } from './grid/GridIterationOperations.js';
+import { GRID_SIZE } from '../core/constants/index';
+import { getTileType } from '../utils/TileUtils';
+import { logger } from '../core/logger';
+import { GridCoreOperations } from './grid/GridCoreOperations';
+import { GridQueryOperations } from './grid/GridQueryOperations';
+import { GridIterationOperations } from './grid/GridIterationOperations';
 
 export type Tile = number | object;
 export type Grid = Array<Array<Tile>>;

@@ -1,5 +1,5 @@
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import type { Player, ZoneCoords } from './Player.js';
+import { createZoneKey } from '../utils/ZoneKeyUtils';
+import type { Player, ZoneCoords } from './Player';
 
 export class PlayerZoneTracking {
     private player: Player;

@@ -1,6 +1,6 @@
 // TypewriterEffect.ts
 // Handles typewriter animation for text nodes in a DOM element.
-import { UI_TIMING_CONSTANTS } from '../core/constants/ui.js';
+import { UI_TIMING_CONSTANTS } from '../core/constants/ui';
 
 interface TypewriterOptions {
     speed?: number;

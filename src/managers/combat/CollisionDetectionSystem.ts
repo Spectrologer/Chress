@@ -5,17 +5,13 @@
  * Extracted from CombatManager to reduce file size.
  */
 
-import audioManager from '../../utils/AudioManager.js';
-import { eventBus } from '../../core/EventBus.ts';
-import { EventTypes } from '../../core/EventTypes.ts';
-import { EnemyAttackHelper } from '../../enemy/EnemyAttackHelper.js';
-import { safeCall } from '../../utils/SafeServiceCall.js';
-import type { Game } from '../../core/Game.js';
-
-interface Position {
-    x: number;
-    y: number;
-}
+import audioManager from '../../utils/AudioManager';
+import { eventBus } from '../../core/EventBus';
+import { EventTypes } from '../../core/EventTypes';
+import { EnemyAttackHelper } from '../../enemy/EnemyAttackHelper';
+import { safeCall } from '../../utils/SafeServiceCall';
+import type { Game } from '../../core/Game';
+import type { Position } from '../../core/Position';
 
 interface Enemy {
     x: number;

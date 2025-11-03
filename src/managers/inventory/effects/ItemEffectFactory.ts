@@ -1,6 +1,6 @@
-import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect.js';
-import { TILE_TYPES } from '../../../core/constants/index.js';
-import type { InventoryItem } from '../ItemMetadata.js';
+import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
+import { TILE_TYPES } from '../../../core/constants/index';
+import type { InventoryItem } from '../ItemMetadata';
 
 interface RadialEffectConfig {
     name: string;

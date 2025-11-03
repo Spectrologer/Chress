@@ -2,14 +2,14 @@
  * ItemRegistrations - Register all game items with ContentRegistry
  */
 
-import { ContentRegistry } from '../../core/ContentRegistry.js';
-import { TILE_TYPES, SPAWN_PROBABILITIES } from '../../core/constants/index.js';
+import { ContentRegistry } from '../../core/ContentRegistry';
+import { TILE_TYPES, SPAWN_PROBABILITIES } from '../../core/constants/index';
 
 // Import item effects
-import { FoodEffect, WaterEffect, HeartEffect } from '../../managers/inventory/effects/ConsumableEffects.js';
-import { AxeEffect, HammerEffect } from '../../managers/inventory/effects/ToolEffects.js';
-import { BombEffect, BowEffect, BishopSpearEffect, HorseIconEffect } from '../../managers/inventory/effects/WeaponEffects.js';
-import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect } from '../../managers/inventory/effects/SpecialEffects.js';
+import { FoodEffect, WaterEffect, HeartEffect } from '../../managers/inventory/effects/ConsumableEffects';
+import { AxeEffect, HammerEffect } from '../../managers/inventory/effects/ToolEffects';
+import { BombEffect, BowEffect, BishopSpearEffect, HorseIconEffect } from '../../managers/inventory/effects/WeaponEffects';
+import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect } from '../../managers/inventory/effects/SpecialEffects';
 
 /**
  * Register all items with the ContentRegistry

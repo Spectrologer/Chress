@@ -1,61 +1,56 @@
-import { TILE_TYPES } from '../core/constants/index.js';
-import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { Position } from '../core/Position.js';
-
-interface GridCoords {
-    x: number;
-    y: number;
-}
+import { TILE_TYPES } from '../core/constants/index';
+import audioManager from '../utils/AudioManager';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { Position } from '../core/Position';
+import type { IGame, ICoordinates } from '../core/GameContext';
+import type { InputManager } from './InputManager';
+import type { NPCManager } from './NPCManager';
+import type { EnvironmentalInteractionManager } from './EnvironmentalInteractionManager';
+import type { CombatActionManager } from './CombatActionManager';
+import type { BombManager } from './BombManager';
+import type { TerrainInteractionManager } from './TerrainInteractionManager';
+import type { ZoneManager } from './ZoneManager';
+import type { ItemPickupManager } from './inventory/ItemPickupManager';
+import type { Player } from '../entities/Player';
+import type { TransientGameState } from '../state/TransientGameState';
+import type { EnemyCollection } from '../facades/EnemyCollection';
+import type { PlayerFacade } from '../facades/PlayerFacade';
+import type { InventoryUI } from '../ui/InventoryUI';
+import type { CombatManager } from './CombatManager';
 
 interface InteractionFacade {
-    inputManager: any;
-    npcManager: any;
-    environmentManager: any;
+    inputManager: InputManager;
+    npcManager: NPCManager;
+    environmentManager: EnvironmentalInteractionManager;
 }
 
 interface CombatFacade {
-    combatActionManager: any;
-    bombManager: any;
+    combatActionManager: CombatActionManager;
+    bombManager: BombManager;
 }
 
 interface WorldFacade {
-    terrainManager: any;
-    zoneManager: any;
-    itemPickupManager: any;
+    terrainManager: TerrainInteractionManager;
+    zoneManager: ZoneManager;
+    itemPickupManager: ItemPickupManager;
 }
 
-interface Game {
-    playerFacade: any;
-    player: any;
-    grid: Array<Array<number | object>>;
-    transientGameState: any;
-    enemyCollection: any;
-    startEnemyTurns: () => void;
-    justEnteredZone: boolean;
-    isInPitfallZone: boolean;
-    pitfallTurnsSurvived: number;
-    updatePlayerPosition: () => void;
-    inventoryManager: any;
-    combatManager: any;
-}
-
-type InteractionHandler = (gridCoords: GridCoords, playerPos: { x: number; y: number }) => boolean;
+type InteractionHandler = (gridCoords: ICoordinates, playerPos: { x: number; y: number }) => boolean;
 
 export class InteractionManager {
-    private game: Game;
+    private game: IGame;
     private interactionFacade: InteractionFacade;
     private combatFacade: CombatFacade;
     private worldFacade: WorldFacade;
-    private inputManager: any;
-    private npcManager: any;
-    private environmentManager: any;
-    private combatManager: any;
-    private bombManager: any;
-    private terrainManager: any;
-    private zoneManager: any;
-    private itemPickupManager: any;
+    private inputManager: InputManager;
+    private npcManager: NPCManager;
+    private environmentManager: EnvironmentalInteractionManager;
+    private combatManager: CombatActionManager;
+    private bombManager: BombManager;
+    private terrainManager: TerrainInteractionManager;
+    private zoneManager: ZoneManager;
+    private itemPickupManager: ItemPickupManager;
     private interactionHandlers: InteractionHandler[];
 
     /**
@@ -69,7 +64,7 @@ export class InteractionManager {
      * @param combatFacade - Groups combat action and bomb managers
      * @param worldFacade - Groups terrain, zone, and item pickup managers
      */
-    constructor(game: Game, interactionFacade: InteractionFacade, combatFacade: CombatFacade, worldFacade: WorldFacade) {
+    constructor(game: IGame, interactionFacade: InteractionFacade, combatFacade: CombatFacade, worldFacade: WorldFacade) {
         this.game = game;
 
         // Store facades for direct access to underlying managers when needed
@@ -108,7 +103,7 @@ export class InteractionManager {
             (gridCoords, playerPos) => {
                 const bishopSpearCharge = this.combatManager.isValidBishopSpearCharge(gridCoords, playerPos);
                 // Only auto-start a bishop charge if the item is present in the main inventory (via facade)
-                if (bishopSpearCharge && this.game.playerFacade.findInInventory((item: any) => item === bishopSpearCharge.item)) {
+                if (bishopSpearCharge && this.game.playerFacade.findInInventory((item) => item === bishopSpearCharge.item)) {
                     this.game.transientGameState.setPendingCharge(bishopSpearCharge);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
@@ -126,7 +121,7 @@ export class InteractionManager {
             (gridCoords, playerPos) => {
                 const horseIconCharge = this.combatManager.isValidHorseIconCharge(gridCoords, playerPos);
                 // Only auto-start a knight charge if the item is present in the main inventory (via facade)
-                if (horseIconCharge && this.game.playerFacade.findInInventory((item: any) => item === horseIconCharge.item)) {
+                if (horseIconCharge && this.game.playerFacade.findInInventory((item) => item === horseIconCharge.item)) {
                     this.game.transientGameState.setPendingCharge(horseIconCharge);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
@@ -144,7 +139,7 @@ export class InteractionManager {
             (gridCoords, playerPos) => {
                 const bowShot = this.combatManager.isValidBowShot(gridCoords, playerPos);
                 // Only auto-start a bow shot if the bow is in the main inventory (via facade)
-                if (bowShot && this.game.playerFacade.findInInventory((item: any) => item === bowShot.item)) {
+                if (bowShot && this.game.playerFacade.findInInventory((item) => item === bowShot.item)) {
                     this.game.transientGameState.setPendingCharge(bowShot);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
@@ -166,26 +161,26 @@ export class InteractionManager {
     }
 
     // Consolidated interaction delegation methods
-    checkPenneInteraction(): any {
+    checkPenneInteraction(): boolean {
         // Example: delegate to NPC manager or handle directly
         // (Penne is a type of NPC or tile)
         // You may want to refactor this to a more generic handler if needed
         return this.npcManager.interactWithPenne({ x: this.game.player.getPosition().x + 1, y: this.game.player.getPosition().y });
     }
 
-    checkSquigInteraction(): any {
+    checkSquigInteraction(): boolean {
         return this.npcManager.interactWithSquig({ x: this.game.player.getPosition().x + 1, y: this.game.player.getPosition().y });
     }
 
-    checkItemPickup(): any {
+    checkItemPickup(): boolean {
         return this.itemPickupManager.checkItemPickup();
     }
 
-    useMapNote(): any {
+    useMapNote(): boolean {
         return this.game.inventoryManager.useMapNote();
     }
 
-    handleTap(gridCoords: GridCoords): boolean {
+    handleTap(gridCoords: ICoordinates): boolean {
         const clickedPos = Position.from(gridCoords);
         const transientState = this.game.transientGameState;
 
@@ -336,7 +331,7 @@ export class InteractionManager {
         return false; // No interaction, allow pathfinding
     }
 
-    triggerInteractAt(gridCoords: GridCoords): void {
+    triggerInteractAt(gridCoords: ICoordinates): void {
         // Check adjacency and delegate to appropriate managers
         this.npcManager.forceInteractAt(gridCoords);
         this.environmentManager.forceInteractAt(gridCoords);

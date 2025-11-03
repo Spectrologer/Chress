@@ -1,19 +1,19 @@
 // Console Commands for debugging and testing
 // This file uses a registry pattern to reduce repetitive code
 
-import { TILE_TYPES, GRID_SIZE } from './constants/index.js';
-import { logger } from './logger.ts';
-import { customZoneLoader } from '../loaders/CustomZoneLoader.js';
-import { boardLoader } from './BoardLoader.js';
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import { PositionValidator } from './PositionValidator.ts';
+import { TILE_TYPES, GRID_SIZE } from './constants/index';
+import { logger } from './logger';
+import { customZoneLoader } from '../loaders/CustomZoneLoader';
+import { boardLoader } from './BoardLoader';
+import { createZoneKey } from '../utils/ZoneKeyUtils';
+import { PositionValidator } from './PositionValidator';
 import {
   generateSpawnCommands,
   generateEnemyCommands,
   generateSpecialCommands,
   generateHotkeyMap,
   createHotkeyHandler
-} from './consoleCommandsGenerator.js';
+} from './consoleCommandsGenerator';
 
 // Generate all spawn commands from registry
 const spawnCommands = generateSpawnCommands();

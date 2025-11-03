@@ -1,18 +1,18 @@
-import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANTS } from '../core/constants/index.js';
-import { PlayerStats } from './PlayerStats.js';
-import { PlayerAnimations } from './PlayerAnimations.js';
-import { PlayerMovement } from './PlayerMovement.js';
-import { PlayerAbilities } from './PlayerAbilities.js';
-import { PlayerZoneTracking } from './PlayerZoneTracking.js';
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.js';
-import { EventTypes } from '../core/EventTypes.js';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler.js';
-import { TileRegistry } from '../core/TileRegistry.js';
-import { isBomb, isTileType } from '../utils/TileUtils.js';
-import GridIterator from '../utils/GridIterator.js';
-import { Position } from '../core/Position.js';
+import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANTS } from '../core/constants/index';
+import { PlayerStats } from './PlayerStats';
+import { PlayerAnimations } from './PlayerAnimations';
+import { PlayerMovement } from './PlayerMovement';
+import { PlayerAbilities } from './PlayerAbilities';
+import { PlayerZoneTracking } from './PlayerZoneTracking';
+import { createZoneKey } from '../utils/ZoneKeyUtils';
+import audioManager from '../utils/AudioManager';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
+import { TileRegistry } from '../core/TileRegistry';
+import { isBomb, isTileType } from '../utils/TileUtils';
+import GridIterator from '../utils/GridIterator';
+import { Position } from '../core/Position';
 
 export interface ZoneCoords {
     x: number;

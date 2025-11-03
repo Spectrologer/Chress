@@ -1,7 +1,7 @@
-import { BaseTileRenderer } from './BaseTileRenderer.js';
-import { RendererUtils } from './RendererUtils.js';
-import type { ImageCache } from './types.js';
-import type { TextureDetector } from './TextureDetector.js';
+import { BaseTileRenderer } from './BaseTileRenderer';
+import { RendererUtils } from './RendererUtils';
+import type { ImageCache } from './types';
+import type { TextureDetector } from './TextureDetector';
 
 interface MultiTileHandler {
     findHousePosition(x: number, y: number, grid: any): { startX: number; startY: number } | null;

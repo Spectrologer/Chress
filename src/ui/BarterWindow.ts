@@ -1,3 +1,4 @@
+import type { IGame } from '../core/GameContext';
 import { Sign, Trade } from './Sign';
 import { FOOD_ASSETS, TILE_TYPES } from '../core/constants/index';
 import { fitTextToContainer } from './TextFitter';
@@ -5,6 +6,7 @@ import audioManager from '../utils/AudioManager';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
 import { safeCall } from '../utils/SafeServiceCall';
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 interface InventoryItem {
     type: string;
@@ -41,24 +43,16 @@ interface PlayerFacade {
     addPoints(amount: number): void;
 }
 
-interface Game {
-    player: Player;
-    transientGameState?: TransientGameState;
-    uiManager?: UIManager;
-    itemManager: ItemManager;
-    playerFacade: PlayerFacade;
-    displayingMessageForSign?: any;
-}
-
 export class BarterWindow {
-    private game: Game;
+    private game: IGame;
     private barterOverlay: HTMLElement | null;
     private barterNPCName: HTMLElement | null;
     private barterNPCPortrait: HTMLImageElement | null;
     private barterNPCMessage: HTMLElement | null;
     private currentNPCType: string | null;
+    private eventManager: EventListenerManager;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
 
         // Barter UI elements
@@ -68,14 +62,13 @@ export class BarterWindow {
         this.barterNPCMessage = document.getElementById('barterNPCMessage');
 
         this.currentNPCType = null;
+        this.eventManager = new EventListenerManager();
     }
 
     setupBarterHandlers(): void {
         // Confirm buttons are now dynamically created, event listeners added in showBarterWindow
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                this.hideBarterWindow();
-            }
+        this.eventManager.addKeyboardShortcut('Escape', () => {
+            this.hideBarterWindow();
         });
     }
 
@@ -248,12 +241,12 @@ export class BarterWindow {
         if (confirmButton) {
             let canTrade = this.checkTradeViability(tradeData);
             confirmButton.disabled = !canTrade;
-            confirmButton.addEventListener('click', () => this.confirmTrade(tradeData));
+            this.eventManager.add(confirmButton, 'click', () => this.confirmTrade(tradeData));
         }
 
         const cancelButton = offerDiv.querySelector<HTMLButtonElement>('.cancel-trade-btn');
         if (cancelButton) {
-            cancelButton.addEventListener('click', () => this.hideBarterWindow());
+            this.eventManager.add(cancelButton, 'click', () => this.hideBarterWindow());
         }
 
         return offerDiv;
@@ -487,5 +480,13 @@ export class BarterWindow {
             this.game.uiManager.updateZoneDisplay(); // Refresh discoveries count
         }
         this.hideBarterWindow();
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the BarterWindow instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

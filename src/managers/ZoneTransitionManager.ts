@@ -1,19 +1,16 @@
-import { GRID_SIZE, TILE_TYPES, DIMENSION_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants/index.js';
-import { MultiTileHandler } from '../renderers/MultiTileHandler.js';
-import { getExitDirection } from '../core/utils/TransitionUtils.ts';
-import audioManager from '../utils/AudioManager.js';
-import { eventBus } from '../core/EventBus.ts';
-import { EventTypes } from '../core/EventTypes.ts';
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import type { Game } from '../core/Game.js';
-import type { InputManager } from '../core/InputManager.js';
-import type { GridManager } from '../core/GridManager.js';
-import type { ZoneRepository } from '../core/ZoneRepository.js';
-
-interface Position {
-    x: number;
-    y: number;
-}
+import { GRID_SIZE, TILE_TYPES, DIMENSION_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants/index';
+import { MultiTileHandler } from '../renderers/MultiTileHandler';
+import { getExitDirection } from '../core/utils/TransitionUtils';
+import audioManager from '../utils/AudioManager';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { createZoneKey } from '../utils/ZoneKeyUtils';
+import type { Game } from '../core/Game';
+import type { InputManager } from '../core/InputManager';
+import type { GridManager } from '../core/GridManager';
+import type { ZoneRepository } from '../core/ZoneRepository';
+import type { Position } from '../core/Position';
+import type { Grid } from '../core/SharedTypes';
 
 interface TapCoords {
     x: number;
@@ -30,13 +27,19 @@ interface ZoneInfo {
 interface ZoneData {
     returnToInterior?: boolean;
     playerSpawn?: Position;
-    [key: string]: any;
+    grid?: Grid;
+    enemies?: Array<{ x: number; y: number; enemyType: string; health: number; id: string }>;
+    terrainTextures?: Record<string, string>;
+    overlayTextures?: Record<string, string>;
+    rotations?: Record<string, number>;
+    overlayRotations?: Record<string, number>;
 }
 
-interface Tile {
-    type?: string;
+interface TileData {
+    type?: number;
     portKind?: string;
-    [key: string]: any;
+    interaction?: string;
+    npc?: string;
 }
 
 export class ZoneTransitionManager {

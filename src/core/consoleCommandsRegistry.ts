@@ -1,5 +1,5 @@
 // Console Commands Registry - Declarative configuration for spawn commands
-import { TILE_TYPES } from './constants/index.js';
+import { TILE_TYPES } from './constants/index';
 
 /**
  * Registry of spawn commands with their configurations

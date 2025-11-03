@@ -1,8 +1,8 @@
-import { logger } from '../core/logger.ts';
-import { TypewriterEffect } from './TypewriterEffect.ts';
-import { getVoiceSettingsForName, playTypingBlip } from './VoiceSettings.ts';
-import { safeCall } from '../utils/SafeServiceCall.js';
-import { UI_TIMING_CONSTANTS } from '../core/constants/ui.js';
+import { logger } from '../core/logger';
+import { TypewriterEffect } from './TypewriterEffect';
+import { getVoiceSettingsForName, playTypingBlip } from './VoiceSettings';
+import { safeCall } from '../utils/SafeServiceCall';
+import { UI_TIMING_CONSTANTS } from '../core/constants/ui';
 
 interface GameInstance {
     [key: string]: any;

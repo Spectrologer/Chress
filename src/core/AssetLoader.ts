@@ -1,7 +1,7 @@
-import { FOOD_ASSETS } from './constants/index.js';
-import { logger } from './logger.js';
-import type { GameContext } from './GameContext.js';
-import type { TextureManager } from './TextureManager.js';
+import { FOOD_ASSETS } from './constants/index';
+import { logger } from './logger';
+import type { GameContext } from './GameContext';
+import type { TextureManager } from './TextureManager';
 
 /**
  * AssetLoader

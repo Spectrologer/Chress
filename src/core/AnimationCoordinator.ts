@@ -1,5 +1,5 @@
-import { eventBus } from './EventBus.ts';
-import { EventTypes } from './EventTypes.ts';
+import { eventBus } from './EventBus';
+import { EventTypes } from './EventTypes';
 
 /**
  * AnimationCoordinator - Centralizes player animation management

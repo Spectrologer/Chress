@@ -1,7 +1,7 @@
-import { TILE_SIZE, TILE_COLORS } from '../../core/constants/index.js';
-import { RendererUtils } from '../RendererUtils.js';
-import { TileRenderStrategy } from './TileRenderStrategy.js';
-import type { BaseRenderer, SimpleItemRenderOptions } from '../types.js';
+import { TILE_SIZE, TILE_COLORS } from '../../core/constants/index';
+import { RendererUtils } from '../RendererUtils';
+import { TileRenderStrategy } from './TileRenderStrategy';
+import type { BaseRenderer, SimpleItemRenderOptions } from '../types';
 
 /**
  * Generic strategy for simple item tiles that just need a sprite or fallback.

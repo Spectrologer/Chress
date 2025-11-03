@@ -5,8 +5,8 @@
  * Extracted from GridManager to reduce file size.
  */
 
-import { GridIterator } from '../../utils/GridIterator.js';
-import { logger } from '../../core/logger.js';
+import { GridIterator } from '../../utils/GridIterator';
+import { logger } from '../../core/logger';
 
 type Tile = number | Record<string, any>;
 type Grid = Array<Array<Tile>>;

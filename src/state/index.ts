@@ -6,25 +6,25 @@
  */
 
 // Core state store
-export { StateStore, store } from './core/StateStore.js';
+export { StateStore, store } from './core/StateStore';
 
 // Persistence layer
-export { StatePersistence, persistence } from './core/StatePersistence.js';
+export { StatePersistence, persistence } from './core/StatePersistence';
 
 // Selectors for reading state
-export { StateSelectors } from './core/StateSelectors.js';
+export { StateSelectors } from './core/StateSelectors';
 
 // Actions for writing state
-export { StateActions } from './core/StateActions.js';
+export { StateActions } from './core/StateActions';
 
 // Debugging tools
-export { StateDebugger, stateDebugger } from './core/StateDebugger.js';
+export { StateDebugger, stateDebugger } from './core/StateDebugger';
 
 /**
  * Quick-start usage:
  *
  * ```typescript
- * import { store, StateActions, StateSelectors, persistence } from './state/index.js';
+ * import { store, StateActions, StateSelectors, persistence } from './state/index';
  *
  * // Read state
  * const player = StateSelectors.getPlayer();

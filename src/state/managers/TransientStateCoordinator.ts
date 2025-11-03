@@ -1,10 +1,11 @@
-import { eventBus } from '../../core/EventBus.js';
-import { EventTypes } from '../../core/EventTypes.js';
-import { logger } from '../../core/logger.js';
-import { ItemAbilityStateManager } from './ItemAbilityStateManager.js';
-import { InteractionStateManager } from './InteractionStateManager.js';
-import { ZoneStateManager } from './ZoneStateManager.js';
-import { CombatStateManager } from './CombatStateManager.js';
+import { eventBus } from '../../core/EventBus';
+import { EventTypes } from '../../core/EventTypes';
+import { logger } from '../../core/logger';
+import { ItemAbilityStateManager } from './ItemAbilityStateManager';
+import { InteractionStateManager } from './InteractionStateManager';
+import { ZoneStateManager } from './ZoneStateManager';
+import { CombatStateManager } from './CombatStateManager';
+import type { Position } from '../../core/Position';
 
 /**
  * TransientStateCoordinator - Facade that delegates to specialized state managers
@@ -25,11 +26,6 @@ import { CombatStateManager } from './CombatStateManager.js';
  * - Clearer Dependencies: Easy to see what depends on what
  * - Easier Maintenance: Changes isolated to specific managers
  */
-
-interface Position {
-    x: number;
-    y: number;
-}
 
 interface ChargeData {
     [key: string]: any;

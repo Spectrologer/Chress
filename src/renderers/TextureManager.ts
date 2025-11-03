@@ -1,10 +1,10 @@
-import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES, TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants/index.js';
-import { TextureLoader } from './TextureLoader.js';
-import { TextureDetector } from './TextureDetector.js';
-import { TileRenderer } from './TileRenderer.js';
-import { MultiTileHandler } from './MultiTileHandler.js';
-import { logger } from '../core/logger.js';
-import type { ImageCache } from './types.js';
+import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES, TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants/index';
+import { TextureLoader } from './TextureLoader';
+import { TextureDetector } from './TextureDetector';
+import { TileRenderer } from './TileRenderer';
+import { MultiTileHandler } from './MultiTileHandler';
+import { logger } from '../core/logger';
+import type { ImageCache } from './types';
 
 export class TextureManager {
     private loader: TextureLoader;

@@ -11,15 +11,7 @@
  * All methods are static and work with position-like objects {x, y}.
  */
 
-export interface Coordinates {
-  x: number;
-  y: number;
-}
-
-export interface Delta {
-  dx: number;
-  dy: number;
-}
+import type { Coordinates, Delta } from './PositionTypes';
 
 export class PositionCalculator {
   // ==========================================

@@ -1,6 +1,6 @@
-import { BaseMoveCalculator } from './base.js';
-import { ANIMATION_CONSTANTS } from '../../core/constants/index.ts';
-import { AttackBehaviors, AttackValidation } from './BaseAttackBehaviors.js';
+import { BaseMoveCalculator } from './base';
+import { ANIMATION_CONSTANTS } from '../../core/constants/index';
+import { AttackBehaviors, AttackValidation } from './BaseAttackBehaviors';
 
 export class LizardyMoveCalculator extends BaseMoveCalculator {
     calculateMove(enemy, player, playerPos, grid, enemies, isSimulation = false, game = null) {

@@ -1,5 +1,5 @@
-import { TileRenderStrategy } from './TileRenderStrategy.js';
-import type { BaseRenderer } from '../types.js';
+import { TileRenderStrategy } from './TileRenderStrategy';
+import type { BaseRenderer } from '../types';
 
 export class ExitRenderStrategy extends TileRenderStrategy {
     render(

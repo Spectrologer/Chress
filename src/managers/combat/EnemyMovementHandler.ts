@@ -5,16 +5,12 @@
  * Extracted from CombatManager to reduce file size.
  */
 
-import { TILE_TYPES } from '../../core/constants/index.js';
-import { createZoneKey } from '../../utils/ZoneKeyUtils.js';
-import { eventBus } from '../../core/EventBus.ts';
-import { EventTypes } from '../../core/EventTypes.ts';
-import type { Game } from '../../core/Game.js';
-
-interface Position {
-    x: number;
-    y: number;
-}
+import { TILE_TYPES } from '../../core/constants/index';
+import { createZoneKey } from '../../utils/ZoneKeyUtils';
+import { eventBus } from '../../core/EventBus';
+import { EventTypes } from '../../core/EventTypes';
+import type { Game } from '../../core/Game';
+import type { Position } from '../../core/Position';
 
 interface Enemy {
     x: number;

@@ -1,5 +1,5 @@
-import { BaseMoveCalculator } from './base.js';
-import { DistanceUtils, AttackBehaviors } from './BaseAttackBehaviors.js';
+import { BaseMoveCalculator } from './base';
+import { DistanceUtils, AttackBehaviors } from './BaseAttackBehaviors';
 
 export class LizardoMoveCalculator extends BaseMoveCalculator {
     calculateMove(enemy, player, playerPos, grid, enemies, isSimulation = false, game = null) {

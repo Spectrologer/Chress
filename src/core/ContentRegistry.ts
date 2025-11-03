@@ -13,6 +13,7 @@
  * - Automatic validation of content definitions
  * - Easy to iterate over all content for tooling/debug
  */
+import type { BaseItemEffect } from '../managers/inventory/effects/BaseItemEffect';
 
 export interface ItemSpawnRules {
     minLevel?: number;
@@ -25,13 +26,13 @@ export interface ItemConfig {
     tileType: number;
     stackable?: boolean;
     radial?: boolean;
-    effect?: any; // BaseItemEffect
+    effect?: BaseItemEffect;
     spawnWeight?: number;
     spawnRules?: ItemSpawnRules;
-    getTooltip: (item: any) => string;
-    getImageKey: (item: any) => string;
-    renderStrategy?: any;
-    metadata?: any;
+    getTooltip: (item: object) => string;
+    getImageKey: (item: object) => string;
+    renderStrategy?: object;
+    metadata?: Record<string, unknown>;
 }
 
 export interface ItemDefinition extends ItemConfig {
@@ -50,10 +51,10 @@ export interface NPCConfig {
     tileType: number;
     action: string;
     placement?: NPCPlacement;
-    dialogue?: any;
-    barter?: any;
-    renderStrategy?: any;
-    metadata?: any;
+    dialogue?: object;
+    barter?: object;
+    renderStrategy?: object;
+    metadata?: Record<string, unknown>;
 }
 
 export interface NPCDefinition extends NPCConfig {
@@ -71,8 +72,8 @@ export interface EnemyConfig {
     weight: number;
     spawnRules?: EnemySpawnRules;
     behaviorType?: string;
-    stats?: any;
-    metadata?: any;
+    stats?: Record<string, number>;
+    metadata?: Record<string, unknown>;
 }
 
 export interface EnemyDefinition extends EnemyConfig {
@@ -81,14 +82,14 @@ export interface EnemyDefinition extends EnemyConfig {
 
 export interface ZoneHandlerConfig {
     name?: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
 }
 
 export interface ZoneHandlerDefinition {
     dimension: number;
-    factory: Function;
+    factory: (...args: unknown[]) => unknown;
     name: string;
-    metadata: any;
+    metadata: Record<string, unknown>;
 }
 
 export interface SpawnableEnemy {

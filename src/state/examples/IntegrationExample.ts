@@ -5,9 +5,9 @@
  * into the existing Chress game.
  */
 
-import { store, StateActions, StateSelectors, persistence } from '../index.js';
-import { EventBus } from '../../core/EventBus.js';
-import { EventTypes } from '../../core/EventTypes.js';
+import { store, StateActions, StateSelectors, persistence } from '../index';
+import { EventBus } from '../../core/EventBus';
+import { EventTypes } from '../../core/EventTypes';
 
 // =============================================================================
 // EXAMPLE 1: Game Initialization
@@ -401,7 +401,7 @@ function generateZone(x, y, dimension, depth) {
  * How to use in your game:
  *
  * // In game initialization:
- * import { initializeGame, setupAutosave } from './state/examples/IntegrationExample.js';
+ * import { initializeGame, setupAutosave } from './state/examples/IntegrationExample';
  *
  * async function startGame() {
  *   await initializeGame();
@@ -410,7 +410,7 @@ function generateZone(x, y, dimension, depth) {
  * }
  *
  * // In game loop:
- * import { handlePlayerMove, handlePlayerAttack } from './state/examples/IntegrationExample.js';
+ * import { handlePlayerMove, handlePlayerAttack } from './state/examples/IntegrationExample';
  *
  * function handleInput(input) {
  *   if (input.type === 'move') {
@@ -421,7 +421,7 @@ function generateZone(x, y, dimension, depth) {
  * }
  *
  * // Access state for rendering:
- * import { StateSelectors } from './state/index.js';
+ * import { StateSelectors } from './state/index';
  *
  * function render() {
  *   const player = StateSelectors.getPlayer();

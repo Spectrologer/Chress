@@ -1,5 +1,5 @@
-import { TILE_TYPES } from '../../core/constants/index.js';
-import { isTileType } from '../../utils/TileUtils.js';
+import { TILE_TYPES } from '../../core/constants/index';
+import { isTileType } from '../../utils/TileUtils';
 
 // Type definitions for items
 export interface BaseItem {

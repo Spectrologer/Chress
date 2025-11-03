@@ -1,3 +1,5 @@
+import type { Position } from '../Position';
+
 // Animation constants
 // Note: We don't use 'as const' to allow numbers to be used flexibly with default parameters
 export const ANIMATION_CONSTANTS = {
@@ -125,11 +127,6 @@ export interface ArrowAnimationSchema {
     endX: number;
     endY: number;
     frame: number;
-}
-
-export interface Position {
-    x: number;
-    y: number;
 }
 
 export interface HorseChargeAnimationSchema {

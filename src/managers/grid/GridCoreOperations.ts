@@ -5,9 +5,9 @@
  * Extracted from GridManager to reduce file size.
  */
 
-import { isWithinGrid } from '../../utils/GridUtils.js';
-import { getTileType, isTileType, isWalkable as isWalkableTile } from '../../utils/TileUtils.js';
-import { logger } from '../../core/logger.js';
+import { isWithinGrid } from '../../utils/GridUtils';
+import { getTileType, isTileType, isWalkable as isWalkableTile } from '../../utils/TileUtils';
+import { logger } from '../../core/logger';
 
 type Tile = number | Record<string, any>;
 type Grid = Array<Array<Tile>>;

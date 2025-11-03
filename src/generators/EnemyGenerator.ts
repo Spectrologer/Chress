@@ -1,8 +1,8 @@
-import { Enemy } from '../entities/Enemy.js';
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index.ts';
-import { findValidPlacement } from './GeneratorUtils.js';
-import { ZoneStateManager } from './ZoneStateManager.js';
-import { ContentRegistry } from '../core/ContentRegistry.js';
+import { Enemy } from '../entities/Enemy';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index';
+import { findValidPlacement } from './GeneratorUtils';
+import { ZoneStateManager } from './ZoneStateManager';
+import { ContentRegistry } from '../core/ContentRegistry';
 
 const MAX_WEIGHT_PER_LEVEL = {
     1: 4,

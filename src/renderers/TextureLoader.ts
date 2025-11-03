@@ -1,6 +1,6 @@
-import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES } from '../core/constants/index.js';
-import { logger } from '../core/logger.js';
-import type { ImageCache } from './types.js';
+import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES } from '../core/constants/index';
+import { logger } from '../core/logger';
+import type { ImageCache } from './types';
 
 export class TextureLoader {
     private images: ImageCache = {};

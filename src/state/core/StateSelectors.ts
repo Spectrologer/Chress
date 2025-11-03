@@ -5,7 +5,7 @@
  * These act as a stable API layer between components and the state store.
  */
 
-import { store } from './StateStore.js';
+import { store } from './StateStore';
 
 export const StateSelectors = {
   // ==================== PLAYER ====================

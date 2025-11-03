@@ -1,6 +1,6 @@
-import { eventBus } from '../../core/EventBus.js';
-import { EventTypes } from '../../core/EventTypes.js';
-import { logger } from '../../core/logger.js';
+import { eventBus } from '../../core/EventBus';
+import { EventTypes } from '../../core/EventTypes';
+import { logger } from '../../core/logger';
 
 /**
  * ZoneStateManager - Manages zone-specific state (Transitions, Pitfalls)

@@ -1,10 +1,10 @@
 // Console Commands Generator - Creates command functions from registry
-import { SPAWN_REGISTRY, ENEMY_REGISTRY, SPECIAL_COMMANDS } from './consoleCommandsRegistry.js';
-import { Enemy } from '../entities/Enemy.js';
-import { logger } from './logger.ts';
-import { TILE_TYPES, GRID_SIZE } from './constants/index.js';
-import { SharedStructureSpawner } from '../utils/SharedStructureSpawner.js';
-import { ContentRegistry } from './ContentRegistry.js';
+import { SPAWN_REGISTRY, ENEMY_REGISTRY, SPECIAL_COMMANDS } from './consoleCommandsRegistry';
+import { Enemy } from '../entities/Enemy';
+import { logger } from './logger';
+import { TILE_TYPES, GRID_SIZE } from './constants/index';
+import { SharedStructureSpawner } from '../utils/SharedStructureSpawner';
+import { ContentRegistry } from './ContentRegistry';
 
 /**
  * Generic spawn utility that reduces code duplication

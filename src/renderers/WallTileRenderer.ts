@@ -1,6 +1,6 @@
-import { TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants/index.js';
-import { RendererUtils } from './RendererUtils.js';
-import type { ImageCache, GridManager, BaseRenderer } from './types.js';
+import { TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants/index';
+import { RendererUtils } from './RendererUtils';
+import type { ImageCache, GridManager, BaseRenderer } from './types';
 
 export class WallTileRenderer {
     private images: ImageCache;

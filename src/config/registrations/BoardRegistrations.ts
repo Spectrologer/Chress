@@ -2,7 +2,7 @@
  * BoardRegistrations - Register custom board JSON files for specific zones
  */
 
-import { boardLoader } from '../../core/BoardLoader.js';
+import { boardLoader } from '../../core/BoardLoader';
 
 /**
  * Register custom board JSON files for specific zones

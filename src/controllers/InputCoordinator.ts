@@ -1,16 +1,18 @@
-import { TILE_TYPES } from '../core/constants/index.js';
-import { getExitDirection } from '../core/utils/TransitionUtils.ts';
-import { getDeltaToDirection, getOffset, isAdjacent } from '../core/utils/DirectionUtils.ts';
-import audioManager from '../utils/AudioManager.js';
-import { GestureDetector } from './GestureDetector.js';
-import { PathfindingController } from './PathfindingController.js';
-import { KeyboardHandler } from './KeyboardHandler.js';
-import { InputStateManager } from './InputStateManager.js';
-import { eventBus } from '../core/EventBus.ts';
-import { EventTypes } from '../core/EventTypes.ts';
-import { TileRegistry } from '../core/TileRegistry.js';
-import { getTileType, isTileObject } from '../utils/TileUtils.js';
-import { Position } from '../core/Position.ts';
+import { TILE_TYPES } from '../core/constants/index';
+import { getExitDirection } from '../core/utils/TransitionUtils';
+import { getDeltaToDirection, getOffset, isAdjacent } from '../core/utils/DirectionUtils';
+import audioManager from '../utils/AudioManager';
+import { GestureDetector } from './GestureDetector';
+import { PathfindingController } from './PathfindingController';
+import { KeyboardHandler } from './KeyboardHandler';
+import { InputStateManager } from './InputStateManager';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { TileRegistry } from '../core/TileRegistry';
+import { getTileType, isTileObject } from '../utils/TileUtils';
+import { Position } from '../core/Position';
+import type { GameContext } from '../core/GameContext';
+import type { InventoryService } from '../managers/inventory/InventoryService';
 
 interface GridCoords {
     x: number;
@@ -28,7 +30,7 @@ interface KeyPressResult {
     type: 'cancel_path' | 'movement';
     newX?: number;
     newY?: number;
-    currentPos?: any;
+    currentPos?: Position;
 }
 
 interface PointerResult {
@@ -48,8 +50,8 @@ interface PointerResult {
  * - Handles core movement and combat coordination
  */
 export class InputCoordinator {
-    private game: any;
-    private inventoryService: any;
+    private game: GameContext;
+    private inventoryService: InventoryService;
 
     // Specialized modules
     public gestureDetector: GestureDetector;
@@ -70,7 +72,7 @@ export class InputCoordinator {
     private _onPointerCancel: (e: PointerEvent) => void;
     private _onKeyDown: (event: KeyboardEvent) => void;
 
-    constructor(game: any, inventoryService: any) {
+    constructor(game: GameContext, inventoryService: InventoryService) {
         this.game = game;
         this.inventoryService = inventoryService;
 
@@ -102,7 +104,7 @@ export class InputCoordinator {
     private _setupModuleCommunication(): void {
         // Subscribe to key press events from PathfindingController
         this._unsubscribers.push(
-            eventBus.on(EventTypes.INPUT_KEY_PRESS, (event: any) => {
+            eventBus.on(EventTypes.INPUT_KEY_PRESS, (event: KeyboardEvent) => {
                 this.handleKeyPress(event);
             })
         );
@@ -252,7 +254,7 @@ export class InputCoordinator {
         this._handleGameplayTap(gridCoords, clickedTileType, isDoubleTap);
     }
 
-    private _playTapSound(enemyAtTile: any, isDoubleTap: boolean): void {
+    private _playTapSound(enemyAtTile: object | null, isDoubleTap: boolean): void {
         if (enemyAtTile) {
             audioManager.playSound('tap_enemy', { game: this.game });
         } else if (isDoubleTap) {
@@ -378,7 +380,7 @@ export class InputCoordinator {
     // KEY PRESS HANDLING
     // ========================================
 
-    handleKeyPress(event: any): void {
+    handleKeyPress(event: KeyboardEvent): void {
         // Block user input during entrance animation, but allow synthetic key presses from pathfinding
         if (this.stateManager.isEntranceAnimationActive() && !event._synthetic) {
             return;
@@ -481,7 +483,7 @@ export class InputCoordinator {
     // HELPER METHODS
     // ========================================
 
-    getTileType(tile: any): string {
+    getTileType(tile: number | object): string {
         return getTileType(tile);
     }
 

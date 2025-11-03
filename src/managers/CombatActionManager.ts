@@ -1,26 +1,10 @@
-import { TILE_TYPES } from '../core/constants/index.js';
-import { safeCall } from '../utils/SafeServiceCall.js';
-import { checkOrthogonalLineOfSight } from '../utils/LineOfSightUtils.js';
-import type { Game } from '../core/Game.js';
-
-interface Position {
-    x: number;
-    y: number;
-}
-
-interface InventoryItem {
-    type: string;
-    uses: number;
-    disabled?: boolean;
-    [key: string]: any;
-}
-
-interface Enemy {
-    x: number;
-    y: number;
-    health: number;
-    [key: string]: any;
-}
+import { TILE_TYPES } from '../core/constants/index';
+import { safeCall } from '../utils/SafeServiceCall';
+import { checkOrthogonalLineOfSight } from '../utils/LineOfSightUtils';
+import type { Game } from '../core/Game';
+import type { Position } from '../core/Position';
+import type { InventoryItem } from '../managers/inventory/ItemMetadata';
+import type { Enemy } from '../entities/Enemy';
 
 interface ChargeDetails {
     type: string;

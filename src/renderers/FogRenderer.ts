@@ -1,7 +1,8 @@
-import { TILE_SIZE, GRID_SIZE } from '../core/constants/index.js';
-import { MOTION_CONSTANTS } from '../core/constants/rendering.js';
-import { createZoneKey } from '../utils/ZoneKeyUtils.js';
-import type { TextureManager } from './TextureManager.js';
+import { TILE_SIZE, GRID_SIZE } from '../core/constants/index';
+import { MOTION_CONSTANTS } from '../core/constants/rendering';
+import { createZoneKey } from '../utils/ZoneKeyUtils';
+import type { TextureManager } from './TextureManager';
+import type { IGame } from '../core/GameContext';
 
 interface Zone {
     x: number;
@@ -15,16 +16,10 @@ interface Player {
     undergroundDepth?: number;
 }
 
-interface Game {
-    ctx: CanvasRenderingContext2D;
-    textureManager: TextureManager;
-    player: Player;
-}
-
 // Scrolling tiled fog overlay using a preloaded texture (assets/fx/fog.png).
 // The TextureLoader registers this under the key 'fx/fog' by default.
 export class FogRenderer {
-    private game: Game;
+    private game: IGame;
     private ctx: CanvasRenderingContext2D;
     private textureManager: TextureManager;
     private lastZoneKey: string | null = null;
@@ -45,7 +40,7 @@ export class FogRenderer {
     private _scaledCanvas: HTMLCanvasElement | null = null;
     private _sourceImageRef: HTMLImageElement | null = null;
 
-    constructor(game: Game) {
+    constructor(game: IGame) {
         this.game = game;
         this.ctx = game.ctx;
         this.textureManager = game.textureManager;

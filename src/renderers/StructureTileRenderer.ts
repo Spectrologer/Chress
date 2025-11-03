@@ -1,7 +1,7 @@
-import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from '../core/constants/index.js';
-import { RendererUtils } from './RendererUtils.js';
-import { renderOverlay } from './BaseRendererHelpers.js';
-import type { ImageCache, GridManager, BaseRenderer } from './types.js';
+import { TILE_COLORS, TILE_TYPES, TILE_SIZE } from '../core/constants/index';
+import { RendererUtils } from './RendererUtils';
+import { renderOverlay } from './BaseRendererHelpers';
+import type { ImageCache, GridManager, BaseRenderer } from './types';
 
 interface MultiTileHandler {
     findHousePosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;

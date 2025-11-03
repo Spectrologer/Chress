@@ -1,6 +1,6 @@
-import { BaseMoveCalculator } from './base.js';
-import { EnemySpecialActions } from '../EnemySpecialActions.js';
-import { DistanceUtils, AttackBehaviors, ChargeMoveHelpers } from './BaseAttackBehaviors.js';
+import { BaseMoveCalculator } from './base';
+import { EnemySpecialActions } from '../EnemySpecialActions';
+import { DistanceUtils, AttackBehaviors, ChargeMoveHelpers } from './BaseAttackBehaviors';
 
 export class ZardMoveCalculator extends BaseMoveCalculator {
     calculateMove(enemy, player, playerPos, grid, enemies, isSimulation = false, game = null) {

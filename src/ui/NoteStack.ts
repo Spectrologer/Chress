@@ -1,11 +1,17 @@
 // NoteStack.ts
 // Handles the UI logic for the note stack (add/remove notes)
-import { logger } from '../core/logger.ts';
-import { UI_CONSTANTS, UI_TIMING_CONSTANTS } from '../core/constants/ui.js';
+import { logger } from '../core/logger';
+import { UI_CONSTANTS, UI_TIMING_CONSTANTS } from '../core/constants/ui';
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 export class NoteStack {
     private noteIdCounter: number = 0;
     private activeNotes: Map<string, number> = new Map(); // id -> timeoutId
+    private eventManager: EventListenerManager;
+
+    constructor() {
+        this.eventManager = new EventListenerManager();
+    }
 
     addNoteToStack(text: string, imageSrc: string | null = null, timeout: number = UI_TIMING_CONSTANTS.NOTE_DEFAULT_TIMEOUT): string | null {
         try {
@@ -50,7 +56,7 @@ export class NoteStack {
             this.activeNotes.set(id, tId);
 
             // Allow manual click to dismiss sooner
-            card.addEventListener('click', () => {
+            this.eventManager.add(card, 'click', () => {
                 const existing = this.activeNotes.get(id);
                 if (existing) clearTimeout(existing);
                 removeFn();
@@ -73,5 +79,13 @@ export class NoteStack {
             setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, UI_CONSTANTS.CSS_TRANSITION_DURATION);
         }
         this.activeNotes.delete(id);
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the NoteStack instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

@@ -1,5 +1,6 @@
-import { logger } from '../core/logger.ts';
-import { safeCall, safeGet } from '../utils/SafeServiceCall.js';
+import { logger } from '../core/logger';
+import { safeCall, safeGet } from '../utils/SafeServiceCall';
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 interface GameInstance {
     player: any;
@@ -15,9 +16,11 @@ interface GameInstance {
 export class OverlayMusicToggle {
     private game: GameInstance;
     private overlayMusicPref: boolean = true; // Default music preference
+    private eventManager: EventListenerManager;
 
     constructor(game: GameInstance) {
         this.game = game;
+        this.eventManager = new EventListenerManager();
     }
 
     /**
@@ -32,7 +35,7 @@ export class OverlayMusicToggle {
                 ? overlayMusicToggle.checked
                 : true;
 
-            overlayMusicToggle.addEventListener('change', (e) => {
+            this.eventManager.add(overlayMusicToggle, 'change', (e: Event) => {
                 try {
                     this.overlayMusicPref = !!(e.target as HTMLInputElement).checked;
                 } catch (err) {
@@ -78,5 +81,13 @@ export class OverlayMusicToggle {
      */
     setMusicPreference(enabled: boolean): void {
         this.overlayMusicPref = !!enabled;
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the OverlayMusicToggle instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

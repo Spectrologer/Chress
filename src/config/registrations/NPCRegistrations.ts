@@ -2,8 +2,8 @@
  * NPCRegistrations - Register all NPCs with ContentRegistry
  */
 
-import { ContentRegistry } from '../../core/ContentRegistry.js';
-import { TILE_TYPES, SPAWN_PROBABILITIES } from '../../core/constants/index.js';
+import { ContentRegistry } from '../../core/ContentRegistry';
+import { TILE_TYPES, SPAWN_PROBABILITIES } from '../../core/constants/index';
 
 interface NPCPlacement {
     zone?: string;

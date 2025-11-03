@@ -1,7 +1,7 @@
-import { eventBus } from '../core/EventBus.ts';
-import { EventTypes } from '../core/EventTypes.ts';
-import { logger } from '../core/logger.ts';
-import type { Game } from '../core/Game.js';
+import { eventBus } from '../core/EventBus';
+import { EventTypes } from '../core/EventTypes';
+import { logger } from '../core/logger';
+import type { Game } from '../core/Game';
 
 /**
  * ZoneEventEmitter handles event emission and state finalization after zone transitions

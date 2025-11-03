@@ -21,7 +21,7 @@
  * @property {number} timestamp
  */
 
-import { deepClone } from './StateSliceManager.js';
+import { deepClone } from './StateSliceManager';
 
 export class StateHistoryManager {
   /**

@@ -1,5 +1,5 @@
-import { TILE_TYPES } from './constants/index.js';
-import { logger } from './logger.js';
+import { TILE_TYPES } from './constants/index';
+import { logger } from './logger';
 
 interface BoardData {
     size: [number, number];

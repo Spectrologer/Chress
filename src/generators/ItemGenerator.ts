@@ -1,10 +1,10 @@
-import { Sign } from '../ui/Sign.js';
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index.ts';
-import { randomInt, findValidPlacement, getGridCenter, isWithinBounds } from './GeneratorUtils.js';
-import { ZoneStateManager } from './ZoneStateManager.js';
-import { PathGenerator } from './PathGenerator.js';
-import { ContentRegistry } from '../core/ContentRegistry.js';
-import { logger } from '../core/logger.ts';
+import { Sign } from '../ui/Sign';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index';
+import { randomInt, findValidPlacement, getGridCenter, isWithinBounds } from './GeneratorUtils';
+import { ZoneStateManager } from './ZoneStateManager';
+import { PathGenerator } from './PathGenerator';
+import { ContentRegistry } from '../core/ContentRegistry';
+import { logger } from '../core/logger';
 
 export class ItemGenerator {
     constructor(gridManager, foodAssets, zoneX, zoneY, dimension, depth) {

@@ -1,9 +1,9 @@
-import { FoodEffect, WaterEffect, HeartEffect } from './effects/ConsumableEffects.js';
-import { AxeEffect, HammerEffect } from './effects/ToolEffects.js';
-import { BombEffect, BowEffect, BishopSpearEffect, HorseIconEffect } from './effects/WeaponEffects.js';
-import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect } from './effects/SpecialEffects.js';
-import type { BaseItemEffect, ItemEffectContext, ItemEffectResult, Game } from './effects/BaseItemEffect.js';
-import type { InventoryItem, ItemType } from './ItemMetadata.js';
+import { FoodEffect, WaterEffect, HeartEffect } from './effects/ConsumableEffects';
+import { AxeEffect, HammerEffect } from './effects/ToolEffects';
+import { BombEffect, BowEffect, BishopSpearEffect, HorseIconEffect } from './effects/WeaponEffects';
+import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect } from './effects/SpecialEffects';
+import type { BaseItemEffect, ItemEffectContext, ItemEffectResult, Game } from './effects/BaseItemEffect';
+import type { InventoryItem, ItemType } from './ItemMetadata';
 
 /**
  * ItemEffectStrategy - Strategy pattern for item effects

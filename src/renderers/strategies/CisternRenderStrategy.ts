@@ -1,6 +1,6 @@
-import { TileRenderStrategy } from './TileRenderStrategy.js';
-import type { BaseRenderer } from '../types.js';
-import type { StructureTileRenderer } from '../StructureTileRenderer.js';
+import { TileRenderStrategy } from './TileRenderStrategy';
+import type { BaseRenderer } from '../types';
+import type { StructureTileRenderer } from '../StructureTileRenderer';
 
 /**
  * Strategy for rendering CISTERN tiles.

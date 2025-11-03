@@ -1,11 +1,14 @@
-import { TILE_TYPES } from './constants/index.js';
-import { ServiceContainer } from './ServiceContainer.js';
-import { AnimationManager } from './DataContracts.js';
-import { GameContext } from './GameContext.js';
-import { isFloor } from '../utils/TileUtils.js';
-import { registerAllContent } from '../config/ContentRegistrations.js';
-import { initializePWA } from '../utils/pwa-register.js';
-import { preloadCriticalModules } from '../utils/LazyLoader.ts';
+import { TILE_TYPES } from './constants/index';
+import { ServiceContainer } from './ServiceContainer';
+import { AnimationManager } from './DataContracts';
+import { GameContext } from './GameContext';
+import { isFloor } from '../utils/TileUtils';
+import { registerAllContent } from '../config/ContentRegistrations';
+import { initializePWA } from '../utils/pwa-register';
+import { preloadCriticalModules } from '../utils/LazyLoader';
+
+// Re-export type for backward compatibility
+export type { IGame } from './GameContext';
 
 /**
  * Game
@@ -15,7 +18,7 @@ import { preloadCriticalModules } from '../utils/LazyLoader.ts';
  *
  * All game logic methods are inherited from GameContext.
  */
-class Game extends GameContext {
+export class Game extends GameContext {
     constructor() {
         super();
 
@@ -49,6 +52,9 @@ class Game extends GameContext {
 
     // All methods are inherited from GameContext
 }
+
+// Export type alias for compatibility
+export type { GameContext as IGame } from './GameContext';
 
 // Initialize game when the page loads
 window.addEventListener('DOMContentLoaded', async () => {

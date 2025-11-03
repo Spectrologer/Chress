@@ -1,6 +1,6 @@
 // Utility to scale text down so it fits within a container element.
 // Designed to be safe for mobile where native text sizes can cause clipping.
-import { UI_RENDERING_CONSTANTS } from '../core/constants/rendering.js';
+import { UI_RENDERING_CONSTANTS } from '../core/constants/rendering';
 
 interface FitTextOptions {
     childSelector?: string | null;

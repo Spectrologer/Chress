@@ -1,4 +1,4 @@
-import { logger } from './logger.ts';
+import { logger } from './logger';
 
 /**
  * Helper class for migrating old ZoneStateManager save data to new ZoneGenerationState.

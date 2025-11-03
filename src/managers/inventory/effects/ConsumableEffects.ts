@@ -1,5 +1,5 @@
-import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect.js';
-import type { InventoryItem, FoodItem, WaterItem, HeartItem } from '../ItemMetadata.js';
+import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
+import type { InventoryItem, FoodItem, WaterItem, HeartItem } from '../ItemMetadata';
 
 /**
  * Food, Water, and Heart effects - Simple consumables

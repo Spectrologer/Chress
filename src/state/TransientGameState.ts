@@ -1,4 +1,4 @@
-import { TransientStateCoordinator } from './managers/TransientStateCoordinator.js';
+import { TransientStateCoordinator } from './managers/TransientStateCoordinator';
 
 /**
  * TransientGameState - Centralized container for temporary game state

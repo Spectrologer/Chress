@@ -1,6 +1,6 @@
 // Zone generation and level constants
 // Import GRID_SIZE from tiles.js to avoid duplication
-import { GRID_SIZE } from './tiles.js';
+import { GRID_SIZE } from './tiles';
 
 /**
  * Zone level distance thresholds

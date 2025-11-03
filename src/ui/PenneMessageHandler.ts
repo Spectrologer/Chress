@@ -1,4 +1,4 @@
-import type { OverlayMessageHandler } from './OverlayMessageHandler.ts';
+import type { OverlayMessageHandler } from './OverlayMessageHandler';
 
 interface GameInstance {
     displayingMessageForSign?: any;

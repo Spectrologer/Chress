@@ -2,8 +2,8 @@
  * Quick test to verify generated TypeChecks.ts works correctly
  */
 
-import { TileTypeChecker, EntityTypeChecker, isStatue } from './TypeChecks.js';
-import { TILE_TYPES } from '../core/constants/index.js';
+import { TileTypeChecker, EntityTypeChecker, isStatue } from './TypeChecks';
+import { TILE_TYPES } from '../core/constants/index';
 
 console.log('🧪 Testing Generated TypeChecks.ts\n');
 
@@ -63,7 +63,7 @@ test('isTileObjectOfType() rejects wrong type', !TileTypeChecker.isTileObjectOfT
 test('isTileObjectOfType() rejects primitive', !TileTypeChecker.isTileObjectOfType(TILE_TYPES.BOMB, TILE_TYPES.BOMB));
 
 // Test backward compatibility exports
-const { isFloor, isBomb, isNPC, getTileType } = await import('./TypeChecks.js');
+const { isFloor, isBomb, isNPC, getTileType } = await import('./TypeChecks');
 test('Backward compat: isFloor()', isFloor(TILE_TYPES.FLOOR));
 test('Backward compat: isBomb()', isBomb(TILE_TYPES.BOMB));
 test('Backward compat: isNPC()', isNPC(TILE_TYPES.PENNE));

@@ -10,8 +10,8 @@
  * - Performance monitoring
  */
 
-import { store } from './StateStore.js';
-import { persistence } from './StatePersistence.js';
+import { store } from './StateStore';
+import { persistence } from './StatePersistence';
 
 export class StateDebugger {
   constructor() {

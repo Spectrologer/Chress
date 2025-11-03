@@ -1,4 +1,4 @@
-import { BaseCommand } from '../BaseCommand.js';
+import { BaseCommand } from '../BaseCommand';
 
 /**
  * RestartGameCommand - Prompts user and restarts the game

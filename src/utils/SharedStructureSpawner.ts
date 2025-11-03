@@ -1,11 +1,7 @@
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index.ts';
-import { logger } from '../core/logger.ts';
-import { isWithinGrid } from './GridUtils.js';
-
-interface Position {
-  x: number;
-  y: number;
-}
+import { TILE_TYPES, GRID_SIZE } from '../core/constants/index';
+import { logger } from '../core/logger';
+import { isWithinGrid } from './GridUtils';
+import type { Position } from '../core/Position';
 
 interface GridManager {
   getTile(x: number, y: number): number;

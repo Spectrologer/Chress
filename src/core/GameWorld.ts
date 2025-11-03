@@ -1,3 +1,7 @@
+import type { Grid } from './SharedTypes';
+import type { Enemy } from '../entities/Enemy';
+import type { Player } from '../entities/Player';
+
 /**
  * GameWorld
  *
@@ -10,14 +14,14 @@
  */
 export class GameWorld {
     // Grid and zone state
-    grid: any[][] | null;
+    grid: Grid | null;
     zones: Map<string, any>;
     specialZones: Map<string, any>;
     currentRegion: string | null;
 
     // Entities
-    player: any;
-    enemies: any[];
+    player: Player | null;
+    enemies: Enemy[];
     defeatedEnemies: Set<string>;
 
     constructor() {

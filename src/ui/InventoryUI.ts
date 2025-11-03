@@ -1,8 +1,10 @@
+import type { IGame } from '../core/GameContext';
 import { TILE_TYPES, INVENTORY_CONSTANTS, TIMING_CONSTANTS, UI_CONSTANTS, GRID_SIZE } from '../core/constants/index';
 import { logger } from '../core/logger';
 import { ItemMetadata } from '../managers/inventory/ItemMetadata';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
+import { EventListenerManager } from '../utils/EventListenerManager';
 
 interface InventoryItem {
     type: string;
@@ -30,13 +32,8 @@ interface InventoryInteractionHandler {
     handleItemUse(item: InventoryItem, options: any): void;
 }
 
-interface Game {
-    player: Player;
-    inventoryInteractionHandler: InventoryInteractionHandler;
-}
-
 export class InventoryUI {
-    private game: Game;
+    private game: IGame;
     private inventoryService: InventoryService;
     // WeakMap to track last-used timestamps per item object (survives DOM re-renders)
     private _itemLastUsed: WeakMap<InventoryItem, number>;
@@ -44,13 +41,15 @@ export class InventoryUI {
     private _activePointerIds: Set<number>;
     // Track when slots were created to ignore pointer events from previous interactions
     private _slotCreationTime: number;
+    private eventManager: EventListenerManager;
 
-    constructor(game: Game, inventoryService: InventoryService) {
+    constructor(game: IGame, inventoryService: InventoryService) {
         this.game = game;
         this.inventoryService = inventoryService;
         this._itemLastUsed = new WeakMap();
         this._activePointerIds = new Set();
         this._slotCreationTime = 0;
+        this.eventManager = new EventListenerManager();
     }
 
     updateInventoryDisplay(): void {
@@ -220,8 +219,7 @@ export class InventoryUI {
         };
 
         if (isDisablable) {
-            slot.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
+            this.eventManager.addContextMenu(slot, (e) => {
                 if (item._suppressContextMenuUntil && Date.now() < item._suppressContextMenuUntil) {
                     item._suppressContextMenuUntil = 0;
                     // If a pending toggle exists, clear it and remove temp class
@@ -239,10 +237,10 @@ export class InventoryUI {
                     return;
                 }
                 toggleDisabled();
-            });
+            }, { preventDefault: true });
         }
 
-        slot.addEventListener('click', (ev) => {
+        this.eventManager.add(slot, 'click', (ev) => {
             // Ignore click if it immediately follows a pointer handler that already triggered use
             const now = Date.now();
             if (_lastPointerTriggeredUseTime && (now - _lastPointerTriggeredUseTime) < TIMING_CONSTANTS.POINTER_ACTION_DEBOUNCE) return;
@@ -348,10 +346,12 @@ export class InventoryUI {
             clickedItem = null;
         };
 
-        slot.addEventListener('pointerdown', onPointerDown, { passive: false });
-    slot.addEventListener('pointermove', onPointerMove);
-    slot.addEventListener('pointercancel', onPointerCancel);
-    slot.addEventListener('pointerup', onPointerUp);
+        this.eventManager.addPointerSequence(slot, {
+            onDown: onPointerDown,
+            onMove: onPointerMove,
+            onCancel: onPointerCancel,
+            onUp: onPointerUp
+        }, { passive: false });
 
     // Bomb handling via unified InventoryInteractionHandler
         if (item.type === 'bomb') {
@@ -384,9 +384,19 @@ export class InventoryUI {
                     }
                 }
             };
-            slot.addEventListener('click', bombClick);
-            slot.addEventListener('pointerup', (e) => { if (!isLongPress && e.pointerType !== 'mouse') bombClick(); });
+            this.eventManager.add(slot, 'click', bombClick);
+            this.eventManager.add(slot, 'pointerup', (e: PointerEvent) => {
+                if (!isLongPress && e.pointerType !== 'mouse') bombClick();
+            });
         }
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the InventoryUI instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 
 }

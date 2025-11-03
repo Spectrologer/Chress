@@ -1,13 +1,15 @@
-import audioManager from '../../../utils/AudioManager.js';
-import { TILE_TYPES } from '../../../core/constants/index.js';
-import { isFloor } from '../../../utils/TileUtils.js';
-import type { InventoryItem } from '../ItemMetadata.js';
+import audioManager from '../../../utils/AudioManager';
+import { TILE_TYPES } from '../../../core/constants/index';
+import { isFloor } from '../../../utils/TileUtils';
+import type { IGame } from '../../../core/GameContext';
+import type { InventoryItem } from '../ItemMetadata';
+import type { Grid, Tile } from '../../../core/SharedTypes';
 
 export interface ItemEffectContext {
     fromRadial?: boolean;
     targetX?: number;
     targetY?: number;
-    data?: any;
+    data?: Record<string, any>;
 }
 
 export interface ItemEffectResult {
@@ -17,21 +19,13 @@ export interface ItemEffectResult {
     success: boolean;
 }
 
-export interface Game {
-    player: any;
-    grid: any[][];
-    uiManager?: any;
-    playerJustAttacked?: boolean;
-    transientGameState?: any;
-    inventoryService?: any;
-    bombManager?: any;
-    [key: string]: any;
-}
+// Re-export IGame as Game for backward compatibility
+export type Game = IGame;
 
 export interface RadialPatternConfig {
     onRadial?: (game: Game, item: InventoryItem) => void;
     message?: string;
-    dropTileType: number | object;
+    dropTileType: number | { type: number; [key: string]: any };
 }
 
 /**
@@ -88,7 +82,7 @@ export abstract class BaseItemEffect {
      * @param tileType - Tile type to place (can be constant or object)
      * @returns True if item was dropped successfully
      */
-    protected _dropItem(game: Game, itemType: string, tileType: number | object): boolean {
+    protected _dropItem(game: Game, itemType: string, tileType: number | { type: number; [key: string]: any }): boolean {
         const px = game.player.x;
         const py = game.player.y;
         const currentTile = game.grid[py][px];
