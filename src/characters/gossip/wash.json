@@ -1,0 +1,53 @@
+{
+  "id": "wash",
+  "name": "Wash",
+  "type": "dialogue",
+  "metadata": {
+    "description": "No filter. Points out things people would rather not notice.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/wash.png",
+    "portrait": "characters/npcs/portraits/washface.png",
+    "tileType": "WASH"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Your posture is terrible. Also, you have something in your teeth. Just thought you should know.",
+        "buttonText": "Thanks?"
+      },
+      {
+        "id": "msg_1",
+        "text": "I'm just saying what everyone else is thinking. Someone needs to point these things out.",
+        "buttonText": "Brutal honesty."
+      },
+      {
+        "id": "msg_2",
+        "text": "Is that what you're wearing? Interesting choice. Not good, just... interesting.",
+        "buttonText": "Rude."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 110
+  }
+}

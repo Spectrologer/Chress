@@ -19,7 +19,11 @@
       "Bash(npx eslint:*)",
       "Bash(find:*)",
       "Bash(for file in src/characters/gossip/*.json)",
-      "Bash(do echo \"=== $file ===\")"
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(findstr:*)",
+      "Bash(cat:*)",
+      "Bash(nul)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,53 @@
+{
+  "id": "goma",
+  "name": "Goma",
+  "type": "dialogue",
+  "metadata": {
+    "description": "Expels gas to float around awkwardly. Hardly sentient.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/goma.png",
+    "portrait": "characters/npcs/portraits/gomaface.png",
+    "tileType": "GOMA"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*floats awkwardly* ...pffft... *drifts slightly to the left*",
+        "buttonText": "..."
+      },
+      {
+        "id": "msg_1",
+        "text": "...bloop... *expels gas and wobbles upward* ...uhhh...",
+        "buttonText": "Are you okay?"
+      },
+      {
+        "id": "msg_2",
+        "text": "*bumps into wall* ...oop... *farts and floats away*",
+        "buttonText": "Yikes."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 100
+  }
+}

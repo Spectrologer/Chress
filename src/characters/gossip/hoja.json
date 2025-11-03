@@ -1,0 +1,53 @@
+{
+  "id": "hoja",
+  "name": "Hoja",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A stack of flapjacks that wants you to know the importance of breakfast.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/hoja.png",
+    "portrait": "characters/npcs/portraits/hojaface.png",
+    "tileType": "HOJA"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Breakfast is the MOST important meal of the day! You can't skip it! I'm serious!",
+        "buttonText": "Okay..."
+      },
+      {
+        "id": "msg_1",
+        "text": "Did you eat breakfast today? No? How are you even FUNCTIONING right now?!",
+        "buttonText": "I'm fine?"
+      },
+      {
+        "id": "msg_2",
+        "text": "Pancakes, waffles, flapjacks - they're all essential! Don't you DARE skip breakfast!",
+        "buttonText": "Got it."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 130
+  }
+}

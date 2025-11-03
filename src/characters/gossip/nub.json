@@ -1,0 +1,53 @@
+{
+  "id": "nub",
+  "name": "Nub",
+  "type": "dialogue",
+  "metadata": {
+    "description": "Thinks he's the chosen one.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/nub.png",
+    "portrait": "characters/npcs/portraits/nubface.png",
+    "tileType": "NUB"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "I am THE CHOSEN ONE. The prophecy speaks of me. I am destined for greatness!",
+        "buttonText": "Sure you are."
+      },
+      {
+        "id": "msg_1",
+        "text": "My powers are beyond your comprehension. I will save this realm! Just you wait!",
+        "buttonText": "Okay buddy."
+      },
+      {
+        "id": "msg_2",
+        "text": "One day everyone will see my true potential! I AM THE CHOSEN ONE! Believe it!",
+        "buttonText": "Whatever you say."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 135
+  }
+}

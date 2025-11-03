@@ -1,0 +1,53 @@
+{
+  "id": "capybara",
+  "name": "Capybara",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A chill presence radiating calm energy. Literally just a capybara, it doesn't talk.",
+    "created": "2025-11-03T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/capybara.png",
+    "portrait": "characters/npcs/portraits/capybaraface.png",
+    "tileType": "CAPYBARA"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*sits calmly, doesn't say anything*",
+        "buttonText": "*stare*"
+      },
+      {
+        "id": "msg_1",
+        "text": "*blinks slowly and continues existing peacefully*",
+        "buttonText": "*pet*"
+      },
+      {
+        "id": "msg_2",
+        "text": "*emanates inexplicable calm energy*",
+        "buttonText": "*vibe*"
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 95
+  }
+}

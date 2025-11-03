@@ -82,6 +82,35 @@ export const TILE_TYPES = {
     SLUG: 85,
     STYLET: 86,
     VELLUM: 87,
+    // New gossip NPCs
+    BIT: 88,
+    BLOCK: 89,
+    CALLI: 90,
+    CAPYBARA: 91,
+    FLEX: 92,
+    GELINKA: 93,
+    GOMA: 94,
+    HIGHLIGHT: 95,
+    HOJA: 96,
+    MIDORI: 97,
+    NUB: 98,
+    POLLY: 99,
+    PULP: 100,
+    REDAKT: 101,
+    SCRAPE: 102,
+    SCROLL: 103,
+    SHADE: 104,
+    SKRIB: 105,
+    STICK: 106,
+    WASH: 107,
+    // Additional gossip NPCs
+    DAWRG: 108,
+    DRAGON: 109,
+    DUK: 110,
+    FLUB: 111,
+    ROK: 112,
+    SNAK: 113,
+    STIK: 114,
     // Item statue tile types (stone statues of activated items)
     BOMB_STATUE: 50,
     SPEAR_STATUE: 51,
@@ -170,6 +199,27 @@ export const TILE_COLORS: Record<number, string> = {
     [TILE_TYPES.SLUG]: '#556B2F', // Dark olive green for Slug
     [TILE_TYPES.STYLET]: '#B8860B', // Dark goldenrod for Stylet
     [TILE_TYPES.VELLUM]: '#FFFAF0', // Floral white for Vellum
+    // New gossip NPC colors
+    [TILE_TYPES.BIT]: '#FFB6C1', // Light pink for Bit
+    [TILE_TYPES.BLOCK]: '#A9A9A9', // Dark gray for Block
+    [TILE_TYPES.CALLI]: '#DA70D6', // Orchid for Calli
+    [TILE_TYPES.CAPYBARA]: '#D2B48C', // Tan for Capybara
+    [TILE_TYPES.FLEX]: '#4682B4', // Steel blue for Flex
+    [TILE_TYPES.GELINKA]: '#E0FFFF', // Light cyan for Gelinka
+    [TILE_TYPES.GOMA]: '#FFE4B5', // Moccasin for Goma
+    [TILE_TYPES.HIGHLIGHT]: '#FFFF00', // Yellow for Highlight
+    [TILE_TYPES.HOJA]: '#98FB98', // Pale green for Hoja
+    [TILE_TYPES.MIDORI]: '#00FF00', // Lime for Midori
+    [TILE_TYPES.NUB]: '#D2691E', // Chocolate for Nub
+    [TILE_TYPES.POLLY]: '#F0E68C', // Khaki for Polly
+    [TILE_TYPES.PULP]: '#DEB887', // Burlywood for Pulp
+    [TILE_TYPES.REDAKT]: '#DC143C', // Crimson for Redakt
+    [TILE_TYPES.SCRAPE]: '#A0522D', // Sienna for Scrape
+    [TILE_TYPES.SCROLL]: '#F5DEB3', // Wheat for Scroll
+    [TILE_TYPES.SHADE]: '#2F4F4F', // Dark slate gray for Shade
+    [TILE_TYPES.SKRIB]: '#4B0082', // Indigo for Skrib
+    [TILE_TYPES.STICK]: '#8B4513', // Saddle brown for Stick
+    [TILE_TYPES.WASH]: '#87CEEB', // Sky blue for Wash
     // Stone statue fallbacks (grey) for item statues
     [TILE_TYPES.BOMB_STATUE]: '#A0A0A0',
     [TILE_TYPES.SPEAR_STATUE]: '#A0A0A0',
