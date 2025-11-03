@@ -5,7 +5,7 @@ import { GameContext } from './GameContext.js';
 import { isFloor } from '../utils/TileUtils.js';
 import { registerAllContent } from '../config/ContentRegistrations.js';
 import { initializePWA } from '../utils/pwa-register.js';
-import { preloadCriticalModules } from '../utils/LazyLoader.js';
+import { preloadCriticalModules } from '../utils/LazyLoader.ts';
 
 /**
  * Game

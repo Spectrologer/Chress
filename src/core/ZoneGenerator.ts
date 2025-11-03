@@ -34,13 +34,6 @@ export class ZoneGenerator {
         // Initialize item locations if they haven't been set for this session
         this.game.zoneGenState.initializeItemLocations();
     }
-    /**
-     * Find a valid spawn tile for the player that is not occupied by an enemy, item, or impassable tile.
-     * Returns {x, y} or null if none found.
-     */
-    findValidPlayerSpawn() {
-        return _findValidPlayerSpawn(this);
-    }
 
     /**
      * Checks if a tile is free for player spawn (not occupied, not impassable)

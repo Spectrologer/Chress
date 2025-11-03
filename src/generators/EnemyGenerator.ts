@@ -69,12 +69,6 @@ export class EnemyGenerator {
         }
     }
 
-    isFloorTileAvailable(x, y, zoneX, zoneY) {
-        // Need to check grid, enemy positions, items etc. - we'll inject these dependencies
-        // For now, basic check
-        return true;
-    }
-
     isTileOccupiedByEnemy(x, y) {
         for (const enemy of this.enemies) {
             if (enemy.x === x && enemy.y === y) {

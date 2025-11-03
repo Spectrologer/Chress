@@ -64,37 +64,37 @@ export function isModuleLoaded(cacheKey) {
  */
 export const LazyUI = {
     loadBarterWindow: () => lazyLoad(
-        () => import('../ui/BarterWindow.js'),
+        () => import('../ui/BarterWindow.ts'),
         'BarterWindow'
     ),
 
     loadStatueInfoWindow: () => lazyLoad(
-        () => import('../ui/StatueInfoWindow.js'),
+        () => import('../ui/StatueInfoWindow.ts'),
         'StatueInfoWindow'
     ),
 
     loadMessageLog: () => lazyLoad(
-        () => import('../ui/MessageLog.js'),
+        () => import('../ui/MessageLog.ts'),
         'MessageLog'
     ),
 
     loadRadialMenu: () => lazyLoad(
-        () => import('../ui/RadialMenu.js'),
-        'RadialMenu'
+        () => import('../ui/RadialInventoryUI.ts'),
+        'RadialInventoryUI'
     ),
 
     loadConfigPanel: () => lazyLoad(
-        () => import('../ui/ConfigPanelManager.js'),
+        () => import('../ui/ConfigPanelManager.ts'),
         'ConfigPanelManager'
     ),
 
     loadRecordsPanel: () => lazyLoad(
-        () => import('../ui/RecordsPanelManager.js'),
+        () => import('../ui/RecordsPanelManager.ts'),
         'RecordsPanelManager'
     ),
 
     loadStatsPanel: () => lazyLoad(
-        () => import('../ui/StatsPanelManager.js'),
+        () => import('../ui/StatsPanelManager.ts'),
         'StatsPanelManager'
     )
 };
@@ -122,14 +122,14 @@ export function preloadCriticalModules() {
     if ('requestIdleCallback' in window) {
         requestIdleCallback(() => {
             // Preload commonly used UI components
-            preloadModule(() => import('../ui/RadialMenu.js'), 'RadialMenu');
-            preloadModule(() => import('../ui/MessageLog.js'), 'MessageLog');
+            preloadModule(() => import('../ui/RadialInventoryUI.ts'), 'RadialInventoryUI');
+            preloadModule(() => import('../ui/MessageLog.ts'), 'MessageLog');
         }, { timeout: 2000 });
     } else {
         // Fallback for browsers without requestIdleCallback
         setTimeout(() => {
-            preloadModule(() => import('../ui/RadialMenu.js'), 'RadialMenu');
-            preloadModule(() => import('../ui/MessageLog.js'), 'MessageLog');
+            preloadModule(() => import('../ui/RadialInventoryUI.ts'), 'RadialInventoryUI');
+            preloadModule(() => import('../ui/MessageLog.ts'), 'MessageLog');
         }, 1000);
     }
 }
@@ -139,12 +139,12 @@ export function preloadCriticalModules() {
  */
 export const LazyUtils = {
     loadPathfinding: () => lazyLoad(
-        () => import('../enemy/EnemyPathfinding.js'),
+        () => import('../enemy/EnemyPathfinding.ts'),
         'EnemyPathfinding'
     ),
 
     loadLineOfSight: () => lazyLoad(
-        () => import('../utils/LineOfSightUtils.js'),
+        () => import('../utils/LineOfSightUtils.ts'),
         'LineOfSightUtils'
     )
 };

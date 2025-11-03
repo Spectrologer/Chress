@@ -6,15 +6,11 @@ interface Game {
 
 export class StatueInfoWindow {
     private game: Game;
-    private handleKeyDown: (event: KeyboardEvent) => void;
-    private handleOkayClick: () => void;
     private statueOverlay: HTMLElement | null;
     private statueWindow: HTMLElement | null;
 
     constructor(game: Game) {
         this.game = game;
-        this.handleKeyDown = this.handleKeyDown.bind(this);
-        this.handleOkayClick = this.handleOkayClick.bind(this);
 
         // Statue Info UI elements - be defensive for tests that don't include full DOM
         this.statueOverlay = document.getElementById('statueOverlay') || null;
@@ -25,11 +21,11 @@ export class StatueInfoWindow {
         // The listener is added when the window is shown and removed when hidden
     }
 
-    private handleOkayClick(): void {
+    private handleOkayClick = (): void => {
         this.hideStatueInfoWindow();
     }
 
-    private handleKeyDown(event: KeyboardEvent): void {
+    private handleKeyDown = (event: KeyboardEvent): void => {
         if (event.key === 'Escape' || ['w', 'a', 's', 'd'].includes(event.key.toLowerCase())) {
             this.hideStatueInfoWindow();
         }
