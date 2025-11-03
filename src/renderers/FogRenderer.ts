@@ -16,8 +16,8 @@ interface Player {
     undergroundDepth?: number;
 }
 
-// Scrolling tiled fog overlay using a preloaded texture (assets/fx/fog.png).
-// The TextureLoader registers this under the key 'fx/fog' by default.
+// Scrolling tiled fog overlay using a preloaded texture (assets/environment/effects/fog.png).
+// The TextureLoader registers this under the key 'fog' by default.
 export class FogRenderer {
     private game: IGame;
     private ctx: CanvasRenderingContext2D;
@@ -77,7 +77,7 @@ export class FogRenderer {
         // Try to get the fog image from the texture manager
         let fogImg: HTMLImageElement | undefined = undefined;
         try {
-            fogImg = this.textureManager && this.textureManager.getImage('fx/fog');
+            fogImg = this.textureManager && this.textureManager.getImage('fog');
         } catch (e) {
             // ignore
         }
@@ -140,8 +140,8 @@ export class FogRenderer {
         }
 
         if (this._pattern) {
-            // Apply ~3.5% overlay opacity (multiplies image alpha)
-            this.ctx.globalAlpha = 0.035;
+            // Apply ~8% overlay opacity for more visible fog effect
+            this.ctx.globalAlpha = 0.08;
 
             // Translate by -offset to create scrolling effect, then fill using the pattern
             this.ctx.translate(-this.offsetX, -this.offsetY);

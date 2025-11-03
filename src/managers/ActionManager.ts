@@ -354,13 +354,18 @@ export class ActionManager {
             { dx: 1, dy: 1 }, { dx: -1, dy: -1 }, { dx: 1, dy: -1 }, { dx: -1, dy: 1 }
         ];
 
+        // Check if we're in dimension 1 (interior) where walls should not be destroyed
+        const currentDimension = this.game.playerFacade.getZoneDimension();
+        const isInterior = currentDimension === 1;
+
         const directionSet = new Set(directions.map(dir => `${dir.dx},${dir.dy}`));
         for (const dir of directions) {
             const nx = bx + dir.dx;
             const ny = by + dir.dy;
             if (isWithinGrid(nx, ny)) {
                 const tile = gridManager.getTile(nx, ny);
-                if (isTileType(tile, TILE_TYPES.WALL) || isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY) || isTileType(tile, TILE_TYPES.GRASS)) {
+                // Only destroy walls if we're NOT in dimension 1 (interior)
+                if (!isInterior && (isTileType(tile, TILE_TYPES.WALL) || isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY) || isTileType(tile, TILE_TYPES.GRASS))) {
                     gridManager.setTile(nx, ny, (nx === 0 || nx === GRID_SIZE - 1 || ny === 0 || ny === GRID_SIZE - 1) ? TILE_TYPES.EXIT : TILE_TYPES.FLOOR);
                 }
 

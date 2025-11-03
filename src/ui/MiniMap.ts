@@ -223,11 +223,11 @@ export class MiniMap {
         const range = Math.floor(mapSize / zoneSize / 2) + 1; // Dynamically calculate range
         const currentZone = this.game.player.getCurrentZone();
 
-        // Special case for Woodcutter's Club interior: show an axe icon instead of the map
+        // Special case for Museum interior: show a pawn icon instead of the map
         if (currentZone.x === 0 && currentZone.y === 0 && currentZone.dimension === 1) {
-            const axeImage = this.game.textureManager.getImage('axe');
-                if (axeImage && axeImage.complete) {
-                    // Draw the axe icon in the center of the map canvas
+            const pawnImage = this.game.textureManager.getImage('ui/pawn');
+                if (pawnImage && pawnImage.complete) {
+                    // Draw the pawn icon in the center of the map canvas
                     // Turn off image smoothing so the scaled-up icon remains crisp
                     // Preserve previous smoothing settings and restore after draw
                     const prevSmoothing = ctx.imageSmoothingEnabled;
@@ -239,7 +239,7 @@ export class MiniMap {
                     const iconSize = mapSize * 0.7; // Make it large
                     const iconX = (mapSize - iconSize) / 2;
                     const iconY = (mapSize - iconSize) / 2;
-                    ctx.drawImage(axeImage, iconX, iconY, iconSize, iconSize);
+                    ctx.drawImage(pawnImage, iconX, iconY, iconSize, iconSize);
 
                     // Restore previous smoothing settings
                     ctx.imageSmoothingEnabled = prevSmoothing;
@@ -248,7 +248,7 @@ export class MiniMap {
                 // Fallback text if image isn't loaded
                 ctx.fillStyle = '#2F1B14';
                 ctx.font = 'bold 14px serif';
-                ctx.fillText("Woodcutter's Club", mapSize / 2, mapSize / 2);
+                ctx.fillText("Museum", mapSize / 2, mapSize / 2);
             }
             return; // Skip drawing the regular zone grid
         }

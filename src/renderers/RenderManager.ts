@@ -340,7 +340,7 @@ export class RenderManager {
         if (Number(currentZone.dimension) === 2) {
             // 1. Draw the dark overlay on top of everything drawn so far
             this.ctx.save();
-            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.65)'; // 65% black overlay
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.50)'; // 50% black overlay (balanced brightness)
             this.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
             this.ctx.restore();
 

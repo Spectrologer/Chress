@@ -79,7 +79,10 @@ export class PlayerStatsUI {
         }
 
         // Update inventory display
-        if (this.game.inventoryManager) {
+        if (this.game.inventoryUI) {
+            this.game.inventoryUI.updateInventoryDisplay();
+        } else if (this.game.inventoryManager) {
+            // Fallback for legacy compatibility
             this.game.inventoryManager.updateInventoryDisplay();
         }
     }

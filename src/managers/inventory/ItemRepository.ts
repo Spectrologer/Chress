@@ -265,6 +265,11 @@ export class ItemRepository {
      * @private
      */
     private _addToMainInventory(player: Player, item: InventoryItem): boolean {
+        // Initialize inventory if it doesn't exist
+        if (!player.inventory) {
+            player.inventory = [];
+        }
+
         // Try to stack with existing item
         if (ItemMetadata.isStackable(item.type)) {
             const existingStack = this.findStackableItem(player, item, 'main');

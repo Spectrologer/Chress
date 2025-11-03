@@ -109,8 +109,8 @@ export class UIManager {
         const mapInfo = document.getElementById('map-info');
         if (mapInfo) {
             if (zone.x === 0 && zone.y === 0 && zone.dimension === 1) {
-                // Woodcutter's Club special case
-                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Woodcutter's Club</span>`;
+                // Museum special case
+                mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Museum</span>`;
             } else if (zone.dimension === 2) {
                 // Underground
                 // Display depth (z-1, z-2, ...)

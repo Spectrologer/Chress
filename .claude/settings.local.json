@@ -45,7 +45,9 @@
       "Bash(for:*)",
       "Bash(node fix-import-extensions.js:*)",
       "Bash(node:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(git fetch:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []
