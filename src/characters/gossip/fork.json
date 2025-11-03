@@ -29,22 +29,22 @@
       {
         "id": "msg_0",
         "text": "We're nesting partners.",
-        "buttonText": "True..."
+        "buttonText": "Cute."
       },
       {
         "id": "msg_1",
         "text": "We noticed you from across the board and loved your vibe.",
-        "buttonText": "Listen..."
+        "buttonText": "Thanks?"
       },
       {
         "id": "msg_2",
         "text": "We're securely attached.",
-        "buttonText": "Good for you."
+        "buttonText": "Healthy."
       },
       {
         "id": "msg_3",
         "text": "We actually met here.",
-        "buttonText": "But..."
+        "buttonText": "Sweet."
       }
     ]
   },

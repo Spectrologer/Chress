@@ -3,7 +3,7 @@
   "name": "Silver",
   "type": "dialogue",
   "metadata": {
-    "description": "A shiny character who works with metallic pigments.",
+    "description": "A dog moon egg. From outer space. Loves daytime TV.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been in a staring contest with a painting for six days. It blinked first.",
-        "buttonText": "Okay..."
+        "text": "Came from beyond the stars. Now I'm hooked on Judge Judy. The galaxy had nothing this good.",
+        "buttonText": "Fair."
       },
       {
         "id": "msg_1",
-        "text": "My nemesis is a guy who returns shopping carts. We've never met. It's complicated.",
-        "buttonText": "Okay..."
+        "text": "My species traveled light-years for knowledge. I use it to understand soap opera plots. No regrets.",
+        "buttonText": "Nice."
       },
       {
         "id": "msg_2",
-        "text": "I tried to high-five a ghost. Went right through. We're both disappointed.",
-        "buttonText": "Okay..."
+        "text": "Earth TV is WILD. Back home we only had educational broadcasts. This? This is living.",
+        "buttonText": "Cool."
       }
     ]
   },

@@ -3,7 +3,7 @@
   "name": "Hane",
   "type": "dialogue",
   "metadata": {
-    "description": "A delicate character who represents the brush's finest hairs.",
+    "description": "An exciteable chick who speaks in haiku.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I tried to gaslight my GPS. Now it thinks we're in Belgium.",
-        "buttonText": "Okay..."
+        "text": "Oh wow oh wow oh - / Have you seen the sky today? / Colors! So many!",
+        "buttonText": "Nice haiku."
       },
       {
         "id": "msg_1",
-        "text": "Socks disappear in the dryer to a parallel dimension. I have proof. Circumstantial.",
-        "buttonText": "Okay..."
+        "text": "Friend! You are my friend! / We just met but I love you! / Five seven five YEAH!",
+        "buttonText": "Energetic."
       },
       {
         "id": "msg_2",
-        "text": "I'm fluent in sarcasm and mediocre at sincerity.",
-        "buttonText": "Okay..."
+        "text": "Everything's exciting! / Even boring things are great! / Life is amazing!",
+        "buttonText": "Calm down."
       }
     ]
   },

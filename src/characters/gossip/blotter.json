@@ -3,7 +3,7 @@
   "name": "Blotter",
   "type": "dialogue",
   "metadata": {
-    "description": "A careful character who cleans up ink spills.",
+    "description": "The slimiest fish you ever met.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been stuck in this Tuesday for four months. Nobody else seems to notice.",
-        "buttonText": "Okay..."
+        "text": "Hey friend, I got this GREAT investment opportunity. Very legitimate. Just need your life savings.",
+        "buttonText": "Uh..."
       },
       {
         "id": "msg_1",
-        "text": "The ocean called. They want their water back. I said no. Hung up.",
-        "buttonText": "Okay..."
+        "text": "Trust me, I'm basically a financial advisor. The slime? That's just... premium moisturizer.",
+        "buttonText": "Sure..."
       },
       {
         "id": "msg_2",
-        "text": "My houseplant judges me. It's not even alive anymore. Still judging.",
-        "buttonText": "Okay..."
+        "text": "Why does everyone keep calling me 'slimy'? I prefer 'morally lubricated.' Much classier.",
+        "buttonText": "Whatever."
       }
     ]
   },

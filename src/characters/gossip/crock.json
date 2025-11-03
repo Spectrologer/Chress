@@ -3,7 +3,7 @@
   "name": "Crock",
   "type": "dialogue",
   "metadata": {
-    "description": "A sturdy character who stores valuable supplies.",
+    "description": "A pots (sic) sign who signals people to pots.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been holding my breath for three years. Forgot why I started.",
+        "text": "POTS! POTS THIS WAY! Got your pots right here! Best pots in the realm!",
         "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My autobiography is three words: \"It Gets Worse.\" Bestseller.",
-        "buttonText": "Okay..."
+        "text": "You need a pot? I know where the pots are. I'm the POT SIGN. It's literally my job.",
+        "buttonText": "Got it."
       },
       {
         "id": "msg_2",
-        "text": "I'm learning to juggle invisible balls. Going great. I think.",
-        "buttonText": "Okay..."
+        "text": "Follow the arrow. Leads to pots. Don't ask me what's IN the pots. Not my department.",
+        "buttonText": "Sure."
       }
     ]
   },

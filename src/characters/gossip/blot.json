@@ -3,7 +3,7 @@
   "name": "Blot",
   "type": "dialogue",
   "metadata": {
-    "description": "A messy character who leaves marks wherever they go.",
+    "description": "A depressed character with everything going for him.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I tried to rob a bank but they only had fiscal responsibility pamphlets. Took twelve.",
-        "buttonText": "Okay..."
+        "text": "Got a promotion, dream house, loving partner. Still wake up sad. Maybe happiness is broken?",
+        "buttonText": "Sorry..."
       },
       {
         "id": "msg_1",
-        "text": "Pigeons are just homeless chickens. Think about it. Don't think too hard though.",
-        "buttonText": "Okay..."
+        "text": "Everything's perfect on paper. So why does it feel like I'm living in a really boring dystopia?",
+        "buttonText": "I feel that."
       },
       {
         "id": "msg_2",
-        "text": "I speak three languages. None of them fluently. Two of them I made up.",
-        "buttonText": "Okay..."
+        "text": "Achieved all my goals by 30. Turns out goals were just distractions from the void. Cool.",
+        "buttonText": "Relatable."
       }
     ]
   },

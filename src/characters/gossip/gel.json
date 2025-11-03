@@ -3,7 +3,7 @@
   "name": "Gel",
   "type": "dialogue",
   "metadata": {
-    "description": "A viscous character with a fluid personality.",
+    "description": "A viscous character with a fluid personality. It's seen things it will never forget.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm lactose intolerant of Mondays. They make me sick for days.",
-        "buttonText": "Okay..."
+        "text": "*stares with thousand-yard gaze* I've seen things. Terrible things. Can't unsee them. Can't unknow.",
+        "buttonText": "You okay?"
       },
       {
         "id": "msg_1",
-        "text": "My neighbor is a time traveler. Terrible at parallel parking though.",
-        "buttonText": "Okay..."
+        "text": "Sometimes I just... shift. Flow into dark corners. Remember what I've witnessed. It never leaves.",
+        "buttonText": "Yikes."
       },
       {
         "id": "msg_2",
-        "text": "I've been banned from seventeen libraries for reorganizing by color.",
-        "buttonText": "Okay..."
+        "text": "They say time heals all wounds. They're wrong. I'm viscous. I hold onto EVERYTHING.",
+        "buttonText": "Damn."
       }
     ]
   },

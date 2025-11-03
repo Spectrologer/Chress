@@ -17,7 +17,9 @@
       "Bash(done)",
       "Bash(sort:*)",
       "Bash(npx eslint:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(for file in src/characters/gossip/*.json)",
+      "Bash(do echo \"=== $file ===\")"
     ],
     "deny": [],
     "ask": []

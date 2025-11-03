@@ -3,7 +3,7 @@
   "name": "Cap",
   "type": "dialogue",
   "metadata": {
-    "description": "A character who keeps everything sealed and protected.",
+    "description": "A poison mushroom who tells sweet lies",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I tried to return a boomerang once. Kept coming back. We live together now.",
-        "buttonText": "Okay..."
+        "text": "You look AMAZING today. Seriously, you're glowing. Has anyone told you that? They should.",
+        "buttonText": "Thanks?"
       },
       {
         "id": "msg_1",
-        "text": "Dolphins are just wet dogs with better PR. Change my mind.",
-        "buttonText": "Okay..."
+        "text": "I would NEVER poison anyone. These spots? Fashion choice. Very trendy in the mushroom community.",
+        "buttonText": "Sure..."
       },
       {
         "id": "msg_2",
-        "text": "I invested all my money in invisible socks. Can't find them anywhere.",
-        "buttonText": "Okay..."
+        "text": "Trust me, eating me would be totally fine. I'm basically a vitamin. A delicious, not-at-all-deadly vitamin.",
+        "buttonText": "No thanks."
       }
     ]
   },

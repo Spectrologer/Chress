@@ -3,7 +3,7 @@
   "name": "Quill",
   "type": "dialogue",
   "metadata": {
-    "description": "A classic character who represents traditional writing with feather pens.",
+    "description": "A colorful bird who loves high finance.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been preparing for a zombie apocalypse since 2003. Zombies are late. Rude.",
-        "buttonText": "Okay..."
+        "text": "Diversified my portfolio this morning. Seventeen different seeds. Very bullish on sunflower futures.",
+        "buttonText": "Smart."
       },
       {
         "id": "msg_1",
-        "text": "My shower has better acoustics than Carnegie Hall. Equally expensive too.",
-        "buttonText": "Okay..."
+        "text": "The market's volatile today. By market I mean the birdbath economy. Someone spilled. Catastrophic.",
+        "buttonText": "Rough."
       },
       {
         "id": "msg_2",
-        "text": "I'm writing a self-help book titled 'Give Up: It's Fine.' Pre-orders are strong.",
-        "buttonText": "Okay..."
+        "text": "Hedge funds? I literally invest in hedges. It's about location, location, nesting location.",
+        "buttonText": "Nice."
       }
     ]
   },

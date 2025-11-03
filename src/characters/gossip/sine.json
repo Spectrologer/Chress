@@ -3,7 +3,7 @@
   "name": "Sine",
   "type": "dialogue",
   "metadata": {
-    "description": "A wavy character who follows sinuous patterns.",
+    "description": "A sign, but he has way cooler things to say than other signs.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm learning Morse code to communicate with my blinking ceiling light.",
-        "buttonText": "Okay..."
+        "text": "Yeah, I'm a sign. But I don't do that boring 'exit this way' stuff. I've got PERSONALITY.",
+        "buttonText": "Sure."
       },
       {
         "id": "msg_1",
-        "text": "Sandwiches are just bread-based hostage situations for ingredients.",
-        "buttonText": "Okay..."
+        "text": "Other signs? Basic. Me? I bring VIBES. I bring ENERGY. I'm the sign people remember.",
+        "buttonText": "Cool."
       },
       {
         "id": "msg_2",
-        "text": "I've been training for a marathon. The Netflix kind. Very competitive.",
-        "buttonText": "Okay..."
+        "text": "You want directions? Ask someone else. I'm here to provide INSIGHT. To make you THINK.",
+        "buttonText": "Alright."
       }
     ]
   },

@@ -3,7 +3,7 @@
   "name": "Vellum",
   "type": "dialogue",
   "metadata": {
-    "description": "A fine character made from calf skin parchment.",
+    "description": "A blue wisp made of smoke from illicit substances.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been moonwalking everywhere for two months. Can't stop. Won't stop.",
-        "buttonText": "Okay..."
+        "text": "*drifts lazily* Whoa, man. Everything's connected. You, me, the universe. It's all just... vibes.",
+        "buttonText": "Sure..."
       },
       {
         "id": "msg_1",
-        "text": "My therapist retired after our third session. I take that as a compliment.",
-        "buttonText": "Okay..."
+        "text": "*swirls gently* Time is a construct. Also I forgot what we were talking about. What were we talking about?",
+        "buttonText": "Uh-huh."
       },
       {
         "id": "msg_2",
-        "text": "I'm hosting a seminar on how to avoid seminars. It's mandatory.",
-        "buttonText": "Okay..."
+        "text": "*floats aimlessly* I'm literally made of smoke. How wild is that? Like, LITERALLY. Mind. Blown.",
+        "buttonText": "Yeah."
       }
     ]
   },

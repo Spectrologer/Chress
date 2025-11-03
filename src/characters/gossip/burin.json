@@ -3,7 +3,7 @@
   "name": "Burin",
   "type": "dialogue",
   "metadata": {
-    "description": "An engraver who carves intricate designs.",
+    "description": "A suspicious mantis with nothing to hide.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been screaming into the void for years. The void just screamed back. We're dating now.",
+        "text": "Nothing to hide here. Just a normal mantis doing normal mantis things. Why are you looking at me?",
         "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Did you know penguins have knees? This has ruined my entire worldview.",
-        "buttonText": "Okay..."
+        "text": "That bag? It's definitely not full of suspicious items. It's... groceries. Normal groceries.",
+        "buttonText": "Sure."
       },
       {
         "id": "msg_2",
-        "text": "I started a business selling dehydrated water. Just add water!",
-        "buttonText": "Okay..."
+        "text": "I'm not doing anything illegal. You can't prove otherwise. Wait, why would I say that? Forget it.",
+        "buttonText": "Right..."
       }
     ]
   },

@@ -3,7 +3,7 @@
   "name": "Scritch",
   "type": "dialogue",
   "metadata": {
-    "description": "A scratchy character whose writing makes distinctive sounds.",
+    "description": "A kangaroo mouse creature who's wanted in five states for crimes he won't say.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I trained a goldfish to fetch. Took four years. Worth it? No.",
+        "text": "*glances around nervously* You didn't see me. I wasn't here. This conversation never happened.",
         "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My toaster has trust issues. Won't commit to a darkness setting.",
-        "buttonText": "Okay..."
+        "text": "The crimes? Can't talk about 'em. Attorney said keep quiet. Five states though. That's impressive, right?",
+        "buttonText": "I guess?"
       },
       {
         "id": "msg_2",
-        "text": "I'm writing a horror novel about spreadsheets. The pivot tables... terrifying.",
-        "buttonText": "Okay..."
+        "text": "Look, I'm not saying I did anything. But hypothetically, those cheese wheels had it coming.",
+        "buttonText": "Sure..."
       }
     ]
   },

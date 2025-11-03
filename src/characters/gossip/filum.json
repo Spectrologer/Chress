@@ -3,7 +3,7 @@
   "name": "Filum",
   "type": "dialogue",
   "metadata": {
-    "description": "A thread-like character who connects things together.",
+    "description": "A nematode who's super curious about you.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I tried yoga once. Got stuck in downward dog. Fire department came.",
-        "buttonText": "Okay..."
+        "text": "Ooh, hi! Where are you from? What do you do? Do you like it here? Tell me EVERYTHING!",
+        "buttonText": "Um..."
       },
       {
         "id": "msg_1",
-        "text": "Trees are just violent broccoli trying to escape the ground.",
+        "text": "Wait wait wait - what's your favorite color? Mine changes hourly. Currently it's... asking you questions!",
         "buttonText": "Okay..."
       },
       {
         "id": "msg_2",
-        "text": "I'm writing a cookbook for people who can't cook. It's one page. Says \"Don't.\"",
-        "buttonText": "Okay..."
+        "text": "You're SO interesting! Have you always been this interesting? What's your backstory? Can we be friends?",
+        "buttonText": "Sure?"
       }
     ]
   },

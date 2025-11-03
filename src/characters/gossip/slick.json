@@ -3,7 +3,7 @@
   "name": "Slick",
   "type": "dialogue",
   "metadata": {
-    "description": "A smooth character whose ink flows effortlessly.",
+    "description": "An otter reminiscent of a clown who gets no respect.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I tried to cancel my gym membership. They said I never had one. Checkmate.",
-        "buttonText": "Okay..."
+        "text": "*does pratfall* See? Comedy GOLD! Nobody laughs. Tough crowd. Every crowd is tough.",
+        "buttonText": "Oof."
       },
       {
         "id": "msg_1",
-        "text": "Chameleons are just indecisive lizards with commitment issues.",
-        "buttonText": "Okay..."
+        "text": "I got the makeup, the act, the whole package. But no respect. Story of my life, pal.",
+        "buttonText": "Sorry."
       },
       {
         "id": "msg_2",
-        "text": "I'm opening a store that sells regret. Business is booming.",
-        "buttonText": "Okay..."
+        "text": "*honks nose sadly* Even my horn sounds depressing. Can't catch a break in this business.",
+        "buttonText": "Rough."
       }
     ]
   },

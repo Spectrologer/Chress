@@ -3,7 +3,7 @@
   "name": "Stylet",
   "type": "dialogue",
   "metadata": {
-    "description": "A pointed character used for ancient writing on wax tablets.",
+    "description": "A cactus who has 4 weeks to live and is uncomfortably positive about it.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I taught my parrot to say 'existential crisis.' Now we're both having one.",
-        "buttonText": "Okay..."
+        "text": "Four weeks left! Isn't that AMAZING? So much to do! Every moment is precious! I'm SO ALIVE!",
+        "buttonText": "Um..."
       },
       {
         "id": "msg_1",
-        "text": "My vacuum cleaner has performance anxiety. Only works when nobody's watching.",
-        "buttonText": "Okay..."
+        "text": "Death? Natural part of life! I'm THRILLED about it! This is great! Everything's GREAT!",
+        "buttonText": "You okay?"
       },
       {
         "id": "msg_2",
-        "text": "I'm starting a religion based on naps. First commandment: Thou shalt snooze.",
-        "buttonText": "Okay..."
+        "text": "Why be sad when you can be OPTIMISTIC about your inevitable demise? It's all about PERSPECTIVE!",
+        "buttonText": "Concerning."
       }
     ]
   },

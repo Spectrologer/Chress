@@ -351,7 +351,8 @@ export class Sign {
                 voicePitch: characterData.audio?.voicePitch,
                 currentMessageIndex: 0,
                 cycleMode: characterData.interaction.cycleMode || 'loop',
-                messages: characterData.interaction.dialogueTree.map(entry => entry.text)
+                messages: characterData.interaction.dialogueTree.map(entry => entry.text),
+                buttonTexts: characterData.interaction.dialogueTree.map(entry => entry.buttonText || null)
             };
 
             // Cache the dialogue data if game instance is provided

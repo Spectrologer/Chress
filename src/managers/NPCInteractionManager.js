@@ -44,6 +44,7 @@ export class NPCInteractionManager {
                 const npcData = Sign.getDialogueNpcData(characterData.id, this.game);
                 if (npcData) {
                     const message = npcData.messages[npcData.currentMessageIndex];
+                    const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
                     const signData = { message: message, type: 'npc' };
 
                     // Set both old and new state for compatibility
@@ -57,7 +58,8 @@ export class NPCInteractionManager {
                         type: 'sign',
                         message: message,
                         portrait: npcData.portrait,
-                        name: npcData.name
+                        name: npcData.name,
+                        buttonText: buttonText
                     });
 
                     // Advance dialogue based on cycle mode
@@ -134,6 +136,7 @@ export class NPCInteractionManager {
                     const npcData = Sign.getDialogueNpcData(npcName, this.game);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
+                        const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
                         const signData = { message: message, type: 'npc' };
 
                         // Set both old and new state for compatibility
@@ -147,7 +150,8 @@ export class NPCInteractionManager {
                             type: 'sign',
                             message: message,
                             portrait: npcData.portrait,
-                            name: npcData.name
+                            name: npcData.name,
+                            buttonText: buttonText
                         });
 
                         // Advance dialogue based on cycle mode
@@ -213,6 +217,7 @@ export class NPCInteractionManager {
                     const npcData = Sign.getDialogueNpcData(npcName, this.game);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
+                        const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
                         const signData = { message: message, type: 'npc' };
 
                         // Set both old and new state for compatibility
@@ -226,7 +231,8 @@ export class NPCInteractionManager {
                             type: 'sign',
                             message: message,
                             portrait: npcData.portrait,
-                            name: npcData.name
+                            name: npcData.name,
+                            buttonText: buttonText
                         });
 
                         // Advance dialogue based on cycle mode

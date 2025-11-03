@@ -3,7 +3,7 @@
   "name": "Cinnabar",
   "type": "dialogue",
   "metadata": {
-    "description": "A character who works with vibrant red pigments.",
+    "description": "A repitile beast who loves tanning and japanese street fashion.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I taught my refrigerator to beatbox. It only does it when I'm not home.",
-        "buttonText": "Okay..."
+        "text": "Just got back from Harajuku. Well, the pictures anyway. My UV lamp setup is SICK though.",
+        "buttonText": "Nice."
       },
       {
         "id": "msg_1",
-        "text": "Time is a flat circle. I ironed it myself. Took three hours.",
-        "buttonText": "Okay..."
+        "text": "Check out this decora-kei look. The platform boots are fake but the vibes are real, you know?",
+        "buttonText": "Cute."
       },
       {
         "id": "msg_2",
-        "text": "I'm opening a restaurant that only serves room temperature water. Five stars.",
-        "buttonText": "Okay..."
+        "text": "Tanning AND fashion? It's called multitasking, sweaty. I mean sweetie. Actually both work.",
+        "buttonText": "Sure."
       }
     ]
   },

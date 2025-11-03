@@ -3,7 +3,7 @@
   "name": "Plume",
   "type": "dialogue",
   "metadata": {
-    "description": "An elegant character with flowing feathered writing tools.",
+    "description": "A duck sign signaling people to duck.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I speak to plants. They asked me to stop. I respect their boundaries.",
-        "buttonText": "Okay..."
+        "text": "DUCK! Quick, duck! Oh wait, that's just my name. Awkward. But seriously, stay alert out there.",
+        "buttonText": "Will do."
       },
       {
         "id": "msg_1",
-        "text": "My life coach is a motivational poster that fell off the wall. Still inspires me.",
-        "buttonText": "Okay..."
+        "text": "I'm the DUCK sign. My whole purpose is telling people to duck. It's very important work.",
+        "buttonText": "Got it."
       },
       {
         "id": "msg_2",
-        "text": "I'm allergic to common sense. Doctor says it's terminal stupidity.",
-        "buttonText": "Okay..."
+        "text": "Low clearance ahead! I mean, probably. I'm a sign, I don't actually know. Just duck to be safe.",
+        "buttonText": "Thanks."
       }
     ]
   },

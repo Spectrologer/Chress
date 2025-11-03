@@ -3,7 +3,7 @@
   "name": "Gouache",
   "type": "dialogue",
   "metadata": {
-    "description": "An opaque painter who works with thick, vibrant colors.",
+    "description": "An pretentious melon.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I trained my alarm clock to lie to me. Now we both sleep in.",
-        "buttonText": "Okay..."
+        "text": "Ah, you wouldn't understand my artistic process. It's very... complex. Very misunderstood.",
+        "buttonText": "Uh-huh."
       },
       {
         "id": "msg_1",
-        "text": "Clouds are just sky mistakes that we pretend to like.",
-        "buttonText": "Okay..."
+        "text": "I only consume artisanal water. Sourced from a specific cloud. You've probably never heard of it.",
+        "buttonText": "Sure."
       },
       {
         "id": "msg_2",
-        "text": "I'm starting a support group for people who are too well-adjusted. Empty so far.",
-        "buttonText": "Okay..."
+        "text": "My therapist says I'm 'difficult.' I prefer 'discerning.' They clearly lack refinement.",
+        "buttonText": "Okay."
       }
     ]
   },

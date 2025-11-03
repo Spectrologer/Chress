@@ -3,7 +3,7 @@
   "name": "Kraft",
   "type": "dialogue",
   "metadata": {
-    "description": "A sturdy character made of strong paper materials.",
+    "description": "A mysterious creature wearing a paper bag. Suspisicous of the government.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been photosynthesizing wrong my entire life. I'm not even a plant.",
+        "text": "They're watching. Always watching. The bag? Protection from their mind-reading satellites.",
         "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "My dentist is a conspiracy theorist. Says teeth aren't real. Still goes to work.",
-        "buttonText": "Okay..."
+        "text": "Don't trust the signs. Especially the official ones. That's how they GET you.",
+        "buttonText": "Sure."
       },
       {
         "id": "msg_2",
-        "text": "I have a PhD in procrastination. Will get the diploma later.",
-        "buttonText": "Okay..."
+        "text": "Wake up! Open your eyes! Or... keep them closed. That's probably safer actually.",
+        "buttonText": "Right."
       }
     ]
   },

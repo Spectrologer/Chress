@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been practicing telekinesis for six years. Still can't move the salt shaker.",
-        "buttonText": "Okay..."
+        "text": "The stars whisper secrets to those who listen... though mostly they complain about light pollution.",
+        "buttonText": "Mystical..."
       },
       {
         "id": "msg_1",
-        "text": "My therapist is a sentient cloud. Very insightful, terrible at keeping appointments.",
-        "buttonText": "Okay..."
+        "text": "Your constellation suggests great fortune. Or maybe just indigestion. The celestial signs are unclear.",
+        "buttonText": "I see."
       },
       {
         "id": "msg_2",
-        "text": "I'm starting a religion based on expired coupons. We have three followers.",
-        "buttonText": "Okay..."
+        "text": "I've mapped every star in the sky. Turns out most of them have already burned out. Very metaphorical.",
+        "buttonText": "Deep."
       }
     ]
   },

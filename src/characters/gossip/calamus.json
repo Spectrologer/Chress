@@ -3,7 +3,7 @@
   "name": "Calamus",
   "type": "dialogue",
   "metadata": {
-    "description": "A traditional scribe who uses reed pens.",
+    "description": "An ancient dragon who's really down to earth.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm allergic to Wednesdays. Breaks out in existential dread every week.",
-        "buttonText": "Okay..."
+        "text": "Been around for eons. Honestly? Just happy to be here. Nice weather today, right?",
+        "buttonText": "Yeah."
       },
       {
         "id": "msg_1",
-        "text": "My shadow filed for divorce. Said I was too two-dimensional.",
-        "buttonText": "Okay..."
+        "text": "Sure, I could destroy kingdoms with my breath. But have you tried just... talking things out?",
+        "buttonText": "Fair."
       },
       {
         "id": "msg_2",
-        "text": "I collect belly button lint from famous people. It's worth nothing. I have jars.",
-        "buttonText": "Okay..."
+        "text": "Ancient wisdom? Just treat people nice and stay hydrated. That's pretty much it.",
+        "buttonText": "Simple."
       }
     ]
   },

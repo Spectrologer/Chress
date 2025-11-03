@@ -3,7 +3,7 @@
   "name": "Pluma",
   "type": "dialogue",
   "metadata": {
-    "description": "A feathered character who represents quill writing.",
+    "description": "A vegetable in active decomposition.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been waiting for my Hogwarts letter for thirty-eight years. Still checking.",
-        "buttonText": "Okay..."
+        "text": "*squelch* Don't mind the smell. That's just my essence... returning to the earth. Very natural.",
+        "buttonText": "Ew."
       },
       {
         "id": "msg_1",
-        "text": "Mitochondria is the powerhouse of the cell. This is all I remember from school.",
-        "buttonText": "Okay..."
+        "text": "I'm technically composting while we speak. Circle of life and all that. *drips slightly*",
+        "buttonText": "Gross."
       },
       {
         "id": "msg_2",
-        "text": "I'm hosting a party for introverts. Nobody's coming. Perfect.",
-        "buttonText": "Okay..."
+        "text": "Used to be firm. Had structure. Now I'm basically sentient mush. Still got personality though!",
+        "buttonText": "Sure..."
       }
     ]
   },

@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "You saw nothing.",
-        "buttonText": "Right"
+        "text": "Every stroke tells a story. This one says 'existential dread in cerulean.' Beautiful, no?",
+        "buttonText": "Sure."
       },
       {
         "id": "msg_1",
-        "text": "*Bush Sounds*",
-        "buttonText": "..."
+        "text": "I don't just paint landscapes. I paint EMOTIONS. This canvas is feeling very Tuesday.",
+        "buttonText": "Artsy."
       },
       {
         "id": "msg_2",
-        "text": "I'm writing an autobiography in second person. You were born in 1987...",
-        "buttonText": "Okay..."
+        "text": "My magnum opus? A single dot. Took me seven years. The critics don't understand genius.",
+        "buttonText": "Deep."
       }
     ]
   },

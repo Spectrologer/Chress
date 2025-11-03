@@ -3,7 +3,7 @@
   "name": "Slug",
   "type": "dialogue",
   "metadata": {
-    "description": "A slow and steady character who takes their time.",
+    "description": "A banana slug who wants to share the flavor.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've been arguing with a scarecrow for three hours. We're both winning.",
-        "buttonText": "Okay..."
+        "text": "Wanna taste? I'm banana-flavored! No really, try it! It's what I'm here for! Come on!",
+        "buttonText": "No thanks."
       },
       {
         "id": "msg_1",
-        "text": "My favorite hobby is pretending to understand the stock market.",
-        "buttonText": "Okay..."
+        "text": "Everyone's curious but nobody commits. Just one lick! I promise it's... well, it's an experience!",
+        "buttonText": "I'm good."
       },
       {
         "id": "msg_2",
-        "text": "I'm writing an opera about expired yogurt. Critics call it 'bold.'",
-        "buttonText": "Okay..."
+        "text": "My whole existence is sharing this flavor and everyone's too cowardly! TASTE THE SLUG!",
+        "buttonText": "Hard pass."
       }
     ]
   },

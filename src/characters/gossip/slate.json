@@ -3,7 +3,7 @@
   "name": "Slate",
   "type": "dialogue",
   "metadata": {
-    "description": "A solid character who serves as a writing surface.",
+    "description": "A little rock who wants to be a boulder some day.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -28,18 +28,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I've convinced three people that I can read minds. I can't. They believe harder now.",
-        "buttonText": "Okay..."
+        "text": "I'm gonna be a boulder one day. Just gotta believe. And maybe accumulate some sediment.",
+        "buttonText": "You got this."
       },
       {
         "id": "msg_1",
-        "text": "My ceiling fan is plotting against me. Circumstantial evidence, strong vibes.",
-        "buttonText": "Okay..."
+        "text": "Been working on my size. Growing slow but steady. It's all about the long game, you know?",
+        "buttonText": "Nice."
       },
       {
         "id": "msg_2",
-        "text": "I'm fluent in gibberish and struggling with English.",
-        "buttonText": "Okay..."
+        "text": "Other rocks laugh, but I have DREAMS. Big dreams. Boulder-sized dreams. I'll show them all.",
+        "buttonText": "Inspiring."
       }
     ]
   },
