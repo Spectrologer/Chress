@@ -1,9 +1,9 @@
 /**
  * Test suite for event bus refactoring of input system
  */
-import { PathfindingController } from '../controllers/PathfindingController.js';
-import { InputController } from '../controllers/InputController.js';
-import { KeyboardHandler } from '../controllers/KeyboardHandler.js';
+import { PathfindingController } from '../controllers/PathfindingController.ts';
+import { InputController } from '../controllers/InputController.ts';
+import { KeyboardHandler } from '../controllers/KeyboardHandler.ts';
 import { eventBus } from '@core/EventBus.js';
 import { EventTypes } from '@core/EventTypes.js';
 import { TILE_TYPES } from '@core/constants/index.js';

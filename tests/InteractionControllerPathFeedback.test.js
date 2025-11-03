@@ -1,4 +1,4 @@
-import { InputController } from '../controllers/InputController.js';
+import { InputController } from '../controllers/InputController.ts';
 import { eventBus } from '@core/EventBus.js';
 import { EventTypes } from '@core/EventTypes.js';
 

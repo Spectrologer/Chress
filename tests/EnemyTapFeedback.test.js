@@ -2,8 +2,8 @@
  * Tests for enemy tap feedback and attack range visualization
  */
 
-import { GestureDetector } from '../controllers/GestureDetector.js';
-import { InputCoordinator } from '../controllers/InputCoordinator.js';
+import { GestureDetector } from '../controllers/GestureDetector.ts';
+import { InputCoordinator } from '../controllers/InputCoordinator.ts';
 import { Position } from '@core/Position.js';
 
 describe('Enemy tap feedback', () => {
