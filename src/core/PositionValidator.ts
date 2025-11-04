@@ -11,16 +11,13 @@
  * All methods are static and work with position-like objects {x, y}.
  */
 
-import { GRID_SIZE } from './constants/index.ts';
-
-export interface Coordinates {
-  x: number;
-  y: number;
-}
-
-export type Grid<T = any> = T[][];
-export type TileValidator<T = any> = (tile: T) => boolean;
-export type PositionPredicate = (pos: Coordinates) => boolean;
+import { GRID_SIZE } from './constants/index';
+import type {
+  Coordinates,
+  Grid,
+  TileValidator,
+  PositionPredicate
+} from './PositionTypes';
 
 export class PositionValidator {
   // ==========================================

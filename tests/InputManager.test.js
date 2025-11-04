@@ -1,5 +1,5 @@
-import { InputManager } from '@managers/InputManager.js';
-import { TILE_TYPES, GRID_SIZE, INPUT_CONSTANTS } from '@core/constants/index.js';
+import { InputManager } from '@managers/InputManager';
+import { TILE_TYPES, GRID_SIZE, INPUT_CONSTANTS } from '@core/constants/index';
 
 describe('InputManager', () => {
   let inputManager;
@@ -9,20 +9,20 @@ describe('InputManager', () => {
 
   beforeEach(() => {
     mockPlayer = {
-      getPosition: jest.fn().mockReturnValue({ x: 1, y: 1 }),
-      getPositionObject: jest.fn().mockReturnValue({ x: 2, y: 1 }),
-      isDead: jest.fn().mockReturnValue(false),
-      isWalkable: jest.fn().mockReturnValue(true),
-      move: jest.fn(),
-      startAttackAnimation: jest.fn(),
-      startBump: jest.fn(),
-      takeDamage: jest.fn(),
-      setPosition: jest.fn(),
-      setInteractOnReach: jest.fn(),
-      clearInteractOnReach: jest.fn(),
+      getPosition: vi.fn().mockReturnValue({ x: 1, y: 1 }),
+      getPositionObject: vi.fn().mockReturnValue({ x: 2, y: 1 }),
+      isDead: vi.fn().mockReturnValue(false),
+      isWalkable: vi.fn().mockReturnValue(true),
+      move: vi.fn(),
+      startAttackAnimation: vi.fn(),
+      startBump: vi.fn(),
+      takeDamage: vi.fn(),
+      setPosition: vi.fn(),
+      setInteractOnReach: vi.fn(),
+      clearInteractOnReach: vi.fn(),
       interactOnReach: null,
-      getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
-      addPoints: jest.fn(),
+      getCurrentZone: vi.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
+      addPoints: vi.fn(),
       x: 2,
       y: 1,
       stats: {
@@ -31,22 +31,22 @@ describe('InputManager', () => {
     };
 
     mockInteractionManager = {
-      handleTap: jest.fn().mockReturnValue(false)
+      handleTap: vi.fn().mockReturnValue(false)
     };
 
     mockGame = {
       player: mockPlayer,
       interactionManager: mockInteractionManager,
-      canvas: { getBoundingClientRect: jest.fn().mockReturnValue({ left: 0, top: 0, width: 360, height: 360 }) },
+      canvas: { getBoundingClientRect: vi.fn().mockReturnValue({ left: 0, top: 0, width: 360, height: 360 }) },
       grid: Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)),
       gridManager: {
-        getTile: jest.fn((x, y) => {
+        getTile: vi.fn((x, y) => {
           if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) {
             return null;
           }
           return mockGame.grid[y][x];
         }),
-        setTile: jest.fn()
+        setTile: vi.fn()
       },
       enemies: [],
       pendingCharge: null,
@@ -57,18 +57,18 @@ describe('InputManager', () => {
       displayingMessageForSign: null,
       justEnteredZone: false,
       isPlayerTurn: true,
-      hideOverlayMessage: jest.fn(),
-      transitionToZone: jest.fn(),
-      handleEnemyMovements: jest.fn(),
-      checkCollisions: jest.fn(),
-      checkItemPickup: jest.fn(),
-      updatePlayerPosition: jest.fn(),
-      updatePlayerStats: jest.fn(),
-      startEnemyTurns: jest.fn(),
-      incrementBombActions: jest.fn(),
+      hideOverlayMessage: vi.fn(),
+      transitionToZone: vi.fn(),
+      handleEnemyMovements: vi.fn(),
+      checkCollisions: vi.fn(),
+      checkItemPickup: vi.fn(),
+      updatePlayerPosition: vi.fn(),
+      updatePlayerStats: vi.fn(),
+      startEnemyTurns: vi.fn(),
+      incrementBombActions: vi.fn(),
       combatManager: {
-        addPointAnimation: jest.fn(),
-        handlePlayerAttack: jest.fn().mockImplementation((enemy, playerPos) => {
+        addPointAnimation: vi.fn(),
+        handlePlayerAttack: vi.fn().mockImplementation((enemy, playerPos) => {
           // Mock the behavior of handlePlayerAttack
           mockPlayer.startAttackAnimation();
           enemy.takeDamage(999);
@@ -77,7 +77,7 @@ describe('InputManager', () => {
           mockGame.defeatedEnemies.add(enemy.id);
           mockGame.enemies = mockGame.enemies.filter(e => e !== enemy);
         }),
-        defeatEnemy: jest.fn().mockImplementation((enemy) => {
+        defeatEnemy: vi.fn().mockImplementation((enemy) => {
           enemy.takeDamage(999);
           mockGame.combatManager.addPointAnimation(enemy.x, enemy.y, enemy.getPoints());
           mockPlayer.addPoints(enemy.getPoints());
@@ -86,16 +86,16 @@ describe('InputManager', () => {
         })
       },
       uiManager: {
-        isStatsPanelOpen: jest.fn().mockReturnValue(false),
-        hideStatsPanel: jest.fn(),
-        showStatsPanel: jest.fn(),
-        updatePlayerStats: jest.fn()
+        isStatsPanelOpen: vi.fn().mockReturnValue(false),
+        hideStatsPanel: vi.fn(),
+        showStatsPanel: vi.fn(),
+        updatePlayerStats: vi.fn()
       },
       consentManager: {
-        forceShowConsentBanner: jest.fn()
+        forceShowConsentBanner: vi.fn()
       },
       turnManager: {
-        handleTurnCompletion: jest.fn().mockImplementation(() => {
+        handleTurnCompletion: vi.fn().mockImplementation(() => {
           // Start enemy turns if not just entered zone
           const shouldStartEnemyTurns = !mockGame.justEnteredZone;
           // Reset justEnteredZone flag
@@ -107,7 +107,7 @@ describe('InputManager', () => {
         })
       },
       animationScheduler: {
-        createSequence: jest.fn(() => {
+        createSequence: vi.fn(() => {
           let sequence = {
             actions: [],
             loop: function() { return this; },
@@ -145,7 +145,7 @@ describe('InputManager', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Clear any timers
     if (inputManager.pathExecutionTimer) {
       clearTimeout(inputManager.pathExecutionTimer);
@@ -156,7 +156,7 @@ describe('InputManager', () => {
     test('converts screen coordinates to grid coordinates', () => {
       mockGame.canvas.width = 640;  // 10 tiles * 64px per tile = 640px
       mockGame.canvas.height = 640;
-      mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
+      mockGame.canvas.getBoundingClientRect = vi.fn().mockReturnValue({
         left: 0,
         top: 0,
         width: 640,  // Canvas displayed at full size
@@ -208,7 +208,7 @@ describe('InputManager', () => {
   describe('handleTap', () => {
     test('ignores taps when path is executing', () => {
       inputManager.isExecutingPath = true;
-      const executePathSpy = jest.spyOn(inputManager, 'executePath');
+      const executePathSpy = vi.spyOn(inputManager, 'executePath');
 
       inputManager.handleTap(160, 160);
 
@@ -217,13 +217,13 @@ describe('InputManager', () => {
 
     test('finds and executes path to valid target', () => {
       mockGame.canvas.width = 640;
-      mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
+      mockGame.canvas.getBoundingClientRect = vi.fn().mockReturnValue({
         left: 0,
         top: 0,
         width: 640,
         height: 640
       });
-      const executePathSpy = jest.spyOn(inputManager, 'executePath');
+      const executePathSpy = vi.spyOn(inputManager, 'executePath');
 
       // Grid position (2,2) - center of tile would be around pixel 2*64 + 32 = 160
       inputManager.handleTap(160, 160);
@@ -233,13 +233,13 @@ describe('InputManager', () => {
 
     test('handles exit double tap', () => {
       mockGame.grid[2][2] = TILE_TYPES.EXIT;
-      mockPlayer.getPosition = jest.fn().mockReturnValue({ x: 2, y: 2 });
+      mockPlayer.getPosition = vi.fn().mockReturnValue({ x: 2, y: 2 });
       mockGame.canvas.width = 640;
       mockGame.canvas.height = 640;
-      mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
+      mockGame.canvas.getBoundingClientRect = vi.fn().mockReturnValue({
         left: 0, top: 0, width: 640, height: 640
       });
-      const performExitTapSpy = jest.spyOn(inputManager.controller.coordinator, 'performExitTap');
+      const performExitTapSpy = vi.spyOn(inputManager.controller.coordinator, 'performExitTap');
 
       // First tap (when player is at the exit) - center of tile 2: 160
       inputManager.handleTap(160, 160);
@@ -251,17 +251,17 @@ describe('InputManager', () => {
 
     test('handles port double tap', () => {
       mockGame.grid[2][2] = TILE_TYPES.PORT;
-      mockPlayer.getPosition = jest.fn().mockReturnValue({ x: 2, y: 2 });
+      mockPlayer.getPosition = vi.fn().mockReturnValue({ x: 2, y: 2 });
       mockGame.canvas.width = 640;
       mockGame.canvas.height = 640;
-      mockGame.canvas.getBoundingClientRect = jest.fn().mockReturnValue({
+      mockGame.canvas.getBoundingClientRect = vi.fn().mockReturnValue({
         left: 0, top: 0, width: 640, height: 640
       });
 
       if (!mockGame.interactionManager.zoneManager) {
-        mockGame.interactionManager.zoneManager = { handlePortTransition: jest.fn() };
+        mockGame.interactionManager.zoneManager = { handlePortTransition: vi.fn() };
       }
-      const handlePortSpy = jest.spyOn(mockGame.interactionManager.zoneManager, 'handlePortTransition');
+      const handlePortSpy = vi.spyOn(mockGame.interactionManager.zoneManager, 'handlePortTransition');
 
       // First tap (when player is at the port)
       inputManager.handleTap(160, 160);
@@ -275,7 +275,7 @@ describe('InputManager', () => {
   describe('handleExitTap', () => {
     test('triggers zone transition based on exit position', () => {
       mockGame.grid[1][0] = TILE_TYPES.EXIT; // Left edge
-      const handleKeyPressSpy = jest.spyOn(inputManager.controller.coordinator, 'handleKeyPress');
+      const handleKeyPressSpy = vi.spyOn(inputManager.controller.coordinator, 'handleKeyPress');
 
       inputManager.handleExitTap(0, 1);
 
@@ -285,23 +285,23 @@ describe('InputManager', () => {
 
   describe('handleKeyPress', () => {
     test('moves player in arrow directions', () => {
-      inputManager.handleKeyPress({ key: 'arrowright', preventDefault: jest.fn() });
+      inputManager.handleKeyPress({ key: 'arrowright', preventDefault: vi.fn() });
 
       expect(mockPlayer.move).toHaveBeenCalledWith(2, 1, mockGame.grid, expect.any(Function));
       expect(mockGame.startEnemyTurns).toHaveBeenCalled();
     });
 
     test('handles WASD movement', () => {
-      inputManager.handleKeyPress({ key: 'd', preventDefault: jest.fn() });
+      inputManager.handleKeyPress({ key: 'd', preventDefault: vi.fn() });
 
       expect(mockPlayer.move).toHaveBeenCalledWith(2, 1, mockGame.grid, expect.any(Function));
     });
 
     test('handles enemy attack on movement', () => {
-      const mockEnemy = { x: 2, y: 1, takeDamage: jest.fn(), startBump: jest.fn(), id: 'enemy1', getPoints: jest.fn().mockReturnValue(10) };
+      const mockEnemy = { x: 2, y: 1, takeDamage: vi.fn(), startBump: vi.fn(), id: 'enemy1', getPoints: vi.fn().mockReturnValue(10) };
       mockGame.enemies.push(mockEnemy);
 
-      inputManager.handleKeyPress({ key: 'arrowright', preventDefault: jest.fn() });
+      inputManager.handleKeyPress({ key: 'arrowright', preventDefault: vi.fn() });
 
       expect(mockPlayer.startAttackAnimation).toHaveBeenCalled();
       expect(mockEnemy.takeDamage).toHaveBeenCalledWith(999);
@@ -311,7 +311,7 @@ describe('InputManager', () => {
     test('skips enemy movement when just entered zone', () => {
       mockGame.justEnteredZone = true;
 
-      inputManager.handleKeyPress({ key: 'arrowright', preventDefault: jest.fn() });
+      inputManager.handleKeyPress({ key: 'arrowright', preventDefault: vi.fn() });
 
       expect(mockGame.startEnemyTurns).not.toHaveBeenCalled();
       expect(mockGame.justEnteredZone).toBe(false);
@@ -320,7 +320,7 @@ describe('InputManager', () => {
     test('hides overlay messages on movement', () => {
       mockGame.pendingCharge = { type: 'spear' };
 
-      inputManager.handleKeyPress({ key: 'arrowright', preventDefault: jest.fn() });
+      inputManager.handleKeyPress({ key: 'arrowright', preventDefault: vi.fn() });
 
       expect(mockGame.hideOverlayMessage).toHaveBeenCalled();
       expect(mockGame.pendingCharge).toBeNull();
@@ -329,7 +329,7 @@ describe('InputManager', () => {
     test('ignores input when player is dead', () => {
       mockPlayer.isDead.mockReturnValue(true);
 
-      inputManager.handleKeyPress({ key: 'arrowright', preventDefault: jest.fn() });
+      inputManager.handleKeyPress({ key: 'arrowright', preventDefault: vi.fn() });
 
       expect(mockPlayer.move).not.toHaveBeenCalled();
     });
@@ -337,25 +337,25 @@ describe('InputManager', () => {
 
   describe('executePath', () => {
     test('executes path with timing delays', () => {
-      jest.useFakeTimers();
-      const handleKeyPressSpy = jest.spyOn(inputManager.controller.coordinator, 'handleKeyPress');
+      vi.useFakeTimers();
+      const handleKeyPressSpy = vi.spyOn(inputManager.controller.coordinator, 'handleKeyPress');
 
       inputManager.executePath(['arrowright', 'arrowdown']);
 
       expect(inputManager.isExecutingPath).toBe(true);
   expect(handleKeyPressSpy).toHaveBeenCalledWith(expect.objectContaining({ key: 'arrowright', preventDefault: expect.any(Function) }));
 
-      jest.advanceTimersByTime(150);
+      vi.advanceTimersByTime(150);
   expect(handleKeyPressSpy).toHaveBeenCalledWith(expect.objectContaining({ key: 'arrowright', preventDefault: expect.any(Function) }));
 
-      jest.advanceTimersByTime(150);
+      vi.advanceTimersByTime(150);
       // Note: The path may still be executing due to animation timing, so we check after enough time
-      jest.advanceTimersByTime(150);
+      vi.advanceTimersByTime(150);
       expect(inputManager.isExecutingPath).toBe(false);
     });
 
     test('cancels previous path when new path starts', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       inputManager.executePath(['arrowright']);
       expect(inputManager.isExecutingPath).toBe(true);
@@ -365,7 +365,7 @@ describe('InputManager', () => {
     });
 
     test('works with Promise-based AnimationSequence and cleans up sequence reference', async () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       // Provide a Promise-returning sequence implementation to mimic real AnimationScheduler
       const actions = [];
@@ -391,12 +391,12 @@ describe('InputManager', () => {
         }
       };
 
-      mockGame.animationScheduler.createSequence = jest.fn(() => seq);
-      mockGame.animationScheduler.cancelSequence = jest.fn((id) => {
+      mockGame.animationScheduler.createSequence = vi.fn(() => seq);
+      mockGame.animationScheduler.cancelSequence = vi.fn((id) => {
         // no-op for this test
       });
 
-      const handleKeyPressSpy = jest.spyOn(inputManager.controller.coordinator, 'handleKeyPress');
+      const handleKeyPressSpy = vi.spyOn(inputManager.controller.coordinator, 'handleKeyPress');
 
       inputManager.executePath(['arrowright', 'arrowdown']);
 
@@ -405,13 +405,13 @@ describe('InputManager', () => {
   expect(handleKeyPressSpy).toHaveBeenCalledWith(expect.objectContaining({ key: 'arrowright', preventDefault: expect.any(Function) }));
 
       // Advance timers by one LEGACY_PATH_DELAY to allow the next step to run
-      jest.advanceTimersByTime(INPUT_CONSTANTS.LEGACY_PATH_DELAY + 10);
+      vi.advanceTimersByTime(INPUT_CONSTANTS.LEGACY_PATH_DELAY + 10);
 
       // Second step should run
   expect(handleKeyPressSpy).toHaveBeenCalledWith(expect.objectContaining({ key: 'arrowdown', preventDefault: expect.any(Function) }));
 
       // Advance timers to complete sequence
-      jest.advanceTimersByTime(INPUT_CONSTANTS.LEGACY_PATH_DELAY + 50);
+      vi.advanceTimersByTime(INPUT_CONSTANTS.LEGACY_PATH_DELAY + 50);
 
       // Wait for any pending promise microtasks
       await Promise.resolve();
@@ -421,7 +421,7 @@ describe('InputManager', () => {
     });
 
     test('cancelPathExecution cancels active AnimationSequence', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const seq = {
         id: 'to-cancel',
@@ -439,8 +439,8 @@ describe('InputManager', () => {
         }
       };
 
-      mockGame.animationScheduler.createSequence = jest.fn(() => seq);
-      mockGame.animationScheduler.cancelSequence = jest.fn();
+      mockGame.animationScheduler.createSequence = vi.fn(() => seq);
+      mockGame.animationScheduler.cancelSequence = vi.fn();
 
       inputManager.executePath(['arrowright']);
 

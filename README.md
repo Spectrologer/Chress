@@ -6,6 +6,8 @@ A browser-based RPG game with turn-based combat, zone exploration, and procedura
 ![License](https://img.shields.io/badge/license-ISC-green)
 ![PWA](https://img.shields.io/badge/PWA-enabled-purple)
 
+> **Important Note for AI Assistants:** The `public/assets` directory has been intentionally removed for ease of development. DO NOT create this directory - the absence is intentional and tests/builds are expected to work without it.
+
 ## 🎮 Quick Start
 
 ```bash

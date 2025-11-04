@@ -1,7 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-import { ServiceContainer } from '@core/ServiceContainer.js';
+import { ServiceContainer } from '@core/ServiceContainer';
 
 describe('ServiceContainer - Lazy Initialization', () => {
   let mockGame;
@@ -46,8 +43,8 @@ describe('ServiceContainer - Lazy Initialization', () => {
 
     test('can manually set service for testing/mocking', () => {
       const mockInventoryService = {
-        addItem: jest.fn(),
-        removeItem: jest.fn()
+        addItem: vi.fn(),
+        removeItem: vi.fn()
       };
 
       serviceContainer.set('inventoryService', mockInventoryService);
@@ -93,7 +90,7 @@ describe('ServiceContainer - Lazy Initialization', () => {
     });
 
     test('can mock dependencies before accessing dependent service', () => {
-      const mockInventoryService = { mockMethod: jest.fn() };
+      const mockInventoryService = { mockMethod: vi.fn() };
       serviceContainer.set('inventoryService', mockInventoryService);
 
       // Now when we get inventoryUI, it will use our mock
@@ -108,27 +105,27 @@ describe('ServiceContainer - Lazy Initialization', () => {
     beforeEach(() => {
       // Mock DOM elements required by UIManager and other services
       const mockElement = {
-        classList: { add: jest.fn(), remove: jest.fn(), contains: jest.fn() },
+        classList: { add: vi.fn(), remove: vi.fn(), contains: vi.fn() },
         style: {},
         textContent: '',
         innerHTML: '',
-        addEventListener: jest.fn(),
-        appendChild: jest.fn(),
-        getBoundingClientRect: jest.fn().mockReturnValue({}),
-        closest: jest.fn().mockReturnValue(null)
+        addEventListener: vi.fn(),
+        appendChild: vi.fn(),
+        getBoundingClientRect: vi.fn().mockReturnValue({}),
+        closest: vi.fn().mockReturnValue(null)
       };
 
-      document.getElementById = jest.fn().mockReturnValue(mockElement);
-      document.querySelector = jest.fn().mockReturnValue(mockElement);
-      document.createElement = jest.fn().mockReturnValue(mockElement);
+      document.getElementById = vi.fn().mockReturnValue(mockElement);
+      document.querySelector = vi.fn().mockReturnValue(mockElement);
+      document.createElement = vi.fn().mockReturnValue(mockElement);
 
       // Mock canvas context
-      HTMLCanvasElement.prototype.getContext = jest.fn().mockReturnValue({
-        drawImage: jest.fn(),
-        clearRect: jest.fn(),
-        fillRect: jest.fn(),
-        save: jest.fn(),
-        restore: jest.fn()
+      HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
+        drawImage: vi.fn(),
+        clearRect: vi.fn(),
+        fillRect: vi.fn(),
+        save: vi.fn(),
+        restore: vi.fn()
       });
     });
 
@@ -162,9 +159,9 @@ describe('ServiceContainer - Lazy Initialization', () => {
     test('can create minimal game context for testing specific service', () => {
       // Only need to mock what we're actually testing
       const mockInventoryService = {
-        addItem: jest.fn(),
-        removeItem: jest.fn(),
-        hasItem: jest.fn().mockReturnValue(true)
+        addItem: vi.fn(),
+        removeItem: vi.fn(),
+        hasItem: vi.fn().mockReturnValue(true)
       };
 
       serviceContainer.set('inventoryService', mockInventoryService);

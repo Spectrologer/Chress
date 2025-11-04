@@ -1,4 +1,4 @@
-import { FogRenderer } from '@renderers/FogRenderer.js';
+import { FogRenderer } from '@renderers/FogRenderer';
 
 describe('FogRenderer', () => {
   let originalCreateElement;
@@ -9,20 +9,20 @@ describe('FogRenderer', () => {
   beforeEach(() => {
     // Minimal mock rendering context used by FogRenderer
     mockCtx = {
-      save: jest.fn(),
-      restore: jest.fn(),
-      translate: jest.fn(),
-      setTransform: jest.fn(),
-      fillRect: jest.fn(),
-      createPattern: jest.fn(() => ({ isPattern: true })),
+      save: vi.fn(),
+      restore: vi.fn(),
+      translate: vi.fn(),
+      setTransform: vi.fn(),
+      fillRect: vi.fn(),
+      createPattern: vi.fn(() => ({ isPattern: true })),
       // allow properties to be set
       globalAlpha: 1.0,
       fillStyle: null,
       strokeStyle: null,
       lineWidth: 1,
-      setLineDash: jest.fn(),
+      setLineDash: vi.fn(),
       // setLineDash alias used in some environments
-      getImageData: jest.fn()
+      getImageData: vi.fn()
     };
 
     // Provide a fake image object with width/height that TextureLoader would return
@@ -35,9 +35,9 @@ describe('FogRenderer', () => {
         // return a simple object that receives width/height and a 2D context
         const c = { width: 0, height: 0 };
         c.getContext = () => ({
-          drawImage: jest.fn(),
-          putImageData: jest.fn(),
-          getImageData: jest.fn(() => ({ data: new Uint8ClampedArray(4) }))
+          drawImage: vi.fn(),
+          putImageData: vi.fn(),
+          getImageData: vi.fn(() => ({ data: new Uint8ClampedArray(4) }))
         });
         return c;
       }
@@ -53,7 +53,7 @@ describe('FogRenderer', () => {
     // Game stub used by FogRenderer
     game = {
       ctx: mockCtx,
-      textureManager: { getImage: jest.fn(() => fakeImage) },
+      textureManager: { getImage: vi.fn(() => fakeImage) },
       player
     };
   });

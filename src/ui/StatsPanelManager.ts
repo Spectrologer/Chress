@@ -1,5 +1,6 @@
-import { PanelEventHandler } from './PanelEventHandler.ts';
-import { safeCall } from '../utils/SafeServiceCall.js';
+import { PanelEventHandler } from './PanelEventHandler';
+import { safeCall } from '@utils/SafeServiceCall';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface GameInstance {
     defeatedEnemies?: Set<any>;
@@ -21,10 +22,12 @@ export class StatsPanelManager {
     private statsPanelOpen: boolean = false;
     private _showConfigCallback: (() => void) | null = null;
     private _showRecordsCallback: (() => void) | null = null;
+    private eventManager: EventListenerManager;
 
     constructor(game: GameInstance) {
         this.game = game;
         this.statsPanelOverlay = document.getElementById('statsPanelOverlay');
+        this.eventManager = new EventListenerManager();
         this._setupHandlers();
     }
 
@@ -159,9 +162,8 @@ export class StatsPanelManager {
      * Wires up action buttons (config, records, restart)
      */
     private _wireActionButtons(showConfigCallback: (() => void) | null, showRecordsCallback: (() => void) | null): void {
-        // Config button - use multiple event types to catch any interaction
+        // Config button
         const configButton = this.statsPanelOverlay?.querySelector<HTMLElement>('#stats-config-button');
-
         if (configButton) {
             const handleConfig = (e: Event): void => {
                 e.preventDefault();
@@ -171,19 +173,14 @@ export class StatsPanelManager {
                 }
             };
 
-            // Remove any existing listeners by cloning and replacing the button
-            const newConfigButton = configButton.cloneNode(true) as HTMLElement;
-            configButton.parentNode!.replaceChild(newConfigButton, configButton);
-
-            // Add listeners to the new button
-            newConfigButton.addEventListener('click', handleConfig, { capture: false });
-            newConfigButton.addEventListener('pointerup', handleConfig, { capture: false });
-            newConfigButton.addEventListener('touchend', handleConfig, { capture: false });
+            const newConfigButton = this.eventManager.cloneAndReplace(configButton);
+            this.eventManager.add(newConfigButton, 'click', handleConfig);
+            this.eventManager.add(newConfigButton, 'pointerup', handleConfig);
+            this.eventManager.add(newConfigButton, 'touchend', handleConfig);
         }
 
-        // Records button - use multiple event types to catch any interaction
+        // Records button
         const recordsButton = this.statsPanelOverlay?.querySelector<HTMLElement>('#stats-records-button');
-
         if (recordsButton) {
             const handleRecords = (e: Event): void => {
                 e.preventDefault();
@@ -193,14 +190,10 @@ export class StatsPanelManager {
                 }
             };
 
-            // Remove any existing listeners by cloning and replacing the button
-            const newRecordsButton = recordsButton.cloneNode(true) as HTMLElement;
-            recordsButton.parentNode!.replaceChild(newRecordsButton, recordsButton);
-
-            // Add listeners to the new button
-            newRecordsButton.addEventListener('click', handleRecords, { capture: false });
-            newRecordsButton.addEventListener('pointerup', handleRecords, { capture: false });
-            newRecordsButton.addEventListener('touchend', handleRecords, { capture: false });
+            const newRecordsButton = this.eventManager.cloneAndReplace(recordsButton);
+            this.eventManager.add(newRecordsButton, 'click', handleRecords);
+            this.eventManager.add(newRecordsButton, 'pointerup', handleRecords);
+            this.eventManager.add(newRecordsButton, 'touchend', handleRecords);
         }
 
         // Restart button
@@ -230,17 +223,15 @@ export class StatsPanelManager {
             }
         };
 
-        // Click handler for mouse/keyboard
-        restartBtn.addEventListener('click', doRestart);
+        this.eventManager.add(restartBtn, 'click', doRestart);
 
-        // Pointer handlers for touch devices
-        restartBtn.addEventListener('pointerdown', (e: PointerEvent) => {
+        this.eventManager.add(restartBtn, 'pointerdown', (e: PointerEvent) => {
             e?.preventDefault?.();
             e?.stopPropagation?.();
             (e.target as HTMLElement)?.setPointerCapture?.(e.pointerId);
         }, { passive: false });
 
-        restartBtn.addEventListener('pointerup', (e: PointerEvent) => {
+        this.eventManager.add(restartBtn, 'pointerup', (e: PointerEvent) => {
             e?.preventDefault?.();
             doRestart(e);
             (e.target as HTMLElement)?.releasePointerCapture?.(e.pointerId);
@@ -266,17 +257,15 @@ export class StatsPanelManager {
             }
         };
 
-        // Click handler for mouse/keyboard
-        menuBtn.addEventListener('click', doReturnToMenu);
+        this.eventManager.add(menuBtn, 'click', doReturnToMenu);
 
-        // Pointer handlers for touch devices
-        menuBtn.addEventListener('pointerdown', (e: PointerEvent) => {
+        this.eventManager.add(menuBtn, 'pointerdown', (e: PointerEvent) => {
             e?.preventDefault?.();
             e?.stopPropagation?.();
             (e.target as HTMLElement)?.setPointerCapture?.(e.pointerId);
         }, { passive: false });
 
-        menuBtn.addEventListener('pointerup', (e: PointerEvent) => {
+        this.eventManager.add(menuBtn, 'pointerup', (e: PointerEvent) => {
             e?.preventDefault?.();
             doReturnToMenu(e);
             (e.target as HTMLElement)?.releasePointerCapture?.(e.pointerId);
@@ -290,8 +279,8 @@ export class StatsPanelManager {
         if (!this.statsPanelOverlay) return;
 
         // Close panel when clicking outside (on overlay background)
-        this.statsPanelOverlay.addEventListener('click', () => this.hideStatsPanel());
-        this.statsPanelOverlay.addEventListener('pointerup', (e) => {
+        this.eventManager.add(this.statsPanelOverlay, 'click', () => this.hideStatsPanel());
+        this.eventManager.add(this.statsPanelOverlay, 'pointerup', (e: PointerEvent) => {
             safeCall(e, 'preventDefault');
             this.hideStatsPanel();
         });
@@ -319,13 +308,20 @@ export class StatsPanelManager {
             this.showStatsPanel();
         };
 
-        // Use pointerdown to capture interactions earlier on touch devices
-        playerPortraitContainer.addEventListener('pointerdown', (e: PointerEvent) => {
+        this.eventManager.add(playerPortraitContainer, 'pointerdown', (e: PointerEvent) => {
             e?.preventDefault?.();
             e?.stopPropagation?.();
         }, { passive: false });
 
-        playerPortraitContainer.addEventListener('click', openStats);
-        playerPortraitContainer.addEventListener('pointerup', openStats, { passive: false });
+        this.eventManager.add(playerPortraitContainer, 'click', openStats);
+        this.eventManager.add(playerPortraitContainer, 'pointerup', openStats, { passive: false });
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the StatsPanelManager instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

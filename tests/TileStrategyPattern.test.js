@@ -1,5 +1,5 @@
-import { TILE_TYPES } from '@core/constants/index.js';
-import { BaseTileRenderer } from '@renderers/BaseTileRenderer.js';
+import { TILE_TYPES } from '@core/constants/index';
+import { BaseTileRenderer } from '@renderers/BaseTileRenderer';
 
 describe('Tile Strategy Pattern', () => {
     let renderer;
@@ -9,28 +9,28 @@ describe('Tile Strategy Pattern', () => {
     beforeEach(() => {
         // Create a mock canvas context
         mockCtx = {
-            drawImage: jest.fn(),
-            fillRect: jest.fn(),
-            fillText: jest.fn(),
+            drawImage: vi.fn(),
+            fillRect: vi.fn(),
+            fillText: vi.fn(),
             fillStyle: null,
             font: null,
             textAlign: null,
             textBaseline: null,
-            save: jest.fn(),
-            restore: jest.fn(),
-            setTransform: jest.fn(),
-            translate: jest.fn(),
-            rotate: jest.fn(),
-            scale: jest.fn()
+            save: vi.fn(),
+            restore: vi.fn(),
+            setTransform: vi.fn(),
+            translate: vi.fn(),
+            rotate: vi.fn(),
+            scale: vi.fn()
         };
 
         // Create minimal mocks
         const images = {};
         const textureDetector = {};
         const multiTileHandler = {
-            findCisternPosition: jest.fn(() => null),
-            findShackPosition: jest.fn(() => null),
-            findHousePosition: jest.fn(() => null)
+            findCisternPosition: vi.fn(() => null),
+            findShackPosition: vi.fn(() => null),
+            findHousePosition: vi.fn(() => null)
         };
 
         renderer = new BaseTileRenderer(images, textureDetector, multiTileHandler, 64);

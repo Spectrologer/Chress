@@ -1,6 +1,6 @@
 import { UIEventCoordinator } from '../ui/UIEventCoordinator.js';
-import { eventBus } from '@core/EventBus.js';
-import { EventTypes } from '@core/EventTypes.js';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 describe('UIEventCoordinator', () => {
     let coordinator;
@@ -20,19 +20,19 @@ describe('UIEventCoordinator', () => {
 
         // Mock MessageManager
         mockMessageManager = {
-            showOverlayMessage: jest.fn(),
-            hideOverlayMessage: jest.fn(),
-            showSignMessage: jest.fn(),
-            addMessageToLog: jest.fn(),
-            showRegionNotification: jest.fn()
+            showOverlayMessage: vi.fn(),
+            hideOverlayMessage: vi.fn(),
+            showSignMessage: vi.fn(),
+            addMessageToLog: vi.fn(),
+            showRegionNotification: vi.fn()
         };
 
         // Mock PanelManager
         mockPanelManager = {
-            showBarterWindow: jest.fn(),
-            hideBarterWindow: jest.fn(),
-            showStatueInfoWindow: jest.fn(),
-            hideStatueInfoWindow: jest.fn()
+            showBarterWindow: vi.fn(),
+            hideBarterWindow: vi.fn(),
+            showStatueInfoWindow: vi.fn(),
+            hideStatueInfoWindow: vi.fn()
         };
 
         // Create coordinator
@@ -67,7 +67,7 @@ describe('UIEventCoordinator', () => {
                 'Welcome to the tavern!',
                 'assets/portrait.png',
                 'Innkeeper',
-                undefined
+                null
             );
         });
 
@@ -80,7 +80,7 @@ describe('UIEventCoordinator', () => {
         });
 
         test('UI_DIALOG_SHOW with invalid type logs error', () => {
-            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+            const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation();
 
             eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
                 type: 'invalid_type'
@@ -211,7 +211,7 @@ describe('UIEventCoordinator', () => {
         });
 
         test('UI_MESSAGE_LOG adds category prefix for error priority', () => {
-            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
 
             eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
                 text: 'Something went wrong',

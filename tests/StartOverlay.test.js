@@ -1,4 +1,4 @@
-import { GameInitializer } from '@core/GameInitializer.js';
+import { GameInitializer } from '@core/GameInitializer';
 
 // Minimal DOM fixture for the start overlay
 beforeEach(() => {
@@ -24,17 +24,17 @@ describe('Start overlay', () => {
       previewMode: true,
       player: { stats: {} },
       soundManager: {
-        resumeAudioContext: jest.fn(() => Promise.resolve()),
-        setMusicEnabled: jest.fn(),
-        setSfxEnabled: jest.fn()
+        resumeAudioContext: vi.fn(() => Promise.resolve()),
+        setMusicEnabled: vi.fn(),
+        setSfxEnabled: vi.fn()
       },
-      gameStateManager: { resetGame: jest.fn() }
+      gameStateManager: { resetGame: vi.fn() }
     };
 
     // Create instance without invoking constructor side-effects
     const gi = Object.create(GameInitializer.prototype);
     gi.game = mockGame;
-    gi.startGame = jest.fn();
+    gi.startGame = vi.fn();
 
     // Call the method under test
     GameInitializer.prototype.showStartOverlay.call(gi);
@@ -71,13 +71,13 @@ describe('Start overlay', () => {
     const mockGame = {
       previewMode: true,
       player: { stats: {} },
-      soundManager: { resumeAudioContext: jest.fn(() => Promise.resolve()), setMusicEnabled: jest.fn() },
-      gameStateManager: { loadGameState: jest.fn() }
+      soundManager: { resumeAudioContext: vi.fn(() => Promise.resolve()), setMusicEnabled: vi.fn() },
+      gameStateManager: { loadGameState: vi.fn() }
     };
 
     const gi = Object.create(GameInitializer.prototype);
     gi.game = mockGame;
-    gi.startGame = jest.fn();
+    gi.startGame = vi.fn();
 
     GameInitializer.prototype.showStartOverlay.call(gi);
 

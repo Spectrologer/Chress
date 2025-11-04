@@ -4,11 +4,11 @@
  * Quick verification that the ContentRegistry system is working
  */
 
-import { ContentRegistry } from '@core/ContentRegistry.js';
+import { ContentRegistry } from '@core/ContentRegistry';
 import { registerAllContent } from '../config/ContentRegistrations.js';
 
 // Mock fetch for NPCLoader
-global.fetch = jest.fn(() =>
+global.fetch = vi.fn(() =>
     Promise.resolve({
         ok: true,
         json: () => Promise.resolve({

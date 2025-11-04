@@ -1,36 +1,36 @@
-import { logger } from '../core/logger.ts';
-import { fitTextToContainer } from './TextFitter.ts';
-
-interface GameInstance {
-    displayingMessageForSign?: any;
-    animationScheduler: any;
-    transientGameState?: any;
-}
+import { logger } from '@core/logger';
+import { fitTextToContainer } from './TextFitter';
+import { EventListenerManager } from '@utils/EventListenerManager';
+import type { IGame } from '@core/GameContext';
 
 /**
  * Handles overlay message display with auto-hide functionality.
  * Manages temporary and persistent overlay messages.
  */
 export class OverlayMessageHandler {
-    private game: GameInstance;
+    private game: IGame;
     private messageOverlay: HTMLElement | null;
     private currentOverlayTimeout: number | null = null;
+    private eventManager: EventListenerManager;
 
-    constructor(game: GameInstance) {
+    constructor(game: IGame) {
         this.game = game;
         this.messageOverlay = document.getElementById('messageOverlay');
+        this.eventManager = new EventListenerManager();
 
         // Set up click handler
-        this.messageOverlay?.addEventListener('pointerdown', () => {
-            if (!this.messageOverlay?.classList.contains('show')) return;
+        if (this.messageOverlay) {
+            this.eventManager.add(this.messageOverlay, 'pointerdown', () => {
+                if (!this.messageOverlay?.classList.contains('show')) return;
 
-            if (this.game.displayingMessageForSign) {
-                // Import Sign dynamically to avoid circular deps
-                import('./Sign.js').then(({ Sign }) => {
-                    Sign.hideMessageForSign(this.game);
-                });
-            }
-        });
+                if (this.game.displayingMessageForSign) {
+                    // Import Sign dynamically to avoid circular deps
+                    import('./Sign').then(({ Sign }) => {
+                        Sign.hideMessageForSign(this.game);
+                    });
+                }
+            });
+        }
     }
 
     /**
@@ -153,5 +153,13 @@ export class OverlayMessageHandler {
      */
     isShowing(): boolean {
         return this.messageOverlay?.classList.contains('show') || false;
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the OverlayMessageHandler instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

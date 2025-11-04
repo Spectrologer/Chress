@@ -1,5 +1,5 @@
 import { RadialInventoryUI } from '../ui/RadialInventoryUI.js';
-import { InventoryService } from '@managers/inventory/InventoryService.js';
+import { InventoryService } from '@managers/inventory/InventoryService';
 
 function makeMockGame() {
   const mockGame = {
@@ -12,10 +12,10 @@ function makeMockGame() {
       getPosition: () => ({ x: 1, y: 1 }),
     },
     canvas: { getBoundingClientRect: () => ({ left: 0, top: 0, width: 540, height: 540 }), width: 540, height: 540 },
-    uiManager: { showOverlayMessage: jest.fn(), updatePlayerStats: jest.fn() },
+    uiManager: { showOverlayMessage: vi.fn(), updatePlayerStats: vi.fn() },
     animationScheduler: { createSequence: () => ({ wait: () => ({ then: () => ({ start: () => {} }) }) }) },
-    startEnemyTurns: jest.fn(),
-    updatePlayerStats: jest.fn(),
+    startEnemyTurns: vi.fn(),
+    updatePlayerStats: vi.fn(),
   };
   return mockGame;
 }
@@ -41,7 +41,7 @@ describe('RadialInventoryUI', () => {
     game.player.inventory = [ { type: 'food', foodType: 'apple' }, book, horse ];
 
     // Spy on saveRadialInventory by replacing the imported function in the module cache
-    jest.spyOn(require('../managers/RadialPersistence.js'), 'saveRadialInventory').mockImplementation(() => {});
+    vi.spyOn(require('../managers/RadialPersistence.js'), 'saveRadialInventory').mockImplementation(() => {});
 
     const service = new InventoryService(game);
     const radial = new RadialInventoryUI(game, service);

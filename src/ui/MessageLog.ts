@@ -1,8 +1,9 @@
-import { logger } from '../core/logger.ts';
+import { logger } from '@core/logger';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface GameInstance {
-    messageLog: string[];
-    gameLoop: () => void;
+    messageLog?: string[];
+    gameLoop?: () => void;
 }
 
 /**
@@ -14,12 +15,14 @@ export class MessageLog {
     private messageLogOverlay: HTMLElement | null;
     private messageLogContent: HTMLElement | null;
     private closeMessageLogButton: HTMLElement | null;
+    private eventManager: EventListenerManager;
 
     constructor(game: GameInstance) {
         this.game = game;
         this.messageLogOverlay = document.getElementById('messageLogOverlay');
         this.messageLogContent = document.getElementById('messageLogContent');
         this.closeMessageLogButton = document.getElementById('closeMessageLogButton');
+        this.eventManager = new EventListenerManager();
 
         this.setupEventHandlers();
     }
@@ -30,9 +33,11 @@ export class MessageLog {
     private setupEventHandlers(): void {
         // Set up close button
         if (this.closeMessageLogButton) {
-            this.closeMessageLogButton.addEventListener('click', () => {
+            this.eventManager.add(this.closeMessageLogButton, 'click', () => {
                 this.hide();
-                this.game.gameLoop();
+                if (this.game.gameLoop) {
+                    this.game.gameLoop();
+                }
             });
         }
 
@@ -40,12 +45,12 @@ export class MessageLog {
         const messageLogButton = document.getElementById('message-log-button');
         if (messageLogButton) {
             // Desktop click
-            messageLogButton.addEventListener('click', () => {
+            this.eventManager.add(messageLogButton, 'click', () => {
                 this.show();
             });
 
             // Mobile / pointer
-            messageLogButton.addEventListener('pointerdown', (e) => {
+            this.eventManager.add(messageLogButton, 'pointerdown', (e: PointerEvent) => {
                 try {
                     e.preventDefault();
                 } catch (err) {}
@@ -62,7 +67,7 @@ export class MessageLog {
 
         this.messageLogContent.innerHTML = '';
 
-        if (this.game.messageLog.length === 0) {
+        if (!this.game.messageLog || this.game.messageLog.length === 0) {
             this.messageLogContent.innerHTML = '<p>No messages yet.</p>';
         } else {
             // Show newest messages first
@@ -101,11 +106,24 @@ export class MessageLog {
             return `<span style="color: darkgreen">${match}</span>`;
         });
 
+        // Initialize messageLog if it doesn't exist
+        if (!this.game.messageLog) {
+            this.game.messageLog = [];
+        }
+
         // Only add if not already in the log
         if (!this.game.messageLog.includes(coloredMessage)) {
             this.game.messageLog.push(coloredMessage);
         }
 
         return coordinates;
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the MessageLog instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

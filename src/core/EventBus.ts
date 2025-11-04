@@ -1,4 +1,4 @@
-import type { EventType, EventDataMap } from './EventTypes.ts';
+import type { EventType, EventDataMap } from './EventTypes';
 
 /**
  * EventBus - A centralized publish-subscribe event system for decoupling managers
@@ -194,7 +194,7 @@ export const eventBus = new EventBus();
 // Wrap with validation in development mode
 // Note: Import is done dynamically to avoid circular dependencies
 if (typeof window !== 'undefined' && window.location?.hostname === 'localhost') {
-  import('./EventValidator.js').then(({ wrapEventBusWithValidation }) => {
+  import('./EventValidator').then(({ wrapEventBusWithValidation }) => {
     wrapEventBusWithValidation(eventBus);
     // console.log('[EventBus] Event validation enabled (development mode)');
   }).catch(err => {

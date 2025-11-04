@@ -1,5 +1,5 @@
-import { EnemyMoveCalculatorFactory } from '@enemy/MoveCalculators.js';
-import { GRID_SIZE, TILE_TYPES } from '@core/constants/index.js';
+import { EnemyMoveCalculatorFactory } from '@enemy/MoveCalculators';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
 
 describe('Lizord movement and bump attack behavior', () => {
   let mockPlayer;
@@ -10,10 +10,10 @@ describe('Lizord movement and bump attack behavior', () => {
     mockPlayer = {
       x: 0,
       y: 0,
-      takeDamage: jest.fn(),
-      startBump: jest.fn(),
-      isWalkable: jest.fn().mockReturnValue(true),
-      setPosition: jest.fn()
+      takeDamage: vi.fn(),
+      startBump: vi.fn(),
+      isWalkable: vi.fn().mockReturnValue(true),
+      setPosition: vi.fn()
     };
 
     mockEnemy = {
@@ -26,7 +26,7 @@ describe('Lizord movement and bump attack behavior', () => {
       smokeAnimations: [],
       lastX: undefined,
       lastY: undefined,
-      startBump: jest.fn(),
+      startBump: vi.fn(),
       isWalkable: function (x, y, g) {
         if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) return false;
         return (g[y] && g[y][x]) === TILE_TYPES.FLOOR;

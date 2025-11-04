@@ -100,6 +100,7 @@ export class AssetScanner {
             const npcs = {};
             allNPCData.forEach((data, key) => {
                 if (data.name) {
+                    // @ts-ignore - NPCData structure differs between runtime and types
                     const npcType = data.interaction?.type || 'npc';
                     // Ensure paths are absolute
                     const portrait = data.display?.portrait;
@@ -109,6 +110,7 @@ export class AssetScanner {
                         portrait: portrait ? (portrait.startsWith('/') ? portrait : '/' + portrait) : null,
                         sprite: sprite ? (sprite.startsWith('/') ? sprite : '/' + sprite) : null,
                         type: npcType,
+                        // @ts-ignore - NPCData structure differs between runtime and types
                         trades: data.interaction?.trades,
                         key: key
                     };

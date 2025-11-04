@@ -16,7 +16,13 @@ export const UI_CONSTANTS = {
     OPACITY_INDICATOR_FLASH_VARIANCE: 0.3, // Variance in flash opacity
 
     // Transition durations
-    CSS_TRANSITION_DURATION: 260 // Duration (ms) for CSS transitions (e.g., fade-out)
+    CSS_TRANSITION_DURATION: 260, // Duration (ms) for CSS transitions (e.g., fade-out)
+
+    // Z-index values
+    Z_INDEX_RADIAL_OVERLAY: 1000, // Z-index for radial inventory overlay
+
+    // Radial inventory
+    RADIAL_INVENTORY_MAX_SIZE: 8 // Maximum number of items in radial inventory
 };
 
 // Input constants

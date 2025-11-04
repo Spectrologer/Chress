@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { PanelManager } from '../ui/PanelManager.js';
 
 // Minimal DOM fixture for records overlay
@@ -33,7 +29,7 @@ beforeEach(() => {
 
 afterEach(() => {
     localStorage.clear();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
 });
 
 test('showRecordsOverlay reads values from localStorage and populates DOM', () => {

@@ -1,6 +1,6 @@
-import GridIterator from '@utils/GridIterator.js';
-import { TILE_TYPES, GRID_SIZE } from '@core/constants/index.js';
-import { isTileType } from '@utils/TileUtils.js';
+import GridIterator from '@utils/GridIterator';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
+import { isTileType } from '@utils/TileUtils';
 
 describe('GridIterator', () => {
     describe('initialize', () => {

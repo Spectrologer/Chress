@@ -1,5 +1,5 @@
-import { GRID_SIZE } from '../constants/index.ts';
-import type { ArrowDirection } from './DirectionUtils.ts';
+import { GRID_SIZE } from '@core/constants/index.js';
+import type { ArrowDirection } from './DirectionUtils.js';
 
 /**
  * Determines the exit direction based on the exit tile position.

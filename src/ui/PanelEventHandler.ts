@@ -2,7 +2,7 @@
  * PanelEventHandler
  * Shared utilities for panel event handling and interaction management
  */
-import { UI_TIMING_CONSTANTS } from '../core/constants/ui.js';
+import { UI_TIMING_CONSTANTS } from '@core/constants/ui';
 
 interface OutsideClickOptions {
     debounceMs?: number;

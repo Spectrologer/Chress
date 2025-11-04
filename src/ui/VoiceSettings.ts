@@ -1,6 +1,6 @@
 // VoiceSettings.ts
 // Helpers for voice settings, audio context, and typing SFX for MessageManager
-import { VOICE_CONSTANTS } from '../core/constants/audio.js';
+import { VOICE_CONSTANTS } from '@core/constants/audio';
 
 interface VoiceSettings {
     name?: string;

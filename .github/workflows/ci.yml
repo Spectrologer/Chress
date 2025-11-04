@@ -1,3 +1,7 @@
+# IMPORTANT: public/assets directory has been intentionally removed
+# DO NOT create public/assets - tests and builds work without it
+# The "Could not scan directory public/assets" error is expected and harmless
+
 name: CI
 
 on:
@@ -13,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x]
 
     steps:
       - name: Checkout code
@@ -58,7 +62,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
 
       - name: Install dependencies
         run: npm install

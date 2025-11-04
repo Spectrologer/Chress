@@ -17,7 +17,7 @@
     "zone": null,
     "x": null,
     "y": null,
-    "dimension": 2,
+    "dimension": 0,
     "spawnLogic": "procedural",
     "spawnWeight": 0.005,
     "level": 2

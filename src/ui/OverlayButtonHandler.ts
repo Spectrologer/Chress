@@ -1,7 +1,8 @@
-import { logger } from '../core/logger.ts';
-import { safeCall, safeCallAsync } from '../utils/SafeServiceCall.js';
-import type { StartOverlayController } from './StartOverlayController.ts';
-import type { OverlayMusicToggle } from './OverlayMusicToggle.ts';
+import { logger } from '@core/logger';
+import { safeCall, safeCallAsync } from '@utils/SafeServiceCall';
+import type { StartOverlayController } from './StartOverlayController';
+import type { OverlayMusicToggle } from './OverlayMusicToggle';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface GameInstance {
     previewMode: boolean;
@@ -20,72 +21,38 @@ export class OverlayButtonHandler {
     private game: GameInstance;
     private startOverlayController: StartOverlayController;
     private musicToggle: OverlayMusicToggle;
+    private eventManager: EventListenerManager;
 
     constructor(game: GameInstance, startOverlayController: StartOverlayController, musicToggle: OverlayMusicToggle) {
         this.game = game;
         this.startOverlayController = startOverlayController;
         this.musicToggle = musicToggle;
+        this.eventManager = new EventListenerManager();
     }
 
     /**
      * Sets up button click handlers.
      */
     setupButtonHandlers(overlay: HTMLElement, hasSaved: boolean): void {
-        const startBtn = overlay.querySelector<HTMLElement>('#startButton');
-        const continueBtn = overlay.querySelector<HTMLElement>('#continueButton');
-        const configBtn = overlay.querySelector<HTMLElement>('#configButton');
-        const recordsBtn = overlay.querySelector<HTMLElement>('#recordsButton');
-        const zoneEditorBtn = overlay.querySelector<HTMLElement>('#zoneEditorButton');
-        const characterEditorBtn = overlay.querySelector<HTMLElement>('#characterEditorButton');
+        // Start button - once only
+        this.eventManager.setupButton('startButton', () => this.handleStartGame(overlay), { once: true });
 
-        if (startBtn) {
-            // Clone and replace to remove any old listeners
-            const newStartBtn = startBtn.cloneNode(true) as HTMLElement;
-            startBtn.parentNode!.replaceChild(newStartBtn, startBtn);
-            newStartBtn.addEventListener('click', () => this.handleStartGame(overlay), { once: true });
+        // Continue button - once only, if saved
+        if (hasSaved) {
+            this.eventManager.setupButton('continueButton', () => this.handleContinueGame(overlay), { once: true });
         }
 
-        if (continueBtn) {
-            // Clone and replace to remove any old listeners
-            const newContinueBtn = continueBtn.cloneNode(true) as HTMLElement;
-            continueBtn.parentNode!.replaceChild(newContinueBtn, continueBtn);
+        // Config button - repeatable
+        this.eventManager.setupButton('configButton', () => this.handleConfig(), { once: false });
 
-            if (hasSaved) {
-                newContinueBtn.addEventListener('click', () => this.handleContinueGame(overlay), { once: true });
-            }
-        }
+        // Records button - repeatable
+        this.eventManager.setupButton('recordsButton', () => this.handleRecords(), { once: false });
 
-        if (configBtn) {
-            // Clone and replace to remove any old listeners
-            const newConfigBtn = configBtn.cloneNode(true) as HTMLElement;
-            configBtn.parentNode!.replaceChild(newConfigBtn, configBtn);
-            // Don't use { once: true } for config since it doesn't close the start menu
-            newConfigBtn.addEventListener('click', () => this.handleConfig());
-        }
+        // Zone editor button - repeatable
+        this.eventManager.setupButton('zoneEditorButton', () => this.handleZoneEditor(), { once: false });
 
-        if (recordsBtn) {
-            // Clone and replace to remove any old listeners
-            const newRecordsBtn = recordsBtn.cloneNode(true) as HTMLElement;
-            recordsBtn.parentNode!.replaceChild(newRecordsBtn, recordsBtn);
-            // Don't use { once: true } for records since it doesn't close the start menu
-            newRecordsBtn.addEventListener('click', () => this.handleRecords());
-        }
-
-        if (zoneEditorBtn) {
-            // Clone and replace to remove any old listeners
-            const newZoneEditorBtn = zoneEditorBtn.cloneNode(true) as HTMLElement;
-            zoneEditorBtn.parentNode!.replaceChild(newZoneEditorBtn, zoneEditorBtn);
-            // Don't use { once: true } for zone editor since it doesn't close the start menu
-            newZoneEditorBtn.addEventListener('click', () => this.handleZoneEditor());
-        }
-
-        if (characterEditorBtn) {
-            // Clone and replace to remove any old listeners
-            const newCharacterEditorBtn = characterEditorBtn.cloneNode(true) as HTMLElement;
-            characterEditorBtn.parentNode!.replaceChild(newCharacterEditorBtn, characterEditorBtn);
-            // Don't use { once: true } for character editor since it doesn't close the start menu
-            newCharacterEditorBtn.addEventListener('click', () => this.handleCharacterEditor());
-        }
+        // Character editor button - repeatable
+        this.eventManager.setupButton('characterEditorButton', () => this.handleCharacterEditor(), { once: false });
     }
 
     /**
@@ -178,15 +145,15 @@ export class OverlayButtonHandler {
             // Show the overlay
             overlay.style.display = 'flex';
 
+            // Create a separate event manager for this editor instance
+            const editorEventManager = new EventListenerManager();
+
             // Close handler function
             const closeEditor = (): void => {
                 overlay.style.display = 'none';
                 iframe.src = ''; // Clear iframe to stop any running scripts
-                // Clean up event listeners
-                if (closeButton) {
-                    closeButton.removeEventListener('click', closeEditor);
-                }
-                overlay.removeEventListener('click', overlayClickHandler);
+                // Clean up only this editor's event listeners
+                editorEventManager.cleanup();
             };
 
             // Overlay click handler
@@ -199,11 +166,11 @@ export class OverlayButtonHandler {
 
             // Set up close button handler
             if (closeButton) {
-                closeButton.addEventListener('click', closeEditor);
+                editorEventManager.add(closeButton, 'click', closeEditor);
             }
 
             // Close on overlay background click
-            overlay.addEventListener('click', overlayClickHandler);
+            editorEventManager.add(overlay, 'click', overlayClickHandler);
 
         } catch (error) {
             logger.error('Error opening zone editor:', error);
@@ -234,15 +201,15 @@ export class OverlayButtonHandler {
             // Show the overlay
             overlay.style.display = 'flex';
 
+            // Create a separate event manager for this editor instance
+            const editorEventManager = new EventListenerManager();
+
             // Close handler function
             const closeEditor = (): void => {
                 overlay.style.display = 'none';
                 iframe.src = ''; // Clear iframe to stop any running scripts
-                // Clean up event listeners
-                if (closeButton) {
-                    closeButton.removeEventListener('click', closeEditor);
-                }
-                overlay.removeEventListener('click', overlayClickHandler);
+                // Clean up only this editor's event listeners
+                editorEventManager.cleanup();
             };
 
             // Overlay click handler
@@ -255,13 +222,13 @@ export class OverlayButtonHandler {
 
             // Set up close button handler
             if (closeButton) {
-                closeButton.addEventListener('click', closeEditor);
+                editorEventManager.add(closeButton, 'click', closeEditor);
             }
 
             // Close on overlay background click
-            overlay.addEventListener('click', overlayClickHandler);
+            editorEventManager.add(overlay, 'click', overlayClickHandler);
         } catch (error) {
-            logger.error('Error opening zone editor:', error);
+            logger.error('Error opening character editor:', error);
         }
     }
 
@@ -286,10 +253,9 @@ export class OverlayButtonHandler {
             const backButton = configOverlay.querySelector<HTMLElement>('#config-back-button');
             if (backButton) {
                 // Clone and replace to ensure clean handler
-                const newBackButton = backButton.cloneNode(true) as HTMLElement;
-                backButton.parentNode!.replaceChild(newBackButton, backButton);
+                const newBackButton = this.eventManager.cloneAndReplace(backButton);
 
-                newBackButton.addEventListener('click', (e: Event) => {
+                this.eventManager.add(newBackButton, 'click', (e: Event) => {
                     e?.preventDefault?.();
                     e?.stopPropagation?.();
                     configOverlay.classList.remove('show');
@@ -303,10 +269,10 @@ export class OverlayButtonHandler {
                 if (!panel || !panel.contains(e.target as Node)) {
                     configOverlay.classList.remove('show');
                     delete configOverlay.dataset.openedFromStart;
-                    configOverlay.removeEventListener('click', handleOverlayClick);
+                    this.eventManager.cleanup();
                 }
             };
-            configOverlay.addEventListener('click', handleOverlayClick);
+            this.eventManager.add(configOverlay, 'click', handleOverlayClick);
         } catch (error) {
             logger.error('Error opening config from start menu:', error);
         }
@@ -350,10 +316,9 @@ export class OverlayButtonHandler {
             const backButton = recordsOverlay.querySelector<HTMLElement>('#records-back-button');
             if (backButton) {
                 // Clone and replace to ensure clean handler
-                const newBackButton = backButton.cloneNode(true) as HTMLElement;
-                backButton.parentNode!.replaceChild(newBackButton, backButton);
+                const newBackButton = this.eventManager.cloneAndReplace(backButton);
 
-                newBackButton.addEventListener('click', (e: Event) => {
+                this.eventManager.add(newBackButton, 'click', (e: Event) => {
                     e?.preventDefault?.();
                     e?.stopPropagation?.();
                     recordsOverlay.classList.remove('show');
@@ -367,10 +332,10 @@ export class OverlayButtonHandler {
                 if (!panel || !panel.contains(e.target as Node)) {
                     recordsOverlay.classList.remove('show');
                     delete recordsOverlay.dataset.openedFromStart;
-                    recordsOverlay.removeEventListener('click', handleOverlayClick);
+                    this.eventManager.cleanup();
                 }
             };
-            recordsOverlay.addEventListener('click', handleOverlayClick);
+            this.eventManager.add(recordsOverlay, 'click', handleOverlayClick);
         } catch (error) {
             logger.error('Error opening records from start menu:', error);
         }
@@ -410,5 +375,13 @@ export class OverlayButtonHandler {
         } catch (e) {
             logger.error('Error loading game state:', e);
         }
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the OverlayButtonHandler instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

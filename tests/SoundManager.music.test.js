@@ -1,4 +1,4 @@
-import { SoundManager } from '@core/SoundManager.js';
+import { SoundManager } from '@core/SoundManager';
 
 describe('SoundManager music selection and continuity', () => {
     let sm;
@@ -30,7 +30,7 @@ describe('SoundManager music selection and continuity', () => {
 
     test('setMusicForZone chooses tension for surface', () => {
         // Spy on playBackgroundContinuous
-        sm.playBackgroundContinuous = jest.fn();
+        sm.playBackgroundContinuous = vi.fn();
         sm.setMusicForZone({ dimension: 0 });
         expect(sm.playBackgroundContinuous).toHaveBeenCalledWith('sfx/music/tension.ogg', expect.any(Number), expect.any(Number));
         // Expect default volume to be the quieter value
@@ -39,7 +39,7 @@ describe('SoundManager music selection and continuity', () => {
     });
 
     test('setMusicForZone chooses peaceful for interior and cave for underground', () => {
-        sm.playBackgroundContinuous = jest.fn();
+        sm.playBackgroundContinuous = vi.fn();
         sm.setMusicForZone({ dimension: 1 });
         expect(sm.playBackgroundContinuous).toHaveBeenCalledWith('sfx/music/peaceful.ogg', expect.any(Number), expect.any(Number));
 

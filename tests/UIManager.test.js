@@ -1,9 +1,6 @@
-/**
- * @jest-environment jsdom
- */
 import { UIManager } from '../ui/UIManager.js';
-import { eventBus } from '@core/EventBus.js';
-import { EventTypes } from '@core/EventTypes.js';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks.js';
 
 describe('UIManager', () => {
@@ -34,9 +31,9 @@ describe('UIManager', () => {
 
     // Create mock player with additional methods
     mockPlayer = createMockPlayer({
-      getPoints: jest.fn().mockReturnValue(100),
-      getVisitedZones: jest.fn().mockReturnValue(new Set(['0,0,0', '1,0,0'])),
-      getSpentDiscoveries: jest.fn().mockReturnValue(0),
+      getPoints: vi.fn().mockReturnValue(100),
+      getVisitedZones: vi.fn().mockReturnValue(new Set(['0,0,0', '1,0,0'])),
+      getSpentDiscoveries: vi.fn().mockReturnValue(0),
       undergroundDepth: 1,
     });
 
@@ -44,20 +41,46 @@ describe('UIManager', () => {
 
     // Mock canvas context for MiniMap
     const expandedCanvas = document.getElementById('expandedMapCanvas');
+    const zoneMapCanvas = document.getElementById('zoneMap');
     const mockCtx = {
       canvas: expandedCanvas,
-      clearRect: jest.fn(),
-      fillRect: jest.fn(),
-      strokeRect: jest.fn(),
-      fillText: jest.fn(),
-      save: jest.fn(),
-      restore: jest.fn(),
-      translate: jest.fn(),
-      scale: jest.fn(),
+      clearRect: vi.fn(),
+      fillRect: vi.fn(),
+      strokeRect: vi.fn(),
+      fillText: vi.fn(),
+      save: vi.fn(),
+      restore: vi.fn(),
+      translate: vi.fn(),
+      scale: vi.fn(),
+    };
+    const zoneMapCtx = {
+      canvas: zoneMapCanvas,
+      clearRect: vi.fn(),
+      fillRect: vi.fn(),
+      strokeRect: vi.fn(),
+      fillText: vi.fn(),
+      save: vi.fn(),
+      restore: vi.fn(),
+      translate: vi.fn(),
+      scale: vi.fn(),
     };
     if (expandedCanvas) {
-      expandedCanvas.getContext = jest.fn().mockReturnValue(mockCtx);
+      expandedCanvas.getContext = vi.fn().mockReturnValue(mockCtx);
     }
+    if (zoneMapCanvas) {
+      zoneMapCanvas.getContext = vi.fn().mockReturnValue(zoneMapCtx);
+    }
+
+    // Add mapCtx to mockGame for MiniMap
+    mockGame.mapCtx = zoneMapCtx;
+
+    // Add specialZones for MiniMap
+    mockGame.specialZones = new Set();
+
+    // Add textureManager for MiniMap
+    mockGame.textureManager = {
+      getImage: vi.fn().mockReturnValue(null)
+    };
 
     // Clear event bus
     eventBus.clear?.() || eventBus.offAll?.();
@@ -82,7 +105,7 @@ describe('UIManager', () => {
     });
 
     test('should set up event listeners', () => {
-      const emitSpy = jest.spyOn(eventBus, 'emit');
+      const emitSpy = vi.spyOn(eventBus, 'emit');
 
       // Trigger PLAYER_STATS_CHANGED event
       eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {});
@@ -107,7 +130,7 @@ describe('UIManager', () => {
     });
 
     test('should update stats when player stats change', () => {
-      const emitSpy = jest.spyOn(eventBus, 'emit');
+      const emitSpy = vi.spyOn(eventBus, 'emit');
 
       // Trigger player stats changed
       eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {});
@@ -120,7 +143,7 @@ describe('UIManager', () => {
     });
 
     test('should update stats when enemy is defeated', () => {
-      const emitSpy = jest.spyOn(eventBus, 'emit');
+      const emitSpy = vi.spyOn(eventBus, 'emit');
 
       // Trigger enemy defeated
       eventBus.emit(EventTypes.ENEMY_DEFEATED, {
@@ -138,7 +161,7 @@ describe('UIManager', () => {
 
   describe('Treasure Found', () => {
     test('should add message to log when treasure is found', () => {
-      const addMessageSpy = jest.spyOn(uiManager, 'addMessageToLog');
+      const addMessageSpy = vi.spyOn(uiManager, 'addMessageToLog');
 
       // Trigger treasure found event
       eventBus.emit(EventTypes.TREASURE_FOUND, {
@@ -150,7 +173,7 @@ describe('UIManager', () => {
     });
 
     test('should update stats when treasure is found', () => {
-      const emitSpy = jest.spyOn(eventBus, 'emit');
+      const emitSpy = vi.spyOn(eventBus, 'emit');
 
       // Trigger treasure found
       eventBus.emit(EventTypes.TREASURE_FOUND, {
@@ -167,7 +190,7 @@ describe('UIManager', () => {
 
   describe('updatePlayerPosition', () => {
     test('should close barter window when player moves', () => {
-      const hideSpy = jest.spyOn(uiManager.panelManager, 'hideBarterWindow');
+      const hideSpy = vi.spyOn(uiManager.panelManager, 'hideBarterWindow');
 
       uiManager.updatePlayerPosition();
 
@@ -175,7 +198,7 @@ describe('UIManager', () => {
     });
 
     test('should close statue window when player moves', () => {
-      const hideSpy = jest.spyOn(uiManager.panelManager, 'hideStatueInfoWindow');
+      const hideSpy = vi.spyOn(uiManager.panelManager, 'hideStatueInfoWindow');
 
       uiManager.updatePlayerPosition();
 
@@ -183,7 +206,7 @@ describe('UIManager', () => {
     });
 
     test('should respond to PLAYER_MOVED event', () => {
-      const updateSpy = jest.spyOn(uiManager, 'updatePlayerPosition');
+      const updateSpy = vi.spyOn(uiManager, 'updatePlayerPosition');
 
       eventBus.emit(EventTypes.PLAYER_MOVED, {});
 
@@ -193,20 +216,20 @@ describe('UIManager', () => {
 
   describe('updateZoneDisplay', () => {
     test('should render minimap when zone changes', () => {
-      const renderSpy = jest.spyOn(uiManager.miniMap, 'renderZoneMap');
+      const renderSpy = vi.spyOn(uiManager.miniMap, 'renderZoneMap');
 
       uiManager.updateZoneDisplay();
 
       expect(renderSpy).toHaveBeenCalled();
     });
 
-    test('should display "Woodcutter\'s Club" for zone (0,0) dimension 1', () => {
+    test('should display "Museum" for zone (0,0) dimension 1', () => {
       mockPlayer.getCurrentZone.mockReturnValue({ x: 0, y: 0, dimension: 1 });
 
       uiManager.updateZoneDisplay();
 
       const mapInfo = document.getElementById('map-info');
-      expect(mapInfo.innerHTML).toContain("Woodcutter's Club");
+      expect(mapInfo.innerHTML).toContain("Museum");
     });
 
     test('should display underground depth info for dimension 2', () => {
@@ -224,7 +247,7 @@ describe('UIManager', () => {
     });
 
     test('should respond to ZONE_CHANGED event', () => {
-      const updateSpy = jest.spyOn(uiManager, 'updateZoneDisplay');
+      const updateSpy = vi.spyOn(uiManager, 'updateZoneDisplay');
 
       eventBus.emit(EventTypes.ZONE_CHANGED, {});
 
@@ -234,9 +257,9 @@ describe('UIManager', () => {
 
   describe('Game Reset', () => {
     test('should update UI on game reset', () => {
-      const updatePositionSpy = jest.spyOn(uiManager, 'updatePlayerPosition');
-      const updateZoneSpy = jest.spyOn(uiManager, 'updateZoneDisplay');
-      const emitSpy = jest.spyOn(eventBus, 'emit');
+      const updatePositionSpy = vi.spyOn(uiManager, 'updatePlayerPosition');
+      const updateZoneSpy = vi.spyOn(uiManager, 'updateZoneDisplay');
+      const emitSpy = vi.spyOn(eventBus, 'emit');
 
       eventBus.emit(EventTypes.GAME_RESET, {});
 
@@ -256,7 +279,7 @@ describe('UIManager', () => {
 
     test('should delegate to messageManager for adding messages', () => {
       if (uiManager.messageManager && uiManager.messageManager.addMessage) {
-        const addSpy = jest.spyOn(uiManager.messageManager, 'addMessage');
+        const addSpy = vi.spyOn(uiManager.messageManager, 'addMessage');
 
         uiManager.addMessageToLog('Test message');
 

@@ -1,5 +1,5 @@
-import { errorHandler, ErrorSeverity } from './ErrorHandler.ts';
-import { logger } from './logger.ts';
+import { errorHandler, ErrorSeverity } from './ErrorHandler';
+import { logger } from './logger';
 
 interface ErrorContext {
   source?: string;

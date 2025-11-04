@@ -1,6 +1,7 @@
-import { ANIMATION_SCHEMAS } from './constants/index.ts';
-import { eventBus } from './EventBus.ts';
-import { EventTypes } from './EventTypes.ts';
+import { ANIMATION_SCHEMAS } from './constants/index';
+import { eventBus } from './EventBus';
+import { EventTypes } from './EventTypes';
+import type { Position } from './Position';
 
 interface TileBase {
   type: number | string;
@@ -29,11 +30,6 @@ interface FoodTile extends TileBase {
 }
 
 type Tile = number | TileBase;
-
-interface Position {
-  x: number;
-  y: number;
-}
 
 interface AnimationData {
   [key: string]: any;
@@ -390,9 +386,9 @@ export class AnimationManager {
    */
   addHorseChargeAnimation({ startPos, midPos, endPos }: { startPos: Position; midPos: Position; endPos: Position }): void {
     const animation: HorseChargeAnimation = {
-      startPos: { ...startPos },
-      midPos: { ...midPos },
-      endPos: { ...endPos },
+      startPos: startPos as Position,
+      midPos: midPos as Position,
+      endPos: endPos as Position,
       frame: 20
     };
     DataContractValidator.validateAnimation('HORSE_CHARGE', animation);

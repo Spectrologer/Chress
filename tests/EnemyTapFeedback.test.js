@@ -2,9 +2,9 @@
  * Tests for enemy tap feedback and attack range visualization
  */
 
-import { GestureDetector } from '../controllers/GestureDetector.js';
-import { InputCoordinator } from '../controllers/InputCoordinator.js';
-import { Position } from '@core/Position.js';
+import { GestureDetector } from '../controllers/GestureDetector';
+import { InputCoordinator } from '../controllers/InputCoordinator';
+import { Position } from '@core/Position';
 
 describe('Enemy tap feedback', () => {
     let mockGame, gestureDetector, inputCoordinator;
@@ -32,9 +32,9 @@ describe('Enemy tap feedback', () => {
                 getPositionObject: () => new Position(0, 0)
             },
             renderManager: {
-                clearFeedback: jest.fn(),
-                showTapFeedback: jest.fn(),
-                startHoldFeedback: jest.fn()
+                clearFeedback: vi.fn(),
+                showTapFeedback: vi.fn(),
+                startHoldFeedback: vi.fn()
             },
             animationScheduler: {
                 isAnimating: false
@@ -56,7 +56,7 @@ describe('Enemy tap feedback', () => {
         const enemyX = 1, enemyY = 0; // Adjacent to player at (0,0)
 
         // Mock the conversion to return enemy position
-        gestureDetector._safeConvert = jest.fn(() => ({ x: enemyX, y: enemyY }));
+        gestureDetector._safeConvert = vi.fn(() => ({ x: enemyX, y: enemyY }));
 
         // Simulate pointer down (which starts hold feedback)
         const pointerDownEvent = {
@@ -64,7 +64,7 @@ describe('Enemy tap feedback', () => {
             clientX: 100,
             clientY: 100,
             pointerType: 'touch',
-            target: { setPointerCapture: jest.fn() }
+            target: { setPointerCapture: vi.fn() }
         };
         gestureDetector._onPointerDown(pointerDownEvent);
 
@@ -80,11 +80,11 @@ describe('Enemy tap feedback', () => {
             clientX: 100,
             clientY: 100,
             pointerType: 'touch',
-            target: { releasePointerCapture: jest.fn() }
+            target: { releasePointerCapture: vi.fn() }
         };
 
         // Mock _safeConvert for pointer up as well
-        gestureDetector._safeConvert = jest.fn(() => ({ x: enemyX, y: enemyY }));
+        gestureDetector._safeConvert = vi.fn(() => ({ x: enemyX, y: enemyY }));
 
         gestureDetector._onPointerUp(pointerUpEvent);
 
@@ -100,7 +100,7 @@ describe('Enemy tap feedback', () => {
         mockGame.enemies.push(nonAdjacentEnemy);
 
         // Mock the conversion to return non-adjacent enemy position
-        gestureDetector._safeConvert = jest.fn(() => ({ x: enemyX, y: enemyY }));
+        gestureDetector._safeConvert = vi.fn(() => ({ x: enemyX, y: enemyY }));
 
         // Simulate pointer down (which starts hold feedback)
         const pointerDownEvent = {
@@ -108,7 +108,7 @@ describe('Enemy tap feedback', () => {
             clientX: 200,
             clientY: 200,
             pointerType: 'touch',
-            target: { setPointerCapture: jest.fn() }
+            target: { setPointerCapture: vi.fn() }
         };
         gestureDetector._onPointerDown(pointerDownEvent);
 
@@ -124,7 +124,7 @@ describe('Enemy tap feedback', () => {
             clientX: 200,
             clientY: 200,
             pointerType: 'touch',
-            target: { releasePointerCapture: jest.fn() }
+            target: { releasePointerCapture: vi.fn() }
         };
 
         gestureDetector._onPointerUp(pointerUpEvent);
@@ -137,7 +137,7 @@ describe('Enemy tap feedback', () => {
         const emptyX = 2, emptyY = 2;
 
         // Mock the conversion to return empty tile position
-        gestureDetector._safeConvert = jest.fn(() => ({ x: emptyX, y: emptyY }));
+        gestureDetector._safeConvert = vi.fn(() => ({ x: emptyX, y: emptyY }));
 
         // Simulate pointer down
         const pointerDownEvent = {
@@ -145,7 +145,7 @@ describe('Enemy tap feedback', () => {
             clientX: 200,
             clientY: 200,
             pointerType: 'touch',
-            target: { setPointerCapture: jest.fn() }
+            target: { setPointerCapture: vi.fn() }
         };
         gestureDetector._onPointerDown(pointerDownEvent);
 
@@ -158,7 +158,7 @@ describe('Enemy tap feedback', () => {
             clientX: 200,
             clientY: 200,
             pointerType: 'touch',
-            target: { releasePointerCapture: jest.fn() }
+            target: { releasePointerCapture: vi.fn() }
         };
         gestureDetector._onPointerUp(pointerUpEvent);
 
@@ -170,9 +170,9 @@ describe('Enemy tap feedback', () => {
         const emptyX = 2, emptyY = 2;
 
         // Mock grid coordinates conversion
-        gestureDetector.convertScreenToGrid = jest.fn(() => ({ x: emptyX, y: emptyY }));
-        gestureDetector.clearTapTimeout = jest.fn();
-        gestureDetector.handleDoubleTapLogic = jest.fn(() => false);
+        gestureDetector.convertScreenToGrid = vi.fn(() => ({ x: emptyX, y: emptyY }));
+        gestureDetector.clearTapTimeout = vi.fn();
+        gestureDetector.handleDoubleTapLogic = vi.fn(() => false);
 
         // Simulate tap on empty tile
         inputCoordinator.handleTap(200, 200);
@@ -186,9 +186,9 @@ describe('Enemy tap feedback', () => {
         const enemyX = 1, enemyY = 0; // Adjacent to player at (0,0)
 
         // Mock grid coordinates conversion
-        gestureDetector.convertScreenToGrid = jest.fn(() => ({ x: enemyX, y: enemyY }));
-        gestureDetector.clearTapTimeout = jest.fn();
-        gestureDetector.handleDoubleTapLogic = jest.fn(() => false);
+        gestureDetector.convertScreenToGrid = vi.fn(() => ({ x: enemyX, y: enemyY }));
+        gestureDetector.clearTapTimeout = vi.fn();
+        gestureDetector.handleDoubleTapLogic = vi.fn(() => false);
 
         // Simulate tap on adjacent enemy tile
         inputCoordinator.handleTap(100, 100);
@@ -207,9 +207,9 @@ describe('Enemy tap feedback', () => {
         mockGame.enemies.push(nonAdjacentEnemy);
 
         // Mock grid coordinates conversion
-        gestureDetector.convertScreenToGrid = jest.fn(() => ({ x: enemyX, y: enemyY }));
-        gestureDetector.clearTapTimeout = jest.fn();
-        gestureDetector.handleDoubleTapLogic = jest.fn(() => false);
+        gestureDetector.convertScreenToGrid = vi.fn(() => ({ x: enemyX, y: enemyY }));
+        gestureDetector.clearTapTimeout = vi.fn();
+        gestureDetector.handleDoubleTapLogic = vi.fn(() => false);
 
         // Simulate tap on non-adjacent enemy tile
         inputCoordinator.handleTap(200, 200);

@@ -20,8 +20,8 @@ describe('MiniMap highlights cycling', () => {
     };
 
     // Avoid running real render code during these unit tests
-    miniMap.renderExpanded = jest.fn();
-    miniMap.renderZoneMap = jest.fn();
+    miniMap.renderExpanded = vi.fn();
+    miniMap.renderZoneMap = vi.fn();
 
     // Ensure pan is zero so clicks map to center tile
     miniMap.panX = 0;

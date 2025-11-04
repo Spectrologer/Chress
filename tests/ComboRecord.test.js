@@ -1,21 +1,17 @@
-/**
- * @jest-environment jsdom
- */
-
-import { CombatManager } from '@managers/CombatManager.js';
-import { BombManager } from '@managers/BombManager.js';
-import { EnemyDefeatFlow } from '@managers/EnemyDefeatFlow.js';
+import { CombatManager } from '@managers/CombatManager';
+import { BombManager } from '@managers/BombManager';
+import { EnemyDefeatFlow } from '@managers/EnemyDefeatFlow';
 
 // Create minimal mocks for game, player, enemy used by CombatManager.defeatEnemy
 function makeMockGame() {
     return {
-        animationManager: { addMultiplierAnimation: jest.fn(), addPointAnimation: jest.fn() },
-        soundManager: { playSound: jest.fn() },
+        animationManager: { addMultiplierAnimation: vi.fn(), addPointAnimation: vi.fn() },
+        soundManager: { playSound: vi.fn() },
         player: {
             lastActionType: 'attack',
             lastActionResult: 'kill',
             consecutiveKills: 1,
-            addPoints: jest.fn(),
+            addPoints: vi.fn(),
             getPoints: () => 0,
             getVisitedZones: () => new Set(),
             getSpentDiscoveries: () => 0
@@ -33,7 +29,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     localStorage.clear();
 });
 
@@ -51,7 +47,7 @@ test('CombatManager.defeatEnemy updates chress:record:combo when player achieves
         y: 3,
         health: 0,
         getPoints: () => 5,
-        takeDamage: jest.fn()
+        takeDamage: vi.fn()
     };
 
     // Pre-seed a lower combo record

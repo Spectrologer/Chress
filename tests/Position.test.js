@@ -3,8 +3,8 @@
  * Comprehensive unit tests for the Position class
  */
 
-import { Position } from '@core/Position.js';
-import { GRID_SIZE } from '@core/constants/index.js';
+import { Position } from '@core/Position';
+import { GRID_SIZE } from '@core/constants/index';
 
 describe('Position', () => {
     // ==========================================

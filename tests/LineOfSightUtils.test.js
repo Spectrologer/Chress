@@ -5,7 +5,7 @@ import {
     checkOrthogonalLineOfSight,
     checkDiagonalLineOfSight,
     checkQueenLineOfSight
-} from '@utils/LineOfSightUtils.js';
+} from '@utils/LineOfSightUtils';
 
 console.log('Testing LineOfSightUtils...\n');
 

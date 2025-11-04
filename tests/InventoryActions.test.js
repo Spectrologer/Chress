@@ -1,5 +1,5 @@
-import { InventoryService } from '@managers/inventory/InventoryService.js';
-import { TILE_TYPES } from '@core/constants/index.js';
+import { InventoryService } from '@managers/inventory/InventoryService';
+import { TILE_TYPES } from '@core/constants/index';
 
 describe('InventoryService', () => {
   let inventoryService;
@@ -12,24 +12,24 @@ describe('InventoryService', () => {
       radialInventory: [],
       x: 1,
       y: 1,
-      getVisitedZones: jest.fn().mockReturnValue(new Set()),
-      getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0 }),
-      markZoneVisited: jest.fn(),
-      setHealth: jest.fn(),
-      getHealth: jest.fn().mockReturnValue(2),
-      restoreHunger: jest.fn(),
-      restoreThirst: jest.fn()
+      getVisitedZones: vi.fn().mockReturnValue(new Set()),
+      getCurrentZone: vi.fn().mockReturnValue({ x: 0, y: 0 }),
+      markZoneVisited: vi.fn(),
+      setHealth: vi.fn(),
+      getHealth: vi.fn().mockReturnValue(2),
+      restoreHunger: vi.fn(),
+      restoreThirst: vi.fn()
     };
 
     mockGame = {
       player: mockPlayer,
       grid: Array(9).fill().map(() => Array(9).fill(TILE_TYPES.FLOOR)),
-      uiManager: { addMessageToLog: jest.fn(), renderZoneMap: jest.fn(), updatePlayerStats: jest.fn() },
+      uiManager: { addMessageToLog: vi.fn(), renderZoneMap: vi.fn(), updatePlayerStats: vi.fn() },
       availableFoodAssets: ['food/meat/beaf.png'],
       specialZones: new Map(),
-      hideOverlayMessage: jest.fn(),
+      hideOverlayMessage: vi.fn(),
       animationScheduler: { createSequence: () => ({ wait: () => ({ then: () => ({ start: () => {} }) }) }) },
-      updatePlayerStats: jest.fn()
+      updatePlayerStats: vi.fn()
     };
 
     inventoryService = new InventoryService(mockGame);
@@ -62,7 +62,7 @@ describe('InventoryService', () => {
   test('useMapNote reveals location and registers special zone', () => {
     const noteItem = { type: 'note' };
     mockPlayer.inventory = [noteItem];
-    jest.spyOn(Math, 'random').mockReturnValue(0.2);
+    vi.spyOn(Math, 'random').mockReturnValue(0.2);
     inventoryService.useItem(noteItem, { fromRadial: false });
     expect(mockPlayer.markZoneVisited).toHaveBeenCalled();
     expect(mockGame.uiManager.addMessageToLog).toHaveBeenCalled();

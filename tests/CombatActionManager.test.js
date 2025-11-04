@@ -1,5 +1,5 @@
-import { CombatActionManager } from '@managers/CombatActionManager.js';
-import { TILE_TYPES } from '@core/constants/index.js';
+import { CombatActionManager } from '@managers/CombatActionManager';
+import { TILE_TYPES } from '@core/constants/index';
 
 describe('CombatActionManager', () => {
   let game;
@@ -39,11 +39,7 @@ describe('CombatActionManager', () => {
       },
       // Add playerFacade mock for Vitest compatibility
       playerFacade: {
-        getInventory: vi.fn().mockReturnValue([
-          { type: 'bishop_spear', uses: 1, disabled: false },
-          { type: 'horse_icon', uses: 1, disabled: false },
-          { type: 'bow', uses: 1, disabled: false }
-        ]),
+        getInventory: vi.fn(() => mockPlayer.inventory),
         getRadialInventory: vi.fn().mockReturnValue([]),
         isWalkable: vi.fn().mockReturnValue(true)
       },

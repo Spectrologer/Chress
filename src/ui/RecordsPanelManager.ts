@@ -1,4 +1,5 @@
-import { PanelEventHandler } from './PanelEventHandler.ts';
+import { PanelEventHandler } from './PanelEventHandler';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface GameInstance {
     [key: string]: any;
@@ -12,13 +13,14 @@ export class RecordsPanelManager {
     private game: GameInstance;
     private recordsOverlay: HTMLElement | null;
     private recordsOpenTime: number | null = null;
-    private _recordsGlobalHandler: ((ev: Event) => void) | null = null;
     private _recordsHandlerAttached: boolean = false;
     private _showStatsPanelCallback?: () => void;
+    private eventManager: EventListenerManager;
 
     constructor(game: GameInstance) {
         this.game = game;
         this.recordsOverlay = document.getElementById('recordsOverlay');
+        this.eventManager = new EventListenerManager();
     }
 
     /**
@@ -67,11 +69,8 @@ export class RecordsPanelManager {
 
         this.recordsOverlay.classList.remove('show');
 
-        // Remove global click handler
-        if (this._recordsGlobalHandler) {
-            document.removeEventListener('pointerdown', this._recordsGlobalHandler, true);
-            this._recordsGlobalHandler = null;
-        }
+        // Cleanup all event listeners
+        this.eventManager.cleanup();
 
         this.recordsOpenTime = null;
     }
@@ -99,24 +98,11 @@ export class RecordsPanelManager {
     private _setupGlobalClickHandler(): void {
         if (!this.recordsOverlay) return;
 
-        // Remove existing handler if present
-        if (this._recordsGlobalHandler) {
-            document.removeEventListener('pointerdown', this._recordsGlobalHandler, true);
-            this._recordsGlobalHandler = null;
-        }
-
-        this._recordsGlobalHandler = PanelEventHandler.createOutsideClickHandler(
+        this.eventManager.addOutsideClickHandler(
             this.recordsOverlay,
             () => this.hideRecordsOverlay(),
-            { debounceMs: 300 }
+            { debounceMs: 300, capturePhase: true }
         );
-
-        // Add with slight delay to prevent immediate closure
-        setTimeout(() => {
-            if (this._recordsGlobalHandler) {
-                document.addEventListener('pointerdown', this._recordsGlobalHandler, true);
-            }
-        }, 0);
     }
 
     /**
@@ -130,17 +116,19 @@ export class RecordsPanelManager {
         }
 
         // Close on overlay background click
-        this.recordsOverlay?.addEventListener('click', (e) => {
-            const inner = this.recordsOverlay?.querySelector('.stats-panel');
-            if (!inner || !inner.contains(e.target as Node)) {
-                this.hideRecordsOverlay();
-            }
-        });
+        if (this.recordsOverlay) {
+            this.eventManager.add(this.recordsOverlay, 'click', (e: MouseEvent) => {
+                const inner = this.recordsOverlay?.querySelector('.stats-panel');
+                if (!inner || !inner.contains(e.target as Node)) {
+                    this.hideRecordsOverlay();
+                }
+            });
+        }
 
         // Wire up the back button
         const backButton = this.recordsOverlay?.querySelector<HTMLButtonElement>('#records-back-button');
         if (backButton) {
-            backButton.addEventListener('click', (e) => {
+            this.eventManager.add(backButton, 'click', (e: MouseEvent) => {
                 if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
 
                 // Check if opened from start menu - if so, don't call hideRecordsOverlay
@@ -163,5 +151,13 @@ export class RecordsPanelManager {
      */
     setShowStatsPanelCallback(callback: () => void): void {
         this._showStatsPanelCallback = callback;
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the RecordsPanelManager instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

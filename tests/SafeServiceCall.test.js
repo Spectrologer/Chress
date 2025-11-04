@@ -2,13 +2,13 @@
  * Tests for SafeServiceCall utility
  */
 
-import { safeCall, safeCallAsync, safeGet, hasMethod } from '@utils/SafeServiceCall.js';
+import { safeCall, safeCallAsync, safeGet, hasMethod } from '@utils/SafeServiceCall';
 
 describe('SafeServiceCall', () => {
     describe('safeCall', () => {
         test('calls method when service and method exist', () => {
             const service = {
-                testMethod: jest.fn(() => 'result')
+                testMethod: vi.fn(() => 'result')
             };
 
             const result = safeCall(service, 'testMethod');
@@ -19,7 +19,7 @@ describe('SafeServiceCall', () => {
 
         test('calls method with arguments', () => {
             const service = {
-                testMethod: jest.fn((a, b) => a + b)
+                testMethod: vi.fn((a, b) => a + b)
             };
 
             const result = safeCall(service, 'testMethod', 5, 3);
@@ -70,7 +70,7 @@ describe('SafeServiceCall', () => {
     describe('safeCallAsync', () => {
         test('calls async method when service and method exist', async () => {
             const service = {
-                asyncMethod: jest.fn(async () => 'async result')
+                asyncMethod: vi.fn(async () => 'async result')
             };
 
             const result = await safeCallAsync(service, 'asyncMethod');
@@ -81,7 +81,7 @@ describe('SafeServiceCall', () => {
 
         test('calls async method with arguments', async () => {
             const service = {
-                asyncMethod: jest.fn(async (a, b) => a * b)
+                asyncMethod: vi.fn(async (a, b) => a * b)
             };
 
             const result = await safeCallAsync(service, 'asyncMethod', 4, 5);
@@ -108,7 +108,7 @@ describe('SafeServiceCall', () => {
 
         test('propagates errors from async methods', async () => {
             const service = {
-                failingMethod: jest.fn(async () => {
+                failingMethod: vi.fn(async () => {
                     throw new Error('Test error');
                 })
             };
@@ -209,7 +209,7 @@ describe('SafeServiceCall', () => {
             // Before: if (this.game.gameStateManager && typeof this.game.gameStateManager.startAutoSave === 'function')
             const game = {
                 gameStateManager: {
-                    startAutoSave: jest.fn()
+                    startAutoSave: vi.fn()
                 }
             };
 
@@ -250,7 +250,7 @@ describe('SafeServiceCall', () => {
         test('replaces fallback method pattern', () => {
             // Before: try method1, fallback to method2
             const gameStateManager = {
-                resetGame: jest.fn(() => true)
+                resetGame: vi.fn(() => true)
             };
 
             const reset = safeCall(gameStateManager, 'resetGame');

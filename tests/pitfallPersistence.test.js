@@ -1,9 +1,5 @@
-/**
- * @jest-environment jsdom
- */
-
-import { ZoneManager } from '@managers/ZoneManager.js';
-import { TILE_TYPES, GRID_SIZE } from '@core/constants/index.js';
+import { ZoneManager } from '@managers/ZoneManager';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 
 // Tests to lock in pitfall/hole metadata persistence and ensure port transitions
 // don't unintentionally overwrite saved underground zone return coordinates.
@@ -29,7 +25,7 @@ describe('Pitfall persistence', () => {
                 onZoneTransition() {}
             },
             uiManager: { generateRegionName() { return 'Test'; }, showRegionNotification() {}, updateZoneDisplay() {}, updatePlayerPosition() {}, updatePlayerStats() {}, addMessageToLog() {} },
-            zoneGenerator: { generateZone: jest.fn(), grid: [] },
+            zoneGenerator: { generateZone: vi.fn(), grid: [] },
             connectionManager: { generateChunkConnections() {} },
             availableFoodAssets: [],
             enemies: [],
@@ -84,7 +80,7 @@ describe('Pitfall persistence', () => {
                 onZoneTransition() {}
             },
             uiManager: { generateRegionName() { return 'Test'; }, showRegionNotification() {}, updateZoneDisplay() {}, updatePlayerPosition() {}, updatePlayerStats() {}, addMessageToLog() {} },
-            zoneGenerator: { generateZone: jest.fn(() => ({ grid: Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)), enemies: [], playerSpawn: { x: 5, y: 5 } })), grid: [] },
+            zoneGenerator: { generateZone: vi.fn(() => ({ grid: Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)), enemies: [], playerSpawn: { x: 5, y: 5 } })), grid: [] },
             connectionManager: { generateChunkConnections() {} },
             availableFoodAssets: [],
             enemies: [],

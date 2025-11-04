@@ -1,25 +1,24 @@
-import { logger } from '../core/logger.ts';
-import { fitTextToContainer } from './TextFitter.ts';
-import type { TypewriterController } from './TypewriterController.ts';
-
-interface GameInstance {
-    messageManager?: any;
-    [key: string]: any;
-}
+import { logger } from '@core/logger';
+import { fitTextToContainer } from './TextFitter';
+import type { TypewriterController } from './TypewriterController';
+import { EventListenerManager } from '@utils/EventListenerManager';
+import type { IGame } from '@core/GameContext';
 
 /**
  * Manages sign and NPC dialogue display with portraits and buttons.
  * Handles persistent dialogue that requires user interaction to dismiss.
  */
 export class DialogueManager {
-    private game: GameInstance;
+    private game: IGame;
     private typewriterController: TypewriterController;
     private messageOverlay: HTMLElement | null;
+    private eventManager: EventListenerManager;
 
-    constructor(game: GameInstance, typewriterController: TypewriterController) {
+    constructor(game: IGame, typewriterController: TypewriterController) {
         this.game = game;
         this.typewriterController = typewriterController;
         this.messageOverlay = document.getElementById('messageOverlay');
+        this.eventManager = new EventListenerManager();
     }
 
     /**
@@ -102,13 +101,15 @@ export class DialogueManager {
         if (name && imgPath) {
             // NPC dialogue with name and portrait
             this.messageOverlay.innerHTML = /*html*/`
-                <span class="character-name" style="font-size: 1.5em; margin-bottom: 10px; display:block; text-align:center;">${name}</span>
-                <div class="barter-portrait-container large-portrait" style="margin: 0 auto 10px auto; text-align:center;">
-                    <img src="${imgPath}" class="barter-portrait">
-                </div>
-                <div class="dialogue-text" style="text-align:center;">${text}</div>
-                <div id="dialogue-button-container" style="text-align: center; margin-top: 20px; display: none;">
-                    <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
+                <div style="display: flex; flex-direction: column; height: 100%; max-height: 100%; overflow: auto;">
+                    <span class="character-name" style="font-size: 2.2em; margin-bottom: 10px; display:block; text-align:center; flex-shrink: 0;">${name}</span>
+                    <div class="barter-portrait-container large-portrait centered-portrait" style="text-align:center; flex-shrink: 0;">
+                        <img src="${imgPath}" class="barter-portrait" style="width: 120px; height: 120px; image-rendering: pixelated;">
+                    </div>
+                    <div class="dialogue-text" style="text-align:center; font-size: 1.35em; line-height: 1.45; padding: 10px 15px; flex-grow: 1; overflow: auto;">${text}</div>
+                    <div id="dialogue-button-container" style="text-align: center; margin-top: 15px; flex-shrink: 0; display: none;">
+                        <button class="dialogue-close-button" style="padding: 10px 20px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
+                    </div>
                 </div>`;
         } else if (imgPath) {
             // Sign with image
@@ -152,9 +153,9 @@ export class DialogueManager {
         try {
             const closeButton = this.messageOverlay?.querySelector('.dialogue-close-button');
             if (closeButton) {
-                closeButton.addEventListener('click', () => {
+                this.eventManager.add(closeButton, 'click', () => {
                     // Import Sign dynamically to avoid circular deps
-                    import('./Sign.js').then(({ Sign }) => {
+                    import('./Sign').then(({ Sign }) => {
                         Sign.hideMessageForSign(this.game);
                     });
                 });
@@ -172,5 +173,13 @@ export class DialogueManager {
         if (this.game.messageManager && this.game.messageManager.overlayHandler) {
             this.game.messageManager.overlayHandler.clearTimeout();
         }
+    }
+
+    /**
+     * Cleanup all event listeners
+     * Call this when destroying the DialogueManager instance
+     */
+    cleanup(): void {
+        this.eventManager.cleanup();
     }
 }

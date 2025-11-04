@@ -2,8 +2,7 @@
  * Common mock factories for testing
  * Provides reusable mock objects to standardize testing patterns
  *
- * Note: Uses jest.fn() which is mapped to vi.fn() via tests/setup.js
- * This maintains compatibility with Vitest while keeping familiar Jest syntax
+ * Uses vi.fn() from Vitest for creating mock functions
  */
 
 import { TILE_TYPES, GRID_SIZE } from '../../src/core/constants/index.js';
@@ -27,38 +26,42 @@ export function createMockPlayer(overrides = {}) {
         visitedZones: new Set(['0,0,0']),
 
         // Position methods
-        getPosition: jest.fn().mockReturnValue({ x: 2, y: 1 }),
-        getPositionObject: jest.fn().mockReturnValue({ x: 2, y: 1 }),
-        setPosition: jest.fn(),
+        getPosition: vi.fn().mockReturnValue({ x: 2, y: 1 }),
+        getPositionObject: vi.fn().mockReturnValue({ x: 2, y: 1 }),
+        setPosition: vi.fn(),
 
         // State checks
-        isDead: jest.fn().mockReturnValue(false),
-        isWalkable: jest.fn().mockReturnValue(true),
+        isDead: vi.fn().mockReturnValue(false),
+        isWalkable: vi.fn().mockReturnValue(true),
 
         // Movement
-        move: jest.fn(),
+        move: vi.fn(),
 
         // Animation
-        startAttackAnimation: jest.fn(),
-        startBump: jest.fn(),
+        startAttackAnimation: vi.fn(),
+        startBump: vi.fn(),
 
         // Combat
-        takeDamage: jest.fn(),
-        addPoints: jest.fn(),
+        takeDamage: vi.fn(),
+        addPoints: vi.fn(),
+
+        // Stats methods
+        getThirst: vi.fn().mockReturnValue(50),
+        getHunger: vi.fn().mockReturnValue(50),
 
         // Interaction
-        setInteractOnReach: jest.fn(),
-        clearInteractOnReach: jest.fn(),
+        setInteractOnReach: vi.fn(),
+        clearInteractOnReach: vi.fn(),
         interactOnReach: null,
 
         // Zone management
-        getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
-        setCurrentZone: jest.fn(),
-        hasVisitedZone: jest.fn().mockReturnValue(false),
+        getCurrentZone: vi.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
+        setCurrentZone: vi.fn(),
+        hasVisitedZone: vi.fn().mockReturnValue(false),
 
         // Stats
-        getHealth: jest.fn().mockReturnValue(100),
-        getHunger: jest.fn().mockReturnValue(50),
+        getHealth: vi.fn().mockReturnValue(100),
+        getHunger: vi.fn().mockReturnValue(50),
 
         ...overrides,
     };
@@ -77,9 +80,9 @@ export function createMockEnemy(overrides = {}) {
         isFrozen: false,
         showFrozenVisual: false,
 
-        takeDamage: jest.fn(),
-        getPoints: jest.fn().mockReturnValue(10),
-        move: jest.fn(),
+        takeDamage: vi.fn(),
+        getPoints: vi.fn().mockReturnValue(10),
+        move: vi.fn(),
 
         ...overrides,
     };
@@ -107,7 +110,7 @@ export function createMockGame(overrides = {}) {
 
         // Canvas
         canvas: {
-            getBoundingClientRect: jest.fn().mockReturnValue({
+            getBoundingClientRect: vi.fn().mockReturnValue({
                 left: 0,
                 top: 0,
                 width: 360,
@@ -127,67 +130,67 @@ export function createMockGame(overrides = {}) {
 
         // Managers
         interactionManager: {
-            handleTap: jest.fn().mockReturnValue(false),
+            handleTap: vi.fn().mockReturnValue(false),
         },
 
         combatManager: {
-            addPointAnimation: jest.fn(),
-            handlePlayerAttack: jest.fn(),
-            defeatEnemy: jest.fn(),
+            addPointAnimation: vi.fn(),
+            handlePlayerAttack: vi.fn(),
+            defeatEnemy: vi.fn(),
         },
 
         uiManager: {
-            isStatsPanelOpen: jest.fn().mockReturnValue(false),
-            hideStatsPanel: jest.fn(),
-            showStatsPanel: jest.fn(),
-            updatePlayerStats: jest.fn(),
-            showMessage: jest.fn(),
-            hideMessage: jest.fn(),
+            isStatsPanelOpen: vi.fn().mockReturnValue(false),
+            hideStatsPanel: vi.fn(),
+            showStatsPanel: vi.fn(),
+            updatePlayerStats: vi.fn(),
+            showMessage: vi.fn(),
+            hideMessage: vi.fn(),
         },
 
         consentManager: {
-            forceShowConsentBanner: jest.fn(),
+            forceShowConsentBanner: vi.fn(),
         },
 
         turnManager: {
-            handleTurnCompletion: jest.fn(),
+            handleTurnCompletion: vi.fn(),
         },
 
         animationScheduler: {
-            createSequence: jest.fn(() => ({
-                add: jest.fn().mockReturnThis(),
-                play: jest.fn().mockResolvedValue(undefined),
-                cancel: jest.fn(),
+            createSequence: vi.fn(() => ({
+                add: vi.fn().mockReturnThis(),
+                play: vi.fn().mockResolvedValue(undefined),
+                cancel: vi.fn(),
             })),
         },
 
         eventBus: {
-            on: jest.fn(),
-            emit: jest.fn(),
-            off: jest.fn(),
+            on: vi.fn(),
+            emit: vi.fn(),
+            off: vi.fn(),
         },
 
         gridManager: {
-            getTile: jest.fn((x, y) => {
+            getTile: vi.fn((x, y) => {
                 if (x < 0 || y < 0 || x >= GRID_SIZE || y >= GRID_SIZE) {
                     return undefined;
                 }
                 return mockGrid[y][x];
             }),
-            setTile: jest.fn(),
-            isWalkable: jest.fn().mockReturnValue(true),
+            setTile: vi.fn(),
+            isWalkable: vi.fn().mockReturnValue(true),
         },
 
         // Game methods
-        hideOverlayMessage: jest.fn(),
-        transitionToZone: jest.fn(),
-        handleEnemyMovements: jest.fn(),
-        checkCollisions: jest.fn(),
-        checkItemPickup: jest.fn(),
-        updatePlayerPosition: jest.fn(),
-        updatePlayerStats: jest.fn(),
-        startEnemyTurns: jest.fn(),
-        incrementBombActions: jest.fn(),
+        hideOverlayMessage: vi.fn(),
+        transitionToZone: vi.fn(),
+        handleEnemyMovements: vi.fn(),
+        checkCollisions: vi.fn(),
+        checkItemPickup: vi.fn(),
+        updatePlayerPosition: vi.fn(),
+        updatePlayerStats: vi.fn(),
+        startEnemyTurns: vi.fn(),
+        incrementBombActions: vi.fn(),
 
         ...overrides,
     };
@@ -200,18 +203,18 @@ export function createMockEventBus() {
     const listeners = new Map();
 
     return {
-        on: jest.fn((event, callback) => {
+        on: vi.fn((event, callback) => {
             if (!listeners.has(event)) {
                 listeners.set(event, []);
             }
             listeners.get(event).push(callback);
         }),
-        emit: jest.fn((event, data) => {
+        emit: vi.fn((event, data) => {
             if (listeners.has(event)) {
                 listeners.get(event).forEach(callback => callback(data));
             }
         }),
-        off: jest.fn((event, callback) => {
+        off: vi.fn((event, callback) => {
             if (listeners.has(event)) {
                 const callbacks = listeners.get(event);
                 const index = callbacks.indexOf(callback);
@@ -220,7 +223,7 @@ export function createMockEventBus() {
                 }
             }
         }),
-        clear: jest.fn(() => {
+        clear: vi.fn(() => {
             listeners.clear();
         }),
     };
@@ -231,12 +234,12 @@ export function createMockEventBus() {
  */
 export function createMockInventoryService() {
     return {
-        addItem: jest.fn(),
-        removeItem: jest.fn(),
-        hasItem: jest.fn().mockReturnValue(false),
-        getItems: jest.fn().mockReturnValue([]),
-        useItem: jest.fn(),
-        equipItem: jest.fn(),
+        addItem: vi.fn(),
+        removeItem: vi.fn(),
+        hasItem: vi.fn().mockReturnValue(false),
+        getItems: vi.fn().mockReturnValue([]),
+        useItem: vi.fn(),
+        equipItem: vi.fn(),
     };
 }
 
@@ -273,25 +276,25 @@ export function createMockElement(id = 'mock-element') {
         innerHTML: '',
         style: {},
         classList: {
-            add: jest.fn(),
-            remove: jest.fn(),
-            contains: jest.fn(),
-            toggle: jest.fn(),
+            add: vi.fn(),
+            remove: vi.fn(),
+            contains: vi.fn(),
+            toggle: vi.fn(),
         },
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        querySelector: jest.fn(selector => {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        querySelector: vi.fn(selector => {
             // Return a nested mock element
             return createMockElement(`${id}-${selector}`);
         }),
-        querySelectorAll: jest.fn(() => []),
-        appendChild: jest.fn(),
-        removeChild: jest.fn(),
-        remove: jest.fn(),
-        getAttribute: jest.fn(),
-        setAttribute: jest.fn(),
-        hasAttribute: jest.fn(),
-        removeAttribute: jest.fn(),
+        querySelectorAll: vi.fn(() => []),
+        appendChild: vi.fn(),
+        removeChild: vi.fn(),
+        remove: vi.fn(),
+        getAttribute: vi.fn(),
+        setAttribute: vi.fn(),
+        hasAttribute: vi.fn(),
+        removeAttribute: vi.fn(),
     };
     return element;
 }

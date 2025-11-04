@@ -1,4 +1,4 @@
-import { SoundManager } from '@core/SoundManager.js';
+import { SoundManager } from '@core/SoundManager';
 
 describe('SoundManager SFX playback', () => {
     let sm;
@@ -25,14 +25,14 @@ describe('SoundManager SFX playback', () => {
         expect(sm.sounds['test-sfx']).toBeDefined();
         // Spy on cloneNode of the stored audio instance
         const stored = sm.sounds['test-sfx'];
-        stored.cloneNode = jest.fn(() => ({ play: () => Promise.resolve(), volume: stored.volume }));
+        stored.cloneNode = vi.fn(() => ({ play: () => Promise.resolve(), volume: stored.volume }));
         sm.playSound('test-sfx');
         expect(stored.cloneNode).toHaveBeenCalled();
     });
 
     test('playSound falls back to procedural when unknown', () => {
         // Spy on playProceduralSound
-        sm.playProceduralSound = jest.fn();
+        sm.playProceduralSound = vi.fn();
         sm.playSound('nonexistent_sound');
         expect(sm.playProceduralSound).toHaveBeenCalledWith('nonexistent_sound');
     });

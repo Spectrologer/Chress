@@ -1,6 +1,6 @@
-import { InputController } from '../controllers/InputController.js';
-import { eventBus } from '@core/EventBus.js';
-import { EventTypes } from '@core/EventTypes.js';
+import { InputController } from '../controllers/InputController';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 // Minimal fake game/player to test executePath behavior
 function makeGame() {
@@ -15,9 +15,9 @@ function makeGame() {
     };
 
     const renderManager = {
-        startHoldFeedback: jest.fn(),
-        clearFeedback: jest.fn(),
-        showTapFeedback: jest.fn()
+        startHoldFeedback: vi.fn(),
+        clearFeedback: vi.fn(),
+        showTapFeedback: vi.fn()
     };
 
     const game = {
@@ -27,18 +27,18 @@ function makeGame() {
         enemies: [],
         animationScheduler: {
             createSequence: () => ({ then: () => ({ wait: () => ({ then: () => ({ start: () => Promise.resolve(), id: 1 }) }) }) }),
-            cancelSequence: jest.fn()
+            cancelSequence: vi.fn()
         }
     };
     // Minimal runtime flags and helpers used by InteractionController.handleKeyPress
     game.isPlayerTurn = true;
     game.pendingCharge = null;
-    game.hideOverlayMessage = jest.fn();
-    game.startEnemyTurns = jest.fn();
-    game.incrementBombActions = jest.fn();
-    game.updatePlayerPosition = jest.fn();
-    game.updatePlayerStats = jest.fn();
-    game.turnManager = { handleTurnCompletion: jest.fn() };
+    game.hideOverlayMessage = vi.fn();
+    game.startEnemyTurns = vi.fn();
+    game.incrementBombActions = vi.fn();
+    game.updatePlayerPosition = vi.fn();
+    game.updatePlayerStats = vi.fn();
+    game.turnManager = { handleTurnCompletion: vi.fn() };
 
     // Ensure requestAnimationFrame is available and deterministic in tests
     global.requestAnimationFrame = (cb) => cb();
@@ -46,7 +46,7 @@ function makeGame() {
 }
 
 describe('InputController path feedback', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     test('startHoldFeedback is called with correct destination for simple path', () => {
         const game = makeGame();
@@ -79,7 +79,7 @@ describe('InputController path feedback', () => {
         ic.executePath(['arrowright']);
 
         // fast-forward time to let the path runner conclude
-        jest.runOnlyPendingTimers();
+        vi.runOnlyPendingTimers();
 
         // After completion we expect clearFeedback to have been called
         expect(game.renderManager.clearFeedback).toHaveBeenCalled();

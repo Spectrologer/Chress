@@ -14,7 +14,7 @@ This document summarizes the repository structure, how to run and test the proje
 ```powershell
 npm install      # Install dependencies
 npm start        # Launch dev server (live-server) at http://localhost:8080
-npm test         # Run Jest tests
+npm test         # Run Vitest tests
 npm test:watch   # Run tests in watch mode
 npm test:coverage # Generate test coverage report
 ```
@@ -44,7 +44,7 @@ npm test:coverage # Generate test coverage report
 
 **Dependencies**:
 - **Runtime**: Sentry (error tracking, currently disabled)
-- **Dev**: Jest, Babel, live-server
+- **Dev**: Vitest, Babel, live-server
 
 **Architecture Patterns**:
 - Dependency Injection via `ServiceContainer`
@@ -86,7 +86,7 @@ Chress/
 │   ├── state/         # State management
 │   └── utils/         # Utility functions
 ├── boards/            # Pre-made board definitions
-├── tests/             # Jest unit tests
+├── tests/             # Vitest unit tests
 ├── docs/              # Documentation
 ├── sfx/               # Sound effects
 └── fonts/             # Web fonts
@@ -232,7 +232,7 @@ Chress/
 - **[fonts/](fonts/)** — Custom game fonts
 
 #### Tests ([tests/](tests/))
-- Jest unit tests covering managers and generators
+- Vitest unit tests covering managers and generators
 - **[Position.test.js](tests/Position.test.js)** — 99 tests for Position class
 
 ### Game Loop Flow
@@ -357,7 +357,7 @@ See [ADDING_CONTENT.md](docs/ADDING_CONTENT.md) for detailed guides on:
 
 ### Testing
 
-- **Framework**: Jest with Babel transpilation
+- **Framework**: Vitest with Babel transpilation
 - **Coverage**: Unit tests for core utilities and managers
 - **Position Class**: 99/99 passing tests covering all operations
 - **Run Tests**:

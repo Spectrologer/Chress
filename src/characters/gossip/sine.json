@@ -19,8 +19,8 @@
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.005,
-    "level": 5
+    "spawnWeight": 0.004,
+    "level": 3
   },
   "interaction": {
     "type": "dialogue",

@@ -1,6 +1,6 @@
 // Test for console commands registry pattern
-import consoleCommands from '@core/consoleCommands.js';
-import { SPAWN_REGISTRY, ENEMY_REGISTRY } from '@core/consoleCommandsRegistry.js';
+import consoleCommands from '@core/consoleCommands';
+import { SPAWN_REGISTRY, ENEMY_REGISTRY } from '@core/consoleCommandsRegistry';
 
 console.log('Testing Console Commands Registry Pattern\n');
 

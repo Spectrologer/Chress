@@ -1,10 +1,6 @@
-/**
- * @jest-environment jsdom
- */
-
-import { ZoneTransitionManager } from '@managers/ZoneTransitionManager.js';
-import { ZoneManager } from '@managers/ZoneManager.js';
-import { TILE_TYPES, GRID_SIZE } from '@core/constants/index.js';
+import { ZoneTransitionManager } from '@managers/ZoneTransitionManager';
+import { ZoneManager } from '@managers/ZoneManager';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 
 // This test simulates falling into a pitfall and then exiting back to surface,
 // asserting the player returns to the original hole coordinates.
@@ -25,13 +21,15 @@ describe('Pitfall round-trip', () => {
                 undergroundDepth: 0,
                 setCurrentZone(x, y, dim) { this.currentZone.x = x; this.currentZone.y = y; if (typeof dim === 'number') this.currentZone.dimension = dim; },
                 setPosition(x, y) { this.x = x; this.y = y; },
+                setLastPosition(x, y) { this.lastX = x; this.lastY = y; },
                 getPosition() { return { x: this.x, y: this.y }; },
                 getCurrentZone() { return { ...this.currentZone }; },
+                getZoneDimension() { return this.currentZone.dimension; },
                 ensureValidPosition() {},
                 onZoneTransition() {}
             },
             uiManager: { generateRegionName() { return 'Test'; }, showRegionNotification() {}, updateZoneDisplay() {}, updatePlayerPosition() {}, updatePlayerStats() {}, addMessageToLog() {} },
-            zoneGenerator: { generateZone: jest.fn(), grid: [] },
+            zoneGenerator: { generateZone: vi.fn(), grid: [], clearPathToExit: vi.fn() },
             connectionManager: { generateChunkConnections() {} },
             availableFoodAssets: [],
             enemies: [],
@@ -39,8 +37,38 @@ describe('Pitfall round-trip', () => {
             lastExitSide: null,
             justEnteredZone: false,
             defeatedEnemies: new Set(),
-            gameStateManager: { saveGameState() {} }
+            gameStateManager: { saveGameState() {} },
+            gridManager: {
+                getTile: vi.fn((x, y) => game.grid[y]?.[x]),
+                setTile: vi.fn((x, y, tile) => { if (game.grid[y]) game.grid[y][x] = tile; }),
+                setGrid: vi.fn(),
+                isWithinBounds: vi.fn((x, y) => x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE),
+                isTileType: vi.fn(),
+                findFirst: vi.fn(() => null)
+            },
+            transientGameState: {
+                getPortTransitionData: vi.fn().mockReturnValue(null),
+                clearPortTransitionData: vi.fn(),
+                setPortTransitionData: vi.fn((data) => { game.portTransitionData = data; }),
+                enterPitfallZone: vi.fn(),
+                exitPitfallZone: vi.fn(),
+                isInPitfallZone: vi.fn().mockReturnValue(false),
+                getPitfallTurnsSurvived: vi.fn().mockReturnValue(0),
+                clearLastSignMessage: vi.fn(),
+                clearDisplayingSignMessage: vi.fn(),
+                clearCurrentNPCPosition: vi.fn(),
+                isDisplayingSignMessage: vi.fn().mockReturnValue(false)
+            },
+            zoneRepository: {
+                hasByKey: vi.fn((key) => game.zones.has(key)),
+                getByKey: vi.fn((key) => game.zones.get(key)),
+                setByKey: vi.fn((key, data) => game.zones.set(key, data))
+            },
+            spawnTreasuresOnGrid: vi.fn()
         };
+
+        // Add playerFacade reference
+        game.playerFacade = game.player;
 
         const zoneManager = new ZoneManager(game);
         const zoneTransition = new ZoneTransitionManager(game, { handleKeyPress() {} });
@@ -72,7 +100,7 @@ describe('Pitfall round-trip', () => {
         };
         game.zones.set(undergroundZoneKey, zoneData);
         // Ensure zoneGenerator.generateZone returns our prepared zone when ZoneManager regenerates on port transitions
-        game.zoneGenerator.generateZone = jest.fn(() => ({ ...zoneData }));
+        game.zoneGenerator.generateZone = vi.fn(() => ({ ...zoneData }));
 
         // When zoneManager.generateZone is called it will set game.grid from zoneData
         game.player.currentZone.dimension = 2;

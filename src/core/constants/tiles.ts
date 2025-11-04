@@ -104,13 +104,8 @@ export const TILE_TYPES = {
     STICK: 106,
     WASH: 107,
     // Additional gossip NPCs
-    DAWRG: 108,
     DRAGON: 109,
-    DUK: 110,
-    FLUB: 111,
-    ROK: 112,
     SNAK: 113,
-    STIK: 114,
     // Item statue tile types (stone statues of activated items)
     BOMB_STATUE: 50,
     SPEAR_STATUE: 51,

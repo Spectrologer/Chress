@@ -1,12 +1,12 @@
 /**
  * Test suite for event bus refactoring of input system
  */
-import { PathfindingController } from '../controllers/PathfindingController.js';
-import { InputController } from '../controllers/InputController.js';
-import { KeyboardHandler } from '../controllers/KeyboardHandler.js';
-import { eventBus } from '@core/EventBus.js';
-import { EventTypes } from '@core/EventTypes.js';
-import { TILE_TYPES } from '@core/constants/index.js';
+import { PathfindingController } from '../controllers/PathfindingController';
+import { InputController } from '../controllers/InputController';
+import { KeyboardHandler } from '../controllers/KeyboardHandler';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { TILE_TYPES } from '@core/constants/index';
 
 describe('Event Bus Refactoring', () => {
     let mockGame;
@@ -20,15 +20,15 @@ describe('Event Bus Refactoring', () => {
         mockPlayer = {
             x: 5,
             y: 5,
-            getPosition: jest.fn(() => ({ x: 5, y: 5 })),
-            isWalkable: jest.fn(() => true),
-            move: jest.fn(() => true),
-            isDead: jest.fn(() => false),
+            getPosition: vi.fn(() => ({ x: 5, y: 5 })),
+            isWalkable: vi.fn(() => true),
+            move: vi.fn(() => true),
+            isDead: vi.fn(() => false),
             stats: { verbosePathAnimations: false },
-            abilities: { has: jest.fn(() => false) },
-            startAttackAnimation: jest.fn(),
-            startBump: jest.fn(),
-            setAction: jest.fn(),
+            abilities: { has: vi.fn(() => false) },
+            startAttackAnimation: vi.fn(),
+            startBump: vi.fn(),
+            setAction: vi.fn(),
         };
 
         mockGame = {
@@ -39,22 +39,22 @@ describe('Event Bus Refactoring', () => {
             displayingMessageForSign: false,
             pendingCharge: null,
             bombPlacementMode: false,
-            hideOverlayMessage: jest.fn(),
+            hideOverlayMessage: vi.fn(),
             renderManager: {
-                showTapFeedback: jest.fn(),
-                clearFeedback: jest.fn(),
+                showTapFeedback: vi.fn(),
+                clearFeedback: vi.fn(),
             },
             animationScheduler: {
-                createSequence: jest.fn(() => ({
-                    then: jest.fn(function() { return this; }),
-                    wait: jest.fn(function() { return this; }),
-                    start: jest.fn(() => Promise.resolve()),
+                createSequence: vi.fn(() => ({
+                    then: vi.fn(function() { return this; }),
+                    wait: vi.fn(function() { return this; }),
+                    start: vi.fn(() => Promise.resolve()),
                     id: 'test-sequence',
                 })),
             },
-            startEnemyTurns: jest.fn(),
-            updatePlayerPosition: jest.fn(),
-            incrementBombActions: jest.fn(),
+            startEnemyTurns: vi.fn(),
+            updatePlayerPosition: vi.fn(),
+            incrementBombActions: vi.fn(),
         };
 
         mockInventoryService = {};
@@ -83,7 +83,7 @@ describe('Event Bus Refactoring', () => {
 
         test('emits INPUT_PATH_STARTED when executing path', () => {
             const pathfindingController = new PathfindingController(mockGame);
-            const listener = jest.fn();
+            const listener = vi.fn();
 
             eventBus.on(EventTypes.INPUT_PATH_STARTED, listener);
 
@@ -94,7 +94,7 @@ describe('Event Bus Refactoring', () => {
 
         test('emits INPUT_PATH_CANCELLED when cancelling path', () => {
             const pathfindingController = new PathfindingController(mockGame);
-            const listener = jest.fn();
+            const listener = vi.fn();
 
             eventBus.on(EventTypes.INPUT_PATH_CANCELLED, listener);
 
@@ -106,7 +106,7 @@ describe('Event Bus Refactoring', () => {
 
         test('emits INPUT_EXIT_REACHED when reaching exit', () => {
             const pathfindingController = new PathfindingController(mockGame);
-            const listener = jest.fn();
+            const listener = vi.fn();
 
             // Set up exit tile
             mockGame.grid[5][5] = TILE_TYPES.EXIT;
@@ -123,7 +123,7 @@ describe('Event Bus Refactoring', () => {
     describe('InputController event subscription', () => {
         test('subscribes to INPUT_KEY_PRESS and handles it', () => {
             const inputController = new InputController(mockGame, mockInventoryService);
-            const handleKeyPressSpy = jest.spyOn(inputController.coordinator, 'handleKeyPress');
+            const handleKeyPressSpy = vi.spyOn(inputController.coordinator, 'handleKeyPress');
 
             const event = { key: 'arrowup', preventDefault: () => {} };
             eventBus.emit(EventTypes.INPUT_KEY_PRESS, event);
@@ -133,7 +133,7 @@ describe('Event Bus Refactoring', () => {
 
         test('subscribes to INPUT_EXIT_REACHED and handles it', () => {
             const inputController = new InputController(mockGame, mockInventoryService);
-            const performExitTapSpy = jest.spyOn(inputController.coordinator, 'performExitTap');
+            const performExitTapSpy = vi.spyOn(inputController.coordinator, 'performExitTap');
 
             eventBus.emit(EventTypes.INPUT_EXIT_REACHED, { x: 5, y: 5 });
 
@@ -142,7 +142,7 @@ describe('Event Bus Refactoring', () => {
 
         test('unsubscribes from events on destroy', () => {
             const inputController = new InputController(mockGame, mockInventoryService);
-            const handleKeyPressSpy = jest.spyOn(inputController.coordinator, 'handleKeyPress');
+            const handleKeyPressSpy = vi.spyOn(inputController.coordinator, 'handleKeyPress');
 
             inputController.destroy();
 
@@ -192,7 +192,7 @@ describe('Event Bus Refactoring', () => {
         test('PathfindingController -> InputController via events', () => {
             const inputController = new InputController(mockGame, mockInventoryService);
             const pathfindingController = inputController.pathfindingController;
-            const handleKeyPressSpy = jest.spyOn(inputController.coordinator, 'handleKeyPress');
+            const handleKeyPressSpy = vi.spyOn(inputController.coordinator, 'handleKeyPress');
 
             // Trigger key press via event
             pathfindingController._triggerKeyPress({
