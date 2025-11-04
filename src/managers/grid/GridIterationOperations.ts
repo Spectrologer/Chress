@@ -6,6 +6,7 @@
  */
 
 import { GridIterator } from '@utils/GridIterator';
+import { TileTypeChecker } from '@utils/TypeChecks';
 import { logger } from '@core/logger';
 import type { Tile, Grid } from '@core/SharedTypes';
 
@@ -72,7 +73,8 @@ export class GridIterationOperations {
     cloneGrid(): Grid {
         return this.grid.map(row =>
             row.map(tile => {
-                if (typeof tile === 'object' && tile !== null) {
+                // Use TypeChecks to identify tile objects
+                if (TileTypeChecker.isTileObject(tile)) {
                     return { ...tile };
                 }
                 return tile;

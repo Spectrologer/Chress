@@ -1,4 +1,4 @@
-import type { SoundManager } from '@types/game';
+import type { SoundManager } from '../types/game.js';
 
 /**
  * GameAudio

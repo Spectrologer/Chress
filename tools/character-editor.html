@@ -791,7 +791,7 @@
                     <label>Display Name:</label>
                     <input type="text" value="${givesDisplayName}" onchange="updateTrade(${index}, 'gives.displayName', this.value)" placeholder="Meat">
                     <label>Icon Path:</label>
-                    <input type="text" value="${givesIcon}" onchange="updateTrade(${index}, 'gives.icon', this.value)" placeholder="assets/food/meat/beaf.png">
+                    <input type="text" value="${givesIcon}" onchange="updateTrade(${index}, 'gives.icon', this.value)" placeholder="assets/food/meat/meat.png">
                     <label><input type="checkbox"${trade.repeatable ? ' checked' : ''} onchange="updateTrade(${index}, 'repeatable', this.checked)">Repeatable Trade</label>`;
                 container.appendChild(item);
             });
@@ -856,7 +856,7 @@
                     <label>Display Name:</label>
                     <input type="text" value="${givesDisplayName}" onchange="updateHybridTrade(${index}, 'gives.displayName', this.value)" placeholder="Meat">
                     <label>Icon Path:</label>
-                    <input type="text" value="${givesIcon}" onchange="updateHybridTrade(${index}, 'gives.icon', this.value)" placeholder="assets/food/meat/beaf.png">
+                    <input type="text" value="${givesIcon}" onchange="updateHybridTrade(${index}, 'gives.icon', this.value)" placeholder="assets/food/meat/meat.png">
                     <label><input type="checkbox"${trade.repeatable ? ' checked' : ''} onchange="updateHybridTrade(${index}, 'repeatable', this.checked)">Repeatable Trade</label>`;
                 container.appendChild(item);
             });

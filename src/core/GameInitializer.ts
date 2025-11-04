@@ -7,6 +7,7 @@ import { EventTypes } from './EventTypes';
 import { errorHandler, ErrorSeverity } from './ErrorHandler';
 import { isWithinGrid } from '@utils/GridUtils';
 import { safeCall, safeCallAsync, safeGet } from '@utils/SafeServiceCall';
+import { TileTypeChecker } from '@utils/TypeChecks';
 import type { GameContext } from './GameContext';
 
 /**
@@ -180,11 +181,10 @@ export class GameInitializer {
             const playerX = this.game.player!.x;
             if (isWithinGrid(playerX, playerY)) {
                 const startTile = this.game.gridManager!.getTile(playerX, playerY);
-                // Don't overwrite SIGN or EXIT tiles
-                const isSign = (typeof startTile === 'object' && startTile !== null && 'type' in startTile && startTile.type === TILE_TYPES.SIGN);
-                const isSignString = (typeof startTile === 'string' && (startTile as any) === TILE_TYPES.SIGN);
-                const isExitString = (typeof startTile === 'string' && (startTile as any) === TILE_TYPES.EXIT);
-                const shouldSetFloor = !startTile || (!isSign && !isSignString && !isExitString);
+                // Don't overwrite SIGN or EXIT tiles - use TypeChecks utility
+                const isSign = TileTypeChecker.isTileType(startTile, TILE_TYPES.SIGN);
+                const isExit = TileTypeChecker.isTileType(startTile, TILE_TYPES.EXIT);
+                const shouldSetFloor = !startTile || (!isSign && !isExit);
                 if (shouldSetFloor) {
                     this.game.gridManager!.setTile(playerX, playerY, TILE_TYPES.FLOOR);
                 }

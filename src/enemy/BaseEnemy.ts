@@ -1,17 +1,14 @@
 import { TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '@core/constants/index';
 import { Position } from '@core/Position';
+import type { Coordinates } from '@core/PositionTypes';
 
-export interface EnemyData {
-    x: number;
-    y: number;
+export interface EnemyData extends Coordinates {
     enemyType?: string;
     id?: string;
     health?: number;
 }
 
-export interface SmokeAnimation {
-    x: number;
-    y: number;
+export interface SmokeAnimation extends Coordinates {
     frame: number;
 }
 
@@ -119,7 +116,7 @@ export class BaseEnemy {
         this._position = new Position(x, y);
     }
 
-    getPosition(): { x: number; y: number } {
+    getPosition(): Coordinates {
         return this._position.toObject();
     }
 

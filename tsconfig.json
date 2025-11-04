@@ -58,7 +58,8 @@
       "@loaders/*": ["./src/loaders/*"],
       "@config/*": ["./src/config/*"],
       "@controllers/*": ["./src/controllers/*"],
-      "@types/*": ["./src/types/*"]
+      "@types/*": ["./src/types/*"],
+      "@services/*": ["./src/services/*"]
     }
   },
   "include": [

@@ -6,9 +6,10 @@
 
 import type { Enemy, EnemyData } from '@entities/Enemy';
 import type { InventoryItem } from '@managers/inventory/ItemMetadata';
+import type { Coordinates, ZoneCoordinates } from '@core/PositionTypes';
 
 // Re-export commonly used types for convenience
-export type { Enemy, EnemyData, InventoryItem };
+export type { Enemy, EnemyData, InventoryItem, Coordinates, ZoneCoordinates };
 
 /**
  * Tile type definitions
@@ -27,7 +28,7 @@ export type Grid = Tile[][];
 export interface SavedPlayerData {
     x: number;
     y: number;
-    currentZone: { x: number; y: number; dimension: number };
+    currentZone: ZoneCoordinates;
     thirst: number;
     hunger: number;
     inventory: InventoryItem[];
@@ -70,9 +71,9 @@ export interface SaveGameData {
  * Animation data types
  */
 export interface HorseChargeAnimationData {
-    startPos: { x: number; y: number };
-    midPos: { x: number; y: number };
-    endPos: { x: number; y: number };
+    startPos: Coordinates;
+    midPos: Coordinates;
+    endPos: Coordinates;
 }
 
 export interface ArrowAnimationData {
@@ -132,7 +133,7 @@ export interface GameStatistics {
  * Charge state data
  */
 export interface ChargeStateData {
-    targetPosition: { x: number; y: number };
+    targetPosition: Coordinates;
     damage: number;
     source: string;
 }

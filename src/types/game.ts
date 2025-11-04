@@ -3,7 +3,8 @@
  * This file consolidates common interfaces used across the codebase
  */
 
-import { Position, type Coordinates } from '@core/Position';
+import { Position } from '@core/Position';
+import type { Coordinates, ZoneCoordinates } from '@core/PositionTypes';
 import type { Enemy } from '@entities/Enemy';
 import type { Player } from '@entities/Player';
 
@@ -65,7 +66,7 @@ export interface GridManager {
 
 // Zone Manager interface
 export interface ZoneManager {
-    getCurrentZone(): { x: number; y: number };
+    getCurrentZone(): Coordinates;
     getZoneAt(x: number, y: number): any;
     handlePortTransition?(direction: string): void;
     handleExitTap?(): void;
@@ -129,7 +130,7 @@ export interface GameInstance {
 
     // Additional properties commonly used
     dimension?: number;
-    currentZone?: { x: number; y: number };
+    currentZone?: Coordinates;
 
     // Allow for additional properties
     [key: string]: any;

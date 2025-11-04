@@ -21,6 +21,7 @@ import { ZoneTreasureManager } from './ZoneTreasureManager';
 import { ZoneEventEmitter } from './ZoneEventEmitter';
 import { ZoneGenerationOrchestrator } from './ZoneGenerationOrchestrator';
 import { ZonePersistenceManager } from './ZonePersistenceManager';
+import type { Coordinates } from '@core/PositionTypes';
 import type { IGame } from '@core/GameContext';
 import type { Player } from '@entities/Player';
 import type { PlayerFacade } from '@facades/PlayerFacade';
@@ -42,10 +43,7 @@ interface EnemyData {
     id: string;
 }
 
-interface PlayerSpawn {
-    x: number;
-    y: number;
-}
+type PlayerSpawn = Coordinates;
 
 interface ReturnCoords {
     x: number;
@@ -175,7 +173,7 @@ export class ZoneManager {
      * @param playerPos - Current player position
      * @returns True if transition was triggered
      */
-    checkForZoneTransitionGesture(tapCoords: { x: number; y: number }, playerPos: { x: number; y: number }): boolean {
+    checkForZoneTransitionGesture(tapCoords: Coordinates, playerPos: Coordinates): boolean {
         // This is typically handled by ZoneTransitionManager, but for compatibility
         // we check if the game has a zoneTransitionManager
         const zoneTransitionManager = (this.game as any).zoneTransitionManager;
@@ -193,7 +191,7 @@ export class ZoneManager {
      * @param playerPos - Current player position
      * @returns True if transition is eligible
      */
-    isTransitionEligible(gridCoords: { x: number; y: number }, playerPos: { x: number; y: number }): boolean {
+    isTransitionEligible(gridCoords: Coordinates, playerPos: Coordinates): boolean {
         const zoneTransitionManager = (this.game as any).zoneTransitionManager;
         if (zoneTransitionManager && typeof zoneTransitionManager.isTransitionEligible === 'function') {
             return zoneTransitionManager.isTransitionEligible(gridCoords, playerPos);

@@ -2,7 +2,7 @@ import { ItemMetadata } from '@managers/inventory/ItemMetadata';
 
 describe('ItemMetadata.getTooltipText', () => {
   test('food tooltip', () => {
-    const item = { type: 'food', foodType: 'food/meat/beaf.png', quantity: 1 };
+    const item = { type: 'food', foodType: 'food/meat/meat.png', quantity: 1 };
     expect(ItemMetadata.getTooltipText(item)).toBe('meat - Restores 10 hunger');
   });
 

@@ -95,6 +95,11 @@ export class GridManager {
         this.grid = newGrid;
     }
 
+    /**
+     * Get the raw grid reference
+     * @internal Prefer using GridManager's abstraction methods (getTile, isWalkable, etc.)
+     * instead of direct grid manipulation.
+     */
     getRawGrid(): Grid {
         return this.coreOps.getRawGrid();
     }

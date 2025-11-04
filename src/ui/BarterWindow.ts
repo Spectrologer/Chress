@@ -279,8 +279,8 @@ export class BarterWindow {
                 // nib gives either a book, horse_icon, or shovel
                 if (hasExistingStackFor('horse_icon') || hasExistingStackFor('book_of_time_travel') || hasExistingStackFor('book') || hasExistingStackFor('shovel')) return true;
             } else if (tradeData.id === 'mark_meat') {
-                // Mark gives a specific meat asset 'items/consumables/beaf.png'
-                if (hasExistingStackFor('food', 'items/consumables/beaf.png')) return true;
+                // Mark gives a specific meat asset 'items/consumables/meat.png'
+                if (hasExistingStackFor('food', 'items/consumables/meat.png')) return true;
             }
 
             // Also support legacy trades which don't have an id but specify receivedItemName or receivedItemImg
@@ -294,7 +294,7 @@ export class BarterWindow {
                 }
 
                 // If the trade gives a specific food name/image, try to match exact food asset
-                if (receivedImg.includes('/consumables/') || receivedName.includes('meat') || receivedName.includes('nut') || receivedName.includes('beaf')) {
+                if (receivedImg.includes('/consumables/') || receivedName.includes('meat') || receivedName.includes('nut')) {
                     // We can't always map names to exact foodType; conservatively allow if player has any food stack
                     if (player.inventory.some(i => i.type === 'food')) return true;
                 }
@@ -403,7 +403,7 @@ export class BarterWindow {
             // Update spent discoveries via the Player API
             const cur = this.game.player.getSpentDiscoveries();
             this.game.player.setSpentDiscoveries(cur + tradeData.requiredAmount);
-            this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: 'items/consumables/beaf.png' });
+            this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: 'items/consumables/meat.png' });
             this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} Discoveries for meat.`, tradeData.receivedItemImg);
         } else if (tradeData.id === 'axelotl_axe') { // Trade discoveries for axe ability
             const cur2 = this.game.player.getSpentDiscoveries();

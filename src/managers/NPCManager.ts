@@ -1,11 +1,11 @@
 import { BaseNPC } from '@npc/BaseNPC';
 import { TILE_TYPES } from '@core/constants/index';
 import { ContentRegistry } from '@core/ContentRegistry';
+import type { Coordinates } from '@core/PositionTypes';
 import type { IGame } from '@core/GameContext';
+import { TileTypeChecker } from '@utils/TypeChecks';
 
-interface NPCConfig {
-    x: number;
-    y: number;
+interface NPCConfig extends Coordinates {
     npcType: string;
     spriteKey: string;
     id: string;
@@ -24,51 +24,51 @@ export class NPCManager {
 
     // Interaction methods that delegate to NPCInteractionManager
     // These are needed for compatibility with InteractionManager
-    interactWithPenne(gridCoords: { x: number; y: number }): boolean {
+    interactWithPenne(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithPenne(gridCoords) ?? false;
     }
 
-    interactWithSquig(gridCoords: { x: number; y: number }): boolean {
+    interactWithSquig(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithSquig(gridCoords) ?? false;
     }
 
-    interactWithRune(gridCoords: { x: number; y: number }): boolean {
+    interactWithRune(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithRune(gridCoords) ?? false;
     }
 
-    interactWithNib(gridCoords: { x: number; y: number }): boolean {
+    interactWithNib(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithNib(gridCoords) ?? false;
     }
 
-    interactWithMark(gridCoords: { x: number; y: number }): boolean {
+    interactWithMark(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithMark(gridCoords) ?? false;
     }
 
-    interactWithAxelotl(gridCoords: { x: number; y: number }): boolean {
+    interactWithAxelotl(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithAxelotl(gridCoords) ?? false;
     }
 
-    interactWithGouge(gridCoords: { x: number; y: number }): boolean {
+    interactWithGouge(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithGouge(gridCoords) ?? false;
     }
 
-    interactWithCrayn(gridCoords: { x: number; y: number }): boolean {
+    interactWithCrayn(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithCrayn(gridCoords) ?? false;
     }
 
-    interactWithFelt(gridCoords: { x: number; y: number }): boolean {
+    interactWithFelt(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithFelt(gridCoords) ?? false;
     }
 
-    interactWithForge(gridCoords: { x: number; y: number }): boolean {
+    interactWithForge(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithForge(gridCoords) ?? false;
     }
 
-    interactWithDynamicNPC(gridCoords: { x: number; y: number }): boolean {
+    interactWithDynamicNPC(gridCoords: Coordinates): boolean {
         return this.game.npcInteractionManager?.interactWithDynamicNPC(gridCoords) ?? false;
     }
 
-    forceInteractAt(gridCoords: { x: number; y: number }): void {
+    forceInteractAt(gridCoords: Coordinates): void {
         this.game.npcInteractionManager?.forceInteractAt(gridCoords);
     }
 
@@ -103,6 +103,7 @@ export class NPCManager {
      * Gets an NPC by ID
      */
     getById(id: number | string): BaseNPC | null {
+        // Normalize ID to string (TypeScript will ensure id is number or string)
         const idStr = typeof id === 'number' ? String(id) : id;
         return this.npcs.find(npc => npc.id === idStr) || null;
     }
@@ -129,6 +130,7 @@ export class NPCManager {
 
         // Find the NPC object
         let npcToRemove: BaseNPC | null = null;
+        // TypeScript ensures npcOrId type, but we still need runtime checks for union types
         if (typeof npcOrId === 'number' || typeof npcOrId === 'string') {
             const idStr = typeof npcOrId === 'number' ? String(npcOrId) : npcOrId;
             npcToRemove = this.npcs.find(npc => npc.id === idStr) || null;
@@ -161,8 +163,8 @@ export class NPCManager {
         const oldX = npc.x;
         const oldY = npc.y;
 
-        // Check if the position is walkable
-        if (!npc.isWalkable(newX, newY, gridManager.getRawGrid())) {
+        // Check if the position is walkable using GridManager
+        if (!gridManager.isWalkable(newX, newY)) {
             return false;
         }
 
@@ -207,7 +209,8 @@ export class NPCManager {
         for (let y = 0; y < gridSize; y++) {
             for (let x = 0; x < gridSize; x++) {
                 const tile = gridManager.getTile(x, y);
-                const tileType = tile && typeof tile === 'object' && 'type' in tile ? tile.type : tile;
+                // Use TypeChecks utility to safely get tile type
+                const tileType = TileTypeChecker.getTileType(tile);
 
                 // Check if this is an NPC tile type
                 let npcType: string | null = null;
@@ -220,6 +223,7 @@ export class NPCManager {
                     // TextureLoader removes 'characters/npcs/' prefix from NPC paths
                     // e.g., "characters/npcs/gossip/aster.png" -> "gossip/aster"
                     const spritePath = npcConfig.metadata.sprite;
+                    // TypeScript ensures spritePath type, but runtime check needed
                     if (typeof spritePath === 'string' && spritePath.startsWith('characters/npcs/')) {
                         spriteKey = spritePath.replace('characters/npcs/', '').replace('.png', '');
                     } else if (typeof spritePath === 'string') {
@@ -228,6 +232,7 @@ export class NPCManager {
                         const filename = parts[parts.length - 1];
                         spriteKey = filename.replace('.png', '');
                     }
+                    // Check for nested characterData object
                     npcType = npcConfig.metadata.characterData && typeof npcConfig.metadata.characterData === 'object' && 'id' in npcConfig.metadata.characterData
                         ? (npcConfig.metadata.characterData.id as string)
                         : spriteKey;

@@ -17,13 +17,6 @@ interface EnemyStats {
     damage: number;
 }
 
-interface EnemyConfig {
-    weight: number;
-    spawnRules: EnemySpawnRules;
-    behaviorType: string;
-    stats: EnemyStats;
-}
-
 /**
  * Register all enemies with the ContentRegistry
  */

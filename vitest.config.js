@@ -37,7 +37,9 @@ export default defineConfig({
         'node_modules/',
         'tests/',
         '**/*.test.js',
+        '**/*.test.ts',
         '**/*.spec.js',
+        '**/*.spec.ts',
         'vite.config.js',
         'vitest.config.js',
         'babel.config.cjs',
@@ -52,7 +54,7 @@ export default defineConfig({
     },
 
     // Test match patterns
-    include: ['tests/**/*.test.js', 'tests/**/*.spec.js'],
+    include: ['tests/**/*.test.js', 'tests/**/*.spec.js', 'tests/**/*.test.ts', 'tests/**/*.spec.ts'],
 
     // Clear mocks between tests
     clearMocks: true,
@@ -81,6 +83,16 @@ export default defineConfig({
       { find: '@enemy', replacement: resolve(__dirname, './src/enemy') },
       { find: '@npc', replacement: resolve(__dirname, './src/npc') },
       { find: '@facades', replacement: resolve(__dirname, './src/facades') },
+      { find: '@services', replacement: resolve(__dirname, './src/services') },
+      { find: '@config', replacement: resolve(__dirname, './src/config') },
+      { find: '@entities', replacement: resolve(__dirname, './src/entities') },
+      { find: '@state', replacement: resolve(__dirname, './src/state') },
+      { find: '@generators', replacement: resolve(__dirname, './src/generators') },
+      { find: '@repositories', replacement: resolve(__dirname, './src/repositories') },
+      { find: '@ui', replacement: resolve(__dirname, './src/ui') },
+      { find: '@controllers', replacement: resolve(__dirname, './src/controllers') },
+      { find: '@types', replacement: resolve(__dirname, './src/types') },
+      { find: '@loaders', replacement: resolve(__dirname, './src/loaders') },
       // Fix relative imports from tests/ directory to src/
       { find: /^\.\.\/(.*)$/, replacement: resolve(__dirname, './src/$1') },
     ],

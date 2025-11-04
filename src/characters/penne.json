@@ -28,10 +28,10 @@
       {
         "id": "penne_water",
         "requires": {
-          "resource": "items/consumables/beaf",
+          "resource": "items/consumables/meat",
           "amount": 1,
           "displayName": "Meat",
-          "icon": "items/consumables/beaf.png"
+          "icon": "items/consumables/meat.png"
         },
         "gives": {
           "type": "item",

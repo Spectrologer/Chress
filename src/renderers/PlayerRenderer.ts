@@ -2,6 +2,7 @@ import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANT
 import { RENDERING_CONSTANTS } from '@core/constants/animation';
 import { MultiTileHandler } from './MultiTileHandler';
 import { RendererUtils } from './RendererUtils';
+import { TileTypeChecker } from '@utils/TypeChecks';
 import type { TextureManager } from './TextureManager';
 import type { Position } from './types';
 import type { IGame } from '@core/GameContext';
@@ -69,8 +70,9 @@ export class PlayerRenderer {
         this.textureManager = game.textureManager;
     }
 
+    // Use TypeChecks utility instead of local implementation
     private isTileObject(tile: Tile): tile is TileObject {
-        return tile !== null && tile !== undefined && typeof tile === 'object' && 'type' in tile;
+        return TileTypeChecker.isTileObject(tile);
     }
 
     drawPlayer(): void {

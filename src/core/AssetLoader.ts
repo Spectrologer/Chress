@@ -27,7 +27,7 @@ export class AssetLoader {
 
             // Filter food assets to only those that loaded successfully
             this.availableFoodAssets = FOOD_ASSETS.filter(foodAsset => {
-                // Extract just the filename for the image key (e.g., 'items/consumables/beaf.png' -> 'beaf')
+                // Extract just the filename for the image key (e.g., 'items/consumables/meat.png' -> 'meat')
                 const foodKey = foodAsset.split('/').pop()!.replace('.png', '');
                 return this.game.textureManager.isImageLoaded(foodKey);
             });
@@ -46,7 +46,7 @@ export class AssetLoader {
      */
     refreshFoodAssets(): void {
         this.availableFoodAssets = FOOD_ASSETS.filter(foodAsset => {
-            // Extract just the filename for the image key (e.g., 'items/consumables/beaf.png' -> 'beaf')
+            // Extract just the filename for the image key (e.g., 'items/consumables/meat.png' -> 'meat')
             const foodKey = foodAsset.split('/').pop()!.replace('.png', '');
             return this.game.textureManager.isImageLoaded(foodKey);
         });

@@ -277,7 +277,7 @@ export class InputCoordinator {
         if (!isDoubleTap && playerPos.equals(clickedPos)) {
             const currentTile = playerPos.getTile(this.game.grid);
             const currentTileType = getTileType(currentTile);
-            const portKind = isTileObject(currentTile) ? currentTile.portKind : null;
+            const portKind = isTileObject(currentTile) ? (currentTile as any).portKind : null;
 
             // console.log('[InputCoordinator] Single tap on player tile:', {
             //     currentTileType,

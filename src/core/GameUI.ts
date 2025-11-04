@@ -7,6 +7,8 @@
  * - Canvas and rendering contexts
  * - Game state flags (gameStarted, previewMode)
  */
+import type { Coordinates } from './PositionTypes';
+
 export class GameUI {
     // Canvas elements and contexts
     canvas: HTMLCanvasElement | null;
@@ -25,7 +27,7 @@ export class GameUI {
     previewMode: boolean;
 
     // Player position tracking for UI updates
-    _lastPlayerPos: {x: number, y: number} | null;
+    _lastPlayerPos: Coordinates | null;
 
     constructor() {
         // Canvas elements and contexts

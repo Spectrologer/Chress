@@ -5,6 +5,7 @@ import { isAdjacent } from '@core/utils/DirectionUtils';
 import { NPC_CONFIG } from '@config/NPCConfig';
 import { ContentRegistry } from '@core/ContentRegistry';
 import { Position } from '@core/Position';
+import { TileTypeChecker } from '@utils/TypeChecks';
 import type { IGame, ICoordinates } from '@core/GameContext';
 
 interface NPCConfigEntry {
@@ -29,10 +30,8 @@ export class NPCInteractionManager {
         const playerPos = this.game.player.getPosition();
         const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
 
-        // Get the tile type (handle both simple and object tiles)
-        const tileType = (typeof targetTile === 'object' && (targetTile as any)?.type !== undefined)
-            ? (targetTile as any).type
-            : targetTile;
+        // Get the tile type using TypeChecks utility
+        const tileType = TileTypeChecker.getTileType(targetTile);
 
         // Look up NPC by tile type in ContentRegistry
         const npcConfig = ContentRegistry.getNPCByTileType(tileType);

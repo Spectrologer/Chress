@@ -1,0 +1,143 @@
+
+> chress@1.0.0 test
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.6 [39m[90mc:/Users/virgi/OneDrive/Desktop/Apps/Chress[39m
+
+ [31m❯[39m tests/SoundManager.sfx.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 9[2mms[22m[39m
+     [32m✓[39m playSound uses file-backed audio when registered[32m 3[2mms[22m[39m
+[31m     [31m×[31m playSound falls back to procedural when unknown[39m[32m 5[2mms[22m[39m
+ [31m❯[39m tests/pitfallPortAccessibility.test.js [2m([22m[2m6 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[32m 14[2mms[22m[39m
+[31m     [31m×[31m ensureExitAccess finds and clears paths to PORT tiles[39m[32m 9[2mms[22m[39m
+[31m     [31m×[31m ensureExitAccess handles multiple PORTs[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m clearPathToCenter does not overwrite PORT tiles[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m ensureExitAccess handles both EXIT and PORT tiles[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m pitfall zone with isolated PORT gets cleared path[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m clearPathToCenter clears obstacles but preserves important tiles[39m[32m 1[2mms[22m[39m
+ [31m❯[39m tests/pitfallRoundtrip.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 22[2mms[22m[39m
+[31m     [31m×[31m player returns to original hole after falling and exiting[39m[32m 20[2mms[22m[39m
+ [31m❯[39m tests/holeCisternDepth.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 26[2mms[22m[39m
+[31m     [31m×[31m undergroundDepth is set to 1 when entering via hole[39m[32m 19[2mms[22m[39m
+[31m     [31m×[31m undergroundDepth is set to 1 when entering via cistern[39m[32m 3[2mms[22m[39m
+[31m     [31m×[31m stairdown correctly increments depth after entering via hole[39m[32m 2[2mms[22m[39m
+ [31m❯[39m tests/pitfallPersistence.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 16[2mms[22m[39m
+[31m     [31m×[31m preserves returnToSurface when reusing saved zone[39m[32m 12[2mms[22m[39m
+[31m     [31m×[31m does not overwrite returnToSurface on port transition when zone exists[39m[32m 2[2mms[22m[39m
+ [31m❯[39m tests/Zard.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 21[2mms[22m[39m
+[31m     [31m×[31m diagonal adjacent attack damages player[39m[32m 11[2mms[22m[39m
+     [32m✓[39m orthogonal adjacent does not perform diagonal attack[32m 7[2mms[22m[39m
+ [31m❯[39m tests/AutoPathWithEnemies.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 17[2mms[22m[39m
+[31m     [31m×[31m when OFF and enemies exist, clicking distant tile only moves one tile[39m[32m 13[2mms[22m[39m
+[31m     [31m×[31m when ON and enemies exist, clicking distant tile attempts multi-tile path[39m[32m 2[2mms[22m[39m
+[90mstdout[2m | tests/TypeChecks.test.js
+[22m[39m🧪 Running TypeChecks.js Tests...
+
+Testing getTileType()...
+Testing isTileObject()...
+Testing isValidTile()...
+Testing isTileType()...
+
+Testing specific type checkers...
+
+Testing isTileObjectOfType()...
+
+Testing property helpers...
+
+Testing category checkers...
+
+Testing edge cases...
+
+==================================================
+📊 Test Results:
+==================================================
+✅ Passed: 59
+❌ Failed: 0
+📈 Total:  59
+🎯 Success Rate: 100.0%
+==================================================
+
+🎉 All tests passed! TypeChecks.js is working correctly.
+
+
+ [32m✓[39m tests/PlayerStatsUI.test.js [2m([22m[2m25 tests[22m[2m)[22m[32m 201[2mms[22m[39m
+[90mstdout[2m | tests/messageManager.test.js[2m > [22m[2mMessageManager typing & blip behavior[2m > [22m[2mshowMessage with typewriterSpeed = 0 displays text immediately
+[22m[39mshowMessage: "Hello world!", useTypewriter: true
+OverlayMessageHandler.show: "Hello world!", imageSrc: null, isPersistent: false
+Overlay message shown
+
+[90mstdout[2m | tests/ConfigOverlay.test.js[2m > [22m[2mConfig overlay interactions[2m > [22m[2mclicking outside config overlay closes it and reopens stats panel
+[22m[39m[ConfigPanelManager] showConfigOverlay called
+[ConfigPanelManager] Overlay classList after adding show: stats-panel-overlay show
+[ConfigPanelManager] Overlay display style: block
+
+ [32m✓[39m tests/MiniMap.test.js [2m([22m[2m34 tests[22m[2m)[22m[32m 176[2mms[22m[39m
+[90mstdout[2m | tests/messageManager.test.js[2m > [22m[2mMessageManager typing & blip behavior[2m > [22m[2mPenneMessageHandler shows message only if no sign message active
+[22m[39mOverlayMessageHandler.show: "<span class="character-name">Penne</span><br>Give me meat!", imageSrc: assets/fauna/penne.png, isPersistent: false
+Overlay message shown
+
+ [32m✓[39m tests/messageManager.test.js [2m([22m[2m6 tests[22m[2m)[22m[32m 181[2mms[22m[39m
+ [32m✓[39m tests/ConfigOverlay.test.js [2m([22m[2m1 test[22m[2m)[22m[33m 404[2mms[22m[39m
+     [33m[2m✓[22m[39m clicking outside config overlay closes it and reopens stats panel [33m 392[2mms[22m[39m
+ [32m✓[39m tests/UIManager.test.js [2m([22m[2m22 tests[22m[2m)[22m[32m 212[2mms[22m[39m
+ [32m✓[39m tests/MessageLog.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 181[2mms[22m[39m
+ [32m✓[39m tests/EventSystem.test.js [2m([22m[2m16 tests[22m[2m)[22m[32m 58[2mms[22m[39m
+ [32m✓[39m tests/EnemyExitFreeze.test.js [2m([22m[2m20 tests[22m[2m)[22m[32m 63[2mms[22m[39m
+[90mstdout[2m | tests/RecordsOverlay.test.js[2m > [22m[2mshowRecordsOverlay reads values from localStorage and populates DOM
+[22m[39m[RecordsPanelManager] showRecordsOverlay called
+[RecordsPanelManager] Overlay classList after adding show: stats-panel-overlay show
+[RecordsPanelManager] Overlay display style: block
+
+ [32m✓[39m tests/RecordsOverlay.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 34[2mms[22m[39m
+ [32m✓[39m tests/GridIterator.test.js [2m([22m[2m35 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32m✓[39m tests/TileStrategyPattern.test.js [2m([22m[2m12 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m tests/UIEventCoordinator.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32m✓[39m tests/Position.test.js [2m([22m[2m99 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m tests/CombatManager.test.js [2m([22m[2m9 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m tests/InventoryUI.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 26[2mms[22m[39m
+[90mstdout[2m | tests/BoardLoader.test.js[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Registration[2m > [22m[2mshould register a board for a specific zone
+[22m[39mRegistered canon board "museum" for zone (0,0) dimension 1
+
+[90mstdout[2m | tests/BoardLoader.test.js[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Registration[2m > [22m[2mshould support both canon and custom board types
+[22m[39mRegistered canon board "museum" for zone (0,0) dimension 1
+Registered custom board "my_zone" for zone (5,5) dimension 0
+
+[90mstdout[2m | tests/BoardLoader.test.js[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Registration[2m > [22m[2mshould create unique keys for different dimensions
+[22m[39mRegistered canon board "surface" for zone (0,0) dimension 0
+Registered canon board "interior" for zone (0,0) dimension 1
+Registered canon board "underground" for zone (0,0) dimension 2
+
+ [32m✓[39m tests/CombatActionManager.test.js [2m([22m[2m7 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+[90mstdout[2m | tests/BoardLoader.test.js[2m > [22m[2mBoardLoader[2m > [22m[2mCache Management[2m > [22m[2mshould clear cache
+[22m[39mBoard cache cleared
+
+ [32m✓[39m tests/BoardLoader.test.js [2m([22m[2m26 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m tests/BarterWindow.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m tests/DirectionUtils.test.js [2m([22m[2m20 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32m✓[39m tests/LineOfSightUtils.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/SafeServiceCall.test.js [2m([22m[2m31 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32m✓[39m tests/Player.test.js [2m([22m[2m10 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m tests/ZoneKeyUtils.test.js [2m([22m[2m22 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tests/EventValidator.test.js [2m([22m[2m21 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m tests/EnemyAttackRange.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m tests/Lizord.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m tests/MiniMapHighlights.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/zoneSpawnManager.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/FogRenderer.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/dialogue-progression.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/InteractionManager.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/constants.test.js [2m([22m[2m8 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/AnimationRenderer.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m tests/dialogue-state-simple.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/CustomBoardZoneKeyFix.test.js [2m([22m[2m7 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/ZoneStateManager.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/ItemUtils.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/UI.dom.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m tests/UI.styles.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m16 failed[39m[22m[2m | [22m[1m[32m39 passed[39m[22m[90m (55)[39m
+[2m      Tests [22m [1m[31m16 failed[39m[22m[2m | [22m[1m[32m527 passed[39m[22m[90m (543)[39m
+[2m     Errors [22m [1m[31m1 error[39m[22m
+[2m   Start at [22m 16:53:16
+[2m   Duration [22m 11.39s[2m (transform 3.70s, setup 7.25s, collect 6.31s, tests 2.18s, environment 42.08s, prepare 1.83s)[22m
+

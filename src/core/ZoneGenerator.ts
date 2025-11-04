@@ -1,5 +1,6 @@
 import { TILE_TYPES, GRID_SIZE } from './constants/index';
 import { logger } from './logger';
+import type { Coordinates } from './PositionTypes';
 import { ZoneStateManager } from '@generators/ZoneStateManager';
 import { FeatureGenerator } from '@generators/FeatureGenerator';
 import { ItemGenerator } from '@generators/ItemGenerator';
@@ -24,7 +25,7 @@ export class ZoneGenerator {
     private enemies: any[] | null;
     private currentZoneX: number | null;
     private currentZoneY: number | null;
-    private playerSpawn: { x: number; y: number } | null;
+    private playerSpawn: Coordinates | null;
     public terrainTextures: Record<string, string>;
     public overlayTextures: Record<string, string>;
     public rotations: Record<string, number>;

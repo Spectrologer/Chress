@@ -36,10 +36,10 @@
         },
         "gives": {
           "type": "item",
-          "id": "items/consumables/beaf",
+          "id": "items/consumables/meat",
           "amount": 1,
           "displayName": "Meat",
-          "icon": "items/consumables/beaf.png"
+          "icon": "items/consumables/meat.png"
         },
         "repeatable": true
       }

@@ -23,7 +23,7 @@ export class FoodRenderStrategy extends TileRenderStrategy {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.FOOD], '🥖');
             return;
         }
-        // Extract just the filename for the image key (e.g., 'items/consumables/beaf.png' -> 'beaf')
+        // Extract just the filename for the image key (e.g., 'items/consumables/meat.png' -> 'meat')
         const foodKey = foodAsset.split('/').pop().replace('.png', '');
 
         // First draw the base tile

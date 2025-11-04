@@ -18,7 +18,7 @@ let added2 = im.addItemToInventory(player, { type: 'heart' });
 logger.debug('Added second heart:', added2, 'inventory:', JSON.stringify(player.inventory));
 
 // Simulate picking up heart when inventory has other items
-player.inventory = [{ type: 'food', foodType: 'food/meat/beaf.png', quantity: 1 }, { type: 'heart', quantity: 1 }];
+player.inventory = [{ type: 'food', foodType: 'food/meat/meat.png', quantity: 1 }, { type: 'heart', quantity: 1 }];
 logger.debug('\nInventory before pickup:', JSON.stringify(player.inventory));
 added2 = im.addItemToInventory(player, { type: 'heart' });
 logger.debug('Added heart with existing heart stack present:', added2, 'inventory:', JSON.stringify(player.inventory));
@@ -30,7 +30,7 @@ logger.debug('Add to existing stack (quantity 3 -> 4):', added2, JSON.stringify(
 
 // Fill inventory with non-heart items and attempt to pickup heart (should merge if stack exists)
 player.inventory = [
-  { type: 'food', foodType: 'food/meat/beaf.png', quantity: 1 },
+  { type: 'food', foodType: 'food/meat/meat.png', quantity: 1 },
   { type: 'water', quantity: 1 },
   { type: 'axe' },
   { type: 'bomb', quantity: 1 },
@@ -43,7 +43,7 @@ logger.debug('Pickup while full but existing stack present - should merge:', add
 
 // Full inventory without heart stack
 player.inventory = [
-  { type: 'food', foodType: 'food/meat/beaf.png', quantity: 1 },
+  { type: 'food', foodType: 'food/meat/meat.png', quantity: 1 },
   { type: 'water', quantity: 1 },
   { type: 'axe' },
   { type: 'bomb', quantity: 1 },

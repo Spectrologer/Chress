@@ -307,7 +307,7 @@ export class ItemMetadata {
         if (!foodType) return '';
 
         try {
-            // Extract just the filename (e.g., 'items/consumables/beaf.png' -> 'beaf')
+            // Extract just the filename (e.g., 'items/consumables/meat.png' -> 'meat')
             return foodType.split('/').pop()?.replace('.png', '') || '';
         } catch (e) {
             return foodType.replace('.png', '');

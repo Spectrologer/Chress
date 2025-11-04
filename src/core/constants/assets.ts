@@ -234,7 +234,7 @@ export type ImageAsset = typeof IMAGE_ASSETS[number];
 
 // Food image assets
 export const FOOD_ASSETS = [
-    'items/consumables/beaf.png',
+    'items/consumables/meat.png',
     'items/consumables/nut.png',
     'items/consumables/aguamelin.png'
 ] as const;

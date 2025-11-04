@@ -4,7 +4,7 @@ import { TileRegistry } from '@core/TileRegistry';
 import { isAdjacent } from '@core/utils/DirectionUtils';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
-import { isTileObjectOfType } from '@utils/TypeChecks';
+import { isTileObjectOfType, TileTypeChecker } from '@utils/TypeChecks';
 import type { Game } from '@core/game';
 import type { Position } from '@core/Position';
 
@@ -63,8 +63,8 @@ export class EnvironmentalInteractionManager {
         const gridManager = this.game.gridManager;
         const tile = gridManager.getTile(gridCoords.x, gridCoords.y);
 
-        // Get tile type for TileRegistry
-        const tileType = typeof tile === 'object' && tile !== null ? (tile as any).type : tile;
+        // Get tile type using TypeChecks utility
+        const tileType = TileTypeChecker.getTileType(tile);
 
         // Use centralized TileRegistry for statue mapping
         const statueNpcType = TileRegistry.getStatueNPCType(tileType);
@@ -118,7 +118,7 @@ export class EnvironmentalInteractionManager {
 
         // Check enemy statue using centralized TileRegistry
         const statueTile2 = gridManager.getTile(gridCoords.x, gridCoords.y);
-        const statueTileType = typeof statueTile2 === 'object' && statueTile2 !== null ? (statueTile2 as any).type : statueTile2;
+        const statueTileType = TileTypeChecker.getTileType(statueTile2);
         const statueNpcType = TileRegistry.getStatueNPCType(statueTileType);
 
         if (statueNpcType) {

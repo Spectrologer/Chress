@@ -99,11 +99,17 @@ export function assetDiscoveryPlugin() {
             // Scan from {publicDir}/assets/ subdirectory
             const publicDir = config.publicDir;
             assetsDir = join(publicDir, 'assets');
-            console.log('[Asset Discovery] Scanning assets directory:', assetsDir);
 
-            // Scan the assets directory
+            // Scan the assets directory (silently handles missing directory)
             scannedAssets = scanDirectory(assetsDir, assetsDir);
             categorizedAssets = categorizeAssets(scannedAssets);
+
+            // Only log if assets were found
+            if (scannedAssets.length === 0) {
+                return; // Skip logging when no assets found
+            }
+
+            console.log('[Asset Discovery] Scanning assets directory:', assetsDir);
 
             console.log('[Asset Discovery] Found assets:');
             console.log(`  - Walls: ${categorizedAssets.walls.length}`);

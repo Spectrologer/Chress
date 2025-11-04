@@ -1,29 +1,12 @@
-import { TileRenderStrategy } from './TileRenderStrategy.js';
-import type { BaseRenderer } from '@renderers/types.js';
+import { DelegatorRenderStrategy } from './DelegatorRenderStrategy.js';
 import type { WallTileRenderer } from '@renderers/WallTileRenderer.js';
 
 /**
  * Strategy for rendering GRASS and SHRUBBERY tiles.
  * Delegates to WallTileRenderer for backward compatibility.
  */
-export class GrassRenderStrategy extends TileRenderStrategy {
-    private wallRenderer: WallTileRenderer;
-
+export class GrassRenderStrategy extends DelegatorRenderStrategy<WallTileRenderer> {
     constructor(images: Record<string, HTMLImageElement>, tileSize: number, wallRenderer: WallTileRenderer) {
-        super(images, tileSize);
-        this.wallRenderer = wallRenderer;
-    }
-
-    render(
-        ctx: CanvasRenderingContext2D,
-        x: number,
-        y: number,
-        pixelX: number,
-        pixelY: number,
-        grid: any[][] | any,
-        zoneLevel: number,
-        baseRenderer: BaseRenderer
-    ): void {
-        this.wallRenderer.renderGrassTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer);
+        super(images, tileSize, wallRenderer, 'renderGrassTile');
     }
 }

@@ -1,4 +1,5 @@
 import type { IGame } from '@core/GameContext';
+import type { Coordinates } from '@core/PositionTypes';
 import { TILE_SIZE, TILE_TYPES, UI_CONSTANTS, TIMING_CONSTANTS, INVENTORY_CONSTANTS } from '@core/constants/index';
 import { saveRadialInventory } from '@managers/RadialPersistence';
 import { ItemMetadata } from '@managers/inventory/ItemMetadata';
@@ -20,11 +21,11 @@ interface Player {
     radialInventory: InventoryItem[];
     inventory: InventoryItem[];
     isDead(): boolean;
-    getPosition?(): { x: number; y: number };
+    getPosition?(): Coordinates;
 }
 
 interface InputManager {
-    convertScreenToGrid?(clientX: number, clientY: number): { x: number; y: number } | null;
+    convertScreenToGrid?(clientX: number, clientY: number): Coordinates | null;
 }
 
 interface InventoryInteractionHandler {

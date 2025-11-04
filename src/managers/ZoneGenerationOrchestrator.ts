@@ -12,22 +12,19 @@ import { createZoneKey } from '@utils/ZoneKeyUtils';
 import { isWithinGrid } from '@utils/GridUtils';
 import { isTileObjectWithProperty, isPitfall } from '@utils/TypeChecks';
 import { Position } from '@core/Position';
+import type { Coordinates } from '@core/PositionTypes';
 import type { Game } from '@core/game';
 import type { ZoneTransitionCoordinator } from './ZoneTransitionCoordinator';
 import type { Grid, Tile } from '@core/SharedTypes';
 import type { Enemy } from '@entities/Enemy';
 
-interface EnemyData {
-    x: number;
-    y: number;
+interface EnemyData extends Coordinates {
     enemyType: string;
     health: number;
     id: string;
 }
 
-interface ZoneInfo {
-    x: number;
-    y: number;
+interface ZoneInfo extends Coordinates {
     dimension: number;
     depth?: number;
 }
@@ -41,7 +38,7 @@ interface ZoneData {
     rotations?: Record<string, number>;
     overlayRotations?: Record<string, number>;
     returnToSurface?: Position;
-    returnToInterior?: { x: number; y: number; zoneX: number; zoneY: number };
+    returnToInterior?: Coordinates & { zoneX: number; zoneY: number };
     metadata?: {
         playerSpawn?: Position;
     };

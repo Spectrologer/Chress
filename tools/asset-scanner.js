@@ -1,9 +1,9 @@
 // @ts-check
 // Asset Scanner Module - Dynamically reads game asset definitions
 // v2.1 - Feltface moved to portraits folder
-import { IMAGE_ASSETS, FOOD_ASSETS } from '/src/core/constants/index.js';
-import { ContentRegistry } from '/src/core/ContentRegistry.js';
-import { loadAllNPCs, getAllNPCCharacterData } from '/src/core/NPCLoader.js';
+import { IMAGE_ASSETS, FOOD_ASSETS } from '../src/core/constants/index.ts';
+import { ContentRegistry } from '../src/core/ContentRegistry.ts';
+import { loadAllNPCs, getAllNPCCharacterData } from '../src/core/NPCLoader.ts';
 
 /**
  * @typedef {Object} AssetCategory

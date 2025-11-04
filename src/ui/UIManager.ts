@@ -1,4 +1,5 @@
 import type { IGame } from '@core/GameContext';
+import type { Coordinates, ZoneCoordinates } from '@core/PositionTypes';
 import { MessageManager } from './MessageManager';
 import { PanelManager } from './PanelManager';
 import { PlayerStatsUI } from './PlayerStatsUI';
@@ -10,8 +11,8 @@ import { EventTypes } from '@core/EventTypes';
 import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface Player {
-    getPosition(): { x: number; y: number };
-    getCurrentZone(): { x: number; y: number; dimension: number };
+    getPosition(): Coordinates;
+    getCurrentZone(): ZoneCoordinates;
     getPoints(): number;
     getVisitedZones(): Set<string>;
     getSpentDiscoveries(): number;

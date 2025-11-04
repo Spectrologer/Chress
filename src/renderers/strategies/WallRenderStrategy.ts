@@ -5,6 +5,9 @@ import type { WallTileRenderer } from '@renderers/WallTileRenderer.js';
 /**
  * Strategy for rendering WALL tiles.
  * Delegates to WallTileRenderer for backward compatibility.
+ *
+ * Note: This strategy uses terrainTextures and rotations parameters,
+ * which are not part of the standard DelegatorRenderStrategy pattern.
  */
 export class WallRenderStrategy extends TileRenderStrategy {
     private wallRenderer: WallTileRenderer;

@@ -4,6 +4,7 @@
  */
 
 import type { Position } from './Position';
+import type { Coordinates, ZoneCoordinates } from './PositionTypes';
 import type {
     Enemy,
     InventoryItem,
@@ -553,7 +554,7 @@ export interface EnemyRemovedEvent {
 
 export interface EnemiesClearedEvent {
   count: number;
-  zoneCoords: { x: number; y: number };
+  zoneCoords: Coordinates;
 }
 
 export interface EnemiesReplacedEvent {
@@ -647,7 +648,7 @@ export interface EventDataMap {
   [EventTypes.MULTIPLIER_CHANGED]: MultiplierChangedEvent;
 
   // Game State Events
-  [EventTypes.GAME_RESET]: { zone: { x: number; y: number; dimension: number }; regionName: string };
+  [EventTypes.GAME_RESET]: { zone: ZoneCoordinates; regionName: string };
   [EventTypes.GAME_INITIALIZED]: GameInitializedEvent;
   [EventTypes.GAME_OVER]: GameOverEvent;
   [EventTypes.GAME_STATE_LOADED]: GameStateLoadedEvent;
@@ -659,7 +660,7 @@ export interface EventDataMap {
   [EventTypes.REGION_CHANGED]: RegionChangedEvent;
 
   // Player Events
-  [EventTypes.PLAYER_MOVED]: { x: number; y: number };
+  [EventTypes.PLAYER_MOVED]: Coordinates;
   [EventTypes.PLAYER_STATS_CHANGED]: PlayerStatsChangedEvent;
   [EventTypes.PLAYER_POSITION_CHANGED]: PlayerPositionChangedEvent;
 

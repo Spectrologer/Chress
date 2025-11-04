@@ -1,6 +1,11 @@
 import { TileRenderStrategy } from './TileRenderStrategy.js';
 import type { BaseRenderer } from '@renderers/types.js';
 
+/**
+ * Strategy for rendering EXIT tiles.
+ * Delegates to BaseRenderer's renderExitTile method.
+ * Note: Exit tiles do not have checkerboard shading.
+ */
 export class ExitRenderStrategy extends TileRenderStrategy {
     render(
         ctx: CanvasRenderingContext2D,

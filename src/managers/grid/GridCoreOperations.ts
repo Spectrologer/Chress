@@ -7,6 +7,7 @@
 
 import { isWithinGrid } from '@utils/GridUtils';
 import { getTileType, isTileType, isWalkable as isWalkableTile } from '@utils/TileUtils';
+import { TileTypeChecker } from '@utils/TypeChecks';
 import { logger } from '@core/logger';
 import type { Tile, Grid } from '@core/SharedTypes';
 
@@ -82,8 +83,8 @@ export class GridCoreOperations {
         const tile = this.getTile(x, y);
         if (tile === undefined) return undefined;
 
-        // If tile is an object, create shallow copy
-        if (typeof tile === 'object' && tile !== null) {
+        // If tile is an object, create shallow copy using TypeChecks
+        if (TileTypeChecker.isTileObject(tile)) {
             return { ...tile };
         }
 
@@ -108,11 +109,11 @@ export class GridCoreOperations {
     }
 
     /**
-     * Get the raw grid reference (use sparingly, prefer abstraction methods)
-     * @deprecated Use GridManager methods instead of direct grid access
+     * Get the raw grid reference
+     * @internal This method is primarily for GridManager internal use.
+     * External callers should prefer GridManager's abstraction methods.
      */
     getRawGrid(): Grid {
-        logger.warn('GridCoreOperations.getRawGrid: Direct grid access detected. Consider using GridManager methods instead.');
         return this.grid;
     }
 }

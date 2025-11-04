@@ -2,7 +2,7 @@ import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
 import { logger } from '@core/logger';
 import { createZoneKey } from '@utils/ZoneKeyUtils';
 import { isWithinGrid } from '@utils/GridUtils';
-import { isTileType, isTileObjectOfType, isTileObjectWithProperty } from '@utils/TypeChecks';
+import { isTileType, isTileObjectOfType, isTileObjectWithProperty, TileTypeChecker } from '@utils/TypeChecks';
 import type { Game } from '@core/game';
 import type { Position } from '@core/Position';
 import type { TileObject } from '@core/SharedTypes';
@@ -155,7 +155,7 @@ export class ZoneTransitionCoordinator {
                         anyPortY = y;
                     }
                     // Check if it's specifically an interior port
-                    if (tile && typeof tile === 'object' && (tile as TileObject).portKind === 'interior') {
+                    if (isTileObjectWithProperty(tile, TILE_TYPES.PORT, 'portKind', 'interior')) {
                         interiorPortX = x;
                         interiorPortY = y;
                         break;
@@ -277,7 +277,7 @@ export class ZoneTransitionCoordinator {
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
                 const tile = gridManager.getTile(x, y);
-                if (tile && typeof tile === 'object' && (tile as TileObject).portKind === 'stairdown') {
+                if (isTileObjectWithProperty(tile, TILE_TYPES.PORT, 'portKind', 'stairdown')) {
                     stairdownX = x;
                     stairdownY = y;
                     break;

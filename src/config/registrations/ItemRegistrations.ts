@@ -5,6 +5,18 @@
 import { ContentRegistry } from '@core/ContentRegistry';
 import { TILE_TYPES, SPAWN_PROBABILITIES } from '@core/constants/index';
 
+// Import item types
+import type {
+    FoodItem,
+    WaterItem,
+    BishopSpearItem,
+    HorseIconItem,
+    BombItem,
+    BookOfTimeTravelItem,
+    BowItem,
+    ShovelItem
+} from '@managers/inventory/ItemMetadata';
+
 // Import item effects
 import { FoodEffect, WaterEffect, HeartEffect } from '@managers/inventory/effects/ConsumableEffects';
 import { AxeEffect, HammerEffect } from '@managers/inventory/effects/ToolEffects';
@@ -23,15 +35,15 @@ export function registerItems(): void {
         radial: false,
         effect: new FoodEffect(),
         spawnWeight: 0, // Spawned via special food/water logic
-        getTooltip: (item: any) => {
+        getTooltip: (item: FoodItem) => {
             const foodName = formatFoodName(item.foodType);
-            const foodQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
+            const foodQuantity = item.quantity && item.quantity > 1 ? ` (x${item.quantity})` : '';
             if (item.foodType === 'items/consumables/aguamelin.png') {
                 return `${foodName}${foodQuantity} - Restores 5 hunger, 5 thirst`;
             }
             return `${foodName}${foodQuantity} - Restores 10 hunger`;
         },
-        getImageKey: (item: any) => {
+        getImageKey: (item: FoodItem) => {
             if (item.foodType) {
                 // Extract just the filename to match TextureLoader's food asset registration
                 // e.g., 'items/consumables/aguamelin.png' -> 'aguamelin'
@@ -47,8 +59,8 @@ export function registerItems(): void {
         radial: false,
         effect: new WaterEffect(),
         spawnWeight: 0, // Spawned via special food/water logic
-        getTooltip: (item: any) => {
-            const waterQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
+        getTooltip: (item: WaterItem) => {
+            const waterQuantity = item.quantity && item.quantity > 1 ? ` (x${item.quantity})` : '';
             return `Water${waterQuantity} - Restores 10 thirst`;
         },
         getImageKey: () => 'water'
@@ -103,7 +115,7 @@ export function registerItems(): void {
             dimension: 'any',
             isActivated: true
         },
-        getTooltip: (item: any) => `Shovel - Digs a hole in an adjacent empty tile. Has ${item.uses} uses.`,
+        getTooltip: (item: ShovelItem) => `Shovel - Digs a hole in an adjacent empty tile. Has ${item.uses} uses.`,
         getImageKey: () => 'shovel',
         metadata: {
             defaultUses: 3
@@ -124,8 +136,8 @@ export function registerItems(): void {
             dimension: 'any',
             isActivated: true
         },
-        getTooltip: (item: any) => {
-            const bombQuantity = item.quantity > 1 ? ` (x${item.quantity})` : '';
+        getTooltip: (item: BombItem) => {
+            const bombQuantity = item.quantity && item.quantity > 1 ? ` (x${item.quantity})` : '';
             return `Bomb${bombQuantity} - Blasts through walls to create exits`;
         },
         getImageKey: () => 'bomb'
@@ -143,7 +155,7 @@ export function registerItems(): void {
             dimension: 'any',
             isActivated: true
         },
-        getTooltip: (item: any) => {
+        getTooltip: (item: BowItem) => {
             const disabledText = item.disabled ? ' (DISABLED)' : '';
             return `Bow${disabledText} - Fires an arrow in an orthogonal direction. Has ${item.uses} charges.`;
         },
@@ -165,7 +177,7 @@ export function registerItems(): void {
             dimension: 'any',
             isActivated: true
         },
-        getTooltip: (item: any) => {
+        getTooltip: (item: BishopSpearItem) => {
             const disabledText = item.disabled ? ' (DISABLED)' : '';
             return `Bishop Spear${disabledText} - Charge diagonally towards enemies, has ${item.uses} charges`;
         },
@@ -187,7 +199,7 @@ export function registerItems(): void {
             dimension: 'any',
             isActivated: true
         },
-        getTooltip: (item: any) => {
+        getTooltip: (item: HorseIconItem) => {
             const disabledText = item.disabled ? ' (DISABLED)' : '';
             return `Horse Icon${disabledText} - Charge in L-shape (knight moves) towards enemies, has ${item.uses} charges`;
         },
@@ -219,7 +231,7 @@ export function registerItems(): void {
         radial: true,
         effect: new BookOfTimeTravelEffect(),
         spawnWeight: 0, // Not naturally spawned
-        getTooltip: (item: any) => `Book of Time Travel - Passes one turn, allowing enemies to move. Has ${item.uses} charges.`,
+        getTooltip: (item: BookOfTimeTravelItem) => `Book of Time Travel - Passes one turn, allowing enemies to move. Has ${item.uses} charges.`,
         getImageKey: () => 'book',
         metadata: {
             defaultUses: 1
@@ -336,7 +348,7 @@ export function registerItems(): void {
 function formatFoodName(foodType: string): string {
     if (!foodType) return '';
     try {
-        // Extract just the filename (e.g., 'items/consumables/beaf.png' -> 'beaf')
+        // Extract just the filename (e.g., 'items/consumables/meat.png' -> 'meat')
         return foodType.split('/').pop()!.replace('.png', '');
     } catch (e) {
         return foodType.replace('.png', '');

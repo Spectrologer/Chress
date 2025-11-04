@@ -4,6 +4,7 @@ import { GameAudio } from './GameAudio';
 import { UI_TIMING_CONSTANTS } from './constants/ui';
 import { ZoneGenerationState } from '@state/ZoneGenerationState';
 import { storageAdapter, StorageAdapter } from '@state/StorageAdapter';
+import type { Coordinates } from './PositionTypes';
 import type { Grid } from './SharedTypes';
 import type { ServiceContainer } from './ServiceContainer';
 import type { AnimationManager } from './DataContracts';
@@ -49,7 +50,7 @@ import type { TerrainInteractionManager } from '@managers/TerrainInteractionMana
 import type { ItemRepository } from '@managers/inventory/ItemRepository';
 import type { InventoryInteractionHandler } from '@managers/inventory/InventoryInteractionHandler';
 import type { InventoryItem } from '@managers/inventory/ItemMetadata';
-import type { SoundManager as ISoundManager } from '@types/game';
+import type { SoundManager as ISoundManager } from '../types/game.js';
 
 export interface Item {
     name?: string;
@@ -88,7 +89,7 @@ export interface IGame {
     messageLog?: string[];
     dialogueState?: Map<string, any>;
     lastExitSide?: string | null;
-    _newGameSpawnPosition?: { x: number; y: number } | null;
+    _newGameSpawnPosition?: Coordinates | null;
     pendingConfirmationAction?: string;
     pendingConfirmationData?: any;
 
@@ -244,7 +245,7 @@ export class GameContext implements IGame {
     messageLog?: string[];
     dialogueState?: Map<string, any>;
     lastExitSide?: string | null;
-    _newGameSpawnPosition?: { x: number; y: number } | null;
+    _newGameSpawnPosition?: Coordinates | null;
     transientGameState?: any;
 
     // Turn-based system state
@@ -425,8 +426,8 @@ export class GameContext implements IGame {
     set radialInventoryUI(value: RadialInventoryUI | null) { this.ui.radialInventoryUI = value; }
 
     // Backward compatibility alias
-    get _lastPlayerPos(): {x: number, y: number} | null { return this.ui._lastPlayerPos; }
-    set _lastPlayerPos(value: {x: number, y: number} | null) { this.ui._lastPlayerPos = value; }
+    get _lastPlayerPos(): Coordinates | null { return this.ui._lastPlayerPos; }
+    set _lastPlayerPos(value: Coordinates | null) { this.ui._lastPlayerPos = value; }
 
     get soundManager(): ISoundManager | null { return this.audio.soundManager as ISoundManager | null; }
     set soundManager(value: ISoundManager | null) { this.audio.soundManager = value; }
