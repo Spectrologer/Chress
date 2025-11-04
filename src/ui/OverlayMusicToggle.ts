@@ -1,6 +1,6 @@
-import { logger } from '../core/logger';
-import { safeCall, safeGet } from '../utils/SafeServiceCall';
-import { EventListenerManager } from '../utils/EventListenerManager';
+import { logger } from '@core/logger';
+import { safeCall, safeGet } from '@utils/SafeServiceCall';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface GameInstance {
     player: any;

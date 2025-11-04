@@ -1,4 +1,4 @@
-import { PLAYER_STAT_CONSTANTS } from '../core/constants/ui';
+import { PLAYER_STAT_CONSTANTS } from '@core/constants/ui';
 import type { Player } from './Player';
 
 export class PlayerStats {

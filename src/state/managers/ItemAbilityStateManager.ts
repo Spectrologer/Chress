@@ -1,7 +1,7 @@
-import { eventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
-import { logger } from '../../core/logger';
-import type { Position } from '../../core/Position';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { logger } from '@core/logger';
+import type { Position } from '@core/Position';
 
 /**
  * ItemAbilityStateManager - Manages item ability state (Horse charge, Bomb placement)

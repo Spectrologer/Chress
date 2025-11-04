@@ -1,6 +1,6 @@
 import type { GameContext } from './GameContext';
-import type { Enemy } from '../entities/Enemy';
-import type { EnemyCollection } from '../facades/EnemyCollection';
+import type { Enemy } from '@entities/Enemy';
+import type { EnemyCollection } from '@facades/EnemyCollection';
 
 /**
  * TurnManager

@@ -34,7 +34,7 @@ describe('MessageLog', () => {
         'You found a treasure at (5, 3)',
         'Enemy defeated!',
       ],
-      gameLoop: jest.fn(),
+      gameLoop: vi.fn(),
     });
 
     // Create MessageLog instance
@@ -136,7 +136,7 @@ describe('MessageLog', () => {
     });
 
     test('should show overlay when message log button is clicked', () => {
-      const showSpy = jest.spyOn(messageLog, 'show');
+      const showSpy = vi.spyOn(messageLog, 'show');
 
       openButton.click();
 
@@ -144,9 +144,9 @@ describe('MessageLog', () => {
     });
 
     test('should show overlay on pointerdown event', () => {
-      const showSpy = jest.spyOn(messageLog, 'show');
+      const showSpy = vi.spyOn(messageLog, 'show');
       const event = new PointerEvent('pointerdown', { bubbles: true });
-      const preventDefaultSpy = jest.spyOn(event, 'preventDefault');
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
 
       openButton.dispatchEvent(event);
 

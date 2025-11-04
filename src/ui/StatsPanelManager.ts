@@ -1,6 +1,6 @@
 import { PanelEventHandler } from './PanelEventHandler';
-import { safeCall } from '../utils/SafeServiceCall';
-import { EventListenerManager } from '../utils/EventListenerManager';
+import { safeCall } from '@utils/SafeServiceCall';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface GameInstance {
     defeatedEnemies?: Set<any>;

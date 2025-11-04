@@ -1,11 +1,11 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants/index';
-import { logger } from '../core/logger';
-import { createZoneKey } from '../utils/ZoneKeyUtils';
-import { isWithinGrid } from '../utils/GridUtils';
-import { isTileType, isTileObjectOfType, isTileObjectWithProperty } from '../utils/TypeChecks';
-import type { Game } from '../core/game';
-import type { Position } from '../core/Position';
-import type { TileObject } from '../core/SharedTypes';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
+import { logger } from '@core/logger';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
+import { isWithinGrid } from '@utils/GridUtils';
+import { isTileType, isTileObjectOfType, isTileObjectWithProperty } from '@utils/TypeChecks';
+import type { Game } from '@core/game';
+import type { Position } from '@core/Position';
+import type { TileObject } from '@core/SharedTypes';
 
 interface ZoneData {
     playerSpawn?: Position;

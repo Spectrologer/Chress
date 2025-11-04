@@ -20,6 +20,8 @@ describe('ZoneManager', () => {
       getPosition: vi.fn().mockReturnValue({ x: 1, y: 1 }),
       ensureValidPosition: vi.fn(),
       setPosition: vi.fn(),
+      setLastPosition: vi.fn(),
+      getZoneDimension: vi.fn().mockReturnValue(0),
       currentZone: { x: 0, y: 0, dimension: 0 }
     };
 
@@ -60,6 +62,7 @@ describe('ZoneManager', () => {
         clearLastSignMessage: vi.fn(),
         clearDisplayingSignMessage: vi.fn(),
         getPortTransitionData: vi.fn().mockReturnValue(null),
+        clearPortTransitionData: vi.fn(),
         exitPitfallZone: vi.fn(),
         enterPitfallZone: vi.fn(),
         setDisplayingSignMessage: vi.fn(),

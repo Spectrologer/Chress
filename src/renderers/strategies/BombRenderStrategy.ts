@@ -1,8 +1,8 @@
-import { TILE_TYPES, TILE_SIZE, TILE_COLORS, ANIMATION_CONSTANTS, STROKE_CONSTANTS } from '../../core/constants/index';
-import { logger } from '../../core/logger';
-import { TileRenderStrategy } from './TileRenderStrategy';
-import { isBomb, isTileObject } from '../../utils/TypeChecks';
-import type { BaseRenderer } from '../types';
+import { TILE_TYPES, TILE_SIZE, TILE_COLORS, ANIMATION_CONSTANTS, STROKE_CONSTANTS } from '@core/constants/index.js';
+import { logger } from '@core/logger';
+import { TileRenderStrategy } from './TileRenderStrategy.js';
+import { isBomb, isTileObject } from '@utils/TypeChecks';
+import type { BaseRenderer } from '@renderers/types.js';
 
 export class BombRenderStrategy extends TileRenderStrategy {
     render(

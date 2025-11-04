@@ -1,7 +1,7 @@
-import { BaseNPC } from '../npc/BaseNPC';
-import { TILE_TYPES } from '../core/constants/index';
-import { ContentRegistry } from '../core/ContentRegistry';
-import type { IGame } from '../core/GameContext';
+import { BaseNPC } from '@npc/BaseNPC';
+import { TILE_TYPES } from '@core/constants/index';
+import { ContentRegistry } from '@core/ContentRegistry';
+import type { IGame } from '@core/GameContext';
 
 interface NPCConfig {
     x: number;

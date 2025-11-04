@@ -2,46 +2,81 @@ import { ZoneTransitionManager } from '@managers/ZoneTransitionManager';
 import { ZoneManager } from '@managers/ZoneManager';
 import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 
-jest.mock('../renderers/MultiTileHandler.js');
+vi.mock('../renderers/MultiTileHandler.js');
 import { MultiTileHandler } from '@renderers/MultiTileHandler';
 
 describe('Hole and Cistern depth setting', () => {
-    const createGameMock = () => ({
-        grid: Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)),
-        portTransitionData: null,
-        specialZones: new Map(),
-        player: {
-            x: 2,
-            y: 2,
-            lastX: 2,
-            lastY: 2,
-            currentZone: { x: 0, y: 0, dimension: 0, depth: 0 },
-            undergroundDepth: 0,
-            setCurrentZone(x, y, dim) { this.currentZone.x = x; this.currentZone.y = y; if (typeof dim === 'number') this.currentZone.dimension = dim; },
-            setPosition(x, y) { this.x = x; this.y = y; },
-            getPosition() { return { x: this.x, y: this.y }; },
-            getCurrentZone() { return { ...this.currentZone }; },
-            ensureValidPosition() {},
-            onZoneTransition() {}
-        },
-        uiManager: {
-            generateRegionName() { return 'Test'; },
-            showRegionNotification() {},
-            updateZoneDisplay() {},
-            updatePlayerPosition() {},
-            updatePlayerStats() {},
-            addMessageToLog() {}
-        },
-        zoneGenerator: { generateZone: jest.fn(), grid: [] },
-        connectionManager: { generateChunkConnections() {} },
-        availableFoodAssets: [],
-        enemies: [],
-        zones: new Map(),
-        lastExitSide: null,
-        justEnteredZone: false,
-        defeatedEnemies: new Set(),
-        gameStateManager: { saveGameState() {} }
-    });
+    const createGameMock = () => {
+        const mockGame = {
+            grid: Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)),
+            portTransitionData: null,
+            specialZones: new Map(),
+            player: {
+                x: 2,
+                y: 2,
+                lastX: 2,
+                lastY: 2,
+                currentZone: { x: 0, y: 0, dimension: 0, depth: 0 },
+                undergroundDepth: 0,
+                setCurrentZone(x, y, dim) { this.currentZone.x = x; this.currentZone.y = y; if (typeof dim === 'number') this.currentZone.dimension = dim; },
+                setPosition(x, y) { this.x = x; this.y = y; },
+                setLastPosition(x, y) { this.lastX = x; this.lastY = y; },
+                getPosition() { return { x: this.x, y: this.y }; },
+                getCurrentZone() { return { ...this.currentZone }; },
+                getZoneDimension() { return this.currentZone.dimension; },
+                ensureValidPosition() {},
+                onZoneTransition() {}
+            },
+            uiManager: {
+                generateRegionName() { return 'Test'; },
+                showRegionNotification() {},
+                updateZoneDisplay() {},
+                updatePlayerPosition() {},
+                updatePlayerStats() {},
+                addMessageToLog() {}
+            },
+            zoneGenerator: { generateZone: vi.fn(), grid: [], clearPathToExit: vi.fn() },
+            connectionManager: { generateChunkConnections() {} },
+            availableFoodAssets: [],
+            enemies: [],
+            zones: new Map(),
+            lastExitSide: null,
+            justEnteredZone: false,
+            defeatedEnemies: new Set(),
+            gameStateManager: { saveGameState() {} },
+            transientGameState: {
+                getPortTransitionData: vi.fn().mockReturnValue(null),
+                clearPortTransitionData: vi.fn(),
+                setPortTransitionData: vi.fn(),
+                enterPitfallZone: vi.fn(),
+                exitPitfallZone: vi.fn(),
+                isInPitfallZone: vi.fn().mockReturnValue(false),
+                getPitfallTurnsSurvived: vi.fn().mockReturnValue(0),
+                clearLastSignMessage: vi.fn(),
+                clearDisplayingSignMessage: vi.fn(),
+                clearCurrentNPCPosition: vi.fn(),
+                isDisplayingSignMessage: vi.fn().mockReturnValue(false)
+            },
+            gridManager: {
+                getTile: vi.fn((x, y) => mockGame.grid[y]?.[x]),
+                setTile: vi.fn((x, y, tile) => { if (mockGame.grid[y]) mockGame.grid[y][x] = tile; }),
+                setGrid: vi.fn(),
+                isTileType: vi.fn(),
+                findFirst: vi.fn(() => null)
+            },
+            zoneRepository: {
+                hasByKey: vi.fn((key) => mockGame.zones.has(key)),
+                getByKey: vi.fn((key) => mockGame.zones.get(key)),
+                setByKey: vi.fn((key, data) => mockGame.zones.set(key, data))
+            },
+            spawnTreasuresOnGrid: vi.fn()
+        };
+
+        // Add playerFacade reference
+        mockGame.playerFacade = mockGame.player;
+
+        return mockGame;
+    };
 
     test('undergroundDepth is set to 1 when entering via hole', () => {
         const game = createGameMock();

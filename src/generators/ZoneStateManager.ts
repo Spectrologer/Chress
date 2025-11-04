@@ -1,5 +1,5 @@
-import { logger } from '../core/logger';
-import { TILE_TYPES, GRID_SIZE, getZoneLevelFromDistance } from '../core/constants/index';
+import { logger } from '@core/logger';
+import { TILE_TYPES, GRID_SIZE, getZoneLevelFromDistance } from '@core/constants/index';
 
 /**
  * ZoneStateManager - Utility functions for zone generation

@@ -1,11 +1,11 @@
-import { eventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
-import { logger } from '../../core/logger';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { logger } from '@core/logger';
 import { ItemAbilityStateManager } from './ItemAbilityStateManager';
 import { InteractionStateManager } from './InteractionStateManager';
 import { ZoneStateManager } from './ZoneStateManager';
 import { CombatStateManager } from './CombatStateManager';
-import type { Position } from '../../core/Position';
+import type { Position } from '@core/Position';
 
 /**
  * TransientStateCoordinator - Facade that delegates to specialized state managers

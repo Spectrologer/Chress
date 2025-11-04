@@ -13,7 +13,7 @@
  * - Automatic validation of content definitions
  * - Easy to iterate over all content for tooling/debug
  */
-import type { BaseItemEffect } from '../managers/inventory/effects/BaseItemEffect';
+import type { BaseItemEffect } from '@managers/inventory/effects/BaseItemEffect';
 
 export interface ItemSpawnRules {
     minLevel?: number;

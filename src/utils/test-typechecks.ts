@@ -3,7 +3,7 @@
  */
 
 import { TileTypeChecker, EntityTypeChecker, isStatue } from './TypeChecks';
-import { TILE_TYPES } from '../core/constants/index';
+import { TILE_TYPES } from '@core/constants/index';
 
 console.log('🧪 Testing Generated TypeChecks.ts\n');
 

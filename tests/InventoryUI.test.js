@@ -8,10 +8,10 @@ function makeMockGame() {
       isDead: () => false,
       getPosition: () => ({ x: 1, y: 1 }),
     },
-    uiManager: { updatePlayerStats: jest.fn() },
+    uiManager: { updatePlayerStats: vi.fn() },
     animationScheduler: { createSequence: () => ({ wait: () => ({ then: () => ({ start: () => {} }) }) }) },
-    startEnemyTurns: jest.fn(),
-    updatePlayerStats: jest.fn(),
+    startEnemyTurns: vi.fn(),
+    updatePlayerStats: vi.fn(),
   };
   return mockGame;
 }

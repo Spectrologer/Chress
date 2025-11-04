@@ -3,9 +3,9 @@
  * This file consolidates common interfaces used across the codebase
  */
 
-import { Position, type Coordinates } from '../core/Position';
-import type { Enemy } from '../entities/Enemy';
-import type { Player } from '../entities/Player';
+import { Position, type Coordinates } from '@core/Position';
+import type { Enemy } from '@entities/Enemy';
+import type { Player } from '@entities/Player';
 
 // Sound Manager interface
 export interface SoundManager {

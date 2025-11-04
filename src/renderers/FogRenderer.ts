@@ -1,8 +1,8 @@
-import { TILE_SIZE, GRID_SIZE } from '../core/constants/index';
-import { MOTION_CONSTANTS } from '../core/constants/rendering';
-import { createZoneKey } from '../utils/ZoneKeyUtils';
+import { TILE_SIZE, GRID_SIZE } from '@core/constants/index';
+import { MOTION_CONSTANTS } from '@core/constants/rendering';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
 import type { TextureManager } from './TextureManager';
-import type { IGame } from '../core/GameContext';
+import type { IGame } from '@core/GameContext';
 
 interface Zone {
     x: number;

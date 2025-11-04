@@ -12,24 +12,24 @@ describe('InventoryService', () => {
     mockPlayer = {
       inventory: [],
       radialInventory: [],
-      isDead: jest.fn().mockReturnValue(false),
+      isDead: vi.fn().mockReturnValue(false),
       x: 1,
       y: 1,
-      getVisitedZones: jest.fn().mockReturnValue(new Set()),
-      getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
-      markZoneVisited: jest.fn(),
-      setHealth: jest.fn(),
-      getHealth: jest.fn().mockReturnValue(2),
-      restoreHunger: jest.fn(),
-      restoreThirst: jest.fn(),
+      getVisitedZones: vi.fn().mockReturnValue(new Set()),
+      getCurrentZone: vi.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
+      markZoneVisited: vi.fn(),
+      setHealth: vi.fn(),
+      getHealth: vi.fn().mockReturnValue(2),
+      restoreHunger: vi.fn(),
+      restoreThirst: vi.fn(),
       getPosition: function() { return { x: this.x, y: this.y }; }
     };
 
     mockUIManager = {
-      updatePlayerStats: jest.fn(),
-      addMessageToLog: jest.fn(),
-      renderZoneMap: jest.fn(),
-      showOverlayMessage: jest.fn()
+      updatePlayerStats: vi.fn(),
+      addMessageToLog: vi.fn(),
+      renderZoneMap: vi.fn(),
+      showOverlayMessage: vi.fn()
     };
 
     mockGame = {
@@ -38,21 +38,21 @@ describe('InventoryService', () => {
       uiManager: mockUIManager,
       availableFoodAssets: ['food/meat/beaf.png'],
       specialZones: new Map(),
-      hideOverlayMessage: jest.fn(),
+      hideOverlayMessage: vi.fn(),
       displayingMessageForSign: null,
-      showSignMessage: jest.fn(),
-      updatePlayerStats: jest.fn(),
+      showSignMessage: vi.fn(),
+      updatePlayerStats: vi.fn(),
       enemies: []
     };
 
-    document.getElementById = jest.fn().mockReturnValue({ classList: { add: jest.fn(), remove: jest.fn() }, textContent: '', style: {} });
-    document.querySelector = jest.fn().mockReturnValue({ innerHTML: '', appendChild: jest.fn(), getBoundingClientRect: jest.fn().mockReturnValue({}), closest: jest.fn().mockReturnValue({ getBoundingClientRect: jest.fn().mockReturnValue({}) }) });
+    document.getElementById = vi.fn().mockReturnValue({ classList: { add: vi.fn(), remove: vi.fn() }, textContent: '', style: {} });
+    document.querySelector = vi.fn().mockReturnValue({ innerHTML: '', appendChild: vi.fn(), getBoundingClientRect: vi.fn().mockReturnValue({}), closest: vi.fn().mockReturnValue({ getBoundingClientRect: vi.fn().mockReturnValue({}) }) });
 
     inventoryService = new InventoryService(mockGame);
     mockGame.inventoryService = inventoryService;
   });
 
-  afterEach(() => jest.clearAllMocks());
+  afterEach(() => vi.clearAllMocks());
 
   test('ItemMetadata.getTooltipText returns correct text for food', () => {
     const foodItem = { type: 'food', foodType: 'food/meat/beaf.png' };
@@ -141,7 +141,7 @@ describe('InventoryService', () => {
     mockPlayer.getVisitedZones.mockReturnValue(new Set(['0,0']));
     mockPlayer.getCurrentZone.mockReturnValue({ x: 0, y: 0, dimension: 0 });
 
-    jest.spyOn(Math, 'random').mockReturnValue(0.1);
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
 
     inventoryService.useItem(noteItem, { fromRadial: false });
 

@@ -15,7 +15,7 @@
  * 2. Simpler implementation (no heuristic needed)
  * 3. Sufficient performance for grid sizes used
  */
-import { GRID_SIZE } from '../core/constants/index';
+import { GRID_SIZE } from '@core/constants/index';
 
 export class EnemyPathfinding {
     /**

@@ -1,4 +1,4 @@
-import type { IGame } from '../core/GameContext';
+import type { IGame } from '@core/GameContext';
 import { BarterWindow } from './BarterWindow';
 import { StatueInfoWindow } from './StatueInfoWindow';
 import { ConfigPanelManager } from './ConfigPanelManager';

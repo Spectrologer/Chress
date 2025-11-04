@@ -12,12 +12,12 @@ describe('Bomb and Shovel integration', () => {
       inventory: [],
       radialInventory: [],
       getPosition() { return { x: this.x, y: this.y }; },
-      restoreHunger: jest.fn(),
-      restoreThirst: jest.fn(),
-      setHealth: jest.fn(),
-      getHealth: jest.fn().mockReturnValue(2)
+      restoreHunger: vi.fn(),
+      restoreThirst: vi.fn(),
+      setHealth: vi.fn(),
+      getHealth: vi.fn().mockReturnValue(2)
     };
-    mockUI = { updatePlayerStats: jest.fn(), addMessageToLog: jest.fn(), renderZoneMap: jest.fn(), showOverlayMessage: jest.fn(), hideOverlayMessage: jest.fn() };
+    mockUI = { updatePlayerStats: vi.fn(), addMessageToLog: vi.fn(), renderZoneMap: vi.fn(), showOverlayMessage: vi.fn(), hideOverlayMessage: vi.fn() };
     mockGame = {
       player: mockPlayer,
       grid: Array(9).fill().map(() => Array(9).fill(TILE_TYPES.FLOOR)),
@@ -25,11 +25,11 @@ describe('Bomb and Shovel integration', () => {
       specialZones: new Map(),
       availableFoodAssets: ['food/meat/beaf.png'],
       enemies: [],
-      incrementBombActions: jest.fn(),
-      startEnemyTurns: jest.fn(),
-      explodeBomb: jest.fn(),
-      hideOverlayMessage: jest.fn(),
-      updatePlayerStats: jest.fn(),
+      incrementBombActions: vi.fn(),
+      startEnemyTurns: vi.fn(),
+      explodeBomb: vi.fn(),
+      hideOverlayMessage: vi.fn(),
+      updatePlayerStats: vi.fn(),
     };
 
     inventoryService = new InventoryService(mockGame);

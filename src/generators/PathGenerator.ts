@@ -16,9 +16,9 @@
  * 3. For each port: Clear 3x3 area + path to center
  * 4. Use greedy pathfinding toward center (not BFS/A* - simpler is sufficient)
  */
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index';
-import { isPort, isTileType, isExit, isWall, isRock, isShrubbery } from '../utils/TypeChecks';
-import GridIterator from '../utils/GridIterator';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
+import { isPort, isTileType, isExit, isWall, isRock, isShrubbery } from '@utils/TypeChecks';
+import GridIterator from '@utils/GridIterator';
 
 export class PathGenerator {
     private gridManager: any;

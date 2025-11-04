@@ -1,7 +1,7 @@
 import { EnemyChargeBehaviors } from './EnemyChargeBehaviors';
 import { EnemyLineOfSight } from './EnemyLineOfSight';
 import { EnemyAttackHelper } from './EnemyAttackHelper';
-import { ANIMATION_CONSTANTS } from '../core/constants/index';
+import { ANIMATION_CONSTANTS } from '@core/constants/index';
 
 export class EnemySpecialActions {
     // Execute charge move for Zard enemy type

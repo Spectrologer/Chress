@@ -1,5 +1,5 @@
 import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
-import { TILE_TYPES } from '../../../core/constants/index';
+import { TILE_TYPES } from '@core/constants/index';
 import type { InventoryItem } from '../ItemMetadata';
 
 /**

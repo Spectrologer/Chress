@@ -1,8 +1,8 @@
-import { logger } from '../core/logger';
-import { safeCall, safeCallAsync } from '../utils/SafeServiceCall';
+import { logger } from '@core/logger';
+import { safeCall, safeCallAsync } from '@utils/SafeServiceCall';
 import type { StartOverlayController } from './StartOverlayController';
 import type { OverlayMusicToggle } from './OverlayMusicToggle';
-import { EventListenerManager } from '../utils/EventListenerManager';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface GameInstance {
     previewMode: boolean;

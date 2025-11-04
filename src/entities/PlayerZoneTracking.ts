@@ -1,4 +1,4 @@
-import { createZoneKey } from '../utils/ZoneKeyUtils';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
 import type { Player, ZoneCoords } from './Player';
 
 export class PlayerZoneTracking {

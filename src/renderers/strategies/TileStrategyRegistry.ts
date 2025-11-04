@@ -1,29 +1,29 @@
-import { TILE_TYPES } from '../../core/constants/index';
+import { TILE_TYPES } from '@core/constants/index.js';
 
 // Import all strategies
-import { FloorRenderStrategy } from './FloorRenderStrategy';
-import { ExitRenderStrategy } from './ExitRenderStrategy';
-import { WaterRenderStrategy } from './WaterRenderStrategy';
-import { WallRenderStrategy } from './WallRenderStrategy';
-import { RockRenderStrategy } from './RockRenderStrategy';
-import { GrassRenderStrategy } from './GrassRenderStrategy';
-import { HouseRenderStrategy } from './HouseRenderStrategy';
-import { ShackRenderStrategy } from './ShackRenderStrategy';
-import { WellRenderStrategy } from './WellRenderStrategy';
-import { DeadTreeRenderStrategy } from './DeadTreeRenderStrategy';
-import { StatueRenderStrategy } from './StatueRenderStrategy';
-import { SimpleOverlayRenderStrategy } from './SimpleOverlayRenderStrategy';
-import { FoodRenderStrategy } from './FoodRenderStrategy';
-import { BombRenderStrategy } from './BombRenderStrategy';
-import { SimpleItemRenderStrategy } from './SimpleItemRenderStrategy';
-import { PortRenderStrategy } from './PortRenderStrategy';
-import { CisternRenderStrategy } from './CisternRenderStrategy';
-import { PitfallRenderStrategy } from './PitfallRenderStrategy';
-import type { TileRenderStrategy } from './TileRenderStrategy';
-import type { ImageCache } from '../types';
-import type { MultiTileHandler } from '../MultiTileHandler';
-import type { WallTileRenderer } from '../WallTileRenderer';
-import type { StructureTileRenderer } from '../StructureTileRenderer';
+import { FloorRenderStrategy } from './FloorRenderStrategy.js';
+import { ExitRenderStrategy } from './ExitRenderStrategy.js';
+import { WaterRenderStrategy } from './WaterRenderStrategy.js';
+import { WallRenderStrategy } from './WallRenderStrategy.js';
+import { RockRenderStrategy } from './RockRenderStrategy.js';
+import { GrassRenderStrategy } from './GrassRenderStrategy.js';
+import { HouseRenderStrategy } from './HouseRenderStrategy.js';
+import { ShackRenderStrategy } from './ShackRenderStrategy.js';
+import { WellRenderStrategy } from './WellRenderStrategy.js';
+import { DeadTreeRenderStrategy } from './DeadTreeRenderStrategy.js';
+import { StatueRenderStrategy } from './StatueRenderStrategy.js';
+import { SimpleOverlayRenderStrategy } from './SimpleOverlayRenderStrategy.js';
+import { FoodRenderStrategy } from './FoodRenderStrategy.js';
+import { BombRenderStrategy } from './BombRenderStrategy.js';
+import { SimpleItemRenderStrategy } from './SimpleItemRenderStrategy.js';
+import { PortRenderStrategy } from './PortRenderStrategy.js';
+import { CisternRenderStrategy } from './CisternRenderStrategy.js';
+import { PitfallRenderStrategy } from './PitfallRenderStrategy.js';
+import type { TileRenderStrategy } from './TileRenderStrategy.js';
+import type { ImageCache } from '@renderers/types.js';
+import type { MultiTileHandler } from '@renderers/MultiTileHandler.js';
+import type { WallTileRenderer } from '@renderers/WallTileRenderer.js';
+import type { StructureTileRenderer } from '@renderers/StructureTileRenderer.js';
 
 /**
  * Registry that maps tile types to their rendering strategies.

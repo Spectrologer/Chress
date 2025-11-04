@@ -1,10 +1,10 @@
-import { TILE_TYPES } from '../core/constants/index';
-import { safeCall } from '../utils/SafeServiceCall';
-import { checkOrthogonalLineOfSight } from '../utils/LineOfSightUtils';
-import type { Game } from '../core/game';
-import type { Position } from '../core/Position';
-import type { InventoryItem } from '../managers/inventory/ItemMetadata';
-import type { Enemy } from '../entities/Enemy';
+import { TILE_TYPES } from '@core/constants/index';
+import { safeCall } from '@utils/SafeServiceCall';
+import { checkOrthogonalLineOfSight } from '@utils/LineOfSightUtils';
+import type { Game } from '@core/game';
+import type { Position } from '@core/Position';
+import type { InventoryItem } from '@managers/inventory/ItemMetadata';
+import type { Enemy } from '@entities/Enemy';
 
 interface ChargeDetails {
     type: string;

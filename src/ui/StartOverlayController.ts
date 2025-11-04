@@ -1,9 +1,9 @@
-import { logger } from '../core/logger';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
-import { safeCall, safeCallAsync } from '../utils/SafeServiceCall';
-import type { IGame } from '../core/GameContext';
+import { logger } from '@core/logger';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
+import { safeCall, safeCallAsync } from '@utils/SafeServiceCall';
+import type { IGame } from '@core/GameContext';
 
 /**
  * StartOverlayController

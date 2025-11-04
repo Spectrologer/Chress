@@ -1,9 +1,9 @@
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index';
-import { GENERATOR_CONSTANTS } from '../core/constants/ui';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '@core/constants/index';
+import { GENERATOR_CONSTANTS } from '@core/constants/ui';
 import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './GeneratorUtils';
 import { ZoneStateManager } from './ZoneStateManager';
-import { logger } from '../core/logger';
-import { isFloor, isWall } from '../utils/TypeChecks';
+import { logger } from '@core/logger';
+import { isFloor, isWall } from '@utils/TypeChecks';
 
 export class FeatureGenerator {
     private gridManager: any;

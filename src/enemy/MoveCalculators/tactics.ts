@@ -47,8 +47,8 @@
  * @property {*} [data] - Game data
  */
 
-import { GRID_SIZE } from '../../core/constants/index';
-import { EnemyPathfinding } from '../EnemyPathfinding';
+import { GRID_SIZE } from '@core/constants/index';
+import { EnemyPathfinding } from '@enemy/EnemyPathfinding';
 
 /**
  * Adjusts enemy movement to improve tactical positioning through better

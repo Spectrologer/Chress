@@ -1,12 +1,12 @@
 import { ItemRepository } from './ItemRepository';
 import { ItemEffectStrategy } from './ItemEffectStrategy';
 import { ItemMetadata, type InventoryItem } from './ItemMetadata';
-import { GRID_SIZE, TILE_TYPES } from '../../core/constants/index';
-import audioManager from '../../utils/AudioManager';
-import { eventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
-import { isFloor } from '../../utils/TileUtils';
-import type { Game } from '../../core/game';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
+import audioManager from '@utils/AudioManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { isFloor } from '@utils/TileUtils';
+import type { Game } from '@core/game';
 
 interface UseItemContext {
     fromRadial?: boolean;

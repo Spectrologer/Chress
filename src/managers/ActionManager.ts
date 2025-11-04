@@ -11,24 +11,24 @@
  * Player input -> ActionManager -> Game systems (Combat, Inventory, etc.) -> Visual feedback
  */
 
-import { TILE_TYPES, TILE_SIZE, GRID_SIZE, ANIMATION_CONSTANTS, TIMING_CONSTANTS, GAMEPLAY_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants/index';
-import audioManager from '../utils/AudioManager';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { isWithinGrid } from '../utils/GridUtils';
+import { TILE_TYPES, TILE_SIZE, GRID_SIZE, ANIMATION_CONSTANTS, TIMING_CONSTANTS, GAMEPLAY_CONSTANTS, INVENTORY_CONSTANTS } from '@core/constants/index';
+import audioManager from '@utils/AudioManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { isWithinGrid } from '@utils/GridUtils';
 import { ItemRepository } from './inventory/ItemRepository';
-import { isBomb, isTileType } from '../utils/TileUtils';
-import GridIterator from '../utils/GridIterator';
-import type { IGame } from '../core/GameContext';
-import type { PlayerFacade } from '../facades/PlayerFacade';
+import { isBomb, isTileType } from '@utils/TileUtils';
+import GridIterator from '@utils/GridIterator';
+import type { IGame } from '@core/GameContext';
+import type { PlayerFacade } from '@facades/PlayerFacade';
 import type { CombatManager } from './CombatManager';
-import type { Player } from '../entities/Player';
+import type { Player } from '@entities/Player';
 import type { GridManager } from './GridManager';
-import type { EnemyCollection } from '../facades/EnemyCollection';
-import type { AnimationScheduler } from '../core/AnimationScheduler';
-import type { TransientGameState } from '../state/TransientGameState';
+import type { EnemyCollection } from '@facades/EnemyCollection';
+import type { AnimationScheduler } from '@core/AnimationScheduler';
+import type { TransientGameState } from '@state/TransientGameState';
 import type { InventoryItem } from './inventory/ItemMetadata';
-import type { Enemy } from '../entities/Enemy';
+import type { Enemy } from '@entities/Enemy';
 
 interface BombTile {
     type: number;

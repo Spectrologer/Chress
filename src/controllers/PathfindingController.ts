@@ -1,9 +1,9 @@
-import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS } from '../core/constants/index';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { isWithinGrid } from '../utils/GridUtils';
-import { Position } from '../core/Position';
-import { isSign, getTileType } from '../utils/TypeChecks';
+import { GRID_SIZE, TILE_TYPES, INPUT_CONSTANTS } from '@core/constants/index';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { isWithinGrid } from '@utils/GridUtils';
+import { Position } from '@core/Position';
+import { isSign, getTileType } from '@utils/TypeChecks';
 
 interface PathNode {
     pos: Position;

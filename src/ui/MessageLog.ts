@@ -1,5 +1,5 @@
-import { logger } from '../core/logger';
-import { EventListenerManager } from '../utils/EventListenerManager';
+import { logger } from '@core/logger';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface GameInstance {
     messageLog?: string[];

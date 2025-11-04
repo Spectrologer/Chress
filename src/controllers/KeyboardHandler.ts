@@ -1,7 +1,7 @@
-import { Sign } from '../ui/Sign';
-import audioManager from '../utils/AudioManager';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
+import { Sign } from '@ui/Sign';
+import audioManager from '@utils/AudioManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 interface KeyPressResult {
     type: 'cancel_path' | 'movement';

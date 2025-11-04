@@ -35,7 +35,7 @@ describe('Config overlay interactions', () => {
 
   beforeEach(() => {
     player = new Player();
-    mockGame = { player, soundManager: { setMusicEnabled: jest.fn(), setSfxEnabled: jest.fn() } };
+    mockGame = { player, soundManager: { setMusicEnabled: vi.fn(), setSfxEnabled: vi.fn() } };
     panelManager = new PanelManager(mockGame);
   });
 

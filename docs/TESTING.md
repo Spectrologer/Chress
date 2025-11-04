@@ -295,7 +295,7 @@ Located in [vitest.config.js](../vitest.config.js):
 - **Better DX:** Hot Module Reloading for tests
 - **Native ESM:** No transpilation needed
 - **UI Mode:** Run `npm run test:ui` for interactive testing
-- **Compatible:** Drop-in replacement for Jest API
+- **Compatible:** Drop-in replacement for testing APIs
 
 ---
 
@@ -420,7 +420,7 @@ echo "npm test" > .husky/pre-commit
 - [Happy DOM](https://github.com/capricorn86/happy-dom)
 - [Testing Best Practices](https://testingjavascript.com/)
 - [Test Coverage Interpretation](https://martinfowler.com/bliki/TestCoverage.html)
-- [Migrating from Jest](https://vitest.dev/guide/migration.html)
+- [Vitest Migration Guide](https://vitest.dev/guide/migration.html)
 
 ---
 

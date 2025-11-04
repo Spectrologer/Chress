@@ -1,5 +1,5 @@
-import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES } from '../core/constants/index';
-import { logger } from '../core/logger';
+import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES } from '@core/constants/index';
+import { logger } from '@core/logger';
 import type { ImageCache } from './types';
 
 export class TextureLoader {

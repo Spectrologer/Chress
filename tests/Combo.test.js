@@ -15,11 +15,11 @@ describe('Combat combo bonuses', () => {
     mockPlayer = {
       x: 2,
       y: 2,
-      getPosition: jest.fn().mockReturnValue({ x: 2, y: 2 }),
-      takeDamage: jest.fn(),
-      startBump: jest.fn(),
-      getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
-      addPoints: jest.fn()
+      getPosition: vi.fn().mockReturnValue({ x: 2, y: 2 }),
+      takeDamage: vi.fn(),
+      startBump: vi.fn(),
+      getCurrentZone: vi.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
+      addPoints: vi.fn()
     };
 
     mockEnemy = {
@@ -27,17 +27,17 @@ describe('Combat combo bonuses', () => {
       y: 4,
       id: 'e_combo',
       health: 1,
-      takeDamage: jest.fn(),
-      getPoints: jest.fn().mockReturnValue(1)
+      takeDamage: vi.fn(),
+      getPoints: vi.fn().mockReturnValue(1)
     };
 
     const mockAnimationManager = {
-      addPointAnimation: jest.fn(),
-      addMultiplierAnimation: jest.fn()
+      addPointAnimation: vi.fn(),
+      addMultiplierAnimation: vi.fn()
     };
 
-    const mockSoundManager = { playSound: jest.fn() };
-    const mockUIManager = { updatePlayerStats: jest.fn() };
+    const mockSoundManager = { playSound: vi.fn() };
+    const mockUIManager = { updatePlayerStats: vi.fn() };
 
     mockGame = {
       player: mockPlayer,

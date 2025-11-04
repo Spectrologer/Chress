@@ -1,4 +1,4 @@
-import { TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from '../core/constants/index';
+import { TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from '@core/constants/index';
 import { RendererUtils } from './RendererUtils';
 import type { ImageCache, GridManager, BaseRenderer } from './types';
 

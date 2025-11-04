@@ -1,7 +1,7 @@
-import { eventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
-import { logger } from '../../core/logger';
-import { Position } from '../../core/Position';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { logger } from '@core/logger';
+import { Position } from '@core/Position';
 
 /**
  * InteractionStateManager - Manages world interaction state (Signs, NPCs)

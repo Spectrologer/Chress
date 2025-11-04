@@ -1,19 +1,19 @@
-import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANTS } from '../core/constants/index';
+import { TILE_TYPES, GRID_SIZE, UI_CONSTANTS, ZONE_CONSTANTS, ANIMATION_CONSTANTS } from '@core/constants/index';
 import { PlayerStats } from './PlayerStats';
 import { PlayerAnimations } from './PlayerAnimations';
 import { PlayerMovement } from './PlayerMovement';
 import { PlayerAbilities } from './PlayerAbilities';
 import { PlayerZoneTracking } from './PlayerZoneTracking';
-import { createZoneKey } from '../utils/ZoneKeyUtils';
-import audioManager from '../utils/AudioManager';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
-import { TileRegistry } from '../core/TileRegistry';
-import { isBomb, isTileType } from '../utils/TileUtils';
-import GridIterator from '../utils/GridIterator';
-import { Position } from '../core/Position';
-import type { InventoryItem } from '../managers/inventory/ItemMetadata';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
+import audioManager from '@utils/AudioManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
+import { TileRegistry } from '@core/TileRegistry';
+import { isBomb, isTileType } from '@utils/TileUtils';
+import GridIterator from '@utils/GridIterator';
+import { Position } from '@core/Position';
+import type { InventoryItem } from '@managers/inventory/ItemMetadata';
 
 export interface ZoneCoords {
     x: number;

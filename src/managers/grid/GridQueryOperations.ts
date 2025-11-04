@@ -5,9 +5,9 @@
  * Extracted from GridManager to reduce file size.
  */
 
-import { GridIterator } from '../../utils/GridIterator';
-import { isTileType } from '../../utils/TileUtils';
-import type { Tile, Grid } from '../../core/SharedTypes';
+import { GridIterator } from '@utils/GridIterator';
+import { isTileType } from '@utils/TileUtils';
+import type { Tile, Grid } from '@core/SharedTypes';
 
 type TilePredicate = (tile: Tile, x: number, y: number) => boolean;
 

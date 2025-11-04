@@ -2,10 +2,10 @@ import { TILE_TYPES } from './constants/index';
 import { ServiceContainer } from './ServiceContainer';
 import { AnimationManager } from './DataContracts';
 import { GameContext } from './GameContext';
-import { isFloor } from '../utils/TileUtils';
-import { registerAllContent } from '../config/ContentRegistrations';
-import { initializePWA } from '../utils/pwa-register';
-import { preloadCriticalModules } from '../utils/LazyLoader';
+import { isFloor } from '@utils/TileUtils';
+import { registerAllContent } from '@config/ContentRegistrations';
+import { initializePWA } from '@utils/pwa-register';
+import { preloadCriticalModules } from '@utils/LazyLoader';
 
 /**
  * Game

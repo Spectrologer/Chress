@@ -18,7 +18,7 @@ describe('EventBus System Integration', () => {
 
   describe('EventBus Core Functionality', () => {
     test('on() subscribes to events and emit() triggers callbacks', () => {
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
 
       eventBus.on(EventTypes.ENEMY_DEFEATED, mockCallback);
       eventBus.emit(EventTypes.ENEMY_DEFEATED, { points: 100 });
@@ -28,8 +28,8 @@ describe('EventBus System Integration', () => {
     });
 
     test('multiple listeners can subscribe to same event', () => {
-      const callback1 = jest.fn();
-      const callback2 = jest.fn();
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
 
       eventBus.on(EventTypes.PLAYER_MOVED, callback1);
       eventBus.on(EventTypes.PLAYER_MOVED, callback2);
@@ -40,7 +40,7 @@ describe('EventBus System Integration', () => {
     });
 
     test('once() subscribes to events that fire only once', () => {
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
 
       eventBus.once(EventTypes.GAME_RESET, mockCallback);
 
@@ -51,7 +51,7 @@ describe('EventBus System Integration', () => {
     });
 
     test('off() unsubscribes from events', () => {
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
 
       eventBus.on(EventTypes.ZONE_CHANGED, mockCallback);
       eventBus.emit(EventTypes.ZONE_CHANGED, {});
@@ -63,7 +63,7 @@ describe('EventBus System Integration', () => {
     });
 
     test('on() returns unsubscribe function', () => {
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
 
       const unsubscribe = eventBus.on(EventTypes.COMBO_ACHIEVED, mockCallback);
       eventBus.emit(EventTypes.COMBO_ACHIEVED, {});
@@ -75,8 +75,8 @@ describe('EventBus System Integration', () => {
     });
 
     test('clear() removes all listeners for an event', () => {
-      const callback1 = jest.fn();
-      const callback2 = jest.fn();
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
 
       eventBus.on(EventTypes.TREASURE_FOUND, callback1);
       eventBus.on(EventTypes.TREASURE_FOUND, callback2);
@@ -89,8 +89,8 @@ describe('EventBus System Integration', () => {
     });
 
     test('listenerCount() returns correct number of listeners', () => {
-      const callback1 = jest.fn();
-      const callback2 = jest.fn();
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
 
       expect(eventBus.listenerCount(EventTypes.ANIMATION_REQUESTED)).toBe(0);
 
@@ -102,13 +102,13 @@ describe('EventBus System Integration', () => {
     });
 
     test('errors in listeners do not prevent other listeners from executing', () => {
-      const errorCallback = jest.fn(() => {
+      const errorCallback = vi.fn(() => {
         throw new Error('Test error');
       });
-      const normalCallback = jest.fn();
+      const normalCallback = vi.fn();
 
       // Spy on console.error to suppress error output in tests
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       eventBus.on(EventTypes.PLAYER_STATS_CHANGED, errorCallback);
       eventBus.on(EventTypes.PLAYER_STATS_CHANGED, normalCallback);
@@ -141,7 +141,7 @@ describe('EventBus System Integration', () => {
 
   describe('Event System Integration Scenarios', () => {
     test('Combat to UI flow: enemy defeated triggers stats update', () => {
-      const uiUpdateCallback = jest.fn();
+      const uiUpdateCallback = vi.fn();
 
       // Simulate UIManager listening to ENEMY_DEFEATED
       eventBus.on(EventTypes.ENEMY_DEFEATED, uiUpdateCallback);
@@ -165,8 +165,8 @@ describe('EventBus System Integration', () => {
     });
 
     test('Zone change triggers multiple manager updates', () => {
-      const uiCallback = jest.fn();
-      const soundCallback = jest.fn();
+      const uiCallback = vi.fn();
+      const soundCallback = vi.fn();
 
       // Simulate UIManager and SoundManager listening
       eventBus.on(EventTypes.ZONE_CHANGED, uiCallback);
@@ -185,7 +185,7 @@ describe('EventBus System Integration', () => {
     });
 
     test('Animation request routing', () => {
-      const animationCallback = jest.fn();
+      const animationCallback = vi.fn();
 
       // Simulate AnimationManager listening
       eventBus.on(EventTypes.ANIMATION_REQUESTED, animationCallback);
@@ -207,7 +207,7 @@ describe('EventBus System Integration', () => {
     });
 
     test('Player movement triggers UI position update', () => {
-      const positionCallback = jest.fn();
+      const positionCallback = vi.fn();
 
       eventBus.on(EventTypes.PLAYER_MOVED, positionCallback);
 
@@ -219,7 +219,7 @@ describe('EventBus System Integration', () => {
 
   describe('Event System Performance', () => {
     test('handles many listeners efficiently', () => {
-      const callbacks = Array(100).fill(null).map(() => jest.fn());
+      const callbacks = Array(100).fill(null).map(() => vi.fn());
 
       callbacks.forEach(cb => eventBus.on(EventTypes.PLAYER_STATS_CHANGED, cb));
 
@@ -234,7 +234,7 @@ describe('EventBus System Integration', () => {
     });
 
     test('handles many sequential events efficiently', () => {
-      const callback = jest.fn();
+      const callback = vi.fn();
       eventBus.on(EventTypes.ANIMATION_REQUESTED, callback);
 
       const startTime = performance.now();

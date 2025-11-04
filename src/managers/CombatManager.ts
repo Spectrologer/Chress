@@ -6,22 +6,22 @@
  * - PlayerCombatHandler: Player attack handling
  * - CollisionDetectionSystem: Collision detection and resolution
  */
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
-import { safeCall, safeGet } from '../utils/SafeServiceCall';
+import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
+import { safeCall, safeGet } from '@utils/SafeServiceCall';
 import { EnemyMovementHandler } from './combat/EnemyMovementHandler';
 import { PlayerCombatHandler, type AttackResult } from './combat/PlayerCombatHandler';
 import { CollisionDetectionSystem } from './combat/CollisionDetectionSystem';
-import type { IGame, ICoordinates } from '../core/GameContext';
-import { Position } from '../core/Position';
-import type { Player } from '../entities/Player';
-import type { PlayerFacade } from '../facades/PlayerFacade';
-import type { EnemyCollection } from '../facades/EnemyCollection';
+import type { IGame, ICoordinates } from '@core/GameContext';
+import { Position } from '@core/Position';
+import type { Player } from '@entities/Player';
+import type { PlayerFacade } from '@facades/PlayerFacade';
+import type { EnemyCollection } from '@facades/EnemyCollection';
 import type { GridManager } from './GridManager';
-import type { ZoneRepository } from '../repositories/ZoneRepository';
+import type { ZoneRepository } from '@repositories/ZoneRepository';
 import type { BombManager } from './BombManager';
 import type { EnemyDefeatFlow } from './EnemyDefeatFlow';
-import type { TurnManager } from '../core/TurnManager';
-import type { Enemy } from '../entities/Enemy';
+import type { TurnManager } from '@core/TurnManager';
+import type { Enemy } from '@entities/Enemy';
 
 interface ZoneInfo {
     x: number;

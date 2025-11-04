@@ -1,10 +1,10 @@
-import type { IGame } from '../core/GameContext';
-import { TILE_SIZE, TILE_TYPES, UI_CONSTANTS, TIMING_CONSTANTS, INVENTORY_CONSTANTS } from '../core/constants/index';
-import { saveRadialInventory } from '../managers/RadialPersistence';
-import { ItemMetadata } from '../managers/inventory/ItemMetadata';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { EventListenerManager } from '../utils/EventListenerManager';
+import type { IGame } from '@core/GameContext';
+import { TILE_SIZE, TILE_TYPES, UI_CONSTANTS, TIMING_CONSTANTS, INVENTORY_CONSTANTS } from '@core/constants/index';
+import { saveRadialInventory } from '@managers/RadialPersistence';
+import { ItemMetadata } from '@managers/inventory/ItemMetadata';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface InventoryItem {
     type: string;

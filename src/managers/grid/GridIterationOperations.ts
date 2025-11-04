@@ -5,9 +5,9 @@
  * Extracted from GridManager to reduce file size.
  */
 
-import { GridIterator } from '../../utils/GridIterator';
-import { logger } from '../../core/logger';
-import type { Tile, Grid } from '../../core/SharedTypes';
+import { GridIterator } from '@utils/GridIterator';
+import { logger } from '@core/logger';
+import type { Tile, Grid } from '@core/SharedTypes';
 
 type TileCallback = (tile: Tile, x: number, y: number) => void;
 type TilePredicate = (tile: Tile, x: number, y: number) => boolean;

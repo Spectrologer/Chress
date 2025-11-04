@@ -7,11 +7,11 @@ describe('AnimationRenderer - splode', () => {
 
   beforeEach(() => {
     ctx = {
-      drawImage: jest.fn(),
+      drawImage: vi.fn(),
     };
 
     const fakeImage = { complete: true };
-    const textureManager = { getImage: jest.fn(() => fakeImage) };
+    const textureManager = { getImage: vi.fn(() => fakeImage) };
 
     mockGame = {
       ctx,

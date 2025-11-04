@@ -5,10 +5,10 @@
  * Extracted from GridManager to reduce file size.
  */
 
-import { isWithinGrid } from '../../utils/GridUtils';
-import { getTileType, isTileType, isWalkable as isWalkableTile } from '../../utils/TileUtils';
-import { logger } from '../../core/logger';
-import type { Tile, Grid } from '../../core/SharedTypes';
+import { isWithinGrid } from '@utils/GridUtils';
+import { getTileType, isTileType, isWalkable as isWalkableTile } from '@utils/TileUtils';
+import { logger } from '@core/logger';
+import type { Tile, Grid } from '@core/SharedTypes';
 
 export class GridCoreOperations {
     private grid: Grid;

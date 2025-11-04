@@ -1,13 +1,13 @@
-import type { IGame } from '../core/GameContext';
+import type { IGame } from '@core/GameContext';
 import { MessageManager } from './MessageManager';
 import { PanelManager } from './PanelManager';
 import { PlayerStatsUI } from './PlayerStatsUI';
 import { Sign } from './Sign';
 import { MiniMap } from './MiniMap';
 import { UIEventCoordinator } from './UIEventCoordinator';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { EventListenerManager } from '../utils/EventListenerManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface Player {
     getPosition(): { x: number; y: number };

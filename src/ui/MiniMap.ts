@@ -1,7 +1,7 @@
-import type { IGame } from '../core/GameContext';
-import { ZoneStateManager } from '../generators/ZoneStateManager';
-import { UI_RENDERING_CONSTANTS } from '../core/constants/rendering';
-import { EventListenerManager } from '../utils/EventListenerManager';
+import type { IGame } from '@core/GameContext';
+import { ZoneStateManager } from '@generators/ZoneStateManager';
+import { UI_RENDERING_CONSTANTS } from '@core/constants/rendering';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface Zone {
     x: number;

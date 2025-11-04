@@ -17,8 +17,8 @@
  * - StateEventBridge: EventBus compatibility
  */
 
-import { eventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 import { createInitialState } from './StateDefinitions';
 import { StateSliceManager, deepClone } from './StateSliceManager';
 import { StateSubscriptionManager } from './StateSubscriptionManager';

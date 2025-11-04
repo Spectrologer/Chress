@@ -6,20 +6,20 @@ import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 
 // Mock Game dependencies
-jest.mock('../core/SoundManager.js');
-jest.mock('../ui/UIManager.js');
-jest.mock('../core/DataContracts.js');
+vi.mock('../core/SoundManager.js');
+vi.mock('../ui/UIManager.js');
+vi.mock('../core/DataContracts.js');
 
 const mockSoundManager = {
-  playSound: jest.fn()
+  playSound: vi.fn()
 };
 
 const mockUIManager = {
-  updatePlayerStats: jest.fn()
+  updatePlayerStats: vi.fn()
 };
 
 const mockAnimationManager = {
-  addPointAnimation: jest.fn()
+  addPointAnimation: vi.fn()
 };
 
 // We'll create real instances of BombManager and EnemyDefeatFlow
@@ -38,38 +38,81 @@ describe('CombatManager', () => {
     mockPlayer = {
       x: 1,
       y: 1,
-      getPosition: jest.fn().mockReturnValue({ x: 1, y: 1 }),
-      takeDamage: jest.fn(),
-      startBump: jest.fn(),
-      getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
-      isWalkable: jest.fn().mockReturnValue(true),
-      setPosition: jest.fn(),
-      addPoints: jest.fn()
+      getPosition: vi.fn().mockReturnValue({ x: 1, y: 1 }),
+      takeDamage: vi.fn(),
+      startBump: vi.fn(),
+      getCurrentZone: vi.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
+      isWalkable: vi.fn().mockReturnValue(true),
+      setPosition: vi.fn(),
+      addPoints: vi.fn(),
+      animations: {
+        startDamageAnimation: vi.fn()
+      }
     };
 
     mockEnemy = {
       x: 3,
       y: 3,
-      planMoveTowards: jest.fn().mockReturnValue({ x: 2, y: 2 }),
-      takeDamage: jest.fn(),
-      startBump: jest.fn(),
+      planMoveTowards: vi.fn().mockReturnValue({ x: 2, y: 2 }),
+      takeDamage: vi.fn(),
+      startBump: vi.fn(),
       id: 'enemy1',
       attack: 1,
       health: 1,
       justAttacked: false,
-      getPoints: jest.fn().mockReturnValue(1)
+      getPoints: vi.fn().mockReturnValue(1)
     };
 
     mockGame = {
       player: mockPlayer,
       enemies: [mockEnemy],
       grid: Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)),
+      gridManager: {
+        getTile: vi.fn((x, y) => mockGame.grid[y]?.[x]),
+        setTile: vi.fn((x, y, tile) => { if (mockGame.grid[y]) mockGame.grid[y][x] = tile; }),
+        setGrid: vi.fn()
+      },
+      enemyCollection: {
+        forEach: vi.fn((callback) => mockGame.enemies.forEach(callback)),
+        replaceAll: vi.fn(),
+        includes: vi.fn((enemy) => mockGame.enemies.includes(enemy)),
+        getAll: vi.fn(() => mockGame.enemies),
+        remove: vi.fn((enemy) => {
+          const index = mockGame.enemies.indexOf(enemy);
+          if (index > -1) mockGame.enemies.splice(index, 1);
+        }),
+        some: vi.fn((callback) => mockGame.enemies.some(callback)),
+        filter: vi.fn((callback) => mockGame.enemies.filter(callback)),
+        find: vi.fn((callback) => mockGame.enemies.find(callback))
+      },
+      playerFacade: {
+        getHealth: vi.fn(() => 10),
+        getHunger: vi.fn(() => 100),
+        getThirst: vi.fn(() => 100),
+        getPoints: vi.fn(() => 0),
+        takeDamage: vi.fn()
+      },
+      zoneRepository: {
+        hasByKey: vi.fn((key) => mockGame.zones.has(key)),
+        getByKey: vi.fn((key) => mockGame.zones.get(key)),
+        setByKey: vi.fn((key, data) => mockGame.zones.set(key, data))
+      },
       soundManager: mockSoundManager,
       uiManager: mockUIManager,
       animationManager: mockAnimationManager,
       zones: new Map(),
       defeatedEnemies: new Set(),
-      explodeBomb: jest.fn()
+      explodeBomb: vi.fn(),
+      _services: {
+        get: vi.fn((name) => {
+          if (name === 'gridManager') return mockGame.gridManager;
+          if (name === 'enemyCollection') return mockGame.enemyCollection;
+          return null;
+        }),
+        _instances: {
+          delete: vi.fn()
+        }
+      }
     };
 
     occupiedTiles = new Set();
@@ -82,7 +125,7 @@ describe('CombatManager', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('initializes with game reference', () => {
@@ -110,8 +153,8 @@ describe('CombatManager', () => {
     const mockEnemy2 = {
       x: 4,
       y: 4,
-      planMoveTowards: jest.fn().mockReturnValue({ x: 2, y: 2 }), // Same position as enemy1
-      takeDamage: jest.fn(),
+      planMoveTowards: vi.fn().mockReturnValue({ x: 2, y: 2 }), // Same position as enemy1
+      takeDamage: vi.fn(),
       id: 'enemy2'
     };
 
@@ -133,7 +176,7 @@ describe('CombatManager', () => {
 
     combatManager.checkCollisions();
 
-    expect(mockPlayer.takeDamage).toHaveBeenCalledWith(1);
+    expect(mockGame.playerFacade.takeDamage).toHaveBeenCalledWith(1);
     expect(mockGame.soundManager.playSound).toHaveBeenCalledWith('attack');
     expect(mockGame.enemies.filter(e => e.id !== 'enemy1')).toHaveLength(0);
   });
@@ -160,10 +203,10 @@ describe('CombatManager', () => {
   });
 
   test('bomb explosion knocks back player when within one tile', () => {
-    mockGame.explodeBomb = jest.fn(() => {
+    mockGame.explodeBomb = vi.fn(() => {
       // Mock the explosion logic for player at (2,2), bomb at (2,1), direction (0,1)
       // Player should be launched to (2,8) since grid allows it
-      mockPlayer.isWalkable = jest.fn().mockReturnValue(true); // All positions walkable in this test
+      mockPlayer.isWalkable = vi.fn().mockReturnValue(true); // All positions walkable in this test
       mockPlayer.setPosition(2, 8);
       mockPlayer.startBump(0, 1);
     });

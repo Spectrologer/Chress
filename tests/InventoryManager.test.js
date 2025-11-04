@@ -16,22 +16,22 @@ describe('InventoryUI', () => {
     mockPlayer = {
       inventory: [],
       radialInventory: [],
-      isDead: jest.fn().mockReturnValue(false),
+      isDead: vi.fn().mockReturnValue(false),
       x: 1,
       y: 1,
-      getVisitedZones: jest.fn().mockReturnValue(new Set()),
-      getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
-      markZoneVisited: jest.fn(),
-      setHealth: jest.fn(),
-      getHealth: jest.fn().mockReturnValue(2),
-      restoreHunger: jest.fn(),
-      restoreThirst: jest.fn()
+      getVisitedZones: vi.fn().mockReturnValue(new Set()),
+      getCurrentZone: vi.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
+      markZoneVisited: vi.fn(),
+      setHealth: vi.fn(),
+      getHealth: vi.fn().mockReturnValue(2),
+      restoreHunger: vi.fn(),
+      restoreThirst: vi.fn()
     };
 
     mockUIManager = {
-      updatePlayerStats: jest.fn(),
-      addMessageToLog: jest.fn(),
-      renderZoneMap: jest.fn()
+      updatePlayerStats: vi.fn(),
+      addMessageToLog: vi.fn(),
+      renderZoneMap: vi.fn()
     };
 
     mockGame = {
@@ -40,32 +40,32 @@ describe('InventoryUI', () => {
       uiManager: mockUIManager,
       availableFoodAssets: ['food/meat/beaf.png'],
       specialZones: new Map(),
-      hideOverlayMessage: jest.fn(),
+      hideOverlayMessage: vi.fn(),
       displayingMessageForSign: null,
-      showSignMessage: jest.fn(),
-      updatePlayerStats: jest.fn(),
+      showSignMessage: vi.fn(),
+      updatePlayerStats: vi.fn(),
       animationScheduler: {
-        createSequence: jest.fn().mockReturnValue({
-          wait: jest.fn().mockReturnValue({
-            then: jest.fn().mockReturnValue({ start: jest.fn() })
+        createSequence: vi.fn().mockReturnValue({
+          wait: vi.fn().mockReturnValue({
+            then: vi.fn().mockReturnValue({ start: vi.fn() })
           })
         })
       }
     };
 
     // Mock DOM elements
-    document.getElementById = jest.fn().mockReturnValue({
-      classList: { add: jest.fn(), remove: jest.fn() },
+    document.getElementById = vi.fn().mockReturnValue({
+      classList: { add: vi.fn(), remove: vi.fn() },
       textContent: '',
       style: {}
     });
 
-    document.querySelector = jest.fn().mockReturnValue({
+    document.querySelector = vi.fn().mockReturnValue({
       innerHTML: '',
-      appendChild: jest.fn(),
-      getBoundingClientRect: jest.fn().mockReturnValue({}),
-      closest: jest.fn().mockReturnValue({
-        getBoundingClientRect: jest.fn().mockReturnValue({})
+      appendChild: vi.fn(),
+      getBoundingClientRect: vi.fn().mockReturnValue({}),
+      closest: vi.fn().mockReturnValue({
+        getBoundingClientRect: vi.fn().mockReturnValue({})
       })
     });
 
@@ -83,7 +83,7 @@ describe('InventoryUI', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('getItemTooltipText returns correct text for food', () => {
@@ -179,7 +179,7 @@ describe('InventoryUI', () => {
     mockPlayer.inventory = [noteItem];
 
     // Mock random to select first candidate
-    jest.spyOn(Math, 'random').mockReturnValue(0.1);
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
 
     inventoryService.useItem(noteItem, { fromRadial: false });
 

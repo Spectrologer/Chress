@@ -1,6 +1,6 @@
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { TILE_TYPES } from '../core/constants/index';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { TILE_TYPES } from '@core/constants/index';
 
 /**
  * EnemyCollection

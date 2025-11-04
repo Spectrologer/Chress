@@ -1,12 +1,12 @@
 import { GRID_SIZE, CANVAS_SIZE, TILE_TYPES } from './constants/index';
 import { logger } from './logger';
-import { TextureManager } from '../renderers/TextureManager';
-import { ZoneStateManager } from '../generators/ZoneStateManager';
+import { TextureManager } from '@renderers/TextureManager';
+import { ZoneStateManager } from '@generators/ZoneStateManager';
 import { eventBus } from './EventBus';
 import { EventTypes } from './EventTypes';
 import { errorHandler, ErrorSeverity } from './ErrorHandler';
-import { isWithinGrid } from '../utils/GridUtils';
-import { safeCall, safeCallAsync, safeGet } from '../utils/SafeServiceCall';
+import { isWithinGrid } from '@utils/GridUtils';
+import { safeCall, safeCallAsync, safeGet } from '@utils/SafeServiceCall';
 import type { GameContext } from './GameContext';
 
 /**

@@ -1,10 +1,10 @@
-import { TILE_TYPES } from '../../core/constants/index';
-import { eventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
-import { isNote, isFood, isWater, isAxe, isHammer, isBishopSpear, isHorseIcon, isBomb, isHeart, isBow, isShovel } from '../../utils/TypeChecks';
-import type { IGame } from '../../core/GameContext';
+import { TILE_TYPES } from '@core/constants/index';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { isNote, isFood, isWater, isAxe, isHammer, isBishopSpear, isHorseIcon, isBomb, isHeart, isBow, isShovel } from '@utils/TypeChecks';
+import type { IGame } from '@core/GameContext';
 import type { InventoryItem } from './ItemMetadata';
-import { Position } from '../../core/Position';
+import { Position } from '@core/Position';
 
 interface TileWithMeta {
     type?: number;

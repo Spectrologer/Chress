@@ -1,6 +1,6 @@
-import type { IGame } from '../core/GameContext';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
+import type { IGame } from '@core/GameContext';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 interface MessageManager {
     showSignMessage(message: string, portrait: string | null, name: string | null, buttonText: string | null): void;

@@ -1,11 +1,11 @@
-import { TILE_TYPES } from '../core/constants/index';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { TileRegistry } from '../core/TileRegistry';
-import { isAdjacent } from '../core/utils/DirectionUtils';
-import { getTileType } from '../utils/TileUtils';
-import type { IGame } from '../core/GameContext';
-import type { Position } from '../core/Position';
+import { TILE_TYPES } from '@core/constants/index';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { TileRegistry } from '@core/TileRegistry';
+import { isAdjacent } from '@core/utils/DirectionUtils';
+import { getTileType } from '@utils/TileUtils';
+import type { IGame } from '@core/GameContext';
+import type { Position } from '@core/Position';
 
 export class TerrainInteractionManager {
     private game: IGame;

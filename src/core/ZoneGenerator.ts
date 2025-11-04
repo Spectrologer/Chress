@@ -1,21 +1,21 @@
 import { TILE_TYPES, GRID_SIZE } from './constants/index';
 import { logger } from './logger';
-import { ZoneStateManager } from '../generators/ZoneStateManager';
-import { FeatureGenerator } from '../generators/FeatureGenerator';
-import { ItemGenerator } from '../generators/ItemGenerator';
-import { StructureGenerator } from '../generators/StructureGenerator';
-import { EnemyGenerator } from '../generators/EnemyGenerator';
-import { PathGenerator } from '../generators/PathGenerator';
-import { initializeGrid, validateAndSetTile } from '../generators/GeneratorUtils';
+import { ZoneStateManager } from '@generators/ZoneStateManager';
+import { FeatureGenerator } from '@generators/FeatureGenerator';
+import { ItemGenerator } from '@generators/ItemGenerator';
+import { StructureGenerator } from '@generators/StructureGenerator';
+import { EnemyGenerator } from '@generators/EnemyGenerator';
+import { PathGenerator } from '@generators/PathGenerator';
+import { initializeGrid, validateAndSetTile } from '@generators/GeneratorUtils';
 import { findValidPlayerSpawn as _findValidPlayerSpawn, isTileFree as _isTileFree, findOpenNpcSpawn as _findOpenNpcSpawn } from './zoneSpawnManager';
 import { generateExits as _generateExits, clearPathToExit as _clearPathToExit, clearPathToCenter as _clearPathToCenter, clearZoneForShackOnly as _clearZoneForShackOnly, forcePlaceShackInCenter as _forcePlaceShackInCenter } from './zoneMutators';
 import { addRegionNotes as _addRegionNotes } from './regionNotes';
 import { handleInterior } from './handlers/InteriorHandler';
 import { handleUnderground } from './handlers/UndergroundHandler';
 import { handleSurface } from './handlers/SurfaceHandler';
-import { createZoneKey } from '../utils/ZoneKeyUtils';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
 import { boardLoader } from './BoardLoader';
-import { GridManager } from '../managers/GridManager';
+import { GridManager } from '@managers/GridManager';
 
 export class ZoneGenerator {
     private game: any;

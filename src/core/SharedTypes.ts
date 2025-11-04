@@ -4,8 +4,8 @@
  * and ensure type consistency across the application.
  */
 
-import type { Enemy, EnemyData } from '../entities/Enemy';
-import type { InventoryItem } from '../managers/inventory/ItemMetadata';
+import type { Enemy, EnemyData } from '@entities/Enemy';
+import type { InventoryItem } from '@managers/inventory/ItemMetadata';
 
 // Re-export commonly used types for convenience
 export type { Enemy, EnemyData, InventoryItem };

@@ -1,7 +1,7 @@
 import { GRID_SIZE, TILE_TYPES } from './constants/index';
 import { logger } from './logger';
-import GridIterator from '../utils/GridIterator';
-import { isTileType } from '../utils/TileUtils';
+import GridIterator from '@utils/GridIterator';
+import { isTileType } from '@utils/TileUtils';
 
 export function isTileFree(zoneGen, x, y) {
     const tile = zoneGen.grid[y][x];

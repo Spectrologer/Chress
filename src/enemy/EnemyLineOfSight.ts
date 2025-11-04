@@ -2,7 +2,7 @@ import {
     checkDiagonalLineOfSight as checkDiagonalLOS,
     checkOrthogonalLineOfSight as checkOrthogonalLOS,
     checkQueenLineOfSight as checkQueenLOS
-} from '../utils/LineOfSightUtils';
+} from '@utils/LineOfSightUtils';
 
 export class EnemyLineOfSight {
     // Helper for Zard: check diagonal line of sight

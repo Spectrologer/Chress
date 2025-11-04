@@ -1,13 +1,13 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants/index';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { isAdjacent } from '../core/utils/DirectionUtils';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { isAdjacent } from '@core/utils/DirectionUtils';
 import { ItemRepository } from './inventory/ItemRepository';
-import { isBomb, isTileObject, isTileObjectOfType } from '../utils/TypeChecks';
-import GridIterator from '../utils/GridIterator';
-import { safeCall } from '../utils/SafeServiceCall';
-import { Position } from '../core/Position';
-import type { IGame, ICoordinates } from '../core/GameContext';
+import { isBomb, isTileObject, isTileObjectOfType } from '@utils/TypeChecks';
+import GridIterator from '@utils/GridIterator';
+import { safeCall } from '@utils/SafeServiceCall';
+import { Position } from '@core/Position';
+import type { IGame, ICoordinates } from '@core/GameContext';
 
 interface BombTile {
     type: number;

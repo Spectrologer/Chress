@@ -1,7 +1,7 @@
 // @ts-check
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { logger } from '../core/logger';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { logger } from '@core/logger';
 
 /**
  * @typedef {Object} InventoryItem

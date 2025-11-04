@@ -1,6 +1,6 @@
-import type { IGame } from '../core/GameContext';
+import type { IGame } from '@core/GameContext';
 import { Sign } from './Sign';
-import { EventListenerManager } from '../utils/EventListenerManager';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 export class StatueInfoWindow {
     private game: IGame;

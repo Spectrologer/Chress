@@ -1,12 +1,12 @@
-import { TILE_TYPES } from '../core/constants/index';
-import { Sign } from '../ui/Sign';
-import { TileRegistry } from '../core/TileRegistry';
-import { isAdjacent } from '../core/utils/DirectionUtils';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { isTileObjectOfType } from '../utils/TypeChecks';
-import type { Game } from '../core/game';
-import type { Position } from '../core/Position';
+import { TILE_TYPES } from '@core/constants/index';
+import { Sign } from '@ui/Sign';
+import { TileRegistry } from '@core/TileRegistry';
+import { isAdjacent } from '@core/utils/DirectionUtils';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { isTileObjectOfType } from '@utils/TypeChecks';
+import type { Game } from '@core/game';
+import type { Position } from '@core/Position';
 
 interface SignTile {
     type: string;

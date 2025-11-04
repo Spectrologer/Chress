@@ -41,9 +41,8 @@ export default defineConfig({
         'vite.config.js',
         'vitest.config.js',
         'babel.config.cjs',
-        'jest.config.cjs',
       ],
-      // Coverage thresholds (matching Jest config)
+      // Coverage thresholds
       thresholds: {
         lines: 30,
         functions: 30,
@@ -55,13 +54,13 @@ export default defineConfig({
     // Test match patterns
     include: ['tests/**/*.test.js', 'tests/**/*.spec.js'],
 
-    // Clear mocks between tests (matching Jest behavior)
+    // Clear mocks between tests
     clearMocks: true,
 
     // Test timeout
     testTimeout: 10000,
 
-    // Pool options (similar to Jest's maxWorkers)
+    // Pool options
     pool: 'threads',
     poolOptions: {
       threads: {
@@ -71,7 +70,7 @@ export default defineConfig({
     },
   },
 
-  // Module resolution (matching vite.config.js and jest.config.cjs)
+  // Module resolution
   resolve: {
     alias: [
       { find: '@', replacement: resolve(__dirname, './src') },

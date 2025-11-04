@@ -1,8 +1,8 @@
-import { TILE_TYPES, TILE_SIZE } from '../../core/constants/index';
-import { RendererUtils } from '../RendererUtils';
-import { TileRenderStrategy } from './TileRenderStrategy';
-import type { BaseRenderer } from '../types';
-import type { MultiTileHandler } from '../MultiTileHandler';
+import { TILE_TYPES, TILE_SIZE } from '@core/constants/index.js';
+import { RendererUtils } from '@renderers/RendererUtils.js';
+import { TileRenderStrategy } from './TileRenderStrategy.js';
+import type { BaseRenderer } from '@renderers/types.js';
+import type { MultiTileHandler } from '@renderers/MultiTileHandler.js';
 
 export class HouseRenderStrategy extends TileRenderStrategy {
     private multiTileHandler: typeof MultiTileHandler;

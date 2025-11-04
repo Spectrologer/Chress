@@ -1,5 +1,5 @@
-import { logger } from '../core/logger';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
+import { logger } from '@core/logger';
+import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
 
 interface GridCoords {
     x: number;

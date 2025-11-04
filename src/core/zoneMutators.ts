@@ -1,8 +1,8 @@
 import { GRID_SIZE, TILE_TYPES, ZONE_CONSTANTS, GAMEPLAY_CONSTANTS } from './constants/index';
 import { logger } from './logger';
-import GridIterator from '../utils/GridIterator';
-import { isTileType } from '../utils/TileUtils';
-import { getGridManager } from '../utils/GridUtils';
+import GridIterator from '@utils/GridIterator';
+import { isTileType } from '@utils/TileUtils';
+import { getGridManager } from '@utils/GridUtils';
 
 export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel) {
     const zoneKey = `${zoneX},${zoneY}`;

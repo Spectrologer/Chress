@@ -6,19 +6,19 @@ function makeMockCanvas() {
   return {
     width: 640,
     height: 640,
-    getBoundingClientRect: jest.fn().mockReturnValue({ left: 0, top: 0, width: 640, height: 640 }),
-    addEventListener: jest.fn((name, fn) => { listeners[name] = fn; }),
+    getBoundingClientRect: vi.fn().mockReturnValue({ left: 0, top: 0, width: 640, height: 640 }),
+    addEventListener: vi.fn((name, fn) => { listeners[name] = fn; }),
     __listeners: listeners
   };
 }
 
 function makeMockCtx() {
   return {
-    save: jest.fn(),
-    restore: jest.fn(),
-    fillRect: jest.fn(),
-    strokeRect: jest.fn(),
-    setLineDash: jest.fn(),
+    save: vi.fn(),
+    restore: vi.fn(),
+    fillRect: vi.fn(),
+    strokeRect: vi.fn(),
+    setLineDash: vi.fn(),
     lineWidth: 1,
     strokeStyle: '',
     fillStyle: '',
@@ -28,11 +28,11 @@ function makeMockCtx() {
 function makeMinimalGame() {
   const canvas = makeMockCanvas();
   const ctx = makeMockCtx();
-  const textureManager = { renderTile: jest.fn() };
+  const textureManager = { renderTile: vi.fn() };
   const grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR));
   const enemies = [];
   const enemyCollection = {
-    findAt: jest.fn((x, y) => enemies.find(e => e.x === x && e.y === y)),
+    findAt: vi.fn((x, y) => enemies.find(e => e.x === x && e.y === y)),
     getAll: () => enemies
   };
   return {

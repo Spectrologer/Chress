@@ -31,7 +31,7 @@ Successfully completed **Phase 1 (Fix Existing Tests)** and made significant pro
 ### Phase 1: Fix Existing Tests & Foundation ✅
 
 #### 1. **Test Infrastructure Fixed**
-- ✅ Created [jest.config.cjs](../jest.config.cjs) with proper ES module support
+- ✅ Created [vitest.config.js](../vitest.config.js) with proper ES module support
 - ✅ Created [babel.config.cjs](../babel.config.cjs) for ES6+ transformation
 - ✅ Set up module path mapping to match Vite aliases
 - ✅ Added support for `controllers`, `config`, and `state` directories

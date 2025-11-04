@@ -1,9 +1,9 @@
-import { TILE_TYPES, INVENTORY_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants/index';
+import { TILE_TYPES, INVENTORY_CONSTANTS, GAMEPLAY_CONSTANTS } from '@core/constants/index';
 import { InventoryService } from './inventory/InventoryService';
 import { ItemMetadata, type InventoryItem } from './inventory/ItemMetadata';
-import { isTileType } from '../utils/TileUtils';
-import type { Game } from '../core/game';
-import type { Tile } from '../core/SharedTypes';
+import { isTileType } from '@utils/TileUtils';
+import type { Game } from '@core/game';
+import type { Tile } from '@core/SharedTypes';
 
 interface Player {
     inventory: InventoryItem[];

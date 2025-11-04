@@ -1,6 +1,6 @@
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index';
-import { isWithinGrid } from '../utils/GridUtils';
-import { isTileType, isPort, isCistern, isShack } from '../utils/TileUtils';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
+import { isWithinGrid } from '@utils/GridUtils';
+import { isTileType, isPort, isCistern, isShack } from '@utils/TileUtils';
 import type { GridManager } from './types';
 
 interface StructurePosition {

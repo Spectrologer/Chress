@@ -33,16 +33,16 @@ describe('PlayerStatsUI', () => {
 
     // Create mock player with stats methods
     mockPlayer = createMockPlayer({
-      getThirst: jest.fn().mockReturnValue(40),
-      getHunger: jest.fn().mockReturnValue(35),
-      getHealth: jest.fn().mockReturnValue(3),
+      getThirst: vi.fn().mockReturnValue(40),
+      getHunger: vi.fn().mockReturnValue(35),
+      getHealth: vi.fn().mockReturnValue(3),
       abilities: new Set(),
     });
 
     mockGame = createMockGame({
       player: mockPlayer,
       inventoryManager: {
-        updateInventoryDisplay: jest.fn(),
+        updateInventoryDisplay: vi.fn(),
       },
     });
 
@@ -60,7 +60,7 @@ describe('PlayerStatsUI', () => {
 
   describe('Initialization', () => {
     test('should set up event listeners', () => {
-      const updateSpy = jest.spyOn(playerStatsUI, 'updatePlayerStats');
+      const updateSpy = vi.spyOn(playerStatsUI, 'updatePlayerStats');
 
       // Trigger event
       eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
@@ -69,7 +69,7 @@ describe('PlayerStatsUI', () => {
     });
 
     test('should listen to PLAYER_STATS_CHANGED event', () => {
-      const updateSpy = jest.spyOn(playerStatsUI, 'updatePlayerStats');
+      const updateSpy = vi.spyOn(playerStatsUI, 'updatePlayerStats');
 
       // Trigger event
       eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {});
@@ -271,7 +271,7 @@ describe('PlayerStatsUI', () => {
 
   describe('Integration with Event Bus', () => {
     test('should update stats when UI_UPDATE_STATS event is emitted', () => {
-      const updateSpy = jest.spyOn(playerStatsUI, 'updatePlayerStats');
+      const updateSpy = vi.spyOn(playerStatsUI, 'updatePlayerStats');
 
       eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
 
@@ -279,7 +279,7 @@ describe('PlayerStatsUI', () => {
     });
 
     test('should update stats when PLAYER_STATS_CHANGED event is emitted', () => {
-      const updateSpy = jest.spyOn(playerStatsUI, 'updatePlayerStats');
+      const updateSpy = vi.spyOn(playerStatsUI, 'updatePlayerStats');
 
       eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {});
 
@@ -287,7 +287,7 @@ describe('PlayerStatsUI', () => {
     });
 
     test('should respond to multiple event emissions', () => {
-      const updateSpy = jest.spyOn(playerStatsUI, 'updatePlayerStats');
+      const updateSpy = vi.spyOn(playerStatsUI, 'updatePlayerStats');
 
       eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
       eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {});

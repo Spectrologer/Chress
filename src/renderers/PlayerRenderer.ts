@@ -1,11 +1,11 @@
-import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS, SCALE_CONSTANTS, DAMAGE_FLASH_CONSTANTS, PULSATE_CONSTANTS } from '../core/constants/index';
-import { RENDERING_CONSTANTS } from '../core/constants/animation';
+import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS, SCALE_CONSTANTS, DAMAGE_FLASH_CONSTANTS, PULSATE_CONSTANTS } from '@core/constants/index';
+import { RENDERING_CONSTANTS } from '@core/constants/animation';
 import { MultiTileHandler } from './MultiTileHandler';
 import { RendererUtils } from './RendererUtils';
 import type { TextureManager } from './TextureManager';
 import type { Position } from './types';
-import type { IGame } from '../core/GameContext';
-import type { Tile, TileObject } from '../core/SharedTypes';
+import type { IGame } from '@core/GameContext';
+import type { Tile, TileObject } from '@core/SharedTypes';
 
 interface Zone {
     x: number;

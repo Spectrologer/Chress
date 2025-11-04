@@ -1,8 +1,8 @@
-import { INPUT_CONSTANTS, TILE_TYPES, TILE_SIZE } from '../core/constants/index';
-import { getDeltaToDirection } from '../core/utils/DirectionUtils';
-import audioManager from '../utils/AudioManager';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
-import { getTileType, isTileObject } from '../utils/TypeChecks';
+import { INPUT_CONSTANTS, TILE_TYPES, TILE_SIZE } from '@core/constants/index';
+import { getDeltaToDirection } from '@core/utils/DirectionUtils';
+import audioManager from '@utils/AudioManager';
+import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
+import { getTileType, isTileObject } from '@utils/TypeChecks';
 
 interface PointerInfo {
     startX: number;

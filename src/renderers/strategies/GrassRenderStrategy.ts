@@ -1,6 +1,6 @@
-import { TileRenderStrategy } from './TileRenderStrategy';
-import type { BaseRenderer } from '../types';
-import type { WallTileRenderer } from '../WallTileRenderer';
+import { TileRenderStrategy } from './TileRenderStrategy.js';
+import type { BaseRenderer } from '@renderers/types.js';
+import type { WallTileRenderer } from '@renderers/WallTileRenderer.js';
 
 /**
  * Strategy for rendering GRASS and SHRUBBERY tiles.

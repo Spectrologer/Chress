@@ -1,7 +1,7 @@
 // Type definitions for renderer classes
 
-import type { Position } from '../core/Position';
-import type { Grid, Tile } from '../core/SharedTypes';
+import type { Position } from '@core/Position';
+import type { Grid, Tile } from '@core/SharedTypes';
 
 export type { Position, Grid, Tile };
 

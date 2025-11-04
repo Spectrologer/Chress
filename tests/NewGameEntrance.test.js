@@ -1,14 +1,14 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 
 // Mock logger before imports
 const mockLogger = {
-    log: jest.fn(),
-    error: jest.fn(),
-    debug: jest.fn()
+    log: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn()
 };
 
-jest.mock('../core/logger.js', () => ({
+vi.mock('../core/logger.js', () => ({
     default: mockLogger
 }));
 
@@ -32,12 +32,12 @@ describe('New Game Entrance', () => {
         mockPlayer = {
             x: 1,
             y: 1,
-            setPosition: jest.fn((x, y) => {
+            setPosition: vi.fn((x, y) => {
                 mockPlayer.x = x;
                 mockPlayer.y = y;
             }),
-            getPosition: jest.fn(() => ({ x: mockPlayer.x, y: mockPlayer.y })),
-            getCurrentZone: jest.fn(() => ({ x: 0, y: 0, dimension: 0, depth: 0 }))
+            getPosition: vi.fn(() => ({ x: mockPlayer.x, y: mockPlayer.y })),
+            getCurrentZone: vi.fn(() => ({ x: 0, y: 0, dimension: 0, depth: 0 }))
         };
 
         // Mock game instance
@@ -376,14 +376,14 @@ describe('New Game Entrance', () => {
         it('should calculate path from off-screen to exit tile', () => {
             // Mock InputManager
             const mockInputManager = {
-                findPath: jest.fn((startX, startY, targetX, targetY) => {
+                findPath: vi.fn((startX, startY, targetX, targetY) => {
                     // Simulate simple vertical path
                     if (startX === targetX && startY < targetY) {
                         return ['arrowdown'];
                     }
                     return null;
                 }),
-                executePath: jest.fn()
+                executePath: vi.fn()
             };
 
             mockGame.inputManager = mockInputManager;
@@ -409,8 +409,8 @@ describe('New Game Entrance', () => {
 
         it('should calculate path from exit to club entrance', () => {
             const mockInputManager = {
-                findPath: jest.fn(() => ['arrowdown', 'arrowdown', 'arrowdown']),
-                executePath: jest.fn()
+                findPath: vi.fn(() => ['arrowdown', 'arrowdown', 'arrowdown']),
+                executePath: vi.fn()
             };
 
             mockGame.inputManager = mockInputManager;
@@ -433,10 +433,10 @@ describe('New Game Entrance', () => {
 
         it('should execute two-stage entrance animation', () => {
             const mockInputManager = {
-                findPath: jest.fn()
+                findPath: vi.fn()
                     .mockReturnValueOnce(['arrowdown']) // Path to exit
                     .mockReturnValueOnce(['arrowdown', 'arrowdown', 'arrowdown']), // Path to club
-                executePath: jest.fn()
+                executePath: vi.fn()
             };
 
             mockGame.inputManager = mockInputManager;
@@ -465,7 +465,7 @@ describe('New Game Entrance', () => {
             mockGame._entranceAnimationInProgress = true;
 
             const mockInputController = {
-                handleTap: jest.fn((screenX, screenY) => {
+                handleTap: vi.fn((screenX, screenY) => {
                     // Simulate the blocking logic
                     if (mockGame._entranceAnimationInProgress) {
                         return;
@@ -485,7 +485,7 @@ describe('New Game Entrance', () => {
             mockGame._entranceAnimationInProgress = true;
 
             const mockInputController = {
-                handleKeyPress: jest.fn((event) => {
+                handleKeyPress: vi.fn((event) => {
                     // Simulate the blocking logic
                     if (mockGame._entranceAnimationInProgress) {
                         return;
@@ -505,7 +505,7 @@ describe('New Game Entrance', () => {
             mockGame._entranceAnimationInProgress = false;
 
             const mockInputController = {
-                handleTap: jest.fn((screenX, screenY) => {
+                handleTap: vi.fn((screenX, screenY) => {
                     if (mockGame._entranceAnimationInProgress) {
                         return;
                     }
@@ -547,10 +547,10 @@ describe('New Game Entrance', () => {
             mockGame._newGameSpawnPosition = { x: 4, y: 0 };
 
             const mockInputManager = {
-                findPath: jest.fn()
+                findPath: vi.fn()
                     .mockReturnValueOnce(['arrowdown']) // Off-screen to exit
                     .mockReturnValueOnce(['arrowdown', 'arrowdown', 'arrowdown', 'arrowdown', 'arrowdown', 'arrowdown']), // Exit to club
-                executePath: jest.fn()
+                executePath: vi.fn()
             };
 
             mockGame.inputManager = mockInputManager;

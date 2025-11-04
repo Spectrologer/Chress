@@ -1,5 +1,5 @@
 import { InputCoordinator } from './InputCoordinator';
-import { InputUIHandler } from '../ui/InputUIHandler';
+import { InputUIHandler } from '@ui/InputUIHandler';
 import { GestureDetector } from './GestureDetector';
 import { PathfindingController } from './PathfindingController';
 import { KeyboardHandler } from './KeyboardHandler';

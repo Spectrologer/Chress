@@ -1,7 +1,7 @@
-import type { IGame } from '../core/GameContext';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { UI_RENDERING_CONSTANTS } from '../core/constants/rendering';
+import type { IGame } from '@core/GameContext';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { UI_RENDERING_CONSTANTS } from '@core/constants/rendering';
 
 export class PlayerStatsUI {
     private game: IGame;

@@ -1,13 +1,13 @@
-import type { IGame } from '../core/GameContext';
+import type { IGame } from '@core/GameContext';
 import { Sign, Trade } from './Sign';
-import { FOOD_ASSETS, TILE_TYPES } from '../core/constants/index';
+import { FOOD_ASSETS, TILE_TYPES } from '@core/constants/index';
 import { fitTextToContainer } from './TextFitter';
-import audioManager from '../utils/AudioManager';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { safeCall } from '../utils/SafeServiceCall';
-import { EventListenerManager } from '../utils/EventListenerManager';
-import type { InventoryItem } from '../managers/inventory/ItemMetadata';
+import audioManager from '@utils/AudioManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { safeCall } from '@utils/SafeServiceCall';
+import { EventListenerManager } from '@utils/EventListenerManager';
+import type { InventoryItem } from '@managers/inventory/ItemMetadata';
 
 interface Player {
     inventory: InventoryItem[];

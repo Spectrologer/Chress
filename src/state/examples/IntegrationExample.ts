@@ -6,8 +6,8 @@
  */
 
 import { store, StateActions, StateSelectors, persistence } from '../index';
-import { EventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
+import { EventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 // =============================================================================
 // EXAMPLE 1: Game Initialization

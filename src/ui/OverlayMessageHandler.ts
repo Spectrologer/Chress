@@ -1,7 +1,7 @@
-import { logger } from '../core/logger';
+import { logger } from '@core/logger';
 import { fitTextToContainer } from './TextFitter';
-import { EventListenerManager } from '../utils/EventListenerManager';
-import type { IGame } from '../core/GameContext';
+import { EventListenerManager } from '@utils/EventListenerManager';
+import type { IGame } from '@core/GameContext';
 
 /**
  * Handles overlay message display with auto-hide functionality.

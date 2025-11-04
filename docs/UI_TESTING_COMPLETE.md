@@ -112,7 +112,7 @@ Successfully completed comprehensive UI component testing for the Chress RPG pro
 3. **[tests/Sign.test.js](../tests/Sign.test.js)** - 41 tests
 
 ### Modified Files
-1. **[jest.config.cjs](../jest.config.cjs)** - Added `controllers`, `config`, `state` to module mapping
+1. **[vitest.config.js](../vitest.config.js)** - Added `controllers`, `config`, `state` to module mapping
 
 ### Documentation
 1. **[docs/UI_TESTING_COMPLETE.md](UI_TESTING_COMPLETE.md)** - This document

@@ -1,7 +1,7 @@
-import audioManager from '../utils/AudioManager';
-import { ANIMATION_CONSTANTS } from '../core/constants/index';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
+import audioManager from '@utils/AudioManager';
+import { ANIMATION_CONSTANTS } from '@core/constants/index';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 interface AttackOptions {
     skipKnockback?: boolean;

@@ -258,7 +258,7 @@ function generateTypeChecksFile(): string {
  * Import and use these utilities throughout the codebase for consistent type checking.
  */
 
-import { TILE_TYPES } from '../core/constants/index';
+import { TILE_TYPES } from '@core/constants/index';
 
 // ========================================
 // TILE TYPE CHECKER CLASS

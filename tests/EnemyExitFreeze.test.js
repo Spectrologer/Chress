@@ -15,7 +15,7 @@ describe('Enemy Exit Freeze Feature', () => {
     beforeEach(() => {
         // Create mock player
         mockPlayer = {
-            getPosition: jest.fn().mockReturnValue({ x: 4, y: 4 }),
+            getPosition: vi.fn().mockReturnValue({ x: 4, y: 4 }),
             x: 4,
             y: 4
         };
@@ -28,7 +28,7 @@ describe('Enemy Exit Freeze Feature', () => {
             enemyType: 'lizardy',
             isFrozen: false,
             showFrozenVisual: false,
-            isDead: jest.fn().mockReturnValue(false)
+            isDead: vi.fn().mockReturnValue(false)
         };
 
         mockEnemy2 = {
@@ -38,26 +38,26 @@ describe('Enemy Exit Freeze Feature', () => {
             enemyType: 'lizardo',
             isFrozen: false,
             showFrozenVisual: false,
-            isDead: jest.fn().mockReturnValue(false)
+            isDead: vi.fn().mockReturnValue(false)
         };
 
         // Create mock combat manager
         mockCombatManager = {
-            handleSingleEnemyMovement: jest.fn(),
-            checkCollisions: jest.fn()
+            handleSingleEnemyMovement: vi.fn(),
+            checkCollisions: vi.fn()
         };
 
         // Create mock animation scheduler
         let sequence;
         mockAnimationScheduler = {
-            createSequence: jest.fn(() => {
+            createSequence: vi.fn(() => {
                 sequence = {
-                    then: jest.fn((callback) => {
+                    then: vi.fn((callback) => {
                         if (callback) callback();
                         return sequence;
                     }),
-                    wait: jest.fn(() => sequence),
-                    start: jest.fn()
+                    wait: vi.fn(() => sequence),
+                    start: vi.fn()
                 };
                 return sequence;
             })
@@ -65,7 +65,7 @@ describe('Enemy Exit Freeze Feature', () => {
 
         // Create mock interaction manager
         const mockInteractionManager = {
-            checkItemPickup: jest.fn()
+            checkItemPickup: vi.fn()
         };
 
         // Create grid with floor tiles
@@ -75,17 +75,17 @@ describe('Enemy Exit Freeze Feature', () => {
 
         // Create mock enemy collection
         const mockEnemyCollection = {
-            getAll: jest.fn(() => [mockEnemy1, mockEnemy2]),
-            forEach: jest.fn((callback) => [mockEnemy1, mockEnemy2].forEach(callback)),
-            includes: jest.fn((enemy) => [mockEnemy1, mockEnemy2].includes(enemy)),
-            getPositionsSet: jest.fn(() => new Set(['2,2', '6,6']))
+            getAll: vi.fn(() => [mockEnemy1, mockEnemy2]),
+            forEach: vi.fn((callback) => [mockEnemy1, mockEnemy2].forEach(callback)),
+            includes: vi.fn((enemy) => [mockEnemy1, mockEnemy2].includes(enemy)),
+            getPositionsSet: vi.fn(() => new Set(['2,2', '6,6']))
         };
 
         // Create mock transient game state
         const mockTransientGameState = {
-            didPlayerJustAttack: jest.fn(() => false),
-            isInPitfallZone: jest.fn(() => false),
-            incrementPitfallTurnsSurvived: jest.fn()
+            didPlayerJustAttack: vi.fn(() => false),
+            isInPitfallZone: vi.fn(() => false),
+            incrementPitfallTurnsSurvived: vi.fn()
         };
 
         // Create mock game context
@@ -103,14 +103,14 @@ describe('Enemy Exit Freeze Feature', () => {
             combatManager: mockCombatManager,
             animationScheduler: mockAnimationScheduler,
             interactionManager: mockInteractionManager,
-            isPlayerOnExitTile: jest.fn().mockReturnValue(false)
+            isPlayerOnExitTile: vi.fn().mockReturnValue(false)
         };
 
         turnManager = new TurnManager(mockGame);
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('Player on exit tile', () => {

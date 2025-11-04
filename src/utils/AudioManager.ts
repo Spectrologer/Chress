@@ -10,8 +10,8 @@
  * 3. Silent failure (graceful degradation)
  */
 
-import { logger } from '../core/logger';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
+import { logger } from '@core/logger';
+import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
 import MethodChecker from './MethodChecker';
 
 interface SoundManager {

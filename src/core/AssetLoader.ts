@@ -1,7 +1,7 @@
 import { FOOD_ASSETS } from './constants/index';
 import { logger } from './logger';
 import type { GameContext } from './GameContext';
-import type { TextureManager } from '../renderers/TextureManager';
+import type { TextureManager } from '@renderers/TextureManager';
 
 /**
  * AssetLoader

@@ -1,7 +1,7 @@
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index';
-import { logger } from '../core/logger';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
+import { logger } from '@core/logger';
 import { isWithinGrid } from './GridUtils';
-import { Position } from '../core/Position';
+import { Position } from '@core/Position';
 
 interface GridManager {
   getTile(x: number, y: number): number;

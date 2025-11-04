@@ -5,13 +5,13 @@
  * Extracted from CombatManager to reduce file size.
  */
 
-import { TILE_TYPES } from '../../core/constants/index';
-import { createZoneKey } from '../../utils/ZoneKeyUtils';
-import { eventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
-import type { Game } from '../../core/game';
-import type { Position } from '../../core/Position';
-import type { Enemy } from '../../entities/Enemy';
+import { TILE_TYPES } from '@core/constants/index';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import type { Game } from '@core/game';
+import type { Position } from '@core/Position';
+import type { Enemy } from '@entities/Enemy';
 
 export class EnemyMovementHandler {
     private game: Game;

@@ -1,5 +1,5 @@
-import { GRID_SIZE, SPAWN_PROBABILITIES, ZONE_LEVEL_DISTANCES, getZoneLevelFromDistance } from '../core/constants/index';
-import { GENERATOR_CONSTANTS } from '../core/constants/ui';
+import { GRID_SIZE, SPAWN_PROBABILITIES, ZONE_LEVEL_DISTANCES, getZoneLevelFromDistance } from '@core/constants/index';
+import { GENERATOR_CONSTANTS } from '@core/constants/ui';
 
 interface ZoneConnections {
     north: number | null;

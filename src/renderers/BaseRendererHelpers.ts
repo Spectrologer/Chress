@@ -1,5 +1,5 @@
 import { RendererUtils } from './RendererUtils';
-import { STROKE_CONSTANTS } from '../core/constants/index';
+import { STROKE_CONSTANTS } from '@core/constants/index';
 import type { ImageCache, TextStyle, RenderOverlayOptions } from './types';
 
 // Small helper to render an overlay image with a base already drawn by caller.

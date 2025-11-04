@@ -1,12 +1,12 @@
-import type { IGame } from '../core/GameContext';
-import { TILE_TYPES } from '../core/constants/index';
+import type { IGame } from '@core/GameContext';
+import { TILE_TYPES } from '@core/constants/index';
 import { Sign } from './Sign';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { isAdjacent } from '../core/utils/DirectionUtils';
-import { getTileType } from '../utils/TileUtils';
-import { TileRegistry } from '../core/TileRegistry';
-import { Position } from '../core/Position';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { isAdjacent } from '@core/utils/DirectionUtils';
+import { getTileType } from '@utils/TileUtils';
+import { TileRegistry } from '@core/TileRegistry';
+import { Position } from '@core/Position';
 
 interface GridCoords {
     x: number;

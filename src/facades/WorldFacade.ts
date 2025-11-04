@@ -1,7 +1,7 @@
-import type { TerrainInteractionManager } from '../managers/TerrainInteractionManager';
-import type { ZoneTransitionManager } from '../managers/ZoneTransitionManager';
-import type { ItemPickupManager } from '../managers/inventory/ItemPickupManager';
-import type { Position } from '../core/Position';
+import type { TerrainInteractionManager } from '@managers/TerrainInteractionManager';
+import type { ZoneTransitionManager } from '@managers/ZoneTransitionManager';
+import type { ItemPickupManager } from '@managers/inventory/ItemPickupManager';
+import type { Position } from '@core/Position';
 
 /**
  * WorldFacade - Groups world/zone-related dependencies

@@ -7,7 +7,7 @@
  * @module ZoneGenerationState
  */
 
-import { Position } from '../core/Position';
+import { Position } from '@core/Position';
 
 interface SpawnFlags {
     axe: boolean;

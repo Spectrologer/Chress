@@ -1,9 +1,9 @@
-import { createZoneKey } from '../utils/ZoneKeyUtils';
-import audioManager from '../utils/AudioManager';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import type { Game } from '../core/game';
-import type { Enemy as EnemyType } from '../entities/Enemy';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
+import audioManager from '@utils/AudioManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import type { Game } from '@core/game';
+import type { Enemy as EnemyType } from '@entities/Enemy';
 
 interface EnemyWithMethods extends EnemyType {
     _suppressAttackSound?: boolean;

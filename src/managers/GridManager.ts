@@ -6,10 +6,10 @@
  * - GridQueryOperations: Finding, filtering, counting tiles
  * - GridIterationOperations: Iterating, filling, transforming regions
  */
-import { GRID_SIZE } from '../core/constants/index';
-import { getTileType } from '../utils/TileUtils';
-import type { Tile, Grid } from '../core/SharedTypes';
-import { logger } from '../core/logger';
+import { GRID_SIZE } from '@core/constants/index';
+import { getTileType } from '@utils/TileUtils';
+import type { Tile, Grid } from '@core/SharedTypes';
+import { logger } from '@core/logger';
 import { GridCoreOperations } from './grid/GridCoreOperations';
 import { GridQueryOperations, type TileWithPosition, type NeighborTile } from './grid/GridQueryOperations';
 import { GridIterationOperations } from './grid/GridIterationOperations';

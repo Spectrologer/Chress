@@ -11,7 +11,7 @@
  * @module StorageAdapter
  */
 
-import { logger } from '../core/logger';
+import { logger } from '@core/logger';
 
 interface PayloadData {
     compressed: boolean;

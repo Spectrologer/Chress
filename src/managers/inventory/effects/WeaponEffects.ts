@@ -1,7 +1,7 @@
 import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
-import { TILE_TYPES, GRID_SIZE } from '../../../core/constants/index';
-import { isWithinGrid } from '../../../utils/GridUtils';
-import { Position } from '../../../core/Position';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
+import { isWithinGrid } from '@utils/GridUtils';
+import { Position } from '@core/Position';
 import type { InventoryItem, BombItem, BowItem, BishopSpearItem, HorseIconItem } from '../ItemMetadata';
 
 /**

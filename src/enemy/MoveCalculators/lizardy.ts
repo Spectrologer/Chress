@@ -1,5 +1,5 @@
 import { BaseMoveCalculator } from './base';
-import { ANIMATION_CONSTANTS } from '../../core/constants/index';
+import { ANIMATION_CONSTANTS } from '@core/constants/index';
 import { AttackBehaviors, AttackValidation } from './BaseAttackBehaviors';
 
 export class LizardyMoveCalculator extends BaseMoveCalculator {

@@ -1,18 +1,18 @@
 import { GRID_SIZE, TILE_TYPES } from './constants/index';
 import { UI_TIMING_CONSTANTS } from './constants/ui';
 import { logger } from './logger';
-import { Sign } from '../ui/Sign';
-import { validateLoadedGrid } from '../generators/GeneratorUtils';
+import { Sign } from '@ui/Sign';
+import { validateLoadedGrid } from '@generators/GeneratorUtils';
 import { eventBus } from './EventBus';
 import { EventTypes } from './EventTypes';
-import { ZoneStateManager } from '../generators/ZoneStateManager';
-import { isWithinGrid } from '../utils/GridUtils';
+import { ZoneStateManager } from '@generators/ZoneStateManager';
+import { isWithinGrid } from '@utils/GridUtils';
 import { SaveSerializer } from './SaveSerializer';
 import { SaveDeserializer } from './SaveDeserializer';
 import { ZoneStateRestorer } from './ZoneStateRestorer';
-import { ZoneRepository } from '../repositories/ZoneRepository';
+import { ZoneRepository } from '@repositories/ZoneRepository';
 import { boardLoader } from './BoardLoader';
-import { createZoneKey } from '../utils/ZoneKeyUtils';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
 import type { GameContext } from './GameContext';
 
 const GAME_STATE_KEY = 'chress_game_state';

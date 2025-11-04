@@ -5,7 +5,7 @@
  * Extracted from SoundManager to reduce file size.
  */
 
-import { SFX_CONSTANTS } from '../constants/audio';
+import { SFX_CONSTANTS } from '@core/constants/audio.js';
 
 export class ProceduralSoundGenerator {
     private getAudioContext: () => AudioContext | null;

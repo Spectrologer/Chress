@@ -5,17 +5,17 @@
  * Manages the full zone lifecycle from generation to entity initialization.
  */
 
-import { GRID_SIZE, TILE_TYPES } from '../core/constants/index';
-import { logger } from '../core/logger';
-import { boardLoader } from '../core/BoardLoader';
-import { createZoneKey } from '../utils/ZoneKeyUtils';
-import { isWithinGrid } from '../utils/GridUtils';
-import { isTileObjectWithProperty, isPitfall } from '../utils/TypeChecks';
-import { Position } from '../core/Position';
-import type { Game } from '../core/game';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
+import { logger } from '@core/logger';
+import { boardLoader } from '@core/BoardLoader';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
+import { isWithinGrid } from '@utils/GridUtils';
+import { isTileObjectWithProperty, isPitfall } from '@utils/TypeChecks';
+import { Position } from '@core/Position';
+import type { Game } from '@core/game';
 import type { ZoneTransitionCoordinator } from './ZoneTransitionCoordinator';
-import type { Grid, Tile } from '../core/SharedTypes';
-import type { Enemy } from '../entities/Enemy';
+import type { Grid, Tile } from '@core/SharedTypes';
+import type { Enemy } from '@entities/Enemy';
 
 interface EnemyData {
     x: number;

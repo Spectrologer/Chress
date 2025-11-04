@@ -1,5 +1,5 @@
-import type { IGame } from '../core/GameContext';
-import { logger } from '../core/logger';
+import type { IGame } from '@core/GameContext';
+import { logger } from '@core/logger';
 import { NoteStack } from './NoteStack';
 import { RegionNotification } from './RegionNotification';
 import { OverlayMessageHandler } from './OverlayMessageHandler';
@@ -7,10 +7,10 @@ import { TypewriterController } from './TypewriterController';
 import { DialogueManager } from './DialogueManager';
 import { MessageLog } from './MessageLog';
 import { PenneMessageHandler } from './PenneMessageHandler';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { UI_TIMING_CONSTANTS } from '../core/constants/ui';
-import { Position } from '../core/Position';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { UI_TIMING_CONSTANTS } from '@core/constants/ui';
+import { Position } from '@core/Position';
 
 /**
  * Coordinates message display across the application.

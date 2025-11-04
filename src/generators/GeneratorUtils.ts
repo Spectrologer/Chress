@@ -1,9 +1,9 @@
 // GeneratorUtils.js
 // Shared utilities for random placement, attempts loops, and tile validation in generators
-import { GRID_SIZE, TILE_TYPES } from '../core/constants/index';
-import { logger } from '../core/logger';
-import GridIterator from '../utils/GridIterator';
-import { Position } from '../core/Position';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
+import { logger } from '@core/logger';
+import GridIterator from '@utils/GridIterator';
+import { Position } from '@core/Position';
 
 /**
  * Returns a random integer between min (inclusive) and max (exclusive)

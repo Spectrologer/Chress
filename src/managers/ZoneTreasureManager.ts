@@ -1,8 +1,8 @@
-import { GRID_SIZE, TILE_TYPES } from '../core/constants/index';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { isFloor, isTileType } from '../utils/TypeChecks';
-import type { Game } from '../core/game';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { isFloor, isTileType } from '@utils/TypeChecks';
+import type { Game } from '@core/game';
 
 /**
  * ZoneTreasureManager handles special zone treasure spawning

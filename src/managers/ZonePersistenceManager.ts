@@ -5,11 +5,11 @@
  * Manages saving current zone state to the zone repository.
  */
 
-import { logger } from '../core/logger';
-import { createZoneKey } from '../utils/ZoneKeyUtils';
-import type { Game } from '../core/game';
-import type { Grid } from '../core/SharedTypes';
-import type { Enemy as EnemyType } from '../entities/Enemy';
+import { logger } from '@core/logger';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
+import type { Game } from '@core/game';
+import type { Grid } from '@core/SharedTypes';
+import type { Enemy as EnemyType } from '@entities/Enemy';
 
 interface EnemyData {
     x: number;

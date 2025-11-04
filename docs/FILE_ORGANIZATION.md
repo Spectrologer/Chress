@@ -58,7 +58,7 @@ chress/
 ├── babel.config.cjs      # Babel config (CJS)
 ├── eslint.config.js      # ESLint 9.x config
 ├── index.html            # Main HTML entry point
-├── jest.config.cjs       # Jest testing config
+├── vitest.config.js      # Vitest testing config
 ├── LICENSE.txt           # License file
 ├── manifest.json         # 📝 PWA manifest (reference)
 ├── package.json          # NPM package config
@@ -102,8 +102,8 @@ chress/
 - `.babelrc` - Babel transpilation
 
 ### Testing
-- `jest.config.cjs` - Jest test configuration
-- `babel.config.cjs` - Babel config for Jest
+- `vitest.config.js` - Vitest test configuration
+- `babel.config.cjs` - Babel config for Vitest
 
 ## 📝 Reference Files
 
@@ -209,7 +209,7 @@ These directories are auto-generated and should be in `.gitignore`:
   └── js/                   # Bundled JS chunks
   ```
 
-- **`coverage/`** - Jest coverage reports
+- **`coverage/`** - Vitest coverage reports
 - **`node_modules/`** - NPM dependencies
 
 ## 📦 Build Output Organization

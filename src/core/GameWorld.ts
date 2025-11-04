@@ -1,6 +1,6 @@
 import type { Grid } from './SharedTypes';
-import type { Enemy } from '../entities/Enemy';
-import type { Player } from '../entities/Player';
+import type { Enemy } from '@entities/Enemy';
+import type { Player } from '@entities/Player';
 
 /**
  * GameWorld

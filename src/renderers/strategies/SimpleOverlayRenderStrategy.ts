@@ -1,7 +1,7 @@
-import { TILE_SIZE, TILE_COLORS } from '../../core/constants/index';
-import { renderOverlay } from '../BaseRendererHelpers';
-import { TileRenderStrategy } from './TileRenderStrategy';
-import type { BaseRenderer, TextStyle } from '../types';
+import { TILE_SIZE, TILE_COLORS } from '@core/constants/index.js';
+import { renderOverlay } from '@renderers/BaseRendererHelpers.js';
+import { TileRenderStrategy } from './TileRenderStrategy.js';
+import type { BaseRenderer, TextStyle } from '@renderers/types.js';
 
 /**
  * Generic strategy for tiles that render as a simple overlay on a base tile.

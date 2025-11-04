@@ -1,9 +1,9 @@
-import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/index';
-import { RENDERING_CONSTANTS } from '../core/constants/animation';
+import { GRID_SIZE, TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS, STROKE_CONSTANTS } from '@core/constants/index';
+import { RENDERING_CONSTANTS } from '@core/constants/animation';
 import { RendererUtils } from './RendererUtils';
 import type { TextureManager } from './TextureManager';
 import type { SmokeAnimation } from './types';
-import type { IGame } from '../core/GameContext';
+import type { IGame } from '@core/GameContext';
 
 interface Enemy {
     x: number;

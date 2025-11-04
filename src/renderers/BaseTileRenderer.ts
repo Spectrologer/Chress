@@ -1,4 +1,4 @@
-import { TILE_COLORS, TILE_TYPES, TILE_SIZE, STROKE_CONSTANTS } from '../core/constants/index';
+import { TILE_COLORS, TILE_TYPES, TILE_SIZE, STROKE_CONSTANTS } from '@core/constants/index';
 import { RendererUtils } from './RendererUtils';
 import { TextureDetector } from './TextureDetector';
 import { WallTileRenderer } from './WallTileRenderer';

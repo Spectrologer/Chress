@@ -2,8 +2,8 @@
  * EnemyRegistrations - Register all enemies with ContentRegistry
  */
 
-import { ContentRegistry } from '../../core/ContentRegistry';
-import { SPAWN_PROBABILITIES } from '../../core/constants/index';
+import { ContentRegistry } from '@core/ContentRegistry';
+import { SPAWN_PROBABILITIES } from '@core/constants/index';
 
 interface EnemySpawnRules {
     level1: number;

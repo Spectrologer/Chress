@@ -6,7 +6,7 @@ import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 describe('Pickup hover visuals', () => {
   beforeEach(() => {
     global.window = global.window || {};
-    global.window.soundManager = { playSound: jest.fn() };
+    global.window.soundManager = { playSound: vi.fn() };
   });
 
   test('ItemManager.handleItemPickup sets pickupHover for bow and clears tile', () => {
@@ -30,7 +30,7 @@ describe('Pickup hover visuals', () => {
     const grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR));
     grid[3][3] = { type: TILE_TYPES.BOW, uses: 1 };
 
-    const uiManager = { updatePlayerStats: jest.fn(), addMessageToLog: jest.fn() };
+    const uiManager = { updatePlayerStats: vi.fn(), addMessageToLog: vi.fn() };
     const game = { player, grid, uiManager };
 
     const pickupManager = new ItemPickupManager(game);

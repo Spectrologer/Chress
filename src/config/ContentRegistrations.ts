@@ -10,9 +10,9 @@
  * 3. Done! The content is now available throughout the game
  */
 
-import { ContentRegistry } from '../core/ContentRegistry';
-import { boardLoader } from '../core/BoardLoader';
-import { loadAllNPCs } from '../core/NPCLoader';
+import { ContentRegistry } from '@core/ContentRegistry';
+import { boardLoader } from '@core/BoardLoader';
+import { loadAllNPCs } from '@core/NPCLoader';
 
 // Import registration modules
 import { registerItems } from './registrations/ItemRegistrations';

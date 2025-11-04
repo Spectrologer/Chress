@@ -1,4 +1,4 @@
-import errorHandler, { ErrorSeverity } from '../core/ErrorHandler';
+import errorHandler, { ErrorSeverity } from '@core/ErrorHandler';
 
 /**
  * MethodChecker - Utility for safely calling methods with defensive checks

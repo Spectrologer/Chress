@@ -1,5 +1,5 @@
 import { PanelEventHandler } from './PanelEventHandler';
-import { EventListenerManager } from '../utils/EventListenerManager';
+import { EventListenerManager } from '@utils/EventListenerManager';
 
 interface GameInstance {
     [key: string]: any;

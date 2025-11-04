@@ -28,20 +28,20 @@ describe('MiniMap', () => {
     // Mock canvas getContext before MiniMap initialization
     const mockCtx = {
       canvas: expandedCanvas,
-      clearRect: jest.fn(),
-      fillRect: jest.fn(),
-      strokeRect: jest.fn(),
-      fillText: jest.fn(),
-      save: jest.fn(),
-      restore: jest.fn(),
-      translate: jest.fn(),
-      scale: jest.fn(),
+      clearRect: vi.fn(),
+      fillRect: vi.fn(),
+      strokeRect: vi.fn(),
+      fillText: vi.fn(),
+      save: vi.fn(),
+      restore: vi.fn(),
+      translate: vi.fn(),
+      scale: vi.fn(),
     };
 
-    expandedCanvas.getContext = jest.fn().mockReturnValue(mockCtx);
+    expandedCanvas.getContext = vi.fn().mockReturnValue(mockCtx);
 
     mockPlayer = createMockPlayer({
-      getCurrentZone: jest.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
+      getCurrentZone: vi.fn().mockReturnValue({ x: 0, y: 0, dimension: 0 }),
     });
 
     mockGame = createMockGame({ player: mockPlayer });
@@ -50,7 +50,7 @@ describe('MiniMap', () => {
     miniMap = new MiniMap(mockGame);
 
     // Mock renderZoneMap to avoid canvas rendering complexity
-    miniMap.renderZoneMap = jest.fn();
+    miniMap.renderZoneMap = vi.fn();
   });
 
   afterEach(() => {
@@ -90,7 +90,7 @@ describe('MiniMap', () => {
     });
 
     test('should set up pointer event listeners', () => {
-      const addEventListenerSpy = jest.spyOn(smallCanvas, 'addEventListener');
+      const addEventListenerSpy = vi.spyOn(smallCanvas, 'addEventListener');
 
       miniMap.setupEvents();
 
@@ -141,7 +141,7 @@ describe('MiniMap', () => {
     });
 
     test('should call renderExpanded when expanded', () => {
-      const renderSpy = jest.spyOn(miniMap, 'renderExpanded');
+      const renderSpy = vi.spyOn(miniMap, 'renderExpanded');
 
       miniMap.expand();
 
@@ -189,7 +189,7 @@ describe('MiniMap', () => {
     });
 
     test('should call renderZoneMap with expanded parameters', () => {
-      miniMap.renderZoneMap = jest.fn();
+      miniMap.renderZoneMap = vi.fn();
 
       miniMap.renderExpanded();
 
@@ -202,7 +202,7 @@ describe('MiniMap', () => {
     });
 
     test('should pass pan offsets to renderZoneMap', () => {
-      miniMap.renderZoneMap = jest.fn();
+      miniMap.renderZoneMap = vi.fn();
       miniMap.panX = 2;
       miniMap.panY = 3;
 
@@ -309,7 +309,7 @@ describe('MiniMap', () => {
       };
 
       // Mock getBoundingClientRect
-      jest.spyOn(expandedCanvas, 'getBoundingClientRect').mockReturnValue({
+      vi.spyOn(expandedCanvas, 'getBoundingClientRect').mockReturnValue({
         left: 0,
         top: 0,
         width: 400,
@@ -395,7 +395,7 @@ describe('MiniMap', () => {
 
     beforeEach(() => {
       // Spy on addEventListener before calling setupEvents
-      addEventListenerSpy = jest.spyOn(expandedCanvas, 'addEventListener');
+      addEventListenerSpy = vi.spyOn(expandedCanvas, 'addEventListener');
       miniMap.setupEvents();
     });
 
@@ -404,7 +404,7 @@ describe('MiniMap', () => {
       const event = {
         clientX: 100,
         clientY: 100,
-        stopPropagation: jest.fn(),
+        stopPropagation: vi.fn(),
       };
 
       // Get the event listener that was attached and call it directly
@@ -422,7 +422,7 @@ describe('MiniMap', () => {
       const event = {
         clientX: 100,
         clientY: 100,
-        stopPropagation: jest.fn(),
+        stopPropagation: vi.fn(),
       };
 
       // Get the event listener that was attached and call it directly

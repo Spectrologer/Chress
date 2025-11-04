@@ -1,5 +1,5 @@
-import { GRID_SIZE } from '../core/constants/index';
-import { logger } from '../core/logger';
+import { GRID_SIZE } from '@core/constants/index';
+import { logger } from '@core/logger';
 
 /**
  * Check if coordinates are within the grid boundaries

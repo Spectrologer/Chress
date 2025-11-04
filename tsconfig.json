@@ -43,7 +43,22 @@
     // Base directory
     "baseUrl": ".",
     "paths": {
-      "/*": ["./*"]
+      "@core/*": ["./src/core/*"],
+      "@managers/*": ["./src/managers/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@enemy/*": ["./src/enemy/*"],
+      "@entities/*": ["./src/entities/*"],
+      "@renderers/*": ["./src/renderers/*"],
+      "@ui/*": ["./src/ui/*"],
+      "@npc/*": ["./src/npc/*"],
+      "@facades/*": ["./src/facades/*"],
+      "@generators/*": ["./src/generators/*"],
+      "@state/*": ["./src/state/*"],
+      "@repositories/*": ["./src/repositories/*"],
+      "@loaders/*": ["./src/loaders/*"],
+      "@config/*": ["./src/config/*"],
+      "@controllers/*": ["./src/controllers/*"],
+      "@types/*": ["./src/types/*"]
     }
   },
   "include": [

@@ -1,9 +1,9 @@
-import { TILE_TYPES } from '../core/constants/index';
-import audioManager from '../utils/AudioManager';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { Position } from '../core/Position';
-import type { IGame, ICoordinates } from '../core/GameContext';
+import { TILE_TYPES } from '@core/constants/index';
+import audioManager from '@utils/AudioManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { Position } from '@core/Position';
+import type { IGame, ICoordinates } from '@core/GameContext';
 import type { InputManager } from './InputManager';
 import type { NPCManager } from './NPCManager';
 import type { EnvironmentalInteractionManager } from './EnvironmentalInteractionManager';
@@ -12,11 +12,11 @@ import type { BombManager } from './BombManager';
 import type { TerrainInteractionManager } from './TerrainInteractionManager';
 import type { ZoneManager } from './ZoneManager';
 import type { ItemPickupManager } from './inventory/ItemPickupManager';
-import type { Player } from '../entities/Player';
-import type { TransientGameState } from '../state/TransientGameState';
-import type { EnemyCollection } from '../facades/EnemyCollection';
-import type { PlayerFacade } from '../facades/PlayerFacade';
-import type { InventoryUI } from '../ui/InventoryUI';
+import type { Player } from '@entities/Player';
+import type { TransientGameState } from '@state/TransientGameState';
+import type { EnemyCollection } from '@facades/EnemyCollection';
+import type { PlayerFacade } from '@facades/PlayerFacade';
+import type { InventoryUI } from '@ui/InventoryUI';
 import type { CombatManager } from './CombatManager';
 
 interface InteractionFacade {

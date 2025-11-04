@@ -6,7 +6,7 @@
  */
 
 import { store } from './StateStore';
-import type { Position } from '../../core/Position';
+import type { Position } from '@core/Position';
 
 interface PlayerStatsUpdate {
     health?: number;

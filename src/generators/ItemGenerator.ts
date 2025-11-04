@@ -1,10 +1,10 @@
-import { Sign } from '../ui/Sign';
-import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '../core/constants/index';
+import { Sign } from '@ui/Sign';
+import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '@core/constants/index';
 import { randomInt, findValidPlacement, getGridCenter, isWithinBounds } from './GeneratorUtils';
 import { ZoneStateManager } from './ZoneStateManager';
 import { PathGenerator } from './PathGenerator';
-import { ContentRegistry } from '../core/ContentRegistry';
-import { logger } from '../core/logger';
+import { ContentRegistry } from '@core/ContentRegistry';
+import { logger } from '@core/logger';
 
 export class ItemGenerator {
     private gridManager: any;

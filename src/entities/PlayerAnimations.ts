@@ -1,5 +1,5 @@
-import { ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '../core/constants/index';
-import { RENDERING_CONSTANTS } from '../core/constants/animation';
+import { ANIMATION_CONSTANTS, PHYSICS_CONSTANTS } from '@core/constants/index';
+import { RENDERING_CONSTANTS } from '@core/constants/animation';
 import type { Player } from './Player';
 
 interface PickupHover {

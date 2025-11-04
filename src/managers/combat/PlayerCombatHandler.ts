@@ -5,13 +5,13 @@
  * Extracted from CombatManager to reduce file size.
  */
 
-import audioManager from '../../utils/AudioManager';
-import { eventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
-import { EnemyAttackHelper } from '../../enemy/EnemyAttackHelper';
-import type { Game } from '../../core/game';
-import type { Position } from '../../core/Position';
-import type { Enemy } from '../../entities/Enemy';
+import audioManager from '@utils/AudioManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { EnemyAttackHelper } from '@enemy/EnemyAttackHelper';
+import type { Game } from '@core/game';
+import type { Position } from '@core/Position';
+import type { Enemy } from '@entities/Enemy';
 
 export interface AttackResult {
     defeated: boolean;

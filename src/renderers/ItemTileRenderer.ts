@@ -1,7 +1,7 @@
-import { TILE_COLORS, TILE_TYPES, TILE_SIZE, SCALE_CONSTANTS, PULSATE_CONSTANTS } from '../core/constants/index';
+import { TILE_COLORS, TILE_TYPES, TILE_SIZE, SCALE_CONSTANTS, PULSATE_CONSTANTS } from '@core/constants/index';
 import { RendererUtils } from './RendererUtils';
-import { logger } from '../core/logger';
-import { isBomb, isTileObject } from '../utils/TypeChecks';
+import { logger } from '@core/logger';
+import { isBomb, isTileObject } from '@utils/TypeChecks';
 import type { ImageCache, GridManager, BaseRenderer } from './types';
 
 export class ItemTileRenderer {

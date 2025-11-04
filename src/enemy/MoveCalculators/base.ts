@@ -63,10 +63,10 @@
  * @typedef {Array<Array<number>>} Grid
  */
 
-import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '../../core/constants/index';
-import { EnemyPathfinding } from '../EnemyPathfinding';
-import { EnemySpecialActions } from '../EnemySpecialActions';
-import { logger } from '../../core/logger';
+import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '@core/constants/index';
+import { EnemyPathfinding } from '@enemy/EnemyPathfinding';
+import { EnemySpecialActions } from '@enemy/EnemySpecialActions';
+import { logger } from '@core/logger';
 
 import { applyAggressiveMovement } from './aggressive';
 import { applyTacticalAdjustments, applyDefensiveMoves } from './tactics';

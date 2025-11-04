@@ -1,5 +1,5 @@
 import { BaseMoveCalculator } from './base';
-import { EnemySpecialActions } from '../EnemySpecialActions';
+import { EnemySpecialActions } from '@enemy/EnemySpecialActions';
 import { ChargeMoveHelpers } from './BaseAttackBehaviors';
 
 export class LazerdMoveCalculator extends BaseMoveCalculator {

@@ -1,8 +1,8 @@
 import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
-import { TILE_TYPES } from '../../../core/constants/index';
-import { Position } from '../../../core/Position';
+import { TILE_TYPES } from '@core/constants/index';
+import { Position } from '@core/Position';
 import type { InventoryItem } from '../ItemMetadata';
-import type { TileObject } from '../../../core/SharedTypes';
+import type { TileObject } from '@core/SharedTypes';
 
 interface RadialEffectConfig {
     name: string;

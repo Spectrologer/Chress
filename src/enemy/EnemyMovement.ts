@@ -1,4 +1,4 @@
-import { GRID_SIZE } from '../core/constants/index';
+import { GRID_SIZE } from '@core/constants/index';
 import { EnemyPathfinding } from './EnemyPathfinding';
 import { EnemyChargeBehaviors } from './EnemyChargeBehaviors';
 import { EnemyLineOfSight } from './EnemyLineOfSight';

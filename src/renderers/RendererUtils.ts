@@ -1,6 +1,6 @@
 // Shared utility functions for tile rendering
-import { TILE_SIZE, TILE_COLORS } from '../core/constants/index';
-import type { ImageCache, ScaledDimensions } from './types';
+import { TILE_SIZE, TILE_COLORS } from '@core/constants/index.js';
+import type { ImageCache, ScaledDimensions } from './types.js';
 
 export class RendererUtils {
     /**

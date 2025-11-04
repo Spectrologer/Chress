@@ -1,5 +1,5 @@
-import { Sign } from '../ui/Sign';
-import { validateLoadedGrid } from '../generators/GeneratorUtils';
+import { Sign } from '@ui/Sign';
+import { validateLoadedGrid } from '@generators/GeneratorUtils';
 import { logger } from './logger';
 import type { GameContext } from './GameContext';
 import type { SavedPlayerData, SavedPlayerStats, SaveGameData } from './SharedTypes';

@@ -1,10 +1,10 @@
-import { GRID_SIZE } from '../core/constants/index';
-import { isWithinGrid } from '../utils/GridUtils';
+import { GRID_SIZE } from '@core/constants/index';
+import { isWithinGrid } from '@utils/GridUtils';
 import {
     checkDiagonalLineOfSight,
     checkOrthogonalLineOfSight,
     checkQueenLineOfSight
-} from '../utils/LineOfSightUtils';
+} from '@utils/LineOfSightUtils';
 
 export class EnemyChargeBehaviors {
     // Helper for zard: find adjacent tile next to player along diagonal line of sight and charge there

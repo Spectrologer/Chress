@@ -1,8 +1,8 @@
-import { Sign } from '../ui/Sign';
+import { Sign } from '@ui/Sign';
 import type { GameContext } from './GameContext';
 import type { SaveGameData, SavedPlayerData, SavedPlayerStats, SavedEnemyData, Grid } from './SharedTypes';
-import type { Player } from '../entities/Player';
-import type { Enemy } from '../entities/Enemy';
+import type { Player } from '@entities/Player';
+import type { Enemy } from '@entities/Enemy';
 
 /**
  * Helper class for serializing game state to a save format.

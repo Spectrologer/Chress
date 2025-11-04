@@ -11,9 +11,9 @@ describe('Player', () => {
     // Provide minimal global window stubs used by Player.move
     global.window = global.window || {};
     global.window.gameInstance = global.window.gameInstance || {};
-    global.window.gameInstance.startEnemyTurns = jest.fn();
-    global.window.gameInstance.explodeBomb = jest.fn();
-    global.window.soundManager = global.window.soundManager || { playSound: jest.fn() };
+    global.window.gameInstance.startEnemyTurns = vi.fn();
+    global.window.gameInstance.explodeBomb = vi.fn();
+    global.window.soundManager = global.window.soundManager || { playSound: vi.fn() };
   });
 
   test('initial state and reset', () => {
@@ -73,7 +73,7 @@ describe('Player', () => {
 
   test('itemManager.handleItemPickup is called when moving onto a tile', () => {
     player.x = 2; player.y = 2;
-    const mockItemManager = { handleItemPickup: jest.fn() };
+    const mockItemManager = { handleItemPickup: vi.fn() };
     player.itemManager = mockItemManager;
     // move into an adjacent floor tile
     const moved = player.move(3, 2, grid);
@@ -106,14 +106,14 @@ describe('Player', () => {
     expect(player.getHunger()).toBe(beforeHunger - 2);
   });
 
-  test('stepping onto a bomb (object tile) does not move player (explode is handled elsewhere)', () => {
+  test('stepping onto a bomb (object tile) does not move player but triggers explosion', () => {
     player.x = 3; player.y = 3;
     // Represent bomb as an object tile as used by game logic
     grid[3][4] = { type: TILE_TYPES.BOMB, actionsSincePlaced: 2 };
     const moved = player.move(4, 3, grid);
-    // Current behavior: Player.move doesn't trigger explodeBomb for object bomb tiles
+    // Player should not move, but explosion should be triggered
     expect(moved).toBe(false);
-    expect(global.window.gameInstance.explodeBomb).not.toHaveBeenCalled();
+    expect(global.window.gameInstance.explodeBomb).toHaveBeenCalledWith(4, 3);
   });
 });
 

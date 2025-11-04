@@ -1,18 +1,18 @@
-import { TILE_TYPES } from '../core/constants/index';
-import { getExitDirection } from '../core/utils/TransitionUtils';
-import { getDeltaToDirection, getOffset, isAdjacent } from '../core/utils/DirectionUtils';
-import audioManager from '../utils/AudioManager';
+import { TILE_TYPES } from '@core/constants/index';
+import { getExitDirection } from '@core/utils/TransitionUtils';
+import { getDeltaToDirection, getOffset, isAdjacent } from '@core/utils/DirectionUtils';
+import audioManager from '@utils/AudioManager';
 import { GestureDetector } from './GestureDetector';
 import { PathfindingController } from './PathfindingController';
 import { KeyboardHandler } from './KeyboardHandler';
 import { InputStateManager } from './InputStateManager';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { TileRegistry } from '../core/TileRegistry';
-import { getTileType, isTileObject } from '../utils/TileUtils';
-import { Position } from '../core/Position';
-import type { GameContext } from '../core/GameContext';
-import type { InventoryService } from '../managers/inventory/InventoryService';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { TileRegistry } from '@core/TileRegistry';
+import { getTileType, isTileObject } from '@utils/TileUtils';
+import { Position } from '@core/Position';
+import type { GameContext } from '@core/GameContext';
+import type { InventoryService } from '@managers/inventory/InventoryService';
 
 interface GridCoords {
     x: number;

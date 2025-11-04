@@ -1,9 +1,9 @@
-import { TILE_TYPES, GRID_SIZE } from '../../core/constants/index';
-import { eventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
-import { isTileType } from '../../utils/TileUtils';
-import { Position } from '../../core/Position';
-import type { IGame, ICoordinates } from '../../core/GameContext';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { isTileType } from '@utils/TileUtils';
+import { Position } from '@core/Position';
+import type { IGame, ICoordinates } from '@core/GameContext';
 import type { InventoryItem } from './ItemMetadata';
 
 interface UseItemOptions {

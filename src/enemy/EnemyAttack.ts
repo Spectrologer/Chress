@@ -13,7 +13,7 @@
  * These abilities make advanced enemies more dangerous and tactical.
  */
 import { EnemyAttackHelper } from './EnemyAttackHelper';
-import { checkQueenLineOfSight, checkOrthogonalLineOfSight } from '../utils/LineOfSightUtils';
+import { checkQueenLineOfSight, checkOrthogonalLineOfSight } from '@utils/LineOfSightUtils';
 
 export const EnemyAttackMixin = {
     /**

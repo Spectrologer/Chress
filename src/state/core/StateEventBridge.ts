@@ -6,8 +6,8 @@
  * when specific state paths change.
  */
 
-import { eventBus } from '../../core/EventBus';
-import { EventTypes } from '../../core/EventTypes';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 export class StateEventBridge {
   /**

@@ -1,11 +1,11 @@
 import { TILE_TYPES, GRID_SIZE } from '../constants/index';
 import { logger } from '../logger';
-import { ZoneStateManager } from '../../generators/ZoneStateManager';
-import { FeatureGenerator } from '../../generators/FeatureGenerator';
-import { ItemGenerator } from '../../generators/ItemGenerator';
-import { StructureGenerator } from '../../generators/StructureGenerator';
-import { EnemyGenerator } from '../../generators/EnemyGenerator';
-import { PathGenerator } from '../../generators/PathGenerator';
+import { ZoneStateManager } from '@generators/ZoneStateManager';
+import { FeatureGenerator } from '@generators/FeatureGenerator';
+import { ItemGenerator } from '@generators/ItemGenerator';
+import { StructureGenerator } from '@generators/StructureGenerator';
+import { EnemyGenerator } from '@generators/EnemyGenerator';
+import { PathGenerator } from '@generators/PathGenerator';
 
 /**
  * Base class for zone handlers, providing shared initialization and common patterns

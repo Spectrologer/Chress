@@ -1,11 +1,11 @@
-import { TILE_TYPES, GRID_SIZE, ANIMATION_CONSTANTS } from '../core/constants/index';
-import { Position } from '../core/Position';
-import { TileRegistry } from '../core/TileRegistry';
-import { isBomb, isTileType } from '../utils/TileUtils';
-import audioManager from '../utils/AudioManager';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
+import { TILE_TYPES, GRID_SIZE, ANIMATION_CONSTANTS } from '@core/constants/index';
+import { Position } from '@core/Position';
+import { TileRegistry } from '@core/TileRegistry';
+import { isBomb, isTileType } from '@utils/TileUtils';
+import audioManager from '@utils/AudioManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
 import type { Player } from './Player';
 import type { Grid } from './Player';
 

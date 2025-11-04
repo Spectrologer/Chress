@@ -1,16 +1,16 @@
-import { GRID_SIZE, TILE_SIZE, TILE_TYPES, CANVAS_SIZE, getZoneLevelFromDistance } from '../core/constants/index';
-import { COLOR_CONSTANTS, STROKE_CONSTANTS } from '../core/constants/rendering';
+import { GRID_SIZE, TILE_SIZE, TILE_TYPES, CANVAS_SIZE, getZoneLevelFromDistance } from '@core/constants/index';
+import { COLOR_CONSTANTS, STROKE_CONSTANTS } from '@core/constants/rendering';
 import type { TextureManager } from './TextureManager';
 import { PlayerRenderer } from './PlayerRenderer';
 import { EnemyRenderer } from './EnemyRenderer';
 import { AnimationRenderer } from './AnimationRenderer';
 import { UIRenderer } from './UIRenderer';
 import { FogRenderer } from './FogRenderer';
-import GridIterator from '../utils/GridIterator';
-import { isTileType } from '../utils/TileUtils';
-import { logger } from '../core/logger';
+import GridIterator from '@utils/GridIterator';
+import { isTileType } from '@utils/TileUtils';
+import { logger } from '@core/logger';
 import type { TapFeedback } from './types';
-import type { IGame } from '../core/GameContext';
+import type { IGame } from '@core/GameContext';
 
 interface Zone {
     x: number;

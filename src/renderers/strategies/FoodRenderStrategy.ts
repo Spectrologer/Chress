@@ -1,7 +1,7 @@
-import { TILE_TYPES, TILE_SIZE, TILE_COLORS, STROKE_CONSTANTS } from '../../core/constants/index';
-import { RendererUtils } from '../RendererUtils';
-import { TileRenderStrategy } from './TileRenderStrategy';
-import type { BaseRenderer } from '../types';
+import { TILE_TYPES, TILE_SIZE, TILE_COLORS, STROKE_CONSTANTS } from '@core/constants/index.js';
+import { RendererUtils } from '@renderers/RendererUtils.js';
+import { TileRenderStrategy } from './TileRenderStrategy.js';
+import type { BaseRenderer } from '@renderers/types.js';
 
 export class FoodRenderStrategy extends TileRenderStrategy {
     render(

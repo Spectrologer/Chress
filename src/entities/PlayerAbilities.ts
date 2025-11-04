@@ -1,7 +1,7 @@
-import { TILE_TYPES, GRID_SIZE } from '../core/constants/index';
-import { Position } from '../core/Position';
-import { isTileType } from '../utils/TileUtils';
-import audioManager from '../utils/AudioManager';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
+import { Position } from '@core/Position';
+import { isTileType } from '@utils/TileUtils';
+import audioManager from '@utils/AudioManager';
 import type { Player } from './Player';
 import type { Grid } from './Player';
 

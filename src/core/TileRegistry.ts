@@ -1,5 +1,5 @@
 import { TILE_TYPES } from './constants/index';
-import { getTileType } from '../utils/TileUtils';
+import { getTileType } from '@utils/TileUtils';
 
 /**
  * Centralized registry for tile properties and metadata.

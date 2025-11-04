@@ -7,25 +7,25 @@ describe('InteractionManager melee tap adjacency', () => {
 
   beforeEach(() => {
     mockPlayer = {
-      getPosition: jest.fn().mockReturnValue({ x: 1, y: 1 }),
-      getPositionObject: jest.fn().mockReturnValue({
+      getPosition: vi.fn().mockReturnValue({ x: 1, y: 1 }),
+      getPositionObject: vi.fn().mockReturnValue({
         x: 1,
         y: 1,
-        equals: jest.fn(),
-        toObject: jest.fn().mockReturnValue({ x: 1, y: 1 }),
-        getTile: jest.fn()
+        equals: vi.fn(),
+        toObject: vi.fn().mockReturnValue({ x: 1, y: 1 }),
+        getTile: vi.fn()
       }),
-      startAttackAnimation: jest.fn(),
-      startBump: jest.fn(),
-      startBackflip: jest.fn(),
-      setAction: jest.fn(),
-      abilities: { has: jest.fn().mockReturnValue(false) },
+      startAttackAnimation: vi.fn(),
+      startBump: vi.fn(),
+      startBackflip: vi.fn(),
+      setAction: vi.fn(),
+      abilities: { has: vi.fn().mockReturnValue(false) },
       x: 1,
       y: 1
     };
 
-    const mockEnemyCardinal = { x: 2, y: 1, health: 10, startBump: jest.fn(), takeDamage: jest.fn(), id: 'e1', getPoints: jest.fn().mockReturnValue(5) };
-    const mockEnemyDiagonal = { x: 2, y: 2, health: 10, startBump: jest.fn(), takeDamage: jest.fn(), id: 'e2', getPoints: jest.fn().mockReturnValue(5) };
+    const mockEnemyCardinal = { x: 2, y: 1, health: 10, startBump: vi.fn(), takeDamage: vi.fn(), id: 'e1', getPoints: vi.fn().mockReturnValue(5) };
+    const mockEnemyDiagonal = { x: 2, y: 2, health: 10, startBump: vi.fn(), takeDamage: vi.fn(), id: 'e2', getPoints: vi.fn().mockReturnValue(5) };
 
     // Create mock facades
     const mockInteractionFacade = {
@@ -49,28 +49,28 @@ describe('InteractionManager melee tap adjacency', () => {
       player: mockPlayer,
       enemies: [mockEnemyCardinal, mockEnemyDiagonal],
       enemyCollection: {
-        findAt: jest.fn((x, y) => {
+        findAt: vi.fn((x, y) => {
           if (x === 2 && y === 1) return mockEnemyCardinal;
           if (x === 2 && y === 2) return mockEnemyDiagonal;
           return null;
         })
       },
       playerFacade: {
-        hasAbility: jest.fn().mockReturnValue(false),
-        findInInventory: jest.fn().mockReturnValue(null)
+        hasAbility: vi.fn().mockReturnValue(false),
+        findInInventory: vi.fn().mockReturnValue(null)
       },
       transientGameState: {
-        hasPendingCharge: jest.fn().mockReturnValue(false)
+        hasPendingCharge: vi.fn().mockReturnValue(false)
       },
       grid: [],
       pendingCharge: null,
       justEnteredZone: false,
-      startEnemyTurns: jest.fn(),
-      updatePlayerPosition: jest.fn(),
-      updatePlayerStats: jest.fn(),
-      uiManager: { showOverlayMessage: jest.fn(), hideOverlayMessage: jest.fn(), isStatsPanelOpen: jest.fn().mockReturnValue(false) },
-      soundManager: { playSound: jest.fn() },
-      combatManager: { defeatEnemy: jest.fn().mockReturnValue({ defeated: true, consecutiveKills: 0 }) },
+      startEnemyTurns: vi.fn(),
+      updatePlayerPosition: vi.fn(),
+      updatePlayerStats: vi.fn(),
+      uiManager: { showOverlayMessage: vi.fn(), hideOverlayMessage: vi.fn(), isStatsPanelOpen: vi.fn().mockReturnValue(false) },
+      soundManager: { playSound: vi.fn() },
+      combatManager: { defeatEnemy: vi.fn().mockReturnValue({ defeated: true, consecutiveKills: 0 }) },
     };
 
     im = new InteractionManager(mockGame, mockInteractionFacade, mockCombatFacade, mockWorldFacade);

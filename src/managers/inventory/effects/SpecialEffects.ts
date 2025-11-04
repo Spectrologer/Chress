@@ -1,10 +1,10 @@
 import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
-import { TILE_TYPES } from '../../../core/constants/index';
-import { Sign } from '../../../ui/Sign';
-import { logger } from '../../../core/logger';
-import { eventBus } from '../../../core/EventBus';
-import { EventTypes } from '../../../core/EventTypes';
-import { isAdjacent } from '../../../core/utils/DirectionUtils';
+import { TILE_TYPES } from '@core/constants/index';
+import { Sign } from '@ui/Sign';
+import { logger } from '@core/logger';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { isAdjacent } from '@core/utils/DirectionUtils';
 import type { InventoryItem, ShovelItem, NoteItem, BookOfTimeTravelItem } from '../ItemMetadata';
 
 /**

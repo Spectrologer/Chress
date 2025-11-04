@@ -1,8 +1,8 @@
-import { logger } from '../core/logger';
+import { logger } from '@core/logger';
 import { fitTextToContainer } from './TextFitter';
 import type { TypewriterController } from './TypewriterController';
-import { EventListenerManager } from '../utils/EventListenerManager';
-import type { IGame } from '../core/GameContext';
+import { EventListenerManager } from '@utils/EventListenerManager';
+import type { IGame } from '@core/GameContext';
 
 /**
  * Manages sign and NPC dialogue display with portraits and buttons.

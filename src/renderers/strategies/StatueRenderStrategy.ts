@@ -1,8 +1,8 @@
-import { TILE_TYPES, TILE_SIZE, TILE_COLORS } from '../../core/constants/index';
-import { RendererUtils } from '../RendererUtils';
-import { renderOverlay } from '../BaseRendererHelpers';
-import { TileRenderStrategy } from './TileRenderStrategy';
-import type { BaseRenderer } from '../types';
+import { TILE_TYPES, TILE_SIZE, TILE_COLORS } from '@core/constants/index.js';
+import { RendererUtils } from '@renderers/RendererUtils.js';
+import { renderOverlay } from '@renderers/BaseRendererHelpers.js';
+import { TileRenderStrategy } from './TileRenderStrategy.js';
+import type { BaseRenderer } from '@renderers/types.js';
 
 export class StatueRenderStrategy extends TileRenderStrategy {
     render(

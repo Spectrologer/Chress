@@ -1,6 +1,6 @@
 import { ItemMetadata, type InventoryItem } from './ItemMetadata';
-import { saveRadialInventory } from '../RadialPersistence';
-import type { IGame } from '../../core/GameContext';
+import { saveRadialInventory } from '@managers/RadialPersistence';
+import type { IGame } from '@core/GameContext';
 
 type InventoryType = 'main' | 'radial' | 'auto';
 

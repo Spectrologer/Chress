@@ -15,9 +15,9 @@ function makeGame() {
     };
 
     const renderManager = {
-        startHoldFeedback: jest.fn(),
-        clearFeedback: jest.fn(),
-        showTapFeedback: jest.fn()
+        startHoldFeedback: vi.fn(),
+        clearFeedback: vi.fn(),
+        showTapFeedback: vi.fn()
     };
 
     const game = {
@@ -27,21 +27,21 @@ function makeGame() {
         enemies: [],
         animationScheduler: {
             createSequence: () => ({ then: () => ({ wait: () => ({ then: () => ({ start: () => Promise.resolve(), id: 1 }) }) }) }),
-            cancelSequence: jest.fn()
+            cancelSequence: vi.fn()
         }
     };
 
     // Minimal interactionManager so executeMovementOrInteraction can call handleTap
-    game.interactionManager = { handleTap: jest.fn().mockReturnValue(false) };
+    game.interactionManager = { handleTap: vi.fn().mockReturnValue(false) };
 
     game.isPlayerTurn = true;
     game.pendingCharge = null;
-    game.hideOverlayMessage = jest.fn();
-    game.startEnemyTurns = jest.fn();
-    game.incrementBombActions = jest.fn();
-    game.updatePlayerPosition = jest.fn();
-    game.updatePlayerStats = jest.fn();
-    game.turnManager = { handleTurnCompletion: jest.fn() };
+    game.hideOverlayMessage = vi.fn();
+    game.startEnemyTurns = vi.fn();
+    game.incrementBombActions = vi.fn();
+    game.updatePlayerPosition = vi.fn();
+    game.updatePlayerStats = vi.fn();
+    game.turnManager = { handleTurnCompletion: vi.fn() };
 
     global.requestAnimationFrame = (cb) => cb();
     return game;
@@ -68,7 +68,7 @@ describe('Auto Path With Enemies setting', () => {
         });
 
         // spy on executePath to observe what is issued
-        const spy = jest.spyOn(ic.pathfindingController, 'executePath');
+        const spy = vi.spyOn(ic.pathfindingController, 'executePath');
 
         // click on a far-away tile
         ic.executeMovementOrInteraction({ x: 8, y: 8 });
@@ -99,8 +99,8 @@ describe('Auto Path With Enemies setting', () => {
         });
 
         // spy on findPath and executePath
-        const findSpy = jest.spyOn(ic.pathfindingController, 'findPath');
-        const execSpy = jest.spyOn(ic.pathfindingController, 'executePath');
+        const findSpy = vi.spyOn(ic.pathfindingController, 'findPath');
+        const execSpy = vi.spyOn(ic.pathfindingController, 'executePath');
 
         // Click to a reachable distant tile - make sure target is walkable
         game.grid[8][8] = 0;

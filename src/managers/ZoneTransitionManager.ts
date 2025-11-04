@@ -1,16 +1,16 @@
-import { GRID_SIZE, TILE_TYPES, DIMENSION_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants/index';
-import { MultiTileHandler } from '../renderers/MultiTileHandler';
-import { getExitDirection } from '../core/utils/TransitionUtils';
-import audioManager from '../utils/AudioManager';
-import { eventBus } from '../core/EventBus';
-import { EventTypes } from '../core/EventTypes';
-import { createZoneKey } from '../utils/ZoneKeyUtils';
-import type { Game } from '../core/game';
+import { GRID_SIZE, TILE_TYPES, DIMENSION_CONSTANTS, GAMEPLAY_CONSTANTS } from '@core/constants/index';
+import { MultiTileHandler } from '@renderers/MultiTileHandler';
+import { getExitDirection } from '@core/utils/TransitionUtils';
+import audioManager from '@utils/AudioManager';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { createZoneKey } from '@utils/ZoneKeyUtils';
+import type { Game } from '@core/game';
 import type { InputManager } from './InputManager';
 import type { GridManager } from './GridManager';
-import type { ZoneRepository } from '../repositories/ZoneRepository';
-import type { Position } from '../core/Position';
-import type { Grid, Tile, TileObject } from '../core/SharedTypes';
+import type { ZoneRepository } from '@repositories/ZoneRepository';
+import type { Position } from '@core/Position';
+import type { Grid, Tile, TileObject } from '@core/SharedTypes';
 
 interface TapCoords {
     x: number;

@@ -1,6 +1,6 @@
-import { TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS } from '../core/constants/index';
+import { TILE_SIZE, CANVAS_SIZE, ANIMATION_CONSTANTS } from '@core/constants/index';
 import type { TextureManager } from './TextureManager';
-import type { IGame } from '../core/GameContext';
+import type { IGame } from '@core/GameContext';
 
 interface NPC {
     x: number;

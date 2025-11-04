@@ -29,7 +29,7 @@ beforeEach(() => {
 
 afterEach(() => {
     localStorage.clear();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
 });
 
 test('showRecordsOverlay reads values from localStorage and populates DOM', () => {

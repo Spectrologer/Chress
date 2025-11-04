@@ -15,24 +15,24 @@
  * - ZoneGenerationOrchestrator: Zone generation and loading
  * - ZonePersistenceManager: Zone state saving
  */
-import { TILE_TYPES } from '../core/constants/index';
+import { TILE_TYPES } from '@core/constants/index';
 import { ZoneTransitionCoordinator } from './ZoneTransitionCoordinator';
 import { ZoneTreasureManager } from './ZoneTreasureManager';
 import { ZoneEventEmitter } from './ZoneEventEmitter';
 import { ZoneGenerationOrchestrator } from './ZoneGenerationOrchestrator';
 import { ZonePersistenceManager } from './ZonePersistenceManager';
-import type { IGame } from '../core/GameContext';
-import type { Player } from '../entities/Player';
-import type { PlayerFacade } from '../facades/PlayerFacade';
-import type { EnemyCollection } from '../facades/EnemyCollection';
+import type { IGame } from '@core/GameContext';
+import type { Player } from '@entities/Player';
+import type { PlayerFacade } from '@facades/PlayerFacade';
+import type { EnemyCollection } from '@facades/EnemyCollection';
 import type { GridManager } from './GridManager';
 import type { NPCManager } from './NPCManager';
-import type { ZoneRepository } from '../repositories/ZoneRepository';
-import type { ZoneGenerator } from '../core/ZoneGenerator';
+import type { ZoneRepository } from '@repositories/ZoneRepository';
+import type { ZoneGenerator } from '@core/ZoneGenerator';
 import type { ConnectionManager } from './ConnectionManager';
-import type { TransientGameState } from '../state/TransientGameState';
-import type { ServiceContainer } from '../core/ServiceContainer';
-import type { NPCRenderer } from '../renderers/NPCRenderer';
+import type { TransientGameState } from '@state/TransientGameState';
+import type { ServiceContainer } from '@core/ServiceContainer';
+import type { NPCRenderer } from '@renderers/NPCRenderer';
 
 interface EnemyData {
     x: number;

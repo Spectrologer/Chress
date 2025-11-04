@@ -25,7 +25,7 @@ describe('Pitfall persistence', () => {
                 onZoneTransition() {}
             },
             uiManager: { generateRegionName() { return 'Test'; }, showRegionNotification() {}, updateZoneDisplay() {}, updatePlayerPosition() {}, updatePlayerStats() {}, addMessageToLog() {} },
-            zoneGenerator: { generateZone: jest.fn(), grid: [] },
+            zoneGenerator: { generateZone: vi.fn(), grid: [] },
             connectionManager: { generateChunkConnections() {} },
             availableFoodAssets: [],
             enemies: [],
@@ -80,7 +80,7 @@ describe('Pitfall persistence', () => {
                 onZoneTransition() {}
             },
             uiManager: { generateRegionName() { return 'Test'; }, showRegionNotification() {}, updateZoneDisplay() {}, updatePlayerPosition() {}, updatePlayerStats() {}, addMessageToLog() {} },
-            zoneGenerator: { generateZone: jest.fn(() => ({ grid: Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)), enemies: [], playerSpawn: { x: 5, y: 5 } })), grid: [] },
+            zoneGenerator: { generateZone: vi.fn(() => ({ grid: Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)), enemies: [], playerSpawn: { x: 5, y: 5 } })), grid: [] },
             connectionManager: { generateChunkConnections() {} },
             availableFoodAssets: [],
             enemies: [],
