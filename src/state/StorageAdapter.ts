@@ -251,7 +251,7 @@ const LZString = {
     _decompress(length: number, resetValue: number, getNextValue: (index: number) => number): string {
         const dictionary: (string | number)[] = [];
         let enlargeIn = 4, dictSize = 4, numBits = 3;
-        let entry: string, result: string, w: string, c: string | number;
+        let entry: string, result: string[], w: string, c: string | number;
         const data = { val: getNextValue(0), position: resetValue, index: 1 };
 
         for (let i = 0; i < 3; i += 1) {

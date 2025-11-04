@@ -96,7 +96,10 @@ export class RadialInventoryUI {
                 if (it && ItemMetadata.RADIAL_TYPES.includes(it.type)) {
                     // Normalize book representation: prefer 'uses' for books
                     if (it.type === 'book_of_time_travel') {
-                        if (typeof it.uses === 'undefined') it.uses = (typeof it.quantity !== 'undefined') ? it.quantity : 1;
+                        if (typeof it.uses === 'undefined') {
+                            const qty = typeof it.quantity === 'number' ? it.quantity : 1;
+                            it.uses = qty;
+                        }
                         delete it.quantity;
                     }
                     player.inventory.splice(i, 1);

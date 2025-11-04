@@ -68,7 +68,7 @@ export class StructureGenerator {
             minY: 1,
             maxX: GRID_SIZE - width,
             maxY: GRID_SIZE - height,
-            validate: (x, y) => {
+            validate: (x: number, y: number): boolean => {
                 for (let dy = 0; dy < height; dy++) {
                     for (let dx = 0; dx < width; dx++) {
                         if (!isAllowedTile(this.gridManager.getTile(x + dx, y + dy), allowedTiles)) {
@@ -117,7 +117,7 @@ export class StructureGenerator {
             minY: 1,
             maxX: GRID_SIZE - 3,
             maxY: GRID_SIZE - 3,
-            validate: (x, y) => {
+            validate: (x: number, y: number): boolean => {
                 // Check 3x3 area + one tile in front for the door
                 for (let dy = 0; dy < 4; dy++) {
                     for (let dx = 0; dx < 3; dx++) {
@@ -184,7 +184,7 @@ export class StructureGenerator {
             minY: 1,
             maxX: GRID_SIZE - 3,
             maxY: GRID_SIZE - 3,
-            validate: (x, y) => {
+            validate: (x: number, y: number): boolean => {
                 const topTile = this.gridManager.getTile(x, y);
                 const bottomTile = this.gridManager.getTile(x, y + 1);
                 return isAllowedTile(topTile, placeableTiles) && isAllowedTile(bottomTile, placeableTiles);

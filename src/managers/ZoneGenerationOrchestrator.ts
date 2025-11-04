@@ -11,10 +11,11 @@ import { boardLoader } from '../core/BoardLoader';
 import { createZoneKey } from '../utils/ZoneKeyUtils';
 import { isWithinGrid } from '../utils/GridUtils';
 import { isTileObjectWithProperty, isPitfall } from '../utils/TypeChecks';
-import type { Game } from '../core/Game';
+import { Position } from '../core/Position';
+import type { Game } from '../core/game';
 import type { ZoneTransitionCoordinator } from './ZoneTransitionCoordinator';
-import type { Position } from '../core/Position';
 import type { Grid, Tile } from '../core/SharedTypes';
+import type { Enemy } from '../entities/Enemy';
 
 interface EnemyData {
     x: number;
@@ -138,12 +139,12 @@ export class ZoneGenerationOrchestrator {
         const portData = transientState.getPortTransitionData() as PortTransitionData | undefined;
 
         if (currentZone.dimension === 1 && portData?.from === 'interior') {
-            zoneData.returnToSurface = { x: portData.x!, y: portData.y! };
+            zoneData.returnToSurface = Position.from({ x: portData.x!, y: portData.y! });
         }
 
         if (currentZone.dimension === 2 && portData && (portData.from === 'hole' || portData.from === 'pitfall')) {
             if (!zoneData.returnToSurface) {
-                zoneData.returnToSurface = { x: portData.x!, y: portData.y! };
+                zoneData.returnToSurface = Position.from({ x: portData.x!, y: portData.y! });
             }
         }
 
@@ -305,7 +306,7 @@ export class ZoneGenerationOrchestrator {
                 zoneData.overlayRotations = result.overlayRotations;
                 // Update playerSpawn if it was missing
                 if (!zoneData.playerSpawn && result.playerSpawn) {
-                    zoneData.playerSpawn = result.playerSpawn;
+                    zoneData.playerSpawn = Position.from(result.playerSpawn);
                 }
                 // Save the repaired zone data
                 this.game.zoneRepository.setByKey(zoneKey, zoneData);

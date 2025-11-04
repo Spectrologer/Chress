@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * StateHistoryManager - Manages state history and debugging
  *
@@ -6,52 +5,43 @@
  * and mutations over time.
  */
 
-/**
- * @typedef {Object} StateSnapshot
- * @property {any} state
- * @property {number} timestamp
- */
+export interface StateSnapshot {
+  state: any;
+  timestamp: number;
+}
 
-/**
- * @typedef {Object} StateMutation
- * @property {string} type
- * @property {string} path
- * @property {any} oldValue
- * @property {any} newValue
- * @property {number} timestamp
- */
+export interface StateMutation {
+  type: string;
+  path: string;
+  oldValue: any;
+  newValue: any;
+  timestamp: number;
+}
 
 import { deepClone } from './StateSliceManager';
 
 export class StateHistoryManager {
+  private history: StateSnapshot[] = [];
+  private mutations: StateMutation[] = [];
+  private maxHistorySize: number;
+  private maxMutations: number;
+  private isRecordingHistory: boolean = false;
+
   /**
-   * @param {number} maxHistorySize - Maximum snapshots to keep
-   * @param {number} maxMutations - Maximum mutations to keep
+   * @param maxHistorySize - Maximum snapshots to keep
+   * @param maxMutations - Maximum mutations to keep
    */
-  constructor(maxHistorySize = 50, maxMutations = 100) {
-    /** @type {StateSnapshot[]} */
-    this.history = [];
-
-    /** @type {StateMutation[]} */
-    this.mutations = [];
-
-    /** @type {number} */
+  constructor(maxHistorySize: number = 50, maxMutations: number = 100) {
     this.maxHistorySize = maxHistorySize;
-
-    /** @type {number} */
     this.maxMutations = maxMutations;
-
-    /** @type {boolean} */
-    this.isRecordingHistory = false;
   }
 
   /**
    * Enable/disable history recording
-   * @param {boolean} enabled - Whether to enable history recording
-   * @param {any} currentState - Current state to record if enabling
-   * @returns {void}
+   * @param enabled - Whether to enable history recording
+   * @param currentState - Current state to record if enabling
    */
-  setHistoryRecording(enabled, currentState = null) {
+  setHistoryRecording(enabled: boolean, currentState: any = null): void {
     this.isRecordingHistory = enabled;
     if (enabled && this.history.length === 0 && currentState) {
       this.recordHistory(currentState);
@@ -60,10 +50,9 @@ export class StateHistoryManager {
 
   /**
    * Record current state in history
-   * @param {any} state - The state to record
-   * @returns {void}
+   * @param state - The state to record
    */
-  recordHistory(state) {
+  recordHistory(state: any): void {
     this.history.push({
       state: deepClone(state),
       timestamp: Date.now()
@@ -76,13 +65,12 @@ export class StateHistoryManager {
 
   /**
    * Record a mutation for debugging
-   * @param {string} type - The mutation type
-   * @param {string} path - The state path
-   * @param {any} oldValue - The old value
-   * @param {any} newValue - The new value
-   * @returns {void}
+   * @param type - The mutation type
+   * @param path - The state path
+   * @param oldValue - The old value
+   * @param newValue - The new value
    */
-  recordMutation(type, path, oldValue, newValue) {
+  recordMutation(type: string, path: string, oldValue: any, newValue: any): void {
     this.mutations.push({
       type,
       path,
@@ -98,40 +86,85 @@ export class StateHistoryManager {
 
   /**
    * Get mutation history
-   * @param {number} [count=10] - Number of recent mutations to return
-   * @returns {StateMutation[]}
+   * @param count - Number of recent mutations to return
    */
-  getMutations(count = 10) {
+  getMutations(count: number = 10): StateMutation[] {
     return this.mutations.slice(-count);
   }
 
   /**
    * Get state history
-   * @param {number} [count=10] - Number of recent history entries to return
-   * @returns {StateSnapshot[]}
+   * @param count - Number of recent history entries to return
    */
-  getHistory(count = 10) {
+  getHistory(count: number = 10): StateSnapshot[] {
     return this.history.slice(-count);
   }
 
   /**
    * Clear all history and mutations
-   * @returns {void}
    */
-  clear() {
+  clear(): void {
     this.history = [];
     this.mutations = [];
   }
 
   /**
    * Get statistics about recorded data
-   * @returns {{historySize: number, mutationsRecorded: number, isRecording: boolean}}
    */
-  getStats() {
+  getStats(): { historySize: number; mutationsRecorded: number; isRecording: boolean } {
     return {
       historySize: this.history.length,
       mutationsRecorded: this.mutations.length,
       isRecording: this.isRecordingHistory
     };
+  }
+
+  /**
+   * Get the history array length
+   */
+  getHistoryLength(): number {
+    return this.history.length;
+  }
+
+  /**
+   * Get the mutations array length
+   */
+  getMutationsLength(): number {
+    return this.mutations.length;
+  }
+
+  /**
+   * Get the max history size
+   */
+  getMaxHistorySize(): number {
+    return this.maxHistorySize;
+  }
+
+  /**
+   * Get the max mutations size
+   */
+  getMaxMutations(): number {
+    return this.maxMutations;
+  }
+
+  /**
+   * Clear history only
+   */
+  clearHistory(): void {
+    this.history = [];
+  }
+
+  /**
+   * Clear mutations only
+   */
+  clearMutations(): void {
+    this.mutations = [];
+  }
+
+  /**
+   * Check if history recording is enabled
+   */
+  isRecording(): boolean {
+    return this.isRecordingHistory;
   }
 }

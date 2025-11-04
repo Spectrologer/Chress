@@ -2,23 +2,19 @@ import { logger } from '../core/logger';
 import { fitTextToContainer } from './TextFitter';
 import type { TypewriterController } from './TypewriterController';
 import { EventListenerManager } from '../utils/EventListenerManager';
-
-interface GameInstance {
-    messageManager?: any;
-    [key: string]: any;
-}
+import type { IGame } from '../core/GameContext';
 
 /**
  * Manages sign and NPC dialogue display with portraits and buttons.
  * Handles persistent dialogue that requires user interaction to dismiss.
  */
 export class DialogueManager {
-    private game: GameInstance;
+    private game: IGame;
     private typewriterController: TypewriterController;
     private messageOverlay: HTMLElement | null;
     private eventManager: EventListenerManager;
 
-    constructor(game: GameInstance, typewriterController: TypewriterController) {
+    constructor(game: IGame, typewriterController: TypewriterController) {
         this.game = game;
         this.typewriterController = typewriterController;
         this.messageOverlay = document.getElementById('messageOverlay');

@@ -8,6 +8,10 @@
  * from 9 to 4 parameters.
  */
 export class InteractionFacade {
+    public npcManager: any;
+    public environmentManager: any;
+    public inputManager: any;
+
     /**
      * @param {Object} npcManager - Handles NPC interactions
      * @param {Object} environmentManager - Manages environmental interactions (signs, statues)

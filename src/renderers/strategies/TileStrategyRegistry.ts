@@ -140,7 +140,7 @@ export class TileStrategyRegistry {
             this.images, this.tileSize, 'hammer', TILE_TYPES.HAMMER, '🔨', { scale: 1.0 }
         ));
         this.register(TILE_TYPES.BISHOP_SPEAR, new SimpleItemRenderStrategy(
-            this.images, this.tileSize, 'spear', TILE_TYPES.SPEAR, '🔱',
+            this.images, this.tileSize, 'spear', TILE_TYPES.BISHOP_SPEAR, '🔱',
             { scaleToFit: true, fallbackFontSize: 24 }
         ));
         this.register(TILE_TYPES.HORSE_ICON, new SimpleItemRenderStrategy(

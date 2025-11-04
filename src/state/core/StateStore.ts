@@ -91,7 +91,7 @@ export class StateStore {
         this.sliceManager.updateStateReference(newState);
 
         // Record in history if enabled
-        if (this.historyManager.isRecordingHistory) {
+        if (this.historyManager.isRecording()) {
             this.historyManager.recordHistory(this.state);
         }
 
@@ -119,7 +119,7 @@ export class StateStore {
         this.sliceManager.updateStateReference(newState);
 
         // Record in history
-        if (this.historyManager.isRecordingHistory) {
+        if (this.historyManager.isRecording()) {
             this.historyManager.recordHistory(this.state);
         }
 
@@ -225,6 +225,42 @@ export class StateStore {
     }
 
     /**
+     * Get history length
+     */
+    getHistoryLength(): number {
+        return this.historyManager.getHistoryLength();
+    }
+
+    /**
+     * Get mutations length
+     */
+    getMutationsLength(): number {
+        return this.historyManager.getMutationsLength();
+    }
+
+    /**
+     * Get max history size
+     */
+    getMaxHistorySize(): number {
+        return this.historyManager.getMaxHistorySize();
+    }
+
+    /**
+     * Get max mutations size
+     */
+    getMaxMutations(): number {
+        return this.historyManager.getMaxMutations();
+    }
+
+    /**
+     * Clear history and mutations
+     */
+    clearHistory(): void {
+        this.historyManager.clearHistory();
+        this.historyManager.clearMutations();
+    }
+
+    /**
      * Deep clone utility
      */
     deepClone(obj: any): any {
@@ -284,8 +320,8 @@ export class StateStore {
             session: countNodes(this.state.session),
             transient: countNodes(this.state.transient),
             ui: countNodes(this.state.ui),
-            historySize: this.historyManager.history.length,
-            mutationsRecorded: this.historyManager.mutations.length,
+            historySize: this.historyManager.getHistoryLength(),
+            mutationsRecorded: this.historyManager.getMutationsLength(),
             listenerCount: this.subscriptionManager.getListenerCount()
         };
     }

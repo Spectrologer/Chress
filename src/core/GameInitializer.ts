@@ -153,7 +153,7 @@ export class GameInitializer {
     /**
      * Initializes the game state, event listeners, and UI.
      */
-    init(): void {
+    async init(): Promise<void> {
         // Initialize transient game state (no longer need scattered flags)
         if ((this.game as any).transientGameState) {
             (this.game as any).transientGameState.resetAll();
@@ -166,7 +166,7 @@ export class GameInitializer {
         // Check if game was already loaded during preview (to avoid double loading)
         let loaded = this.game.grid !== null && this.game.grid !== undefined;
         if (!loaded) {
-            loaded = this.game.gameStateManager!.loadGameState();
+            loaded = await this.game.gameStateManager!.loadGameState();
         }
         let isNewGame = false;
         if (!loaded) {
@@ -181,7 +181,7 @@ export class GameInitializer {
             if (isWithinGrid(playerX, playerY)) {
                 const startTile = this.game.gridManager!.getTile(playerX, playerY);
                 // Don't overwrite SIGN or EXIT tiles
-                const isSign = (typeof startTile === 'object' && startTile.type === TILE_TYPES.SIGN);
+                const isSign = (typeof startTile === 'object' && startTile !== null && 'type' in startTile && startTile.type === TILE_TYPES.SIGN);
                 const isSignString = (typeof startTile === 'string' && (startTile as any) === TILE_TYPES.SIGN);
                 const isExitString = (typeof startTile === 'string' && (startTile as any) === TILE_TYPES.EXIT);
                 const shouldSetFloor = !startTile || (!isSign && !isSignString && !isExitString);

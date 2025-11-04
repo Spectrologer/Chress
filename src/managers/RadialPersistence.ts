@@ -1,5 +1,5 @@
 // Simple localStorage-backed persistence for player's radial inventory
-import type { Game } from '../core/Game';
+import type { IGame } from '../core/GameContext';
 
 const STORAGE_KEY = 'chress:radialInventory:v1';
 
@@ -12,7 +12,7 @@ interface RadialItem {
     image?: string;
 }
 
-export function saveRadialInventory(game: Game): void {
+export function saveRadialInventory(game: IGame): void {
     try {
         if (!game || !game.player) return;
         const radial = (game.player as any).radialInventory || [];
@@ -31,7 +31,7 @@ export function saveRadialInventory(game: Game): void {
     }
 }
 
-export function loadRadialInventory(game: Game): void {
+export function loadRadialInventory(game: IGame): void {
     try {
         if (!game || !game.player) return;
         const raw = localStorage.getItem(STORAGE_KEY);

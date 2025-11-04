@@ -55,7 +55,7 @@ export class FeatureGenerator {
         let placedCount = 0;
         while (placedCount < featureCount) {
             const pos = findValidPlacement({
-                validate: (x, y) => {
+                validate: (x: number, y: number): boolean => {
                     if (x === 1 && y === 1) return false;
                     if (this.gridManager.getTile(x, y) !== TILE_TYPES.FLOOR) return false;
                     return true;
@@ -91,7 +91,7 @@ export class FeatureGenerator {
         // Add a chance tile: could be an extra water or food
         const pos = findValidPlacement({
             maxAttempts: 20,
-            validate: (x, y) => isFloor(this.gridManager.getTile(x, y))
+            validate: (x: number, y: number): boolean => isFloor(this.gridManager.getTile(x, y))
         });
         if (!pos) return;
         const { x, y } = pos;
@@ -253,7 +253,7 @@ export class FeatureGenerator {
         for (let i = 0; i < blockages; i++) {
             const pos = findValidPlacement({
                 maxAttempts: 20,
-                validate: (x, y) => isFloor(this.gridManager.getTile(x, y))
+                validate: (x: number, y: number): boolean => isFloor(this.gridManager.getTile(x, y))
             });
             if (pos) {
                 const { x, y } = pos;
@@ -364,10 +364,12 @@ export class FeatureGenerator {
         // Underground zones have simpler features - mostly rocks and some walls
         let featureCount = randomInt(8, 18); // Math.floor(Math.random() * 10) + 8
         let placedCount = 0;
-        const { centerX, centerY } = getGridCenter();
+        const center = getGridCenter();
+        const centerX = center.x;
+        const centerY = center.y;
         while (placedCount < featureCount) {
             const pos = findValidPlacement({
-                validate: (x, y) => {
+                validate: (x: number, y: number): boolean => {
                     if (Math.abs(x - centerX) <= 2 && Math.abs(y - centerY) <= 2) return false;
                     if (this.gridManager.getTile(x, y) !== TILE_TYPES.FLOOR) return false;
                     return true;
@@ -394,14 +396,16 @@ export class FeatureGenerator {
 
     addUndergroundChanceTile(zoneX, zoneY) {
         // Underground chance tile: mostly water/food, rare special items
-        const { centerX, centerY } = getGridCenter();
+        const center = getGridCenter();
+        const centerX = center.x;
+        const centerY = center.y;
         const pos = findValidPlacement({
             maxAttempts: 20,
             minX: 2,
             minY: 2,
             maxX: GRID_SIZE - 2,
             maxY: GRID_SIZE - 2,
-            validate: (x, y) => {
+            validate: (x: number, y: number): boolean => {
                 if (Math.abs(x - centerX) <= 2 && Math.abs(y - centerY) <= 2) return false;
                 return this.gridManager.getTile(x, y) === TILE_TYPES.FLOOR;
             }

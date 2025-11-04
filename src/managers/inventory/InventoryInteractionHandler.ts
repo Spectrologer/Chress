@@ -2,6 +2,7 @@ import { TILE_TYPES, GRID_SIZE } from '../../core/constants/index';
 import { eventBus } from '../../core/EventBus';
 import { EventTypes } from '../../core/EventTypes';
 import { isTileType } from '../../utils/TileUtils';
+import { Position } from '../../core/Position';
 import type { IGame, ICoordinates } from '../../core/GameContext';
 import type { InventoryItem } from './ItemMetadata';
 
@@ -141,7 +142,7 @@ export class InventoryInteractionHandler {
             if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
                 const tile = this.game.grid[ny][nx];
                 if (isTileType(tile, TILE_TYPES.FLOOR) || isTileType(tile, TILE_TYPES.EXIT)) {
-                    transientState.addBombPlacementPosition({ x: nx, y: ny });
+                    transientState.addBombPlacementPosition(Position.from({ x: nx, y: ny }));
                 }
             }
         }

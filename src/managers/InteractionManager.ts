@@ -46,7 +46,7 @@ export class InteractionManager {
     private inputManager: InputManager;
     private npcManager: NPCManager;
     private environmentManager: EnvironmentalInteractionManager;
-    private combatManager: CombatActionManager;
+    public combatManager: CombatActionManager;
     private bombManager: BombManager;
     private terrainManager: TerrainInteractionManager;
     private zoneManager: ZoneManager;
@@ -97,11 +97,11 @@ export class InteractionManager {
             (gridCoords, playerPos) => this.npcManager.interactWithForge(gridCoords),
             // Dynamic NPC handler for all NPCs registered in ContentRegistry (e.g., gossip NPCs)
             (gridCoords, playerPos) => this.npcManager.interactWithDynamicNPC(gridCoords),
-            (gridCoords, playerPos) => this.environmentManager.handleSignTap(gridCoords),
-            (gridCoords, playerPos) => this.environmentManager.handleStatueTap(gridCoords),
-            (gridCoords, playerPos) => this.bombManager.triggerBombExplosion(gridCoords, playerPos),
+            (gridCoords, playerPos) => this.environmentManager.handleSignTap(Position.from(gridCoords)),
+            (gridCoords, playerPos) => this.environmentManager.handleStatueTap(Position.from(gridCoords)),
+            (gridCoords, playerPos) => this.bombManager.triggerBombExplosion(Position.from(gridCoords), Position.from(playerPos)),
             (gridCoords, playerPos) => {
-                const bishopSpearCharge = this.combatManager.isValidBishopSpearCharge(gridCoords, playerPos);
+                const bishopSpearCharge = this.combatManager.isValidBishopSpearCharge(Position.from(gridCoords), Position.from(playerPos));
                 // Only auto-start a bishop charge if the item is present in the main inventory (via facade)
                 if (bishopSpearCharge && this.game.playerFacade.findInInventory((item) => item === bishopSpearCharge.item)) {
                     this.game.transientGameState.setPendingCharge(bishopSpearCharge);
@@ -119,7 +119,7 @@ export class InteractionManager {
                 return false;
             },
             (gridCoords, playerPos) => {
-                const horseIconCharge = this.combatManager.isValidHorseIconCharge(gridCoords, playerPos);
+                const horseIconCharge = this.combatManager.isValidHorseIconCharge(Position.from(gridCoords), Position.from(playerPos));
                 // Only auto-start a knight charge if the item is present in the main inventory (via facade)
                 if (horseIconCharge && this.game.playerFacade.findInInventory((item) => item === horseIconCharge.item)) {
                     this.game.transientGameState.setPendingCharge(horseIconCharge);
@@ -137,7 +137,7 @@ export class InteractionManager {
                 return false;
             },
             (gridCoords, playerPos) => {
-                const bowShot = this.combatManager.isValidBowShot(gridCoords, playerPos);
+                const bowShot = this.combatManager.isValidBowShot(Position.from(gridCoords), Position.from(playerPos));
                 // Only auto-start a bow shot if the bow is in the main inventory (via facade)
                 if (bowShot && this.game.playerFacade.findInInventory((item) => item === bowShot.item)) {
                     this.game.transientGameState.setPendingCharge(bowShot);
@@ -154,7 +154,7 @@ export class InteractionManager {
                 }
                 return false;
             },
-            (gridCoords, playerPos) => this.terrainManager.handleChoppableTile(gridCoords, playerPos),
+            (gridCoords, playerPos) => this.terrainManager.handleChoppableTile(Position.from(gridCoords), Position.from(playerPos)),
             (gridCoords, playerPos) => this.zoneManager.checkForZoneTransitionGesture(gridCoords, playerPos),
             (gridCoords, playerPos) => this.zoneManager.isTransitionEligible(gridCoords, playerPos),
         ];
@@ -177,7 +177,8 @@ export class InteractionManager {
     }
 
     useMapNote(): boolean {
-        return this.game.inventoryManager.useMapNote();
+        // Use InventoryUI instead of inventoryManager
+        return (this.game.inventoryUI as any)?.useMapNote?.() ?? false;
     }
 
     handleTap(gridCoords: ICoordinates): boolean {
@@ -197,9 +198,9 @@ export class InteractionManager {
                 const playerPos = this.game.player.getPosition();
                 // Re-run validators including radial inventory because selection
                 // originated from the radial UI and the item may live there.
-                if (pending.selectionType === 'bishop_spear') chargeDetails = this.combatManager.isValidBishopSpearCharge(gridCoords, playerPos, true);
-                else if (pending.selectionType === 'horse_icon') chargeDetails = this.combatManager.isValidHorseIconCharge(gridCoords, playerPos, true);
-                else if (pending.selectionType === 'bow') chargeDetails = this.combatManager.isValidBowShot(gridCoords, playerPos, true);
+                if (pending.selectionType === 'bishop_spear') chargeDetails = this.combatManager.isValidBishopSpearCharge(Position.from(gridCoords), Position.from(playerPos), true);
+                else if (pending.selectionType === 'horse_icon') chargeDetails = this.combatManager.isValidHorseIconCharge(Position.from(gridCoords), Position.from(playerPos), true);
+                else if (pending.selectionType === 'bow') chargeDetails = this.combatManager.isValidBowShot(Position.from(gridCoords), Position.from(playerPos), true);
             } else {
                 chargeDetails = pending;
             }
@@ -304,12 +305,12 @@ export class InteractionManager {
                     }
 
                 // Trigger enemy turns (unless we just entered a zone)
-                if (this.game.justEnteredZone) {
-                    this.game.justEnteredZone = false;
+                if ((this.game as any).justEnteredZone) {
+                    (this.game as any).justEnteredZone = false;
                 } else {
-                    try { this.game.startEnemyTurns(); } catch (e) {}
-                    if (this.game.isInPitfallZone) {
-                        this.game.pitfallTurnsSurvived++;
+                    try { this.game.startEnemyTurns?.(); } catch (e) {}
+                    if ((this.game as any).isInPitfallZone) {
+                        (this.game as any).pitfallTurnsSurvived++;
                     }
                 }
 
@@ -333,9 +334,9 @@ export class InteractionManager {
 
     triggerInteractAt(gridCoords: ICoordinates): void {
         // Check adjacency and delegate to appropriate managers
-        this.npcManager.forceInteractAt(gridCoords);
-        this.environmentManager.forceInteractAt(gridCoords);
-        this.terrainManager.forceChoppableAction(gridCoords, this.game.player.getPosition());
+        this.npcManager.forceInteractAt(Position.from(gridCoords));
+        this.environmentManager.forceInteractAt(Position.from(gridCoords));
+        this.terrainManager.forceChoppableAction(Position.from(gridCoords), Position.from(this.game.player.getPosition()));
 
         // Handle bomb force trigger
         this.bombManager.forceBombTrigger(gridCoords);

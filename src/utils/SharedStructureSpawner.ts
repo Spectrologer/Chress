@@ -1,7 +1,7 @@
 import { TILE_TYPES, GRID_SIZE } from '../core/constants/index';
 import { logger } from '../core/logger';
 import { isWithinGrid } from './GridUtils';
-import type { Position } from '../core/Position';
+import { Position } from '../core/Position';
 
 interface GridManager {
   getTile(x: number, y: number): number;
@@ -96,7 +96,7 @@ export class SharedStructureSpawner {
     for (let y = 1; y < GRID_SIZE - 4; y++) { // Leave space for shack (3) + front (1) + border
       for (let x = 1; x < GRID_SIZE - 3; x++) {
         if (this.isValidShackPosition(game, x, y)) {
-          availablePositions.push({ x, y });
+          availablePositions.push(Position.from({ x, y }));
         }
       }
     }
@@ -122,7 +122,7 @@ export class SharedStructureSpawner {
     for (let y = 1; y < GRID_SIZE - 2; y++) { // y from 1 to GRID_SIZE - 3
       for (let x = 1; x < GRID_SIZE - 1; x++) { // x from 1 to GRID_SIZE - 2
         if (this.isValidCisternPosition(game, x, y)) {
-          availablePositions.push({ x, y });
+          availablePositions.push(Position.from({ x, y }));
         }
       }
     }

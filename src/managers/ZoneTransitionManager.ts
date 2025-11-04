@@ -5,12 +5,12 @@ import audioManager from '../utils/AudioManager';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
 import { createZoneKey } from '../utils/ZoneKeyUtils';
-import type { Game } from '../core/Game';
-import type { InputManager } from '../core/InputManager';
-import type { GridManager } from '../core/GridManager';
-import type { ZoneRepository } from '../core/ZoneRepository';
+import type { Game } from '../core/game';
+import type { InputManager } from './InputManager';
+import type { GridManager } from './GridManager';
+import type { ZoneRepository } from '../repositories/ZoneRepository';
 import type { Position } from '../core/Position';
-import type { Grid } from '../core/SharedTypes';
+import type { Grid, Tile, TileObject } from '../core/SharedTypes';
 
 interface TapCoords {
     x: number;
@@ -96,7 +96,15 @@ export class ZoneTransitionManager {
 
         if (direction) {
             // Simulate the key press to trigger zone transition
-            this.inputManager.handleKeyPress({ key: direction, preventDefault: () => {} });
+            const fakeEvent = {
+                key: direction,
+                preventDefault: () => {},
+                stopPropagation: () => {},
+                bubbles: false,
+                cancelable: true,
+                composed: false
+            } as unknown as KeyboardEvent;
+            this.inputManager.handleKeyPress(fakeEvent);
         }
     }
 
@@ -128,8 +136,8 @@ export class ZoneTransitionManager {
 
         if (currentDim === DIMENSION_CONSTANTS.SURFACE) {
             // On the surface, determine where the PORT leads
-            const cisternPos = MultiTileHandler.findCisternPosition(playerPos.x, playerPos.y, this.game.gridManager);
-            const isHole = MultiTileHandler.isHole(playerPos.x, playerPos.y, this.game.gridManager);
+            const cisternPos = MultiTileHandler.findCisternPosition(playerPos.x, playerPos.y, gridManager as any);
+            const isHole = MultiTileHandler.isHole(playerPos.x, playerPos.y, gridManager as any);
 
             if (cisternPos) {
                 // Entering underground via cistern
@@ -144,7 +152,7 @@ export class ZoneTransitionManager {
                 transientState.setPortTransitionData({ from: 'hole', x: playerPos.x, y: playerPos.y });
                 // Ensure player's underground depth is initialized to 1 (first underground level)
                 playerFacade.setUndergroundDepth(DIMENSION_CONSTANTS.DEFAULT_UNDERGROUND_DEPTH);
-            } else if (gridManager.getTile(playerPos.x, playerPos.y) && (gridManager.getTile(playerPos.x, playerPos.y) as Tile).portKind === 'stairdown') {
+            } else if (gridManager.getTile(playerPos.x, playerPos.y) && (gridManager.getTile(playerPos.x, playerPos.y) as TileObject).portKind === 'stairdown') {
                 // Descend via stairdown into a deeper underground level
                 // We represent deeper underground layers by keeping dimension=2 and tracking depth via player.undergroundDepth
                 targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
@@ -155,8 +163,7 @@ export class ZoneTransitionManager {
                 const prevDepth = playerFacade.getUndergroundDepth();
                 const newDepth = prevDepth + 1;
                 playerFacade.setUndergroundDepth(newDepth);
-                try { logger && logger.debug && logger.debug(`Port transition set: stairdown at (${playerPos.x},${playerPos.y}), prevDepth=${prevDepth} -> newDepth=${newDepth}`); } catch (e) {}
-            } else if (gridManager.getTile(playerPos.x, playerPos.y) && (gridManager.getTile(playerPos.x, playerPos.y) as Tile).portKind === 'stairup') {
+            } else if (gridManager.getTile(playerPos.x, playerPos.y) && (gridManager.getTile(playerPos.x, playerPos.y) as TileObject).portKind === 'stairup') {
                 // Ascend via stairup to a shallower underground level or surface
                 const prevDepth = playerFacade.getUndergroundDepth();
                 // Decrease depth; if we were at depth 1, ascending returns to surface (depth 0)
@@ -166,7 +173,6 @@ export class ZoneTransitionManager {
                     transientState.setPortTransitionData({ from: 'stairup', x: playerPos.x, y: playerPos.y });
                     const newDepth = prevDepth - 1;
                     playerFacade.setUndergroundDepth(newDepth);
-                    try { logger && logger.debug && logger.debug(`Port transition set: stairup at (${playerPos.x},${playerPos.y}), newDepth=${newDepth}`); } catch (e) {}
                 } else {
                     // prevDepth is 0 or 1 -> return to surface
                     targetDim = DIMENSION_CONSTANTS.SURFACE;
@@ -174,7 +180,6 @@ export class ZoneTransitionManager {
                     // Mark transition so the surface emergence will get the matching stairdown
                     transientState.setPortTransitionData({ from: 'stairup', x: playerPos.x, y: playerPos.y });
                     playerFacade.setUndergroundDepth(DIMENSION_CONSTANTS.DEFAULT_SURFACE_DEPTH);
-                    try { logger && logger.debug && logger.debug(`Port transition set: stairup->surface at (${playerPos.x},${playerPos.y})`); } catch (e) {}
                 }
             } else {
                 // Entering interior via house/shack door
@@ -185,7 +190,7 @@ export class ZoneTransitionManager {
             }
         } else {
             // Exiting to surface or handling stair transitions while underground or interior
-            const tileUnderPlayer = gridManager.getTile(playerPos.x, playerPos.y) as Tile | undefined;
+            const tileUnderPlayer = gridManager.getTile(playerPos.x, playerPos.y) as TileObject | undefined;
             const portKind = tileUnderPlayer && tileUnderPlayer.portKind;
 
             // If currently in underground, check for stair portals that should change depth rather than exit to surface
@@ -314,7 +319,7 @@ export class ZoneTransitionManager {
             if (tileUnderPlayer === TILE_TYPES.EXIT) {
                 this.handleExitTap(gridCoords.x, gridCoords.y);
                 return true;
-            } else if (tileUnderPlayer === TILE_TYPES.PORT || (tileUnderPlayer && (tileUnderPlayer as Tile).type === TILE_TYPES.PORT)) {
+            } else if (tileUnderPlayer === TILE_TYPES.PORT || (tileUnderPlayer && (tileUnderPlayer as TileObject).type === TILE_TYPES.PORT)) {
                 this.handlePortTransition();
                 return true;
             }

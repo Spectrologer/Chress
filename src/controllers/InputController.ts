@@ -99,7 +99,7 @@ export class InputController {
         return this.coordinator.handleExitTap(x, y);
     }
 
-    getTileType(tile: any): string {
+    getTileType(tile: any): number | undefined {
         return this.coordinator.getTileType(tile);
     }
 

@@ -7,18 +7,17 @@
 
 import { GridIterator } from '../../utils/GridIterator';
 import { isTileType } from '../../utils/TileUtils';
+import type { Tile, Grid } from '../../core/SharedTypes';
 
-type Tile = number | Record<string, any>;
-type Grid = Array<Array<Tile>>;
 type TilePredicate = (tile: Tile, x: number, y: number) => boolean;
 
-interface TileWithPosition {
+export interface TileWithPosition {
     tile: Tile;
     x: number;
     y: number;
 }
 
-interface NeighborTile {
+export interface NeighborTile {
     tile: Tile;
     x: number;
     y: number;
@@ -124,5 +123,12 @@ export class GridQueryOperations {
         }
 
         return neighbors;
+    }
+
+    /**
+     * Update the grid reference (for zone transitions)
+     */
+    setGrid(newGrid: Grid): void {
+        this.grid = newGrid;
     }
 }

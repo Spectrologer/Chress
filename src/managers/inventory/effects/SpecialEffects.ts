@@ -59,7 +59,8 @@ export class ShovelEffect extends BaseItemEffect {
 export class NoteEffect extends BaseItemEffect {
     apply(game: Game, item: InventoryItem, context: ItemEffectContext = {}): ItemEffectResult {
         // Use map note to reveal distant location
-        this._useMapNote(game);
+        const currentZone = game.player.getCurrentZone();
+        this._useMapNote(game, currentZone.x, currentZone.y);
 
         // Hide overlay and show note message
         if (typeof game.hideOverlayMessage === 'function') {
@@ -72,12 +73,12 @@ export class NoteEffect extends BaseItemEffect {
             typeof game.uiManager.messageManager.addNoteToStack === 'function') {
             game.uiManager.messageManager.addNoteToStack(noteMessageText, 'assets/items/misc/note.png', 2000);
         } else {
-            game.displayingMessageForSign = { message: noteMessageText };
-            game.showSignMessage(noteMessageText, 'assets/items/misc/note.png');
+            (game as any).displayingMessageForSign = { message: noteMessageText };
+            (game as any).showSignMessage(noteMessageText, 'assets/items/misc/note.png');
             game.animationScheduler.createSequence()
                 .wait(2000)
                 .then(() => {
-                    if (game.displayingMessageForSign && game.displayingMessageForSign.message === noteMessageText) {
+                    if ((game as any).displayingMessageForSign && (game as any).displayingMessageForSign.message === noteMessageText) {
                         Sign.hideMessageForSign(game as any);
                     }
                 })
@@ -87,18 +88,18 @@ export class NoteEffect extends BaseItemEffect {
         return { consumed: true, quantity: 1, success: true };
     }
 
-    private _useMapNote(game: Game): void {
+    private _useMapNote(game: Game, zoneX: number, zoneY: number): void {
         const currentZone = game.player.getCurrentZone();
         const visited = game.player.getVisitedZones();
 
         const candidates: Array<{ x: number; y: number; distance: number }> = [];
-        for (let zoneX = currentZone.x - 50; zoneX <= currentZone.x + 50; zoneX++) {
-            for (let zoneY = currentZone.y - 50; zoneY <= currentZone.y + 50; zoneY++) {
-                const zoneKey = `${zoneX},${zoneY}`;
-                if (!visited.has(zoneKey) && !game.specialZones.has(zoneKey)) {
-                    const distance = Math.max(Math.abs(zoneX - currentZone.x), Math.abs(zoneY - currentZone.y));
+        for (let cZoneX = currentZone.x - 50; cZoneX <= currentZone.x + 50; cZoneX++) {
+            for (let cZoneY = currentZone.y - 50; cZoneY <= currentZone.y + 50; cZoneY++) {
+                const zoneKey = `${cZoneX},${cZoneY}`;
+                if (!visited.has(zoneKey) && !(game as any).specialZones?.has(zoneKey)) {
+                    const distance = Math.max(Math.abs(cZoneX - currentZone.x), Math.abs(cZoneY - currentZone.y));
                     if (distance >= 5 && distance <= 15) {
-                        candidates.push({ x: zoneX, y: zoneY, distance });
+                        candidates.push({ x: cZoneX, y: cZoneY, distance });
                     }
                 }
             }
@@ -109,8 +110,9 @@ export class NoteEffect extends BaseItemEffect {
         const selected = candidates[Math.floor(Math.random() * candidates.length)];
         const zoneKey = `${selected.x},${selected.y}`;
 
+        const availableFoodAssets = (game as any).availableFoodAssets || [];
         const treasurePool = [
-            () => ({ type: TILE_TYPES.FOOD, foodType: game.availableFoodAssets[Math.floor(Math.random() * game.availableFoodAssets.length)] }),
+            () => ({ type: TILE_TYPES.FOOD, foodType: availableFoodAssets[Math.floor(Math.random() * availableFoodAssets.length)] }),
             () => TILE_TYPES.WATER,
             () => TILE_TYPES.BOMB,
             () => ({ type: TILE_TYPES.BOW, uses: 3 }),
@@ -125,8 +127,8 @@ export class NoteEffect extends BaseItemEffect {
             treasures.push(getRandomTreasure());
         }
 
-        game.specialZones.set(zoneKey, treasures);
-        game.player.markZoneVisited(selected.x, selected.y);
+        (game as any).specialZones?.set(zoneKey, treasures);
+        game.player.markZoneVisited(selected.x, selected.y, currentZone.dimension);
 
         if (game.uiManager && typeof game.uiManager.addMessageToLog === 'function') {
             game.uiManager.addMessageToLog(`A distant location has been revealed on your map: (${selected.x}, ${selected.y})`);

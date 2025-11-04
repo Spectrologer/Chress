@@ -100,7 +100,9 @@ export class TurnManager {
             // After all enemy moves, run collision and pickup checks
             let playerWasAttacked = false;
             if (this.game.combatManager && typeof this.game.combatManager.checkCollisions === 'function') {
-                playerWasAttacked = this.game.combatManager.checkCollisions();
+                const collisionResult = this.game.combatManager.checkCollisions();
+                // checkCollisions may return boolean or void depending on implementation
+                playerWasAttacked = collisionResult === true;
             }
             if (this.game.interactionManager && typeof this.game.interactionManager.checkItemPickup === 'function') {
                 this.game.interactionManager.checkItemPickup();

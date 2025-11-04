@@ -18,6 +18,16 @@ interface NPCData {
         portrait: string;
         sprite: string;
     };
+    interaction?: {
+        type?: string;
+        greeting?: string;
+        trades?: any[];
+        cycleMode?: string;
+        dialogueTree?: any[];
+    };
+    audio?: {
+        voicePitch?: number;
+    };
     placement?: {
         zone?: string;
         x?: number;

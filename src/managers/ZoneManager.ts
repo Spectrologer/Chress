@@ -83,11 +83,11 @@ export class ZoneManager {
      */
     constructor(game: IGame) {
         this.game = game;
-        this.transitionCoordinator = new ZoneTransitionCoordinator(game);
-        this.treasureManager = new ZoneTreasureManager(game);
-        this.eventEmitter = new ZoneEventEmitter(game);
-        this.generationOrchestrator = new ZoneGenerationOrchestrator(game, this.transitionCoordinator);
-        this.persistenceManager = new ZonePersistenceManager(game);
+        this.transitionCoordinator = new ZoneTransitionCoordinator(game as any);
+        this.treasureManager = new ZoneTreasureManager(game as any);
+        this.eventEmitter = new ZoneEventEmitter(game as any);
+        this.generationOrchestrator = new ZoneGenerationOrchestrator(game as any, this.transitionCoordinator);
+        this.persistenceManager = new ZonePersistenceManager(game as any);
     }
 
     /**
@@ -165,5 +165,64 @@ export class ZoneManager {
      */
     saveCurrentZoneState(): void {
         this.persistenceManager.saveCurrentZoneState();
+    }
+
+    /**
+     * Checks if a tap gesture should trigger a zone transition.
+     * Delegates to ZoneTransitionManager if available.
+     *
+     * @param tapCoords - Coordinates of the tap
+     * @param playerPos - Current player position
+     * @returns True if transition was triggered
+     */
+    checkForZoneTransitionGesture(tapCoords: { x: number; y: number }, playerPos: { x: number; y: number }): boolean {
+        // This is typically handled by ZoneTransitionManager, but for compatibility
+        // we check if the game has a zoneTransitionManager
+        const zoneTransitionManager = (this.game as any).zoneTransitionManager;
+        if (zoneTransitionManager && typeof zoneTransitionManager.checkForZoneTransitionGesture === 'function') {
+            return zoneTransitionManager.checkForZoneTransitionGesture(tapCoords, playerPos);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a tile position is eligible for zone transition.
+     * Delegates to ZoneTransitionManager if available.
+     *
+     * @param gridCoords - Coordinates to check
+     * @param playerPos - Current player position
+     * @returns True if transition is eligible
+     */
+    isTransitionEligible(gridCoords: { x: number; y: number }, playerPos: { x: number; y: number }): boolean {
+        const zoneTransitionManager = (this.game as any).zoneTransitionManager;
+        if (zoneTransitionManager && typeof zoneTransitionManager.isTransitionEligible === 'function') {
+            return zoneTransitionManager.isTransitionEligible(gridCoords, playerPos);
+        }
+        return false;
+    }
+
+    /**
+     * Handles port (portal) transitions between dimensions.
+     * Delegates to ZoneTransitionManager if available.
+     */
+    handlePortTransition(): void {
+        const zoneTransitionManager = (this.game as any).zoneTransitionManager;
+        if (zoneTransitionManager && typeof zoneTransitionManager.handlePortTransition === 'function') {
+            zoneTransitionManager.handlePortTransition();
+        }
+    }
+
+    /**
+     * Handles tapping on an exit tile to trigger zone transition.
+     * Delegates to ZoneTransitionManager if available.
+     *
+     * @param exitX - X coordinate of exit
+     * @param exitY - Y coordinate of exit
+     */
+    handleExitTap(exitX: number, exitY: number): void {
+        const zoneTransitionManager = (this.game as any).zoneTransitionManager;
+        if (zoneTransitionManager && typeof zoneTransitionManager.handleExitTap === 'function') {
+            zoneTransitionManager.handleExitTap(exitX, exitY);
+        }
     }
 }

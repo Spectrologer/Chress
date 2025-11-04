@@ -13,6 +13,7 @@ import { TileRegistry } from '../core/TileRegistry';
 import { isBomb, isTileType } from '../utils/TileUtils';
 import GridIterator from '../utils/GridIterator';
 import { Position } from '../core/Position';
+import type { InventoryItem } from '../managers/inventory/ItemMetadata';
 
 export interface ZoneCoords {
     x: number;
@@ -38,8 +39,8 @@ export class Player {
 
     public currentZone: ZoneCoords;
     public visitedZones: Set<string>;
-    public inventory: string[];
-    public radialInventory: string[];
+    public inventory: InventoryItem[];
+    public radialInventory: InventoryItem[];
     public abilities: Set<string>;
     public sprite: string;
 

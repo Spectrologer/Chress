@@ -27,18 +27,8 @@ import type { GridManager } from './GridManager';
 import type { EnemyCollection } from '../facades/EnemyCollection';
 import type { AnimationScheduler } from '../core/AnimationScheduler';
 import type { TransientGameState } from '../state/TransientGameState';
-
-interface Item {
-    type: string;
-    uses?: number;
-    [key: string]: unknown;
-}
-
-interface Enemy {
-    x: number;
-    y: number;
-    [key: string]: unknown;
-}
+import type { InventoryItem } from './inventory/ItemMetadata';
+import type { Enemy } from '../entities/Enemy';
 
 interface BombTile {
     type: number;
@@ -137,15 +127,17 @@ export class ActionManager {
      * @param dx - Delta X (direction)
      * @param dy - Delta Y (direction)
      */
-    performBishopSpearCharge(item: Item, targetX: number, targetY: number, enemy: Enemy | null, dx: number, dy: number): void {
+    performBishopSpearCharge(item: InventoryItem, targetX: number, targetY: number, enemy: Enemy | null, dx: number, dy: number): void {
         const playerPos = this.game.playerFacade.getPosition();
         const startX = playerPos.x;
         const startY = playerPos.y;
 
         // Consume one use of the item
-        item.uses!--;
-        if (item.uses! <= 0) {
-            this.itemRepository.removeItem(this.game.player, item);
+        if (typeof item.uses === 'number') {
+            item.uses--;
+            if (item.uses <= 0) {
+                this.itemRepository.removeItem(this.game.player, item);
+            }
         }
 
         // Add smoke trail along the charge path
@@ -168,7 +160,7 @@ export class ActionManager {
 
             if (res && res.defeated) {
                 // Backflip for combo kills, bump for single kills
-                if (res.consecutiveKills >= 2) {
+                if (res.consecutiveKills && res.consecutiveKills >= 2) {
                     this.game.playerFacade.startBackflip();
                 } else {
                     this.game.playerFacade.startBump(enemy.x - startX, enemy.y - startY);
@@ -178,7 +170,7 @@ export class ActionManager {
 
         // Move player to target position
         this.game.playerFacade.setPosition(targetX, targetY);
-        this.game.playerFacade.startSmokeAnimation();
+        this.game.playerFacade.startSmokeAnimation(targetX, targetY);
         audioManager.playSound('whoosh', { game: this.game });
         this.game.startEnemyTurns?.();
 
@@ -194,10 +186,12 @@ export class ActionManager {
      * @param dx - Delta X
      * @param dy - Delta Y
      */
-    performHorseIconCharge(item: Item, targetX: number, targetY: number, enemy: Enemy | null, dx: number, dy: number): void {
-        item.uses!--;
-        if (item.uses! <= 0) {
-            this.itemRepository.removeItem(this.game.player, item);
+    performHorseIconCharge(item: InventoryItem, targetX: number, targetY: number, enemy: Enemy | null, dx: number, dy: number): void {
+        if (typeof item.uses === 'number') {
+            item.uses--;
+            if (item.uses <= 0) {
+                this.itemRepository.removeItem(this.game.player, item);
+            }
         }
 
         // Get current player position (via facade)
@@ -269,12 +263,12 @@ export class ActionManager {
             this.game.playerFacade.setAction('attack');
             const res = this.game.combatManager.defeatEnemy(enemy, 'player');
             if (res && res.defeated) {
-                if (res.consecutiveKills >= 2) this.game.playerFacade.startBackflip(); else this.game.playerFacade.startBump(enemy.x - startX, enemy.y - startY);
+                if (res.consecutiveKills && res.consecutiveKills >= 2) this.game.playerFacade.startBackflip(); else this.game.playerFacade.startBump(enemy.x - startX, enemy.y - startY);
             }
         }
 
         this.game.playerFacade.setPosition(targetX, targetY);
-        this.game.playerFacade.startSmokeAnimation();
+        this.game.playerFacade.startSmokeAnimation(targetX, targetY);
         audioManager.playSound('whoosh', { game: this.game });
         this.game.startEnemyTurns?.();
         eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
@@ -287,10 +281,12 @@ export class ActionManager {
      * @param targetY - Target Y coordinate
      * @param enemy - Enemy at target (if any)
      */
-    performBowShot(item: Item, targetX: number, targetY: number, enemy: Enemy | null = null): void {
-        item.uses!--;
-        if (item.uses! <= 0) {
-            this.itemRepository.removeItem(this.game.player, item);
+    performBowShot(item: InventoryItem, targetX: number, targetY: number, enemy: Enemy | null = null): void {
+        if (typeof item.uses === 'number') {
+            item.uses--;
+            if (item.uses <= 0) {
+                this.itemRepository.removeItem(this.game.player, item);
+            }
         }
 
         const playerPos = this.game.playerFacade.getPosition();
@@ -327,7 +323,7 @@ export class ActionManager {
                     this.game.playerFacade.setAction('attack');
                     const res = this.game.combatManager.defeatEnemy(targetEnemy, 'player');
                     if (res && res.defeated) {
-                        if (res.consecutiveKills >= 2) this.game.playerFacade.startBackflip(); else this.game.playerFacade.startBump(targetEnemy.x - playerPos.x, targetEnemy.y - playerPos.y);
+                        if (res.consecutiveKills && res.consecutiveKills >= 2) this.game.playerFacade.startBackflip(); else this.game.playerFacade.startBump(targetEnemy.x - playerPos.x, targetEnemy.y - playerPos.y);
                     }
                 }
                 // Now that the arrow has hit, enemies can take their turn.

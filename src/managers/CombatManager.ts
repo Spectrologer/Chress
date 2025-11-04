@@ -9,9 +9,10 @@
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
 import { safeCall, safeGet } from '../utils/SafeServiceCall';
 import { EnemyMovementHandler } from './combat/EnemyMovementHandler';
-import { PlayerCombatHandler } from './combat/PlayerCombatHandler';
+import { PlayerCombatHandler, type AttackResult } from './combat/PlayerCombatHandler';
 import { CollisionDetectionSystem } from './combat/CollisionDetectionSystem';
 import type { IGame, ICoordinates } from '../core/GameContext';
+import { Position } from '../core/Position';
 import type { Player } from '../entities/Player';
 import type { PlayerFacade } from '../facades/PlayerFacade';
 import type { EnemyCollection } from '../facades/EnemyCollection';
@@ -20,6 +21,7 @@ import type { ZoneRepository } from '../repositories/ZoneRepository';
 import type { BombManager } from './BombManager';
 import type { EnemyDefeatFlow } from './EnemyDefeatFlow';
 import type { TurnManager } from '../core/TurnManager';
+import type { Enemy } from '../entities/Enemy';
 
 interface ZoneInfo {
     x: number;
@@ -31,26 +33,6 @@ interface ZoneInfo {
 export interface DefeatResult {
     defeated: boolean;
     consecutiveKills: number;
-}
-
-interface Enemy {
-    id: string;
-    x: number;
-    y: number;
-    lastX?: number;
-    lastY?: number;
-    health: number;
-    attack: number;
-    enemyType: string;
-    justAttacked?: boolean;
-    attackAnimation?: number;
-    liftFrames?: number;
-    _suppressAttackSound?: boolean;
-    startBump: (dx: number, dy: number) => void;
-    takeDamage: (amount: number) => void;
-    isDead?: () => boolean;
-    planMoveTowards: (targetX: number, targetY: number, grid: Array<Array<number | object>>) => void;
-    serialize: () => object;
 }
 
 export class CombatManager {
@@ -75,9 +57,9 @@ export class CombatManager {
         this.defeatFlow = defeatFlow;
 
         // Initialize sub-handlers
-        this.movementHandler = new EnemyMovementHandler(game, occupiedTiles);
-        this.playerCombatHandler = new PlayerCombatHandler(game, (enemy, initiator) => this.defeatEnemy(enemy, initiator));
-        this.collisionSystem = new CollisionDetectionSystem(game, bombManager, (enemy, initiator) => this.defeatEnemy(enemy, initiator));
+        this.movementHandler = new EnemyMovementHandler(game as any, occupiedTiles);
+        this.playerCombatHandler = new PlayerCombatHandler(game as any, (enemy, initiator) => this.defeatEnemy(enemy, initiator || null));
+        this.collisionSystem = new CollisionDetectionSystem(game as any, bombManager, (enemy, initiator) => this.defeatEnemy(enemy, initiator || null));
     }
 
     /**
@@ -127,8 +109,8 @@ export class CombatManager {
         return this.defeatFlow.executeDefeat(enemy, currentZone, initiator);
     }
 
-    handlePlayerAttack(enemy: Enemy, playerPos: ICoordinates): void {
-        return this.playerCombatHandler.handlePlayerAttack(enemy, playerPos);
+    handlePlayerAttack(enemy: Enemy, playerPos: ICoordinates): AttackResult {
+        return this.playerCombatHandler.handlePlayerAttack(enemy, Position.from(playerPos));
     }
 
     handleSingleEnemyMovement(enemy: Enemy): void {
@@ -143,7 +125,7 @@ export class CombatManager {
          // This is a placeholder for now as the main enemy movement logic might be in game.js
     }
 
-    checkCollisions(): void {
+    checkCollisions(): boolean {
         return this.collisionSystem.checkCollisions();
     }
 }

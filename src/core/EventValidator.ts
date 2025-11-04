@@ -4,7 +4,7 @@ interface FieldValidator {
     required?: boolean;
     type?: string;
     values?: any[];
-    validator?: (value: any) => boolean;
+    validator?: (value: any, data?: any) => boolean | string;
 }
 
 interface Schema {
@@ -18,7 +18,7 @@ interface Schema {
 export class EventValidator {
     private schemas: Map<string, Schema>;
     private enabled: boolean;
-    private strictMode: boolean;
+    public strictMode: boolean;
 
     constructor() {
         this.schemas = new Map();

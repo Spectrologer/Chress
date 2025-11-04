@@ -31,7 +31,7 @@ export class StructureTileRenderer {
         grid: GridManager | any[][],
         zoneLevel: number,
         baseRenderer: BaseRenderer,
-        tileType: string
+        tileType: number
     ): void {
         // First draw the base tile - statues need special handling for zones
         if (zoneLevel === 5 && RendererUtils.isImageLoaded(baseRenderer.images, 'housetile')) {

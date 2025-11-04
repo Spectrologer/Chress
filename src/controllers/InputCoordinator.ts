@@ -256,15 +256,15 @@ export class InputCoordinator {
 
     private _playTapSound(enemyAtTile: object | null, isDoubleTap: boolean): void {
         if (enemyAtTile) {
-            audioManager.playSound('tap_enemy', { game: this.game });
+            audioManager.playSound('tap_enemy', { game: this.game as any });
         } else if (isDoubleTap) {
-            audioManager.playSound('double_tap', { game: this.game });
+            audioManager.playSound('double_tap', { game: this.game as any });
         } else {
-            audioManager.playSound('bloop', { game: this.game });
+            audioManager.playSound('bloop', { game: this.game as any });
         }
     }
 
-    private _handleGameplayTap(gridCoords: GridCoords, clickedTileType: string, isDoubleTap: boolean): void {
+    private _handleGameplayTap(gridCoords: GridCoords, clickedTileType: number | undefined, isDoubleTap: boolean): void {
         const playerPos = this.game.player.getPositionObject();
         const clickedPos = Position.from(gridCoords);
 
@@ -291,7 +291,7 @@ export class InputCoordinator {
                 this.performExitTap(gridCoords.x, gridCoords.y);
                 return;
             } else if (currentTileType === TILE_TYPES.PORT) {
-                this.game.interactionManager.zoneManager.handlePortTransition();
+                (this.game.interactionManager as any).zoneManager.handlePortTransition();
                 return;
             }
 
@@ -334,7 +334,7 @@ export class InputCoordinator {
         return false;
     }
 
-    private _handleDoubleTap(gridCoords: GridCoords, clickedTileType: string): void {
+    private _handleDoubleTap(gridCoords: GridCoords, clickedTileType: number | undefined): void {
         const playerPos = this.game.player.getPositionObject();
         const clickedPos = Position.from(gridCoords);
 
@@ -344,7 +344,7 @@ export class InputCoordinator {
                 if (clickedTileType === TILE_TYPES.EXIT) {
                     this.performExitTap(gridCoords.x, gridCoords.y);
                 } else {
-                    this.game.interactionManager.zoneManager.handlePortTransition();
+                    (this.game.interactionManager as any).zoneManager.handlePortTransition();
                 }
             } else {
                 // Path to exit/port
@@ -382,7 +382,7 @@ export class InputCoordinator {
 
     handleKeyPress(event: KeyboardEvent): void {
         // Block user input during entrance animation, but allow synthetic key presses from pathfinding
-        if (this.stateManager.isEntranceAnimationActive() && !event._synthetic) {
+        if (this.stateManager.isEntranceAnimationActive() && !(event as any)._synthetic) {
             return;
         }
 
@@ -409,7 +409,7 @@ export class InputCoordinator {
                 this.game.combatManager?.handlePlayerAttack(enemyAtTarget, currentPos);
             } else {
                 this.game.incrementBombActions();
-                this.game.player.move(newX!, newY!, this.game.gridManager, (zoneX: number, zoneY: number, exitSide: string) => {
+                this.game.player.move(newX!, newY!, this.game.gridManager as any, (zoneX: number, zoneY: number, exitSide: string) => {
                     this.game.transitionToZone(zoneX, zoneY, exitSide, currentPos.x, currentPos.y);
                 });
             }
@@ -483,8 +483,8 @@ export class InputCoordinator {
     // HELPER METHODS
     // ========================================
 
-    getTileType(tile: number | object): string {
-        return getTileType(tile);
+    getTileType(tile: number | object): number | undefined {
+        return getTileType(tile as any);
     }
 
     convertScreenToGrid(screenX: number, screenY: number): GridCoords {
@@ -497,14 +497,14 @@ export class InputCoordinator {
         if (!tile) return false;
 
         const tileType = this.getTileType(tile);
-        return TileRegistry.isInteractive(tileType);
+        return TileRegistry.isInteractive(tileType as number);
     }
 
     performExitTap(exitX: number, exitY: number): void {
         const direction = getExitDirection(exitX, exitY);
         if (direction) {
-            const ev = { key: direction, preventDefault: () => {}, _synthetic: true };
-            this.handleKeyPress(ev);
+            const ev = { key: direction, preventDefault: () => {}, _synthetic: true } as any;
+            this.handleKeyPress(ev as KeyboardEvent);
         }
     }
 

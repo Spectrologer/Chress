@@ -89,18 +89,18 @@ export class InputManager {
     }
 
     get currentPathSequence(): AnimationSequence | null {
-        return this.controller.pathfindingController.currentPathSequence;
+        return this.controller.pathfindingController.getCurrentPathSequence() as unknown as AnimationSequence | null;
     }
 
     set currentPathSequence(v: AnimationSequence | null) {
-        this.controller.pathfindingController.currentPathSequence = v;
+        this.controller.pathfindingController.setCurrentPathSequence(v as any);
     }
 
     get currentPathSequenceFallback(): NodeJS.Timeout | null {
-        return this.controller.pathfindingController.currentPathSequenceFallback;
+        return this.controller.pathfindingController.getCurrentPathSequenceFallback();
     }
 
     set currentPathSequenceFallback(v: NodeJS.Timeout | null) {
-        this.controller.pathfindingController.currentPathSequenceFallback = v;
+        this.controller.pathfindingController.setCurrentPathSequenceFallback(v);
     }
 }

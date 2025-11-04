@@ -7,14 +7,7 @@ import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
 import { safeCall } from '../utils/SafeServiceCall';
 import { EventListenerManager } from '../utils/EventListenerManager';
-
-interface InventoryItem {
-    type: string;
-    foodType?: string;
-    quantity?: number;
-    uses?: number;
-    disabled?: boolean;
-}
+import type { InventoryItem } from '../managers/inventory/ItemMetadata';
 
 interface Player {
     inventory: InventoryItem[];
@@ -318,7 +311,7 @@ export class BarterWindow {
             return discoveries >= requiredAmount;
         } else {
             const requiredItems = player.inventory.filter(item => item.type === 'food' && item.foodType?.startsWith(tradeData.requiredItem));
-            const totalCount = requiredItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            const totalCount = requiredItems.reduce((sum, item) => sum + (typeof item.quantity === 'number' ? item.quantity : 1), 0);
             return totalCount >= requiredAmount;
         }
     }
@@ -368,14 +361,14 @@ export class BarterWindow {
                 TILE_TYPES.BISHOP_SPEAR
             ];
             const selectedItemType = items[Math.floor(Math.random() * items.length)];
-            let inventoryItem: InventoryItem | undefined;
-            if (selectedItemType === TILE_TYPES.BOMB) inventoryItem = { type: 'bomb' };
-            else if (selectedItemType === TILE_TYPES.BOW) inventoryItem = { type: 'bow', uses: 3 };
-            else if (selectedItemType === TILE_TYPES.BISHOP_SPEAR) inventoryItem = { type: 'bishop_spear', uses: 3 };
+            let inventoryItem: Partial<InventoryItem> | undefined;
+            if (selectedItemType === TILE_TYPES.BOMB) inventoryItem = { type: 'bomb' as const };
+            else if (selectedItemType === TILE_TYPES.BOW) inventoryItem = { type: 'bow' as const, uses: 3 };
+            else if (selectedItemType === TILE_TYPES.BISHOP_SPEAR) inventoryItem = { type: 'bishop_spear' as const, uses: 3 };
 
             let awardedImg = tradeData.receivedItemImg;
             if (inventoryItem) {
-                this.game.itemManager.addItemToInventory(this.game.player, inventoryItem);
+                this.game.itemManager.addItemToInventory(this.game.player, inventoryItem as InventoryItem);
                 // Map awarded type to appropriate asset for the overlay
                 if (inventoryItem.type === 'bomb') awardedImg = 'assets/items/misc/bomb.png';
                 else if (inventoryItem.type === 'bow') awardedImg = 'assets/items/equipment/bow.png';
@@ -386,15 +379,15 @@ export class BarterWindow {
             this.game.playerFacade.addPoints(-tradeData.requiredAmount);
             // Normalize to the canonical radial book type so ItemManager stacks it correctly
             const rand = Math.random();
-            let randomItem: InventoryItem;
+            let randomItem: Partial<InventoryItem>;
             if (rand < 0.33) {
-                randomItem = { type: 'book_of_time_travel', uses: 3 };
+                randomItem = { type: 'book_of_time_travel' as const, uses: 3 };
             } else if (rand < 0.66) {
-                randomItem = { type: 'horse_icon', uses: 3 };
+                randomItem = { type: 'horse_icon' as const, uses: 3 };
             } else {
-                randomItem = { type: 'shovel', uses: 3 };
+                randomItem = { type: 'shovel' as const, uses: 3 };
             }
-            this.game.itemManager.addItemToInventory(this.game.player, randomItem);
+            this.game.itemManager.addItemToInventory(this.game.player, randomItem as InventoryItem);
             // Choose overlay image based on awarded item
             let awardedImg2: string;
             if (randomItem.type === 'book_of_time_travel') {
@@ -460,8 +453,9 @@ export class BarterWindow {
                      return;
                 }
 
-                requiredItem.quantity = (requiredItem.quantity || 1) - 1;
-                if (requiredItem.quantity <= 0) {
+                const currentQty = typeof requiredItem.quantity === 'number' ? requiredItem.quantity : 1;
+                requiredItem.quantity = currentQty - 1;
+                if (typeof requiredItem.quantity === 'number' && requiredItem.quantity <= 0) {
                     const index = this.game.player.inventory.indexOf(requiredItem);
                     this.game.player.inventory.splice(index, 1);
                 }

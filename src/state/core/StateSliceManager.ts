@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * StateSliceManager - Handles state get/set operations
  *
@@ -8,17 +7,17 @@
 
 /**
  * Deep clone utility for state immutability
- * @param {any} obj - The object to clone
- * @returns {any} The cloned object
+ * @param obj - The object to clone
+ * @returns The cloned object
  */
-export function deepClone(obj) {
+export function deepClone(obj: any): any {
   if (obj === null || typeof obj !== 'object') return obj;
   if (obj instanceof Set) return new Set(Array.from(obj));
   if (obj instanceof Map) return new Map(Array.from(obj));
   if (obj instanceof Date) return new Date(obj);
-  if (Array.isArray(obj)) return obj.map(item => deepClone(item));
+  if (Array.isArray(obj)) return obj.map((item: any) => deepClone(item));
 
-  const cloned = {};
+  const cloned: any = {};
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       cloned[key] = deepClone(obj[key]);
@@ -28,19 +27,21 @@ export function deepClone(obj) {
 }
 
 export class StateSliceManager {
+  private state: any;
+
   /**
-   * @param {any} state - Reference to the state object
+   * @param state - Reference to the state object
    */
-  constructor(state) {
+  constructor(state: any) {
     this.state = state;
   }
 
   /**
    * Get state from a specific slice or path
-   * @param {string} path - Dot notation path (e.g., 'persistent.player.position')
-   * @returns {*} The state value at that path
+   * @param path - Dot notation path (e.g., 'persistent.player.position')
+   * @returns The state value at that path
    */
-  get(path) {
+  get(path: string): any {
     if (!path) return this.state;
 
     const parts = path.split('.');
@@ -56,11 +57,11 @@ export class StateSliceManager {
 
   /**
    * Set state at a specific path (returns new state object for immutability)
-   * @param {string} path - Dot notation path
-   * @param {*} value - New value
-   * @returns {{newState: any, topLevelSlice: string}} New state and affected slice
+   * @param path - Dot notation path
+   * @param value - New value
+   * @returns New state and affected slice
    */
-  set(path, value) {
+  set(path: string, value: any): { newState: any; topLevelSlice: string } {
     const parts = path.split('.');
     const topLevelSlice = parts[0];
 
@@ -79,12 +80,12 @@ export class StateSliceManager {
 
   /**
    * Update multiple paths atomically
-   * @param {Object} updates - Object with path -> value mappings
-   * @returns {{newState: any, affectedSlices: Set<string>}} New state and affected slices
+   * @param updates - Object with path -> value mappings
+   * @returns New state and affected slices
    */
-  batchSet(updates) {
+  batchSet(updates: Record<string, any>): { newState: any; affectedSlices: Set<string> } {
     const newState = deepClone(this.state);
-    const affectedSlices = new Set();
+    const affectedSlices = new Set<string>();
 
     for (const [path, value] of Object.entries(updates)) {
       const parts = path.split('.');
@@ -103,9 +104,9 @@ export class StateSliceManager {
 
   /**
    * Get a snapshot of the current state
-   * @returns {{state: any, timestamp: number}}
+   * @returns Snapshot with state and timestamp
    */
-  getSnapshot() {
+  getSnapshot(): { state: any; timestamp: number } {
     return {
       state: deepClone(this.state),
       timestamp: Date.now()
@@ -114,9 +115,9 @@ export class StateSliceManager {
 
   /**
    * Update internal state reference
-   * @param {any} newState - The new state object
+   * @param newState - The new state object
    */
-  updateStateReference(newState) {
+  updateStateReference(newState: any): void {
     this.state = newState;
   }
 }

@@ -1,7 +1,7 @@
 import { TILE_TYPES } from '../core/constants/index';
 import { safeCall } from '../utils/SafeServiceCall';
 import { checkOrthogonalLineOfSight } from '../utils/LineOfSightUtils';
-import type { Game } from '../core/Game';
+import type { Game } from '../core/game';
 import type { Position } from '../core/Position';
 import type { InventoryItem } from '../managers/inventory/ItemMetadata';
 import type { Enemy } from '../entities/Enemy';
@@ -30,7 +30,7 @@ export class CombatActionManager {
         const inventoryItems = this.game.playerFacade.getInventory() as InventoryItem[];
         const radialItems = includeRadial ? (this.game.playerFacade.getRadialInventory() as InventoryItem[]) : [];
         const allItems = inventoryItems.concat(radialItems);
-        return allItems.find(item => item.type === itemType && item.uses > 0 && !item.disabled) || null;
+        return allItems.find(item => item.type === itemType && ('uses' in item) && typeof item.uses === 'number' && item.uses > 0 && !item.disabled) || null;
     }
 
     public isValidBishopSpearCharge(gridCoords: Position, playerPos: Position, includeRadial: boolean = false): ChargeDetails | null {

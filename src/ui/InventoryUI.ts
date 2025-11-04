@@ -1,21 +1,17 @@
 import type { IGame } from '../core/GameContext';
 import { TILE_TYPES, INVENTORY_CONSTANTS, TIMING_CONSTANTS, UI_CONSTANTS, GRID_SIZE } from '../core/constants/index';
 import { logger } from '../core/logger';
-import { ItemMetadata } from '../managers/inventory/ItemMetadata';
+import { ItemMetadata, type InventoryItem } from '../managers/inventory/ItemMetadata';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
 import { EventListenerManager } from '../utils/EventListenerManager';
 
-interface InventoryItem {
-    type: string;
-    foodType?: string;
-    quantity?: number;
-    uses?: number;
-    disabled?: boolean;
+// UI-specific extension of InventoryItem with additional transient properties
+type UIInventoryItem = InventoryItem & {
     image?: string;
     _suppressContextMenuUntil?: number;
     _pendingToggle?: boolean;
-}
+};
 
 interface Player {
     inventory: InventoryItem[];
@@ -36,7 +32,7 @@ export class InventoryUI {
     private game: IGame;
     private inventoryService: InventoryService;
     // WeakMap to track last-used timestamps per item object (survives DOM re-renders)
-    private _itemLastUsed: WeakMap<InventoryItem, number>;
+    private _itemLastUsed: WeakMap<UIInventoryItem, number>;
     // Track active pointer interactions to prevent newly created slots from interfering
     private _activePointerIds: Set<number>;
     // Track when slots were created to ignore pointer events from previous interactions
@@ -59,7 +55,7 @@ export class InventoryUI {
             // Record the time when new slots are being created
             this._slotCreationTime = Date.now();
             this.game.player.inventory.forEach((item, idx) => {
-                const slot = this.createInventorySlot(item, idx);
+                const slot = this.createInventorySlot(item as UIInventoryItem, idx);
                 inventoryGrid.appendChild(slot);
             });
             for (let i = this.game.player.inventory.length; i < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE; i++) {
@@ -70,7 +66,7 @@ export class InventoryUI {
         }
     }
 
-    private createInventorySlot(item: InventoryItem, idx: number): HTMLDivElement {
+    private createInventorySlot(item: UIInventoryItem, idx: number): HTMLDivElement {
         const slot = document.createElement('div');
         slot.className = 'inventory-slot';
         slot.style.cursor = this.game.player.isDead() ? 'not-allowed' : 'pointer';
@@ -84,7 +80,7 @@ export class InventoryUI {
         return slot;
     }
 
-    private addItemVisuals(slot: HTMLDivElement, item: InventoryItem): void {
+    private addItemVisuals(slot: HTMLDivElement, item: UIInventoryItem): void {
         // Add disabled styling
         if (item.disabled) slot.classList.add('item-disabled');
         // Ensure slot is positioned for absolute children
@@ -112,7 +108,7 @@ export class InventoryUI {
                 break;
             case 'horse_icon':
                 this._createItemImage(slot, 'assets/items/misc/horse.png', item);
-                if ((item.uses && item.uses > 1) || (item.quantity && item.quantity > 1)) this._addUsesIndicator(slot, item);
+                if (('uses' in item && typeof item.uses === 'number' && item.uses > 1) || ('quantity' in item && typeof item.quantity === 'number' && item.quantity > 1)) this._addUsesIndicator(slot, item);
                 break;
             case 'bomb':
                 this._createItemImage(slot, 'assets/items/misc/bomb.png', item);
@@ -142,15 +138,16 @@ export class InventoryUI {
                 break;
             default:
                 // Unknown item types: try to show an image if path provided
-                if (item.image) {
-                    this._createItemImage(slot, item.image, item);
+                const extendedItem = item as UIInventoryItem;
+                if ('image' in extendedItem && extendedItem.image) {
+                    this._createItemImage(slot, extendedItem.image, item);
                 }
                 break;
         }
     }
 
     // Private helper: create an img element and append to parent
-    private _createItemImage(parent: HTMLElement, src: string, item: InventoryItem, extraStyles: {transform?: string} = {}): void {
+    private _createItemImage(parent: HTMLElement, src: string, item: UIInventoryItem, extraStyles: {transform?: string} = {}): void {
         const img = document.createElement('img');
         img.src = src;
         img.classList.add('item-img');
@@ -161,7 +158,7 @@ export class InventoryUI {
     }
 
     // Private helper: add a uses indicator element to parent
-    private _addUsesIndicator(parent: HTMLElement, item: InventoryItem): void {
+    private _addUsesIndicator(parent: HTMLElement, item: UIInventoryItem): void {
         parent.style.position = parent.style.position || 'relative';
         const usesText = document.createElement('div');
         usesText.classList.add('uses-indicator');
@@ -170,7 +167,7 @@ export class InventoryUI {
         parent.appendChild(usesText);
     }
 
-    private addInventorySlotEvents(slot: HTMLDivElement, item: InventoryItem, idx: number): void {
+    private addInventorySlotEvents(slot: HTMLDivElement, item: UIInventoryItem, idx: number): void {
         const isDisablable = ['bishop_spear', 'horse_icon', 'bow'].includes(item.type);
         let isLongPress = false;
         let pressTimeout: number | null = null;
@@ -185,9 +182,9 @@ export class InventoryUI {
 
     // Store the item reference at the start of the interaction to prevent
     // clicking on repositioned items after the original item is consumed
-    let clickedItem: InventoryItem | null = null;
+    let clickedItem: UIInventoryItem | null = null;
 
-        const useItem = (itemToUse: InventoryItem | null): boolean => {
+        const useItem = (itemToUse: UIInventoryItem | null): boolean => {
             // Only use the item that was clicked, not whatever might be in this slot now
             if (!itemToUse) return false;
 

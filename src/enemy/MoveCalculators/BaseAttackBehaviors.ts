@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * BaseAttackBehaviors - Consolidated attack behavior utilities for enemy move calculators.
  *
@@ -13,6 +12,14 @@
  * - Consistency: Standardize attack behavior implementations
  * - Maintainability: Single source of truth for attack logic
  */
+
+declare global {
+    interface Window {
+        soundManager?: {
+            playSound(soundName: string): void;
+        };
+    }
+}
 
 /**
  * @typedef {Object} Position
@@ -199,8 +206,9 @@ export const AttackBehaviors = {
         player.startBump(enemy.x - player.x, enemy.y - player.y);
         enemy.startBump(player.x - enemy.x, player.y - enemy.y);
 
-        if (/** @type {any} */ (window).soundManager) {
-            /** @type {any} */ (window).soundManager.playSound('attack');
+        // Use type-safe window access for soundManager
+        if (typeof window !== 'undefined' && window.soundManager) {
+            window.soundManager.playSound('attack');
         }
     }
 };

@@ -10,24 +10,9 @@ import { eventBus } from '../../core/EventBus';
 import { EventTypes } from '../../core/EventTypes';
 import { EnemyAttackHelper } from '../../enemy/EnemyAttackHelper';
 import { safeCall } from '../../utils/SafeServiceCall';
-import type { Game } from '../../core/Game';
+import type { Game } from '../../core/game';
 import type { Position } from '../../core/Position';
-
-interface Enemy {
-    x: number;
-    y: number;
-    lastX?: number;
-    lastY?: number;
-    health: number;
-    attack: number;
-    enemyType: string;
-    justAttacked?: boolean;
-    attackAnimation?: number;
-    startBump: (dx: number, dy: number) => void;
-    takeDamage: (amount: number) => void;
-    isDead?: () => boolean;
-    [key: string]: any;
-}
+import type { Enemy } from '../../entities/Enemy';
 
 interface AttackResult {
     defeated: boolean;

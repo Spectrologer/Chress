@@ -15,6 +15,10 @@ export class EnemyGenerator {
     private enemies: any[];
     private depth: number;
     private depthMultiplier: number;
+    private gridManager: any;
+    private zoneX: number = 0;
+    private zoneY: number = 0;
+    private items: any[] = [];
 
     constructor(enemies: any[], depth = 0) {
         this.enemies = enemies;
@@ -50,7 +54,7 @@ export class EnemyGenerator {
             let enemyPlaced = false;
             const pos = findValidPlacement({
                 maxAttempts: 50,
-                validate: (x, y) => this.isFloorTileAvailable(x, y, zoneX, zoneY)
+                validate: (x: number, y: number): boolean => this.isFloorTileAvailable(x, y, zoneX, zoneY)
             });
             if (pos) {
                 let enemyType = this.selectEnemyType(zoneLevel);

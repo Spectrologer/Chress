@@ -7,7 +7,7 @@
 
 import { logger } from '../core/logger';
 import { createZoneKey } from '../utils/ZoneKeyUtils';
-import type { Game } from '../core/Game';
+import type { Game } from '../core/game';
 import type { Grid } from '../core/SharedTypes';
 import type { Enemy as EnemyType } from '../entities/Enemy';
 
@@ -57,13 +57,19 @@ export class ZonePersistenceManager {
 
         const zoneState: ZoneState = {
             grid: JSON.parse(JSON.stringify(this.game.grid)),
-            enemies: enemyCollection.map((enemy: Enemy) => ({
+            enemies: (enemyCollection as any).map((enemy: EnemyType) => ({
                 x: enemy.x,
                 y: enemy.y,
                 enemyType: enemy.enemyType,
                 health: enemy.health,
                 id: enemy.id
-            })),
+            })) as Array<{
+                x: number;
+                y: number;
+                enemyType: string;
+                health: number;
+                id: string;
+            }>,
             playerSpawn: null,
             // Preserve terrain textures, overlay textures, rotations, and overlay rotations for custom boards
             terrainTextures: zoneGenerator.terrainTextures || {},

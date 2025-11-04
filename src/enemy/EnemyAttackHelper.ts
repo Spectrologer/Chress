@@ -3,6 +3,11 @@ import { ANIMATION_CONSTANTS } from '../core/constants/index';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
 
+interface AttackOptions {
+    skipKnockback?: boolean;
+    knockbackOverride?: { x: number; y: number };
+}
+
 /**
  * EnemyAttackHelper - Centralized utility for enemy attack animations and events
  * Eliminates duplication across EnemyAttack, EnemySpecialActions, and CombatManager
@@ -76,11 +81,9 @@ export class EnemyAttackHelper {
      * @param {number} playerY - Player's Y position
      * @param {Object} grid - Game grid for walkability checks
      * @param {string} source - Attack source identifier (e.g., 'enemy_ram')
-     * @param {Object} options - Optional configuration
-     * @param {boolean} options.skipKnockback - Skip knockback calculation
-     * @param {Object} options.knockbackOverride - Override knockback position {x, y}
+     * @param {AttackOptions} options - Optional configuration
      */
-    static performCompleteAttack(enemy, player, playerX, playerY, grid, source, options = {}) {
+    static performCompleteAttack(enemy, player, playerX, playerY, grid, source, options: AttackOptions = {}) {
         // Deal damage
         player.takeDamage(enemy.attack);
 

@@ -2,7 +2,7 @@ import { GRID_SIZE, TILE_TYPES } from '../core/constants/index';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
 import { isFloor, isTileType } from '../utils/TypeChecks';
-import type { Game } from '../core/Game';
+import type { Game } from '../core/game';
 
 /**
  * ZoneTreasureManager handles special zone treasure spawning
@@ -29,7 +29,7 @@ export class ZoneTreasureManager {
     /**
      * Spawn treasures on grid at valid floor positions
      */
-    private spawnTreasuresOnGrid(treasures: any[]): void {
+    public spawnTreasuresOnGrid(treasures: any[]): void {
         const gridManager = this.game.gridManager;
         for (const treasure of treasures) {
             // Try to place treasure in a valid location (max 50 attempts)

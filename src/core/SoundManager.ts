@@ -70,7 +70,7 @@ export class SoundManager {
 
         const audio = this.sounds[soundName];
         if (audio) {
-            const newAudio = audio.cloneNode();
+            const newAudio = audio.cloneNode() as HTMLAudioElement;
             newAudio.volume = Math.min(VOLUME_CONSTANTS.MAX_VOLUME, audio.volume || VOLUME_CONSTANTS.DEFAULT_SFX_VOLUME);
             newAudio.play().catch(error => {
                 // Could not play sound
@@ -109,11 +109,11 @@ export class SoundManager {
     }
 
     get musicEnabled() {
-        return this.musicController.musicEnabled;
+        return this.musicController.getMusicEnabled();
     }
 
     set musicEnabled(value) {
-        this.musicController.musicEnabled = value;
+        this.musicController.setMusicEnabled(value);
     }
 
     // ========== Lifecycle ==========

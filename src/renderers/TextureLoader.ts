@@ -15,74 +15,76 @@ export class TextureLoader {
             // Load regular assets
             IMAGE_ASSETS.forEach(assetName => {
                 let imageKey: string;
+                // Cast to string for comparison to avoid narrowed type issues
+                const assetPath = assetName as string;
                 // New paths - environment
-                if (assetName === 'environment/floors/desert.png') {
+                if (assetPath === 'environment/floors/desert.png') {
                     imageKey = 'desert';
-                } else if (assetName === 'environment/floors/housetile.png') {
+                } else if (assetPath === 'environment/floors/housetile.png') {
                     imageKey = 'housetile';
-                } else if (assetName === 'environment/floors/house_wall_corner.png') {
+                } else if (assetPath === 'environment/floors/house_wall_corner.png') {
                     imageKey = 'house_wall_corner';
-                } else if (assetName === 'environment/floors/house_wall_open.png') {
+                } else if (assetPath === 'environment/floors/house_wall_open.png') {
                     imageKey = 'house_wall_open';
-                } else if (assetName === 'environment/floors/house_wall_side.png') {
+                } else if (assetPath === 'environment/floors/house_wall_side.png') {
                     imageKey = 'house_wall_side';
-                } else if (assetName === 'environment/walls/succulent.png') {
+                } else if (assetPath === 'environment/walls/succulent.png') {
                     imageKey = 'succulent';
-                } else if (assetName === 'environment/walls/stump.png') {
+                } else if (assetPath === 'environment/walls/stump.png') {
                     imageKey = 'stump';
-                } else if (assetName === 'environment/walls/blocklily.png') {
+                } else if (assetPath === 'environment/walls/blocklily.png') {
                     imageKey = 'blocklily';
-                } else if (assetName === 'environment/walls/boulder.png') {
+                } else if (assetPath === 'environment/walls/boulder.png') {
                     imageKey = 'boulder';
-                } else if (assetName.startsWith('environment/floors/')) {
-                    imageKey = assetName.replace('environment/floors/', '').replace('.png', '');
-                } else if (assetName.startsWith('environment/walls/')) {
-                    imageKey = assetName.replace('environment/walls/', '').replace('.png', '');
-                } else if (assetName.startsWith('environment/trim/')) {
+                } else if (assetPath.startsWith('environment/floors/')) {
+                    imageKey = assetPath.replace('environment/floors/', '').replace('.png', '');
+                } else if (assetPath.startsWith('environment/walls/')) {
+                    imageKey = assetPath.replace('environment/walls/', '').replace('.png', '');
+                } else if (assetPath.startsWith('environment/trim/')) {
                     // Keep the full path for trim textures to match overlay rendering expectations
-                    imageKey = assetName.replace('.png', '');
-                } else if (assetName.startsWith('items/')) {
-                    imageKey = assetName.replace(/items\/(equipment|misc|consumables)\//, '').replace('.png', '');
-                } else if (assetName.startsWith('characters/npcs/')) {
-                    imageKey = assetName.replace('characters/npcs/', '').replace('.png', '');
-                } else if (assetName.startsWith('characters/enemies/')) {
-                    imageKey = assetName.replace('characters/enemies/', '').replace('.png', '');
-                } else if (assetName.startsWith('characters/player/')) {
-                    imageKey = assetName.replace('characters/player/', '').replace('.png', '');
-                } else if (assetName.startsWith('environment/effects/')) {
-                    imageKey = assetName.replace('environment/effects/', '').replace('.png', '');
-                } else if (assetName === 'environment/doodads/cistern.png') {
+                    imageKey = assetPath.replace('.png', '');
+                } else if (assetPath.startsWith('items/')) {
+                    imageKey = assetPath.replace(/items\/(equipment|misc|consumables)\//, '').replace('.png', '');
+                } else if (assetPath.startsWith('characters/npcs/')) {
+                    imageKey = assetPath.replace('characters/npcs/', '').replace('.png', '');
+                } else if (assetPath.startsWith('characters/enemies/')) {
+                    imageKey = assetPath.replace('characters/enemies/', '').replace('.png', '');
+                } else if (assetPath.startsWith('characters/player/')) {
+                    imageKey = assetPath.replace('characters/player/', '').replace('.png', '');
+                } else if (assetPath.startsWith('environment/effects/')) {
+                    imageKey = assetPath.replace('environment/effects/', '').replace('.png', '');
+                } else if (assetPath === 'environment/doodads/cistern.png') {
                     imageKey = 'doodads/cistern';
-                } else if (assetName === 'environment/doodads/shack.png') {
+                } else if (assetPath === 'environment/doodads/shack.png') {
                     imageKey = 'doodads/shack';
-                } else if (assetName === 'environment/doodads/table.png') {
+                } else if (assetPath === 'environment/doodads/table.png') {
                     imageKey = 'doodads/table';
-                } else if (assetName === 'environment/doodads/hole.png') {
+                } else if (assetPath === 'environment/doodads/hole.png') {
                     imageKey = 'hole';
-                } else if (assetName === 'environment/doodads/pitfall.png') {
+                } else if (assetPath === 'environment/doodads/pitfall.png') {
                     imageKey = 'pitfall';
-                } else if (assetName === 'environment/doodads/stairdown.png') {
+                } else if (assetPath === 'environment/doodads/stairdown.png') {
                     // Register stair doodads under the simple key the renderer expects
                     imageKey = 'stairdown';
-                } else if (assetName === 'environment/doodads/stairup.png') {
+                } else if (assetPath === 'environment/doodads/stairup.png') {
                     // stairup doodad
                     imageKey = 'stairup';
-                } else if (assetName === 'environment/obstacles/rock.png') {
+                } else if (assetPath === 'environment/obstacles/rock.png') {
                     imageKey = 'rock';
-                } else if (assetName === 'environment/doodads/sign.png') {
+                } else if (assetPath === 'environment/doodads/sign.png') {
                     imageKey = 'sign';
-                } else if (assetName === 'environment/obstacles/shrubbery.png') {
+                } else if (assetPath === 'environment/obstacles/shrubbery.png') {
                     imageKey = 'shrubbery';
-                } else if (assetName === 'environment/walls/bush.png') {
+                } else if (assetPath === 'environment/walls/bush.png') {
                     imageKey = 'bush';
-                } else if (assetName === 'environment/doodads/club.png') {
+                } else if (assetPath === 'environment/doodads/club.png') {
                     imageKey = 'doodads/club';
-                } else if (assetName === 'environment/doodads/well.png') {
+                } else if (assetPath === 'environment/doodads/well.png') {
                     imageKey = 'doodads/well';
-                } else if (assetName === 'environment/doodads/deadtree.png') {
+                } else if (assetPath === 'environment/doodads/deadtree.png') {
                     imageKey = 'doodads/deadtree';
                 } else {
-                    imageKey = assetName.replace('.png', '');
+                    imageKey = assetPath.replace('.png', '');
                 }
                 this.loadImage(imageKey, assetName);
             });

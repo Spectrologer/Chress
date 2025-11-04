@@ -3,11 +3,7 @@ import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
 import { errorHandler, ErrorSeverity } from '../core/ErrorHandler';
 import { safeCall, safeCallAsync } from '../utils/SafeServiceCall';
-
-interface GameInstance {
-    storageAdapter: any;
-    uiManager: any;
-}
+import type { IGame } from '../core/GameContext';
 
 /**
  * StartOverlayController
@@ -16,9 +12,9 @@ interface GameInstance {
  * Responsible for showing/hiding the overlay and configuring its visual state.
  */
 export class StartOverlayController {
-    private game: GameInstance;
+    private game: IGame;
 
-    constructor(game: GameInstance) {
+    constructor(game: IGame) {
         this.game = game;
     }
 

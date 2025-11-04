@@ -6,7 +6,7 @@ import { EventTypes } from '../core/EventTypes';
 import { isAdjacent } from '../core/utils/DirectionUtils';
 import { getTileType } from '../utils/TileUtils';
 import { TileRegistry } from '../core/TileRegistry';
-import type { Position } from '../core/Position';
+import { Position } from '../core/Position';
 
 interface GridCoords {
     x: number;
@@ -16,15 +16,6 @@ interface GridCoords {
 interface InputTapEvent {
     gridCoords: GridCoords;
     handled?: boolean;
-}
-
-interface ChargeDetails {
-    type: string;
-    item: object;
-    target: Position;
-    enemy: object | null;
-    dx?: number;
-    dy?: number;
 }
 
 interface InputPlayerTileTapEvent {
@@ -48,14 +39,14 @@ interface UIManager {
 }
 
 interface TransientGameState {
-    getPendingCharge(): ChargeDetails | null;
+    getPendingCharge(): any;
 }
 
 interface CombatActionManager {
-    isValidBishopSpearCharge(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): ChargeDetails | null;
-    isValidHorseIconCharge(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): ChargeDetails | null;
-    isValidBowShot(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): ChargeDetails | null;
-    confirmPendingCharge(chargeDetails: ChargeDetails): void;
+    isValidBishopSpearCharge(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): any;
+    isValidHorseIconCharge(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): any;
+    isValidBowShot(gridCoords: GridCoords, playerPos: Position, includeRadial: boolean): any;
+    confirmPendingCharge(chargeDetails: any): void;
     cancelPendingCharge(): void;
 }
 
@@ -271,7 +262,7 @@ export class InputUIHandler {
         }
 
         const selType = pendingCharge.selectionType;
-        let chargeDetails: ChargeDetails | null = null;
+        let chargeDetails: any = null;
         const playerPos = this.game.player.getPosition();
 
         // Use interactionManager.combatManager (CombatActionManager) for charge validation
@@ -285,11 +276,11 @@ export class InputUIHandler {
         const includeRadial = true;
 
         if (selType === 'bishop_spear') {
-            chargeDetails = combatActionManager.isValidBishopSpearCharge(gridCoords, playerPos, includeRadial);
+            chargeDetails = combatActionManager.isValidBishopSpearCharge(Position.from(gridCoords), Position.from(playerPos), includeRadial);
         } else if (selType === 'horse_icon') {
-            chargeDetails = combatActionManager.isValidHorseIconCharge(gridCoords, playerPos, includeRadial);
+            chargeDetails = combatActionManager.isValidHorseIconCharge(Position.from(gridCoords), Position.from(playerPos), includeRadial);
         } else if (selType === 'bow') {
-            chargeDetails = combatActionManager.isValidBowShot(gridCoords, playerPos, includeRadial);
+            chargeDetails = combatActionManager.isValidBowShot(Position.from(gridCoords), Position.from(playerPos), includeRadial);
         }
 
         if (chargeDetails) {

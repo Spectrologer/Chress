@@ -7,6 +7,8 @@ import { ContentRegistry } from '../ContentRegistry';
 import { findValidPlacement } from '../../generators/GeneratorUtils';
 
 class SurfaceHandler extends BaseZoneHandler {
+    private zoneConnections: any;
+
     constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets) {
         super(zoneGen, zoneX, zoneY, foodAssets, 0, 0);
         this.zoneConnections = zoneConnections;
@@ -119,9 +121,9 @@ class SurfaceHandler extends BaseZoneHandler {
         const allNPCs = ContentRegistry.getAllNPCs();
         const gossipNPCs = allNPCs.filter(npc =>
             npc.metadata &&
-            npc.metadata.characterData &&
-            npc.metadata.characterData.metadata &&
-            npc.metadata.characterData.metadata.category === 'gossip' &&
+            (npc.metadata as any).characterData &&
+            (npc.metadata as any).characterData.metadata &&
+            (npc.metadata as any).characterData.metadata.category === 'gossip' &&
             npc.placement &&
             npc.placement.spawnWeight !== undefined
         );
@@ -138,13 +140,15 @@ class SurfaceHandler extends BaseZoneHandler {
             // Find a valid placement for the NPC
             const pos = findValidPlacement({
                 maxAttempts: 50,
-                validate: (x, y) => this.zoneGen.gridManager.getTile(x, y) === TILE_TYPES.FLOOR
+                validate: (x, y) => {
+                    return this.zoneGen.gridManager.getTile(x, y) === TILE_TYPES.FLOOR;
+                }
             });
 
             if (pos) {
                 const { x, y } = pos;
                 this.zoneGen.gridManager.setTile(x, y, randomNPC.tileType);
-                logger.log(`Gossip NPC ${randomNPC.metadata.name} spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
+                logger.log(`Gossip NPC ${(randomNPC.metadata as any).name} spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
             }
         }
     }

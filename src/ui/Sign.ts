@@ -1,8 +1,9 @@
 import { TILE_TYPES } from '../core/constants/index';
 import { getNPCCharacterData } from '../core/NPCLoader';
+import type { IGame } from '../core/GameContext';
 
 export interface SignData {
-    message: string;
+    message?: string;
     x?: number;
     y?: number;
 }
@@ -41,37 +42,8 @@ export interface DialogueNpcData {
     buttonTexts?: (string | null)[];
 }
 
-interface GridManager {
-    getSize(): number;
-    getTile(x: number, y: number): any;
-    setTile(x: number, y: number, tileType: any): void;
-}
-
-interface NPCManager {
-    getByType(type: string): any[];
-    removeNPC(npc: any): void;
-    moveNPC(npc: any, x: number, y: number): void;
-}
-
-interface TransientGameState {
-    getDisplayingSignMessage(): SignData | null;
-    setDisplayingSignMessage(signData: SignData): void;
-    clearDisplayingSignMessage(): void;
-    clearCurrentNPCPosition(): void;
-    isDisplayingSignMessage(): boolean;
-}
-
-export interface GameInstance {
-    transientGameState: TransientGameState;
-    gridManager: GridManager;
-    npcManager: NPCManager;
-    grid: any[][];
-    showSignMessage: (message: string, imageSrc: string) => void;
-    hideOverlayMessage: () => void;
-    render: () => void;
-    displayingMessageForSign?: SignData | null;
-    dialogueState?: Map<string, DialogueNpcData>;
-}
+// Use IGame type for better compatibility across all UI components
+export type GameInstance = IGame;
 
 // Sign class, refactored to be a static utility class for NPC and statue message handling.
 export class Sign {
@@ -169,6 +141,7 @@ export class Sign {
         }
 
         const transientState = gameInstance.transientGameState;
+        if (!transientState) return;
 
         // Check if this specific sign's message is currently displayed
         const displayingSign = transientState.getDisplayingSignMessage();
@@ -192,8 +165,12 @@ export class Sign {
      */
     static displayMessageForSign(signData: SignData, gameInstance: GameInstance): void {
         // Use the dedicated sign message method for persistent display
-        gameInstance.showSignMessage(signData.message, 'assets/environment/doodads/sign.png');
-        gameInstance.transientGameState.setDisplayingSignMessage(signData);
+        if (gameInstance.showSignMessage && signData.message) {
+            gameInstance.showSignMessage(signData.message, 'assets/environment/doodads/sign.png');
+        }
+        if (gameInstance.transientGameState) {
+            gameInstance.transientGameState.setDisplayingSignMessage(signData);
+        }
     }
 
     /**
@@ -209,7 +186,9 @@ export class Sign {
         let didHide = false;
 
         if (transientState && transientState.isDisplayingSignMessage()) {
-            gameInstance.hideOverlayMessage();
+            if (gameInstance.hideOverlayMessage) {
+                gameInstance.hideOverlayMessage();
+            }
             transientState.clearDisplayingSignMessage();
             // Clear NPC position tracking when message is dismissed
             transientState.clearCurrentNPCPosition();
@@ -218,7 +197,7 @@ export class Sign {
 
         // Also clear the old property for compatibility
         if (gameInstance.displayingMessageForSign) {
-            if (!didHide) {
+            if (!didHide && gameInstance.hideOverlayMessage) {
                 gameInstance.hideOverlayMessage();
             }
             gameInstance.displayingMessageForSign = null;
@@ -241,9 +220,15 @@ export class Sign {
     static makeAxolotlLeave(gameInstance: GameInstance): void {
         const grid = gameInstance.grid;
         const npcManager = gameInstance.npcManager;
+        const gridManager = gameInstance.gridManager;
 
         if (!npcManager) {
             console.warn('NPC Manager not available');
+            return;
+        }
+
+        if (!gridManager) {
+            console.warn('Grid Manager not available');
             return;
         }
 
@@ -260,7 +245,6 @@ export class Sign {
         let exitX: number | null = null;
         let exitY: number | null = null;
 
-        const gridManager = gameInstance.gridManager;
         const gridSize = gridManager.getSize();
 
         for (let y = 0; y < gridSize; y++) {
@@ -277,7 +261,9 @@ export class Sign {
         if (exitX === null) {
             // No exit found, just remove axolotl immediately
             npcManager.removeNPC(axolotl);
-            gameInstance.render();
+            if (gameInstance.render) {
+                gameInstance.render();
+            }
             return;
         }
 
@@ -288,7 +274,9 @@ export class Sign {
                 npcManager.removeNPC(axolotl);
                 // Restore the exit tile (removeNPC sets it to FLOOR)
                 gridManager.setTile(exitX!, exitY!, TILE_TYPES.EXIT);
-                gameInstance.render();
+                if (gameInstance.render) {
+                    gameInstance.render();
+                }
                 return;
             }
 
@@ -310,7 +298,9 @@ export class Sign {
 
             // Move NPC (this automatically sets lastX/lastY and starts lift animation)
             npcManager.moveNPC(axolotl, newX, newY);
-            gameInstance.render();
+            if (gameInstance.render) {
+                gameInstance.render();
+            }
 
             // Continue walking after animation completes (match LIFT_FRAMES duration)
             setTimeout(walkToExit, 250);

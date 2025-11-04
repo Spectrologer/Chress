@@ -114,8 +114,8 @@ export class ServiceContainer {
             enemyCollection: () => new EnemyCollection(this.game.enemies, this.game),
 
             // NPC management (like enemies but for friendly NPCs)
-            npcManager: () => new NPCManager(this.game),
-            npcRenderer: () => new NPCRenderer(this.game),
+            npcManager: () => new NPCManager(this.game as any),
+            npcRenderer: () => new NPCRenderer(this.game as any),
 
             // Transient state container (session-specific, non-persisted state)
             transientGameState: () => new TransientGameState(),
@@ -143,37 +143,37 @@ export class ServiceContainer {
             itemService: () => this.get('inventoryService'), // Backward compatibility alias
             itemUsageHandler: () => null, // Replaced by ItemEffectStrategy
             itemUsageManager: () => null, // Replaced by ItemEffectStrategy
-            inventoryInteractionHandler: () => new InventoryInteractionHandler(this.game),
-            inventoryUI: () => new InventoryUI(this.game, this.get('inventoryService')),
-            radialInventoryUI: () => new RadialInventoryUI(this.game, this.get('inventoryService')),
+            inventoryInteractionHandler: () => new InventoryInteractionHandler(this.game as any),
+            inventoryUI: () => new InventoryUI(this.game as any, this.get('inventoryService')),
+            radialInventoryUI: () => new RadialInventoryUI(this.game as any, this.get('inventoryService')),
 
             // Input and UI
-            inputManager: () => new InputManager(this.game, this.get('inventoryService')),
-            uiManager: () => new UIManager(this.game),
-            assetLoader: () => new AssetLoader(this.game),
-            overlayManager: () => new OverlayManager(this.game),
-            gameInitializer: () => new GameInitializer(this.game),
+            inputManager: () => new InputManager(this.game as any, this.get('inventoryService')),
+            uiManager: () => new UIManager(this.game as any),
+            assetLoader: () => new AssetLoader(this.game as any),
+            overlayManager: () => new OverlayManager(this.game as any),
+            gameInitializer: () => new GameInitializer(this.game as any),
 
             // Rendering
-            renderManager: () => new RenderManager(this.game),
+            renderManager: () => new RenderManager(this.game as any),
 
             // Core managers
             actionManager: () => new ActionManager(this.game as any),
-            consentManager: () => new ConsentManager(this.game),
+            consentManager: () => new ConsentManager(this.game as any),
 
             // Systems / utilities
             animationScheduler: () => new AnimationScheduler(),
             soundManager: () => new SoundManager(),
-            turnManager: () => new TurnManager(this.game),
+            turnManager: () => new TurnManager(this.game as any),
 
             // Sub-managers for InteractionManager
-            npcInteractionManager: () => new NPCInteractionManager(this.game),
-            itemPickupManager: () => new ItemPickupManager(this.game),
-            combatActionManager: () => new CombatActionManager(this.game),
+            npcInteractionManager: () => new NPCInteractionManager(this.game as any),
+            itemPickupManager: () => new ItemPickupManager(this.game as any),
+            combatActionManager: () => new CombatActionManager(this.game as any),
             bombManager: () => new BombManager(this.game as any),
-            terrainInteractionManager: () => new TerrainInteractionManager(this.game),
-            environmentalInteractionManager: () => new EnvironmentalInteractionManager(this.game),
-            enemyDefeatFlow: () => new EnemyDefeatFlow(this.game),
+            terrainInteractionManager: () => new TerrainInteractionManager(this.game as any),
+            environmentalInteractionManager: () => new EnvironmentalInteractionManager(this.game as any),
+            enemyDefeatFlow: () => new EnemyDefeatFlow(this.game as any),
 
             // Facades for grouping related dependencies
             interactionFacade: () => new InteractionFacade(

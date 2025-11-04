@@ -7,7 +7,7 @@
  * @module ZoneGenerationState
  */
 
-import type { Position } from '../core/Position';
+import { Position } from '../core/Position';
 
 interface SpawnFlags {
     axe: boolean;
@@ -152,7 +152,7 @@ export class ZoneGenerationState {
         } while (Math.max(Math.abs(x), Math.abs(y)) < minDist ||
                  Math.max(Math.abs(x), Math.abs(y)) > maxDist);
 
-        return { x, y };
+        return Position.from({ x, y });
     }
 
     /**

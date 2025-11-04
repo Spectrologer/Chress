@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * SoundLifecycleManager - Manages sound lifecycle events
  *
@@ -10,20 +9,28 @@ import { errorHandler, ErrorSeverity } from '../ErrorHandler';
 import { safeCallAsync } from '../../utils/SafeServiceCall';
 import { VOLUME_CONSTANTS } from '../constants/audio';
 
+interface MusicController {
+    musicEnabled: boolean;
+    backgroundAudioElement: HTMLAudioElement | null;
+    backgroundGain: GainNode | null;
+    audioContext: AudioContext | null;
+    currentMusicVolume: number;
+    getAudioContext(): AudioContext | null;
+}
+
 export class SoundLifecycleManager {
-    /**
-     * @param {any} musicController - Music controller instance
-     */
-    constructor(musicController) {
+    private musicController: MusicController;
+    private wasMusicPlayingBeforeBlur: boolean;
+
+    constructor(musicController: MusicController) {
         this.musicController = musicController;
         this.wasMusicPlayingBeforeBlur = false;
     }
 
     /**
      * Setup focus/blur event listeners
-     * @returns {void}
      */
-    setupFocusListeners() {
+    setupFocusListeners(): void {
         // Handle Page Visibility API (desktop and mobile)
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
@@ -45,9 +52,8 @@ export class SoundLifecycleManager {
 
     /**
      * Handle blur event (app loses focus)
-     * @returns {void}
      */
-    handleBlur() {
+    handleBlur(): void {
         const isMusicPlaying = this.musicController.musicEnabled &&
             (this.musicController.backgroundAudioElement && !this.musicController.backgroundAudioElement.paused);
 
@@ -70,9 +76,8 @@ export class SoundLifecycleManager {
 
     /**
      * Handle focus event (app regains focus)
-     * @returns {void}
      */
-    handleFocus() {
+    handleFocus(): void {
         if (this.wasMusicPlayingBeforeBlur && this.musicController.musicEnabled) {
             try {
                 if (this.musicController.backgroundAudioElement) {
@@ -93,9 +98,8 @@ export class SoundLifecycleManager {
 
     /**
      * Resume audio context (call from user gesture)
-     * @returns {Promise<void>}
      */
-    resumeAudioContext() {
+    resumeAudioContext(): Promise<void> {
         try {
             const audioContext = this.musicController.getAudioContext();
             if (!audioContext) {

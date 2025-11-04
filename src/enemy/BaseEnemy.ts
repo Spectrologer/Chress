@@ -16,6 +16,8 @@ export interface SmokeAnimation {
 }
 
 export class BaseEnemy {
+    [key: string]: any;
+
     private _position: Position;
     private _lastPosition: Position;
 
@@ -189,5 +191,30 @@ export class BaseEnemy {
         ];
 
         return walkableTypes.includes(tileType);
+    }
+
+    serialize(): any {
+        return {
+            x: this.x,
+            y: this.y,
+            lastX: this.lastX,
+            lastY: this.lastY,
+            enemyType: this.enemyType,
+            id: this.id,
+            health: this.health,
+            attack: this.attack,
+            justAttacked: this.justAttacked,
+            attackAnimation: this.attackAnimation,
+            deathAnimation: this.deathAnimation,
+            bumpOffsetX: this.bumpOffsetX,
+            bumpOffsetY: this.bumpOffsetY,
+            bumpFrames: this.bumpFrames,
+            liftOffsetY: this.liftOffsetY,
+            liftFrames: this.liftFrames,
+            smokeAnimations: this.smokeAnimations,
+            isFrozen: this.isFrozen,
+            showFrozenVisual: this.showFrozenVisual,
+            scale: this.scale
+        };
     }
 }

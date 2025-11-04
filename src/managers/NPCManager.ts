@@ -8,7 +8,7 @@ interface NPCConfig {
     y: number;
     npcType: string;
     spriteKey: string;
-    id: number;
+    id: string;
 }
 
 export class NPCManager {
@@ -20,6 +20,56 @@ export class NPCManager {
         this.game = game;
         this.npcs = [];
         this.nextId = 0;
+    }
+
+    // Interaction methods that delegate to NPCInteractionManager
+    // These are needed for compatibility with InteractionManager
+    interactWithPenne(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithPenne(gridCoords) ?? false;
+    }
+
+    interactWithSquig(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithSquig(gridCoords) ?? false;
+    }
+
+    interactWithRune(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithRune(gridCoords) ?? false;
+    }
+
+    interactWithNib(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithNib(gridCoords) ?? false;
+    }
+
+    interactWithMark(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithMark(gridCoords) ?? false;
+    }
+
+    interactWithAxelotl(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithAxelotl(gridCoords) ?? false;
+    }
+
+    interactWithGouge(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithGouge(gridCoords) ?? false;
+    }
+
+    interactWithCrayn(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithCrayn(gridCoords) ?? false;
+    }
+
+    interactWithFelt(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithFelt(gridCoords) ?? false;
+    }
+
+    interactWithForge(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithForge(gridCoords) ?? false;
+    }
+
+    interactWithDynamicNPC(gridCoords: { x: number; y: number }): boolean {
+        return this.game.npcInteractionManager?.interactWithDynamicNPC(gridCoords) ?? false;
+    }
+
+    forceInteractAt(gridCoords: { x: number; y: number }): void {
+        this.game.npcInteractionManager?.forceInteractAt(gridCoords);
     }
 
     /**
@@ -36,7 +86,7 @@ export class NPCManager {
             y,
             npcType,
             spriteKey: spriteKey || npcType,
-            id: this.nextId++
+            id: String(this.nextId++)
         });
         this.npcs.push(npc);
         return npc;
@@ -52,8 +102,9 @@ export class NPCManager {
     /**
      * Gets an NPC by ID
      */
-    getById(id: number): BaseNPC | null {
-        return this.npcs.find(npc => npc.id === id) || null;
+    getById(id: number | string): BaseNPC | null {
+        const idStr = typeof id === 'number' ? String(id) : id;
+        return this.npcs.find(npc => npc.id === idStr) || null;
     }
 
     /**
@@ -73,14 +124,15 @@ export class NPCManager {
     /**
      * Removes an NPC
      */
-    removeNPC(npcOrId: BaseNPC | number): void {
+    removeNPC(npcOrId: BaseNPC | number | string): void {
         const gridManager = this.game.gridManager;
 
         // Find the NPC object
         let npcToRemove: BaseNPC | null = null;
-        if (typeof npcOrId === 'number') {
-            npcToRemove = this.npcs.find(npc => npc.id === npcOrId) || null;
-            this.npcs = this.npcs.filter(npc => npc.id !== npcOrId);
+        if (typeof npcOrId === 'number' || typeof npcOrId === 'string') {
+            const idStr = typeof npcOrId === 'number' ? String(npcOrId) : npcOrId;
+            npcToRemove = this.npcs.find(npc => npc.id === idStr) || null;
+            this.npcs = this.npcs.filter(npc => npc.id !== idStr);
         } else {
             npcToRemove = npcOrId;
             this.npcs = this.npcs.filter(npc => npc !== npcOrId);
@@ -110,7 +162,7 @@ export class NPCManager {
         const oldY = npc.y;
 
         // Check if the position is walkable
-        if (!npc.isWalkable(newX, newY, gridManager)) {
+        if (!npc.isWalkable(newX, newY, gridManager.getRawGrid())) {
             return false;
         }
 
@@ -155,28 +207,30 @@ export class NPCManager {
         for (let y = 0; y < gridSize; y++) {
             for (let x = 0; x < gridSize; x++) {
                 const tile = gridManager.getTile(x, y);
-                const tileType = tile && tile.type ? tile.type : tile;
+                const tileType = tile && typeof tile === 'object' && 'type' in tile ? tile.type : tile;
 
                 // Check if this is an NPC tile type
                 let npcType: string | null = null;
                 let spriteKey: string | null = null;
 
                 // First, try to look up NPC config from ContentRegistry
-                const npcConfig = ContentRegistry.getNPCByTileType(tileType);
+                const npcConfig = typeof tileType === 'number' ? ContentRegistry.getNPCByTileType(tileType) : null;
                 if (npcConfig && npcConfig.metadata && npcConfig.metadata.sprite) {
                     // Extract sprite path and convert to image key
                     // TextureLoader removes 'characters/npcs/' prefix from NPC paths
                     // e.g., "characters/npcs/gossip/aster.png" -> "gossip/aster"
                     const spritePath = npcConfig.metadata.sprite;
-                    if (spritePath.startsWith('characters/npcs/')) {
+                    if (typeof spritePath === 'string' && spritePath.startsWith('characters/npcs/')) {
                         spriteKey = spritePath.replace('characters/npcs/', '').replace('.png', '');
-                    } else {
+                    } else if (typeof spritePath === 'string') {
                         // Fallback: just use the filename
                         const parts = spritePath.split('/');
                         const filename = parts[parts.length - 1];
                         spriteKey = filename.replace('.png', '');
                     }
-                    npcType = npcConfig.metadata.characterData?.id || spriteKey;
+                    npcType = npcConfig.metadata.characterData && typeof npcConfig.metadata.characterData === 'object' && 'id' in npcConfig.metadata.characterData
+                        ? (npcConfig.metadata.characterData.id as string)
+                        : spriteKey;
                 } else {
                     // Fallback to hardcoded NPC types
                     switch (tileType) {

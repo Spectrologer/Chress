@@ -10,6 +10,7 @@ import { PenneMessageHandler } from './PenneMessageHandler';
 import { eventBus } from '../core/EventBus';
 import { EventTypes } from '../core/EventTypes';
 import { UI_TIMING_CONSTANTS } from '../core/constants/ui';
+import { Position } from '../core/Position';
 
 /**
  * Coordinates message display across the application.
@@ -78,7 +79,7 @@ export class MessageManager {
                 if (transientState) {
                     const npcPos = transientState.getCurrentNPCPosition();
 
-                    const isAdjacent = transientState.isPlayerAdjacentToNPC(playerPos);
+                    const isAdjacent = transientState.isPlayerAdjacentToNPC(Position.from(playerPos));
 
                     if (!isAdjacent) {
                         // Player walked away from NPC, close the message

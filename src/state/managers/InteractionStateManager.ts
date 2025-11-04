@@ -1,7 +1,7 @@
 import { eventBus } from '../../core/EventBus';
 import { EventTypes } from '../../core/EventTypes';
 import { logger } from '../../core/logger';
-import type { Position } from '../../core/Position';
+import { Position } from '../../core/Position';
 
 /**
  * InteractionStateManager - Manages world interaction state (Signs, NPCs)
@@ -110,7 +110,7 @@ export class InteractionStateManager {
      */
     setCurrentNPCPosition(position: Position): void {
         if (position && typeof position.x === 'number' && typeof position.y === 'number') {
-            this._currentNPCPosition = { x: position.x, y: position.y };
+            this._currentNPCPosition = Position.from({ x: position.x, y: position.y });
             logger.debug('InteractionStateManager: NPC position set', position);
         }
     }

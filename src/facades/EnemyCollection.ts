@@ -22,6 +22,9 @@ import { TILE_TYPES } from '../core/constants/index';
  *   const all = enemyCollection.getAll(); // Returns defensive copy
  */
 export class EnemyCollection {
+    private _enemies: any[];
+    private _game: any;
+
     /**
      * @param {Array} enemiesArray - Reference to the game's enemies array
      * @param {Object} game - Reference to game instance for grid cleanup
@@ -277,8 +280,8 @@ export class EnemyCollection {
      * @param {boolean} aliveOnly - Only include living enemies
      * @returns {Set<string>}
      */
-    getPositionsSet(aliveOnly = false) {
-        const positions = new Set();
+    getPositionsSet(aliveOnly = false): Set<string> {
+        const positions = new Set<string>();
         for (const enemy of this._enemies) {
             if (!aliveOnly || enemy.health > 0) {
                 positions.add(`${enemy.x},${enemy.y}`);

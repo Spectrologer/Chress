@@ -63,18 +63,20 @@ test('isTileObjectOfType() rejects wrong type', !TileTypeChecker.isTileObjectOfT
 test('isTileObjectOfType() rejects primitive', !TileTypeChecker.isTileObjectOfType(TILE_TYPES.BOMB, TILE_TYPES.BOMB));
 
 // Test backward compatibility exports
-const { isFloor, isBomb, isNPC, getTileType } = await import('./TypeChecks');
-test('Backward compat: isFloor()', isFloor(TILE_TYPES.FLOOR));
-test('Backward compat: isBomb()', isBomb(TILE_TYPES.BOMB));
-test('Backward compat: isNPC()', isNPC(TILE_TYPES.PENNE));
-test('Backward compat: getTileType()', getTileType({ type: TILE_TYPES.BOMB }) === TILE_TYPES.BOMB);
+(async () => {
+    const { isFloor, isBomb, isNPC, getTileType } = await import('./TypeChecks');
+    test('Backward compat: isFloor()', isFloor(TILE_TYPES.FLOOR));
+    test('Backward compat: isBomb()', isBomb(TILE_TYPES.BOMB));
+    test('Backward compat: isNPC()', isNPC(TILE_TYPES.PENNE));
+    test('Backward compat: getTileType()', getTileType({ type: TILE_TYPES.BOMB }) === TILE_TYPES.BOMB);
 
-console.log(`\n📊 Results: ${passed} passed, ${failed} failed`);
+    console.log(`\n📊 Results: ${passed} passed, ${failed} failed`);
 
-if (failed === 0) {
-    console.log('✅ All tests passed!');
-    process.exit(0);
-} else {
-    console.log('❌ Some tests failed');
-    process.exit(1);
-}
+    if (failed === 0) {
+        console.log('✅ All tests passed!');
+        process.exit(0);
+    } else {
+        console.log('❌ Some tests failed');
+        process.exit(1);
+    }
+})();

@@ -36,7 +36,7 @@ export interface SavedPlayerData {
     dead: boolean;
     sprite: any;
     points: number;
-    visitedZones: Array<{ x: number; y: number; dimension: number }>;
+    visitedZones: string[];
     spentDiscoveries: number;
 }
 
@@ -63,6 +63,7 @@ export interface SaveGameData {
     specialZones: Array<[string, any]>;
     messageLog: string[];
     currentRegion: string;
+    zoneGeneration?: any; // Zone generation state for session tracking
 }
 
 /**

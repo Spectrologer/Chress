@@ -1,6 +1,7 @@
 import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
 import { TILE_TYPES, GRID_SIZE } from '../../../core/constants/index';
 import { isWithinGrid } from '../../../utils/GridUtils';
+import { Position } from '../../../core/Position';
 import type { InventoryItem, BombItem, BowItem, BishopSpearItem, HorseIconItem } from '../ItemMetadata';
 
 /**
@@ -26,7 +27,7 @@ export class BombEffect extends BaseItemEffect {
                     const ny = py + dir.dy;
                     if (isWithinGrid(nx, ny) &&
                         (game.grid[ny][nx] === TILE_TYPES.FLOOR || game.grid[ny][nx] === TILE_TYPES.EXIT)) {
-                        game.transientGameState.addBombPlacementPosition({x: nx, y: ny});
+                        game.transientGameState.addBombPlacementPosition(Position.from({x: nx, y: ny}));
                     }
                 }
             },

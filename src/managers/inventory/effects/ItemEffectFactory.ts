@@ -1,12 +1,14 @@
 import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
 import { TILE_TYPES } from '../../../core/constants/index';
+import { Position } from '../../../core/Position';
 import type { InventoryItem } from '../ItemMetadata';
+import type { TileObject } from '../../../core/SharedTypes';
 
 interface RadialEffectConfig {
     name: string;
     onRadial: (game: Game, item: InventoryItem) => void;
     message: string;
-    dropTileType: number | object;
+    dropTileType: number | TileObject;
 }
 
 interface WeaponChargeConfig {
@@ -20,7 +22,7 @@ interface WeaponChargeConfig {
 interface BombEffectConfig {
     name: string;
     message: string;
-    dropTileType: number | object;
+    dropTileType: number | TileObject;
     enterPlacementMode: (game: Game) => void;
     getValidPositions: (game: Game) => Array<{ x: number; y: number }>;
 }
@@ -118,7 +120,7 @@ export class ItemEffectFactory {
                 enterPlacementMode(game);
                 const positions = getValidPositions(game);
                 positions.forEach(pos => {
-                    game.transientGameState.addBombPlacementPosition(pos);
+                    game.transientGameState.addBombPlacementPosition(Position.from(pos));
                 });
             },
             message,

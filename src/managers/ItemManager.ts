@@ -1,18 +1,12 @@
 import { TILE_TYPES, INVENTORY_CONSTANTS, GAMEPLAY_CONSTANTS } from '../core/constants/index';
 import { InventoryService } from './inventory/InventoryService';
-import { ItemMetadata } from './inventory/ItemMetadata';
+import { ItemMetadata, type InventoryItem } from './inventory/ItemMetadata';
 import { isTileType } from '../utils/TileUtils';
-import type { Game } from '../core/Game';
-
-interface Item {
-    type: string;
-    foodType?: string;
-    uses?: number;
-    [key: string]: any;
-}
+import type { Game } from '../core/game';
+import type { Tile } from '../core/SharedTypes';
 
 interface Player {
-    inventory: Item[];
+    inventory: InventoryItem[];
     restoreThirst: (amount: number) => void;
     setHealth: (health: number) => void;
     getHealth?: () => number;
@@ -79,7 +73,7 @@ export class ItemManager {
      * @param sound - Sound effect to play on success
      * @returns True if successfully added, false if inventory full
      */
-    addItemToInventory(player: Player, item: Item, sound: string = 'pickup'): boolean {
+    addItemToInventory(player: Player, item: InventoryItem, sound: string = 'pickup'): boolean {
         return this.service.pickupItem(item, sound);
     }
 
@@ -112,7 +106,7 @@ export class ItemManager {
         const tile = gridManager.getTile(x, y);
         if (!tile) return;
 
-        const pickup = (item: Item, sound: string = 'pickup') => {
+        const pickup = (item: InventoryItem, sound: string = 'pickup') => {
             const success = this.service.pickupItem(item, sound);
             if (success) {
                 gridManager.setTile(x, y, TILE_TYPES.FLOOR);
@@ -175,8 +169,10 @@ export class ItemManager {
                         case TILE_TYPES.BOOK_OF_TIME_TRAVEL:
                         case TILE_TYPES.BOW:
                         case TILE_TYPES.SHOVEL:
-                            const itemType = ItemMetadata.TILE_TYPE_MAP[tile.type] || 'unknown';
-                            pickup({ type: itemType, uses: tile.uses });
+                            const itemType = ItemMetadata.TILE_TYPE_MAP[tile.type];
+                            if (itemType) {
+                                pickup({ type: itemType, uses: tile.uses } as InventoryItem);
+                            }
                             break;
                     }
                 }
@@ -202,7 +198,7 @@ export class ItemManager {
      * @param tile - Tile value or tile object
      * @returns True if item can be added to inventory
      */
-    private _canPickupOrStackTile(player: Player, tile: number | object): boolean {
+    private _canPickupOrStackTile(player: Player, tile: Tile): boolean {
         // Check inventory space
         const hasSpace = player.inventory.length < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE;
         const isStackable = ItemMetadata.isStackableItem(tile);

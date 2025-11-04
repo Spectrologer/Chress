@@ -7,9 +7,8 @@
 
 import { GridIterator } from '../../utils/GridIterator';
 import { logger } from '../../core/logger';
+import type { Tile, Grid } from '../../core/SharedTypes';
 
-type Tile = number | Record<string, any>;
-type Grid = Array<Array<Tile>>;
 type TileCallback = (tile: Tile, x: number, y: number) => void;
 type TilePredicate = (tile: Tile, x: number, y: number) => boolean;
 
@@ -79,5 +78,12 @@ export class GridIterationOperations {
                 return tile;
             })
         );
+    }
+
+    /**
+     * Update the grid reference (for zone transitions)
+     */
+    setGrid(newGrid: Grid): void {
+        this.grid = newGrid;
     }
 }

@@ -7,9 +7,6 @@ import { registerAllContent } from '../config/ContentRegistrations';
 import { initializePWA } from '../utils/pwa-register';
 import { preloadCriticalModules } from '../utils/LazyLoader';
 
-// Re-export type for backward compatibility
-export type { IGame } from './GameContext';
-
 /**
  * Game
  *

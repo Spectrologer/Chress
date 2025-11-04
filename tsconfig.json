@@ -51,7 +51,8 @@
     "tools/**/*",
     "scripts/**/*",
     "tests/**/*",
-    "vite-env.d.ts"
+    "vite-env.d.ts",
+    "src/types/**/*.d.ts"
   ],
   "exclude": [
     "node_modules",

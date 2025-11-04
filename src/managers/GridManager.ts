@@ -8,26 +8,13 @@
  */
 import { GRID_SIZE } from '../core/constants/index';
 import { getTileType } from '../utils/TileUtils';
+import type { Tile, Grid } from '../core/SharedTypes';
 import { logger } from '../core/logger';
 import { GridCoreOperations } from './grid/GridCoreOperations';
-import { GridQueryOperations } from './grid/GridQueryOperations';
+import { GridQueryOperations, type TileWithPosition, type NeighborTile } from './grid/GridQueryOperations';
 import { GridIterationOperations } from './grid/GridIterationOperations';
 
-export type Tile = number | object;
-export type Grid = Array<Array<Tile>>;
-
-export interface TileWithPosition {
-    tile: Tile;
-    x: number;
-    y: number;
-}
-
-export interface NeighborTile {
-    tile: Tile;
-    x: number;
-    y: number;
-    direction: string;
-}
+export type { Tile, Grid, TileWithPosition, NeighborTile };
 
 export interface GridIteratorOptions {
     startX?: number;
@@ -52,29 +39,29 @@ export class GridManager {
 
         // Initialize query operations
         this.queryOps = new GridQueryOperations(
-            this.coreOps.grid,
+            this.coreOps.getRawGrid(),
             this.coreOps.getTile.bind(this.coreOps)
         );
 
         // Initialize iteration operations
         this.iterationOps = new GridIterationOperations(
-            this.coreOps.grid,
+            this.coreOps.getRawGrid(),
             this.coreOps.isWithinBounds.bind(this.coreOps),
             this.coreOps.getTile.bind(this.coreOps)
         );
 
         // Expose grid reference for compatibility
-        this.grid = this.coreOps.grid;
+        this.grid = this.coreOps.getRawGrid();
     }
 
     // ========== Core Operations ==========
 
     getTile(x: number, y: number): Tile | null {
-        return this.coreOps.getTile(x, y);
+        return this.coreOps.getTile(x, y) ?? null;
     }
 
     setTile(x: number, y: number, tile: Tile): void {
-        return this.coreOps.setTile(x, y, tile);
+        this.coreOps.setTile(x, y, tile);
     }
 
     isWithinBounds(x: number, y: number): boolean {
@@ -90,21 +77,21 @@ export class GridManager {
     }
 
     getTileType(x: number, y: number): number | null {
-        return this.coreOps.getTileType(x, y);
+        return this.coreOps.getTileType(x, y) ?? null;
     }
 
     cloneTile(x: number, y: number): Tile | null {
-        return this.coreOps.cloneTile(x, y);
+        return this.coreOps.cloneTile(x, y) ?? null;
     }
 
     clearTile(x: number, y: number, floorType: number = 0): void {
-        return this.coreOps.clearTile(x, y, floorType);
+        this.coreOps.clearTile(x, y, floorType);
     }
 
     setGrid(newGrid: Grid): void {
         this.coreOps.setGrid(newGrid);
-        this.queryOps.grid = newGrid;
-        this.iterationOps.grid = newGrid;
+        this.queryOps.setGrid(newGrid);
+        this.iterationOps.setGrid(newGrid);
         this.grid = newGrid;
     }
 
@@ -161,11 +148,11 @@ export class GridManager {
     }
 
     forEachInRegion(centerX: number, centerY: number, width: number, height: number, callback: TileCallback): void {
-        return this.iterationOps.forEachInRegion(centerX, centerY, width, height, callback);
+        this.iterationOps.forEachInRegion(centerX, centerY, width, height, callback);
     }
 
     swapTiles(x1: number, y1: number, x2: number, y2: number): void {
-        return this.iterationOps.swapTiles(x1, y1, x2, y2);
+        this.iterationOps.swapTiles(x1, y1, x2, y2);
     }
 
     cloneGrid(): Grid {

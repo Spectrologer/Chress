@@ -1,10 +1,11 @@
-import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS, SCALE_CONSTANTS, DAMAGE_FLASH_CONSTANTS } from '../core/constants/index';
+import { GRID_SIZE, TILE_SIZE, TILE_TYPES, ANIMATION_CONSTANTS, PHYSICS_CONSTANTS, SCALE_CONSTANTS, DAMAGE_FLASH_CONSTANTS, PULSATE_CONSTANTS } from '../core/constants/index';
 import { RENDERING_CONSTANTS } from '../core/constants/animation';
 import { MultiTileHandler } from './MultiTileHandler';
 import { RendererUtils } from './RendererUtils';
 import type { TextureManager } from './TextureManager';
 import type { Position } from './types';
 import type { IGame } from '../core/GameContext';
+import type { Tile, TileObject } from '../core/SharedTypes';
 
 interface Zone {
     x: number;
@@ -66,6 +67,10 @@ export class PlayerRenderer {
         this.game = game;
         this.ctx = game.ctx;
         this.textureManager = game.textureManager;
+    }
+
+    private isTileObject(tile: Tile): tile is TileObject {
+        return tile !== null && tile !== undefined && typeof tile === 'object' && 'type' in tile;
     }
 
     drawPlayer(): void {
@@ -178,7 +183,7 @@ export class PlayerRenderer {
             const bh = (bowImage?.height || TILE_SIZE) * scale;
 
             // Slight pulsing based on progress
-            const pulse = 1 + Math.sin(progress * Math.PI * 2) * PHYSICS_CONSTANTS.BOW_PULSE_AMPLITUDE * (power - 1);
+            const pulse = 1 + Math.sin(progress * Math.PI * 2) * PULSATE_CONSTANTS.BOW_PULSE_AMPLITUDE * (power - 1);
 
             if (bowImage && bowImage.complete) {
                 this.ctx.drawImage(bowImage, -bw / 2 * pulse, -bh / 2 * pulse, bw * pulse, bh * pulse);
@@ -270,7 +275,7 @@ export class PlayerRenderer {
         const playerGridY = this.game.player.y;
         const tileUnderPlayer = this.game.grid[playerGridY]?.[playerGridX];
 
-        if (tileUnderPlayer === TILE_TYPES.EXIT || tileUnderPlayer === TILE_TYPES.PORT || (tileUnderPlayer && tileUnderPlayer.type === TILE_TYPES.PORT)) {
+        if (tileUnderPlayer === TILE_TYPES.EXIT || tileUnderPlayer === TILE_TYPES.PORT || (this.isTileObject(tileUnderPlayer) && tileUnderPlayer.type === TILE_TYPES.PORT)) {
             const arrowImage = this.game.textureManager.getImage('ui/arrow');
             if (arrowImage && arrowImage.complete) {
                 this.ctx.save();
@@ -287,7 +292,7 @@ export class PlayerRenderer {
                 let rotationAngle = 0; // Default to North (arrow.png points up)
 
                 // If the tile under the player is an object-style PORT with explicit portKind, respect it
-                if (tileUnderPlayer && tileUnderPlayer.type === TILE_TYPES.PORT && tileUnderPlayer.portKind) {
+                if (this.isTileObject(tileUnderPlayer) && tileUnderPlayer.type === TILE_TYPES.PORT && tileUnderPlayer.portKind) {
                     if (tileUnderPlayer.portKind === 'stairdown') rotationAngle = Math.PI; // point down to indicate descend
                     else if (tileUnderPlayer.portKind === 'stairup') rotationAngle = 0; // point up to indicate ascend
                     else if (tileUnderPlayer.portKind === 'cistern') {
@@ -298,8 +303,8 @@ export class PlayerRenderer {
                         rotationAngle = this.game.player.currentZone.dimension === 0 ? 0 : Math.PI;
                     }
                 } else if (tileUnderPlayer === TILE_TYPES.PORT) {
-                    const isCistern = MultiTileHandler.findCisternPosition(playerGridX, playerGridY, this.game.gridManager);
-                    const isHole = !isCistern && !MultiTileHandler.findShackPosition(playerGridX, playerGridY, this.game.gridManager) && !MultiTileHandler.findHousePosition(playerGridX, playerGridY, this.game.gridManager);
+                    const isCistern = MultiTileHandler.findCisternPosition(playerGridX, playerGridY, this.game.gridManager as any);
+                    const isHole = !isCistern && !MultiTileHandler.findShackPosition(playerGridX, playerGridY, this.game.gridManager as any) && !MultiTileHandler.findHousePosition(playerGridX, playerGridY, this.game.gridManager as any);
 
                     if (isCistern || isHole) {
                         // For underground entrances (cisterns, holes), arrow points down to enter, and up to exit.

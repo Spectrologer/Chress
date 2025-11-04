@@ -4,6 +4,7 @@ import { EventTypes } from '../core/EventTypes';
 import { isAdjacent } from '../core/utils/DirectionUtils';
 import { NPC_CONFIG } from '../config/NPCConfig';
 import { ContentRegistry } from '../core/ContentRegistry';
+import { Position } from '../core/Position';
 import type { IGame, ICoordinates } from '../core/GameContext';
 
 interface NPCConfigEntry {
@@ -46,18 +47,19 @@ export class NPCInteractionManager {
 
         if (isAdjacent(dx, dy)) {
             // Track NPC position for distance-based auto-close
-            this.game.transientGameState.setCurrentNPCPosition(gridCoords);
+            this.game.transientGameState.setCurrentNPCPosition(Position.from(gridCoords));
 
             // Handle based on NPC action type
             if (npcConfig.action === 'dialogue') {
-                const npcData = Sign.getDialogueNpcData(characterData.id, this.game);
+                const characterId = (characterData as any)?.id || 'unknown';
+                const npcData = Sign.getDialogueNpcData(characterId, this.game as any);
                 if (npcData) {
                     const message = npcData.messages[npcData.currentMessageIndex];
                     const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
                     const signData = { message: message, type: 'npc' };
 
                     // Set both old and new state for compatibility
-                    this.game.displayingMessageForSign = signData;
+                    (this.game as any).displayingMessageForSign = signData;
                     if (this.game.transientGameState) {
                         this.game.transientGameState.setDisplayingSignMessage(signData);
                     }
@@ -84,9 +86,10 @@ export class NPCInteractionManager {
                 }
             } else if (npcConfig.action === 'barter') {
                 // Use event instead of direct UIManager call
+                const characterId = (characterData as any)?.id || 'unknown';
                 eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
                     type: 'barter',
-                    npc: characterData.id,
+                    npc: characterId,
                     playerPos: playerPos,
                     npcPos: gridCoords
                 });
@@ -131,7 +134,7 @@ export class NPCInteractionManager {
 
             if (isAdjacent(dx, dy)) {
                 // Track NPC position for distance-based auto-close
-                this.game.transientGameState.setCurrentNPCPosition(gridCoords);
+                this.game.transientGameState.setCurrentNPCPosition(Position.from(gridCoords));
 
                 if (config.action === 'barter') {
                     // Use event instead of direct UIManager call
@@ -142,14 +145,14 @@ export class NPCInteractionManager {
                         npcPos: gridCoords
                     });
                 } else if (config.action === 'dialogue') {
-                    const npcData = Sign.getDialogueNpcData(npcName, this.game);
+                    const npcData = Sign.getDialogueNpcData(npcName, this.game as any);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
                         const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
                         const signData = { message: message, type: 'npc' };
 
                         // Set both old and new state for compatibility
-                        this.game.displayingMessageForSign = signData;
+                        (this.game as any).displayingMessageForSign = signData;
                         if (this.game.transientGameState) {
                             this.game.transientGameState.setDisplayingSignMessage(signData);
                         }
@@ -212,7 +215,7 @@ export class NPCInteractionManager {
         for (const [npcName, config] of Object.entries(this.npcConfig)) {
             if (targetTile === config.tileType) {
                 // Track NPC position for distance-based auto-close
-                this.game.transientGameState.setCurrentNPCPosition(gridCoords);
+                this.game.transientGameState.setCurrentNPCPosition(Position.from(gridCoords));
 
                 if (config.action === 'barter') {
                     // Use event instead of direct UIManager call
@@ -223,14 +226,14 @@ export class NPCInteractionManager {
                         npcPos: gridCoords
                     });
                 } else if (config.action === 'dialogue') {
-                    const npcData = Sign.getDialogueNpcData(npcName, this.game);
+                    const npcData = Sign.getDialogueNpcData(npcName, this.game as any);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
                         const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
                         const signData = { message: message, type: 'npc' };
 
                         // Set both old and new state for compatibility
-                        this.game.displayingMessageForSign = signData;
+                        (this.game as any).displayingMessageForSign = signData;
                         if (this.game.transientGameState) {
                             this.game.transientGameState.setDisplayingSignMessage(signData);
                         }

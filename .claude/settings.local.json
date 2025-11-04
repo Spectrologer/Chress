@@ -54,7 +54,10 @@
       "Bash(npm run test:coverage:*)",
       "Bash(npx vitest:*)",
       "Bash(cmd /c \"dir c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\ui\\DialogueManager.* /B\")",
-      "Bash(cut:*)"
+      "Bash(cut:*)",
+      "Bash(tree:*)",
+      "Bash(xargs -I {} sed -i \"s|from ''''../core/Game''''|from ''''../core/game''''|g\" {})",
+      "Bash(xargs:*)"
     ],
     "deny": [],
     "ask": []

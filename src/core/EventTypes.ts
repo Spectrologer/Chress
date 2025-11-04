@@ -35,6 +35,11 @@ export const EventTypes = {
   ZONE_CHANGED: 'zone:changed',
   ZONE_INITIALIZED: 'zone:initialized',
   REGION_CHANGED: 'region:changed',
+  PORT_TRANSITION_DATA_SET: 'zone:port:transition:set',
+  PORT_TRANSITION_DATA_CLEARED: 'zone:port:transition:cleared',
+  PITFALL_ZONE_ENTERED: 'zone:pitfall:entered',
+  PITFALL_ZONE_EXITED: 'zone:pitfall:exited',
+  PITFALL_TURN_SURVIVED: 'zone:pitfall:turn:survived',
 
   // Player Events
   PLAYER_MOVED: 'player:moved',
@@ -75,6 +80,8 @@ export const EventTypes = {
   INVENTORY_CHANGED: 'inventory:changed',
   RADIAL_INVENTORY_CHANGED: 'inventory:radial:changed',
   ITEM_USED: 'inventory:item:used',
+  BOMB_PLACEMENT_POSITION_ADDED: 'inventory:bomb:placement:added',
+  BOMB_PLACEMENT_POSITION_REMOVED: 'inventory:bomb:placement:removed',
 
   // Ability Events (new)
   ABILITY_GAINED: 'ability:gained',

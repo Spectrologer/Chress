@@ -234,7 +234,7 @@ export class AnimationSequence {
             this.currentDelay = setTimeout(() => {
                 this.currentDelay = null;
                 if (!this.cancelled) {
-                    resolve();
+                    resolve(undefined);
                 } else {
                     reject(new Error('Sequence was cancelled'));
                 }
@@ -247,6 +247,6 @@ export class AnimationSequence {
      * @returns {AnimationSequence} New sequence instance
      */
     createSubSequence() {
-        return new AnimationSequence(`${this.id}_sub_${Math.random()}`, this.scheduler);
+        return new AnimationSequence(Math.floor(Math.random() * 1000000), this.scheduler);
     }
 }

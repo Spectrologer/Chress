@@ -1,24 +1,19 @@
 import { logger } from '../core/logger';
 import { fitTextToContainer } from './TextFitter';
 import { EventListenerManager } from '../utils/EventListenerManager';
-
-interface GameInstance {
-    displayingMessageForSign?: any;
-    animationScheduler: any;
-    transientGameState?: any;
-}
+import type { IGame } from '../core/GameContext';
 
 /**
  * Handles overlay message display with auto-hide functionality.
  * Manages temporary and persistent overlay messages.
  */
 export class OverlayMessageHandler {
-    private game: GameInstance;
+    private game: IGame;
     private messageOverlay: HTMLElement | null;
     private currentOverlayTimeout: number | null = null;
     private eventManager: EventListenerManager;
 
-    constructor(game: GameInstance) {
+    constructor(game: IGame) {
         this.game = game;
         this.messageOverlay = document.getElementById('messageOverlay');
         this.eventManager = new EventListenerManager();

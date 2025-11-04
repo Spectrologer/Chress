@@ -5,6 +5,7 @@ import { isTileType } from '../../utils/TileUtils';
 export interface BaseItem {
     type: string;
     disabled?: boolean;
+    [key: string]: unknown;
 }
 
 export interface FoodItem extends BaseItem {

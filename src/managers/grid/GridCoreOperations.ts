@@ -8,9 +8,7 @@
 import { isWithinGrid } from '../../utils/GridUtils';
 import { getTileType, isTileType, isWalkable as isWalkableTile } from '../../utils/TileUtils';
 import { logger } from '../../core/logger';
-
-type Tile = number | Record<string, any>;
-type Grid = Array<Array<Tile>>;
+import type { Tile, Grid } from '../../core/SharedTypes';
 
 export class GridCoreOperations {
     private grid: Grid;

@@ -9,22 +9,9 @@ import { TILE_TYPES } from '../../core/constants/index';
 import { createZoneKey } from '../../utils/ZoneKeyUtils';
 import { eventBus } from '../../core/EventBus';
 import { EventTypes } from '../../core/EventTypes';
-import type { Game } from '../../core/Game';
+import type { Game } from '../../core/game';
 import type { Position } from '../../core/Position';
-
-interface Enemy {
-    x: number;
-    y: number;
-    lastX?: number;
-    lastY?: number;
-    health: number;
-    id: string;
-    enemyType: string;
-    liftFrames?: number;
-    planMoveTowards: (player: any, grid: any, allEnemies: any[], playerPos: Position, param5: boolean, game: Game) => Position | null;
-    serialize: () => any;
-    [key: string]: any;
-}
+import type { Enemy } from '../../entities/Enemy';
 
 export class EnemyMovementHandler {
     private game: Game;

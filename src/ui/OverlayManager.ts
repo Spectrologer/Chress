@@ -1,10 +1,7 @@
 import { StartOverlayController } from './StartOverlayController';
 import { OverlayButtonHandler } from './OverlayButtonHandler';
 import { OverlayMusicToggle } from './OverlayMusicToggle';
-
-interface GameInstance {
-    [key: string]: any;
-}
+import type { IGame } from '../core/GameContext';
 
 /**
  * OverlayManager
@@ -13,12 +10,12 @@ interface GameInstance {
  * Delegates responsibilities to specialized controllers.
  */
 export class OverlayManager {
-    private game: GameInstance;
+    private game: IGame;
     private startOverlayController: StartOverlayController;
     private musicToggle: OverlayMusicToggle;
     private buttonHandler: OverlayButtonHandler;
 
-    constructor(game: GameInstance) {
+    constructor(game: IGame) {
         this.game = game;
 
         // Initialize controllers

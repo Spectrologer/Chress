@@ -22,7 +22,14 @@ export function findValidPlacement({
     minY = 1,
     maxX = GRID_SIZE - 1,
     maxY = GRID_SIZE - 1,
-    validate = () => true
+    validate = (x: number, y: number): boolean => true
+}: {
+    maxAttempts?: number;
+    minX?: number;
+    minY?: number;
+    maxX?: number;
+    maxY?: number;
+    validate?: (x: number, y: number) => boolean;
 } = {}) {
     for (let attempts = 0; attempts < maxAttempts; attempts++) {
         const x = randomInt(minX, maxX);

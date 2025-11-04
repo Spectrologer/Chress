@@ -1,12 +1,6 @@
 // Small runtime helper to animate overlay curling away like parchment.
 // Exposes `animateOverlayCurl` on window for backward-compatible invocation.
 
-declare global {
-    interface Window {
-        animateOverlayCurl: (overlayElement: HTMLElement | null) => Promise<void>;
-    }
-}
-
 (function () {
     function animateOverlayCurl(overlayElement: HTMLElement | null): Promise<void> {
         return new Promise((resolve) => {

@@ -328,7 +328,7 @@ export class ItemRepository {
      */
     private _saveRadialInventory(): void {
         try {
-            saveRadialInventory(this.game);
+            saveRadialInventory(this.game as any);
         } catch (e) {
             // Silently fail - radial persistence is not critical
         }

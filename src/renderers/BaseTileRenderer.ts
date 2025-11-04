@@ -22,7 +22,7 @@ export class BaseTileRenderer {
     private tileSize: number;
     private wallRenderer: WallTileRenderer;
     private itemRenderer: ItemTileRenderer;
-    private structureRenderer: StructureTileRenderer;
+    public structureRenderer: StructureTileRenderer;
     private strategyRegistry: TileStrategyRegistry;
 
     constructor(images: ImageCache, textureDetector: TextureDetector, multiTileHandler: MultiTileHandler, tileSize: number) {
@@ -39,7 +39,7 @@ export class BaseTileRenderer {
         this.strategyRegistry = new TileStrategyRegistry(
             images,
             tileSize,
-            multiTileHandler,
+            multiTileHandler as any,
             this.wallRenderer,
             this.structureRenderer
         );

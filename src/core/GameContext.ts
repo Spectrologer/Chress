@@ -48,11 +48,14 @@ import type { NPCInteractionManager } from '../managers/NPCInteractionManager';
 import type { TerrainInteractionManager } from '../managers/TerrainInteractionManager';
 import type { ItemRepository } from '../managers/inventory/ItemRepository';
 import type { InventoryInteractionHandler } from '../managers/inventory/InventoryInteractionHandler';
+import type { InventoryItem } from '../managers/inventory/ItemMetadata';
+import type { SoundManager as ISoundManager } from '../types/game';
 
 export interface Item {
-    name: string;
+    name?: string;
     type: string;
     uses?: number;
+    [key: string]: unknown;
 }
 
 /**
@@ -77,6 +80,8 @@ export interface IGame {
     zoneGenState: ZoneGenerationState;
     storageAdapter: StorageAdapter;
     transientGameState?: TransientGameState;
+    displayingMessageForSign?: any;
+    radialInventorySnapshot?: InventoryItem[];
 
     // Dynamic properties (used by GameStateManager)
     zoneRepository?: any; // ZoneRepository instance
@@ -84,6 +89,8 @@ export interface IGame {
     dialogueState?: Map<string, any>;
     lastExitSide?: string | null;
     _newGameSpawnPosition?: { x: number; y: number } | null;
+    pendingConfirmationAction?: string;
+    pendingConfirmationData?: any;
 
     // Turn-based system state
     isPlayerTurn: boolean;
@@ -167,7 +174,7 @@ export interface IGame {
     // turnFeedbackRenderer?: TurnFeedbackRenderer; // Type doesn't exist
 
     // Audio
-    soundManager: object | null;
+    soundManager: ISoundManager | null;
     consentManager: object | null;
 
     // Backward compatibility aliases
@@ -186,7 +193,7 @@ export interface IGame {
     processTurnQueue(): void;
     render(): void;
     handleEnemyMovements(): void;
-    checkCollisions(): void;
+    checkCollisions(): boolean;
     checkPenneInteraction(): void;
     checkSquigInteraction(): void;
     checkItemPickup(): void;
@@ -289,6 +296,7 @@ export class GameContext implements IGame {
     enemyCollection: EnemyCollection | null;
     npcManager: NPCManager | null;
     playerDeathTimer: number | null;
+    playerFacade?: PlayerFacade;
 
     constructor() {
         // Core subsystems
@@ -420,8 +428,8 @@ export class GameContext implements IGame {
     get _lastPlayerPos(): {x: number, y: number} | null { return this.ui._lastPlayerPos; }
     set _lastPlayerPos(value: {x: number, y: number} | null) { this.ui._lastPlayerPos = value; }
 
-    get soundManager(): object | null { return this.audio.soundManager; }
-    set soundManager(value: object | null) { this.audio.soundManager = value; }
+    get soundManager(): ISoundManager | null { return this.audio.soundManager as ISoundManager | null; }
+    set soundManager(value: ISoundManager | null) { this.audio.soundManager = value; }
 
     get consentManager(): object | null { return this.audio.consentManager; }
     set consentManager(value: object | null) { this.audio.consentManager = value; }
@@ -455,15 +463,15 @@ export class GameContext implements IGame {
     // ========================================
 
     handleTurnCompletion(): void {
-        return this.turnManager!.handleTurnCompletion();
+        this.turnManager!.handleTurnCompletion();
     }
 
     startEnemyTurns(): void {
-        return this.turnManager!.startEnemyTurns();
+        this.turnManager!.startEnemyTurns();
     }
 
     processTurnQueue(): void {
-        return this.turnManager!.processTurnQueue();
+        this.turnManager!.processTurnQueue();
     }
 
     render(): void {
@@ -474,8 +482,8 @@ export class GameContext implements IGame {
         this.combatManager!.handleEnemyMovements();
     }
 
-    checkCollisions(): void {
-        this.combatManager!.checkCollisions();
+    checkCollisions(): boolean {
+        return this.combatManager!.checkCollisions();
     }
 
     checkPenneInteraction(): void {
@@ -536,15 +544,15 @@ export class GameContext implements IGame {
         this.actionManager!.incrementBombActions();
     }
 
-    performBishopSpearCharge(item: Item, targetX: number, targetY: number, enemy: Enemy, dx: number, dy: number): void {
+    performBishopSpearCharge(item: InventoryItem, targetX: number, targetY: number, enemy: Enemy, dx: number, dy: number): void {
         this.actionManager!.performBishopSpearCharge(item, targetX, targetY, enemy, dx, dy);
     }
 
-    performHorseIconCharge(item: Item, targetX: number, targetY: number, enemy: Enemy, dx: number, dy: number): void {
+    performHorseIconCharge(item: InventoryItem, targetX: number, targetY: number, enemy: Enemy, dx: number, dy: number): void {
         this.actionManager!.performHorseIconCharge(item, targetX, targetY, enemy, dx, dy);
     }
 
-    performBowShot(item: Item, targetX: number, targetY: number): void {
+    performBowShot(item: InventoryItem, targetX: number, targetY: number): void {
         this.actionManager!.performBowShot(item, targetX, targetY);
     }
 

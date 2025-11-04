@@ -8,6 +8,9 @@
  * that need combat-related functionality.
  */
 export class CombatFacade {
+    public combatActionManager: any;
+    public bombManager: any;
+
     /**
      * @param {Object} combatActionManager - Manages combat actions (charges, bow shots)
      * @param {Object} bombManager - Handles bomb placement and explosions

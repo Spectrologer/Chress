@@ -13,10 +13,16 @@
 import { store } from './StateStore';
 import { persistence } from './StatePersistence';
 
+declare global {
+  interface Window {
+    chressDebugger: StateDebugger;
+  }
+}
+
 export class StateDebugger {
   private isOpen: boolean;
   private container: HTMLElement | null;
-  private updateInterval: NodeJS.Timer | null;
+  private updateInterval: ReturnType<typeof setInterval> | null;
   private selectedSlice: string;
   private viewMode: string;
 
@@ -267,40 +273,40 @@ export class StateDebugger {
     document.body.appendChild(this.container);
 
     // Add event listeners
-    this.container.querySelector('#state-debugger-close').addEventListener('click', () => {
+    this.container.querySelector('#state-debugger-close')!.addEventListener('click', () => {
       this.close();
     });
 
     this.container.querySelectorAll('.debugger-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
-        this.viewMode = e.target.dataset.view;
-        this.container.querySelectorAll('.debugger-tab').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
+        const target = e.target as HTMLElement;
+        this.viewMode = target.dataset.view || 'tree';
+        this.container!.querySelectorAll('.debugger-tab').forEach(t => t.classList.remove('active'));
+        target.classList.add('active');
         this.refresh();
       });
     });
 
-    this.container.querySelector('#debug-print').addEventListener('click', () => {
+    this.container.querySelector('#debug-print')!.addEventListener('click', () => {
       store.debugPrint();
     });
 
-    this.container.querySelector('#debug-export').addEventListener('click', () => {
+    this.container.querySelector('#debug-export')!.addEventListener('click', () => {
       persistence.exportSave();
     });
 
-    this.container.querySelector('#debug-clear').addEventListener('click', () => {
-      store.history = [];
-      store.mutations = [];
+    this.container.querySelector('#debug-clear')!.addEventListener('click', () => {
+      store.clearHistory();
       this.refresh();
     });
 
-    this.container.querySelector('#debug-snapshot').addEventListener('click', () => {
+    this.container.querySelector('#debug-snapshot')!.addEventListener('click', () => {
       const snapshot = store.getSnapshot();
       console.log('📸 State Snapshot:', snapshot);
       this.refresh();
     });
 
-    this.container.querySelector('#debug-refresh').addEventListener('click', () => {
+    this.container.querySelector('#debug-refresh')!.addEventListener('click', () => {
       this.refresh();
     });
   }
@@ -478,12 +484,12 @@ export class StateDebugger {
 
         <div class="stat-row">
           <span class="stat-label">History Size:</span>
-          <span class="stat-value">${store.history.length} / ${store.maxHistorySize}</span>
+          <span class="stat-value">${store.getHistoryLength()} / ${store.getMaxHistorySize()}</span>
         </div>
 
         <div class="stat-row">
           <span class="stat-label">Mutations Recorded:</span>
-          <span class="stat-value">${store.mutations.length} / ${store.maxMutations}</span>
+          <span class="stat-value">${store.getMutationsLength()} / ${store.getMaxMutations()}</span>
         </div>
 
         <div class="stat-row">

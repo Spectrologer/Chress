@@ -366,4 +366,24 @@ export class PathfindingController {
         }
     }
 
+    // ========================================
+    // GETTERS/SETTERS
+    // ========================================
+
+    getCurrentPathSequence(): AnimationSequence | null {
+        return this.currentPathSequence;
+    }
+
+    setCurrentPathSequence(value: AnimationSequence | null): void {
+        this.currentPathSequence = value;
+    }
+
+    getCurrentPathSequenceFallback(): NodeJS.Timeout | null {
+        return this.currentPathSequenceFallback;
+    }
+
+    setCurrentPathSequenceFallback(value: NodeJS.Timeout | null): void {
+        this.currentPathSequenceFallback = value;
+    }
+
 }

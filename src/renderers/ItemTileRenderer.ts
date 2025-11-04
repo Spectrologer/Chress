@@ -128,7 +128,7 @@ export class ItemTileRenderer {
                 scaledHeight
             );
         } else {
-            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.SPEAR], '🔱', 24);
+            this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BISHOP_SPEAR], '🔱', 24);
         }
     }
 

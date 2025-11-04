@@ -12,7 +12,6 @@ interface Zone {
 interface Player {
     getCurrentZone(): Zone;
     hasVisitedZone(x: number, y: number, dimension: number): boolean;
-    isTileMarked?(x: number, y: number): boolean;
     undergroundDepth?: number;
     getVisitedZones(): Set<string>;
     getSpentDiscoveries(): number;
@@ -301,14 +300,14 @@ export class MiniMap {
                 ctx.lineWidth = 1;
                 ctx.strokeRect(mapX, mapY, zoneSize - 2, zoneSize - 2);
 
-                // Draw marked tile indicator (X)
-                if (this.game.player.isTileMarked && this.game.player.isTileMarked(zoneX, zoneY)) {
-                    ctx.fillStyle = '#8B0000'; // Dark red for the mark
-                    ctx.font = `bold ${zoneSize * 0.9}px serif`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText('X', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
-                }
+                // Draw marked tile indicator (X) - feature disabled until implemented
+                // if (this.game.player.isTileMarked && this.game.player.isTileMarked(zoneX, zoneY)) {
+                //     ctx.fillStyle = '#8B0000'; // Dark red for the mark
+                //     ctx.font = `bold ${zoneSize * 0.9}px serif`;
+                //     ctx.textAlign = 'center';
+                //     ctx.textBaseline = 'middle';
+                //     ctx.fillText('X', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
+                // }
 
                 // Draw star icon for special zones (from map notes)
                 const zoneKey = `${zoneX},${zoneY}`;

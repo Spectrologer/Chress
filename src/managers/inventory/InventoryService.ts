@@ -6,7 +6,7 @@ import audioManager from '../../utils/AudioManager';
 import { eventBus } from '../../core/EventBus';
 import { EventTypes } from '../../core/EventTypes';
 import { isFloor } from '../../utils/TileUtils';
-import type { Game } from '../../core/Game';
+import type { Game } from '../../core/game';
 
 interface UseItemContext {
     fromRadial?: boolean;

@@ -6,6 +6,9 @@ import { findValidPlayerSpawn as _findValidPlayerSpawn } from '../zoneSpawnManag
 import { isPort, isTileType } from '../../utils/TileUtils';
 
 class UndergroundHandler extends BaseZoneHandler {
+    private zoneConnections: any;
+    private exitSide: any;
+
     constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets, exitSide) {
         const currentDepth = zoneGen.game?.player?.currentZone?.depth || zoneGen.game?.player?.undergroundDepth || 1;
         super(zoneGen, zoneX, zoneY, foodAssets, 2, currentDepth);

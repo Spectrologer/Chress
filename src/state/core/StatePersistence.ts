@@ -69,7 +69,7 @@ export class StatePersistence {
       };
 
       request.onupgradeneeded = (event) => {
-        const db = event.target.result;
+        const db = (event.target as IDBOpenDBRequest).result;
 
         // Create object store if it doesn't exist
         if (!db.objectStoreNames.contains(this.STORE_NAME)) {
@@ -449,7 +449,7 @@ export class StatePersistence {
   async saveToIndexedDB(key, data) {
     await this.waitForDB();
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const transaction = this.db.transaction([this.STORE_NAME], 'readwrite');
       const store = transaction.objectStore(this.STORE_NAME);
       const request = store.put(data, key);
@@ -481,7 +481,7 @@ export class StatePersistence {
   async deleteFromIndexedDB(key) {
     await this.waitForDB();
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const transaction = this.db.transaction([this.STORE_NAME], 'readwrite');
       const store = transaction.objectStore(this.STORE_NAME);
       const request = store.delete(key);
@@ -582,7 +582,11 @@ export class StatePersistence {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const serialized = JSON.parse(e.target.result);
+          const result = e.target?.result;
+          if (typeof result !== 'string') {
+            throw new Error('Invalid file format');
+          }
+          const serialized = JSON.parse(result);
           const state = this.deserialize(serialized);
           store.restoreSnapshot({ state, timestamp: Date.now() });
           resolve(true);

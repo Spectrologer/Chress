@@ -5,6 +5,8 @@ import { createZoneKey } from '../utils/ZoneKeyUtils';
  * Manages storage and retrieval of zone data across all dimensions and depths.
  */
 export class ZoneRepository {
+    private _zones: Map<string, any>;
+
     constructor() {
         // Stores generated zones by coordinate key
         // Key format: "x,y,dimension,depth" (depth optional, defaults to 1 for underground)

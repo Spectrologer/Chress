@@ -1,3 +1,5 @@
+import type { SoundManager } from '../types/game';
+
 /**
  * GameAudio
  *
@@ -7,7 +9,7 @@
  */
 export class GameAudio {
     // Audio managers (set by ServiceContainer)
-    soundManager: any;
+    soundManager: SoundManager | null;
     consentManager: any;
 
     constructor() {

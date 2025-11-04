@@ -10,13 +10,13 @@ import { errorHandler, ErrorSeverity } from '../ErrorHandler';
 import { VOLUME_CONSTANTS } from '../constants/audio';
 
 export class MusicController {
-    private audioContext: AudioContext | null;
-    private backgroundAudioElement: HTMLAudioElement | null;
-    private backgroundSource: MediaElementAudioSourceNode | null;
-    private backgroundGain: GainNode | null;
-    private currentMusicVolume: number;
-    private currentMusicTrack: string | null;
-    private musicEnabled: boolean;
+    public audioContext: AudioContext | null;
+    public backgroundAudioElement: HTMLAudioElement | null;
+    public backgroundSource: MediaElementAudioSourceNode | null;
+    public backgroundGain: GainNode | null;
+    public currentMusicVolume: number;
+    public currentMusicTrack: string | null;
+    public musicEnabled: boolean;
 
     constructor() {
         this.audioContext = null;
@@ -55,7 +55,7 @@ export class MusicController {
                     filePath
                 });
             });
-            this.backgroundAudio = audio;
+            this.backgroundAudioElement = audio;
         } catch (e) {
             // ignore background play errors
         }
@@ -67,9 +67,9 @@ export class MusicController {
      */
     stopBackground() {
         try {
-            if (this.backgroundAudio) {
-                try { this.backgroundAudio.pause(); } catch (e) {}
-                this.backgroundAudio = null;
+            if (this.backgroundAudioElement) {
+                try { this.backgroundAudioElement.pause(); } catch (e) {}
+                this.backgroundAudioElement = null;
             }
         } catch (e) {}
     }
@@ -176,6 +176,14 @@ export class MusicController {
             // Fallback to simple HTMLAudio playback
             try { this.playBackground(filePath, volume); } catch (ee) {}
         }
+    }
+
+    /**
+     * Get music enabled state
+     * @returns {boolean}
+     */
+    getMusicEnabled() {
+        return this.musicEnabled;
     }
 
     /**

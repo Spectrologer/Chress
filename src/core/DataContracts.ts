@@ -386,9 +386,9 @@ export class AnimationManager {
    */
   addHorseChargeAnimation({ startPos, midPos, endPos }: { startPos: Position; midPos: Position; endPos: Position }): void {
     const animation: HorseChargeAnimation = {
-      startPos: { ...startPos },
-      midPos: { ...midPos },
-      endPos: { ...endPos },
+      startPos: startPos as Position,
+      midPos: midPos as Position,
+      endPos: endPos as Position,
       frame: 20
     };
     DataContractValidator.validateAnimation('HORSE_CHARGE', animation);

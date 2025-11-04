@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * StateSubscriptionManager - Manages listener subscriptions
  *
@@ -6,31 +5,27 @@
  * Each listener subscribes to a top-level slice (persistent, session, transient, ui, meta).
  */
 
-/**
- * @typedef {Function} StateListener
- * @param {any} sliceState - The state slice that changed
- * @param {string|null} path - The path that changed (if available)
- * @returns {void}
- */
+export type StateListener = (sliceState: any, path?: string | null) => void;
 
 export class StateSubscriptionManager {
+  private listeners: Map<string, Set<StateListener>> = new Map();
+
   constructor() {
-    /** @type {Map<string, Set<StateListener>>} */
-    this.listeners = new Map(); // slice -> Set of callbacks
+    // listeners initialized above
   }
 
   /**
    * Subscribe to changes in a specific state slice
-   * @param {string} slice - Top-level slice name (e.g., 'persistent', 'ui')
-   * @param {StateListener} callback - Called when slice changes
-   * @returns {() => void} Unsubscribe function
+   * @param slice - Top-level slice name (e.g., 'persistent', 'ui')
+   * @param callback - Called when slice changes
+   * @returns Unsubscribe function
    */
-  subscribe(slice, callback) {
+  subscribe(slice: string, callback: StateListener): () => void {
     if (!this.listeners.has(slice)) {
       this.listeners.set(slice, new Set());
     }
 
-    this.listeners.get(slice).add(callback);
+    this.listeners.get(slice)!.add(callback);
 
     // Return unsubscribe function
     return () => {
@@ -43,12 +38,11 @@ export class StateSubscriptionManager {
 
   /**
    * Notify all listeners for a specific slice
-   * @param {string} slice - The slice name
-   * @param {any} sliceState - The current state of the slice
-   * @param {string|null} [path=null] - The changed path
-   * @returns {void}
+   * @param slice - The slice name
+   * @param sliceState - The current state of the slice
+   * @param path - The changed path
    */
-  notifyListeners(slice, sliceState, path = null) {
+  notifyListeners(slice: string, sliceState: any, path: string | null = null): void {
     const listeners = this.listeners.get(slice);
     if (listeners) {
       listeners.forEach(callback => {
@@ -63,11 +57,10 @@ export class StateSubscriptionManager {
 
   /**
    * Notify listeners for multiple slices
-   * @param {Set<string>} slices - Set of slice names to notify
-   * @param {any} state - The full state object
-   * @returns {void}
+   * @param slices - Set of slice names to notify
+   * @param state - The full state object
    */
-  notifyMultipleSlices(slices, state) {
+  notifyMultipleSlices(slices: Set<string>, state: any): void {
     slices.forEach(slice => {
       this.notifyListeners(slice, state[slice]);
     });
@@ -75,10 +68,9 @@ export class StateSubscriptionManager {
 
   /**
    * Notify all listeners across all slices
-   * @param {any} state - The full state object
-   * @returns {void}
+   * @param state - The full state object
    */
-  notifyAllListeners(state) {
+  notifyAllListeners(state: any): void {
     for (const slice of Object.keys(state)) {
       this.notifyListeners(slice, state[slice]);
     }
@@ -86,9 +78,9 @@ export class StateSubscriptionManager {
 
   /**
    * Get total number of listeners across all slices
-   * @returns {number} Total listener count
+   * @returns Total listener count
    */
-  getListenerCount() {
+  getListenerCount(): number {
     return Array.from(this.listeners.values()).reduce((sum, set) => sum + set.size, 0);
   }
 }

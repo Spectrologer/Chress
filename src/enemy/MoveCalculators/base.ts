@@ -73,8 +73,9 @@ import { applyTacticalAdjustments, applyDefensiveMoves } from './tactics';
 import { handlePlayerInteraction, handlePitfallTransition } from './interaction';
 
 export class BaseMoveCalculator {
+    public tacticalAI: any;
+
     constructor() {
-        /** @type {any} */
         this.tacticalAI = null; // Will be set by movement mixin
     }
 

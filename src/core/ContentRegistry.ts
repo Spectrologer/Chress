@@ -160,7 +160,7 @@ export class ContentRegistry {
     /**
      * Register a new zone handler for a dimension
      */
-    static registerZoneHandler(dimension: number, handlerFactory: Function, config: ZoneHandlerConfig = {}): void {
+    static registerZoneHandler(dimension: number, handlerFactory: (...args: unknown[]) => unknown, config: ZoneHandlerConfig = {}): void {
         if (typeof dimension !== 'number') {
             throw new Error(`Zone dimension must be a number, got: ${typeof dimension}`);
         }

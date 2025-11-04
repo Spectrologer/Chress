@@ -22,6 +22,8 @@ import GridIterator from '../utils/GridIterator';
 
 export class PathGenerator {
     private gridManager: any;
+    private zoneX: number = 0;
+    private zoneY: number = 0;
 
     constructor(gridManager: any) {
         this.gridManager = gridManager;

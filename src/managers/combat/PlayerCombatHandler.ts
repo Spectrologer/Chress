@@ -9,19 +9,11 @@ import audioManager from '../../utils/AudioManager';
 import { eventBus } from '../../core/EventBus';
 import { EventTypes } from '../../core/EventTypes';
 import { EnemyAttackHelper } from '../../enemy/EnemyAttackHelper';
-import type { Game } from '../../core/Game';
+import type { Game } from '../../core/game';
 import type { Position } from '../../core/Position';
+import type { Enemy } from '../../entities/Enemy';
 
-interface Enemy {
-    x: number;
-    y: number;
-    health: number;
-    startBump: (dx: number, dy: number) => void;
-    _suppressAttackSound?: boolean;
-    [key: string]: any;
-}
-
-interface AttackResult {
+export interface AttackResult {
     defeated: boolean;
     consecutiveKills: number;
 }
