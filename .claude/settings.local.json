@@ -51,7 +51,8 @@
       "Bash(npm install:*)",
       "Bash(npm run lint:*)",
       "Bash(npm run type-check:*)",
-      "Bash(npm run test:coverage:*)"
+      "Bash(npm run test:coverage:*)",
+      "Bash(npx vitest:*)"
     ],
     "deny": [],
     "ask": []
