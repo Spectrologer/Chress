@@ -8,6 +8,10 @@ import { npcDiscoveryPlugin } from './vite-plugin-npc-discovery.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// IMPORTANT: public/assets directory has been intentionally removed
+// DO NOT create public/assets - tests should work without it
+// The error "Could not scan directory public/assets" is expected and harmless
+
 export default defineConfig({
   plugins: [
     assetDiscoveryPlugin(),

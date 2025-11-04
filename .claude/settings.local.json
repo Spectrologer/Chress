@@ -47,7 +47,11 @@
       "Bash(node:*)",
       "Bash(test:*)",
       "Bash(git fetch:*)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run test:coverage:*)"
     ],
     "deny": [],
     "ask": []
