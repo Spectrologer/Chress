@@ -327,9 +327,10 @@ export class ActionManager {
                     }
                 }
                 // Now that the arrow has hit, enemies can take their turn.
+                // IMPORTANT: Call startEnemyTurns BEFORE clearing the flag so the guard check works
+                this.game.startEnemyTurns?.();
                 const transientState = this.game.transientGameState;
                 transientState.clearPlayerJustAttacked();
-                this.game.startEnemyTurns?.();
             })
             .start();
     }

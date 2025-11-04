@@ -20,7 +20,9 @@
       "Bash(Select-String \"FAIL tests/\")",
       "Bash(rm:*)",
       "Bash(cat:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm run test:coverage:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []
