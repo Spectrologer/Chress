@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { UIManager } from '../ui/UIManager.js';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';

@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { ZoneManager } from '@managers/ZoneManager';
 import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 

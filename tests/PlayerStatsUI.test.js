@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { PlayerStatsUI } from '../ui/PlayerStatsUI.js';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';

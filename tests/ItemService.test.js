@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { InventoryService } from '@managers/inventory/InventoryService';
 import { ItemMetadata } from '@managers/inventory/ItemMetadata';
 import { TILE_TYPES } from '@core/constants/index';

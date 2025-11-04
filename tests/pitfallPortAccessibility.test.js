@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { PathGenerator } from '../generators/PathGenerator.js';
 import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 import { isTileType } from '@utils/TileUtils';

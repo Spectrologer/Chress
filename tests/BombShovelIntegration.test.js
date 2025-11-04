@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { InventoryService } from '@managers/inventory/InventoryService';
 import { BombManager } from '@managers/BombManager';
 import { TILE_TYPES } from '@core/constants/index';

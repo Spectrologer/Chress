@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { ServiceContainer } from '@core/ServiceContainer';
 
 describe('ServiceContainer - Lazy Initialization', () => {

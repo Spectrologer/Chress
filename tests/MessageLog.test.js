@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { MessageLog } from '../ui/MessageLog.js';
 import { createMockGame, setupDOMFixture, teardownDOMFixture } from './helpers/mocks.js';
 

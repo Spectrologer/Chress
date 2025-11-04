@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { CombatManager } from '@managers/CombatManager';
 import { BombManager } from '@managers/BombManager';
 import { EnemyDefeatFlow } from '@managers/EnemyDefeatFlow';

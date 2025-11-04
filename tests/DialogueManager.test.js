@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { DialogueManager } from '../ui/DialogueManager.js';
 import { createMockGame, setupDOMFixture, teardownDOMFixture } from './helpers/mocks.js';
 

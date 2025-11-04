@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { MiniMap } from '../ui/MiniMap.js';
 import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks.js';
 

@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { PanelManager } from '../ui/PanelManager.js';
 
 // Minimal DOM fixture for records overlay

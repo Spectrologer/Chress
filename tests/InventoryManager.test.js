@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { InventoryUI } from '../ui/InventoryUI.js';
 import { InventoryService } from '@managers/inventory/InventoryService';
 import { ItemMetadata } from '@managers/inventory/ItemMetadata';
