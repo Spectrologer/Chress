@@ -42,7 +42,7 @@ export class SaveSerializer {
             inventory: player.inventory,
             abilities: Array.from(player.abilities),
             health: player.getHealth(),
-            dead: player.dead,
+            dead: player.stats.dead,
             sprite: player.sprite,
             points: player.getPoints(),
             visitedZones: Array.from(player.visitedZones),

@@ -23,7 +23,7 @@ export class SaveDeserializer {
         game.world.player.inventory = playerData.inventory;
         game.world.player.abilities = new Set(playerData.abilities || []);
         game.world.player.setHealth(playerData.health);
-        game.world.player.dead = playerData.dead;
+        game.world.player.stats.dead = playerData.dead;
         game.world.player.sprite = playerData.sprite;
         game.world.player.setPoints(playerData.points);
         game.world.player.visitedZones = new Set(playerData.visitedZones);

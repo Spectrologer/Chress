@@ -21,7 +21,9 @@ import { isPort, isTileType, isExit, isWall, isRock, isShrubbery } from '../util
 import GridIterator from '../utils/GridIterator';
 
 export class PathGenerator {
-    constructor(gridManager) {
+    private gridManager: any;
+
+    constructor(gridManager: any) {
         this.gridManager = gridManager;
     }
 

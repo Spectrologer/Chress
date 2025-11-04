@@ -7,6 +7,9 @@ import { logger } from '../core/logger';
  * with the zone editor tool.
  */
 export class CustomZoneLoader {
+    private loadedZones: Map<string, any>;
+    private zonePath: string;
+
     constructor() {
         this.loadedZones = new Map();
         this.zonePath = './zones/custom/';

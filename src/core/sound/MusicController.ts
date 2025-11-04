@@ -10,6 +10,14 @@ import { errorHandler, ErrorSeverity } from '../ErrorHandler';
 import { VOLUME_CONSTANTS } from '../constants/audio';
 
 export class MusicController {
+    private audioContext: AudioContext | null;
+    private backgroundAudioElement: HTMLAudioElement | null;
+    private backgroundSource: MediaElementAudioSourceNode | null;
+    private backgroundGain: GainNode | null;
+    private currentMusicVolume: number;
+    private currentMusicTrack: string | null;
+    private musicEnabled: boolean;
+
     constructor() {
         this.audioContext = null;
         this.backgroundAudioElement = null;

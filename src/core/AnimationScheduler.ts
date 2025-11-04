@@ -3,6 +3,9 @@
  * Eliminates spaghetti async coupling by providing a clean Promise-based API for animation management
  */
 export class AnimationScheduler {
+    private activeSequences: Map<number, AnimationSequence>;
+    private nextSequenceId: number;
+
     constructor() {
         this.activeSequences = new Map();
         this.nextSequenceId = 0;
@@ -43,8 +46,25 @@ export class AnimationScheduler {
 /**
  * Animation Sequence - Handles chaining of animation steps with Promise-based flow control
  */
+interface AnimationStep {
+    type: string;
+    duration?: number;
+    action?: Function;
+    actions?: Function[];
+    condition?: () => boolean;
+    thenBlock?: AnimationStep[];
+    elseBlock?: AnimationStep[];
+    loopBlock?: AnimationStep[];
+}
+
 export class AnimationSequence {
-    constructor(id, scheduler) {
+    private id: number;
+    private scheduler: AnimationScheduler;
+    private steps: AnimationStep[];
+    private cancelled: boolean;
+    private currentDelay: NodeJS.Timeout | null;
+
+    constructor(id: number, scheduler: AnimationScheduler) {
         this.id = id;
         this.scheduler = scheduler;
         this.steps = [];

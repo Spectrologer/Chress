@@ -53,7 +53,8 @@
       "Bash(npm run type-check:*)",
       "Bash(npm run test:coverage:*)",
       "Bash(npx vitest:*)",
-      "Bash(cmd /c \"dir c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\ui\\DialogueManager.* /B\")"
+      "Bash(cmd /c \"dir c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\ui\\DialogueManager.* /B\")",
+      "Bash(cut:*)"
     ],
     "deny": [],
     "ask": []

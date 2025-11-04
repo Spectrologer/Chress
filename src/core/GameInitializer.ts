@@ -308,7 +308,7 @@ export class GameInitializer {
                             const tile = this.game.gridManager?.getTile(x, y);
                             const isPort = this.game.gridManager?.isTileType(x, y, TILE_TYPES.PORT);
 
-                            if (isPort && tile && typeof tile === 'object' && tile.portKind === 'interior') {
+                            if (isPort && tile && typeof tile === 'object' && 'portKind' in tile && tile.portKind === 'interior') {
                                 clubEntranceX = x;
                                 clubEntranceY = y;
                                 logger.debug(`[Entrance] Found interior port at (${x},${y})`);
@@ -496,30 +496,8 @@ export class GameInitializer {
         (window as any).game = this.game;
         (window as any).gameInstance = this.game;
 
-        // Console commands
-        try {
-            import('./consoleCommands')
-                .then(module => {
-                    (window as any).consoleCommands = module.default;
-                    (window as any).tp = (x: number, y: number) => module.default.tp(this.game, x, y);
-                    (window as any).spawnHorseIcon = () => module.default.spawnHorseIcon(this.game);
-                    (window as any).spawnTimedBomb = () => module.default.spawnTimedBomb(this.game);
-                    (window as any).gotoInterior = () => module.default.gotoInterior(this.game);
-                    (window as any).gotoWorld = () => module.default.gotoWorld(this.game);
-                    (window as any).clearBoardCache = () => module.default.clearBoardCache(this.game);
-                })
-                .catch(err => {
-                    errorHandler.handle(err, ErrorSeverity.WARNING, {
-                        component: 'GameInitializer',
-                        action: 'load console commands module'
-                    });
-                });
-        } catch (err) {
-            errorHandler.handle(err, ErrorSeverity.WARNING, {
-                component: 'GameInitializer',
-                action: 'import consoleCommands'
-            });
-        }
+        // Console commands removed - add as needed
+        // You can add specific console commands here when required
     }
 
     /**

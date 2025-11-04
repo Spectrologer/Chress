@@ -7,7 +7,16 @@ import { ContentRegistry } from '../core/ContentRegistry';
 import { logger } from '../core/logger';
 
 export class ItemGenerator {
-    constructor(gridManager, foodAssets, zoneX, zoneY, dimension, depth) {
+    private gridManager: any;
+    private foodAssets: string[];
+    private zoneX: number;
+    private zoneY: number;
+    private dimension: number;
+    private depth: number;
+    private zoneLevel: number;
+    private depthMultiplier: number;
+
+    constructor(gridManager: any, foodAssets: string[], zoneX: number, zoneY: number, dimension: number, depth: number) {
         this.gridManager = gridManager;
         this.foodAssets = foodAssets;
         this.zoneX = zoneX;

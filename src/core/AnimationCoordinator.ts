@@ -15,57 +15,70 @@ import { EventTypes } from './EventTypes';
  * - Allows for future animation queuing/prioritization if needed
  */
 export class AnimationCoordinator {
-  constructor(player) {
+  private player: any;
+  private listeners: Map<string, Function>;
+
+  constructor(player: any) {
     this.player = player;
+    this.listeners = new Map();
     this.setupListeners();
   }
 
   setupListeners() {
     // Bump animation - Used for knockback effects and collisions
-    eventBus.on(EventTypes.ANIMATION_BUMP, (data) => {
+    const bumpListener = (data: any) => {
       if (this.player.startBump) {
         this.player.startBump(data.dx, data.dy);
       }
-    });
+    };
+    this.listeners.set(EventTypes.ANIMATION_BUMP, bumpListener);
+    eventBus.on(EventTypes.ANIMATION_BUMP, bumpListener);
 
     // Backflip animation - Used for successful enemy defeats
-    eventBus.on(EventTypes.ANIMATION_BACKFLIP, () => {
+    const backflipListener = () => {
       if (this.player.startBackflip) {
         this.player.startBackflip();
       }
-    });
+    };
+    this.listeners.set(EventTypes.ANIMATION_BACKFLIP, backflipListener);
+    eventBus.on(EventTypes.ANIMATION_BACKFLIP, backflipListener);
 
     // Smoke animation - Used for special abilities or teleportation
-    eventBus.on(EventTypes.ANIMATION_SMOKE, (data) => {
+    const smokeListener = (data: any) => {
       if (this.player.startSmokeAnimation) {
         this.player.startSmokeAnimation(data.x, data.y);
       }
-    });
+    };
+    this.listeners.set(EventTypes.ANIMATION_SMOKE, smokeListener);
+    eventBus.on(EventTypes.ANIMATION_SMOKE, smokeListener);
 
     // Attack animation - Used for player attacks
-    eventBus.on(EventTypes.ANIMATION_ATTACK, () => {
+    const attackListener = () => {
       if (this.player.startAttackAnimation) {
         this.player.startAttackAnimation();
       }
-    });
+    };
+    this.listeners.set(EventTypes.ANIMATION_ATTACK, attackListener);
+    eventBus.on(EventTypes.ANIMATION_ATTACK, attackListener);
 
     // Knockback - Updates player position (used with bump animation)
-    eventBus.on(EventTypes.PLAYER_KNOCKBACK, (data) => {
+    const knockbackListener = (data: any) => {
       if (this.player.setPosition) {
         // Use emitEvent=false because we're responding to an event already
         this.player.setPosition(data.x, data.y, false);
       }
-    });
+    };
+    this.listeners.set(EventTypes.PLAYER_KNOCKBACK, knockbackListener);
+    eventBus.on(EventTypes.PLAYER_KNOCKBACK, knockbackListener);
   }
 
   /**
    * Cleanup event listeners when coordinator is destroyed
    */
   destroy() {
-    eventBus.off(EventTypes.ANIMATION_BUMP);
-    eventBus.off(EventTypes.ANIMATION_BACKFLIP);
-    eventBus.off(EventTypes.ANIMATION_SMOKE);
-    eventBus.off(EventTypes.ANIMATION_ATTACK);
-    eventBus.off(EventTypes.PLAYER_KNOCKBACK);
+    for (const [eventType, listener] of this.listeners.entries()) {
+      eventBus.off(eventType, listener as any);
+    }
+    this.listeners.clear();
   }
 }

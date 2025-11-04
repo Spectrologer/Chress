@@ -38,12 +38,12 @@ import type { Treasure } from '../managers/ZoneManager';
 import type { TransientGameState } from '../state/TransientGameState';
 import type { PlayerFacade } from '../facades/PlayerFacade';
 import type { BombManager } from '../managers/BombManager';
-import type { UICoordinator } from '../ui/UICoordinator';
+// import type { UICoordinator } from '../ui/UICoordinator'; // File doesn't exist
 import type { MessageManager } from '../ui/MessageManager';
 import type { PanelManager } from '../ui/PanelManager';
 import type { PlayerStatsUI } from '../ui/PlayerStatsUI';
 import type { DialogueManager } from '../ui/DialogueManager';
-import type { TurnFeedbackRenderer } from '../renderers/TurnFeedbackRenderer';
+// import type { TurnFeedbackRenderer } from '../renderers/TurnFeedbackRenderer'; // File doesn't exist
 import type { NPCInteractionManager } from '../managers/NPCInteractionManager';
 import type { TerrainInteractionManager } from '../managers/TerrainInteractionManager';
 import type { ItemRepository } from '../managers/inventory/ItemRepository';
@@ -157,14 +157,14 @@ export interface IGame {
     overlayManager: OverlayManager | null;
     inventoryUI: InventoryUI | null;
     radialInventoryUI: RadialInventoryUI | null;
-    uiCoordinator?: UICoordinator;
+    // uiCoordinator?: UICoordinator; // Type doesn't exist
     messageManager?: MessageManager;
     panelManager?: PanelManager;
     playerStatsUI?: PlayerStatsUI;
     dialogueManager?: DialogueManager;
 
     // Renderers
-    turnFeedbackRenderer?: TurnFeedbackRenderer;
+    // turnFeedbackRenderer?: TurnFeedbackRenderer; // Type doesn't exist
 
     // Audio
     soundManager: object | null;
@@ -361,8 +361,8 @@ export class GameContext implements IGame {
     get enemies(): Enemy[] { return this.world.enemies; }
     set enemies(value: Enemy[]) { this.world.enemies = value; }
 
-    get grid(): Array<Array<number | object>> | null { return this.world.grid; }
-    set grid(value: Array<Array<number | object>> | null) { this.world.grid = value; }
+    get grid(): Grid | null { return this.world.grid; }
+    set grid(value: Grid | null) { this.world.grid = value; }
 
     // Lazy-load gridManager from ServiceContainer
     get gridManager(): GridManager | null {
@@ -446,7 +446,7 @@ export class GameContext implements IGame {
         if (!this.player || !this.grid) return false;
         const pos = this.player.getPosition();
         const tile = this.grid[pos.y] && this.grid[pos.y][pos.x];
-        const tileType = tile && tile.type ? tile.type : tile;
+        const tileType = (tile && typeof tile === 'object' && 'type' in tile) ? tile.type : tile;
         return tileType === 3; // TILE_TYPES.EXIT = 3
     }
 

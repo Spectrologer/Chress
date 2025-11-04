@@ -12,7 +12,11 @@ const MAX_WEIGHT_PER_LEVEL = {
 };
 
 export class EnemyGenerator {
-    constructor(enemies, depth = 0) {
+    private enemies: any[];
+    private depth: number;
+    private depthMultiplier: number;
+
+    constructor(enemies: any[], depth = 0) {
         this.enemies = enemies;
         this.depth = depth || 0;
         this.depthMultiplier = 1 + Math.max(0, (this.depth - 1)) * 0.02; // +2% per depth beyond first

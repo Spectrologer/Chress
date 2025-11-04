@@ -5,7 +5,10 @@ import { logger } from '../core/logger';
 import { isTileType, isTileObjectOfType, isFloor } from '../utils/TypeChecks';
 
 export class StructureGenerator {
-    constructor(gridManager, game = null) {
+    private gridManager: any;
+    private game: any;
+
+    constructor(gridManager: any, game: any = null) {
         this.gridManager = gridManager;
         this.game = game; // For accessing zoneGenState
     }

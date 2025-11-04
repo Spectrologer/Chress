@@ -14,6 +14,12 @@ import { store } from './StateStore';
 import { persistence } from './StatePersistence';
 
 export class StateDebugger {
+  private isOpen: boolean;
+  private container: HTMLElement | null;
+  private updateInterval: NodeJS.Timer | null;
+  private selectedSlice: string;
+  private viewMode: string;
+
   constructor() {
     this.isOpen = false;
     this.container = null;

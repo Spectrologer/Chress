@@ -43,10 +43,12 @@ import { logger } from '../core/logger';
  * positionFacade.setUndergroundDepth(2);
  */
 export class PlayerPositionFacade {
+    private player: any;
+
     /**
      * @param {any} player - The player entity
      */
-    constructor(player) {
+    constructor(player: any) {
         if (!player) {
             throw new Error('PlayerPositionFacade requires a valid player instance');
         }

@@ -38,10 +38,15 @@ import { logger } from '../core/logger';
  * // After:  playerFacade.addToInventory(item);
  */
 export class PlayerFacade {
+    private player: any;
+    public position: PlayerPositionFacade;
+    public inventory: PlayerInventoryFacade;
+    public stats: PlayerStatsFacade;
+
     /**
      * @param {Object} player - The player entity
      */
-    constructor(player) {
+    constructor(player: any) {
         if (!player) {
             throw new Error('PlayerFacade requires a valid player instance');
         }

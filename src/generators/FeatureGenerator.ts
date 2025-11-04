@@ -6,7 +6,13 @@ import { logger } from '../core/logger';
 import { isFloor, isWall } from '../utils/TypeChecks';
 
 export class FeatureGenerator {
-    constructor(gridManager, foodAssets, depth = 0, game = null) {
+    private gridManager: any;
+    private foodAssets: string[];
+    private depth: number;
+    private game: any;
+    private depthMultiplier: number;
+
+    constructor(gridManager: any, foodAssets: string[], depth = 0, game: any = null) {
         this.gridManager = gridManager;
         this.foodAssets = foodAssets;
         this.depth = depth || 0;

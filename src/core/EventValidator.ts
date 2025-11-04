@@ -1,10 +1,25 @@
 import { EventTypes } from './EventTypes';
 
+interface FieldValidator {
+    required?: boolean;
+    type?: string;
+    values?: any[];
+    validator?: (value: any) => boolean;
+}
+
+interface Schema {
+    [fieldName: string]: FieldValidator;
+}
+
 /**
  * EventValidator - Validates event data against registered schemas
  * Provides runtime validation to catch event contract violations early
  */
 export class EventValidator {
+    private schemas: Map<string, Schema>;
+    private enabled: boolean;
+    private strictMode: boolean;
+
     constructor() {
         this.schemas = new Map();
         this.enabled = true;
@@ -17,7 +32,7 @@ export class EventValidator {
      * @param {string} eventType - The event type constant
      * @param {Object} schema - Schema definition with field validators
      */
-    registerSchema(eventType, schema) {
+    registerSchema(eventType: string, schema: Schema) {
         this.schemas.set(eventType, schema);
     }
 
@@ -27,7 +42,7 @@ export class EventValidator {
      * @param {*} data - The event data to validate
      * @returns {{valid: boolean, errors: string[]}} - Validation result
      */
-    validate(eventType, data) {
+    validate(eventType: string, data: any): { valid: boolean; errors: string[] } {
         if (!this.enabled) {
             return { valid: true, errors: [] };
         }

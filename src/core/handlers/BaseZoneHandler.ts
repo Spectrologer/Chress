@@ -11,7 +11,22 @@ import { PathGenerator } from '../../generators/PathGenerator';
  * Base class for zone handlers, providing shared initialization and common patterns
  */
 export class BaseZoneHandler {
-    constructor(zoneGen, zoneX, zoneY, foodAssets, dimension = 0, depth = 0) {
+    protected zoneGen: any;
+    protected game: any;
+    protected zoneX: number;
+    protected zoneY: number;
+    protected foodAssets: string[];
+    protected dimension: number;
+    protected depth: number;
+    protected zoneLevel: number;
+    protected isHomeZone: boolean;
+    protected structureGenerator: StructureGenerator;
+    protected featureGenerator: FeatureGenerator;
+    protected itemGenerator: ItemGenerator;
+    protected enemyGenerator: EnemyGenerator;
+    protected pathGenerator: PathGenerator;
+
+    constructor(zoneGen: any, zoneX: number, zoneY: number, foodAssets: string[], dimension = 0, depth = 0) {
         this.zoneGen = zoneGen;
         this.game = zoneGen.game; // Store game reference for state access
         this.zoneX = zoneX;

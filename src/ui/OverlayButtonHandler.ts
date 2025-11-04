@@ -145,11 +145,15 @@ export class OverlayButtonHandler {
             // Show the overlay
             overlay.style.display = 'flex';
 
+            // Create a separate event manager for this editor instance
+            const editorEventManager = new EventListenerManager();
+
             // Close handler function
             const closeEditor = (): void => {
                 overlay.style.display = 'none';
                 iframe.src = ''; // Clear iframe to stop any running scripts
-                this.eventManager.cleanup();
+                // Clean up only this editor's event listeners
+                editorEventManager.cleanup();
             };
 
             // Overlay click handler
@@ -162,11 +166,11 @@ export class OverlayButtonHandler {
 
             // Set up close button handler
             if (closeButton) {
-                this.eventManager.add(closeButton, 'click', closeEditor);
+                editorEventManager.add(closeButton, 'click', closeEditor);
             }
 
             // Close on overlay background click
-            this.eventManager.add(overlay, 'click', overlayClickHandler);
+            editorEventManager.add(overlay, 'click', overlayClickHandler);
 
         } catch (error) {
             logger.error('Error opening zone editor:', error);
@@ -197,11 +201,15 @@ export class OverlayButtonHandler {
             // Show the overlay
             overlay.style.display = 'flex';
 
+            // Create a separate event manager for this editor instance
+            const editorEventManager = new EventListenerManager();
+
             // Close handler function
             const closeEditor = (): void => {
                 overlay.style.display = 'none';
                 iframe.src = ''; // Clear iframe to stop any running scripts
-                this.eventManager.cleanup();
+                // Clean up only this editor's event listeners
+                editorEventManager.cleanup();
             };
 
             // Overlay click handler
@@ -214,13 +222,13 @@ export class OverlayButtonHandler {
 
             // Set up close button handler
             if (closeButton) {
-                this.eventManager.add(closeButton, 'click', closeEditor);
+                editorEventManager.add(closeButton, 'click', closeEditor);
             }
 
             // Close on overlay background click
-            this.eventManager.add(overlay, 'click', overlayClickHandler);
+            editorEventManager.add(overlay, 'click', overlayClickHandler);
         } catch (error) {
-            logger.error('Error opening zone editor:', error);
+            logger.error('Error opening character editor:', error);
         }
     }
 

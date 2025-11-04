@@ -18,8 +18,21 @@ import { boardLoader } from './BoardLoader';
 import { GridManager } from '../managers/GridManager';
 
 export class ZoneGenerator {
+    private game: any;
+    public grid: any[][] | null;
+    private gridManager: GridManager | null;
+    private enemies: any[] | null;
+    private currentZoneX: number | null;
+    private currentZoneY: number | null;
+    private playerSpawn: { x: number; y: number } | null;
+    public terrainTextures: Record<string, string>;
+    public overlayTextures: Record<string, string>;
+    public rotations: Record<string, number>;
+    public overlayRotations: Record<string, number>;
+    private foodAssets: string[];
+    private currentDimension: number;
 
-    constructor(game) {
+    constructor(game: any) {
         this.game = game;
         this.grid = null;
         this.gridManager = null;
@@ -31,6 +44,8 @@ export class ZoneGenerator {
         this.overlayTextures = {}; // Store overlay texture names (e.g., 'trim/bordertrim')
         this.rotations = {}; // Store rotation data for terrain tiles
         this.overlayRotations = {}; // Store rotation data for overlay tiles
+        this.foodAssets = [];
+        this.currentDimension = 0;
         // Initialize item locations if they haven't been set for this session
         this.game.zoneGenState.initializeItemLocations();
     }

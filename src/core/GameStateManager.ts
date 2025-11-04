@@ -190,10 +190,10 @@ export class GameStateManager {
 
         // Emit player stats changed event instead of calling UIManager directly
         eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {
-            health: this.game.player!.health,
-            points: this.game.player!.points,
-            hunger: this.game.player!.hunger,
-            thirst: this.game.player!.thirst
+            health: this.game.player!.stats.health,
+            points: this.game.player!.stats.points,
+            hunger: this.game.player!.stats.hunger,
+            thirst: this.game.player!.stats.thirst
         });
     }
 
@@ -203,10 +203,10 @@ export class GameStateManager {
             this.game.player!.inventory.push({ type: 'bomb' });
             // Emit player stats changed event instead of calling UIManager directly
             eventBus.emit(EventTypes.PLAYER_STATS_CHANGED, {
-                health: this.game.player!.health,
-                points: this.game.player!.points,
-                hunger: this.game.player!.hunger,
-                thirst: this.game.player!.thirst
+                health: this.game.player!.stats.health,
+                points: this.game.player!.stats.points,
+                hunger: this.game.player!.stats.hunger,
+                thirst: this.game.player!.stats.thirst
             });
         }
     }

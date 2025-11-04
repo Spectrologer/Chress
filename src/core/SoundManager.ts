@@ -17,6 +17,12 @@ import { ProceduralSoundGenerator } from './sound/ProceduralSoundGenerator';
 import { SoundLifecycleManager } from './sound/SoundLifecycleManager';
 
 export class SoundManager {
+    private sounds: Record<string, HTMLAudioElement>;
+    private sfxEnabled: boolean;
+    private musicController: MusicController;
+    private proceduralGenerator: ProceduralSoundGenerator;
+    private lifecycleManager: SoundLifecycleManager;
+
     constructor() {
         this.sounds = {};
         this.sfxEnabled = true;

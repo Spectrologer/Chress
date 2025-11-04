@@ -13,6 +13,18 @@ import { store } from './StateStore';
 import LZString from 'lz-string';
 
 export class StatePersistence {
+  private INDEXEDDB_NAME: string;
+  private INDEXEDDB_VERSION: number;
+  private STORE_NAME: string;
+  private LOCALSTORAGE_KEY: string;
+  private LOCALSTORAGE_BACKUP_KEY: string;
+  private MAX_ZONES_TO_KEEP: number;
+  private MAX_MESSAGE_LOG: number;
+  private COMPRESSION_ENABLED: boolean;
+  private db: IDBDatabase | null;
+  private dbReady: boolean;
+  private dbError: any;
+
   constructor() {
     this.INDEXEDDB_NAME = 'ChressDB';
     this.INDEXEDDB_VERSION = 1;

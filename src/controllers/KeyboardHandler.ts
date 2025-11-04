@@ -138,15 +138,7 @@ export class KeyboardHandler {
         const lowerKey = (event.key || '').toLowerCase();
         const movementKeys = ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'];
 
-        // Hotkeys
-        if (!movementKeys.includes(lowerKey)) {
-            try {
-                if ((window as any).consoleCommands?.handleHotkey?.(this.game, event.key, event.shiftKey)) {
-                    event.preventDefault();
-                    return null;
-                }
-            } catch (e) {}
-        }
+        // Hotkeys - removed console commands, add specific hotkeys as needed
 
         // Debug
         if (event.key === '9') {

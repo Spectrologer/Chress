@@ -32,10 +32,12 @@ import { logger } from '../core/logger';
  * inventoryFacade.addAbility('swim');
  */
 export class PlayerInventoryFacade {
+    private player: any;
+
     /**
      * @param {any} player - The player entity
      */
-    constructor(player) {
+    constructor(player: any) {
         if (!player) {
             throw new Error('PlayerInventoryFacade requires a valid player instance');
         }

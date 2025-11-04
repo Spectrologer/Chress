@@ -37,10 +37,12 @@ import { logger } from '../core/logger';
  * statsFacade.addPoints(100);
  */
 export class PlayerStatsFacade {
+    private player: any;
+
     /**
      * @param {any} player - The player entity
      */
-    constructor(player) {
+    constructor(player: any) {
         if (!player) {
             throw new Error('PlayerStatsFacade requires a valid player instance');
         }
