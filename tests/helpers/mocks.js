@@ -46,6 +46,10 @@ export function createMockPlayer(overrides = {}) {
         takeDamage: jest.fn(),
         addPoints: jest.fn(),
 
+        // Stats methods
+        getThirst: jest.fn().mockReturnValue(50),
+        getHunger: jest.fn().mockReturnValue(50),
+
         // Interaction
         setInteractOnReach: jest.fn(),
         clearInteractOnReach: jest.fn(),

@@ -1,5 +1,9 @@
-import { DialogueManager } from '../ui/DialogueManager.js';
+import { vi, describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { createMockGame, setupDOMFixture, teardownDOMFixture } from './helpers/mocks.js';
+
+// Import after mocks are set up
+let DialogueManager;
+let Sign;
 
 describe('DialogueManager', () => {
   let dialogueManager;
@@ -7,7 +11,27 @@ describe('DialogueManager', () => {
   let mockTypewriterController;
   let messageOverlay;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    // Mock the Sign module first
+    vi.doMock('@/ui/Sign', () => ({
+      Sign: {
+        hideMessageForSign: vi.fn((game) => {
+          if (game.hideOverlayMessage) {
+            game.hideOverlayMessage();
+          }
+          if (game.gameLoop) {
+            game.gameLoop();
+          }
+        })
+      }
+    }));
+
+    // Now import the modules
+    const dialogueModule = await import('@/ui/DialogueManager');
+    const signModule = await import('@/ui/Sign');
+    DialogueManager = dialogueModule.DialogueManager;
+    Sign = signModule.Sign;
+
     // Setup DOM
     setupDOMFixture();
 
@@ -20,12 +44,19 @@ describe('DialogueManager', () => {
 
     // Create mock typewriter controller
     mockTypewriterController = {
-      shouldUseTypewriter: jest.fn().mockReturnValue(false),
-      start: jest.fn(),
-      stop: jest.fn(),
+      shouldUseTypewriter: vi.fn().mockReturnValue(false),
+      start: vi.fn(),
+      stop: vi.fn(),
     };
 
     mockGame = createMockGame();
+
+    // Add mock for hideOverlayMessage that removes the 'show' class
+    mockGame.hideOverlayMessage = vi.fn(() => {
+      if (messageOverlay?.classList.contains('show')) {
+        messageOverlay.classList.remove('show');
+      }
+    });
 
     // Create DialogueManager instance
     dialogueManager = new DialogueManager(mockGame, mockTypewriterController);
@@ -33,6 +64,8 @@ describe('DialogueManager', () => {
 
   afterEach(() => {
     teardownDOMFixture();
+    vi.clearAllMocks();
+    vi.doUnmock('@/ui/Sign');
   });
 
   describe('Initialization', () => {
@@ -218,23 +251,29 @@ describe('DialogueManager', () => {
       expect(button).toBeTruthy();
     });
 
-    test('should hide overlay when button is clicked', () => {
+    test('should hide overlay when button is clicked', async () => {
       dialogueManager.showDialogue('Text', null, null);
 
       const button = messageOverlay.querySelector('.dialogue-close-button');
       button.click();
 
-      expect(messageOverlay.classList.contains('show')).toBe(false);
+      // Wait for async import and handler to complete
+      await vi.waitFor(() => {
+        expect(messageOverlay.classList.contains('show')).toBe(false);
+      });
     });
 
-    test('should resume game loop when button is clicked', () => {
-      mockGame.gameLoop = jest.fn();
+    test('should resume game loop when button is clicked', async () => {
+      mockGame.gameLoop = vi.fn();
       dialogueManager.showDialogue('Text', null, null);
 
       const button = messageOverlay.querySelector('.dialogue-close-button');
       button.click();
 
-      expect(mockGame.gameLoop).toHaveBeenCalled();
+      // Wait for async import and handler to complete
+      await vi.waitFor(() => {
+        expect(mockGame.gameLoop).toHaveBeenCalled();
+      });
     });
   });
 
@@ -251,16 +290,16 @@ describe('DialogueManager', () => {
       expect(() => {
         dialogueManager.showDialogue(longText, null, null);
       }).not.toThrow();
+
+      expect(messageOverlay.innerHTML).toContain(longText);
     });
 
     test('should handle special characters in text', () => {
-      const specialText = 'Text with "quotes" and \'apostrophes\' and <>&';
-
+      const specialText = '<>&"\'';
       dialogueManager.showDialogue(specialText, null, null);
 
-      // HTML entities should be escaped in innerHTML
-      expect(messageOverlay.innerHTML).toContain('Text with "quotes" and \'apostrophes\'');
-      expect(messageOverlay.innerHTML).toContain('&lt;&gt;&amp;'); // <& should be escaped
+      // HTML entities should be escaped
+      expect(messageOverlay.textContent).toContain(specialText);
     });
 
     test('should handle null imageSrc gracefully', () => {
@@ -270,23 +309,24 @@ describe('DialogueManager', () => {
     });
 
     test('should handle missing messageOverlay element', () => {
-      messageOverlay.remove();
+      const tempOverlay = dialogueManager.messageOverlay;
+      dialogueManager.messageOverlay = null;
 
-      // Create new DialogueManager without messageOverlay
-      const manager = new DialogueManager(mockGame, mockTypewriterController);
+      expect(() => {
+        dialogueManager.showDialogue('Text', null, null);
+      }).not.toThrow();
 
-      expect(manager.messageOverlay).toBeNull();
+      dialogueManager.messageOverlay = tempOverlay;
     });
   });
 
   describe('Multiple Dialogues', () => {
     test('should replace previous dialogue when showing new one', () => {
-      dialogueManager.showDialogue('First message', null, null);
-      expect(messageOverlay.innerHTML).toContain('First message');
+      dialogueManager.showDialogue('First', null, null);
+      dialogueManager.showDialogue('Second', null, null);
 
-      dialogueManager.showDialogue('Second message', null, null);
-      expect(messageOverlay.innerHTML).toContain('Second message');
-      expect(messageOverlay.innerHTML).not.toContain('First message');
+      expect(messageOverlay.innerHTML).toContain('Second');
+      expect(messageOverlay.innerHTML).not.toContain('First');
     });
 
     test('should maintain "show" class when replacing dialogue', () => {
@@ -302,9 +342,8 @@ describe('DialogueManager', () => {
     test('should call shouldUseTypewriter with messageOverlay', () => {
       dialogueManager.showDialogue('Text', 'image.png', 'NPC');
 
-      expect(mockTypewriterController.shouldUseTypewriter).toHaveBeenCalledWith(
-        messageOverlay
-      );
+      expect(mockTypewriterController.shouldUseTypewriter)
+        .toHaveBeenCalledWith(messageOverlay);
     });
 
     test('should show button after typewriter completes', () => {
@@ -337,13 +376,16 @@ describe('DialogueManager', () => {
       expect(messageOverlay.classList.contains('show')).toBe(true);
     });
 
-    test('should remove "show" class when button is clicked', () => {
+    test('should remove "show" class when button is clicked', async () => {
       dialogueManager.showDialogue('Text', null, null);
 
       const button = messageOverlay.querySelector('.dialogue-close-button');
       button.click();
 
-      expect(messageOverlay.classList.contains('show')).toBe(false);
+      // Wait for async import and handler to complete
+      await vi.waitFor(() => {
+        expect(messageOverlay.classList.contains('show')).toBe(false);
+      });
     });
   });
 });

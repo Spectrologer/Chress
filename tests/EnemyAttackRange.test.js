@@ -30,7 +30,20 @@ function makeMinimalGame() {
   const ctx = makeMockCtx();
   const textureManager = { renderTile: jest.fn() };
   const grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR));
-  return { canvas, ctx, textureManager, grid, enemies: [], player: { getCurrentZone: () => ({ dimension: 0 }) } };
+  const enemies = [];
+  const enemyCollection = {
+    findAt: jest.fn((x, y) => enemies.find(e => e.x === x && e.y === y)),
+    getAll: () => enemies
+  };
+  return {
+    canvas,
+    ctx,
+    textureManager,
+    grid,
+    enemies,
+    enemyCollection,
+    player: { getCurrentZone: () => ({ dimension: 0 }) }
+  };
 }
 
 describe('RenderManager enemy attack range overlay', () => {

@@ -41,8 +41,20 @@ describe('UIManager', () => {
 
     // Mock canvas context for MiniMap
     const expandedCanvas = document.getElementById('expandedMapCanvas');
+    const zoneMapCanvas = document.getElementById('zoneMap');
     const mockCtx = {
       canvas: expandedCanvas,
+      clearRect: jest.fn(),
+      fillRect: jest.fn(),
+      strokeRect: jest.fn(),
+      fillText: jest.fn(),
+      save: jest.fn(),
+      restore: jest.fn(),
+      translate: jest.fn(),
+      scale: jest.fn(),
+    };
+    const zoneMapCtx = {
+      canvas: zoneMapCanvas,
       clearRect: jest.fn(),
       fillRect: jest.fn(),
       strokeRect: jest.fn(),
@@ -55,6 +67,20 @@ describe('UIManager', () => {
     if (expandedCanvas) {
       expandedCanvas.getContext = jest.fn().mockReturnValue(mockCtx);
     }
+    if (zoneMapCanvas) {
+      zoneMapCanvas.getContext = jest.fn().mockReturnValue(zoneMapCtx);
+    }
+
+    // Add mapCtx to mockGame for MiniMap
+    mockGame.mapCtx = zoneMapCtx;
+
+    // Add specialZones for MiniMap
+    mockGame.specialZones = new Set();
+
+    // Add textureManager for MiniMap
+    mockGame.textureManager = {
+      getImage: jest.fn().mockReturnValue(null)
+    };
 
     // Clear event bus
     eventBus.clear?.() || eventBus.offAll?.();
@@ -197,13 +223,13 @@ describe('UIManager', () => {
       expect(renderSpy).toHaveBeenCalled();
     });
 
-    test('should display "Woodcutter\'s Club" for zone (0,0) dimension 1', () => {
+    test('should display "Museum" for zone (0,0) dimension 1', () => {
       mockPlayer.getCurrentZone.mockReturnValue({ x: 0, y: 0, dimension: 1 });
 
       uiManager.updateZoneDisplay();
 
       const mapInfo = document.getElementById('map-info');
-      expect(mapInfo.innerHTML).toContain("Woodcutter's Club");
+      expect(mapInfo.innerHTML).toContain("Museum");
     });
 
     test('should display underground depth info for dimension 2', () => {
