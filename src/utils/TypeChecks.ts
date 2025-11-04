@@ -434,80 +434,80 @@ export function isStatue(tile: Tile): boolean {
 // ========================================
 
 // Core utilities
-export const getTileType = TileTypeChecker.getTileType.bind(TileTypeChecker);
-export const isTileObject = TileTypeChecker.isTileObject.bind(TileTypeChecker);
-export const isTileType = TileTypeChecker.isTileType.bind(TileTypeChecker);
-export const isValidTile = TileTypeChecker.isValidTile.bind(TileTypeChecker);
+export const getTileType = (...args: any[]) => TileTypeChecker.getTileType(...args);
+export const isTileObject = (...args: any[]) => TileTypeChecker.isTileObject(...args);
+export const isTileType = (...args: any[]) => TileTypeChecker.isTileType(...args);
+export const isValidTile = (...args: any[]) => TileTypeChecker.isValidTile(...args);
 
 // Tile type checkers
-export const isFloor = TileTypeChecker.isFloor.bind(TileTypeChecker);
-export const isWall = TileTypeChecker.isWall.bind(TileTypeChecker);
-export const isGrass = TileTypeChecker.isGrass.bind(TileTypeChecker);
-export const isExit = TileTypeChecker.isExit.bind(TileTypeChecker);
-export const isRock = TileTypeChecker.isRock.bind(TileTypeChecker);
-export const isHouse = TileTypeChecker.isHouse.bind(TileTypeChecker);
-export const isShack = TileTypeChecker.isShack.bind(TileTypeChecker);
-export const isWater = TileTypeChecker.isWater.bind(TileTypeChecker);
-export const isFood = TileTypeChecker.isFood.bind(TileTypeChecker);
-export const isShrubbery = TileTypeChecker.isShrubbery.bind(TileTypeChecker);
-export const isWell = TileTypeChecker.isWell.bind(TileTypeChecker);
-export const isDeadTree = TileTypeChecker.isDeadTree.bind(TileTypeChecker);
-export const isAxe = TileTypeChecker.isAxe.bind(TileTypeChecker);
-export const isHammer = TileTypeChecker.isHammer.bind(TileTypeChecker);
-export const isBishopSpear = TileTypeChecker.isBishopSpear.bind(TileTypeChecker);
-export const isBow = TileTypeChecker.isBow.bind(TileTypeChecker);
-export const isShovel = TileTypeChecker.isShovel.bind(TileTypeChecker);
-export const isBomb = TileTypeChecker.isBomb.bind(TileTypeChecker);
-export const isHeart = TileTypeChecker.isHeart.bind(TileTypeChecker);
-export const isNote = TileTypeChecker.isNote.bind(TileTypeChecker);
-export const isBookOfTimeTravel = TileTypeChecker.isBookOfTimeTravel.bind(TileTypeChecker);
-export const isHorseIcon = TileTypeChecker.isHorseIcon.bind(TileTypeChecker);
-export const isSign = TileTypeChecker.isSign.bind(TileTypeChecker);
-export const isPort = TileTypeChecker.isPort.bind(TileTypeChecker);
-export const isCistern = TileTypeChecker.isCistern.bind(TileTypeChecker);
-export const isPitfall = TileTypeChecker.isPitfall.bind(TileTypeChecker);
-export const isTable = TileTypeChecker.isTable.bind(TileTypeChecker);
-export const isBombStatue = TileTypeChecker.isBombStatue.bind(TileTypeChecker);
-export const isSpearStatue = TileTypeChecker.isSpearStatue.bind(TileTypeChecker);
-export const isBowStatue = TileTypeChecker.isBowStatue.bind(TileTypeChecker);
-export const isHorseStatue = TileTypeChecker.isHorseStatue.bind(TileTypeChecker);
-export const isBookStatue = TileTypeChecker.isBookStatue.bind(TileTypeChecker);
-export const isShovelStatue = TileTypeChecker.isShovelStatue.bind(TileTypeChecker);
+export const isFloor = (...args: any[]) => TileTypeChecker.isFloor(...args);
+export const isWall = (...args: any[]) => TileTypeChecker.isWall(...args);
+export const isGrass = (...args: any[]) => TileTypeChecker.isGrass(...args);
+export const isExit = (...args: any[]) => TileTypeChecker.isExit(...args);
+export const isRock = (...args: any[]) => TileTypeChecker.isRock(...args);
+export const isHouse = (...args: any[]) => TileTypeChecker.isHouse(...args);
+export const isShack = (...args: any[]) => TileTypeChecker.isShack(...args);
+export const isWater = (...args: any[]) => TileTypeChecker.isWater(...args);
+export const isFood = (...args: any[]) => TileTypeChecker.isFood(...args);
+export const isShrubbery = (...args: any[]) => TileTypeChecker.isShrubbery(...args);
+export const isWell = (...args: any[]) => TileTypeChecker.isWell(...args);
+export const isDeadTree = (...args: any[]) => TileTypeChecker.isDeadTree(...args);
+export const isAxe = (...args: any[]) => TileTypeChecker.isAxe(...args);
+export const isHammer = (...args: any[]) => TileTypeChecker.isHammer(...args);
+export const isBishopSpear = (...args: any[]) => TileTypeChecker.isBishopSpear(...args);
+export const isBow = (...args: any[]) => TileTypeChecker.isBow(...args);
+export const isShovel = (...args: any[]) => TileTypeChecker.isShovel(...args);
+export const isBomb = (...args: any[]) => TileTypeChecker.isBomb(...args);
+export const isHeart = (...args: any[]) => TileTypeChecker.isHeart(...args);
+export const isNote = (...args: any[]) => TileTypeChecker.isNote(...args);
+export const isBookOfTimeTravel = (...args: any[]) => TileTypeChecker.isBookOfTimeTravel(...args);
+export const isHorseIcon = (...args: any[]) => TileTypeChecker.isHorseIcon(...args);
+export const isSign = (...args: any[]) => TileTypeChecker.isSign(...args);
+export const isPort = (...args: any[]) => TileTypeChecker.isPort(...args);
+export const isCistern = (...args: any[]) => TileTypeChecker.isCistern(...args);
+export const isPitfall = (...args: any[]) => TileTypeChecker.isPitfall(...args);
+export const isTable = (...args: any[]) => TileTypeChecker.isTable(...args);
+export const isBombStatue = (...args: any[]) => TileTypeChecker.isBombStatue(...args);
+export const isSpearStatue = (...args: any[]) => TileTypeChecker.isSpearStatue(...args);
+export const isBowStatue = (...args: any[]) => TileTypeChecker.isBowStatue(...args);
+export const isHorseStatue = (...args: any[]) => TileTypeChecker.isHorseStatue(...args);
+export const isBookStatue = (...args: any[]) => TileTypeChecker.isBookStatue(...args);
+export const isShovelStatue = (...args: any[]) => TileTypeChecker.isShovelStatue(...args);
 
 // Tile category checkers
-export const isWalkable = TileTypeChecker.isWalkable.bind(TileTypeChecker);
-export const isItem = TileTypeChecker.isItem.bind(TileTypeChecker);
-export const isChoppable = TileTypeChecker.isChoppable.bind(TileTypeChecker);
-export const isBreakable = TileTypeChecker.isBreakable.bind(TileTypeChecker);
+export const isWalkable = (...args: any[]) => TileTypeChecker.isWalkable(...args);
+export const isItem = (...args: any[]) => TileTypeChecker.isItem(...args);
+export const isChoppable = (...args: any[]) => TileTypeChecker.isChoppable(...args);
+export const isBreakable = (...args: any[]) => TileTypeChecker.isBreakable(...args);
 
 // Tile property helpers
-export const getTileProperty = TileTypeChecker.getTileProperty.bind(TileTypeChecker);
-export const hasTileProperty = TileTypeChecker.hasTileProperty.bind(TileTypeChecker);
-export const isTileObjectOfType = TileTypeChecker.isTileObjectOfType.bind(TileTypeChecker);
-export const isTileObjectWithProperty = TileTypeChecker.isTileObjectWithProperty.bind(TileTypeChecker);
+export const getTileProperty = (...args: any[]) => TileTypeChecker.getTileProperty(...args);
+export const hasTileProperty = (...args: any[]) => TileTypeChecker.hasTileProperty(...args);
+export const isTileObjectOfType = (...args: any[]) => TileTypeChecker.isTileObjectOfType(...args);
+export const isTileObjectWithProperty = (...args: any[]) => TileTypeChecker.isTileObjectWithProperty(...args);
 
 // Entity type checkers
-export const isPenne = EntityTypeChecker.isPenne.bind(EntityTypeChecker);
-export const isSquig = EntityTypeChecker.isSquig.bind(EntityTypeChecker);
-export const isNib = EntityTypeChecker.isNib.bind(EntityTypeChecker);
-export const isRune = EntityTypeChecker.isRune.bind(EntityTypeChecker);
-export const isCrayn = EntityTypeChecker.isCrayn.bind(EntityTypeChecker);
-export const isFelt = EntityTypeChecker.isFelt.bind(EntityTypeChecker);
-export const isForge = EntityTypeChecker.isForge.bind(EntityTypeChecker);
-export const isMark = EntityTypeChecker.isMark.bind(EntityTypeChecker);
-export const isAxolotl = EntityTypeChecker.isAxolotl.bind(EntityTypeChecker);
-export const isGouge = EntityTypeChecker.isGouge.bind(EntityTypeChecker);
-export const isEnemy = EntityTypeChecker.isEnemy.bind(EntityTypeChecker);
-export const isLizardyStatue = EntityTypeChecker.isLizardyStatue.bind(EntityTypeChecker);
-export const isLizardoStatue = EntityTypeChecker.isLizardoStatue.bind(EntityTypeChecker);
-export const isLizardeauxStatue = EntityTypeChecker.isLizardeauxStatue.bind(EntityTypeChecker);
-export const isZardStatue = EntityTypeChecker.isZardStatue.bind(EntityTypeChecker);
-export const isLazerdStatue = EntityTypeChecker.isLazerdStatue.bind(EntityTypeChecker);
-export const isLizordStatue = EntityTypeChecker.isLizordStatue.bind(EntityTypeChecker);
+export const isPenne = (...args: any[]) => EntityTypeChecker.isPenne(...args);
+export const isSquig = (...args: any[]) => EntityTypeChecker.isSquig(...args);
+export const isNib = (...args: any[]) => EntityTypeChecker.isNib(...args);
+export const isRune = (...args: any[]) => EntityTypeChecker.isRune(...args);
+export const isCrayn = (...args: any[]) => EntityTypeChecker.isCrayn(...args);
+export const isFelt = (...args: any[]) => EntityTypeChecker.isFelt(...args);
+export const isForge = (...args: any[]) => EntityTypeChecker.isForge(...args);
+export const isMark = (...args: any[]) => EntityTypeChecker.isMark(...args);
+export const isAxolotl = (...args: any[]) => EntityTypeChecker.isAxolotl(...args);
+export const isGouge = (...args: any[]) => EntityTypeChecker.isGouge(...args);
+export const isEnemy = (...args: any[]) => EntityTypeChecker.isEnemy(...args);
+export const isLizardyStatue = (...args: any[]) => EntityTypeChecker.isLizardyStatue(...args);
+export const isLizardoStatue = (...args: any[]) => EntityTypeChecker.isLizardoStatue(...args);
+export const isLizardeauxStatue = (...args: any[]) => EntityTypeChecker.isLizardeauxStatue(...args);
+export const isZardStatue = (...args: any[]) => EntityTypeChecker.isZardStatue(...args);
+export const isLazerdStatue = (...args: any[]) => EntityTypeChecker.isLazerdStatue(...args);
+export const isLizordStatue = (...args: any[]) => EntityTypeChecker.isLizordStatue(...args);
 
 // Entity category checkers
-export const isNPC = EntityTypeChecker.isNPC.bind(EntityTypeChecker);
-export const isEnemyStatue = EntityTypeChecker.isEnemyStatue.bind(EntityTypeChecker);
+export const isNPC = (...args: any[]) => EntityTypeChecker.isNPC(...args);
+export const isEnemyStatue = (...args: any[]) => EntityTypeChecker.isEnemyStatue(...args);
 
 // ========================================
 // MIGRATION ALIASES

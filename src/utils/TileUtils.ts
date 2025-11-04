@@ -15,18 +15,13 @@
 import {
     TileTypeChecker,
     type Tile as TypeChecksTile,
-    getTileType as getType,
-    isTileObject as isTileObj,
-    isTileType as checkTileType
 } from './TypeChecks';
 
 // Re-export the Tile type
 export type Tile = TypeChecksTile;
 
-// Re-export core utilities
-export const getTileType = getType;
-export const isTileObject = isTileObj;
-export const isTileType = checkTileType;
+// Re-export core utilities using proper re-export syntax to avoid TDZ
+export { getTileType, isTileObject, isTileType } from './TypeChecks';
 
 // Re-export specific tile type checkers from TypeChecks
 export {

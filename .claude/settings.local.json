@@ -1,28 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(Select-Object -First 10)",
-      "Bash(npm run dev:*)",
-      "Bash(dir /s /b src 2)",
-      "Bash(nul)",
-      "Bash(findstr:*)",
-      "Bash(npm run typecheck:*)",
-      "Bash(npm run type-check:*)",
-      "Bash(npm test:*)",
-      "Bash(git grep:*)",
-      "Bash(node -e:*)",
-      "Bash(npx tsc:*)",
-      "Bash(git mv:*)",
-      "Bash(npx vitest:*)",
-      "Bash(node --input-type=module -e:*)",
-      "Bash(npm run test:*)",
-      "Bash(git rm:*)",
-      "Bash(Select-String \"FAIL tests/\")",
-      "Bash(rm:*)",
-      "Bash(cat:*)",
-      "Bash(find:*)",
-      "Bash(npm run test:coverage:*)",
-      "Bash(npm run build:*)"
+      "Bash(Sort-Object LastWriteTime -Descending)",
+      "Bash(Select-Object -First 5)",
+      "Bash(Select-Object Name, LastWriteTime)",
+      "Bash(sed:*)",
+      "Bash(node fix-circular-dep.js:*)",
+      "Bash(node fix-circular-dep.cjs:*)",
+      "Bash(git checkout:*)",
+      "Bash(node:*)",
+      "Bash(npm run preview:*)"
     ],
     "deny": [],
     "ask": []

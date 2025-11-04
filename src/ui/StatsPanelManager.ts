@@ -66,15 +66,12 @@ export class StatsPanelManager {
         // Update persistent records
         this._updatePersistentRecords();
 
-        // Install capture blocker FIRST to prevent immediate clickthrough from portrait tap
-        // This blocks ALL events for 400ms to prevent the portrait tap from triggering buttons
-        PanelEventHandler.installCaptureBlocker(400, null);
+        // Wire up action buttons immediately after content is updated
+        this._wireActionButtons(this._showConfigCallback, this._showRecordsCallback);
 
-        // Wire up action buttons AFTER a delay to ensure the capture blocker is active
-        // This prevents the portrait tap from immediately triggering the config button
-        setTimeout(() => {
-            this._wireActionButtons(this._showConfigCallback, this._showRecordsCallback);
-        }, 50);
+        // Install capture blocker AFTER wiring buttons to prevent immediate clickthrough from portrait tap
+        // This blocks events for 200ms but allows the newly-wired buttons to work after that
+        PanelEventHandler.installCaptureBlocker(200, null);
     }
 
     /**
@@ -214,7 +211,8 @@ export class StatsPanelManager {
      */
     private _setupRestartButton(restartBtn: HTMLElement): void {
         const doRestart = (e: Event): void => {
-            safeCall(e, 'stopPropagation');
+            e?.preventDefault?.();
+            e?.stopPropagation?.();
             if (confirm('Are you sure you want to restart the game? All progress will be lost.')) {
                 this.hideStatsPanel();
                 this.game.resetGame();
@@ -223,19 +221,8 @@ export class StatsPanelManager {
             }
         };
 
+        // Use only click event to avoid double-triggering
         this.eventManager.add(restartBtn, 'click', doRestart);
-
-        this.eventManager.add(restartBtn, 'pointerdown', (e: PointerEvent) => {
-            e?.preventDefault?.();
-            e?.stopPropagation?.();
-            (e.target as HTMLElement)?.setPointerCapture?.(e.pointerId);
-        }, { passive: false });
-
-        this.eventManager.add(restartBtn, 'pointerup', (e: PointerEvent) => {
-            e?.preventDefault?.();
-            doRestart(e);
-            (e.target as HTMLElement)?.releasePointerCapture?.(e.pointerId);
-        });
     }
 
     /**
@@ -243,7 +230,8 @@ export class StatsPanelManager {
      */
     private _setupMenuButton(menuBtn: HTMLElement): void {
         const doReturnToMenu = (e: Event): void => {
-            safeCall(e, 'stopPropagation');
+            e?.preventDefault?.();
+            e?.stopPropagation?.();
             if (confirm('Return to start menu? Current game progress will be saved.')) {
                 this.hideStatsPanel();
                 // Reset the gameStarted flag so the player can continue or start a new game
@@ -257,19 +245,8 @@ export class StatsPanelManager {
             }
         };
 
+        // Use only click event to avoid double-triggering
         this.eventManager.add(menuBtn, 'click', doReturnToMenu);
-
-        this.eventManager.add(menuBtn, 'pointerdown', (e: PointerEvent) => {
-            e?.preventDefault?.();
-            e?.stopPropagation?.();
-            (e.target as HTMLElement)?.setPointerCapture?.(e.pointerId);
-        }, { passive: false });
-
-        this.eventManager.add(menuBtn, 'pointerup', (e: PointerEvent) => {
-            e?.preventDefault?.();
-            doReturnToMenu(e);
-            (e.target as HTMLElement)?.releasePointerCapture?.(e.pointerId);
-        });
     }
 
     /**
