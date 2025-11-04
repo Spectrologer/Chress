@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { CombatManager } from '@managers/CombatManager.js';
-import { BombManager } from '@managers/BombManager.js';
-import { EnemyDefeatFlow } from '@managers/EnemyDefeatFlow.js';
+import { CombatManager } from '@managers/CombatManager';
+import { BombManager } from '@managers/BombManager';
+import { EnemyDefeatFlow } from '@managers/EnemyDefeatFlow';
 
 // Create minimal mocks for game, player, enemy used by CombatManager.defeatEnemy
 function makeMockGame() {

@@ -1,5 +1,5 @@
-import { EventValidator } from '@core/EventValidator.js';
-import { EventTypes } from '@core/EventTypes.js';
+import { EventValidator } from '@core/EventValidator';
+import { EventTypes } from '@core/EventTypes';
 
 describe('EventValidator', () => {
     let validator;

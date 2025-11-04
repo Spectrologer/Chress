@@ -1,12 +1,12 @@
 /**
  * Test suite for event bus refactoring of input system
  */
-import { PathfindingController } from '../controllers/PathfindingController.ts';
-import { InputController } from '../controllers/InputController.ts';
-import { KeyboardHandler } from '../controllers/KeyboardHandler.ts';
-import { eventBus } from '@core/EventBus.js';
-import { EventTypes } from '@core/EventTypes.js';
-import { TILE_TYPES } from '@core/constants/index.js';
+import { PathfindingController } from '../controllers/PathfindingController';
+import { InputController } from '../controllers/InputController';
+import { KeyboardHandler } from '../controllers/KeyboardHandler';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
+import { TILE_TYPES } from '@core/constants/index';
 
 describe('Event Bus Refactoring', () => {
     let mockGame;

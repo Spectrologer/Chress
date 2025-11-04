@@ -1,4 +1,4 @@
-import { InteractionManager } from '@managers/InteractionManager.js';
+import { InteractionManager } from '@managers/InteractionManager';
 
 describe('InteractionManager melee tap adjacency', () => {
   let mockGame;

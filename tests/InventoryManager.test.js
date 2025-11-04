@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 import { InventoryUI } from '../ui/InventoryUI.js';
-import { InventoryService } from '@managers/inventory/InventoryService.js';
-import { ItemMetadata } from '@managers/inventory/ItemMetadata.js';
-import { TILE_TYPES } from '@core/constants/index.js';
-import { eventBus } from '@core/EventBus.js';
-import { EventTypes } from '@core/EventTypes.js';
+import { InventoryService } from '@managers/inventory/InventoryService';
+import { ItemMetadata } from '@managers/inventory/ItemMetadata';
+import { TILE_TYPES } from '@core/constants/index';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 describe('InventoryUI', () => {
   let inventoryUI;

@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { InventoryService } from '@managers/inventory/InventoryService.js';
-import { ItemMetadata } from '@managers/inventory/ItemMetadata.js';
-import { TILE_TYPES } from '@core/constants/index.js';
+import { InventoryService } from '@managers/inventory/InventoryService';
+import { ItemMetadata } from '@managers/inventory/ItemMetadata';
+import { TILE_TYPES } from '@core/constants/index';
 
 describe('InventoryService', () => {
   let inventoryService;

@@ -1,6 +1,6 @@
-import { ZoneGenerator } from '@core/ZoneGenerator.js';
-import { boardLoader } from '@core/BoardLoader.js';
-import { TILE_TYPES } from '@core/constants/index.js';
+import { ZoneGenerator } from '@core/ZoneGenerator';
+import { boardLoader } from '@core/BoardLoader';
+import { TILE_TYPES } from '@core/constants/index';
 
 describe('ZoneGenerator - Custom Board Integration', () => {
     let mockGame;

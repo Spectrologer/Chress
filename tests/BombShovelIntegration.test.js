@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { InventoryService } from '@managers/inventory/InventoryService.js';
-import { BombManager } from '@managers/BombManager.js';
-import { TILE_TYPES } from '@core/constants/index.js';
+import { InventoryService } from '@managers/inventory/InventoryService';
+import { BombManager } from '@managers/BombManager';
+import { TILE_TYPES } from '@core/constants/index';
 
 describe('Bomb and Shovel integration', () => {
   let mockGame, mockPlayer, mockUI, inventoryService, bombManager;

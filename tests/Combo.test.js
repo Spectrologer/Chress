@@ -1,9 +1,9 @@
-import { CombatManager } from '@managers/CombatManager.js';
-import { BombManager } from '@managers/BombManager.js';
-import { EnemyDefeatFlow } from '@managers/EnemyDefeatFlow.js';
-import { GRID_SIZE, TILE_TYPES } from '@core/constants/index.js';
-import { eventBus } from '@core/EventBus.js';
-import { EventTypes } from '@core/EventTypes.js';
+import { CombatManager } from '@managers/CombatManager';
+import { BombManager } from '@managers/BombManager';
+import { EnemyDefeatFlow } from '@managers/EnemyDefeatFlow';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 describe('Combat combo bonuses', () => {
   let combatManager;

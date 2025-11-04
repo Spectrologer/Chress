@@ -1,5 +1,5 @@
-import { InputManager } from '@managers/InputManager.js';
-import { TILE_TYPES, GRID_SIZE, INPUT_CONSTANTS } from '@core/constants/index.js';
+import { InputManager } from '@managers/InputManager';
+import { TILE_TYPES, GRID_SIZE, INPUT_CONSTANTS } from '@core/constants/index';
 
 describe('Input feedback integration', () => {
   let inputManager;

@@ -1,4 +1,4 @@
-import { getOffset, getDeltaToDirection, isValidDirection, getAllDirections } from '@core/utils/DirectionUtils.js';
+import { getOffset, getDeltaToDirection, isValidDirection, getAllDirections } from '@core/utils/DirectionUtils';
 
 describe('DirectionUtils', () => {
     describe('getOffset', () => {

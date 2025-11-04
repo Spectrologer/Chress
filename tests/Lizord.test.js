@@ -1,5 +1,5 @@
-import { EnemyMoveCalculatorFactory } from '@enemy/MoveCalculators.js';
-import { GRID_SIZE, TILE_TYPES } from '@core/constants/index.js';
+import { EnemyMoveCalculatorFactory } from '@enemy/MoveCalculators';
+import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
 
 describe('Lizord movement and bump attack behavior', () => {
   let mockPlayer;

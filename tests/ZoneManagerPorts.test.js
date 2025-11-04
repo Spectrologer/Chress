@@ -1,4 +1,4 @@
-import { TILE_TYPES, GRID_SIZE } from '@core/constants/index.js';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 
 describe('ZoneManager - PORT Handling for Custom Boards', () => {
     let mockGame;

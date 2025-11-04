@@ -1,5 +1,5 @@
 import { RadialInventoryUI } from '../ui/RadialInventoryUI.js';
-import { InventoryService } from '@managers/inventory/InventoryService.js';
+import { InventoryService } from '@managers/inventory/InventoryService';
 
 function makeMockGame() {
   const mockGame = {

@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import { UIManager } from '../ui/UIManager.js';
-import { eventBus } from '@core/EventBus.js';
-import { EventTypes } from '@core/EventTypes.js';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks.js';
 
 describe('UIManager', () => {

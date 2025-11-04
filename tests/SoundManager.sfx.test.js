@@ -1,4 +1,4 @@
-import { SoundManager } from '@core/SoundManager.js';
+import { SoundManager } from '@core/SoundManager';
 
 describe('SoundManager SFX playback', () => {
     let sm;

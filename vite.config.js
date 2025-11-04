@@ -33,45 +33,45 @@ export default defineConfig({
         manualChunks: {
           // Core game logic
           'game-core': [
-            './src/core/game.js',
-            './src/core/constants/index.js',
+            './src/core/game.ts',
+            './src/core/constants/index.ts',
           ],
 
           // Managers
           'managers': [
-            './src/managers/ZoneManager.js',
-            './src/managers/GridManager.js',
-            './src/managers/ActionManager.js',
-            './src/managers/InteractionManager.js',
+            './src/managers/ZoneManager.ts',
+            './src/managers/GridManager.ts',
+            './src/managers/ActionManager.ts',
+            './src/managers/InteractionManager.ts',
           ],
 
           // Inventory system
           'inventory': [
-            './src/managers/inventory/InventoryService.js',
-            './src/managers/inventory/ItemRepository.js',
-            './src/managers/ItemManager.js',
+            './src/managers/inventory/InventoryService.ts',
+            './src/managers/inventory/ItemRepository.ts',
+            './src/managers/ItemManager.ts',
           ],
 
           // Rendering
           'renderers': [
-            './src/renderers/RenderManager.js',
-            './src/renderers/TileRenderer.js',
-            './src/renderers/PlayerRenderer.js',
-            './src/renderers/EnemyRenderer.js',
-            './src/renderers/NPCRenderer.js',
+            './src/renderers/RenderManager.ts',
+            './src/renderers/TileRenderer.ts',
+            './src/renderers/PlayerRenderer.ts',
+            './src/renderers/EnemyRenderer.ts',
+            './src/renderers/NPCRenderer.ts',
           ],
 
           // Enemy AI
           'enemy-ai': [
-            './src/enemy/BaseEnemy.js',
-            './src/enemy/EnemyMovement.js',
-            './src/enemy/EnemyPathfinding.js',
+            './src/enemy/BaseEnemy.ts',
+            './src/enemy/EnemyMovement.ts',
+            './src/enemy/EnemyPathfinding.ts',
           ],
 
           // Utils (lazy loaded)
           'utils': [
-            './src/utils/GridUtils.js',
-            './src/utils/TileUtils.js',
+            './src/utils/GridUtils.ts',
+            './src/utils/TileUtils.ts',
           ],
         },
 

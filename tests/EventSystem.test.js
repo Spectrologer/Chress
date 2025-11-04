@@ -1,5 +1,5 @@
-import { eventBus } from '@core/EventBus.js';
-import { EventTypes } from '@core/EventTypes.js';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 describe('EventBus System Integration', () => {
   beforeEach(() => {

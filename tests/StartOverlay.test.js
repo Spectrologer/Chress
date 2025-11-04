@@ -1,4 +1,4 @@
-import { GameInitializer } from '@core/GameInitializer.js';
+import { GameInitializer } from '@core/GameInitializer';
 
 // Minimal DOM fixture for the start overlay
 beforeEach(() => {

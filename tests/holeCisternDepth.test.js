@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { ZoneTransitionManager } from '@managers/ZoneTransitionManager.js';
-import { ZoneManager } from '@managers/ZoneManager.js';
-import { TILE_TYPES, GRID_SIZE } from '@core/constants/index.js';
+import { ZoneTransitionManager } from '@managers/ZoneTransitionManager';
+import { ZoneManager } from '@managers/ZoneManager';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 
 jest.mock('../renderers/MultiTileHandler.js');
-import { MultiTileHandler } from '@renderers/MultiTileHandler.js';
+import { MultiTileHandler } from '@renderers/MultiTileHandler';
 
 describe('Hole and Cistern depth setting', () => {
     const createGameMock = () => ({

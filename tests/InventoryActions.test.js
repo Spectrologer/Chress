@@ -1,5 +1,5 @@
-import { InventoryService } from '@managers/inventory/InventoryService.js';
-import { TILE_TYPES } from '@core/constants/index.js';
+import { InventoryService } from '@managers/inventory/InventoryService';
+import { TILE_TYPES } from '@core/constants/index';
 
 describe('InventoryService', () => {
   let inventoryService;

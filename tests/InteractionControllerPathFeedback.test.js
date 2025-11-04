@@ -1,6 +1,6 @@
-import { InputController } from '../controllers/InputController.ts';
-import { eventBus } from '@core/EventBus.js';
-import { EventTypes } from '@core/EventTypes.js';
+import { InputController } from '../controllers/InputController';
+import { eventBus } from '@core/EventBus';
+import { EventTypes } from '@core/EventTypes';
 
 // Minimal fake game/player to test executePath behavior
 function makeGame() {

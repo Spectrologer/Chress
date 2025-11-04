@@ -4,7 +4,7 @@
  */
 
 import { Sign } from '../ui/Sign.js';
-import * as NPCLoader from '@core/NPCLoader.js';
+import * as NPCLoader from '@core/NPCLoader';
 
 // Mock character data for testing
 const mockCharacterData = {
