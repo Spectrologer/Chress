@@ -3,8 +3,6 @@ import { ZoneStateManager } from '@generators/ZoneStateManager';
 import { BaseZoneHandler } from './BaseZoneHandler';
 import { SPAWN_PROBABILITIES, TILE_TYPES } from '../constants/index';
 import { boardLoader } from '../BoardLoader';
-import { ContentRegistry } from '../ContentRegistry';
-import { findValidPlacement } from '@generators/GeneratorUtils';
 
 class SurfaceHandler extends BaseZoneHandler {
     private zoneConnections: any;
@@ -114,43 +112,6 @@ class SurfaceHandler extends BaseZoneHandler {
         boardLoader.loadBoard(this.zoneX, this.zoneY, 1).catch(err => {
             logger.error(`Failed to load gouges board for zone (${this.zoneX},${this.zoneY}):`, err);
         });
-    }
-
-    handleGossipNPCSpawning() {
-        // Get all gossip NPCs from ContentRegistry
-        const allNPCs = ContentRegistry.getAllNPCs();
-        const gossipNPCs = allNPCs.filter(npc =>
-            npc.metadata &&
-            (npc.metadata as any).characterData &&
-            (npc.metadata as any).characterData.metadata &&
-            (npc.metadata as any).characterData.metadata.category === 'gossip' &&
-            npc.placement &&
-            npc.placement.spawnWeight !== undefined
-        );
-
-        if (gossipNPCs.length === 0) {
-            return;
-        }
-
-        // Pick a random gossip NPC from the list
-        const randomNPC = gossipNPCs[Math.floor(Math.random() * gossipNPCs.length)];
-
-        // Check if this NPC should spawn based on its spawn weight
-        if (Math.random() < randomNPC.placement.spawnWeight) {
-            // Find a valid placement for the NPC
-            const pos = findValidPlacement({
-                maxAttempts: 50,
-                validate: (x, y) => {
-                    return this.zoneGen.gridManager.getTile(x, y) === TILE_TYPES.FLOOR;
-                }
-            });
-
-            if (pos) {
-                const { x, y } = pos;
-                this.zoneGen.gridManager.setTile(x, y, randomNPC.tileType);
-                logger.log(`Gossip NPC ${(randomNPC.metadata as any).name} spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
-            }
-        }
     }
 }
 

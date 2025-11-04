@@ -45,6 +45,7 @@ export interface NPCPlacement {
     y?: number;
     spawnWeight?: number;
     dimension?: number | string;
+    level?: number;
 }
 
 export interface NPCConfig {

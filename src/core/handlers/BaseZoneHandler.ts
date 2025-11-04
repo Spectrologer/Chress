@@ -6,6 +6,8 @@ import { ItemGenerator } from '@generators/ItemGenerator';
 import { StructureGenerator } from '@generators/StructureGenerator';
 import { EnemyGenerator } from '@generators/EnemyGenerator';
 import { PathGenerator } from '@generators/PathGenerator';
+import { ContentRegistry } from '../ContentRegistry';
+import { findValidPlacement } from '@generators/GeneratorUtils';
 
 /**
  * Base class for zone handlers, providing shared initialization and common patterns
@@ -151,6 +153,60 @@ export class BaseZoneHandler {
      */
     incrementZoneCounter() {
         this.game.zoneGenState.incrementZoneCounter();
+    }
+
+    /**
+     * Handle gossip NPC spawning based on dimension and level from JSON files
+     */
+    handleGossipNPCSpawning() {
+        // Get all gossip NPCs from ContentRegistry
+        const allNPCs = ContentRegistry.getAllNPCs();
+        const gossipNPCs = allNPCs.filter(npc => {
+            // Check if it's a gossip NPC with required metadata
+            if (!npc.metadata ||
+                !(npc.metadata as any).characterData ||
+                !(npc.metadata as any).characterData.metadata ||
+                (npc.metadata as any).characterData.metadata.category !== 'gossip') {
+                return false;
+            }
+
+            // Check if it has placement data
+            if (!npc.placement || npc.placement.spawnWeight === undefined) {
+                return false;
+            }
+
+            // Get the NPC's dimension and level from placement data
+            const npcDimension = npc.placement.dimension ?? 0;
+            const npcLevel = npc.placement.level ?? 1;
+
+            // Filter by matching dimension and level
+            return npcDimension === this.dimension && npcLevel === this.zoneLevel;
+        });
+
+        if (gossipNPCs.length === 0) {
+            return;
+        }
+
+        // Check each eligible gossip NPC's spawn weight
+        for (const npc of gossipNPCs) {
+            if (Math.random() < npc.placement.spawnWeight!) {
+                // Find a valid placement for the NPC
+                const pos = findValidPlacement({
+                    maxAttempts: 50,
+                    validate: (x, y) => {
+                        return this.zoneGen.gridManager.getTile(x, y) === TILE_TYPES.FLOOR;
+                    }
+                });
+
+                if (pos) {
+                    const { x, y } = pos;
+                    this.zoneGen.gridManager.setTile(x, y, npc.tileType);
+                    logger.log(`Gossip NPC ${(npc.metadata as any).characterData?.name || (npc.metadata as any).name} spawned at zone (${this.zoneX}, ${this.zoneY}) dimension ${this.dimension} level ${this.zoneLevel} at (${x}, ${y})`);
+                    // Only spawn one gossip NPC per zone
+                    break;
+                }
+            }
+        }
     }
 
     /**

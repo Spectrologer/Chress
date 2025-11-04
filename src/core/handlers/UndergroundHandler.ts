@@ -30,6 +30,7 @@ class UndergroundHandler extends BaseZoneHandler {
         this.addSpecialZoneItems();
         this.handleRandomStairdownPlacement();
         this.handleEnemySpawning();
+        this.handleGossipNPCSpawning();
         this.ensureExitAccess();
 
         const transientState = this.zoneGen.game.transientGameState;

@@ -19,7 +19,7 @@
     "y": null,
     "dimension": 0,
     "spawnLogic": "procedural",
-    "spawnWeight": 0.005,
+    "spawnWeight": 0.007,
     "level": 1
   },
   "interaction": {
