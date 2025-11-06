@@ -54,13 +54,21 @@ export class InventoryUI {
             inventoryGrid.innerHTML = '';
             // Record the time when new slots are being created
             this._slotCreationTime = Date.now();
-            this.game.player.inventory.forEach((item, idx) => {
-                const slot = this.createInventorySlot(item as UIInventoryItem, idx);
-                inventoryGrid.appendChild(slot);
-            });
-            for (let i = this.game.player.inventory.length; i < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE; i++) {
-                const slot = document.createElement('div');
-                slot.className = 'inventory-slot';
+
+            // Render all slots up to MAX_INVENTORY_SIZE, creating empty slots for null items
+            for (let idx = 0; idx < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE; idx++) {
+                const item = this.game.player.inventory[idx];
+                let slot: HTMLDivElement;
+
+                if (item && item !== null) {
+                    // Render item slot
+                    slot = this.createInventorySlot(item as UIInventoryItem, idx);
+                } else {
+                    // Render empty slot
+                    slot = document.createElement('div');
+                    slot.className = 'inventory-slot';
+                }
+
                 inventoryGrid.appendChild(slot);
             }
         }

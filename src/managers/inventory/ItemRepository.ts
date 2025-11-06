@@ -69,18 +69,21 @@ export class ItemRepository {
     /**
      * Remove an item from either inventory
      * Consolidates ItemService._removeItemFromEither()
+     *
+     * For main inventory: replaces with null to maintain positions (prevents item shifting)
+     * For radial inventory: uses splice (radial menu handles positioning differently)
      */
     removeItem(player: Player, item: InventoryItem): boolean {
         if (!player || !item) return false;
 
-        // Try main inventory
+        // Try main inventory - use null to preserve slot positions
         const mainIdx = player.inventory.indexOf(item);
         if (mainIdx >= 0) {
-            player.inventory.splice(mainIdx, 1);
+            player.inventory[mainIdx] = null as any;
             return true;
         }
 
-        // Try radial inventory
+        // Try radial inventory - splice is OK here
         const radialIdx = player.radialInventory ? player.radialInventory.indexOf(item) : -1;
         if (radialIdx >= 0) {
             player.radialInventory!.splice(radialIdx, 1);
@@ -128,6 +131,7 @@ export class ItemRepository {
         if (!Array.isArray(inventory)) return null;
 
         return inventory.find(existing =>
+            existing && // Skip null slots
             existing.type === item.type &&
             (item.type !== 'food' || (item as any).foodType === undefined || (existing as any).foodType === (item as any).foodType)
         ) || null;
@@ -157,7 +161,17 @@ export class ItemRepository {
         const inventory = inventoryType === 'radial' ? player.radialInventory : player.inventory;
         const maxSize = inventoryType === 'radial' ? 8 : 6;
 
-        return Array.isArray(inventory) && inventory.length < maxSize;
+        if (!Array.isArray(inventory)) return true;
+
+        // For main inventory, check for null slots (which can be reused)
+        if (inventoryType === 'main') {
+            const nullSlots = inventory.filter(item => !item).length;
+            const nonNullItems = inventory.length - nullSlots;
+            return nonNullItems < maxSize || nullSlots > 0;
+        }
+
+        // For radial inventory, use length check
+        return inventory.length < maxSize;
     }
 
     /**
@@ -166,8 +180,11 @@ export class ItemRepository {
     getInventorySpace(player: Player): InventorySpace {
         if (!player) return { main: 0, radial: 0 };
 
+        // Count non-null items for main inventory
+        const mainCount = player.inventory ? player.inventory.filter(item => item !== null).length : 0;
+
         return {
-            main: 6 - (player.inventory ? player.inventory.length : 0),
+            main: 6 - mainCount,
             radial: 8 - (player.radialInventory ? player.radialInventory.length : 0)
         };
     }
@@ -175,11 +192,14 @@ export class ItemRepository {
     /**
      * Prune items with zero uses/quantity from both inventories
      * Consolidates ItemService._pruneZeroUseItems()
+     *
+     * For main inventory: replaces with null to maintain positions (prevents item shifting)
+     * For radial inventory: uses splice (radial menu handles positioning differently)
      */
     pruneEmptyItems(player: Player): void {
         if (!player) return;
 
-        // Prune from main inventory
+        // Prune from main inventory - use null to preserve slot positions
         if (Array.isArray(player.inventory)) {
             for (let i = player.inventory.length - 1; i >= 0; i--) {
                 const item = player.inventory[i];
@@ -187,12 +207,12 @@ export class ItemRepository {
 
                 if ((typeof (item as any).uses !== 'undefined' && (item as any).uses <= 0) ||
                     (typeof (item as any).quantity !== 'undefined' && (item as any).quantity <= 0)) {
-                    player.inventory.splice(i, 1);
+                    player.inventory[i] = null as any;
                 }
             }
         }
 
-        // Prune from radial inventory
+        // Prune from radial inventory - splice is OK here
         if (Array.isArray(player.radialInventory)) {
             let changed = false;
             for (let i = player.radialInventory.length - 1; i >= 0; i--) {
@@ -223,6 +243,9 @@ export class ItemRepository {
      * Decrement item quantity/uses by type (prefers main inventory)
      * Consolidates duplicate removal logic from BombManager and ActionManager
      *
+     * For main inventory: replaces with null to maintain positions (prevents item shifting)
+     * For radial inventory: uses splice (radial menu handles positioning differently)
+     *
      * @param player - Player object
      * @param itemType - Type of item to decrement
      * @param amount - Amount to decrement (default 1)
@@ -231,21 +254,21 @@ export class ItemRepository {
     decrementItemByType(player: Player, itemType: string, amount: number = 1): boolean {
         if (!player || !itemType) return false;
 
-        // Try main inventory first
-        const mainIdx = player.inventory.findIndex(item => item.type === itemType);
+        // Try main inventory first - use null to preserve slot positions
+        const mainIdx = player.inventory.findIndex(item => item && item.type === itemType);
         if (mainIdx !== -1) {
             const item = player.inventory[mainIdx];
             if (typeof (item as any).quantity === 'number' && (item as any).quantity > amount) {
                 (item as any).quantity -= amount;
                 return true;
             } else {
-                player.inventory.splice(mainIdx, 1);
+                player.inventory[mainIdx] = null as any;
                 return true;
             }
         }
 
-        // Fall back to radial inventory
-        const radialIdx = player.radialInventory ? player.radialInventory.findIndex(item => item.type === itemType) : -1;
+        // Fall back to radial inventory - splice is OK here
+        const radialIdx = player.radialInventory ? player.radialInventory.findIndex(item => item && item.type === itemType) : -1;
         if (radialIdx !== -1) {
             const item = player.radialInventory![radialIdx];
             if (typeof (item as any).quantity === 'number' && (item as any).quantity > amount) {
@@ -277,6 +300,13 @@ export class ItemRepository {
                 this.stackItems(existingStack, item);
                 return true;
             }
+        }
+
+        // Try to fill a null slot first (reuse empty slots to maintain positions)
+        const nullSlotIdx = player.inventory.findIndex(slot => !slot);
+        if (nullSlotIdx !== -1) {
+            player.inventory[nullSlotIdx] = item;
+            return true;
         }
 
         // Add as new item if space available

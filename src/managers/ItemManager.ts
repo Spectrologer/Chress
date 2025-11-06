@@ -199,24 +199,25 @@ export class ItemManager {
      * @returns True if item can be added to inventory
      */
     private _canPickupOrStackTile(player: Player, tile: Tile): boolean {
-        // Check inventory space
-        const hasSpace = player.inventory.length < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE;
+        // Check inventory space (count non-null items)
+        const nonNullCount = player.inventory.filter(item => item !== null).length;
+        const hasSpace = nonNullCount < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE;
         const isStackable = ItemMetadata.isStackableItem(tile);
 
         // Check for existing stacks based on item type
         let hasExistingStack = false;
 
         if (isTileType(tile, TILE_TYPES.WATER)) {
-            hasExistingStack = player.inventory.some(i => i.type === 'water');
+            hasExistingStack = player.inventory.some(i => i && i.type === 'water');
         } else if (isTileType(tile, TILE_TYPES.HEART)) {
-            hasExistingStack = player.inventory.some(i => i.type === 'heart');
+            hasExistingStack = player.inventory.some(i => i && i.type === 'heart');
         } else if (isTileType(tile, TILE_TYPES.NOTE)) {
-            hasExistingStack = player.inventory.some(i => i.type === 'note');
+            hasExistingStack = player.inventory.some(i => i && i.type === 'note');
         } else if (isTileType(tile, TILE_TYPES.FOOD)) {
             // Food requires matching foodType for stacking
             const tileObj = tile as any;
             hasExistingStack = player.inventory.some(i =>
-                i.type === 'food' && i.foodType === tileObj.foodType
+                i && i.type === 'food' && i.foodType === tileObj.foodType
             );
         }
 

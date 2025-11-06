@@ -102,19 +102,22 @@ export class NPCInteractionManager {
 
     // Food/water trade
     tradeFoodForWater(foodType: string): void {
-        const index = this.game.player.inventory.findIndex((item: any) => item.type === 'food' && item.foodType.includes(foodType));
-        if (index >= 0 && this.game.player.inventory.length < 6) {
-            this.game.player.inventory.splice(index, 1);
-            this.game.player.inventory.push({ type: 'water' });
-            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-        } else if (index >= 0 && this.game.player.inventory.length >= 6) {
-            // Use event instead of direct UIManager call
-            eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
-                text: 'Inventory is full! Cannot complete trade.',
-                category: 'trade',
-                priority: 'warning',
-                timestamp: Date.now()
-            });
+        const index = this.game.player.inventory.findIndex((item: any) => item && item.type === 'food' && item.foodType.includes(foodType));
+        if (index >= 0) {
+            const nonNullCount = this.game.player.inventory.filter(item => item !== null).length;
+            if (nonNullCount < 6) {
+                this.game.player.inventory[index] = null as any;
+                this.game.player.inventory.push({ type: 'water' });
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
+            } else {
+                // Use event instead of direct UIManager call
+                eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
+                    text: 'Inventory is full! Cannot complete trade.',
+                    category: 'trade',
+                    priority: 'warning',
+                    timestamp: Date.now()
+                });
+            }
         }
     }
 

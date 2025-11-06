@@ -18,12 +18,13 @@ export class OverlayMessageHandler {
         this.messageOverlay = document.getElementById('messageOverlay');
         this.eventManager = new EventListenerManager();
 
-        // Set up click handler
+        // Set up click handler - only close when clicking on overlay background, not content
         if (this.messageOverlay) {
-            this.eventManager.add(this.messageOverlay, 'pointerdown', () => {
+            this.eventManager.add(this.messageOverlay, 'pointerdown', (e: PointerEvent) => {
                 if (!this.messageOverlay?.classList.contains('show')) return;
 
-                if (this.game.displayingMessageForSign) {
+                // Only close if clicking directly on the overlay background, not its children
+                if (e.target === this.messageOverlay && this.game.displayingMessageForSign) {
                     // Import Sign dynamically to avoid circular deps
                     import('./Sign').then(({ Sign }) => {
                         Sign.hideMessageForSign(this.game);

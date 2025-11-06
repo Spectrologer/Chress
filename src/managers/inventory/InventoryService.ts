@@ -123,7 +123,7 @@ export class InventoryService {
         this.game.grid[py][px] = tileType;
 
         // Remove from inventory
-        const item = this.game.player.inventory.find((i: InventoryItem) => i.type === itemType);
+        const item = this.game.player.inventory.find((i: InventoryItem) => i && i.type === itemType);
         if (item) {
             this.repository.removeItem(this.game.player, item);
         }

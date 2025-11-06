@@ -256,10 +256,12 @@ export class BarterWindow {
         // If inventory is full, allow the trade only if the resulting item would merge into an
         // existing stack. Determine possible received item types for the trade and check for
         // matching stacks in the player's inventory.
-        if (!isAbilityTrade && player.inventory.length >= 6) {
+        const nonNullCount = player.inventory.filter(item => item !== null).length;
+        if (!isAbilityTrade && nonNullCount >= 6) {
             // Helper to check if player has an existing stack for a given item descriptor
             const hasExistingStackFor = (itemType: string, foodType?: string): boolean => {
                 return player.inventory.some(i => {
+                    if (!i) return false; // Skip null slots
                     if (itemType === 'food') {
                         return i.type === 'food' && i.foodType === foodType;
                     }
@@ -271,7 +273,7 @@ export class BarterWindow {
             if (tradeData.id === 'rune_food') {
                 // random food: can merge with any existing food stack regardless of sub-type only if types match exactly;
                 // conservatively allow if player has any food stack (may not merge if different foodType, but most NPC foods use common types)
-                if (player.inventory.some(i => i.type === 'food')) return true;
+                if (player.inventory.some(i => i && i.type === 'food')) return true;
             } else if (tradeData.id === 'rune_item') {
                 // random among bomb, bow, bishop_spear
                 if (hasExistingStackFor('bomb') || hasExistingStackFor('bow') || hasExistingStackFor('bishop_spear')) return true;
@@ -296,7 +298,7 @@ export class BarterWindow {
                 // If the trade gives a specific food name/image, try to match exact food asset
                 if (receivedImg.includes('/consumables/') || receivedName.includes('meat') || receivedName.includes('nut')) {
                     // We can't always map names to exact foodType; conservatively allow if player has any food stack
-                    if (player.inventory.some(i => i.type === 'food')) return true;
+                    if (player.inventory.some(i => i && i.type === 'food')) return true;
                 }
             }
 
@@ -310,7 +312,7 @@ export class BarterWindow {
             const discoveries = player.getVisitedZones().size - player.getSpentDiscoveries();
             return discoveries >= requiredAmount;
         } else {
-            const requiredItems = player.inventory.filter(item => item.type === 'food' && item.foodType?.startsWith(tradeData.requiredItem));
+            const requiredItems = player.inventory.filter(item => item && item.type === 'food' && item.foodType?.startsWith(tradeData.requiredItem));
             const totalCount = requiredItems.reduce((sum, item) => sum + (typeof item.quantity === 'number' ? item.quantity : 1), 0);
             return totalCount >= requiredAmount;
         }
@@ -440,9 +442,10 @@ export class BarterWindow {
             this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} discoveries for hammer ability.`, tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic
-            const requiredItem = this.game.player.inventory.find(item => item.type === 'food' && item.foodType?.startsWith(tradeData.requiredItem));
+            const requiredItem = this.game.player.inventory.find(item => item && item.type === 'food' && item.foodType?.startsWith(tradeData.requiredItem));
             if (requiredItem) {
-                const canReceiveWater = this.game.player.inventory.length < 6 || this.game.player.inventory.some(i => i.type === 'water');
+                const nonNullCount = this.game.player.inventory.filter(item => item !== null).length;
+                const canReceiveWater = nonNullCount < 6 || this.game.player.inventory.some(i => i && i.type === 'water');
                 if (!canReceiveWater) {
                      eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
                          text: 'Inventory is full! Cannot complete trade.',
@@ -457,7 +460,7 @@ export class BarterWindow {
                 requiredItem.quantity = currentQty - 1;
                 if (typeof requiredItem.quantity === 'number' && requiredItem.quantity <= 0) {
                     const index = this.game.player.inventory.indexOf(requiredItem);
-                    this.game.player.inventory.splice(index, 1);
+                    this.game.player.inventory[index] = null as any;
                 }
 
                 // Directly add the received item using ItemManager helper so stacking rules apply

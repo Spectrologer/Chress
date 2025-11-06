@@ -626,11 +626,25 @@ body {
 .player-portrait-container {
     width: 100px;
     height: 100px;
-    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+.player-portrait-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
+    pointer-events: none;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .player-portrait {
@@ -1576,6 +1590,101 @@ h1 {
     }
 /* End of mobile-first responsive rules (previously inside @media screen and (max-width: 768px)) */
 
+/* Landscape mode on mobile: position player card to the left of the board */
+@media (orientation: landscape) and (max-height: 600px) {
+    /* Make the main wrapper and inner container horizontal */
+    .main-content-wrapper {
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        max-width: 100vw !important;
+        padding: 4px !important;
+        gap: 8px !important;
+    }
+
+    .content-inner {
+        flex-direction: row !important;
+        gap: 8px !important;
+        align-items: flex-start !important;
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+    /* Header area should remain vertical but size appropriately */
+    .header-area {
+        flex-direction: column !important;
+        gap: 4px !important;
+        margin-bottom: 0 !important;
+        width: auto !important;
+        max-width: none !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Character card container sizing */
+    .character-card-container {
+        width: auto !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Player card sizing for landscape - make it fill available height */
+    .modern-player-card {
+        max-width: 46vw !important;
+        width: 46vw !important;
+        max-height: 98vh !important;
+        padding-bottom: 16px !important;
+    }
+
+    /* Add bottom padding to player details (contains map-info and inventory) */
+    .player-details {
+        padding-bottom: 12px !important;
+    }
+
+    /* Add bottom padding to map-inventory wrapper */
+    .map-inventory-wrapper {
+        padding-bottom: 8px !important;
+    }
+
+    /* Fix overlays within player card to maintain full coverage in landscape */
+    .message-overlay, #messageOverlay,
+    .barter-overlay,
+    .stats-panel-overlay,
+    .statue-overlay,
+    .message-log-overlay {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Ensure character card container is positioned relative for overlays */
+    .character-card-container {
+        position: relative !important;
+    }
+
+    /* Game area sizing for landscape */
+    .game-area {
+        width: 46vw !important;
+        max-width: 46vw !important;
+        margin: 0 !important;
+        flex-shrink: 0 !important;
+        justify-content: flex-start !important;
+    }
+
+    /* Game parchment sizing */
+    .game-parchment {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    /* Canvas sizing */
+    #gameCanvas {
+        max-width: 100% !important;
+        max-height: 98vh !important;
+    }
+}
+
 /* Message Box */
 .message-box {
     margin: 10px 0;
@@ -1700,6 +1809,25 @@ h1 {
     font-size: 1.2em;         /* Relative to the new base font size */
     line-height: 1.05;        /* Tight line-height reduces risk of glyph clipping */
     margin: 0 0 0.6em 0;      /* Small gap below the name */
+}
+
+/* Horizontal RPG-style dialogue layout (portrait on left, text on right) */
+.dialogue-main-content {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+/* Adjust portrait size and gap on small screens but keep horizontal layout */
+@media screen and (max-width: 768px) {
+    .dialogue-main-content {
+        gap: 10px;
+    }
+
+    .dialogue-main-content .barter-portrait-container:not(.large-portrait) {
+        width: clamp(48px, 20%, 80px);
+        max-width: 80px;
+    }
 }
 
 /* Uniform dialogue text style used by sign/dialogue/merchant messages */
@@ -2328,13 +2456,47 @@ h1 {
     max-width: 160px;
     height: auto;
     aspect-ratio: 1 / 1;
-    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px; /* Creates space for the frame around the image */
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     box-sizing: border-box;
+    position: relative;
+}
+
+.barter-portrait-container.large-portrait {
+    /* Larger portraits in barter window need proportionally more padding for the frame */
+    padding: clamp(12px, 4%, 24px);
+}
+
+.barter-portrait-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
+    pointer-events: none; /* Allow clicks to pass through to underlying elements */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+/* Portrait container for NPC dialogues sized for facesetbox frame (48x48 native, scaled 4x = 192px) */
+#messageOverlay .barter-portrait-container {
+    width: 192px;
+    max-width: 192px;
+    height: 192px;
+}
+
+/* Scale portrait to match frame scaling (32px native * 4 = 128px) */
+#messageOverlay .barter-portrait {
+    width: 128px;
+    height: 128px;
+    image-rendering: pixelated;
+    display: block;
 }
 
 .barter-portrait {
@@ -2803,12 +2965,26 @@ h1 {
 .stats-portrait-container {
     width: 84px; /* Slightly reduce portrait size to free horizontal space */
     height: 84px;
-    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: relative;
+}
+
+.stats-portrait-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
+    pointer-events: none;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .stats-list {
@@ -3025,12 +3201,26 @@ input:checked + .toggle-slider::after {
 .statue-portrait-container {
     width: 120px;
     height: 120px;
-    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
     padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: relative;
+}
+
+.statue-portrait-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/assets/ui/facesetbox.png') no-repeat center/contain;
+    pointer-events: none;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .statue-portrait {
