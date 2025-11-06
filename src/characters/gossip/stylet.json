@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/stylet.png",
     "portrait": "characters/npcs/portraits/styletface.png",
-    "tileType": "STYLET"
+    "tileType": "STYLET",
+    "portraitBackground": "#B8860B"
   },
   "placement": {
     "zone": null,

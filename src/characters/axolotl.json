@@ -29,10 +29,10 @@
       {
         "id": "axelotl_axe",
         "requires": {
-          "resource": "DISCOVERED",
-          "amount": 10,
-          "displayName": "Discoveries",
-          "icon": "ui/talk.png"
+        "resource": "DISCOVERED",
+        "amount": 10,
+        "displayName": "Discoveries",
+        "icon": null
         },
         "gives": {
           "type": "ability",

@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/nub.png",
     "portrait": "characters/npcs/portraits/nubface.png",
-    "tileType": "NUB"
+    "tileType": "NUB",
+    "portraitBackground": "#696969"
   },
   "placement": {
     "zone": null,

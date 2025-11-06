@@ -651,6 +651,7 @@ body {
     width: 80%;
     height: 80%;
     object-fit: contain;
+    background-color: #000000;
 }
 
 .player-info {
@@ -3285,7 +3286,7 @@ margin: 0 auto 10px auto;
 
 /* Style for character name in NPC dialogue overlays */
 .dialogue-portrait-area .character-name {
-    color: #3A2418; /* Default dark brown color */
+    color: white !important; /* White text with black stroke */
     font-size: 72px; /* Larger font size */
     font-weight: 900;
     letter-spacing: 0.1em;
@@ -3341,7 +3342,8 @@ margin: 0 auto 10px auto;
 
 /* Custom matte for portraits with inline background-color */
 .barter-portrait.custom-matte {
-  /* Background color is set inline via style attribute */
+  /* Background color is set inline via style attribute - this rule serves as a CSS hook */
+  display: block;
 }
 .npc-category-gossip .barter-portrait.matte-3 { background-color: #98FB98; } /* Pale Green */
 .npc-category-gossip .barter-portrait.matte-4 { background-color: #87CEEB; } /* Sky Blue */

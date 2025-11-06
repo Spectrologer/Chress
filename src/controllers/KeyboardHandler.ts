@@ -157,8 +157,8 @@ export class KeyboardHandler {
             return null;
         }
         if (event.key === '8') {
-            this.game.player.setSpentDiscoveries(this.game.player.getVisitedZones().size - 999);
-            this.game.uiManager.updateZoneDisplay();
+            // Teleport to level 3 (Wilds) - zone (9,0) which has Manhattan distance 9, placing it in wilds
+            this.game.transitionToZone(9, 0, 'teleport', this.game.player.x, this.game.player.y);
             return null;
         }
         if (event.key === '7') {
@@ -207,6 +207,9 @@ export class KeyboardHandler {
                 return null;
             case '6':
                 this.spawnEnemyAtPlayerPosition('zard');
+                return null;
+            case 'escape':
+                this.game.resetGame();
                 return null;
             default:
                 return null;

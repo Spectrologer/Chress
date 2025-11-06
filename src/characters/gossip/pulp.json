@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/pulp.png",
     "portrait": "characters/npcs/portraits/pulpface.png",
-    "tileType": "PULP"
+    "tileType": "PULP",
+    "portraitBackground": "#F5F5DC"
   },
   "placement": {
     "zone": null,

@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/skrib.png",
     "portrait": "characters/npcs/portraits/skribface.png",
-    "tileType": "SKRIB"
+    "tileType": "SKRIB",
+    "portraitBackground": "#4B0082"
   },
   "placement": {
     "zone": null,

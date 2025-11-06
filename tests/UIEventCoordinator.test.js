@@ -67,7 +67,9 @@ describe('UIEventCoordinator', () => {
                 'Welcome to the tavern!',
                 'assets/portrait.png',
                 'Innkeeper',
-                null
+                null,
+                undefined,
+                undefined
             );
         });
 

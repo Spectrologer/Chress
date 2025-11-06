@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/gel.png",
     "portrait": "characters/npcs/portraits/gelface.png",
-    "tileType": "GEL"
+    "tileType": "GEL",
+    "portraitBackground": "#00FFFF"
   },
   "placement": {
     "zone": null,

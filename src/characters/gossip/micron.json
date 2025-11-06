@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/micron.png",
     "portrait": "characters/npcs/portraits/micronface.png",
-    "tileType": "MICRON"
+    "tileType": "MICRON",
+    "portraitBackground": "#000000"
   },
   "placement": {
     "zone": null,

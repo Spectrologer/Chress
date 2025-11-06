@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/slate.png",
     "portrait": "characters/npcs/portraits/slateface.png",
-    "tileType": "SLATE"
+    "tileType": "SLATE",
+    "portraitBackground": "#708090"
   },
   "placement": {
     "zone": null,

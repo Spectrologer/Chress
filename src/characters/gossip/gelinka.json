@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/gelinka.png",
     "portrait": "characters/npcs/portraits/gelinkaface.png",
-    "tileType": "GELINKA"
+    "tileType": "GELINKA",
+    "portraitBackground": "#98FB98"
   },
   "placement": {
     "zone": null,

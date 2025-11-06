@@ -40,7 +40,7 @@
           "id": "random_weapon",
           "amount": 1,
           "displayName": "Random Weapon",
-          "icon": "items/chest.png"
+          "icon": "items/misc/chest.png"
         },
         "repeatable": false
       }

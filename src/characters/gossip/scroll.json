@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/scroll.png",
     "portrait": "characters/npcs/portraits/scrollface.png",
-    "tileType": "SCROLL"
+    "tileType": "SCROLL",
+    "portraitBackground": "#F5DEB3"
   },
   "placement": {
     "zone": null,

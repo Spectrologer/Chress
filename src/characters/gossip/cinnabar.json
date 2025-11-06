@@ -1,16 +1,17 @@
 {
   "id": "cinnabar",
-  "name": "Cinnabar",
+  "name": "朱砂",
   "type": "dialogue",
   "metadata": {
-    "description": "A repitile beast who loves tanning and japanese street fashion.",
+    "description": "A repitile beast who feels misunderstood and lonely.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/gossip/cinnabar.png",
-    "portrait": "characters/npcs/portraits/cinnabarface.png",
+  "sprite": "characters/npcs/gossip/cinnabar.png",
+  "portrait": "characters/npcs/portraits/cinnabarface.png",
+  "portraitBackground": "#DC143C",
     "tileType": "CINNABAR"
   },
   "placement": {
@@ -26,21 +27,21 @@
     "type": "dialogue",
     "cycleMode": "sequential",
     "dialogueTree": [
-      {
-        "id": "msg_0",
-        "text": "Just got back from Harajuku. Well, the pictures anyway. My UV lamp setup is SICK though.",
-        "buttonText": "Nice."
-      },
-      {
-        "id": "msg_1",
-        "text": "Check out this decora-kei look. The platform boots are fake but the vibes are real, you know?",
-        "buttonText": "Cute."
-      },
-      {
-        "id": "msg_2",
-        "text": "Tanning AND fashion? It's called multitasking, sweaty. I mean sweetie. Actually both work.",
-        "buttonText": "Sure."
-      }
+    {
+    "id": "msg_0",
+    "text": "誰も私のことを理解してくれない... いつも一人ぼっちだわ。",
+    "buttonText": "I understand"
+    },
+    {
+    "id": "msg_1",
+    "text": "私の気持ちを分かってくれる人なんていない。寂しいの...。",
+    "buttonText": "That's rough"
+    },
+    {
+    "id": "msg_2",
+    "text": "みんなに見捨てられた気分。誰も私の世界に入ってこないの。",
+    "buttonText": "I hear you"
+    }
     ]
   },
   "behavior": {

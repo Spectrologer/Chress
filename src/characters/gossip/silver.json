@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/silver.png",
     "portrait": "characters/npcs/portraits/silverface.png",
-    "tileType": "SILVER"
+    "tileType": "SILVER",
+    "portraitBackground": "#C0C0C0"
   },
   "placement": {
     "zone": null,

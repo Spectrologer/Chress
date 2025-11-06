@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/filum.png",
     "portrait": "characters/npcs/portraits/filumface.png",
-    "tileType": "FILUM"
+    "tileType": "FILUM",
+    "portraitBackground": "#F0E68C"
   },
   "placement": {
     "zone": null,

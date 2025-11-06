@@ -9,8 +9,9 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/gossip/quill.png",
-    "portrait": "characters/npcs/portraits/quillface.png",
+  "sprite": "characters/npcs/gossip/quill.png",
+  "portrait": "characters/npcs/portraits/quillface.png",
+  "portraitBackground": "#FFD700",
     "tileType": "QUILL"
   },
   "placement": {

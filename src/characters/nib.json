@@ -40,7 +40,7 @@
           "id": "random_trinket",
           "amount": 1,
           "displayName": "Random Trinket",
-          "icon": "items/chest.png"
+          "icon": "items/misc/chest.png"
         },
         "repeatable": false
       }

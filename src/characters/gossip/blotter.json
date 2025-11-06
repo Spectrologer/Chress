@@ -9,8 +9,9 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/gossip/blotter.png",
-    "portrait": "characters/npcs/portraits/blotterface.png",
+  "sprite": "characters/npcs/gossip/blotter.png",
+  "portrait": "characters/npcs/portraits/blotterface.png",
+  "portraitBackground": "#32CD32",
     "tileType": "BLOTTER"
   },
   "placement": {

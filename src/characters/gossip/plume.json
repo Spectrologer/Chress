@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/plume.png",
     "portrait": "characters/npcs/portraits/plumeface.png",
-    "tileType": "PLUME"
+    "tileType": "PLUME",
+    "portraitBackground": "#DDA0DD"
   },
   "placement": {
     "zone": null,

@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/capybara.png",
     "portrait": "characters/npcs/portraits/capybaraface.png",
-    "tileType": "CAPYBARA"
+    "tileType": "CAPYBARA",
+    "portraitBackground": "#8FBC8F"
   },
   "placement": {
     "zone": null,

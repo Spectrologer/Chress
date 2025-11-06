@@ -32,10 +32,10 @@
       {
         "id": "gouge_hammer",
         "requires": {
-          "resource": "DISCOVERED",
-          "amount": 35,
-          "displayName": "Discoveries",
-          "icon": "ui/talk.png"
+        "resource": "DISCOVERED",
+        "amount": 35,
+        "displayName": "Discoveries",
+        "icon": null
         },
         "gives": {
           "type": "ability",

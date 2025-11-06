@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/sine.png",
     "portrait": "characters/npcs/portraits/sineface.png",
-    "tileType": "SINE"
+    "tileType": "SINE",
+    "portraitBackground": "#00CED1"
   },
   "placement": {
     "zone": null,
