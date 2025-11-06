@@ -212,7 +212,7 @@ export const IMAGE_ASSETS = [
     'items/misc/arrow.png',
     'environment/floors/housetile.png',
     'ui/arrow.png',
-    'ui/pawn.png',
+    'ui/pawn_white.png',
     'environment/effects/smoke_frame_1.png',
     'environment/effects/smoke_frame_2.png',
     'environment/effects/smoke_frame_3.png',

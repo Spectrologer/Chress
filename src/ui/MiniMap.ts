@@ -224,7 +224,7 @@ export class MiniMap {
 
         // Special case for Museum interior: show a pawn icon instead of the map
         if (currentZone.x === 0 && currentZone.y === 0 && currentZone.dimension === 1) {
-            const pawnImage = this.game.textureManager.getImage('ui/pawn');
+            const pawnImage = this.game.textureManager.getImage('ui/pawn_white');
                 if (pawnImage && pawnImage.complete) {
                     // Draw the pawn icon in the center of the map canvas
                     // Turn off image smoothing so the scaled-up icon remains crisp

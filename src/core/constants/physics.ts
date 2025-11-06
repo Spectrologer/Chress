@@ -44,7 +44,7 @@ export const SCALE_CONSTANTS = {
     FOOD_RENDER_SCALE: 0.65, // Food item size (65% of tile)
 
     // Animation scales
-    ANIMATION_BASE_SIZE_SCALE: 0.6, // Base size for particle animations (60% of tile)
+    ANIMATION_BASE_SIZE_SCALE: 1.0, // Base size for particle animations (100% of tile)
 
     // Base tile renderer
     BASE_TILE_RENDER_SCALE: 0.7, // Generic tile rendering scale (70% of tile)
