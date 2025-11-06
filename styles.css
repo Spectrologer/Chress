@@ -891,9 +891,9 @@ body {
 .character-name {
     font-family: 'MedievalSharp', serif;
     font-weight: 900; /* Bolder */
-    font-size: 1em;
+    font-size: 24px;
     color: #3A2418; /* Darker, richer brown */
-    text-shadow: 
+    text-shadow:
         1px 1px 0px #D2B48C, /* Highlight */
         2px 2px 3px rgba(0, 0, 0, 0.6); /* Deeper shadow */
     letter-spacing: 1.5px;
@@ -1506,7 +1506,7 @@ h1 {
     }
 
     .character-name {
-        font-size: clamp(2.2em, 8vw, 3em);
+        font-size: 48px;
     }
 
     .character-level {
@@ -3281,6 +3281,45 @@ explicit margin to center themselves. */
 #messageOverlay .barter-portrait-container,
 .message-overlay .barter-portrait-container {
 margin: 0 auto 10px auto;
+}
+
+/* Style for character name in NPC dialogue overlays */
+.dialogue-portrait-area .character-name {
+    color: #3A2418; /* Default dark brown color */
+    font-size: 72px; /* Larger font size */
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    -webkit-text-stroke: 5px #000;
+    paint-order: stroke fill;
+    text-shadow: none;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+/* New styles for dialogue layout */
+.dialogue-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+}
+
+.dialogue-main-content {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.dialogue-portrait-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px; /* Reduced space between portrait and name */
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
 }
 
 /* NPC Portrait Matte Colors */

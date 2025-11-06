@@ -102,11 +102,13 @@ export class DialogueManager {
         if (name && imgPath) {
         // NPC dialogue with name and portrait in traditional RPG layout (portrait on left)
         this.messageOverlay.innerHTML = /*html*/`
-        <div style="display: flex; flex-direction: column; height: 100%; max-height: 100%;">
-        <div class="dialogue-main-content" style="display: flex; gap: 15px; align-items: flex-start; flex-grow: 1; overflow: hidden;">
-        <div class="barter-portrait-container large-portrait npc-category-${category}" style="flex-shrink: 0; position: sticky; top: 0; align-self: flex-start; position: relative; margin-bottom: 10px;">
-        <img src="${imgPath}" class="barter-portrait${portraitBackground ? ' custom-matte' : ' matte-1'}" style="image-rendering: pixelated;${portraitBackground ? ` background-color: ${portraitBackground};` : ''}">
-        <div class="character-name" style="position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); font-size: 1.8em; display:block; text-align:center; color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; z-index: 1; white-space: nowrap;">${name}</div>
+        <div class="dialogue-container">
+        <div class="dialogue-main-content">
+        <div class="dialogue-portrait-area">
+            <div class="barter-portrait-container large-portrait npc-category-${category}">
+                <img src="${imgPath}" class="barter-portrait${portraitBackground ? ' custom-matte' : ' matte-1'}" style="image-rendering: pixelated;${portraitBackground ? ` background-color: ${portraitBackground};` : ''}">
+            </div>
+            <div class="character-name" style="${portraitBackground ? `color: ${portraitBackground};` : ''}">${name}</div>
         </div>
         <div class="dialogue-text" style="text-align: left; font-size: 1.35em; line-height: 1.45; padding: 10px 15px; flex-grow: 1; overflow: auto; max-height: 100%;">${text}</div>
         </div>
