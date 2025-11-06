@@ -17,6 +17,7 @@ interface NPCData {
         tileType: string;
         portrait: string;
         sprite: string;
+        portraitBackground?: string;
     };
     interaction?: {
         type?: string;
@@ -93,7 +94,8 @@ function loadNPCFromJSON(npcData: NPCData): any {
         characterData: npcData,
         name: npcData.name,
         portrait: npcData.display.portrait,
-        sprite: npcData.display.sprite
+        sprite: npcData.display.sprite,
+        portraitBackground: npcData.display.portraitBackground
     };
 
     return registryConfig;

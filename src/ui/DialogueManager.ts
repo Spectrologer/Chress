@@ -22,9 +22,9 @@ export class DialogueManager {
     }
 
     /**
-     * Show sign or NPC dialogue message
-     */
-    showDialogue(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null): void {
+    * Show sign or NPC dialogue message
+    */
+    showDialogue(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null, category: string = 'unknown', portraitBackground?: string): void {
         if (!this.messageOverlay) return;
 
         // Clear any overlay timeouts to prevent auto-hiding
@@ -34,7 +34,7 @@ export class DialogueManager {
         const btnText = this._getButtonText(name, buttonText);
 
         // Build dialogue HTML
-        this._buildDialogueHTML(text, imageSrc, name, btnText);
+        this._buildDialogueHTML(text, imageSrc, name, btnText, category, portraitBackground);
 
         // Attach button event listener
         this._attachButtonHandler();
@@ -91,29 +91,29 @@ export class DialogueManager {
     }
 
     /**
-     * Build dialogue HTML content
-     */
-    private _buildDialogueHTML(text: string, imageSrc: string | null, name: string | null, btnText: string): void {
+    * Build dialogue HTML content
+    */
+    private _buildDialogueHTML(text: string, imageSrc: string | null, name: string | null, btnText: string, category: string, portraitBackground?: string): void {
         if (!this.messageOverlay) return;
 
         // Add assets/ prefix if imageSrc doesn't already include it
         const imgPath = imageSrc && !imageSrc.startsWith('assets/') ? `assets/${imageSrc}` : imageSrc;
 
         if (name && imgPath) {
-            // NPC dialogue with name and portrait in traditional RPG layout (portrait on left)
-            this.messageOverlay.innerHTML = /*html*/`
-                <div style="display: flex; flex-direction: column; height: 100%; max-height: 100%; overflow: auto;">
-                    <span class="character-name" style="font-size: 2.2em; margin-bottom: 10px; display:block; text-align:center; flex-shrink: 0;">${name}</span>
-                    <div class="dialogue-main-content" style="display: flex; gap: 15px; align-items: flex-start; flex-grow: 1; overflow: auto;">
-                        <div class="barter-portrait-container large-portrait" style="flex-shrink: 0;">
-                            <img src="${imgPath}" class="barter-portrait" style="image-rendering: pixelated;">
-                        </div>
-                        <div class="dialogue-text" style="text-align: left; font-size: 1.35em; line-height: 1.45; padding: 10px 15px; flex-grow: 1; overflow: auto;">${text}</div>
-                    </div>
-                    <div id="dialogue-button-container" style="text-align: center; margin-top: 15px; flex-shrink: 0; opacity: 0; pointer-events: none;">
-                        <button class="dialogue-close-button" style="padding: 10px 20px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
-                    </div>
-                </div>`;
+        // NPC dialogue with name and portrait in traditional RPG layout (portrait on left)
+        this.messageOverlay.innerHTML = /*html*/`
+        <div style="display: flex; flex-direction: column; height: 100%; max-height: 100%;">
+        <div class="dialogue-main-content" style="display: flex; gap: 15px; align-items: flex-start; flex-grow: 1; overflow: hidden;">
+        <div class="barter-portrait-container large-portrait npc-category-${category}" style="flex-shrink: 0; position: sticky; top: 0; align-self: flex-start; position: relative; margin-bottom: 10px;">
+        <img src="${imgPath}" class="barter-portrait${portraitBackground ? ' custom-matte' : ' matte-1'}" style="image-rendering: pixelated;${portraitBackground ? ` background-color: ${portraitBackground};` : ''}">
+        <div class="character-name" style="position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); font-size: 1.8em; display:block; text-align:center; color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; z-index: 1; white-space: nowrap;">${name}</div>
+        </div>
+        <div class="dialogue-text" style="text-align: left; font-size: 1.35em; line-height: 1.45; padding: 10px 15px; flex-grow: 1; overflow: auto; max-height: 100%;">${text}</div>
+        </div>
+        <div id="dialogue-button-container" style="text-align: center; margin-top: 15px; flex-shrink: 0; opacity: 0; pointer-events: none;">
+        <button class="dialogue-close-button" style="padding: 10px 20px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
+        </div>
+        </div>`;
         } else if (imgPath) {
             // Sign with image
             let imgStyle = 'width: 128px; height: auto; max-height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;';

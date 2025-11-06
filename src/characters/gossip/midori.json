@@ -9,8 +9,9 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/gossip/midori.png",
-    "portrait": "characters/npcs/portraits/midoriface.png",
+  "sprite": "characters/npcs/gossip/midori.png",
+  "portrait": "characters/npcs/portraits/midoriface.png",
+  "portraitBackground": "#228B22",
     "tileType": "MIDORI"
   },
   "placement": {

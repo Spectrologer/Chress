@@ -32,10 +32,12 @@ export interface UIManager {
     ): void;
     hideOverlayMessage(): void;
     showSignMessage(
-        text: string,
-        imageSrc: string | null,
-        name: string | null,
-        buttonText: string | null
+    text: string,
+    imageSrc: string | null,
+    name: string | null,
+    buttonText: string | null,
+    category?: string,
+        portraitBackground?: string
     ): void;
     updatePlayerPosition(): void;
     updateUI?(player: Player): void;

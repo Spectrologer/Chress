@@ -9,8 +9,9 @@
     "category": "merchant"
   },
   "display": {
-    "sprite": "characters/npcs/merchant/mark.png",
-    "portrait": "characters/npcs/portraits/markface.png",
+  "sprite": "characters/npcs/merchant/mark.png",
+  "portrait": "characters/npcs/portraits/markface.png",
+  "portraitBackground": "#FF8C00",
     "tileType": "MARK"
   },
   "placement": {

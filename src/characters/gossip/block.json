@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/gossip/block.png",
     "portrait": "characters/npcs/portraits/blockface.png",
-    "tileType": "BLOCK"
+    "portraitBackground": "#708090",
+  "tileType": "BLOCK"
   },
   "placement": {
     "zone": null,

@@ -65,11 +65,13 @@ export class NPCInteractionManager {
 
                     // Use event instead of direct UIManager call
                     eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
-                        type: 'sign',
-                        message: message,
-                        portrait: npcData.portrait,
-                        name: npcData.name,
-                        buttonText: buttonText
+                    type: 'sign',
+                    message: message,
+                    portrait: npcData.portrait,
+                    name: npcData.name,
+                    buttonText: buttonText,
+                    category: npcData.category,
+                        portraitBackground: npcData.portraitBackground
                     });
 
                     // Advance dialogue based on cycle mode
@@ -161,11 +163,13 @@ export class NPCInteractionManager {
 
                         // Use event instead of direct UIManager call
                         eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
-                            type: 'sign',
-                            message: message,
-                            portrait: npcData.portrait,
-                            name: npcData.name,
-                            buttonText: buttonText
+                        type: 'sign',
+                        message: message,
+                        portrait: npcData.portrait,
+                        name: npcData.name,
+                        buttonText: buttonText,
+                        category: npcData.category,
+                            portraitBackground: npcData.portraitBackground
                         });
 
                         // Advance dialogue based on cycle mode
@@ -242,11 +246,13 @@ export class NPCInteractionManager {
 
                         // Use event instead of direct UIManager call
                         eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
-                            type: 'sign',
-                            message: message,
-                            portrait: npcData.portrait,
-                            name: npcData.name,
-                            buttonText: buttonText
+                        type: 'sign',
+                        message: message,
+                        portrait: npcData.portrait,
+                        name: npcData.name,
+                        buttonText: buttonText,
+                        category: npcData.category,
+                            portraitBackground: npcData.portraitBackground
                         });
 
                         // Advance dialogue based on cycle mode

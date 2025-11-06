@@ -9,8 +9,9 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/gossip/aster.png",
-    "portrait": "characters/npcs/portraits/asterface.png",
+  "sprite": "characters/npcs/gossip/aster.png",
+  "portrait": "characters/npcs/portraits/asterface.png",
+  "portraitBackground": "#191970",
     "tileType": "ASTER"
   },
   "placement": {

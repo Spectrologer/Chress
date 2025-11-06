@@ -161,8 +161,8 @@ export class UIManager {
         this.messageManager.hideOverlayMessage();
     }
 
-    showSignMessage(text: string, imageSrc: string, name: string | null = null, buttonText: string | null = null): void {
-        this.messageManager.showSignMessage(text, imageSrc, name, buttonText);
+    showSignMessage(text: string, imageSrc: string, name: string | null = null, buttonText: string | null = null, category: string = 'unknown', portraitBackground?: string): void {
+    this.messageManager.showSignMessage(text, imageSrc, name, buttonText, category, portraitBackground);
     }
 
     showRegionNotification(zoneX: number, zoneY: number): void {

@@ -456,17 +456,21 @@
 
         <!-- Display Section -->
         <div class="section">
-            <div class="section-title">Display & Assets</div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Sprite Path:</label>
-                    <input type="text" id="charSprite" placeholder="assets/fauna/crayn.png">
-                </div>
-                <div class="form-group">
-                    <label>Portrait Path:</label>
-                    <input type="text" id="charPortrait" placeholder="assets/fauna/craynface.png">
-                </div>
+        <div class="section-title">Display & Assets</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Sprite Path:</label>
+                <input type="text" id="charSprite" placeholder="assets/fauna/crayn.png">
             </div>
+            <div class="form-group">
+                <label>Portrait Path:</label>
+                <input type="text" id="charPortrait" placeholder="assets/fauna/craynface.png">
+            </div>
+        <div class="form-group">
+            <label>Portrait Background:</label>
+            <input type="text" id="charPortraitBg" placeholder="#FFFFFF or leave empty for random" pattern="^#[0-9A-Fa-f]{6}$" title="Hex color code (e.g. #FF0000)">
+        </div>
+        </div>
         </div>
 
         <!-- Placement Section -->
@@ -916,6 +920,7 @@
             document.getElementById('charCategory').value = '';
             document.getElementById('charSprite').value = '';
             document.getElementById('charPortrait').value = '';
+            document.getElementById('charPortraitBg').value = '';
             document.getElementById('charZoneX').value = '0';
             document.getElementById('charZoneY').value = '0';
             document.getElementById('charDimension').value = 'null';
@@ -987,6 +992,7 @@
                 display: {
                     sprite: document.getElementById('charSprite').value.trim(),
                     portrait: document.getElementById('charPortrait').value.trim(),
+                    portraitBackground: document.getElementById('charPortraitBg').value.trim() || undefined,
                     tileType: tileType || 'UNNAMED_CHARACTER'
                 },
                 placement: {
@@ -1094,6 +1100,7 @@
             document.getElementById('charCategory').value = character.metadata?.category || '';
             document.getElementById('charSprite').value = character.display?.sprite || '';
             document.getElementById('charPortrait').value = character.display?.portrait || '';
+            document.getElementById('charPortraitBg').value = character.display?.portraitBackground || '';
 
             // Parse zone coordinates
             if (character.placement?.zone) {

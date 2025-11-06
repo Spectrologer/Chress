@@ -9,8 +9,9 @@
     "category": "merchant"
   },
   "display": {
-    "sprite": "characters/npcs/merchant/penne.png",
-    "portrait": "characters/npcs/portraits/penneface.png",
+  "sprite": "characters/npcs/merchant/penne.png",
+  "portrait": "characters/npcs/portraits/penneface.png",
+  "portraitBackground": "#98FB98",
     "tileType": "PENNE"
   },
   "placement": {

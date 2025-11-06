@@ -1771,7 +1771,7 @@ h1 {
 #messageOverlay, .message-overlay {
     box-sizing: border-box;
     max-height: 50vh; /* Keep overlay within viewport */
-    overflow: auto; /* Allow scrolling for long content */
+    overflow: hidden; /* Prevent overlay from scrolling - only dialogue text should scroll */
     padding: 16px;
 }
 
@@ -3274,14 +3274,38 @@ input:checked + .toggle-slider::after {
 }
 
 /* Ensure portrait containers placed inside dialogue text or the overlay
-   are visually centered. Consent HTML is sometimes injected as a single
-   `.dialogue-text` block, so block-level portrait containers need an
-   explicit margin to center themselves. */
+are visually centered. Consent HTML is sometimes injected as a single
+`.dialogue-text` block, so block-level portrait containers need an
+explicit margin to center themselves. */
 .dialogue-text .barter-portrait-container,
 #messageOverlay .barter-portrait-container,
 .message-overlay .barter-portrait-container {
-    margin: 0 auto 10px auto;
+margin: 0 auto 10px auto;
 }
+
+/* NPC Portrait Matte Colors */
+/* Tutorial NPCs - Warm, educational colors */
+.npc-category-tutorial .barter-portrait.matte-1 { background-color: #FFE4B5; } /* Moccasin */
+.npc-category-tutorial .barter-portrait.matte-2 { background-color: #FFDAB9; } /* Peach Puff */
+.npc-category-tutorial .barter-portrait.matte-3 { background-color: #F0E68C; } /* Khaki */
+.npc-category-tutorial .barter-portrait.matte-4 { background-color: #DDA0DD; } /* Plum */
+
+/* Merchant NPCs - Cool, business-like colors */
+.npc-category-merchant .barter-portrait.matte-1 { background-color: #98FB98; } /* Pale Green */
+.npc-category-merchant .barter-portrait.matte-2 { background-color: #87CEEB; } /* Sky Blue */
+.npc-category-merchant .barter-portrait.matte-3 { background-color: #DDA0DD; } /* Plum */
+.npc-category-merchant .barter-portrait.matte-4 { background-color: #F0E68C; } /* Khaki */
+
+/* Gossip NPCs - Vibrant, social colors */
+.npc-category-gossip .barter-portrait.matte-1 { background-color: #FFB6C1; } /* Light Pink */
+.npc-category-gossip .barter-portrait.matte-2 { background-color: #FFA07A; } /* Light Salmon */
+
+/* Custom matte for portraits with inline background-color */
+.barter-portrait.custom-matte {
+  /* Background color is set inline via style attribute */
+}
+.npc-category-gossip .barter-portrait.matte-3 { background-color: #98FB98; } /* Pale Green */
+.npc-category-gossip .barter-portrait.matte-4 { background-color: #87CEEB; } /* Sky Blue */
 
 /* Button styling for NPC-style messages */
 .consent-buttons {

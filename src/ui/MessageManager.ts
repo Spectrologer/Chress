@@ -176,10 +176,10 @@ export class MessageManager {
     // ========================================
 
     /**
-     * Show sign or NPC dialogue
-     */
-    showSignMessage(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null): void {
-        this.dialogueManager.showDialogue(text, imageSrc, name, buttonText);
+    * Show sign or NPC dialogue
+    */
+    showSignMessage(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null, category: string = 'unknown', portraitBackground?: string): void {
+    this.dialogueManager.showDialogue(text, imageSrc, name, buttonText, category, portraitBackground);
     }
 
     // ========================================

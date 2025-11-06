@@ -34,7 +34,9 @@ export interface BarterNpcData {
 export interface DialogueNpcData {
     name: string;
     portrait: string;
+    portraitBackground?: string;
     subclass: string;
+    category: string;
     voicePitch?: number;
     currentMessageIndex: number;
     cycleMode: string;
@@ -333,7 +335,9 @@ export class Sign {
             const dialogueData: DialogueNpcData = {
                 name: characterData.name,
                 portrait: characterData.display.portrait,
+                portraitBackground: characterData.display.portraitBackground,
                 subclass: 'dialogue',
+                category: characterData.metadata?.category || 'unknown',
                 voicePitch: characterData.audio?.voicePitch,
                 currentMessageIndex: 0,
                 cycleMode: characterData.interaction.cycleMode || 'loop',

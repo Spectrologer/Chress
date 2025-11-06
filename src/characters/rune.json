@@ -9,8 +9,9 @@
     "category": "merchant"
   },
   "display": {
-    "sprite": "characters/npcs/merchant/rune.png",
-    "portrait": "characters/npcs/portraits/runeface.png",
+  "sprite": "characters/npcs/merchant/rune.png",
+  "portrait": "characters/npcs/portraits/runeface.png",
+  "portraitBackground": "#696969",
     "tileType": "RUNE"
   },
   "placement": {

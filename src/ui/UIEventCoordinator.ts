@@ -25,6 +25,8 @@ interface UIDialogShowEvent {
     portrait?: string | null;
     name?: string | null;
     buttonText?: string | null;
+    category?: string;
+    portraitBackground?: string;
     data?: any;
 }
 
@@ -123,10 +125,10 @@ export class UIEventCoordinator {
     }
 
     /**
-     * Handle dialog show events
-     */
+    * Handle dialog show events
+    */
     private handleDialogShow(data: UIDialogShowEvent): void {
-        const { type, npc, message, portrait, name, buttonText } = data;
+    const { type, npc, message, portrait, name, buttonText, category, portraitBackground } = data;
 
         switch (type) {
             case 'barter':
@@ -138,12 +140,12 @@ export class UIEventCoordinator {
                 break;
 
             case 'sign':
-                if (!message) {
-                    console.error('[UIEventCoordinator] Sign dialog requires message property');
-                    return;
-                }
-                this.messageManager.showSignMessage(message, portrait || null, name || null, buttonText || null);
-                break;
+            if (!message) {
+            console.error('[UIEventCoordinator] Sign dialog requires message property');
+            return;
+            }
+            this.messageManager.showSignMessage(message, portrait || null, name || null, buttonText || null, category, portraitBackground);
+            break;
 
             case 'statue':
                 // showStatueInfo takes an npc parameter

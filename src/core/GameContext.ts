@@ -203,7 +203,7 @@ export interface IGame {
     addTreasureToInventory(): void;
     addBomb(): void;
     hideOverlayMessage(): void;
-    showSignMessage(text: string, imageSrc?: string | null, name?: string | null, buttonText?: string | null): void;
+    showSignMessage(text: string, imageSrc?: string | null, name?: string | null, buttonText?: string | null, category?: string, portraitBackground?: string): void;
     updatePlayerPosition(): void;
     updatePlayerStats(): void;
     incrementBombActions(): void;
@@ -519,8 +519,8 @@ export class GameContext implements IGame {
         this.uiManager!.hideOverlayMessage();
     }
 
-    showSignMessage(text: string, imageSrc: string | null = null, name: string | null = null, buttonText: string | null = null): void {
-        this.uiManager!.showSignMessage(text, imageSrc, name, buttonText);
+    showSignMessage(text: string, imageSrc: string | null = null, name: string | null = null, buttonText: string | null = null, category: string = 'unknown', portraitBackground?: string): void {
+        this.uiManager!.showSignMessage(text, imageSrc, name, buttonText, category, portraitBackground);
     }
 
     updatePlayerPosition(): void {

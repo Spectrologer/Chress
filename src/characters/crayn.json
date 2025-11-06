@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/tutorial/crayn.png",
     "portrait": "characters/npcs/portraits/craynface.png",
-    "tileType": "CRAYN"
+    "portraitBackground": "#228B22",
+  "tileType": "CRAYN"
   },
   "placement": {
     "zone": "0,0",

@@ -5,6 +5,8 @@ import { EventTypes } from '@core/EventTypes';
 import { Enemy } from '@entities/Enemy';
 import { findValidPlacement } from '@generators/GeneratorUtils';
 import { TILE_TYPES } from '@core/constants/index';
+import { ContentRegistry } from '@core/ContentRegistry';
+import type { Position } from '@core/Position';
 
 interface KeyPressResult {
     type: 'cancel_path' | 'movement';
@@ -160,8 +162,7 @@ export class KeyboardHandler {
             return null;
         }
         if (event.key === '7') {
-            const pos = this.game.playerFacade.getPosition();
-            this.game.transitionToZone(9, 0, 'teleport', pos.x, pos.y);
+            this.spawnRandomGossipNPC();
             return null;
         }
 
@@ -257,9 +258,110 @@ export class KeyboardHandler {
     }
 
     /**
+    * Spawn a random gossip NPC at an available floor tile
+    */
+    private spawnRandomGossipNPC(): void {
+        // Get all gossip NPCs from ContentRegistry
+        const allNPCs = ContentRegistry.getAllNPCs();
+        const gossipNPCs = allNPCs.filter(npc =>
+            npc.metadata &&
+            (npc.metadata as any).characterData &&
+            (npc.metadata as any).characterData.metadata &&
+            (npc.metadata as any).characterData.metadata.category === 'gossip'
+        );
+
+        if (gossipNPCs.length === 0) {
+            console.warn('[KeyboardHandler] No gossip NPCs found');
+            return;
+        }
+
+        // Select random gossip NPC
+        const randomNPC = gossipNPCs[Math.floor(Math.random() * gossipNPCs.length)];
+
+        // Find valid placement on floor tile
+        let pos = this.findValidGossipNPCPlacement();
+
+        // Fallback: if no valid placement found, try to find ANY floor tile
+        if (!pos) {
+            pos = this.findAnyFloorTilePlacement();
+        }
+
+        if (!pos) {
+            console.warn('[KeyboardHandler] No floor tile placement found for gossip NPC');
+            return;
+        }
+
+        // Get sprite key from metadata
+        const spritePath = (randomNPC.metadata as any)?.sprite;
+        let spriteKey = randomNPC.id; // fallback
+        if (spritePath && typeof spritePath === 'string' && spritePath.startsWith('characters/npcs/')) {
+            spriteKey = spritePath.replace('characters/npcs/', '').replace('.png', '');
+        }
+
+        // Create NPC entity
+        const npc = this.game.npcManager?.createNPC(pos.x, pos.y, randomNPC.id, spriteKey);
+        if (npc) {
+            // Set tile on grid
+            this.game.gridManager?.setTile(pos.x, pos.y, randomNPC.tileType);
+            // Render update
+            this.game.render?.();
+        }
+    }
+
+    /**
+     * Find a valid placement for gossip NPC on empty floor tile
+     */
+    private findValidGossipNPCPlacement(): Position | null {
+        return findValidPlacement({
+            maxAttempts: 50,
+            validate: (x: number, y: number) => this.isFloorTileAvailableForNPC(x, y)
+        });
+    }
+
+    /**
+     * Find any floor tile for placement (fallback method)
+     */
+    private findAnyFloorTilePlacement(): Position | null {
+        const { findValidPlacement } = require('@generators/GeneratorUtils');
+        return findValidPlacement({
+            maxAttempts: 100,
+            validate: (x: number, y: number) => {
+                const tile = this.game.gridManager.getTile(x, y);
+                const tileValue = tile && tile.type ? tile.type : tile;
+                return tileValue === TILE_TYPES.FLOOR;
+            }
+        });
+    }
+
+    /**
+     * Check if a floor tile is available for NPC spawning
+     */
+    private isFloorTileAvailableForNPC(x: number, y: number): boolean {
+        const tile = this.game.gridManager.getTile(x, y);
+        const tileValue = tile && tile.type ? tile.type : tile;
+
+        // Only place on normal floor tiles
+        if (tileValue !== TILE_TYPES.FLOOR) {
+            return false;
+        }
+
+        // Check for enemy
+        if (this.game.enemyCollection?.hasEnemyAt(x, y, true)) {
+            return false;
+        }
+
+        // Check for existing NPC
+        if (this.game.npcManager?.getNPCAt(x, y)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Check if a floor tile is available for enemy spawning
      */
-    private isFloorTileAvailable(x: number, y: number): boolean {
+     private isFloorTileAvailable(x: number, y: number): boolean {
         const tile = this.game.gridManager.getTile(x, y);
         const tileValue = tile && tile.type ? tile.type : tile;
         // Only place on normal floor tiles

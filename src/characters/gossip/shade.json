@@ -9,8 +9,9 @@
     "category": "gossip"
   },
   "display": {
-    "sprite": "characters/npcs/gossip/shade.png",
-    "portrait": "characters/npcs/portraits/shadeface.png",
+  "sprite": "characters/npcs/gossip/shade.png",
+  "portrait": "characters/npcs/portraits/shadeface.png",
+  "portraitBackground": "#2F2F2F",
     "tileType": "SHADE"
   },
   "placement": {

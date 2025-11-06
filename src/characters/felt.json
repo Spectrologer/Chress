@@ -11,7 +11,8 @@
   "display": {
     "sprite": "characters/npcs/tutorial/felt.png",
     "portrait": "characters/npcs/portraits/feltface.png",
-    "tileType": "FELT"
+    "portraitBackground": "#87CEEB",
+  "tileType": "FELT"
   },
   "placement": {
     "zone": "0,0",

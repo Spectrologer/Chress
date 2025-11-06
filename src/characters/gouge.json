@@ -11,8 +11,9 @@
     "notes": "Spawns in a dynamically placed shack in level 3 (wilds). The board is registered at runtime when the shack spawns."
   },
   "display": {
-    "sprite": "characters/npcs/merchant/gouge.png",
-    "portrait": "characters/npcs/portraits/gougeface.png",
+  "sprite": "characters/npcs/merchant/gouge.png",
+  "portrait": "characters/npcs/portraits/gougeface.png",
+    "portraitBackground": "#A0522D",
     "tileType": "GOUGE"
   },
   "placement": {

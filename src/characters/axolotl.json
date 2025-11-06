@@ -9,8 +9,9 @@
     "category": "merchant"
   },
   "display": {
-    "sprite": "characters/npcs/merchant/axolotl.png",
-    "portrait": "characters/npcs/portraits/axolotlface.png",
+  "sprite": "characters/npcs/merchant/axolotl.png",
+  "portrait": "characters/npcs/portraits/axolotlface.png",
+  "portraitBackground": "#8B4513",
     "tileType": "AXELOTL"
   },
   "placement": {

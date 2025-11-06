@@ -9,8 +9,9 @@
     "category": "merchant"
   },
   "display": {
-    "sprite": "characters/npcs/merchant/squig.png",
-    "portrait": "characters/npcs/portraits/squigface.png",
+  "sprite": "characters/npcs/merchant/squig.png",
+  "portrait": "characters/npcs/portraits/squigface.png",
+  "portraitBackground": "#D2B48C",
     "tileType": "SQUIG"
   },
   "placement": {
