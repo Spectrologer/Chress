@@ -268,6 +268,7 @@ export class ZoneGenerationOrchestrator {
 
         const allEnemies = (zoneData.enemies || []).map((e: Enemy) => new EnemyClass(e));
         const livingEnemies = allEnemies.filter((enemy: Enemy) => {
+            if (!enemy.id) return true; // Include enemies without id
             const defeatedKey = `${enemy.id}`;
             return !defeatedEnemies.has(defeatedKey);
         });

@@ -22,10 +22,12 @@ export class SoundManager {
     private musicController: MusicController;
     private proceduralGenerator: ProceduralSoundGenerator;
     private lifecycleManager: SoundLifecycleManager;
+    private _unsubscribers: Array<() => void>;
 
     constructor() {
         this.sounds = {};
         this.sfxEnabled = true;
+        this._unsubscribers = [];
 
         // Initialize sub-managers
         this.musicController = new MusicController();
@@ -40,13 +42,17 @@ export class SoundManager {
     }
 
     setupEventListeners() {
-        eventBus.on(EventTypes.MUSIC_CHANGE, (data) => {
-            this.setMusicForZone({ dimension: data.dimension });
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.MUSIC_CHANGE, (data) => {
+                this.setMusicForZone({ dimension: data.dimension });
+            })
+        );
 
-        eventBus.on(EventTypes.ZONE_CHANGED, (data) => {
-            this.setMusicForZone({ dimension: data.dimension });
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.ZONE_CHANGED, (data) => {
+                this.setMusicForZone({ dimension: data.dimension });
+            })
+        );
     }
 
     async loadSounds() {
@@ -124,5 +130,16 @@ export class SoundManager {
 
     playProceduralSound(soundName) {
         this.proceduralGenerator.playProceduralSound(soundName);
+    }
+
+    // ========== Cleanup ==========
+
+    /**
+     * Cleanup event listeners
+     * Call this when destroying the SoundManager instance
+     */
+    destroy(): void {
+        this._unsubscribers?.forEach(unsub => unsub());
+        this._unsubscribers = [];
     }
 }

@@ -1,5 +1,6 @@
 import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES } from '@core/constants/index';
 import { logger } from '@core/logger';
+import { RendererUtils } from './RendererUtils';
 import type { ImageCache } from './types';
 
 export class TextureLoader {
@@ -149,8 +150,7 @@ export class TextureLoader {
     }
 
     isImageLoaded(key: string): boolean {
-        const image = this.images[key];
-        return image && image.complete && image.naturalWidth > 0;
+        return RendererUtils.isImageLoaded(this.images, key);
     }
 
     getImages(): ImageCache {

@@ -30,9 +30,11 @@ export class MessageManager {
     public _typingAudioContext: any;
     public _typingMasterGain: any;
     public _currentVoiceSettings: any;
+    private _unsubscribers: Array<() => void>;
 
     constructor(game: IGame) {
         this.game = game;
+        this._unsubscribers = [];
 
         // Initialize specialized handlers
         this.overlayHandler = new OverlayMessageHandler(game);
@@ -62,43 +64,47 @@ export class MessageManager {
      */
     private setupEventListeners(): void {
         // Listen for UI show message events
-        eventBus.on(EventTypes.UI_SHOW_MESSAGE, (data: any) => {
-            const { text, imageSrc, isPersistent, isLargeText, useTypewriter } = data;
-            this.showOverlayMessage(text, imageSrc, isPersistent, isLargeText, useTypewriter);
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.UI_SHOW_MESSAGE, (data: any) => {
+                const { text, imageSrc, isPersistent, isLargeText, useTypewriter } = data;
+                this.showOverlayMessage(text, imageSrc, isPersistent, isLargeText, useTypewriter);
+            })
+        );
 
         // Hide persistent messages when player moves (unless it's a sign message)
-        eventBus.on(EventTypes.PLAYER_MOVED, (positionData: any) => {
-            if (!this.game.displayingMessageForSign) {
-                this.hideOverlayMessage();
-            } else {
-                // Check if player walked away from NPC
-                const playerPos = { x: positionData.x, y: positionData.y };
-                const transientState = this.game.transientGameState;
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.PLAYER_MOVED, (positionData: any) => {
+                if (!this.game.displayingMessageForSign) {
+                    this.hideOverlayMessage();
+                } else {
+                    // Check if player walked away from NPC
+                    const playerPos = { x: positionData.x, y: positionData.y };
+                    const transientState = this.game.transientGameState;
 
-                if (transientState) {
-                    const npcPos = transientState.getCurrentNPCPosition();
+                    if (transientState) {
+                        const npcPos = transientState.getCurrentNPCPosition();
 
-                    const isAdjacent = transientState.isPlayerAdjacentToNPC(Position.from(playerPos));
+                        const isAdjacent = transientState.isPlayerAdjacentToNPC(Position.from(playerPos));
 
-                    if (!isAdjacent) {
-                        // Player walked away from NPC, close the message
-                        logger.log('Player walked away from NPC, closing message');
+                        if (!isAdjacent) {
+                            // Player walked away from NPC, close the message
+                            logger.log('Player walked away from NPC, closing message');
 
-                        // Hide sign/dialogue message
-                        import('./Sign').then(({ Sign }) => {
-                            Sign.hideMessageForSign(this.game);
-                        });
+                            // Hide sign/dialogue message
+                            import('./Sign').then(({ Sign }) => {
+                                Sign.hideMessageForSign(this.game);
+                            });
 
-                        // Clear NPC position tracking
-                        transientState.clearCurrentNPCPosition();
+                            // Clear NPC position tracking
+                            transientState.clearCurrentNPCPosition();
 
-                        // Also close barter window if open
-                        eventBus.emit(EventTypes.UI_DIALOG_HIDE, { type: 'barter' });
+                            // Also close barter window if open
+                            eventBus.emit(EventTypes.UI_DIALOG_HIDE, { type: 'barter' });
+                        }
                     }
                 }
-            }
-        });
+            })
+        );
     }
 
     // ========================================
@@ -290,5 +296,14 @@ export class MessageManager {
     setTypewriterSfxEnabled(enabled: boolean): void {
         this.typewriterController.setSfxEnabled(enabled);
         this.typewriterSfxEnabled = this.typewriterController.typewriterSfxEnabled;
+    }
+
+    /**
+     * Cleanup event listeners
+     * Call this when destroying the MessageManager instance
+     */
+    destroy(): void {
+        this._unsubscribers?.forEach(unsub => unsub());
+        this._unsubscribers = [];
     }
 }

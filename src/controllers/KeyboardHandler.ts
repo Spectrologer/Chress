@@ -2,6 +2,9 @@ import { Sign } from '@ui/Sign';
 import audioManager from '@utils/AudioManager';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
+import { Enemy } from '@entities/Enemy';
+import { findValidPlacement } from '@generators/GeneratorUtils';
+import { TILE_TYPES } from '@core/constants/index';
 
 interface KeyPressResult {
     type: 'cancel_path' | 'movement';
@@ -186,6 +189,24 @@ export class KeyboardHandler {
             case 'k':
                 try { this.game.player.startBackflip(); } catch (e) {}
                 return null;
+            case '1':
+                this.spawnEnemyAtPlayerPosition('lizardy');
+                return null;
+            case '2':
+                this.spawnEnemyAtPlayerPosition('lizardo');
+                return null;
+            case '3':
+                this.spawnEnemyAtPlayerPosition('lizardeaux');
+                return null;
+            case '4':
+                this.spawnEnemyAtPlayerPosition('lizord');
+                return null;
+            case '5':
+                this.spawnEnemyAtPlayerPosition('lazerd');
+                return null;
+            case '6':
+                this.spawnEnemyAtPlayerPosition('zard');
+                return null;
             default:
                 return null;
         }
@@ -212,6 +233,41 @@ export class KeyboardHandler {
      */
     setPathExecutionCheckCallback(callback: () => boolean): void {
         this.onPathExecutionCheck = callback;
+    }
+
+    /**
+     * Spawn an enemy at a random valid floor tile
+     */
+    private spawnEnemyAtPlayerPosition(enemyType: string): void {
+        const pos = findValidPlacement({
+            maxAttempts: 50,
+            validate: (x: number, y: number): boolean => this.isFloorTileAvailable(x, y)
+        });
+
+        if (pos) {
+            const enemy = new Enemy({
+                x: pos.x,
+                y: pos.y,
+                enemyType: enemyType,
+                id: `${enemyType}_${Date.now()}_${Math.random()}`
+            });
+            this.game.enemyCollection?.add(enemy);
+            this.game.render?.();
+        }
+    }
+
+    /**
+     * Check if a floor tile is available for enemy spawning
+     */
+    private isFloorTileAvailable(x: number, y: number): boolean {
+        const tile = this.game.gridManager.getTile(x, y);
+        const tileValue = tile && tile.type ? tile.type : tile;
+        // Only place on normal floor tiles
+        if (tileValue !== TILE_TYPES.FLOOR) return false;
+        // Check for enemy
+        if (this.game.enemyCollection?.hasEnemyAt(x, y, true)) return false;
+        // Note: Item checking is complex and omitted for simplicity in debug spawning
+        return true;
     }
 
     // ========================================

@@ -263,12 +263,18 @@ export class GameInitializer {
             (gameCanvas as HTMLElement).style.pointerEvents = 'none';
         }
 
-        // Helper to re-enable everything
+        // Track active listeners for cleanup
+        const activeListeners: Array<() => void> = [];
+
+        // Helper to re-enable everything and cleanup listeners
         const enableInput = () => {
             (this.game as any)._entranceAnimationInProgress = false;
             if (gameCanvas) {
                 (gameCanvas as HTMLElement).style.pointerEvents = 'auto';
             }
+            // Clean up any remaining listeners
+            activeListeners.forEach(unsub => unsub());
+            activeListeners.length = 0;
         };
 
         // Safety timeout - always re-enable input after max 10 seconds
@@ -353,6 +359,9 @@ export class GameInitializer {
                             return; // Don't unsubscribe, wait for correct completion
                         }
 
+                        // Remove this listener from active list and unsubscribe
+                        const index = activeListeners.indexOf(unsubscribeHop);
+                        if (index > -1) activeListeners.splice(index, 1);
                         unsubscribeHop();
                         logger.debug(`[Entrance] Stage 1 complete - hopped to exit tile`);
 
@@ -385,14 +394,19 @@ export class GameInitializer {
                                 return; // Don't unsubscribe, wait for correct completion
                             }
 
+                            // Remove this listener from active list and unsubscribe
+                            const index = activeListeners.indexOf(unsubscribeWalk);
+                            if (index > -1) activeListeners.splice(index, 1);
                             unsubscribeWalk();
                             logger.debug(`[Entrance] Stage 2 complete - reached club entrance`);
                             clearTimeout(safetyTimeout);
                             enableInput();
                         });
+                        activeListeners.push(unsubscribeWalk);
 
                         this.game.inputManager!.executePath(pathToClub);
                     });
+                    activeListeners.push(unsubscribeHop);
 
                     logger.debug(`[Entrance] Starting entrance animation - executing path to exit tile`);
                     this.game.inputManager!.executePath(pathToExit);

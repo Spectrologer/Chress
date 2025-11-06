@@ -107,7 +107,8 @@ export class EnemyRenderer {
                 // and lizord, draw them directly without scaling to avoid blurriness,
                 // unless they are doing a special animation (attack/move) or frozen.
                 const isPixelPerfectEnemy = enemy.enemyType === 'lazerd' || enemy.enemyType === 'lizord';
-                if (isPixelPerfectEnemy && scale === 1 && !flash && enemy.liftFrames === 0 && !enemy.showFrozenVisual) {
+                const usePixelPerfect = isPixelPerfectEnemy && scale === 1 && !flash && enemy.liftFrames === 0 && !enemy.showFrozenVisual;
+                if (usePixelPerfect) {
                     this.ctx.drawImage(
                         enemyImage,
                         pixelXBase,
@@ -115,7 +116,6 @@ export class EnemyRenderer {
                         TILE_SIZE,
                         TILE_SIZE
                     );
-                    continue; // Skip the rest of the scaling/animation logic for this enemy
                 }
 
                 // Handle frozen pixel-perfect enemies separately
@@ -133,7 +133,6 @@ export class EnemyRenderer {
                     this.ctx.filter = 'none';
                     this.ctx.globalAlpha = 1.0;
                     this.ctx.restore();
-                    continue;
                 }
 
                 this.ctx.save();

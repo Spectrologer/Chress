@@ -3,6 +3,9 @@ import { TILE_SIZE, TILE_COLORS } from '@core/constants/index.js';
 import type { ImageCache, ScaledDimensions } from './types.js';
 
 export class RendererUtils {
+    // Cache for loaded image states to avoid redundant checks
+    private static loadedImages = new Set<string>();
+
     /**
      * Draw an image rotated around its center
      */
@@ -56,8 +59,35 @@ export class RendererUtils {
      * Check if an image is loaded and ready to use
      */
     static isImageLoaded(images: ImageCache, key: string): boolean {
+        // First check our cache for faster lookups
+        if (this.loadedImages.has(key)) {
+            return true;
+        }
+
+        // Check the actual image
         const image = images[key];
-        return image && image.complete && image.naturalWidth > 0;
+        const isLoaded = image && image.complete && image.naturalWidth > 0;
+
+        // Cache the result for future checks
+        if (isLoaded) {
+            this.loadedImages.add(key);
+        }
+
+        return isLoaded;
+    }
+
+    /**
+     * Clear the loaded image cache (useful when images are reloaded or cache is reset)
+     */
+    static clearImageLoadedCache(): void {
+        this.loadedImages.clear();
+    }
+
+    /**
+     * Invalidate cache for a specific image (useful when an image is replaced)
+     */
+    static invalidateImageLoadedCache(key: string): void {
+        this.loadedImages.delete(key);
     }
 
     /**

@@ -203,6 +203,11 @@ export class InputCoordinator {
             return;
         }
 
+        // Block input during enemy turns
+        if (!this.game.isPlayerTurn) {
+            return;
+        }
+
         this.gestureDetector.clearTapTimeout();
         const gridCoords = this.gestureDetector.convertScreenToGrid(screenX, screenY);
 
@@ -383,6 +388,11 @@ export class InputCoordinator {
     handleKeyPress(event: KeyboardEvent): void {
         // Block user input during entrance animation, but allow synthetic key presses from pathfinding
         if (this.stateManager.isEntranceAnimationActive() && !(event as any)._synthetic) {
+            return;
+        }
+
+        // Block user input during enemy turns, but allow synthetic key presses from pathfinding
+        if (!this.game.isPlayerTurn && !(event as any)._synthetic) {
             return;
         }
 

@@ -5,22 +5,28 @@ import { UI_RENDERING_CONSTANTS } from '@core/constants/rendering';
 
 export class PlayerStatsUI {
     private game: IGame;
+    private _unsubscribers: Array<() => void>;
 
     constructor(game: IGame) {
         this.game = game;
+        this._unsubscribers = [];
         this.setupEventListeners();
     }
 
     setupEventListeners(): void {
         // Listen for UI update stats events
-        eventBus.on(EventTypes.UI_UPDATE_STATS, () => {
-            this.updatePlayerStats();
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.UI_UPDATE_STATS, () => {
+                this.updatePlayerStats();
+            })
+        );
 
         // Also listen for player stats changed events
-        eventBus.on(EventTypes.PLAYER_STATS_CHANGED, () => {
-            this.updatePlayerStats();
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.PLAYER_STATS_CHANGED, () => {
+                this.updatePlayerStats();
+            })
+        );
     }
 
     updateProgressBar(barId: string, currentValue: number, maxValue: number): void {
@@ -85,5 +91,14 @@ export class PlayerStatsUI {
             // Fallback for legacy compatibility
             this.game.inventoryManager.updateInventoryDisplay();
         }
+    }
+
+    /**
+     * Cleanup event listeners
+     * Call this when destroying the PlayerStatsUI instance
+     */
+    destroy(): void {
+        this._unsubscribers?.forEach(unsub => unsub());
+        this._unsubscribers = [];
     }
 }

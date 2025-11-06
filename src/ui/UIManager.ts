@@ -28,10 +28,12 @@ export class UIManager {
     public miniMap: MiniMap;
     private eventCoordinator: UIEventCoordinator;
     private eventManager: EventListenerManager;
+    private _unsubscribers: Array<() => void>;
 
     constructor(game: IGame) {
         this.game = game;
         this.eventManager = new EventListenerManager();
+        this._unsubscribers = [];
 
         // Managers
         this.messageManager = new MessageManager(game);
@@ -49,46 +51,60 @@ export class UIManager {
 
     private setupEventListeners(): void {
         // Player stats
-        eventBus.on(EventTypes.PLAYER_STATS_CHANGED, () => {
-            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.PLAYER_STATS_CHANGED, () => {
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
+            })
+        );
 
         // Enemy defeated
-        eventBus.on(EventTypes.ENEMY_DEFEATED, () => {
-            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.ENEMY_DEFEATED, () => {
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
+            })
+        );
 
         // Treasure found
-        eventBus.on(EventTypes.TREASURE_FOUND, (data: any) => {
-            this.addMessageToLog(data.message);
-            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.TREASURE_FOUND, (data: any) => {
+                this.addMessageToLog(data.message);
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
+            })
+        );
 
         // Game reset
-        eventBus.on(EventTypes.GAME_RESET, (data: any) => {
-            this.updatePlayerPosition();
-            this.updateZoneDisplay();
-            eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.GAME_RESET, (data: any) => {
+                this.updatePlayerPosition();
+                this.updateZoneDisplay();
+                eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
+            })
+        );
 
         // Zone changed
-        eventBus.on(EventTypes.ZONE_CHANGED, () => {
-            this.updateZoneDisplay();
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.ZONE_CHANGED, () => {
+                this.updateZoneDisplay();
+            })
+        );
 
         // Player moved
-        eventBus.on(EventTypes.PLAYER_MOVED, () => {
-            this.updatePlayerPosition();
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.PLAYER_MOVED, () => {
+                this.updatePlayerPosition();
+            })
+        );
 
         // Update points display
-        eventBus.on(EventTypes.UI_UPDATE_STATS, () => {
-            // Update player card points
-            const pointsValueElement = document.querySelector<HTMLElement>('.player-points .points-value');
-            if (pointsValueElement) {
-                pointsValueElement.textContent = String(this.game.player.getPoints());
-            }
-        });
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.UI_UPDATE_STATS, () => {
+                // Update player card points
+                const pointsValueElement = document.querySelector<HTMLElement>('.player-points .points-value');
+                if (pointsValueElement) {
+                    pointsValueElement.textContent = String(this.game.player.getPoints());
+                }
+            })
+        );
     }
 
     updatePlayerPosition(): void {
@@ -250,6 +266,16 @@ export class UIManager {
      * Call this when destroying the UIManager instance
      */
     cleanup(): void {
+        // Clean up DOM event listeners
         this.eventManager.cleanup();
+
+        // Clean up EventBus listeners
+        this._unsubscribers?.forEach(unsub => unsub());
+        this._unsubscribers = [];
+
+        // Clean up child components
+        this.eventCoordinator?.destroy?.();
+        this.playerStatsUI?.destroy?.();
+        this.messageManager?.destroy?.();
     }
 }

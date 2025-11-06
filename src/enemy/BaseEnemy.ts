@@ -159,7 +159,12 @@ export class BaseEnemy {
             this.liftOffsetY = maxLift * Math.sin(Math.PI * t);
         }
         this.smokeAnimations.forEach(anim => anim.frame--);
-        this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);
+        // Remove expired smoke animations in place to avoid GC pressure
+        for (let i = this.smokeAnimations.length - 1; i >= 0; i--) {
+            if (this.smokeAnimations[i].frame <= 0) {
+                this.smokeAnimations.splice(i, 1);
+            }
+        }
     }
 
     isWalkable(x: number, y: number, grid: any[][]): boolean {

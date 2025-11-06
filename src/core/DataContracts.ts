@@ -434,15 +434,30 @@ export class AnimationManager {
   updateAnimations(): void {
     // Update point animations
     this.pointAnimations.forEach(anim => anim.frame--);
-    this.pointAnimations = this.pointAnimations.filter(anim => anim.frame > 0);
+    // Remove expired point animations in place to avoid GC pressure
+    for (let i = this.pointAnimations.length - 1; i >= 0; i--) {
+      if (this.pointAnimations[i].frame <= 0) {
+        this.pointAnimations.splice(i, 1);
+      }
+    }
 
     // Update arrow animations
     this.arrowAnimations.forEach(anim => anim.frame--);
-    this.arrowAnimations = this.arrowAnimations.filter(anim => anim.frame > 0);
+    // Remove expired arrow animations in place to avoid GC pressure
+    for (let i = this.arrowAnimations.length - 1; i >= 0; i--) {
+      if (this.arrowAnimations[i].frame <= 0) {
+        this.arrowAnimations.splice(i, 1);
+      }
+    }
 
     // Update horse charge animations
     this.horseChargeAnimations.forEach(anim => anim.frame--);
-    this.horseChargeAnimations = this.horseChargeAnimations.filter(anim => anim.frame > 0);
+    // Remove expired horse charge animations in place to avoid GC pressure
+    for (let i = this.horseChargeAnimations.length - 1; i >= 0; i--) {
+      if (this.horseChargeAnimations[i].frame <= 0) {
+        this.horseChargeAnimations.splice(i, 1);
+      }
+    }
 
     // Update bump animations
     this.bumpAnimations.forEach(anim => {
@@ -451,7 +466,12 @@ export class AnimationManager {
       anim.offsetX *= 0.85;
       anim.offsetY *= 0.85;
     });
-    this.bumpAnimations = this.bumpAnimations.filter(anim => anim.frames > 0);
+    // Remove expired bump animations in place to avoid GC pressure
+    for (let i = this.bumpAnimations.length - 1; i >= 0; i--) {
+      if (this.bumpAnimations[i].frames <= 0) {
+        this.bumpAnimations.splice(i, 1);
+      }
+    }
 
     // Update lift animations
     this.liftAnimations.forEach(anim => {
@@ -461,15 +481,30 @@ export class AnimationManager {
       const maxLift = -12;
       anim.offsetY = maxLift * 4 * progress * (1 - progress);
     });
-    this.liftAnimations = this.liftAnimations.filter(anim => anim.frames > 0);
+    // Remove expired lift animations in place to avoid GC pressure
+    for (let i = this.liftAnimations.length - 1; i >= 0; i--) {
+      if (this.liftAnimations[i].frames <= 0) {
+        this.liftAnimations.splice(i, 1);
+      }
+    }
 
     // Update smoke animations
     this.smokeAnimations.forEach(anim => anim.frame--);
-    this.smokeAnimations = this.smokeAnimations.filter(anim => anim.frame > 0);
+    // Remove expired smoke animations in place to avoid GC pressure
+    for (let i = this.smokeAnimations.length - 1; i >= 0; i--) {
+      if (this.smokeAnimations[i].frame <= 0) {
+        this.smokeAnimations.splice(i, 1);
+      }
+    }
 
     // Update multiplier animations
     this.multiplierAnimations.forEach(anim => anim.frame--);
-    this.multiplierAnimations = this.multiplierAnimations.filter(anim => anim.frame > 0);
+    // Remove expired multiplier animations in place to avoid GC pressure
+    for (let i = this.multiplierAnimations.length - 1; i >= 0; i--) {
+      if (this.multiplierAnimations[i].frame <= 0) {
+        this.multiplierAnimations.splice(i, 1);
+      }
+    }
   }
 
   /**

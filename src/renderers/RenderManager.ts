@@ -190,9 +190,12 @@ export class RenderManager {
         if (!enemy || !this.game || !this.game.grid) return;
         const grid = this.game.grid;
         const enemies = this.game.enemyCollection?.getAll() || [];
-        const tiles = new Set<string>();
+        // Reuse a single array to avoid Set allocation and string concatenation
+        const tiles: number[] = [];
         const push = (x: number, y: number) => {
-            if (x >= 0 && y >= 0 && y < grid.length && x < grid[0].length) tiles.add(`${x},${y}`);
+            if (x >= 0 && y >= 0 && y < grid.length && x < grid[0].length) {
+                tiles.push(x, y); // Store x,y pairs sequentially
+            }
         };
 
         const stopRay = (x: number, y: number, dx: number, dy: number, orthogonalOnly: boolean = false) => {
@@ -270,15 +273,16 @@ export class RenderManager {
             }
         }
 
-        if (tiles.size === 0) return;
+        if (tiles.length === 0) return;
 
         // Draw the tiles overlay
         this.ctx.save();
         this.ctx.fillStyle = 'rgba(200,40,40,0.18)';
         this.ctx.strokeStyle = 'rgba(200,40,40,0.85)';
         this.ctx.lineWidth = Math.max(1, Math.round(TILE_SIZE * 0.03));
-        for (const t of tiles) {
-            const [tx, ty] = t.split(',').map(n => parseInt(n, 10));
+        for (let i = 0; i < tiles.length; i += 2) {
+            const tx = tiles[i];
+            const ty = tiles[i + 1];
             // Don't draw the enemy's own tile (focus on targets)
             if (tx === ex && ty === ey) continue;
             this.ctx.fillRect(tx * TILE_SIZE + 1, ty * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2);

@@ -607,7 +607,13 @@ export class GameContext implements IGame {
                 enemy.startDeathAnimation();
             }
         });
-        this.enemies = this.enemies.filter(enemy => !enemy.isDead() || enemy.deathAnimation > 0);
+        // Remove dead enemies in place to avoid GC pressure
+        for (let i = this.enemies.length - 1; i >= 0; i--) {
+            const enemy = this.enemies[i];
+            if (enemy.isDead() && enemy.deathAnimation === 0) {
+                this.enemies.splice(i, 1);
+            }
+        }
 
         if (this.player!.isDead()) {
             // If player just died, start death animation timer and keep rendering

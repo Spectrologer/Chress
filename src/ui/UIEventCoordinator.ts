@@ -79,11 +79,13 @@ export class UIEventCoordinator {
     private game: IGame;
     private messageManager: MessageManager;
     private panelManager: PanelManager;
+    private _unsubscribers: Array<() => void>;
 
     constructor(game: IGame, messageManager: MessageManager, panelManager: PanelManager) {
         this.game = game;
         this.messageManager = messageManager;
         this.panelManager = panelManager;
+        this._unsubscribers = [];
         this.setupEventListeners();
     }
 
@@ -93,17 +95,31 @@ export class UIEventCoordinator {
      */
     private setupEventListeners(): void {
         // Dialog events
-        eventBus.on(EventTypes.UI_DIALOG_SHOW, (data: UIDialogShowEvent) => this.handleDialogShow(data));
-        eventBus.on(EventTypes.UI_DIALOG_HIDE, (data: UIDialogHideEvent) => this.handleDialogHide(data));
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.UI_DIALOG_SHOW, (data: UIDialogShowEvent) => this.handleDialogShow(data))
+        );
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.UI_DIALOG_HIDE, (data: UIDialogHideEvent) => this.handleDialogHide(data))
+        );
 
         // Confirmation events
-        eventBus.on(EventTypes.UI_CONFIRMATION_SHOW, (data: UIConfirmationShowEvent) => this.handleConfirmationShow(data));
-        eventBus.on(EventTypes.UI_OVERLAY_MESSAGE_SHOW, (data: UIOverlayMessageShowEvent) => this.handleOverlayMessageShow(data));
-        eventBus.on(EventTypes.UI_OVERLAY_MESSAGE_HIDE, () => this.handleOverlayMessageHide());
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.UI_CONFIRMATION_SHOW, (data: UIConfirmationShowEvent) => this.handleConfirmationShow(data))
+        );
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.UI_OVERLAY_MESSAGE_SHOW, (data: UIOverlayMessageShowEvent) => this.handleOverlayMessageShow(data))
+        );
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.UI_OVERLAY_MESSAGE_HIDE, () => this.handleOverlayMessageHide())
+        );
 
         // Message events
-        eventBus.on(EventTypes.UI_MESSAGE_LOG, (data: UIMessageLogEvent) => this.handleMessageLog(data));
-        eventBus.on(EventTypes.UI_REGION_NOTIFICATION_SHOW, (data: UIRegionNotificationShowEvent) => this.handleRegionNotification(data));
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.UI_MESSAGE_LOG, (data: UIMessageLogEvent) => this.handleMessageLog(data))
+        );
+        this._unsubscribers.push(
+            eventBus.on(EventTypes.UI_REGION_NOTIFICATION_SHOW, (data: UIRegionNotificationShowEvent) => this.handleRegionNotification(data))
+        );
     }
 
     /**
@@ -264,8 +280,7 @@ export class UIEventCoordinator {
      * Call this when the UI coordinator is destroyed
      */
     destroy(): void {
-        // EventBus.on returns unsubscribe functions, but we're not storing them
-        // For now, we rely on the game instance lifecycle
-        // In the future, could store unsubscribe functions and call them here
+        this._unsubscribers?.forEach(unsub => unsub());
+        this._unsubscribers = [];
     }
 }
