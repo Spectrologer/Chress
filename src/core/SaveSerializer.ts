@@ -1,4 +1,4 @@
-import type { GameContext } from './GameContext';
+import type { GameContext } from './context/GameContextCore';
 import type { SaveGameData, SavedPlayerData, SavedPlayerStats, SavedEnemyData, Grid } from './SharedTypes';
 import type { Player } from '@entities/Player';
 import type { PlayerStats } from '@entities/PlayerStats';

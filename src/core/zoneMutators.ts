@@ -3,8 +3,38 @@ import { logger } from './logger';
 import GridIterator from '@utils/GridIterator';
 import { isTileType } from '@utils/TileUtils';
 import { getGridManager } from '@utils/GridUtils';
+import type { GridManager, TileObject } from '../types/game';
+import type { FeatureGenerator } from '@generators/FeatureGenerator';
 
-export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel) {
+interface ZoneConnections {
+    north: number | null;
+    south: number | null;
+    west: number | null;
+    east: number | null;
+}
+
+interface ZoneGenContext {
+    grid: (number | TileObject | null)[][];
+    gridManager?: GridManager;
+    game?: {
+        gridManager?: GridManager;
+    };
+    enemies: unknown[];
+    currentDimension: number;
+}
+
+/**
+ * Generates exit tiles on zone borders based on zone connections.
+ * For underground zones, applies connection probability to limit exits.
+ */
+export function generateExits(
+    zoneGen: ZoneGenContext,
+    zoneX: number,
+    zoneY: number,
+    zoneConnections: Map<string, ZoneConnections>,
+    featureGenerator: FeatureGenerator,
+    zoneLevel: number
+): void {
     const zoneKey = `${zoneX},${zoneY}`;
     const connections = zoneConnections.get(zoneKey);
 
@@ -15,10 +45,10 @@ export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGen
             }
         }
 
-        const gridManager = getGridManager(zoneGen, 'generateExits');
+        const gridManager = getGridManager(zoneGen, 'generateExits') as GridManager | null;
         if (!gridManager) return;
 
-        let effectiveConnections = { ...connections };
+        const effectiveConnections: ZoneConnections = { ...connections };
         if (zoneGen.currentDimension === 2) {
             effectiveConnections.north = connections.north !== null && Math.random() < GAMEPLAY_CONSTANTS.UNDERGROUND_CONNECTION_PROBABILITY ? connections.north : null;
             effectiveConnections.south = connections.south !== null && Math.random() < GAMEPLAY_CONSTANTS.UNDERGROUND_CONNECTION_PROBABILITY ? connections.south : null;
@@ -43,18 +73,22 @@ export function generateExits(zoneGen, zoneX, zoneY, zoneConnections, featureGen
     }
 }
 
-export function clearPathToExit(zoneGen, exitX, exitY) {
-    let inwardX = exitX;
-    let inwardY = exitY;
+/**
+ * Clears a path from an exit tile inward toward the zone center.
+ * Ensures exits are accessible by removing obstacles.
+ */
+export function clearPathToExit(zoneGen: ZoneGenContext, exitX: number, exitY: number): void {
+    let inwardX: number = exitX;
+    let inwardY: number = exitY;
     if (exitY === 0) inwardY = 1;
     else if (exitY === GRID_SIZE - 1) inwardY = GRID_SIZE - 2;
     else if (exitX === 0) inwardX = 1;
     else if (exitX === GRID_SIZE - 1) inwardX = GRID_SIZE - 2;
 
-    const gridManager = getGridManager(zoneGen, 'clearPathToExit');
+    const gridManager = getGridManager(zoneGen, 'clearPathToExit') as GridManager | null;
     if (!gridManager) return;
 
-    const adjacentTile = gridManager.getTile(inwardX, inwardY);
+    const adjacentTile: number | TileObject | null | undefined = gridManager.getTile(inwardX, inwardY);
     if (isTileType(adjacentTile, TILE_TYPES.WALL) || isTileType(adjacentTile, TILE_TYPES.ROCK) || isTileType(adjacentTile, TILE_TYPES.SHRUBBERY)) {
         gridManager.setTile(inwardX, inwardY, TILE_TYPES.FLOOR);
     }
@@ -62,10 +96,10 @@ export function clearPathToExit(zoneGen, exitX, exitY) {
     for (let dy = -1; dy <= 1; dy++) {
         for (let dx = -1; dx <= 1; dx++) {
             if (dx === 0 && dy === 0) continue;
-            const nx = inwardX + dx;
-            const ny = inwardY + dy;
+            const nx: number = inwardX + dx;
+            const ny: number = inwardY + dy;
             if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
-                const tile = gridManager.getTile(nx, ny);
+                const tile: number | TileObject | null | undefined = gridManager.getTile(nx, ny);
                 if (isTileType(tile, TILE_TYPES.WALL) || isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY)) {
                     gridManager.setTile(nx, ny, TILE_TYPES.FLOOR);
                 }
@@ -76,13 +110,17 @@ export function clearPathToExit(zoneGen, exitX, exitY) {
     clearPathToCenter(zoneGen, inwardX, inwardY);
 }
 
-export function clearPathToCenter(zoneGen, startX, startY) {
-    const centerX = Math.floor(GRID_SIZE / 2);
-    const centerY = Math.floor(GRID_SIZE / 2);
-    let currentX = startX;
-    let currentY = startY;
+/**
+ * Clears a path from a starting position toward the center of the zone.
+ * Creates a walkable corridor by removing obstacles along the path.
+ */
+export function clearPathToCenter(zoneGen: ZoneGenContext, startX: number, startY: number): void {
+    const centerX: number = Math.floor(GRID_SIZE / 2);
+    const centerY: number = Math.floor(GRID_SIZE / 2);
+    let currentX: number = startX;
+    let currentY: number = startY;
 
-    const gridManager = getGridManager(zoneGen, 'clearPathToCenter');
+    const gridManager = getGridManager(zoneGen, 'clearPathToCenter') as GridManager | null;
     if (!gridManager) return;
 
     while (Math.abs(currentX - centerX) > 1 || Math.abs(currentY - centerY) > 1) {
@@ -91,7 +129,7 @@ export function clearPathToCenter(zoneGen, startX, startY) {
         else if (currentY < centerY) currentY++;
         else if (currentY > centerY) currentY--;
 
-        const curTile = gridManager.getTile(currentX, currentY);
+        const curTile: number | TileObject | null | undefined = gridManager.getTile(currentX, currentY);
         if (isTileType(curTile, TILE_TYPES.WALL) || isTileType(curTile, TILE_TYPES.ROCK) || isTileType(curTile, TILE_TYPES.SHRUBBERY)) {
             gridManager.setTile(currentX, currentY, TILE_TYPES.FLOOR);
         }
@@ -99,13 +137,18 @@ export function clearPathToCenter(zoneGen, startX, startY) {
     }
 }
 
-export function clearZoneForShackOnly(zoneGen) {
+/**
+ * Clears all features from the zone except exits, leaving only floor tiles.
+ * Used for the first wilds zone to ensure the shack spawns reliably.
+ */
+export function clearZoneForShackOnly(zoneGen: ZoneGenContext): void {
     logger.log('Clearing first wilds zone for shack-only placement');
 
-    const gridManager = getGridManager(zoneGen, 'clearZoneForShackOnly');
+    const gridManager = getGridManager(zoneGen, 'clearZoneForShackOnly') as GridManager | null;
     if (!gridManager) return;
 
-    gridManager.forEach((tile, x, y) => {
+    // Use GridIterator to iterate over all tiles
+    GridIterator.forEach(zoneGen.grid, (tile: number | TileObject | null | undefined, x: number, y: number) => {
         if (!isTileType(tile, TILE_TYPES.WALL) && !isTileType(tile, TILE_TYPES.EXIT) && !isTileType(tile, TILE_TYPES.FLOOR) && !isTileType(tile, TILE_TYPES.GRASS)) {
             gridManager.setTile(x, y, TILE_TYPES.FLOOR);
         }
@@ -113,17 +156,21 @@ export function clearZoneForShackOnly(zoneGen) {
     zoneGen.enemies = [];
 }
 
-export function forcePlaceShackInCenter(zoneGen, zoneX, zoneY) {
-    const startX = ZONE_CONSTANTS.SHACK_START_POSITION.x;
-    const startY = ZONE_CONSTANTS.SHACK_START_POSITION.y;
+/**
+ * Forces a shack structure to be placed at the center of the zone.
+ * Returns true if successful, false if gridManager is unavailable.
+ */
+export function forcePlaceShackInCenter(zoneGen: ZoneGenContext, zoneX: number, zoneY: number): boolean {
+    const startX: number = ZONE_CONSTANTS.SHACK_START_POSITION.x;
+    const startY: number = ZONE_CONSTANTS.SHACK_START_POSITION.y;
 
-    const gridManager = getGridManager(zoneGen, 'forcePlaceShackInCenter');
+    const gridManager = getGridManager(zoneGen, 'forcePlaceShackInCenter') as GridManager | null;
     if (!gridManager) return false;
 
     for (let dy = 0; dy < ZONE_CONSTANTS.SHACK_SIZE; dy++) {
         for (let dx = 0; dx < ZONE_CONSTANTS.SHACK_SIZE; dx++) {
-            const tileX = startX + dx;
-            const tileY = startY + dy;
+            const tileX: number = startX + dx;
+            const tileY: number = startY + dy;
             if (dy === ZONE_CONSTANTS.SHACK_PORT_OFFSET.y && dx === ZONE_CONSTANTS.SHACK_PORT_OFFSET.x) {
                 gridManager.setTile(tileX, tileY, TILE_TYPES.PORT);
             } else {

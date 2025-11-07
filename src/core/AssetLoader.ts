@@ -1,6 +1,6 @@
 import { FOOD_ASSETS } from './constants/index';
 import { logger } from './logger';
-import type { GameContext } from './GameContext';
+import type { GameContext } from './context/GameContextCore';
 
 /**
  * AssetLoader

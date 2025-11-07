@@ -3,7 +3,7 @@ import audioManager from '@utils/AudioManager';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { Position } from '@core/Position';
-import type { IGame, ICoordinates } from '@core/GameContext';
+import type { IGame, ICoordinates } from '@core/context';
 import type { TileObject } from '@core/SharedTypes';
 import type { InputManager } from './InputManager';
 import type { NPCManager } from './NPCManager';

@@ -19,7 +19,7 @@ import { isWithinGrid } from '@utils/GridUtils';
 import { ItemRepository } from './inventory/ItemRepository';
 import { isBomb, isTileType } from '@utils/TileUtils';
 import GridIterator from '@utils/GridIterator';
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import type { PlayerFacade } from '@facades/PlayerFacade';
 import type { CombatManager } from './CombatManager';
 import type { Player } from '@entities/Player';

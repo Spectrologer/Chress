@@ -3,7 +3,7 @@ import { getDeltaToDirection } from '@core/utils/DirectionUtils';
 import audioManager from '@utils/AudioManager';
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
 import { getTileType, isTileObject } from '@utils/TypeChecks';
-import type { GameContext } from '@core/GameContext';
+import type { GameContext } from '@core/context';
 
 interface PointerInfo {
     startX: number;

@@ -13,7 +13,8 @@ export interface SmokeAnimation extends Coordinates {
 }
 
 export class BaseEnemy {
-    [key: string]: any;
+    // Index signature for dynamic properties
+    [key: string]: unknown;
 
     private _position: Position;
     private _lastPosition: Position;
@@ -167,15 +168,17 @@ export class BaseEnemy {
         }
     }
 
-    isWalkable(x: number, y: number, grid: any[][]): boolean {
+    isWalkable(x: number, y: number, grid: unknown[][]): boolean {
         const pos = new Position(x, y);
 
         if (!pos.isInBounds(grid.length)) {
             return false;
         }
 
-        const tile = pos.getTile(grid);
-        const tileType = tile && tile.type ? tile.type : tile;
+        const tile: unknown = pos.getTile(grid);
+        const tileType: unknown = tile && typeof tile === 'object' && tile !== null && 'type' in tile
+            ? (tile as { type: unknown }).type
+            : tile;
 
         const walkableTypes = [
             TILE_TYPES.FLOOR,

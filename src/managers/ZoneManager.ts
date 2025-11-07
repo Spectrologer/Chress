@@ -23,7 +23,7 @@ import { ZoneGenerationOrchestrator } from './ZoneGenerationOrchestrator';
 import { ZonePersistenceManager } from './ZonePersistenceManager';
 import type { Coordinates } from '@core/PositionTypes';
 import { Position } from '@core/Position';
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import type { Game } from '@core/game';
 import type { Player } from '@entities/Player';
 import type { PlayerFacade } from '@facades/PlayerFacade';

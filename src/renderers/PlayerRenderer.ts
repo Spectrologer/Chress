@@ -5,7 +5,7 @@ import { RendererUtils } from './RendererUtils';
 import { TileTypeChecker } from '@utils/TypeChecks';
 import type { TextureManager } from './TextureManager';
 import type { Position } from './types';
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import type { Tile, TileObject } from '@core/SharedTypes';
 
 interface Zone {

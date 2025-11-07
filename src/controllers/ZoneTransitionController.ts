@@ -1,6 +1,6 @@
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
 import { Position } from '@core/Position';
-import type { GameContext } from '@core/GameContext';
+import type { GameContext } from '@core/context';
 import type { Treasure } from '@managers/ZoneManager';
 
 interface GridCoords {

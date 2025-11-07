@@ -4,7 +4,7 @@ import { EventTypes } from '@core/EventTypes';
 import { isWithinGrid } from '@utils/GridUtils';
 import { Position } from '@core/Position';
 import { isSign, getTileType } from '@utils/TypeChecks';
-import type { GameContext } from '@core/GameContext';
+import type { GameContext } from '@core/context';
 import type { AnimationSequence } from '@core/AnimationScheduler';
 
 interface PathNode {

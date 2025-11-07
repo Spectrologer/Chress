@@ -4,15 +4,28 @@ import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './
 import { ZoneStateManager } from './ZoneStateManager';
 import { logger } from '@core/logger';
 import { isFloor, isWall } from '@utils/TypeChecks';
+import type { GridManager } from '../types/game';
+import type { ZoneGenerationState } from '../state/ZoneGenerationState';
+
+interface ZoneConnections {
+    north: number | null;
+    south: number | null;
+    west: number | null;
+    east: number | null;
+}
+
+interface GameWithZoneState {
+    zoneGenState: ZoneGenerationState;
+}
 
 export class FeatureGenerator {
-    private gridManager: any;
+    private gridManager: GridManager;
     private foodAssets: string[];
     private depth: number;
-    private game: any;
+    private game: GameWithZoneState | null;
     private depthMultiplier: number;
 
-    constructor(gridManager: any, foodAssets: string[], depth = 0, game: any = null) {
+    constructor(gridManager: GridManager, foodAssets: string[], depth = 0, game: GameWithZoneState | null = null) {
         this.gridManager = gridManager;
         this.foodAssets = foodAssets;
         this.depth = depth || 0;
@@ -21,7 +34,7 @@ export class FeatureGenerator {
         this.depthMultiplier = 1 + Math.max(0, (this.depth - 1)) * GENERATOR_CONSTANTS.FEATURE_EXTRA_MULTIPLIER;
     }
 
-    addRandomFeatures(zoneLevel, zoneX, zoneY, isUnderground = false) {
+    addRandomFeatures(zoneLevel: number, zoneX: number, zoneY: number, isUnderground = false): void {
 
         // Underground: allow maze generation with higher probability, using rock walls
         if (isUnderground) {
@@ -87,7 +100,7 @@ export class FeatureGenerator {
 
     }
 
-    addChanceTile(zoneX, zoneY) {
+    addChanceTile(zoneX: number, zoneY: number): void {
         // Add a chance tile: could be an extra water or food
         const pos = findValidPlacement({
             maxAttempts: 20,
@@ -110,7 +123,7 @@ export class FeatureGenerator {
 
 
 
-    shouldGenerateMaze(zoneLevel, isUnderground = false) {
+    shouldGenerateMaze(zoneLevel: number, isUnderground = false): boolean {
         // Home = 0%, Woods = 5%, Wilds = 8%, Frontier = 10%
         // Underground: much higher probability (40%)
         if (isUnderground) {
@@ -152,7 +165,7 @@ export class FeatureGenerator {
      * - Walls: Between passages, creating a perfect maze
      * - Border: Outer edge remains walls
      */
-    generateMaze() {
+    generateMaze(): void {
         // Step 1: Fill interior with walls (leaves border intact)
         for (let y = 1; y < GRID_SIZE - 1; y++) {
             for (let x = 1; x < GRID_SIZE - 1; x++) {
@@ -202,11 +215,8 @@ export class FeatureGenerator {
      * Direction Shuffling:
      * Randomizing direction order creates varied maze patterns. Without
      * shuffling, mazes would have predictable structure.
-     *
-     * @param {number} x - Current X position (must be odd)
-     * @param {number} y - Current Y position (must be odd)
      */
-    carveMaze(x, y) {
+    carveMaze(x: number, y: number): void {
         // Mark current position as passage
         this.gridManager.setTile(x, y, TILE_TYPES.FLOOR);
 
@@ -245,7 +255,7 @@ export class FeatureGenerator {
         // When all directions exhausted, backtrack (function returns)
     }
 
-    addMazeBlockages() {
+    addMazeBlockages(): void {
         // Add some rocks and shrubbery to block alternative paths
         // Slightly increase number of blockages with depth
         const extra = Math.floor(Math.max(0, this.depth - 1) * GENERATOR_CONSTANTS.FEATURE_EXTRA_MULTIPLIER * GENERATOR_CONSTANTS.FEATURE_EXTRA_DIVISOR);
@@ -288,12 +298,8 @@ export class FeatureGenerator {
      * connections = { north: x, south: x, east: y, west: y }
      * - null means no exit in that direction
      * - number means exit at that coordinate on the edge
-     *
-     * @param {number} zoneLevel - Zone difficulty level (1-4)
-     * @param {Object} connections - Exit positions {north, south, east, west}
-     * @param {boolean} [isUnderground=false] - Whether this is an underground zone
      */
-    blockExitsWithShrubbery(zoneLevel, connections, isUnderground = false) {
+    blockExitsWithShrubbery(zoneLevel: number, connections: ZoneConnections | null, isUnderground = false): void {
         if (!connections) {
             return;
         }
@@ -360,7 +366,7 @@ export class FeatureGenerator {
         // No blocking in other surface zones
     }
 
-    addUndergroundFeatures(zoneLevel, zoneX, zoneY) {
+    addUndergroundFeatures(zoneLevel: number, zoneX: number, zoneY: number): void {
         // Underground zones have simpler features - mostly rocks and some walls
         let featureCount = randomInt(8, 18); // Math.floor(Math.random() * 10) + 8
         let placedCount = 0;
@@ -394,7 +400,7 @@ export class FeatureGenerator {
         }
     }
 
-    addUndergroundChanceTile(zoneX, zoneY) {
+    addUndergroundChanceTile(zoneX: number, zoneY: number): void {
         // Underground chance tile: mostly water/food, rare special items
         const center = getGridCenter();
         const centerX = center.x;

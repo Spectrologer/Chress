@@ -10,7 +10,7 @@ import GridIterator from '@utils/GridIterator';
 import { isTileType } from '@utils/TileUtils';
 import { logger } from '@core/logger';
 import type { TapFeedback } from './types';
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import type { Grid, Tile } from '@core/SharedTypes';
 
 interface Zone {

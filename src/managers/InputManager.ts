@@ -1,5 +1,5 @@
 import { InputController } from '@controllers/InputController';
-import type { GameContext } from '@core/GameContext';
+import type { GameContext } from '@core/context';
 import type { InventoryService } from './inventory/InventoryService';
 import type { AnimationSequence } from '@core/AnimationScheduler';
 

@@ -7,7 +7,7 @@ import { findValidPlacement } from '@generators/GeneratorUtils';
 import { TILE_TYPES } from '@core/constants/index';
 import { ContentRegistry } from '@core/ContentRegistry';
 import type { Position } from '@core/Position';
-import type { GameContext } from '@core/GameContext';
+import type { GameContext } from '@core/context';
 
 interface KeyPressResult {
     type: 'cancel_path' | 'movement';

@@ -5,7 +5,7 @@
  * Uses vi.fn() from Vitest for creating mock functions
  */
 
-import { TILE_TYPES, GRID_SIZE } from '../../src/core/constants/index.js';
+import { TILE_TYPES, GRID_SIZE } from '../../src/core/constants/index\.ts';
 
 /**
  * Creates a mock player object with common methods and properties

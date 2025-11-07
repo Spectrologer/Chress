@@ -4,7 +4,7 @@
 
 // Import necessary types
 import { Position } from '@core/Position';
-import type { GameContext } from '@core/GameContext';
+import type { GameContext } from '@core/context';
 
 // Fix for IGame interface - make it compatible with GameContext
 export interface IGameCompat extends GameContext {

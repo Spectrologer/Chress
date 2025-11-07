@@ -20,7 +20,7 @@ import { TILE_TYPES, TileType } from '@core/constants/index';
 /**
  * A tile can be either a primitive number (tile type) or an object with a type property
  */
-export type Tile = number | { type: number; [key: string]: any } | null | undefined;
+export type Tile = number | { type: number; [key: string]: unknown } | null | undefined;
 
 // ========================================
 // TILE TYPE CHECKER CLASS
@@ -55,8 +55,8 @@ export class TileTypeChecker {
      * Checks if a tile is a valid tile object (not just a primitive type).
      * Type guard for tile objects.
      */
-    static isTileObject(tile: any): tile is { type: number; [key: string]: any } {
-        return tile !== null && typeof tile === 'object' && tile.type !== undefined;
+    static isTileObject(tile: unknown): tile is { type: number; [key: string]: unknown } {
+        return tile !== null && typeof tile === 'object' && 'type' in tile && (tile as { type: unknown }).type !== undefined;
     }
 
     /**
@@ -70,8 +70,8 @@ export class TileTypeChecker {
     /**
      * Checks if a value is a valid tile (either primitive or object).
      */
-    static isValidTile(tile: any): tile is Tile {
-        return TileTypeChecker.getTileType(tile) !== undefined;
+    static isValidTile(tile: unknown): tile is Tile {
+        return TileTypeChecker.getTileType(tile as Tile) !== undefined;
     }
 
     // ========================================
@@ -286,15 +286,16 @@ export class TileTypeChecker {
      * Checks if a tile is an object with a specific type.
      * Type guard that narrows to tile object.
      */
-    static isTileObjectOfType(tile: any, tileType: number): tile is { type: number; [key: string]: any } {
-        return TileTypeChecker.isTileObject(tile) && tile.type === tileType;
+    static isTileObjectOfType(tile: unknown, tileType: number): tile is { type: number; [key: string]: unknown } {
+        return TileTypeChecker.isTileObject(tile) && (tile as { type: number }).type === tileType;
     }
 
     /**
      * Checks if a tile object matches a type AND has a specific property value.
      */
-    static isTileObjectWithProperty(tile: any, tileType: number, property: string, expectedValue: any): boolean {
-        return TileTypeChecker.isTileObjectOfType(tile, tileType) && tile[property] === expectedValue;
+    static isTileObjectWithProperty(tile: unknown, tileType: number, property: string, expectedValue: unknown): boolean {
+        return TileTypeChecker.isTileObjectOfType(tile, tileType) &&
+            (tile as Record<string, unknown>)[property] === expectedValue;
     }
 }
 
@@ -435,9 +436,9 @@ export function isStatue(tile: Tile): boolean {
 
 // Core utilities
 export const getTileType = (tile: Tile) => TileTypeChecker.getTileType(tile);
-export const isTileObject = (tile: any) => TileTypeChecker.isTileObject(tile);
+export const isTileObject = (tile: unknown) => TileTypeChecker.isTileObject(tile);
 export const isTileType = (tile: Tile, tileType: number) => TileTypeChecker.isTileType(tile, tileType);
-export const isValidTile = (tile: Tile) => TileTypeChecker.isValidTile(tile);
+export const isValidTile = (tile: unknown) => TileTypeChecker.isValidTile(tile);
 
 // Tile type checkers
 export const isFloor = (tile: Tile) => TileTypeChecker.isFloor(tile);
@@ -483,8 +484,8 @@ export const isBreakable = (tile: Tile) => TileTypeChecker.isBreakable(tile);
 // Tile property helpers
 export const getTileProperty = (tile: Tile, property: string) => TileTypeChecker.getTileProperty(tile, property);
 export const hasTileProperty = (tile: Tile, property: string) => TileTypeChecker.hasTileProperty(tile, property);
-export const isTileObjectOfType = (tile: any, tileType: number) => TileTypeChecker.isTileObjectOfType(tile, tileType);
-export const isTileObjectWithProperty = (tile: any, tileType: number, property: string, expectedValue: any) => TileTypeChecker.isTileObjectWithProperty(tile, tileType, property, expectedValue);
+export const isTileObjectOfType = (tile: unknown, tileType: number) => TileTypeChecker.isTileObjectOfType(tile, tileType);
+export const isTileObjectWithProperty = (tile: unknown, tileType: number, property: string, expectedValue: unknown) => TileTypeChecker.isTileObjectWithProperty(tile, tileType, property, expectedValue);
 
 // Entity type checkers
 export const isPenne = (tile: Tile) => EntityTypeChecker.isPenne(tile);

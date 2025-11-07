@@ -1,4 +1,4 @@
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import { ZoneStateManager } from '@generators/ZoneStateManager';
 import { UI_RENDERING_CONSTANTS } from '@core/constants/rendering';
 import { EventListenerManager } from '@utils/EventListenerManager';

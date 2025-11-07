@@ -1,6 +1,23 @@
 import { TILE_TYPES, ANIMATION_CONSTANTS } from '@core/constants/index';
+import type { Enemy, Player, Position, Grid, Game } from './base';
+import type { BaseMoveCalculator } from './base';
 
-export function handlePlayerInteraction(base, enemy, next, player, playerX, playerY, grid, enemies, isSimulation, game) {
+/**
+ * Handles interaction between an enemy and the player, including adjacency checks
+ * and special attack logic for different enemy types.
+ */
+export function handlePlayerInteraction(
+    base: BaseMoveCalculator,
+    enemy: Enemy,
+    next: Position,
+    player: Player,
+    playerX: number,
+    playerY: number,
+    grid: Grid,
+    enemies: Enemy[],
+    isSimulation: boolean,
+    game: Game | null
+): Position | null {
     // Check adjacency
     const dx = Math.abs(next.x - playerX);
     const dy = Math.abs(next.y - playerY);
@@ -43,7 +60,17 @@ export function handlePlayerInteraction(base, enemy, next, player, playerX, play
     }
 }
 
-export function handlePitfallTransition(base, enemy, x, y, game) {
+/**
+ * Handles an enemy falling into a pitfall, transitioning them to an underground zone.
+ * Updates the game state, creates underground zones if needed, and transfers the enemy.
+ */
+export function handlePitfallTransition(
+    base: BaseMoveCalculator,
+    enemy: Enemy,
+    x: number,
+    y: number,
+    game: any
+): void {
     // Moved logic from original file; rely on game APIs and zoneGenerator
     game.grid[y][x] = TILE_TYPES.PORT;
     game.portTransitionData = { from: 'pitfall', x, y };
@@ -74,5 +101,5 @@ export function handlePitfallTransition(base, enemy, x, y, game) {
         if (game && game.occupiedTilesThisTurn) game.occupiedTilesThisTurn.delete(startKey);
     } catch (e) { /* ignore */ }
     game.zones.set(undergroundZoneKey, updatedZoneData);
-    if (window.soundManager) window.soundManager.playSound('pitfall');
+    if ((window as any).soundManager) (window as any).soundManager.playSound('pitfall');
 }

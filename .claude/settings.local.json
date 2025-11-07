@@ -26,7 +26,21 @@
       "Bash(npm install:*)",
       "Bash(npx type-coverage --detail --at-least 0)",
       "Bash(git commit:*)",
-      "Bash(npx type-coverage:*)"
+      "Bash(npx type-coverage:*)",
+      "Bash(git mv:*)",
+      "Bash(for file in tests/*.js)",
+      "Bash(do:*)",
+      "Bash(done)",
+      "Bash(while read file)",
+      "Bash(while read -r file)",
+      "Bash(powershell -ExecutionPolicy Bypass -File migrate-tests.ps1)",
+      "Bash(powershell -ExecutionPolicy Bypass -File fix-imports.ps1)",
+      "Bash(npm run test:*)",
+      "Bash(npx vitest:*)",
+      "Bash(type-coverage-report.txt)",
+      "Bash(powershell -Command:*)",
+      "Bash(cat:*)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []

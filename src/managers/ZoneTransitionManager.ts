@@ -12,19 +12,19 @@ import type { ZoneRepository } from '@repositories/ZoneRepository';
 import type { Position } from '@core/Position';
 import type { Grid, Tile, TileObject } from '@core/SharedTypes';
 
-interface TapCoords {
+export interface TapCoords {
     x: number;
     y: number;
 }
 
-interface ZoneInfo {
+export interface ZoneInfo {
     x: number;
     y: number;
     dimension: number;
     depth?: number;
 }
 
-interface ZoneData {
+export interface ZoneData {
     returnToInterior?: boolean;
     playerSpawn?: Position;
     grid?: Grid;
@@ -35,11 +35,19 @@ interface ZoneData {
     overlayRotations?: Record<string, number>;
 }
 
-interface TileData {
+export interface TileData {
     type?: number;
     portKind?: string;
     interaction?: string;
     npc?: string;
+}
+
+interface PortTransitionData {
+    from: string;
+    x: number;
+    y: number;
+    toInterior?: boolean;
+    fromDimension?: number;
 }
 
 export class ZoneTransitionManager {
@@ -51,15 +59,18 @@ export class ZoneTransitionManager {
         this.inputManager = inputManager;
     }
 
+    /**
+     * Checks if a tap gesture should trigger a zone transition.
+     * Validates that the player is on an EXIT tile and tapping toward/beyond the edge.
+     */
     public checkForZoneTransitionGesture(tapCoords: TapCoords, playerPos: Position): boolean {
-        // Validate that grid and player position are valid before checking
         const gridManager: GridManager = this.game.gridManager;
         if (!this.game.grid || !Array.isArray(this.game.grid)) return false;
         if (playerPos.y < 0 || playerPos.y >= GRID_SIZE || playerPos.x < 0 || playerPos.x >= GRID_SIZE) return false;
         if (!gridManager.isWithinBounds(playerPos.x, playerPos.y)) return false;
 
         // If player is on an exit tile and taps outside the grid or on the same edge, trigger transition
-        const isOnExit = gridManager.isTileType(playerPos.x, playerPos.y, TILE_TYPES.EXIT);
+        const isOnExit: boolean = gridManager.isTileType(playerPos.x, playerPos.y, TILE_TYPES.EXIT);
         if (!isOnExit) return false;
 
         // Check if tap is outside grid boundaries (attempting to go beyond current zone)
@@ -90,9 +101,12 @@ export class ZoneTransitionManager {
         return false;
     }
 
-    // Handle tapping on exit tiles to trigger zone transitions
+    /**
+     * Handles tapping on exit tiles to trigger zone transitions.
+     * Determines the exit direction and simulates a keyboard event.
+     */
     public handleExitTap(exitX: number, exitY: number): void {
-        const direction = getExitDirection(exitX, exitY);
+        const direction: string | null = getExitDirection(exitX, exitY);
 
         if (direction) {
             // Simulate the key press to trigger zone transition
@@ -108,18 +122,21 @@ export class ZoneTransitionManager {
         }
     }
 
+    /**
+     * Handles player transition through a PORT tile (cistern, hole, stairs, door).
+     * Manages dimension changes between surface, underground, and interior zones.
+     */
     public handlePortTransition(): void {
-        // Player tapped on a PORT tile they are standing on
         const gridManager: GridManager = this.game.gridManager;
         const playerFacade = this.game.playerFacade;
         const transientState = this.game.transientGameState;
-        const playerPos = playerFacade.getPosition();
-        const currentDim = playerFacade.getZoneDimension();
+        const playerPos: Position = playerFacade.getPosition();
+        const currentDim: number = playerFacade.getZoneDimension();
 
         // Check if player is in a pitfall zone and hasn't survived required turns yet
         if (transientState.isInPitfallZone() && transientState.getPitfallTurnsSurvived() < GAMEPLAY_CONSTANTS.PITFALL_SURVIVAL_TURNS) {
-            const turnsRemaining = GAMEPLAY_CONSTANTS.PITFALL_SURVIVAL_TURNS - transientState.getPitfallTurnsSurvived();
-            const turnText = turnsRemaining === 1 ? 'turn' : 'turns';
+            const turnsRemaining: number = GAMEPLAY_CONSTANTS.PITFALL_SURVIVAL_TURNS - transientState.getPitfallTurnsSurvived();
+            const turnText: string = turnsRemaining === 1 ? 'turn' : 'turns';
             // Use event instead of direct UIManager call
             eventBus.emit(EventTypes.UI_OVERLAY_MESSAGE_SHOW, {
                 text: `You must survive ${turnsRemaining} more ${turnText} to escape!`,
@@ -136,8 +153,8 @@ export class ZoneTransitionManager {
 
         if (currentDim === DIMENSION_CONSTANTS.SURFACE) {
             // On the surface, determine where the PORT leads
-            const cisternPos = MultiTileHandler.findCisternPosition(playerPos.x, playerPos.y, gridManager);
-            const isHole = MultiTileHandler.isHole(playerPos.x, playerPos.y, gridManager);
+            const cisternPos: Position | null = MultiTileHandler.findCisternPosition(playerPos.x, playerPos.y, gridManager);
+            const isHole: boolean = MultiTileHandler.isHole(playerPos.x, playerPos.y, gridManager);
 
             if (cisternPos) {
                 // Entering underground via cistern
@@ -160,18 +177,18 @@ export class ZoneTransitionManager {
                 // Mark transition as from stairdown so the new zone can place a stairup at emergence point
                 transientState.setPortTransitionData({ from: 'stairdown', x: playerPos.x, y: playerPos.y });
                 // Increase player's underground depth (surface==0 -> first underground == 1)
-                const prevDepth = playerFacade.getUndergroundDepth();
-                const newDepth = prevDepth + 1;
+                const prevDepth: number = playerFacade.getUndergroundDepth();
+                const newDepth: number = prevDepth + 1;
                 playerFacade.setUndergroundDepth(newDepth);
             } else if (gridManager.getTile(playerPos.x, playerPos.y) && (gridManager.getTile(playerPos.x, playerPos.y) as TileObject).portKind === 'stairup') {
                 // Ascend via stairup to a shallower underground level or surface
-                const prevDepth = playerFacade.getUndergroundDepth();
+                const prevDepth: number = playerFacade.getUndergroundDepth();
                 // Decrease depth; if we were at depth 1, ascending returns to surface (depth 0)
                 if (prevDepth > 1) {
                     targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                     portType = 'underground';
                     transientState.setPortTransitionData({ from: 'stairup', x: playerPos.x, y: playerPos.y });
-                    const newDepth = prevDepth - 1;
+                    const newDepth: number = prevDepth - 1;
                     playerFacade.setUndergroundDepth(newDepth);
                 } else {
                     // prevDepth is 0 or 1 -> return to surface
@@ -190,8 +207,8 @@ export class ZoneTransitionManager {
             }
         } else {
             // Exiting to surface or handling stair transitions while underground or interior
-            const tileUnderPlayer = gridManager.getTile(playerPos.x, playerPos.y) as TileObject | undefined;
-            const portKind = tileUnderPlayer && tileUnderPlayer.portKind;
+            const tileUnderPlayer: Tile | undefined = gridManager.getTile(playerPos.x, playerPos.y);
+            const portKind: string | undefined = tileUnderPlayer && typeof tileUnderPlayer === 'object' && 'portKind' in tileUnderPlayer ? (tileUnderPlayer as TileObject).portKind : undefined;
 
             // If currently in underground, check for stair portals that should change depth rather than exit to surface
             if (currentDim === DIMENSION_CONSTANTS.UNDERGROUND) {
@@ -200,11 +217,11 @@ export class ZoneTransitionManager {
                     targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                     portType = 'underground';
                     transientState.setPortTransitionData({ from: 'stairdown', x: playerPos.x, y: playerPos.y });
-                    const prevDepth2 = playerFacade.getUndergroundDepth();
+                    const prevDepth2: number = playerFacade.getUndergroundDepth();
                     playerFacade.setUndergroundDepth(prevDepth2 + 1);
                 } else if (portKind === 'stairup') {
                     // Ascend one level: if depth > 1, stay in underground with decreased depth; if depth == 1, check if we should return to interior or surface
-                    const currentDepth = playerFacade.getUndergroundDepth();
+                    const currentDepth: number = playerFacade.getUndergroundDepth();
                     if (currentDepth > 1) {
                         targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                         portType = 'underground';
@@ -212,8 +229,8 @@ export class ZoneTransitionManager {
                         playerFacade.setUndergroundDepth(currentDepth - 1);
                     } else {
                         // Depth 1 - check if this underground zone is connected to an interior
-                        const currentZone = playerFacade.getCurrentZone();
-                        const undergroundZoneKey = createZoneKey(
+                        const currentZone: ZoneInfo = playerFacade.getCurrentZone();
+                        const undergroundZoneKey: string = createZoneKey(
                             currentZone.x,
                             currentZone.y,
                             DIMENSION_CONSTANTS.UNDERGROUND,
@@ -274,15 +291,15 @@ export class ZoneTransitionManager {
             portType: portType
         });
 
-        const currentZone = playerFacade.getCurrentZone();
+        const currentZone: ZoneInfo = playerFacade.getCurrentZone();
         this.game.transitionToZone(currentZone.x, currentZone.y, 'port', playerPos.x, playerPos.y);
     }
 
+    /**
+     * Handles player falling through a pitfall trap.
+     * Transitions player to underground dimension and marks the surface tile.
+     */
     public handlePitfallTransition(x: number, y: number): void {
-        // Player stepped on a pitfall trap
-        // Player fell through a pitfall. Keep the surface tile as a primitive PITFALL
-        // (do not place an object-style 'stairup' on the surface). The underground
-        // generator will handle any emergence metadata.
         const gridManager: GridManager = this.game.gridManager;
         if (gridManager.isWithinBounds(x, y)) {
             gridManager.setTile(x, y, TILE_TYPES.PITFALL);
@@ -301,7 +318,7 @@ export class ZoneTransitionManager {
             depth: 1 // First underground level
         });
 
-        const currentZone = playerFacade.getCurrentZone();
+        const currentZone: ZoneInfo = playerFacade.getCurrentZone();
         this.game.transitionToZone(currentZone.x, currentZone.y, 'port', x, y);
         // Some callers/tests expect portTransitionData to remain available immediately after
         // calling handlePitfallTransition. The ZoneManager.transitionToZone clears it at the
@@ -310,11 +327,15 @@ export class ZoneTransitionManager {
         transientState.setPortTransitionData({ from: 'pitfall', x, y });
     }
 
+    /**
+     * Checks if the tapped coordinates are eligible for a zone transition.
+     * Returns true if a transition was triggered (EXIT or PORT tile).
+     */
     public isTransitionEligible(gridCoords: Position, playerPos: Position): boolean {
         // Check if tapped tile is an exit and player is already on it - trigger zone transition
         if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
             const gridManager: GridManager = this.game.gridManager;
-            const tileUnderPlayer = gridManager.getTile(playerPos.x, playerPos.y);
+            const tileUnderPlayer: Tile | undefined = gridManager.getTile(playerPos.x, playerPos.y);
 
             if (tileUnderPlayer === TILE_TYPES.EXIT) {
                 this.handleExitTap(gridCoords.x, gridCoords.y);

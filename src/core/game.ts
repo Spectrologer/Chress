@@ -1,7 +1,7 @@
 import { TILE_TYPES } from './constants/index';
 import { ServiceContainer } from './ServiceContainer';
 import { AnimationManager } from './DataContracts';
-import { GameContext } from './GameContext';
+import { GameContext } from './context/GameContextCore';
 import { isFloor } from '@utils/TileUtils';
 import { registerAllContent } from '@config/ContentRegistrations';
 import { initializePWA } from '@utils/pwa-register';
@@ -51,7 +51,7 @@ export class Game extends GameContext {
 }
 
 // Export type alias for compatibility
-export type { GameContext as IGame } from './GameContext';
+export type { GameContext as IGame } from './context/GameContextCore';
 
 // Initialize game when the page loads
 window.addEventListener('DOMContentLoaded', async () => {

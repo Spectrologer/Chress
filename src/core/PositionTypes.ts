@@ -67,19 +67,19 @@ export type PositionPredicate = (pos: Coordinates) => boolean;
 /**
  * Generic grid type for 2D arrays
  */
-export type Grid<T = any> = T[][];
+export type Grid<T = unknown> = T[][];
 
 /**
  * Validator function for tile types
  */
-export type TileValidator<T = any> = (tile: T) => boolean;
+export type TileValidator<T = unknown> = (tile: T) => boolean;
 
 /**
  * Interface for objects that manage grids
  */
 export interface GridManager {
-  getTile(x: number, y: number): any;
-  setTile(x: number, y: number, value: any): void;
+  getTile(x: number, y: number): unknown;
+  setTile(x: number, y: number, value: unknown): void;
 }
 
 /**
@@ -100,13 +100,15 @@ export interface HasPosition {
 /**
  * Type guard to check if an object has x and y coordinates
  */
-export function isCoordinates(obj: any): obj is Coordinates {
-  return obj && typeof obj.x === 'number' && typeof obj.y === 'number';
+export function isCoordinates(obj: unknown): obj is Coordinates {
+  return typeof obj === 'object' && obj !== null &&
+    typeof (obj as Record<string, unknown>).x === 'number' &&
+    typeof (obj as Record<string, unknown>).y === 'number';
 }
 
 /**
  * Type guard to check if an object has zone coordinates
  */
-export function isZoneCoordinates(obj: any): obj is ZoneCoordinates {
-  return isCoordinates(obj) && typeof (obj as any).dimension === 'number';
+export function isZoneCoordinates(obj: unknown): obj is ZoneCoordinates {
+  return isCoordinates(obj) && typeof (obj as Record<string, unknown>).dimension === 'number';
 }

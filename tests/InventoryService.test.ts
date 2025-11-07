@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { InventoryService } from '@managers/inventory/InventoryService';
 import { ItemEffectStrategy } from '@managers/inventory/ItemEffectStrategy';
 import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';

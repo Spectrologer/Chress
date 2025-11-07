@@ -1,7 +1,7 @@
-import { PlayerStatsUI } from '../ui/PlayerStatsUI.js';
+import { PlayerStatsUI } from '../ui/PlayerStatsUI\.ts';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
-import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks.js';
+import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks\.ts';
 
 describe('PlayerStatsUI', () => {
   let playerStatsUI;

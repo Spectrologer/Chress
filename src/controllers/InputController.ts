@@ -4,7 +4,7 @@ import { GestureDetector } from './GestureDetector';
 import { PathfindingController } from './PathfindingController';
 import { KeyboardHandler } from './KeyboardHandler';
 import { InputStateManager } from './InputStateManager';
-import type { GameContext } from '@core/GameContext';
+import type { GameContext } from '@core/context';
 import type { InventoryService } from '@managers/inventory/InventoryService';
 
 interface GridCoords {

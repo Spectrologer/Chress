@@ -11,7 +11,7 @@ import { safeCall, safeGet } from '@utils/SafeServiceCall';
 import { EnemyMovementHandler } from './combat/EnemyMovementHandler';
 import { PlayerCombatHandler, type AttackResult } from './combat/PlayerCombatHandler';
 import { CollisionDetectionSystem } from './combat/CollisionDetectionSystem';
-import type { IGame, ICoordinates } from '@core/GameContext';
+import type { IGame, ICoordinates } from '@core/context';
 import type { Game } from '@core/game';
 import { Position } from '@core/Position';
 import type { Player } from '@entities/Player';

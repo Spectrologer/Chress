@@ -1,5 +1,5 @@
 import { TILE_TYPES } from '@core/constants/index';
-import { isTileType } from '@utils/TileUtils';
+import { isTileType, type Tile } from '@utils/TileUtils';
 
 // Type definitions for items
 export interface BaseItem {
@@ -240,17 +240,18 @@ export class ItemMetadata {
     /**
      * Check if an item/tile is stackable (handles both object tiles and primitives)
      */
-    static isStackableItem(tile: any): boolean {
+    static isStackableItem(tile: unknown): boolean {
         // Handle primitive tile constants
-        if (isTileType(tile, TILE_TYPES.NOTE)) return true;
-        if (isTileType(tile, TILE_TYPES.WATER)) return true;
-        if (isTileType(tile, TILE_TYPES.HEART)) return true;
-        if (isTileType(tile, TILE_TYPES.BOMB)) return true;
+        if (isTileType(tile as Tile, TILE_TYPES.NOTE)) return true;
+        if (isTileType(tile as Tile, TILE_TYPES.WATER)) return true;
+        if (isTileType(tile as Tile, TILE_TYPES.HEART)) return true;
+        if (isTileType(tile as Tile, TILE_TYPES.BOMB)) return true;
 
         // Handle object-based tiles
-        if (tile && tile.type) {
-            const itemType = this.TILE_TYPE_MAP[tile.type] ||
-                           (isTileType(tile, TILE_TYPES.FOOD) ? 'food' : null);
+        if (tile && typeof tile === 'object' && 'type' in tile) {
+            const tileWithType = tile as { type: number };
+            const itemType: string | null = this.TILE_TYPE_MAP[tileWithType.type] ||
+                           (isTileType(tile as Tile, TILE_TYPES.FOOD) ? 'food' : null);
             return itemType ? this.isStackable(itemType) : false;
         }
 
@@ -273,10 +274,12 @@ export class ItemMetadata {
 
         // Books should always use 'uses' not 'quantity'
         if (item.type === 'book_of_time_travel') {
-            if (typeof (item as any).uses === 'undefined') {
-                (item as any).uses = (typeof (item as any).quantity !== 'undefined') ? (item as any).quantity : 1;
+            const itemWithUses = item as Record<string, unknown>;
+            if (typeof itemWithUses.uses === 'undefined') {
+                const uses: number = (typeof itemWithUses.quantity !== 'undefined') ? (itemWithUses.quantity as number) : 1;
+                itemWithUses.uses = uses;
             }
-            delete (item as any).quantity;
+            delete itemWithUses.quantity;
         }
 
         // Initialize uses for items that need them (shovel, bow, bishop_spear, horse_icon)
@@ -286,14 +289,20 @@ export class ItemMetadata {
             'bishop_spear': 3,
             'horse_icon': 3
         };
-        if (item.type && item.type in itemsWithUses && typeof (item as any).uses === 'undefined') {
-            (item as any).uses = itemsWithUses[item.type];
+        if (item.type && item.type in itemsWithUses) {
+            const itemWithUsesProp = item as Record<string, unknown>;
+            if (typeof itemWithUsesProp.uses === 'undefined') {
+                itemWithUsesProp.uses = itemsWithUses[item.type];
+            }
         }
 
         // Initialize quantity for stackable consumables
-        const defaultQty = this.getDefaultQuantity(item.type || '');
-        if (defaultQty !== undefined && typeof (item as any).quantity === 'undefined') {
-            (item as any).quantity = defaultQty;
+        const defaultQty: number | undefined = this.getDefaultQuantity(item.type || '');
+        if (defaultQty !== undefined) {
+            const itemWithQty = item as Record<string, unknown>;
+            if (typeof itemWithQty.quantity === 'undefined') {
+                itemWithQty.quantity = defaultQty;
+            }
         }
 
         return item;

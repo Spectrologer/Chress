@@ -18,20 +18,21 @@ export const logger: Logger = {
 
   isDebug(): boolean {
     try {
-      if (typeof window !== 'undefined' && (window as any).DEBUG) return true;
-    } catch (e) {
+      if (typeof window !== 'undefined' && (window as Window & { DEBUG?: boolean }).DEBUG) return true;
+    } catch (_e: unknown) {
       // Ignore
     }
     try {
       if (typeof process !== 'undefined' && process.env && process.env.DEBUG) return true;
-    } catch (e) {
+    } catch (_e: unknown) {
       // Ignore
     }
     return false;
   },
 
   debug(...args: unknown[]): void {
-    if (this.isDebug()) {
+    const debugMode: boolean = this.isDebug();
+    if (debugMode) {
 
       console.log(...args);
     }
@@ -66,10 +67,11 @@ export const logger: Logger = {
     console.error(...processedArgs);
 
     // In debug mode, also log stack traces separately for visibility
-    if (this.isDebug()) {
+    const debugMode: boolean = this.isDebug();
+    if (debugMode) {
       args.forEach(arg => {
         if (arg instanceof Error && arg.stack) {
-           
+
           console.error('Stack trace:', arg.stack);
         }
       });
@@ -88,7 +90,8 @@ export const logger: Logger = {
 
     let formatted = `${error.name}: ${error.message}`;
 
-    if (this.isDebug() && error.stack) {
+    const debugMode: boolean = this.isDebug();
+    if (debugMode && error.stack) {
       formatted += '\n' + error.stack;
     }
 
@@ -101,7 +104,7 @@ export const logger: Logger = {
    * @param context - Additional context (component, action, etc.)
    */
   errorWithContext(error: Error | unknown, context: Record<string, unknown> = {}): void {
-    const contextStr = Object.entries(context)
+    const contextStr: string = Object.entries(context)
       .map(([key, value]) => `${key}=${value}`)
       .join(', ');
 

@@ -1,6 +1,6 @@
 import { TILE_TYPES } from '@core/constants/index';
 import { getNPCCharacterData } from '@core/NPCLoader';
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 
 export interface SignData {
     message?: string;

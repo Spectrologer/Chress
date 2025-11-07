@@ -6,7 +6,7 @@ import { NPC_CONFIG } from '@config/NPCConfig';
 import { ContentRegistry } from '@core/ContentRegistry';
 import { Position } from '@core/Position';
 import { TileTypeChecker } from '@utils/TypeChecks';
-import type { IGame, ICoordinates } from '@core/GameContext';
+import type { IGame, ICoordinates } from '@core/context';
 
 interface NPCConfigEntry {
     tileType: number;

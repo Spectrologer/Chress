@@ -1,5 +1,5 @@
 import { TurnManager } from '@core/TurnManager';
-import { createMockEnemy } from './helpers/mocks.js';
+import { createMockEnemy } from './helpers/mocks\.ts';
 
 describe('TurnManager', () => {
   let turnManager;

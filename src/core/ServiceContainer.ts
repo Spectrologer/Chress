@@ -44,7 +44,7 @@ import { AnimationCoordinator } from './AnimationCoordinator';
 import { InteractionFacade } from '@facades/InteractionFacade';
 import { CombatFacade } from '@facades/CombatFacade';
 import { WorldFacade } from '@facades/WorldFacade';
-import type { GameContext } from './GameContext';
+import type { GameContext } from './context/GameContextCore';
 
 type ServiceFactory = () => unknown;
 

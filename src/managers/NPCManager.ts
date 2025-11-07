@@ -2,7 +2,7 @@ import { BaseNPC } from '@npc/BaseNPC';
 import { TILE_TYPES } from '@core/constants/index';
 import { ContentRegistry } from '@core/ContentRegistry';
 import type { Coordinates } from '@core/PositionTypes';
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import { TileTypeChecker } from '@utils/TypeChecks';
 
 interface NPCConfig extends Coordinates {

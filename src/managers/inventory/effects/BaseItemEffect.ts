@@ -1,7 +1,7 @@
 import audioManager from '@utils/AudioManager';
 import { TILE_TYPES } from '@core/constants/index';
 import { isFloor } from '@utils/TileUtils';
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import type { InventoryItem } from '../ItemMetadata';
 import type { Grid, Tile } from '@core/SharedTypes';
 

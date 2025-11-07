@@ -1,4 +1,4 @@
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 

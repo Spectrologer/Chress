@@ -7,20 +7,28 @@ import type { Game } from '@core/game';
 import type { Position } from '@core/Position';
 import type { TileObject } from '@core/SharedTypes';
 
-interface ZoneData {
+export interface ZoneData {
     playerSpawn?: Position;
     metadata?: {
         playerSpawn?: Position;
     };
-    [key: string]: any;
+    returnToSurface?: {
+        x: number;
+        y: number;
+    };
 }
 
-interface PortTransitionData {
+export interface PortTransitionData {
     from?: string;
     x?: number;
     y?: number;
     toInterior?: boolean;
-    [key: string]: any;
+}
+
+interface TileWithPosition {
+    x: number;
+    y: number;
+    [key: string]: unknown;
 }
 
 /**
@@ -37,6 +45,7 @@ export class ZoneTransitionCoordinator {
      * Initialize transition state (pitfall tracking, sign reset, etc.)
      */
     public initializeTransitionState(exitSide: string): void {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (this.game as any).lastExitSide = exitSide;
 
         const transientState = this.game.transientGameState;
@@ -194,7 +203,7 @@ export class ZoneTransitionCoordinator {
                 2,
                 undergroundDepth
             );
-            const undergroundData: any = this.game.zoneRepository.getByKey(undergroundZoneKey);
+            const undergroundData: ZoneData | undefined = this.game.zoneRepository.getByKey(undergroundZoneKey);
 
             if (undergroundData?.returnToSurface) {
                 portX = undergroundData.returnToSurface.x;
@@ -224,7 +233,7 @@ export class ZoneTransitionCoordinator {
         const currentZone = playerFacade.getCurrentZone();
 
         const interiorZoneKey = createZoneKey(currentZone.x, currentZone.y, 1);
-        const interiorZoneData: any = this.game.zoneRepository.getByKey(interiorZoneKey);
+        const interiorZoneData: ZoneData | undefined = this.game.zoneRepository.getByKey(interiorZoneKey);
 
         // Try recorded return coordinates
         if (interiorZoneData?.returnToSurface) {
@@ -243,7 +252,7 @@ export class ZoneTransitionCoordinator {
         }
 
         // Search for any PORT tile using GridManager
-        const portTile = gridManager.findFirst((tile: any) => isTileType(tile, TILE_TYPES.PORT));
+        const portTile = gridManager.findFirst((tile: TileObject) => isTileType(tile, TILE_TYPES.PORT)) as TileWithPosition | undefined;
         if (portTile) {
             playerFacade.setPosition(portTile.x, portTile.y);
             return;
@@ -328,6 +337,7 @@ export class ZoneTransitionCoordinator {
     public positionPlayerAfterTransition(exitSide: string, exitX: number, exitY: number): void {
         const gridManager = this.game.gridManager;
         const playerFacade = this.game.playerFacade;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const zoneGenerator = (this.game as any).zoneGenerator;
 
         switch (exitSide) {
@@ -372,7 +382,7 @@ export class ZoneTransitionCoordinator {
     /**
      * Helper to safely set a tile on the grid, checking bounds.
      */
-    public validateAndSetTile(gridOrGridManager: any, x: number, y: number, tile: any): void {
+    public validateAndSetTile(gridOrGridManager: unknown, x: number, y: number, tile: TileObject | number): void {
         if (isWithinGrid(x, y)) {
             // Use gridManager if available
             const gridManager = this.game.gridManager;

@@ -48,9 +48,9 @@ export class ErrorHandler {
      */
     private _checkDevelopmentMode(): boolean {
         try {
-            if (typeof window !== 'undefined' && (window as any).DEBUG) return true;
+            if (typeof window !== 'undefined' && (window as Window & { DEBUG?: boolean }).DEBUG) return true;
             if (typeof process !== 'undefined' && process.env?.DEBUG) return true;
-        } catch (e) {
+        } catch (_e: unknown) {
             // Ignore
         }
         return false;
@@ -80,7 +80,7 @@ export class ErrorHandler {
         this.errorListeners.forEach(listener => {
             try {
                 listener(error, severity, context);
-            } catch (e) {
+            } catch (e: unknown) {
                 // Don't let listener errors break error handling
                 console.error('[ErrorHandler] Error in error listener:', e);
             }

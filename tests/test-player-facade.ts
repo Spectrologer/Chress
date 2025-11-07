@@ -1,7 +1,7 @@
-import { PlayerFacade } from '../src/facades/PlayerFacade.js';
-import { Player } from '../src/entities/Player.js';
-import { eventBus } from '../src/core/EventBus.js';
-import { EventTypes } from '../src/core/EventTypes.js';
+import { PlayerFacade } from '../src/facades/PlayerFacade\.ts';
+import { Player } from '../src/entities/Player\.ts';
+import { eventBus } from '../src/core/EventBus\.ts';
+import { EventTypes } from '../src/core/EventTypes\.ts';
 
 console.log('🧪 Testing PlayerFacade...\n');
 

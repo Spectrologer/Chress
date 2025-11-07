@@ -1,4 +1,4 @@
-import type { GameContext } from './GameContext';
+import type { GameContext } from './context/GameContextCore';
 import type { Enemy } from '@entities/Enemy';
 import type { EnemyCollection } from '@facades/EnemyCollection';
 

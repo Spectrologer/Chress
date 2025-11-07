@@ -1,25 +1,38 @@
-// @ts-check
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { logger } from '@core/logger';
 
 /**
- * @typedef {Object} PlayerStats
- * @property {number} [health] - Health points
- * @property {number} [hunger] - Hunger level
- * @property {number} [thirst] - Thirst level
- * @property {number} [maxHealth] - Maximum health
- * @property {number} [points] - Player points
- * @property {number} [spentDiscoveries] - Spent discoveries count
- * @property {Function} [takeDamage] - Take damage function
+ * Player stats interface
  */
+export interface PlayerStats {
+    /** Health points */
+    health?: number;
+    /** Hunger level */
+    hunger?: number;
+    /** Thirst level */
+    thirst?: number;
+    /** Maximum health */
+    maxHealth?: number;
+    /** Player points */
+    points?: number;
+    /** Spent discoveries count */
+    spentDiscoveries?: number;
+    /** Take damage function */
+    takeDamage?: (amount: number) => void;
+}
 
 /**
- * @typedef {Object} InteractTarget
- * @property {number} x - Target X coordinate
- * @property {number} y - Target Y coordinate
- * @property {*} [data] - Additional interaction data
+ * Interaction target interface
  */
+export interface InteractTarget {
+    /** Target X coordinate */
+    x: number;
+    /** Target Y coordinate */
+    y: number;
+    /** Additional interaction data */
+    data?: unknown;
+}
 
 /**
  * PlayerStatsFacade - Stats, animations, and interaction management for player
@@ -39,9 +52,6 @@ import { logger } from '@core/logger';
 export class PlayerStatsFacade {
     private player: any;
 
-    /**
-     * @param {any} player - The player entity
-     */
     constructor(player: any) {
         if (!player) {
             throw new Error('PlayerStatsFacade requires a valid player instance');
@@ -55,51 +65,45 @@ export class PlayerStatsFacade {
 
     /**
      * Get stats object (returns copy to prevent direct mutations)
-     * @returns {PlayerStats} Copy of stats
      */
-    getStats() {
+    getStats(): PlayerStats {
         return this.player.stats ? { ...this.player.stats } : {};
     }
 
     /**
      * Get stats reference (use sparingly)
-     * @returns {Object}
      * @deprecated Use getStats() for safer access
      */
-    getStatsRef() {
+    getStatsRef(): PlayerStats | undefined {
         logger.warn('PlayerStatsFacade.getStatsRef: Direct stats reference requested.');
         return this.player.stats;
     }
 
     /**
      * Get health value
-     * @returns {number}
      */
-    getHealth() {
+    getHealth(): number {
         return this.player.stats?.health ?? 0;
     }
 
     /**
      * Get hunger value
-     * @returns {number}
      */
-    getHunger() {
+    getHunger(): number {
         return this.player.stats?.hunger ?? 0;
     }
 
     /**
      * Get thirst value
-     * @returns {number}
      */
-    getThirst() {
+    getThirst(): number {
         return this.player.stats?.thirst ?? 0;
     }
 
     /**
      * Take damage (delegates to PlayerStats)
-     * @param {number} amount - Damage amount
      */
-    takeDamage(amount) {
+    takeDamage(amount: number): void {
         if (this.player.takeDamage) {
             this.player.takeDamage(amount);
         } else if (this.player.stats?.takeDamage) {
@@ -111,9 +115,8 @@ export class PlayerStatsFacade {
 
     /**
      * Restore health
-     * @param {number} amount - Health to restore
      */
-    restoreHealth(amount) {
+    restoreHealth(amount: number): void {
         if (this.player.restoreHealth) {
             this.player.restoreHealth(amount);
         }
@@ -123,9 +126,8 @@ export class PlayerStatsFacade {
 
     /**
      * Restore hunger
-     * @param {number} amount - Hunger to restore
      */
-    restoreHunger(amount) {
+    restoreHunger(amount: number): void {
         if (this.player.restoreHunger) {
             this.player.restoreHunger(amount);
         }
@@ -135,17 +137,15 @@ export class PlayerStatsFacade {
 
     /**
      * Get points
-     * @returns {number}
      */
-    getPoints() {
+    getPoints(): number {
         return this.player.getPoints?.() ?? this.player.points ?? 0;
     }
 
     /**
      * Add points with event emission
-     * @param {number} points - Points to add
      */
-    addPoints(points) {
+    addPoints(points: number): void {
         if (this.player.addPoints) {
             this.player.addPoints(points);
         } else {
@@ -160,17 +160,15 @@ export class PlayerStatsFacade {
 
     /**
      * Get spent discoveries
-     * @returns {number}
      */
-    getSpentDiscoveries() {
+    getSpentDiscoveries(): number {
         return this.player.getSpentDiscoveries?.() ?? this.player.spentDiscoveries ?? 0;
     }
 
     /**
      * Set spent discoveries
-     * @param {number} count - Number of spent discoveries
      */
-    setSpentDiscoveries(count) {
+    setSpentDiscoveries(count: number): void {
         if (this.player.setSpentDiscoveries) {
             this.player.setSpentDiscoveries(count);
         } else {
@@ -180,10 +178,8 @@ export class PlayerStatsFacade {
 
     /**
      * Update a specific stat property (for settings like musicEnabled)
-     * @param {string} statName - Stat property name
-     * @param {*} value - New value
      */
-    updateStat(statName, value) {
+    updateStat(statName: string, value: unknown): void {
         if (!this.player.stats) {
             this.player.stats = {};
         }
@@ -203,10 +199,8 @@ export class PlayerStatsFacade {
 
     /**
      * Start bump animation
-     * @param {number} dx - X direction
-     * @param {number} dy - Y direction
      */
-    startBump(dx, dy) {
+    startBump(dx: number, dy: number): void {
         if (this.player.startBump) {
             this.player.startBump(dx, dy);
         }
@@ -215,7 +209,7 @@ export class PlayerStatsFacade {
     /**
      * Start backflip animation
      */
-    startBackflip() {
+    startBackflip(): void {
         if (this.player.startBackflip) {
             this.player.startBackflip();
         }
@@ -224,7 +218,7 @@ export class PlayerStatsFacade {
     /**
      * Start attack animation
      */
-    startAttackAnimation() {
+    startAttackAnimation(): void {
         if (this.player.startAttackAnimation) {
             this.player.startAttackAnimation();
         }
@@ -232,10 +226,8 @@ export class PlayerStatsFacade {
 
     /**
      * Start explosion animation
-     * @param {number} x - Explosion X
-     * @param {number} y - Explosion Y
      */
-    startSplodeAnimation(x, y) {
+    startSplodeAnimation(x: number, y: number): void {
         if (this.player.startSplodeAnimation) {
             this.player.startSplodeAnimation(x, y);
         }
@@ -243,10 +235,8 @@ export class PlayerStatsFacade {
 
     /**
      * Start smoke animation
-     * @param {number} x - Smoke X
-     * @param {number} y - Smoke Y
      */
-    startSmokeAnimation(x, y) {
+    startSmokeAnimation(x: number, y: number): void {
         if (this.player.startSmokeAnimation) {
             this.player.startSmokeAnimation(x, y);
         }
@@ -254,9 +244,8 @@ export class PlayerStatsFacade {
 
     /**
      * Set player action state
-     * @param {string} action - Action type
      */
-    setAction(action) {
+    setAction(action: string): void {
         if (this.player.setAction) {
             this.player.setAction(action);
         }
@@ -264,17 +253,15 @@ export class PlayerStatsFacade {
 
     /**
      * Get consecutive kills count
-     * @returns {number}
      */
-    getConsecutiveKills() {
+    getConsecutiveKills(): number {
         return this.player.consecutiveKills ?? 0;
     }
 
     /**
      * Set consecutive kills count
-     * @param {number} count - Kill count
      */
-    setConsecutiveKills(count) {
+    setConsecutiveKills(count: number): void {
         this.player.consecutiveKills = count;
     }
 
@@ -284,24 +271,22 @@ export class PlayerStatsFacade {
 
     /**
      * Get interact on reach target
-     * @returns {InteractTarget|null}
      */
-    getInteractOnReach() {
+    getInteractOnReach(): InteractTarget | null {
         return this.player.interactOnReach;
     }
 
     /**
      * Set interact on reach target
-     * @param {InteractTarget|null} target - Target coordinates
      */
-    setInteractOnReach(target) {
+    setInteractOnReach(target: InteractTarget | null): void {
         this.player.interactOnReach = target;
     }
 
     /**
      * Clear interact on reach
      */
-    clearInteractOnReach() {
+    clearInteractOnReach(): void {
         if (this.player.clearInteractOnReach) {
             this.player.clearInteractOnReach();
         } else {
@@ -315,10 +300,9 @@ export class PlayerStatsFacade {
 
     /**
      * Get raw player reference (use only when absolutely necessary)
-     * @returns {Object} The underlying player object
      * @deprecated Prefer using facade methods
      */
-    getRawPlayer() {
+    getRawPlayer(): any {
         logger.warn('PlayerStatsFacade.getRawPlayer: Direct player access requested. This bypasses encapsulation.');
         return this.player;
     }

@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * BaseMoveCalculator - Core enemy movement decision system.
  *
@@ -20,53 +19,53 @@
  * - Anti-stacking to prevent blocking allies
  */
 
-/**
- * @typedef {Object} Position
- * @property {number} x - X coordinate
- * @property {number} y - Y coordinate
- */
-
-/**
- * @typedef {Object} Enemy
- * @property {number} x - Current X position
- * @property {number} y - Current Y position
- * @property {number} [lastX] - Previous X position
- * @property {number} [lastY] - Previous Y position
- * @property {string} enemyType - Enemy type ('lizardy', 'lizardo', 'lizardeaux', 'lizord', 'lazerd', 'zard')
- * @property {string} [type] - Alias for enemyType
- * @property {number} attack - Attack damage
- * @property {boolean} [justAttacked] - Whether enemy just attacked
- * @property {number} [attackAnimation] - Attack animation frame counter
- * @property {Array<{x: number, y: number, frame: number}>} smokeAnimations - Smoke trail animations
- * @property {Function} isWalkable - Check if position is walkable
- * @property {Function} [startBump] - Start bump animation
- */
-
-/**
- * @typedef {Object} Player
- * @property {number} x - Player X position
- * @property {number} y - Player Y position
- * @property {Function} takeDamage - Take damage function
- * @property {Function} setPosition - Set player position
- * @property {Function} startBump - Start bump animation
- * @property {Function} isWalkable - Check if position is walkable
- * @property {Function} [isDead] - Check if player is dead
- */
-
-/**
- * @typedef {Object} Game
- * @property {boolean} [playerJustAttacked] - Whether player just attacked
- * @property {*} [zoneManager] - Zone manager instance
- */
-
-/**
- * @typedef {Array<Array<number>>} Grid
- */
-
 import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '@core/constants/index';
 import { EnemyPathfinding } from '@enemy/EnemyPathfinding';
 import { EnemySpecialActions } from '@enemy/EnemySpecialActions';
 import { logger } from '@core/logger';
+
+export interface Position {
+    x: number;
+    y: number;
+    g?: Grid;
+}
+
+export interface Enemy {
+    x: number;
+    y: number;
+    lastX?: number;
+    lastY?: number;
+    enemyType: string;
+    type?: string;
+    attack: number;
+    justAttacked?: boolean;
+    attackAnimation?: number;
+    smokeAnimations: Array<{ x: number; y: number; frame: number }>;
+    isWalkable: (x: number, y: number, grid: Grid) => boolean;
+    startBump?: (dx: number, dy: number) => void;
+    liftFrames?: number;
+    health?: number;
+    id?: string;
+}
+
+export interface Player {
+    x: number;
+    y: number;
+    takeDamage: (damage: number) => void;
+    setPosition: (x: number, y: number) => void;
+    startBump: (dx: number, dy: number) => void;
+    isWalkable: (x: number, y: number, grid: Grid) => boolean;
+    isDead?: () => boolean;
+}
+
+export interface Game {
+    playerJustAttacked?: boolean;
+    zoneManager?: any;
+    initialEnemyTilesThisTurn?: Set<string>;
+    occupiedTilesThisTurn?: Set<string>;
+}
+
+export type Grid = number[][];
 
 import { applyAggressiveMovement } from './aggressive';
 import { applyTacticalAdjustments, applyDefensiveMoves } from './tactics';
@@ -82,17 +81,16 @@ export class BaseMoveCalculator {
     /**
      * Main entry point for calculating enemy movement.
      * Delegates to findPathedMove for the full decision pipeline.
-     *
-     * @param {Enemy} enemy - The enemy calculating its move
-     * @param {Player} player - The player (target)
-     * @param {Position} playerPos - Player position
-     * @param {Grid} grid - Game grid
-     * @param {Enemy[]} enemies - All enemies
-     * @param {boolean} [isSimulation=false] - If true, skip visual effects
-     * @param {Game|null} [game=null] - Game instance
-     * @returns {Position|null} Next position or null
      */
-    calculateMove(enemy, player, playerPos, grid, enemies, isSimulation = false, game = null) {
+    calculateMove(
+        enemy: Enemy,
+        player: Player,
+        playerPos: Position,
+        grid: Grid,
+        enemies: Enemy[],
+        isSimulation: boolean = false,
+        game: Game | null = null
+    ): Position | null {
         return this.findPathedMove(enemy, player, playerPos, grid, enemies, isSimulation, game);
     }
 
@@ -117,17 +115,16 @@ export class BaseMoveCalculator {
      * - Lizord knight bump: Can attack by landing on player
      * - Pitfalls: Enemy falls to lower level (handled separately)
      * - Multi-tile moves: Add smoke trail animations
-     *
-     * @param {Enemy} enemy - The enemy calculating its move
-     * @param {Player} player - The player
-     * @param {Position} playerPos - Player position
-     * @param {Grid} grid - Game grid
-     * @param {Enemy[]} enemies - All enemies
-     * @param {boolean} isSimulation - If true, skip visual/audio effects
-     * @param {Game|null} game - Game instance
-     * @returns {Position|null} Next position or null if stuck
      */
-    findPathedMove(enemy, player, playerPos, grid, enemies, isSimulation, game) {
+    findPathedMove(
+        enemy: Enemy,
+        player: Player,
+        playerPos: Position,
+        grid: Grid,
+        enemies: Enemy[],
+        isSimulation: boolean,
+        game: Game | null
+    ): Position | null {
         const { x: playerX, y: playerY } = playerPos;
 
         // Layer 1: Leader-Follower Pattern (cooperative behavior)
@@ -206,14 +203,8 @@ export class BaseMoveCalculator {
     /**
      * Calculates Chebyshev distance (8-way grid distance).
      * Used for determining if moves are adjacent or multi-tile.
-     *
-     * @param {number} x1 - Start X
-     * @param {number} y1 - Start Y
-     * @param {number} x2 - End X
-     * @param {number} y2 - End Y
-     * @returns {number} Maximum of |deltaX| and |deltaY|
      */
-    calculateMoveDistance(x1, y1, x2, y2) {
+    calculateMoveDistance(x1: number, y1: number, x2: number, y2: number): number {
         return Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
     }
 
@@ -238,17 +229,16 @@ export class BaseMoveCalculator {
      * - Must be walkable terrain
      * - Cannot be occupied by another enemy
      * - If no valid positions, player stays in place
-     *
-     * @param {Enemy} enemy - The attacking lizord
-     * @param {Player} player - The player being attacked
-     * @param {number} playerX - Current player X
-     * @param {number} playerY - Current player Y
-     * @param {Grid} grid - Game grid
-     * @param {Enemy[]} enemies - All enemies
-     * @param {Game} game - Game instance
-     * @returns {void}
      */
-    performLizordBumpAttack(enemy, player, playerX, playerY, grid, enemies, game) {
+    performLizordBumpAttack(
+        enemy: Enemy,
+        player: Player,
+        playerX: number,
+        playerY: number,
+        grid: Grid,
+        enemies: Enemy[],
+        game: Game
+    ): void {
         // Deal damage and trigger attack visuals
         player.takeDamage(enemy.attack);
         enemy.justAttacked = true;
@@ -302,16 +292,16 @@ export class BaseMoveCalculator {
 
     /**
      * Perform a standard enemy attack on the player
-     * @param {Enemy} enemy - The attacking enemy
-     * @param {Player} player - The player being attacked
-     * @param {number} playerX - Player X position
-     * @param {number} playerY - Player Y position
-     * @param {Grid} grid - Game grid
-     * @param {Enemy[]} enemies - All enemies
-     * @param {Game|null} game - Game instance
-     * @returns {void}
      */
-    performAttack(enemy, player, playerX, playerY, grid, enemies, game) {
+    performAttack(
+        enemy: Enemy,
+        player: Player,
+        playerX: number,
+        playerY: number,
+        grid: Grid,
+        enemies: Enemy[],
+        game: Game | null
+    ): void {
         if (game && game.playerJustAttacked) return;
         const dx = Math.abs(enemy.x - playerX);
         const dy = Math.abs(enemy.y - playerY);
@@ -331,12 +321,8 @@ export class BaseMoveCalculator {
 
     /**
      * Find any valid adjacent move as a fallback when pathfinding fails
-     * @param {Enemy} enemy - The enemy
-     * @param {Grid} grid - Game grid
-     * @param {Enemy[]} enemies - All enemies
-     * @returns {Position|null} A valid adjacent position or null
      */
-    findAnyValidAdjacentMove(enemy, grid, enemies) {
+    findAnyValidAdjacentMove(enemy: Enemy, grid: Grid, enemies: Enemy[]): Position | null {
         const directions = EnemyPathfinding.getMovementDirections(enemy.enemyType || enemy.type);
         for (const dir of directions) {
             const newX = enemy.x + dir.x;
@@ -377,12 +363,8 @@ export class BaseMoveCalculator {
      * - For i=2: x=7, y=5+round(2*2/5)=6
      * - For i=3: x=8, y=5+round(3*2/5)=6
      * - For i=4: x=9, y=5+round(4*2/5)=7
-     *
-     * @param {Enemy} enemy - The charging enemy
-     * @param {Position} next - Destination position
-     * @returns {void}
      */
-    addSmokeTrail(enemy, next) {
+    addSmokeTrail(enemy: Enemy, next: Position): void {
         const chargeTypes = new Set(['lizardeaux', 'zard']);
 
         if (chargeTypes.has(enemy.enemyType)) {

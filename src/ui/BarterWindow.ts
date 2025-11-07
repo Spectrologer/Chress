@@ -1,4 +1,4 @@
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import { Sign, Trade } from './Sign';
 import { FOOD_ASSETS, TILE_TYPES } from '@core/constants/index';
 import { fitTextToContainer } from './TextFitter';

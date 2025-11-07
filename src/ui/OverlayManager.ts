@@ -1,7 +1,7 @@
 import { StartOverlayController } from './StartOverlayController';
 import { OverlayButtonHandler } from './OverlayButtonHandler';
 import { OverlayMusicToggle } from './OverlayMusicToggle';
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 
 /**
  * OverlayManager

@@ -2,7 +2,7 @@ import { TILE_SIZE, ANIMATION_CONSTANTS, SCALE_CONSTANTS, STROKE_CONSTANTS } fro
 import { RENDERING_CONSTANTS } from '@core/constants/animation';
 import { COLOR_CONSTANTS, UI_RENDERING_CONSTANTS } from '@core/constants/rendering';
 import { RendererUtils } from './RendererUtils';
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import type { TextureManager } from './TextureManager';
 import type { SplodeAnimation, HorseChargeAnimation, ArrowAnimation, PointAnimation, MultiplierAnimation } from './types';
 

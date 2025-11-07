@@ -2,10 +2,24 @@ import { EnemyChargeBehaviors } from './EnemyChargeBehaviors';
 import { EnemyLineOfSight } from './EnemyLineOfSight';
 import { EnemyAttackHelper } from './EnemyAttackHelper';
 import { ANIMATION_CONSTANTS } from '@core/constants/index';
+import type { Enemy, Player, Position, Grid, Game } from './MoveCalculators/base';
 
 export class EnemySpecialActions {
-    // Execute charge move for Zard enemy type
-    static executeZardCharge(enemy, player, playerX, playerY, grid, enemies, isSimulation = false, game = null) {
+    /**
+     * Execute charge move for Zard enemy type.
+     * Checks diagonal line of sight and performs diagonal charge with smoke trail.
+     * If adjacent after charge, performs ram attack on player.
+     */
+    static executeZardCharge(
+        enemy: Enemy,
+        player: Player,
+        playerX: number,
+        playerY: number,
+        grid: Grid,
+        enemies: Enemy[],
+        isSimulation: boolean = false,
+        game: Game | null = null
+    ): null | false {
         if (EnemyLineOfSight.checkDiagonalLineOfSight(enemy, playerX, playerY, grid)) {
             const chargeMove = EnemyChargeBehaviors.getChargeAdjacentDiagonalMove(enemy, playerX, playerY, grid, enemies);
             if (chargeMove) {
@@ -33,7 +47,7 @@ export class EnemySpecialActions {
                 const newDx = Math.abs(chargeMove.x - playerX);
                 const newDy = Math.abs(chargeMove.y - playerY);
                 if (newDx === 1 && newDy === 1 && (!game || !game.playerJustAttacked)) {
-                    enemy.performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation);
+                    (enemy as any).performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation);
                 }
                 return null; // All in one turn
             }
@@ -43,8 +57,22 @@ export class EnemySpecialActions {
         return false; // No line of sight
     }
 
-    // Execute charge move for Lizardeaux enemy type
-    static executeLizardeauxCharge(enemy, player, playerX, playerY, grid, enemies, isSimulation = false, game = null) {
+    /**
+     * Execute charge move for Lizardeaux enemy type.
+     * Checks orthogonal line of sight and performs orthogonal charge.
+     * If distance is 1, performs normal attack without knockback.
+     * Otherwise, charges to tile adjacent to player and attacks with knockback.
+     */
+    static executeLizardeauxCharge(
+        enemy: Enemy,
+        player: Player,
+        playerX: number,
+        playerY: number,
+        grid: Grid,
+        enemies: Enemy[],
+        isSimulation: boolean = false,
+        game: Game | null = null
+    ): null | false {
         if (EnemyLineOfSight.checkOrthogonalLineOfSight(enemy, playerX, playerY, grid, enemies)) {
             const dx = Math.abs(enemy.x - playerX);
             const dy = Math.abs(enemy.y - playerY);
@@ -115,8 +143,21 @@ export class EnemySpecialActions {
         return false; // No line of sight
     }
 
-    // Execute charge move for Lazerd enemy type
-    static executeLazerdCharge(enemy, player, playerX, playerY, grid, enemies, isSimulation = false, game = null) {
+    /**
+     * Execute charge move for Lazerd enemy type.
+     * Checks both orthogonal and diagonal line of sight (queen movement).
+     * Charges to tile adjacent to player and attacks with knockback.
+     */
+    static executeLazerdCharge(
+        enemy: Enemy,
+        player: Player,
+        playerX: number,
+        playerY: number,
+        grid: Grid,
+        enemies: Enemy[],
+        isSimulation: boolean = false,
+        game: Game | null = null
+    ): null | false {
         // Check if orthogonal or diagonal line of sight exists
         const chargeMove = EnemyChargeBehaviors.getQueenChargeAdjacentMove(enemy, playerX, playerY, grid, enemies);
         if (chargeMove) {

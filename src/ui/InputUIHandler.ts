@@ -1,4 +1,4 @@
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import { TILE_TYPES } from '@core/constants/index';
 import { Sign } from './Sign';
 import { eventBus } from '@core/EventBus';

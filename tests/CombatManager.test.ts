@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { CombatManager } from '@managers/CombatManager';
 import { Position } from '@core/Position';
 import { TILE_TYPES } from '@core/constants/index';

@@ -11,11 +11,30 @@ import { ZoneStateRestorer } from './ZoneStateRestorer';
 import { ZoneRepository } from '@repositories/ZoneRepository';
 import { boardLoader } from './BoardLoader';
 import { createZoneKey } from '@utils/ZoneKeyUtils';
-import type { GameContext } from './GameContext';
+import type { GameContext } from './context/GameContextCore';
 import type { PlayerStats } from '@entities/PlayerStats';
 
 const GAME_STATE_KEY = 'chress_game_state';
 const SAVE_VERSION = 2; // bump if save format changes
+
+export interface SavePayload {
+    version: number;
+    lastSaved: number;
+    state: SerializedGameState;
+}
+
+export interface SerializedGameState {
+    player: any;
+    playerStats: any;
+    zoneGeneration?: any;
+    zoneStateManager?: any;
+    [key: string]: any;
+}
+
+interface ConfigSettings {
+    musicEnabled: boolean;
+    sfxEnabled: boolean;
+}
 
 export class GameStateManager {
     private game: GameContext;
@@ -68,7 +87,7 @@ export class GameStateManager {
 
     resetGame(): void {
         // Preserve config settings
-        const prevConfig = {
+        const prevConfig: ConfigSettings = {
             musicEnabled: this.game.player!.stats && typeof this.game.player!.stats.musicEnabled !== 'undefined' ? this.game.player!.stats.musicEnabled : true,
             sfxEnabled: this.game.player!.stats && typeof this.game.player!.stats.sfxEnabled !== 'undefined' ? this.game.player!.stats.sfxEnabled : true
         };
@@ -106,14 +125,14 @@ export class GameStateManager {
         this.game.zoneManager!.generateZone();
 
         // Only set tile if player is within grid bounds (for new games, player may be off-screen)
-        const playerY = this.game.player!.y;
-        const playerX = this.game.player!.x;
+        const playerY: number = this.game.player!.y;
+        const playerX: number = this.game.player!.x;
         if (isWithinGrid(playerX, playerY)) {
             this.game.grid![playerY][playerX] = TILE_TYPES.FLOOR;
         }
 
         // Set initial region
-        const initialZone = this.game.player!.getCurrentZone();
+        const initialZone: any = this.game.player!.getCurrentZone();
         this.game.currentRegion = this.game.uiManager!.generateRegionName(initialZone.x, initialZone.y);
 
         // Restore config settings
@@ -123,7 +142,7 @@ export class GameStateManager {
 
         // Trigger entrance animation for new game BEFORE emitting events
         // This ensures input is blocked before any event handlers could process clicks
-        const shouldTriggerEntrance = this.game.gameInitializer && (this.game as any)._newGameSpawnPosition;
+        const shouldTriggerEntrance: boolean = !!(this.game.gameInitializer && (this.game as any)._newGameSpawnPosition);
         if (shouldTriggerEntrance) {
             // Pre-emptively block input to prevent race conditions with queued mouse events
             (this.game as any)._entranceAnimationInProgress = true;
@@ -143,7 +162,7 @@ export class GameStateManager {
         // Ensure background music matches the new starting zone so any previous
         // underground track doesn't continue playing after a respawn/reset.
         try {
-            const dimension = this.game.player!.currentZone && typeof this.game.player!.currentZone.dimension === 'number'
+            const dimension: number = this.game.player!.currentZone && typeof this.game.player!.currentZone.dimension === 'number'
                 ? this.game.player!.currentZone.dimension
                 : 0;
             // Emit music change event instead of calling soundManager directly
@@ -153,13 +172,13 @@ export class GameStateManager {
 
     addTreasureToInventory(): void {
         // Generate 3-5 random treasure items, respecting inventory limit
-        const numItems = Math.floor(Math.random() * 3) + 3; // 3 to 5 items
-        const treasureTypes = ['bomb', 'bishop_spear', 'food'];
+        const numItems: number = Math.floor(Math.random() * 3) + 3; // 3 to 5 items
+        const treasureTypes: string[] = ['bomb', 'bishop_spear', 'food'];
 
-        for (let i = 0; i < numItems; i++) {
+        for (let i: number = 0; i < numItems; i++) {
             if (this.game.player!.inventory.length >= 6) break; // Stop if inventory is full
 
-            const randomType = treasureTypes[Math.floor(Math.random() * treasureTypes.length)];
+            const randomType: string = treasureTypes[Math.floor(Math.random() * treasureTypes.length)];
 
             if (randomType === 'bomb') {
                 this.game.player!.inventory.push({ type: 'bomb' });
@@ -177,7 +196,7 @@ export class GameStateManager {
                     message: 'Treasure Found: Bishop Spear added to inventory.'
                 });
             } else if (randomType === 'food' && this.game.availableFoodAssets.length > 0) {
-                const randomFood = this.game.availableFoodAssets[Math.floor(Math.random() * this.game.availableFoodAssets.length)];
+                const randomFood: string = this.game.availableFoodAssets[Math.floor(Math.random() * this.game.availableFoodAssets.length)];
                 this.game.player!.inventory.push({ type: 'food', foodType: randomFood });
                 eventBus.emit(EventTypes.TREASURE_FOUND, {
                     itemType: 'food',
@@ -229,13 +248,13 @@ export class GameStateManager {
         }
 
         try {
-            const gameState = SaveSerializer.serializeGameState(this.game);
+            const gameState: SerializedGameState = SaveSerializer.serializeGameState(this.game);
 
             // Add zone generation state to save
             gameState.zoneGeneration = this.game.zoneGenState.serialize();
 
             // add metadata
-            const payload = {
+            const payload: SavePayload = {
                 version: SAVE_VERSION,
                 lastSaved: Date.now(),
                 state: gameState
@@ -267,20 +286,20 @@ export class GameStateManager {
     async loadGameState(): Promise<boolean> {
         try {
             // Try StorageAdapter first (IndexedDB with compression)
-            let payload = await this.game.storageAdapter.load(GAME_STATE_KEY);
+            let payload: SavePayload | null = await this.game.storageAdapter.load(GAME_STATE_KEY);
 
             // Fallback to localStorage if StorageAdapter didn't find anything
             if (!payload) {
-                const savedState = localStorage.getItem(GAME_STATE_KEY);
+                const savedState: string | null = localStorage.getItem(GAME_STATE_KEY);
                 if (!savedState) return false; // No saved state
-                payload = JSON.parse(savedState);
+                payload = JSON.parse(savedState) as SavePayload;
             }
 
             if (!payload) return false;
 
             // Support older saves that stored state directly (back-compat)
-            const gameState = payload && payload.state ? payload.state : payload;
-            const version = payload && payload.version ? payload.version : 1;
+            const gameState: SerializedGameState = payload && payload.state ? payload.state : payload as any;
+            const version: number = payload && payload.version ? payload.version : 1;
             // If version too new, avoid attempting to load incompatible structure
             if (version > SAVE_VERSION) {
                 logger.warn('Saved game version is newer than supported. Skipping load.');
@@ -357,28 +376,28 @@ export class GameStateManager {
     }
 
     /**
-     * Repair board-based zones that are missing terrain textures
-     * This fixes saves created before the InteriorHandler fix
+     * Repair board-based zones that are missing terrain textures.
+     * This fixes saves created before the InteriorHandler fix.
      */
     private _repairBoardZones(): void {
         // Get all zones from the repository
-        const allZones = (this.game as any).zoneRepository.entries();
+        const allZones: IterableIterator<[string, any]> = (this.game as any).zoneRepository.entries();
 
         for (const [zoneKey, zoneData] of allZones) {
             // Parse the zone key to get coordinates
             // Format: "x,y:dimension" or "x,y:dimension:depth"
-            const parts = zoneKey.split(':');
-            const [x, y] = parts[0].split(',').map(Number);
-            const dimension = parseInt(parts[1]);
+            const parts: string[] = zoneKey.split(':');
+            const [x, y]: number[] = parts[0].split(',').map(Number);
+            const dimension: number = parseInt(parts[1]);
 
             // Check if this zone should use a board and is missing terrain textures
-            const hasBoard = boardLoader.hasBoard(x, y, dimension);
+            const hasBoard: boolean = boardLoader.hasBoard(x, y, dimension);
 
             if (hasBoard && (!zoneData.terrainTextures || Object.keys(zoneData.terrainTextures).length === 0)) {
                 // This zone uses a board but is missing terrain textures - regenerate them
-                const boardData = boardLoader.getBoardSync(x, y, dimension);
+                const boardData: any = boardLoader.getBoardSync(x, y, dimension);
                 if (boardData) {
-                    const result = boardLoader.convertBoardToGrid(boardData, this.game.availableFoodAssets);
+                    const result: any = boardLoader.convertBoardToGrid(boardData, this.game.availableFoodAssets);
                     // Merge the terrain textures, overlays, rotations, and overlay rotations into the existing zone data
                     zoneData.terrainTextures = result.terrainTextures;
                     zoneData.overlayTextures = result.overlayTextures;
@@ -396,24 +415,24 @@ export class GameStateManager {
     }
 
     /**
-     * Restore the current zone's terrain textures, overlay textures, rotations, and overlay rotations to zoneGenerator
-     * This ensures custom board tiles are displayed correctly after loading a save
+     * Restore the current zone's terrain textures, overlay textures, rotations, and overlay rotations to zoneGenerator.
+     * This ensures custom board tiles are displayed correctly after loading a save.
      */
     private _restoreCurrentZoneTextures(): void {
         if (!this.game.zoneGenerator || !this.game.player) return;
 
         // Get the current zone key based on player's currentZone object
-        const currentZone = this.game.player.currentZone;
+        const currentZone: any = this.game.player.currentZone;
         if (!currentZone) return;
 
-        const zoneX = currentZone.x;
-        const zoneY = currentZone.y;
-        const dimension = currentZone.dimension || 0;
-        const depth = currentZone.depth || ((this.game.player as any).undergroundDepth || 1);
-        const zoneKey = createZoneKey(zoneX, zoneY, dimension, depth);
+        const zoneX: number = currentZone.x;
+        const zoneY: number = currentZone.y;
+        const dimension: number = currentZone.dimension || 0;
+        const depth: number = currentZone.depth || ((this.game.player as any).undergroundDepth || 1);
+        const zoneKey: string = createZoneKey(zoneX, zoneY, dimension, depth);
 
         // Get the current zone data from repository
-        const zoneData = (this.game as any).zoneRepository.getByKey(zoneKey);
+        const zoneData: any = (this.game as any).zoneRepository.getByKey(zoneKey);
         if (zoneData) {
             // Apply the zone's texture and rotation data to zoneGenerator
             this.game.zoneGenerator.terrainTextures = zoneData.terrainTextures || {};

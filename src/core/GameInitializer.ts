@@ -7,7 +7,7 @@ import { errorHandler, ErrorSeverity } from './ErrorHandler';
 import { isWithinGrid } from '@utils/GridUtils';
 import { safeCall, safeCallAsync, safeGet } from '@utils/SafeServiceCall';
 import { TileTypeChecker } from '@utils/TypeChecks';
-import type { GameContext } from './GameContext';
+import type { GameContext } from './context/GameContextCore';
 
 /**
  * GameInitializer
@@ -69,7 +69,7 @@ export class GameInitializer {
     /**
      * Handle window resize event
      */
-    handleResize(): void {
+    private handleResize(): void {
         // Update canvas on resize
         this.updateMapCanvasSize();
         // Re-render zone map
@@ -153,7 +153,7 @@ export class GameInitializer {
     /**
      * Initializes the game state, event listeners, and UI.
      */
-    async init(): Promise<void> {
+    private async init(): Promise<void> {
         // Initialize transient game state (no longer need scattered flags)
         if ((this.game as any).transientGameState) {
             (this.game as any).transientGameState.resetAll();
@@ -164,11 +164,11 @@ export class GameInitializer {
         this.game.assetLoader!.refreshFoodAssets();
 
         // Check if game was already loaded during preview (to avoid double loading)
-        let loaded = this.game.grid !== null && this.game.grid !== undefined;
+        let loaded: boolean = this.game.grid !== null && this.game.grid !== undefined;
         if (!loaded) {
             loaded = await this.game.gameStateManager!.loadGameState();
         }
-        let isNewGame = false;
+        let isNewGame: boolean = false;
         if (!loaded) {
             // No save - generate zone
             isNewGame = true;
@@ -176,14 +176,14 @@ export class GameInitializer {
 
             // Valid start tile - preserve signs and exits
             // Only check if player is within grid bounds (for new games, player may be off-screen)
-            const playerY = this.game.player!.y;
-            const playerX = this.game.player!.x;
+            const playerY: number = this.game.player!.y;
+            const playerX: number = this.game.player!.x;
             if (isWithinGrid(playerX, playerY)) {
                 const startTile = this.game.gridManager!.getTile(playerX, playerY);
                 // Don't overwrite SIGN or EXIT tiles - use TypeChecks utility
-                const isSign = TileTypeChecker.isTileType(startTile, TILE_TYPES.SIGN);
-                const isExit = TileTypeChecker.isTileType(startTile, TILE_TYPES.EXIT);
-                const shouldSetFloor = !startTile || (!isSign && !isExit);
+                const isSign: boolean = TileTypeChecker.isTileType(startTile, TILE_TYPES.SIGN);
+                const isExit: boolean = TileTypeChecker.isTileType(startTile, TILE_TYPES.EXIT);
+                const shouldSetFloor: boolean = !startTile || (!isSign && !isExit);
                 if (shouldSetFloor) {
                     this.game.gridManager!.setTile(playerX, playerY, TILE_TYPES.FLOOR);
                 }
@@ -209,8 +209,8 @@ export class GameInitializer {
                 // Fallback if grid failed
                 this.game.generateZone();
                 // Only set tile if player is within grid bounds
-                const playerY = this.game.player!.y;
-                const playerX = this.game.player!.x;
+                const playerY: number = this.game.player!.y;
+                const playerX: number = this.game.player!.x;
                 if (isWithinGrid(playerX, playerY)) {
                     this.game.gridManager!.setTile(playerX, playerY, TILE_TYPES.FLOOR);
                 }
@@ -257,7 +257,7 @@ export class GameInitializer {
         }
 
         // Disable pointer events on canvas to prevent any mouse clicks from interfering
-        const gameCanvas = document.getElementById('gameCanvas');
+        const gameCanvas: HTMLElement | null = document.getElementById('gameCanvas');
         if (gameCanvas) {
             (gameCanvas as HTMLElement).style.pointerEvents = 'none';
         }
@@ -266,18 +266,18 @@ export class GameInitializer {
         const activeListeners: Array<() => void> = [];
 
         // Helper to re-enable everything and cleanup listeners
-        const enableInput = () => {
+        const enableInput = (): void => {
             (this.game as any)._entranceAnimationInProgress = false;
             if (gameCanvas) {
                 (gameCanvas as HTMLElement).style.pointerEvents = 'auto';
             }
             // Clean up any remaining listeners
-            activeListeners.forEach(unsub => unsub());
+            activeListeners.forEach((unsub: () => void) => unsub());
             activeListeners.length = 0;
         };
 
         // Safety timeout - always re-enable input after max 10 seconds
-        const safetyTimeout = setTimeout(() => {
+        const safetyTimeout: ReturnType<typeof setTimeout> = setTimeout(() => {
             logger.warn(`[Entrance] Safety timeout triggered - re-enabling input`);
             enableInput();
         }, 10000);
@@ -308,10 +308,10 @@ export class GameInitializer {
 
                     // Search for interior port tile
                     logger.debug(`[Entrance] Searching for interior port in grid...`);
-                    for (let y = 0; y < GRID_SIZE; y++) {
-                        for (let x = 0; x < GRID_SIZE; x++) {
+                    for (let y: number = 0; y < GRID_SIZE; y++) {
+                        for (let x: number = 0; x < GRID_SIZE; x++) {
                             const tile = this.game.gridManager?.getTile(x, y);
-                            const isPort = this.game.gridManager?.isTileType(x, y, TILE_TYPES.PORT);
+                            const isPort: boolean | undefined = this.game.gridManager?.isTileType(x, y, TILE_TYPES.PORT);
 
                             if (isPort && tile && typeof tile === 'object' && 'portKind' in tile && tile.portKind === 'interior') {
                                 clubEntranceX = x;
@@ -348,10 +348,10 @@ export class GameInitializer {
 
                     // Execute first hop onto exit tile
                     // Subscribe to completion of first hop
-                    const unsubscribeHop = eventBus.on(EventTypes.INPUT_PATH_COMPLETED, () => {
+                    const unsubscribeHop: () => void = eventBus.on(EventTypes.INPUT_PATH_COMPLETED, () => {
                         // Verify player is at exit tile before continuing
                         const currentPos = this.game.player!.getPosition();
-                        const atExitTile = currentPos.x === exitSpawn.x && currentPos.y === exitSpawn.y;
+                        const atExitTile: boolean = currentPos.x === exitSpawn.x && currentPos.y === exitSpawn.y;
 
                         if (!atExitTile) {
                             logger.warn(`[Entrance] Stage 1 path completed but player not at exit tile (${exitSpawn.x},${exitSpawn.y}). Player at (${currentPos.x},${currentPos.y}). Ignoring event.`);
@@ -359,7 +359,7 @@ export class GameInitializer {
                         }
 
                         // Remove this listener from active list and unsubscribe
-                        const index = activeListeners.indexOf(unsubscribeHop);
+                        const index: number = activeListeners.indexOf(unsubscribeHop);
                         if (index > -1) activeListeners.splice(index, 1);
                         unsubscribeHop();
                         logger.debug(`[Entrance] Stage 1 complete - hopped to exit tile`);
@@ -383,10 +383,10 @@ export class GameInitializer {
                         logger.debug(`[Entrance] Found path to club with ${pathToClub.length} steps, executing...`);
 
                         // Subscribe to completion of walk to club
-                        const unsubscribeWalk = eventBus.on(EventTypes.INPUT_PATH_COMPLETED, () => {
+                        const unsubscribeWalk: () => void = eventBus.on(EventTypes.INPUT_PATH_COMPLETED, () => {
                             // Verify player reached club entrance
                             const finalPos = this.game.player!.getPosition();
-                            const atClubEntrance = finalPos.x === clubEntranceX && finalPos.y === clubEntranceY;
+                            const atClubEntrance: boolean = finalPos.x === clubEntranceX && finalPos.y === clubEntranceY;
 
                             if (!atClubEntrance) {
                                 logger.warn(`[Entrance] Stage 2 path completed but player not at club entrance (${clubEntranceX},${clubEntranceY}). Player at (${finalPos.x},${finalPos.y}). Ignoring event.`);
@@ -394,7 +394,7 @@ export class GameInitializer {
                             }
 
                             // Remove this listener from active list and unsubscribe
-                            const index = activeListeners.indexOf(unsubscribeWalk);
+                            const index: number = activeListeners.indexOf(unsubscribeWalk);
                             if (index > -1) activeListeners.splice(index, 1);
                             unsubscribeWalk();
                             logger.debug(`[Entrance] Stage 2 complete - reached club entrance`);
@@ -424,7 +424,7 @@ export class GameInitializer {
     /**
      * Sets up all event listeners for the game.
      */
-    setupEventListeners(): void {
+    private setupEventListeners(): void {
         // Input
         this.game.inputManager!.setupControls();
 
@@ -437,7 +437,7 @@ export class GameInitializer {
 
         // Save on unload (mobile & refresh)
         window.addEventListener('pagehide', () => {
-            const saved = safeCall(this.game.gameStateManager, 'saveGameStateImmediate');
+            const saved: boolean = safeCall(this.game.gameStateManager, 'saveGameStateImmediate');
             if (!saved) {
                 safeCall(this.game.gameStateManager, 'saveGameState');
             }
@@ -451,7 +451,7 @@ export class GameInitializer {
         });
 
         // Cross-tab saves
-        window.addEventListener('storage', (ev) => {
+        window.addEventListener('storage', (ev: StorageEvent) => {
             if (ev.key === null) return;
             if (ev.key === 'chress_game_state') {
                 safeCall(this.game.uiManager, 'addMessageToLog', 'Game state updated in another tab. Your session will keep running with current state.');
@@ -462,13 +462,13 @@ export class GameInitializer {
     /**
      * Sets up audio and music for the current zone.
      */
-    setupAudio(): void {
+    private setupAudio(): void {
         // Global soundManager
         (window as any).soundManager = this.game.soundManager;
 
         // Resume audio (autoplay policy)
         try {
-            safeCallAsync(this.game.soundManager, 'resumeAudioContext').catch(err => {
+            safeCallAsync(this.game.soundManager, 'resumeAudioContext').catch((err: unknown) => {
                 if (err) {
                     errorHandler.handle(err, ErrorSeverity.WARNING, {
                         component: 'GameInitializer',
@@ -486,11 +486,11 @@ export class GameInitializer {
         // Apply audio settings
         try {
             const currentZone = safeCall(this.game.player, 'getCurrentZone');
-            const dimension = safeGet(currentZone, 'dimension', 0);
+            const dimension: number = safeGet(currentZone, 'dimension', 0);
 
             // Apply player settings
-            const musicEnabled = safeGet(this.game, 'player.stats.musicEnabled', false);
-            const sfxEnabled = safeGet(this.game, 'player.stats.sfxEnabled', false);
+            const musicEnabled: boolean = safeGet(this.game, 'player.stats.musicEnabled', false);
+            const sfxEnabled: boolean = safeGet(this.game, 'player.stats.sfxEnabled', false);
 
             safeCall(this.game.soundManager, 'setMusicEnabled', !!musicEnabled);
             safeCall(this.game.soundManager, 'setSfxEnabled', !!sfxEnabled);
@@ -505,7 +505,7 @@ export class GameInitializer {
     /**
      * Exposes game instance and console commands for debugging.
      */
-    exposeToConsole(): void {
+    private exposeToConsole(): void {
         (window as any).game = this.game;
         (window as any).gameInstance = this.game;
 

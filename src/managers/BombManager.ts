@@ -7,7 +7,7 @@ import { isBomb, isTileObject, isTileObjectOfType } from '@utils/TypeChecks';
 import GridIterator from '@utils/GridIterator';
 import { safeCall } from '@utils/SafeServiceCall';
 import { Position } from '@core/Position';
-import type { IGame, ICoordinates } from '@core/GameContext';
+import type { IGame, ICoordinates } from '@core/context';
 
 interface BombTile {
     type: number;

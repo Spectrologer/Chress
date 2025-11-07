@@ -1,4 +1,4 @@
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import { logger } from '@core/logger';
 import { NoteStack } from './NoteStack';
 import { RegionNotification } from './RegionNotification';

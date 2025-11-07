@@ -1,4 +1,4 @@
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import { TILE_TYPES, INVENTORY_CONSTANTS, TIMING_CONSTANTS, UI_CONSTANTS, GRID_SIZE } from '@core/constants/index';
 import { logger } from '@core/logger';
 import { ItemMetadata, type InventoryItem } from '@managers/inventory/ItemMetadata';

@@ -10,7 +10,27 @@
  */
 
 import { store } from './StateStore';
-import LZString from 'lz-string';
+import * as LZString from 'lz-string';
+
+export interface SerializedData {
+  version: number;
+  compressed: boolean;
+  data: string;
+}
+
+export interface ZoneMetadata {
+  key: string;
+  zone: any;
+  isSpecial: boolean;
+  isCurrent: boolean;
+  timestamp: number;
+}
+
+export interface PreparedObject {
+  __type?: 'Set' | 'Map';
+  value?: any[];
+  [key: string]: any;
+}
 
 export class StatePersistence {
   private INDEXEDDB_NAME: string;
@@ -47,7 +67,7 @@ export class StatePersistence {
   /**
    * Initialize IndexedDB
    */
-  async initIndexedDB() {
+  async initIndexedDB(): Promise<void> {
     if (!window.indexedDB) {
       console.warn('IndexedDB not available, falling back to localStorage');
       this.dbError = 'IndexedDB not supported';
@@ -85,7 +105,7 @@ export class StatePersistence {
   /**
    * Wait for IndexedDB to be ready
    */
-  async waitForDB(timeout = 5000) {
+  async waitForDB(timeout: number = 5000): Promise<void> {
     const startTime = Date.now();
     while (!this.dbReady && !this.dbError) {
       if (Date.now() - startTime > timeout) {
@@ -100,10 +120,8 @@ export class StatePersistence {
 
   /**
    * Save state to storage
-   * @param {boolean} useIndexedDB - Prefer IndexedDB over localStorage
-   * @returns {Promise<boolean>} Success status
    */
-  async save(useIndexedDB = true) {
+  async save(useIndexedDB: boolean = true): Promise<boolean> {
     try {
       // Get current state
       const state = store.getSnapshot();
@@ -141,9 +159,8 @@ export class StatePersistence {
 
   /**
    * Load state from storage
-   * @returns {Promise<boolean>} Success status
    */
-  async load() {
+  async load(): Promise<boolean> {
     try {
       let serialized = null;
 
@@ -186,7 +203,7 @@ export class StatePersistence {
   /**
    * Check if saved state exists
    */
-  async hasSavedState() {
+  async hasSavedState(): Promise<boolean> {
     if (this.dbReady) {
       try {
         const data = await this.loadFromIndexedDB('currentGame');
@@ -202,7 +219,7 @@ export class StatePersistence {
   /**
    * Clear all saved state
    */
-  async clear() {
+  async clear(): Promise<void> {
     // Clear IndexedDB
     if (this.dbReady) {
       try {
@@ -222,7 +239,7 @@ export class StatePersistence {
   /**
    * Prune state to reduce storage size
    */
-  pruneState(state) {
+  pruneState(state: any): any {
     const pruned = { ...state };
 
     // Prune zones - keep only recent and special zones
@@ -252,9 +269,9 @@ export class StatePersistence {
   /**
    * Prune zones to keep only recent and special ones
    */
-  pruneZones(zones, currentZone, specialZones) {
+  pruneZones(zones: Map<string, any>, currentZone: any, specialZones: Map<string, any> | undefined): Map<string, any> {
     // Convert to array with metadata
-    const zonesArray = Array.from(zones.entries()).map(([key, zone]) => {
+    const zonesArray: ZoneMetadata[] = Array.from(zones.entries()).map(([key, zone]) => {
       const isSpecial = specialZones && specialZones.has(key);
       const isCurrent = currentZone && key === `${currentZone.x},${currentZone.y},${currentZone.dimension},${currentZone.depth}`;
 
@@ -278,7 +295,7 @@ export class StatePersistence {
 
     // Keep top N zones
     const keptZones = zonesArray.slice(0, this.MAX_ZONES_TO_KEEP);
-    const prunedMap = new Map();
+    const prunedMap = new Map<string, any>();
 
     keptZones.forEach(({ key, zone }) => {
       prunedMap.set(key, zone);
@@ -291,7 +308,7 @@ export class StatePersistence {
   /**
    * Serialize state to string
    */
-  serialize(state) {
+  serialize(state: any): SerializedData {
     // Convert Maps and Sets to arrays for JSON serialization
     const prepared = this.prepareForSerialization(state);
 
@@ -319,7 +336,7 @@ export class StatePersistence {
   /**
    * Deserialize state from string
    */
-  deserialize(serialized) {
+  deserialize(serialized: SerializedData | any): any {
     // Handle old format (direct object)
     if (!serialized.version) {
       return this.migrateOldFormat(serialized);
@@ -341,13 +358,13 @@ export class StatePersistence {
   /**
    * Prepare state for JSON serialization (Maps/Sets -> Arrays)
    */
-  prepareForSerialization(obj) {
+  prepareForSerialization(obj: any): any {
     if (obj === null || typeof obj !== 'object') return obj;
     if (obj instanceof Set) return { __type: 'Set', value: Array.from(obj) };
     if (obj instanceof Map) return { __type: 'Map', value: Array.from(obj.entries()) };
     if (Array.isArray(obj)) return obj.map(item => this.prepareForSerialization(item));
 
-    const prepared = {};
+    const prepared: Record<string, any> = {};
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         prepared[key] = this.prepareForSerialization(obj[key]);
@@ -359,13 +376,13 @@ export class StatePersistence {
   /**
    * Restore Maps and Sets from serialized format
    */
-  restoreFromSerialization(obj) {
+  restoreFromSerialization(obj: any): any {
     if (obj === null || typeof obj !== 'object') return obj;
     if (obj.__type === 'Set') return new Set(obj.value);
     if (obj.__type === 'Map') return new Map(obj.value);
     if (Array.isArray(obj)) return obj.map(item => this.restoreFromSerialization(item));
 
-    const restored = {};
+    const restored: Record<string, any> = {};
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         restored[key] = this.restoreFromSerialization(obj[key]);
@@ -377,7 +394,7 @@ export class StatePersistence {
   /**
    * Migrate old save format to new format
    */
-  migrateOldFormat(oldState) {
+  migrateOldFormat(oldState: any): any {
     console.log('📦 Migrating old save format...');
 
     // Create new state structure
@@ -446,11 +463,11 @@ export class StatePersistence {
   /**
    * Save to IndexedDB
    */
-  async saveToIndexedDB(key, data) {
+  async saveToIndexedDB(key: string, data: SerializedData): Promise<void> {
     await this.waitForDB();
 
     return new Promise<void>((resolve, reject) => {
-      const transaction = this.db.transaction([this.STORE_NAME], 'readwrite');
+      const transaction = this.db!.transaction([this.STORE_NAME], 'readwrite');
       const store = transaction.objectStore(this.STORE_NAME);
       const request = store.put(data, key);
 
@@ -462,11 +479,11 @@ export class StatePersistence {
   /**
    * Load from IndexedDB
    */
-  async loadFromIndexedDB(key) {
+  async loadFromIndexedDB(key: string): Promise<SerializedData | null> {
     await this.waitForDB();
 
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([this.STORE_NAME], 'readonly');
+    return new Promise<SerializedData | null>((resolve, reject) => {
+      const transaction = this.db!.transaction([this.STORE_NAME], 'readonly');
       const store = transaction.objectStore(this.STORE_NAME);
       const request = store.get(key);
 
@@ -478,11 +495,11 @@ export class StatePersistence {
   /**
    * Delete from IndexedDB
    */
-  async deleteFromIndexedDB(key) {
+  async deleteFromIndexedDB(key: string): Promise<void> {
     await this.waitForDB();
 
     return new Promise<void>((resolve, reject) => {
-      const transaction = this.db.transaction([this.STORE_NAME], 'readwrite');
+      const transaction = this.db!.transaction([this.STORE_NAME], 'readwrite');
       const store = transaction.objectStore(this.STORE_NAME);
       const request = store.delete(key);
 
@@ -494,7 +511,7 @@ export class StatePersistence {
   /**
    * Save to localStorage
    */
-  saveToLocalStorage(data) {
+  saveToLocalStorage(data: SerializedData): boolean {
     try {
       const json = JSON.stringify(data);
 
@@ -533,7 +550,7 @@ export class StatePersistence {
   /**
    * Load from localStorage
    */
-  loadFromLocalStorage() {
+  loadFromLocalStorage(): SerializedData | null {
     try {
       const json = localStorage.getItem(this.LOCALSTORAGE_KEY);
       if (!json) return null;
@@ -560,7 +577,7 @@ export class StatePersistence {
   /**
    * Export save data as downloadable file
    */
-  async exportSave() {
+  async exportSave(): Promise<void> {
     const state = store.getSnapshot();
     const serialized = this.serialize(state.state);
     const json = JSON.stringify(serialized, null, 2);
@@ -577,10 +594,10 @@ export class StatePersistence {
   /**
    * Import save data from file
    */
-  async importSave(file) {
-    return new Promise((resolve, reject) => {
+  async importSave(file: File): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = (e: ProgressEvent<FileReader>) => {
         try {
           const result = e.target?.result;
           if (typeof result !== 'string') {

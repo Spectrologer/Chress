@@ -1,31 +1,27 @@
-// @ts-check
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { logger } from '@core/logger';
 
-/**
- * @typedef {Object} Position
- * @property {number} x - X coordinate
- * @property {number} y - Y coordinate
- */
+export interface Position {
+    x: number;
+    y: number;
+}
 
-/**
- * @typedef {Object} ZoneInfo
- * @property {number} x - Zone X coordinate
- * @property {number} y - Zone Y coordinate
- * @property {number} dimension - Dimension (0=surface, 1=interior, 2=underground)
- * @property {number} depth - Underground depth level
- * @property {string} [portType] - Port type (optional)
- */
+export interface ZoneInfo {
+    x: number;
+    y: number;
+    dimension: number;
+    depth: number;
+    portType?: string;
+}
 
-/**
- * @typedef {Object} ZoneUpdate
- * @property {number} [x] - Zone X coordinate
- * @property {number} [y] - Zone Y coordinate
- * @property {number} [dimension] - Dimension (0, 1, or 2)
- * @property {number} [depth] - Depth level
- * @property {string} [portType] - Port type (optional)
- */
+export interface ZoneUpdate {
+    x?: number;
+    y?: number;
+    dimension?: number;
+    depth?: number;
+    portType?: string;
+}
 
 /**
  * PlayerPositionFacade - Position and zone management for player
@@ -45,9 +41,6 @@ import { logger } from '@core/logger';
 export class PlayerPositionFacade {
     private player: any;
 
-    /**
-     * @param {any} player - The player entity
-     */
     constructor(player: any) {
         if (!player) {
             throw new Error('PlayerPositionFacade requires a valid player instance');
@@ -61,85 +54,65 @@ export class PlayerPositionFacade {
 
     /**
      * Get player position as object
-     * @returns {Position} Position coordinates
      */
-    getPosition() {
+    getPosition(): Position {
         return this.player.getPosition();
     }
 
     /**
      * Set player position with validation and events
-     * @param {number} x - X coordinate
-     * @param {number} y - Y coordinate
-     * @param {boolean} emitEvent - Whether to emit PLAYER_MOVED event (default: true)
      */
-    setPosition(x, y, emitEvent = true) {
+    setPosition(x: number, y: number, emitEvent: boolean = true): void {
         this.player.setPosition(x, y, emitEvent);
     }
 
     /**
      * Get X coordinate
-     * @returns {number}
      */
-    getX() {
+    getX(): number {
         return this.player.x;
     }
 
     /**
      * Get Y coordinate
-     * @returns {number}
      */
-    getY() {
+    getY(): number {
         return this.player.y;
     }
 
     /**
      * Get last position (for interpolation/animation)
-     * @returns {Position}
      */
-    getLastPosition() {
+    getLastPosition(): Position {
         return { x: this.player.lastX, y: this.player.lastY };
     }
 
     /**
      * Update last position (for animation tracking)
-     * @param {number} x - Last X coordinate
-     * @param {number} y - Last Y coordinate
      */
-    setLastPosition(x, y) {
+    setLastPosition(x: number, y: number): void {
         this.player.lastX = x;
         this.player.lastY = y;
     }
 
     /**
      * Check if a tile is walkable from current position
-     * @param {number} x - Target X coordinate
-     * @param {number} y - Target Y coordinate
-     * @param {Array<Array>} grid - The game grid
-     * @param {number} fromX - Source X coordinate (optional)
-     * @param {number} fromY - Source Y coordinate (optional)
-     * @returns {boolean}
      */
-    isWalkable(x, y, grid, fromX = -1, fromY = -1) {
+    isWalkable(x: number, y: number, grid: any[][], fromX: number = -1, fromY: number = -1): boolean {
         return this.player.isWalkable(x, y, grid, fromX, fromY);
     }
 
     /**
      * Move player to target position
-     * @param {number} x - Target X
-     * @param {number} y - Target Y
-     * @param {Array<Array>} grid - Game grid
-     * @param {Function} onZoneTransition - Callback for zone transitions
      */
-    move(x, y, grid, onZoneTransition) {
+    move(x: number, y: number, grid: any[][], onZoneTransition: () => void): any {
         return this.player.move(x, y, grid, onZoneTransition);
     }
 
     /**
      * Ensure player is on a valid position
-     * @param {Array<Array>} grid - Game grid
      */
-    ensureValidPosition(grid) {
+    ensureValidPosition(grid: any[][]): void {
         this.player.ensureValidPosition(grid);
     }
 
@@ -149,34 +122,29 @@ export class PlayerPositionFacade {
 
     /**
      * Get current zone information (returns a copy)
-     * @returns {ZoneInfo}
      */
-    getCurrentZone() {
+    getCurrentZone(): ZoneInfo {
         return this.player.getCurrentZone();
     }
 
     /**
      * Set current zone coordinates
-     * @param {number} x - Zone X coordinate
-     * @param {number} y - Zone Y coordinate
      */
-    setCurrentZone(x, y) {
+    setCurrentZone(x: number, y: number): void {
         this.player.setCurrentZone(x, y);
     }
 
     /**
      * Get zone dimension (0=surface, 1=interior, 2=underground)
-     * @returns {number}
      */
-    getZoneDimension() {
+    getZoneDimension(): number {
         return this.player.currentZone?.dimension ?? 0;
     }
 
     /**
      * Set zone dimension with validation
-     * @param {number} dimension - Dimension value (0, 1, or 2)
      */
-    setZoneDimension(dimension) {
+    setZoneDimension(dimension: number): void {
         if (![0, 1, 2].includes(dimension)) {
             logger.warn(`PlayerPositionFacade: Invalid dimension ${dimension}, must be 0, 1, or 2`);
             return;
@@ -192,18 +160,16 @@ export class PlayerPositionFacade {
 
     /**
      * Get underground depth (atomic with zone depth)
-     * @returns {number}
      */
-    getUndergroundDepth() {
+    getUndergroundDepth(): number {
         return this.player.undergroundDepth ?? 0;
     }
 
     /**
      * Set underground depth (keeps currentZone.depth in sync)
      * IMPORTANT: This maintains consistency between undergroundDepth and currentZone.depth
-     * @param {number} depth - Depth level (0=surface, 1+=underground levels)
      */
-    setUndergroundDepth(depth) {
+    setUndergroundDepth(depth: number): void {
         if (typeof depth !== 'number' || depth < 0) {
             logger.warn(`PlayerPositionFacade: Invalid depth ${depth}, must be non-negative number`);
             return;
@@ -221,17 +187,15 @@ export class PlayerPositionFacade {
 
     /**
      * Get zone port type
-     * @returns {string|undefined}
      */
-    getPortType() {
+    getPortType(): string | undefined {
         return this.player.currentZone?.portType;
     }
 
     /**
      * Set zone port type
-     * @param {string} portType - Port type (e.g., 'interior', 'underground')
      */
-    setPortType(portType) {
+    setPortType(portType: string): void {
         if (!this.player.currentZone) {
             this.player.currentZone = { x: 0, y: 0, dimension: 0, depth: 0 };
         }
@@ -240,9 +204,8 @@ export class PlayerPositionFacade {
 
     /**
      * Atomically update zone state (prevents drift between related properties)
-     * @param {ZoneUpdate} zoneUpdate - Zone properties to update
      */
-    updateZoneState(zoneUpdate) {
+    updateZoneState(zoneUpdate: ZoneUpdate): void {
         const { x, y, dimension, depth, portType } = zoneUpdate;
 
         if (!this.player.currentZone) {
@@ -265,9 +228,8 @@ export class PlayerPositionFacade {
 
     /**
      * Mark a zone as visited
-     * @param {string} zoneKey - Zone key string
      */
-    markZoneVisited(zoneKey) {
+    markZoneVisited(zoneKey: string): void {
         if (this.player.markZoneVisited) {
             this.player.markZoneVisited(zoneKey);
         }
@@ -276,7 +238,7 @@ export class PlayerPositionFacade {
     /**
      * Trigger zone transition lifecycle
      */
-    onZoneTransition() {
+    onZoneTransition(): void {
         if (this.player.onZoneTransition) {
             this.player.onZoneTransition();
         }

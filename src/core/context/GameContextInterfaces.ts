@@ -78,19 +78,19 @@ export interface IGame {
     zoneGenState: ZoneGenerationState;
     storageAdapter: StorageAdapter;
     transientGameState?: TransientGameState;
-    displayingMessageForSign?: any;
+    displayingMessageForSign?: boolean | string | { x: number; y: number };
     radialInventorySnapshot?: InventoryItem[];
     playerFacade?: PlayerFacade;
     _entranceAnimationInProgress?: boolean;
 
     // Dynamic properties
-    zoneRepository?: any;
+    zoneRepository?: Record<string, unknown>;
     messageLog?: string[];
-    dialogueState?: Map<string, any>;
+    dialogueState?: Map<string, unknown>;
     lastExitSide?: string | null;
     _newGameSpawnPosition?: Coordinates | null;
     pendingConfirmationAction?: string;
-    pendingConfirmationData?: any;
+    pendingConfirmationData?: Record<string, unknown>;
 
     // Turn-based system state
     isPlayerTurn: boolean;

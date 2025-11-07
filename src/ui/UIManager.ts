@@ -1,4 +1,4 @@
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import type { Coordinates, ZoneCoordinates } from '@core/PositionTypes';
 import { MessageManager } from './MessageManager';
 import { PanelManager } from './PanelManager';

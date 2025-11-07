@@ -3,34 +3,10 @@ import { RENDERING_CONSTANTS } from '@core/constants/animation';
 import { RendererUtils } from './RendererUtils';
 import type { TextureManager } from './TextureManager';
 import type { SmokeAnimation } from './types';
-import type { IGame } from '@core/GameContext';
-
-interface Enemy {
-    x: number;
-    y: number;
-    lastX?: number;
-    lastY?: number;
-    health: number;
-    enemyType: string;
-    deathAnimation: number;
-    attackAnimation: number;
-    liftFrames: number;
-    bumpOffsetX: number;
-    bumpOffsetY: number;
-    liftOffsetY: number;
-    showFrozenVisual?: boolean;
-    movementDirection: number;
-    flipAnimation?: number;
-    smokeAnimations: SmokeAnimation[];
-}
-
-interface TurnManager {
-    turnQueue: Enemy[];
-}
-
-interface EnemyCollection {
-    getAll(): Enemy[];
-}
+import type { IGame } from '@core/context';
+import type { Enemy } from '@entities/Enemy';
+import type { TurnManager } from '@core/TurnManager';
+import type { EnemyCollection } from '@facades/EnemyCollection';
 
 export class EnemyRenderer {
     private game: IGame;
@@ -261,7 +237,7 @@ export class EnemyRenderer {
     drawEnemySmokeAnimation(): void {
         // Draw enemy smoke
         for (const enemy of this.game.enemies) {
-            enemy.smokeAnimations.forEach(anim => {
+            enemy.smokeAnimations.forEach((anim: SmokeAnimation) => {
                 if (anim.frame > 0) {
                     const frameNumber = Math.floor((18 - anim.frame) / 3) + 1; // Map 18 frames to 6 smoke frames
                     const smokeImage = this.game.textureManager.getImage(`smoke_frame_${frameNumber}`);

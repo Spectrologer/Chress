@@ -14,6 +14,24 @@
  */
 import { EnemyAttackHelper } from './EnemyAttackHelper';
 import { checkQueenLineOfSight, checkOrthogonalLineOfSight } from '@utils/LineOfSightUtils';
+import type { Enemy } from '@entities/Enemy';
+import type { Player } from '@entities/Player';
+import type { Grid } from '@core/SharedTypes';
+import type { SmokeAnimation } from './BaseEnemy';
+
+interface EnemyWithAttack {
+    x: number;
+    y: number;
+    enemyType: string;
+    attack: number;
+    smokeAnimations: SmokeAnimation[];
+    isWalkable(x: number, y: number, grid: Grid): boolean;
+    planMoveTowards(player: Player, grid: Grid, enemies: Enemy[], targetPos: { x: number; y: number }, isSimulation: boolean): { x: number; y: number } | null;
+    startBump(dx: number, dy: number): void;
+    justAttacked?: boolean;
+    attackAnimation?: number;
+    _suppressAttackSound?: boolean;
+}
 
 export const EnemyAttackMixin = {
     /**
@@ -44,16 +62,8 @@ export const EnemyAttackMixin = {
      * - Direction matches charge direction
      * - Player pushed 1 tile away from enemy
      * - If no valid knockback position, player stays in place
-     *
-     * @param {Player} player - The player being attacked
-     * @param {number} playerX - Player's X position
-     * @param {number} playerY - Player's Y position
-     * @param {Array<Array>} grid - Game grid
-     * @param {Array<Enemy>} enemies - All enemies (to check blocking)
-     * @param {boolean} [isSimulation=false] - If true, skip visual/audio effects
-     * @returns {boolean} True if ram attack was performed, false otherwise
      */
-    performRamFromDistance(player, playerX, playerY, grid, enemies, isSimulation = false) {
+    performRamFromDistance(this: EnemyWithAttack, player: Player, playerX: number, playerY: number, grid: Grid, enemies: Enemy[], isSimulation: boolean = false): boolean {
         // Check if player is on diagonal line
         const sameDiagonal = Math.abs(this.x - playerX) === Math.abs(this.y - playerY) &&
                             (playerX !== this.x) && (playerY !== this.y);
@@ -144,13 +154,8 @@ export const EnemyAttackMixin = {
      * - Orthogonal only (N/S/E/W)
      * - Ignores other enemies (they don't block)
      * - Must have walkable path
-     *
-     * @param {number} playerX - Player's X position
-     * @param {number} playerY - Player's Y position
-     * @param {Array<Array>} grid - Game grid
-     * @returns {{x: number, y: number}|null} Next position or null if no valid move
      */
-    checkRamAttack(playerX, playerY, grid) {
+    checkRamAttack(this: EnemyWithAttack, playerX: number, playerY: number, grid: Grid): { x: number; y: number } | null {
         // Validate orthogonal line-of-sight (rook-like movement)
         const hasLineOfSight = checkOrthogonalLineOfSight(
             this.x, this.y,
@@ -193,15 +198,8 @@ export const EnemyAttackMixin = {
     /**
      * Checks if enemy can attack a specific position.
      * Used for AI decision-making and threat assessment.
-     *
-     * @param {Player} player - The player
-     * @param {number} px - Target X position
-     * @param {number} py - Target Y position
-     * @param {Array<Array>} grid - Game grid
-     * @param {Array<Enemy>} enemies - All enemies
-     * @returns {boolean} True if position can be attacked
      */
-    canAttackPosition(player, px, py, grid, enemies) {
+    canAttackPosition(this: EnemyWithAttack, player: Player, px: number, py: number, grid: Grid, enemies: Enemy[]): boolean {
         return this.planMoveTowards(player, grid, enemies, { x: px, y: py }, true) === null;
     },
 
@@ -229,13 +227,8 @@ export const EnemyAttackMixin = {
      * - Direction continues the charge momentum
      * - Pushes player 1 tile in charge direction
      * - If no valid knockback tile, player stays in place
-     *
-     * @param {Player} player - The player being attacked
-     * @param {number} playerX - Player's X position
-     * @param {number} playerY - Player's Y position
-     * @param {Array<Array>} grid - Game grid
      */
-    performQueenCharge(player, playerX, playerY, grid) {
+    performQueenCharge(this: EnemyWithAttack, player: Player, playerX: number, playerY: number, grid: Grid): void {
         // Calculate direction to player
         const dx = playerX - this.x;
         const dy = playerY - this.y;

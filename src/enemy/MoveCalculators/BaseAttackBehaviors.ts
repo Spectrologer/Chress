@@ -13,6 +13,8 @@
  * - Maintainability: Single source of truth for attack logic
  */
 
+import type { Position, Enemy, Player, Game } from './base';
+
 declare global {
     interface Window {
         soundManager?: {
@@ -22,116 +24,54 @@ declare global {
 }
 
 /**
- * @typedef {Object} Position
- * @property {number} x
- * @property {number} y
- */
-
-/**
- * @typedef {Object} Enemy
- * @property {number} x
- * @property {number} y
- * @property {number} attack
- * @property {string} enemyType
- * @property {boolean} [justAttacked]
- * @property {number} [attackAnimation]
- * @property {Function} startBump
- * @property {Array<{x: number, y: number, frame: number}>} smokeAnimations
- */
-
-/**
- * @typedef {Object} Player
- * @property {number} x
- * @property {number} y
- * @property {Function} takeDamage
- * @property {Function} startBump
- * @property {Function} [isDead]
- */
-
-/**
- * @typedef {Object} Game
- * @property {boolean} [playerJustAttacked]
- */
-
-/**
  * Distance calculation utilities
  */
 export const DistanceUtils = {
     /**
      * Calculate Manhattan distance (sum of absolute differences)
      * Used for orthogonal movement (rook-like)
-     * @param {number} x1 - Start X
-     * @param {number} y1 - Start Y
-     * @param {number} x2 - End X
-     * @param {number} y2 - End Y
-     * @returns {number} Manhattan distance
      */
-    manhattan(x1, y1, x2, y2) {
+    manhattan(x1: number, y1: number, x2: number, y2: number): number {
         return Math.abs(x2 - x1) + Math.abs(y2 - y1);
     },
 
     /**
      * Calculate Chebyshev distance (max of absolute differences)
      * Used for 8-way movement and adjacency checks
-     * @param {number} x1 - Start X
-     * @param {number} y1 - Start Y
-     * @param {number} x2 - End X
-     * @param {number} y2 - End Y
-     * @returns {number} Chebyshev distance
      */
-    chebyshev(x1, y1, x2, y2) {
+    chebyshev(x1: number, y1: number, x2: number, y2: number): number {
         return Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
     },
 
     /**
      * Check if two positions are adjacent (Chebyshev distance = 1)
-     * @param {number} x1 - First X
-     * @param {number} y1 - First Y
-     * @param {number} x2 - Second X
-     * @param {number} y2 - Second Y
-     * @returns {boolean} True if adjacent
      */
-    isAdjacent(x1, y1, x2, y2) {
+    isAdjacent(x1: number, y1: number, x2: number, y2: number): boolean {
         return this.chebyshev(x1, y1, x2, y2) === 1;
     },
 
     /**
      * Check if two positions are diagonally adjacent (both dx and dy are 1)
-     * @param {number} x1 - First X
-     * @param {number} y1 - First Y
-     * @param {number} x2 - Second X
-     * @param {number} y2 - Second Y
-     * @returns {boolean} True if diagonally adjacent
      */
-    isDiagonallyAdjacent(x1, y1, x2, y2) {
-        const dx = Math.abs(x2 - x1);
-        const dy = Math.abs(y2 - y1);
+    isDiagonallyAdjacent(x1: number, y1: number, x2: number, y2: number): boolean {
+        const dx: number = Math.abs(x2 - x1);
+        const dy: number = Math.abs(y2 - y1);
         return dx === 1 && dy === 1;
     },
 
     /**
      * Check if two positions are orthogonally adjacent (one axis differs by 1, other is 0)
-     * @param {number} x1 - First X
-     * @param {number} y1 - First Y
-     * @param {number} x2 - Second X
-     * @param {number} y2 - Second Y
-     * @returns {boolean} True if orthogonally adjacent
      */
-    isOrthogonallyAdjacent(x1, y1, x2, y2) {
-        const dx = Math.abs(x2 - x1);
-        const dy = Math.abs(y2 - y1);
+    isOrthogonallyAdjacent(x1: number, y1: number, x2: number, y2: number): boolean {
+        const dx: number = Math.abs(x2 - x1);
+        const dy: number = Math.abs(y2 - y1);
         return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
     },
 
     /**
      * Get deltas between two positions
-     * @param {number} x1 - Start X
-     * @param {number} y1 - Start Y
-     * @param {number} x2 - End X
-     * @param {number} y2 - End Y
-     * @returns {{dx: number, dy: number}} Deltas
      */
-    getDeltas(x1, y1, x2, y2) {
+    getDeltas(x1: number, y1: number, x2: number, y2: number): { dx: number; dy: number } {
         return {
             dx: Math.abs(x2 - x1),
             dy: Math.abs(y2 - y1)
@@ -146,13 +86,21 @@ export const SimulationGuards = {
     /**
      * Check if we should skip visual/audio effects during simulation
      * Use this as an early return in attack methods to prevent animations during AI pathfinding
-     * @param {boolean} isSimulation - Whether this is a simulation
-     * @returns {boolean} True if we should skip effects
      */
-    shouldSkipEffects(isSimulation) {
+    shouldSkipEffects(isSimulation: boolean): boolean {
         return isSimulation === true;
     }
 };
+
+type PerformAttackFn = (
+    enemy: Enemy,
+    player: Player,
+    playerX: number,
+    playerY: number,
+    grid: null,
+    enemies: null,
+    game: Game | null
+) => void;
 
 /**
  * Standard attack behavior implementations
@@ -161,16 +109,16 @@ export const AttackBehaviors = {
     /**
      * Perform a standard adjacent attack (used by most enemy types)
      * Deals damage, plays sound, triggers bump animations
-     *
-     * @param {Enemy} enemy - Attacking enemy
-     * @param {Player} player - Target player
-     * @param {number} playerX - Player X position
-     * @param {number} playerY - Player Y position
-     * @param {boolean} isSimulation - Skip effects if true
-     * @param {Game|null} game - Game instance
-     * @param {Function} performAttackFn - The actual performAttack function from calculator
      */
-    performAdjacentAttack(enemy, player, playerX, playerY, isSimulation, game, performAttackFn) {
+    performAdjacentAttack(
+        enemy: Enemy,
+        player: Player,
+        playerX: number,
+        playerY: number,
+        isSimulation: boolean,
+        game: Game | null,
+        performAttackFn: PerformAttackFn
+    ): void {
         if (SimulationGuards.shouldSkipEffects(isSimulation)) return;
         performAttackFn(enemy, player, playerX, playerY, null, null, game);
     },
@@ -178,16 +126,16 @@ export const AttackBehaviors = {
     /**
      * Perform a diagonal attack (used by zard, lizardy)
      * Similar to adjacent but specifically for diagonal positions
-     *
-     * @param {Enemy} enemy - Attacking enemy
-     * @param {Player} player - Target player
-     * @param {number} playerX - Player X position
-     * @param {number} playerY - Player Y position
-     * @param {boolean} isSimulation - Skip effects if true
-     * @param {Game|null} game - Game instance
-     * @param {Function} performAttackFn - The actual performAttack function from calculator
      */
-    performDiagonalAttack(enemy, player, playerX, playerY, isSimulation, game, performAttackFn) {
+    performDiagonalAttack(
+        enemy: Enemy,
+        player: Player,
+        playerX: number,
+        playerY: number,
+        isSimulation: boolean,
+        game: Game | null,
+        performAttackFn: PerformAttackFn
+    ): void {
         if (SimulationGuards.shouldSkipEffects(isSimulation)) return;
         performAttackFn(enemy, player, playerX, playerY, null, null, game);
     },
@@ -195,16 +143,12 @@ export const AttackBehaviors = {
     /**
      * Perform a bump attack without damage (used by lizardy)
      * Only plays animation and sound, no damage dealt
-     *
-     * @param {Enemy} enemy - Attacking enemy
-     * @param {Player} player - Target player
-     * @param {boolean} isSimulation - Skip effects if true
      */
-    performBumpAttack(enemy, player, isSimulation) {
+    performBumpAttack(enemy: Enemy, player: Player, isSimulation: boolean): void {
         if (SimulationGuards.shouldSkipEffects(isSimulation)) return;
 
         player.startBump(enemy.x - player.x, enemy.y - player.y);
-        enemy.startBump(player.x - enemy.x, player.y - enemy.y);
+        enemy.startBump!(player.x - enemy.x, player.y - enemy.y);
 
         // Use type-safe window access for soundManager
         if (typeof window !== 'undefined' && window.soundManager) {
@@ -220,12 +164,11 @@ export const ChargeMoveHelpers = {
     /**
      * Handle the result of a charge move execution
      * Common pattern: if charge succeeds, return result; otherwise continue with normal movement
-     *
-     * @param {Position|false|null} chargeResult - Result from charge execution
-     * @param {Function} fallbackMoveFn - Function to call if charge fails
-     * @returns {Position|null} Move result
      */
-    handleChargeResult(chargeResult, fallbackMoveFn) {
+    handleChargeResult(
+        chargeResult: Position | false | null,
+        fallbackMoveFn: () => Position | null
+    ): Position | null {
         if (chargeResult !== false) {
             return chargeResult;
         }
@@ -240,21 +183,15 @@ export const AttackValidation = {
     /**
      * Check if enemy should attack player at given position
      * Handles special cases for different enemy types
-     *
-     * @param {Enemy} enemy - The enemy
-     * @param {number} playerX - Player X
-     * @param {number} playerY - Player Y
-     * @param {Game|null} game - Game instance
-     * @returns {boolean} True if should attack
      */
-    shouldAttackPlayer(enemy, playerX, playerY, game) {
+    shouldAttackPlayer(enemy: Enemy, playerX: number, playerY: number, game: Game | null): boolean {
         // Don't attack if player just attacked
         if (game && game.playerJustAttacked) {
             return false;
         }
 
-        const dx = Math.abs(enemy.x - playerX);
-        const dy = Math.abs(enemy.y - playerY);
+        const dx: number = Math.abs(enemy.x - playerX);
+        const dy: number = Math.abs(enemy.y - playerY);
 
         // Special case: lizardeaux (rook) can't attack diagonally
         if (enemy.enemyType === 'lizardeaux' && dx === 1 && dy === 1) {
@@ -271,13 +208,8 @@ export const AttackValidation = {
 
     /**
      * Check if positions match (for attack range validation)
-     * @param {number} x1 - First X
-     * @param {number} y1 - First Y
-     * @param {number} x2 - Second X
-     * @param {number} y2 - Second Y
-     * @returns {boolean} True if positions match
      */
-    positionsMatch(x1, y1, x2, y2) {
+    positionsMatch(x1: number, y1: number, x2: number, y2: number): boolean {
         return x1 === x2 && y1 === y2;
     }
 };

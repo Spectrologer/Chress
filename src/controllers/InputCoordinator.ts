@@ -11,7 +11,7 @@ import { EventTypes } from '@core/EventTypes';
 import { TileRegistry } from '@core/TileRegistry';
 import { getTileType, isTileObject } from '@utils/TileUtils';
 import { Position } from '@core/Position';
-import type { GameContext } from '@core/GameContext';
+import type { GameContext } from '@core/context';
 import type { InventoryService } from '@managers/inventory/InventoryService';
 import type { TileObject } from '@core/SharedTypes';
 

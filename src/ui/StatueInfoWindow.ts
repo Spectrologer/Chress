@@ -1,4 +1,4 @@
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 import { Sign } from './Sign';
 import { EventListenerManager } from '@utils/EventListenerManager';
 

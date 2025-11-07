@@ -3,7 +3,7 @@
  * Verifies that dialogue state persists across multiple interactions
  */
 
-import { Sign } from '../ui/Sign.js';
+import { Sign } from '../ui/Sign\.ts';
 import * as NPCLoader from '@core/NPCLoader';
 
 // Mock character data for testing

@@ -1,4 +1,4 @@
-import { UIEventCoordinator } from '../ui/UIEventCoordinator.js';
+import { UIEventCoordinator } from '../ui/UIEventCoordinator\.ts';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 

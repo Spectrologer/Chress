@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * Tactical adjustment functions for enemy cooperative behavior.
  *
@@ -9,46 +8,16 @@
  * - Anti-Stacking: Avoid blocking allies
  */
 
-/**
- * @typedef {Object} Position
- * @property {number} x - X coordinate
- * @property {number} y - Y coordinate
- */
-
-/**
- * @typedef {Object} Enemy
- * @property {number} x - Enemy X position
- * @property {number} y - Enemy Y position
- * @property {string} enemyType - Enemy type identifier
- * @property {Function} isWalkable - Check if position is walkable
- * @property {Array<{x: number, y: number, frame: number}>} smokeAnimations - Smoke trail animations
- */
-
-/**
- * @typedef {Object} Player
- * @property {number} x - Player X position
- * @property {number} y - Player Y position
- */
-
-/**
- * @typedef {Object} TacticalAI
- * @property {Function} calculateAllyDistance - Calculate distance to nearest allies
- * @property {Function} calculateDirectionDiversity - Calculate spread around target
- * @property {Function} isStackedBehind - Check if position stacks behind other enemies
- * @property {Function} getDefensiveMoves - Get defensive retreat positions
- */
-
-/**
- * @typedef {Array<Array<number>>} Grid
- */
-
-/**
- * @typedef {Object} Game
- * @property {*} [data] - Game data
- */
-
 import { GRID_SIZE } from '@core/constants/index';
 import { EnemyPathfinding } from '@enemy/EnemyPathfinding';
+import type { Position, Enemy, Player, Grid, Game } from './base';
+
+export interface TacticalAI {
+    calculateAllyDistance: (x: number, y: number, enemies: Enemy[], currentEnemy: Enemy) => number;
+    calculateDirectionDiversity: (x: number, y: number, playerX: number, playerY: number, enemies: Enemy[], currentEnemy: Enemy) => number;
+    isStackedBehind: (x: number, y: number, playerX: number, playerY: number, enemies: Enemy[], currentEnemy: Enemy) => boolean;
+    getDefensiveMoves: (enemy: Enemy, playerX: number, playerY: number, proposedX: number, proposedY: number, grid: Grid, enemies: Enemy[]) => Position[];
+}
 
 /**
  * Adjusts enemy movement to improve tactical positioning through better
@@ -72,17 +41,16 @@ import { EnemyPathfinding } from '@enemy/EnemyPathfinding';
  * Use Case:
  * Called after basic pathfinding to refine positions for cooperative play.
  * Prevents enemies from all attacking from the same direction.
- *
- * @param {TacticalAI|null} tacticalAI - The tactical AI system instance
- * @param {Enemy} enemy - The enemy evaluating the move
- * @param {Position} next - The proposed next position
- * @param {number} playerX - Player's X position
- * @param {number} playerY - Player's Y position
- * @param {Grid} grid - Game grid for walkability checks
- * @param {Enemy[]} enemies - All enemies for tactical calculations
- * @returns {Position} Adjusted position (or original if no better option)
  */
-export function applyTacticalAdjustments(tacticalAI, enemy, next, playerX, playerY, grid, enemies) {
+export function applyTacticalAdjustments(
+    tacticalAI: TacticalAI | null,
+    enemy: Enemy,
+    next: Position,
+    playerX: number,
+    playerY: number,
+    grid: Grid,
+    enemies: Enemy[]
+): Position {
     if (!tacticalAI) return next;
 
     // Evaluate tactical metrics of the proposed move
@@ -151,21 +119,20 @@ export function applyTacticalAdjustments(tacticalAI, enemy, next, playerX, playe
  * Smoke Animation:
  * Added when defensive retreat covers >1 tile (Chebyshev distance).
  * Places smoke at midpoint for visual feedback of multi-tile movement.
- *
- * @param {TacticalAI|null} tacticalAI - The tactical AI system instance
- * @param {Enemy} enemy - The enemy evaluating defensive options
- * @param {Player} player - The player (threat source)
- * @param {Position} next - Proposed next position
- * @param {number} playerX - Player's X position
- * @param {number} playerY - Player's Y position
- * @param {Grid} grid - Game grid for walkability checks
- * @param {Enemy[]} enemies - All enemies (to avoid occupied tiles)
- * @param {boolean} isSimulation - If true, skip visual effects (logging/animation)
- * @param {Game|null} game - Game instance (unused but kept for API consistency)
- * @param {any} logger - Logger for debug output
- * @returns {Position} Defensive position or original move
  */
-export function applyDefensiveMoves(tacticalAI, enemy, player, next, playerX, playerY, grid, enemies, isSimulation, game, logger) {
+export function applyDefensiveMoves(
+    tacticalAI: TacticalAI | null,
+    enemy: Enemy,
+    player: Player,
+    next: Position,
+    playerX: number,
+    playerY: number,
+    grid: Grid,
+    enemies: Enemy[],
+    isSimulation: boolean,
+    game: Game | null,
+    logger: any
+): Position {
     if (!tacticalAI) return next;
 
     // Special case: Lizord (knight) can bump attack the player

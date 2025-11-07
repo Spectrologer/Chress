@@ -1,7 +1,7 @@
 import { Sign } from '@ui/Sign';
 import { validateLoadedGrid } from '@generators/GeneratorUtils';
 import { logger } from './logger';
-import type { GameContext } from './GameContext';
+import type { GameContext } from './context/GameContextCore';
 import type { SavedPlayerData, SavedPlayerStats, SaveGameData } from './SharedTypes';
 import type { ZoneRepository } from '@repositories/ZoneRepository';
 import type { EnemyData } from '@entities/Enemy';

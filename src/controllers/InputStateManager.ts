@@ -1,4 +1,4 @@
-import type { GameContext, Item } from '@core/GameContext';
+import type { GameContext, Item } from '@core/context';
 import type { InventoryItem } from '@managers/inventory/ItemMetadata';
 
 interface HighlightedTile {

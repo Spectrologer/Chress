@@ -1,6 +1,6 @@
-import { BarterWindow } from '../ui/BarterWindow.js';
-import { Player } from '../entities/Player.js';
-import { Sign } from '../ui/Sign.js';
+import { BarterWindow } from '../ui/BarterWindow\.ts';
+import { Player } from '../entities/Player\.ts';
+import { Sign } from '../ui/Sign\.ts';
 import * as NPCLoader from '../core/NPCLoader';
 
 // Mock NPC data

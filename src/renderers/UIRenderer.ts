@@ -1,7 +1,7 @@
 import { TILE_SIZE } from '@core/constants/index';
 import { COLOR_CONSTANTS } from '@core/constants/rendering';
 import type { TextureManager } from './TextureManager';
-import type { IGame } from '@core/GameContext';
+import type { IGame } from '@core/context';
 
 interface TransientGameState {
     isBombPlacementMode(): boolean;

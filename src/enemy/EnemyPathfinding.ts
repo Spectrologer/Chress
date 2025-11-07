@@ -48,14 +48,22 @@ export class EnemyPathfinding {
      * @param {Function} isWalkableFunc - Function(x, y, grid) -> boolean
      * @returns {Array<{x, y}>|null} Path array or null if unreachable
      */
-    static findPath(startX, startY, targetX, targetY, grid, enemyType, isWalkableFunc) {
+    static findPath(
+        startX: number,
+        startY: number,
+        targetX: number,
+        targetY: number,
+        grid: unknown[][],
+        enemyType: string,
+        isWalkableFunc: (x: number, y: number, grid: unknown[][]) => boolean
+    ): Array<{ x: number; y: number }> | null {
         // Get movement directions specific to this enemy type
-        const directions = this.getMovementDirectionsForType(enemyType);
+        const directions: Array<{ x: number; y: number }> = this.getMovementDirectionsForType(enemyType);
 
         // BFS data structures
-        const visited = new Set();           // Tracks explored positions
-        const parent = new Map();            // child position -> parent position
-        const queue = [{ x: startX, y: startY }];  // BFS queue (FIFO)
+        const visited = new Set<string>();           // Tracks explored positions
+        const parent = new Map<string, { x: number; y: number } | null>();            // child position -> parent position
+        const queue: Array<{ x: number; y: number }> = [{ x: startX, y: startY }];  // BFS queue (FIFO)
 
         // Initialize starting position
         visited.add(`${startX},${startY}`);
@@ -63,18 +71,20 @@ export class EnemyPathfinding {
 
         // BFS exploration loop
         while (queue.length > 0) {
-            const current = queue.shift();  // FIFO: explore earliest added position
+            const current: { x: number; y: number } | undefined = queue.shift();  // FIFO: explore earliest added position
+
+            if (!current) continue;
 
             // Check if we reached the target
             if (current.x === targetX && current.y === targetY) {
                 // Reconstruct path by backtracking through parents
-                const path = [];
-                let pos = current;
+                const path: Array<{ x: number; y: number }> = [];
+                let pos: { x: number; y: number } | null = current;
 
                 while (pos) {
                     path.unshift(pos);  // Add to front (reverse order)
-                    const key = `${pos.x},${pos.y}`;
-                    pos = parent.get(key);  // Move to parent
+                    const key: string = `${pos.x},${pos.y}`;
+                    pos = parent.get(key) ?? null;  // Move to parent
                 }
 
                 // path[0] = start, path[1] = next move, path[n] = target
@@ -83,9 +93,9 @@ export class EnemyPathfinding {
 
             // Explore all neighbors from current position
             for (const dir of directions) {
-                const nx = current.x + dir.x;
-                const ny = current.y + dir.y;
-                const key = `${nx},${ny}`;
+                const nx: number = current.x + dir.x;
+                const ny: number = current.y + dir.y;
+                const key: string = `${nx},${ny}`;
 
                 // Only visit if unvisited and walkable
                 if (!visited.has(key) && isWalkableFunc(nx, ny, grid)) {
@@ -143,7 +153,7 @@ export class EnemyPathfinding {
      * @param {string} enemyType - The enemy type identifier
      * @returns {Array<{x: number, y: number}>} Array of direction vectors
      */
-    static getMovementDirectionsForType(enemyType) {
+    static getMovementDirectionsForType(enemyType: string): Array<{ x: number; y: number }> {
         // King-like: 8-way movement (orthogonal + diagonal)
         if (enemyType === 'lizardo' || enemyType === 'lazord') {
             return [
@@ -220,7 +230,7 @@ export class EnemyPathfinding {
     }
 
     // Get movement directions for rendering arrows (instance method compatibility)
-    static getMovementDirections(enemyType) {
+    static getMovementDirections(enemyType: string): Array<{ x: number; y: number }> {
         return this.getMovementDirectionsForType(enemyType);
     }
 }
