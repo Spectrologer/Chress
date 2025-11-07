@@ -30,7 +30,7 @@ interface Enemy {
     y: number;
     health: number;
     enemyType: string;
-    movementDirection: number;
+    movementDirection?: number;
     isWalkable(x: number, y: number, grid: Grid): boolean;
 }
 

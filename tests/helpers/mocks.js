@@ -83,6 +83,7 @@ export function createMockEnemy(overrides = {}) {
         takeDamage: vi.fn(),
         getPoints: vi.fn().mockReturnValue(10),
         move: vi.fn(),
+        isDead: vi.fn().mockReturnValue(false),
 
         ...overrides,
     };

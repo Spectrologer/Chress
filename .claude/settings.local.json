@@ -23,7 +23,10 @@
       "Bash(printf:*)",
       "Bash(\"c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\core\\GameContext.ts\")",
       "Bash(xargs:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npx type-coverage --detail --at-least 0)",
+      "Bash(git commit:*)",
+      "Bash(npx type-coverage:*)"
     ],
     "deny": [],
     "ask": []

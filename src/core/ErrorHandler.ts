@@ -16,7 +16,7 @@ export const ErrorSeverity = {
 
 export type ErrorSeverityValue = typeof ErrorSeverity[keyof typeof ErrorSeverity];
 
-export interface ErrorContext extends Record<string, any> {
+export interface ErrorContext extends Record<string, unknown> {
     component?: string;
     action?: string;
     timestamp?: string;

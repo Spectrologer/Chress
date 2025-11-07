@@ -8,12 +8,44 @@ import type { Coordinates, ZoneCoordinates } from '@core/PositionTypes';
 import type { Enemy } from '@entities/Enemy';
 import type { Player } from '@entities/Player';
 
+// Tile types (for backwards compatibility)
+export interface TileObject {
+    type: number;
+    uses?: number;
+    message?: string;
+    foodType?: string;
+    enemyType?: string;
+    name?: string;
+    icon?: string;
+    npcType?: string;
+    direction?: string;
+    discovered?: boolean;
+    [key: string]: unknown;
+}
+
+// Zone Data interface
+export interface ZoneData {
+    grid?: (number | TileObject | null)[][];
+    enemies?: unknown[];
+    discovered?: boolean;
+    [key: string]: unknown;
+}
+
+// NPC interface
+export interface NPC {
+    x: number;
+    y: number;
+    type: string;
+    name?: string;
+    [key: string]: unknown;
+}
+
 // Sound Manager interface
 export interface SoundManager {
     playSound(soundId: string): void;
     stopMusic?(): void;
     playMusic?(trackId: string): void;
-    setMusicForZone?(options: { dimension: number } | any): void;
+    setMusicForZone?(options: { dimension: number; zone?: string }): void;
     resumeAudioContext?(): Promise<void>;
     setMusicEnabled?(enabled: boolean): void;
     setSfxEnabled?(enabled: boolean): void;
@@ -60,27 +92,27 @@ export interface SignData {
 // Grid Manager interface
 export interface GridManager {
     getSize(): number;
-    getTile(x: number, y: number): any;
-    setTile(x: number, y: number, tileType: any): void;
-    forEachTile?(callback: (tile: any, x: number, y: number) => void): void;
-    iterateTiles?(callback: (tile: any, x: number, y: number) => void): void;
+    getTile(x: number, y: number): number | TileObject | null | undefined;
+    setTile(x: number, y: number, tileType: number | TileObject | null): void;
+    forEachTile?(callback: (tile: number | TileObject | null | undefined, x: number, y: number) => void): void;
+    iterateTiles?(callback: (tile: number | TileObject | null | undefined, x: number, y: number) => void): void;
 }
 
 // Zone Manager interface (simplified for compatibility)
 export interface ZoneManager {
     getCurrentZone?(): Coordinates;
-    getZoneAt?(x: number, y: number): any;
+    getZoneAt?(x: number, y: number): ZoneData | undefined;
     handlePortTransition?(direction: string): void;
     handleExitTap?(exitX?: number, exitY?: number): void;
-    checkForZoneTransitionGesture?(pos: Position): boolean;
-    isTransitionEligible?(): boolean;
-    [key: string]: any; // Allow additional properties
+    checkForZoneTransitionGesture?(tapCoords: Coordinates | Position, playerPos?: Coordinates | Position): boolean;
+    isTransitionEligible?(gridCoords?: Coordinates, playerPos?: Coordinates): boolean;
+    [key: string]: unknown; // Allow additional properties
 }
 
 // NPC Manager interface
 export interface NPCManager {
-    getNPCs(): any[];
-    getNPCAt(x: number, y: number): any;
+    getNPCs(): NPC[];
+    getNPCAt(x: number, y: number): NPC | null | undefined;
     interactWithPenne?(): void;
     interactWithSquig?(): void;
     interactWithRune?(): void;
@@ -91,14 +123,16 @@ export interface NPCManager {
     interactWithAxelotl?(): void;
     interactWithGouge?(): void;
     interactWithForge?(): void;
-    interactWithDynamicNPC?(npc: any): void;
+    interactWithDynamicNPC?(npc: NPC): void;
     forceInteractAt?(x: number, y: number): void;
 }
 
 // Item type definitions
 export interface BaseItem {
     type: string;
-    [key: string]: any;
+    name?: string;
+    icon?: string;
+    [key: string]: unknown;
 }
 
 export interface FoodItem extends BaseItem {
@@ -117,7 +151,8 @@ export interface Item {
     type: string;
     name?: string;
     icon?: string;
-    [key: string]: any;
+    uses?: number;
+    [key: string]: unknown;
 }
 
 // Game Instance interface - consolidates all game systems
@@ -136,7 +171,7 @@ export interface GameInstance {
     currentZone?: Coordinates;
 
     // Allow for additional properties
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 // IGame interface for backward compatibility
@@ -152,7 +187,7 @@ export interface IGame extends GameInstance {
 export type ICoordinates = Coordinates;
 
 // Tile type
-export type Tile = number | object | any;
+export type Tile = number | TileObject | null | undefined;
 
 // Grid type
-export type Grid = any[][];
+export type Grid = Tile[][];

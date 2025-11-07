@@ -1,18 +1,18 @@
 interface Logger {
-  log(...args: any[]): void;
+  log(...args: unknown[]): void;
   isDebug(): boolean;
-  debug(...args: any[]): void;
-  info(...args: any[]): void;
-  warn(...args: any[]): void;
-  error(...args: any[]): void;
-  formatError(error: Error | any): string;
-  errorWithContext(error: Error | any, context?: Record<string, any>): void;
+  debug(...args: unknown[]): void;
+  info(...args: unknown[]): void;
+  warn(...args: unknown[]): void;
+  error(...args: unknown[]): void;
+  formatError(error: Error | unknown): string;
+  errorWithContext(error: Error | unknown, context?: Record<string, unknown>): void;
 }
 
 export const logger: Logger = {
-  log(...args: any[]): void {
+  log(...args: unknown[]): void {
     // Always show general logs
-     
+
     console.log(...args);
   },
 
@@ -30,24 +30,24 @@ export const logger: Logger = {
     return false;
   },
 
-  debug(...args: any[]): void {
+  debug(...args: unknown[]): void {
     if (this.isDebug()) {
-       
+
       console.log(...args);
     }
   },
 
-  info(...args: any[]): void {
-     
+  info(...args: unknown[]): void {
+
     console.info(...args);
   },
 
-  warn(...args: any[]): void {
-     
+  warn(...args: unknown[]): void {
+
     console.warn(...args);
   },
 
-  error(...args: any[]): void {
+  error(...args: unknown[]): void {
     // Enhanced error logging that handles Error objects properly
     const processedArgs = args.map(arg => {
       if (arg instanceof Error) {
@@ -81,7 +81,7 @@ export const logger: Logger = {
    * @param error - The error to format
    * @returns Formatted error message
    */
-  formatError(error: Error | any): string {
+  formatError(error: Error | unknown): string {
     if (!(error instanceof Error)) {
       return String(error);
     }
@@ -100,7 +100,7 @@ export const logger: Logger = {
    * @param error - The error to log
    * @param context - Additional context (component, action, etc.)
    */
-  errorWithContext(error: Error | any, context: Record<string, any> = {}): void {
+  errorWithContext(error: Error | unknown, context: Record<string, unknown> = {}): void {
     const contextStr = Object.entries(context)
       .map(([key, value]) => `${key}=${value}`)
       .join(', ');
