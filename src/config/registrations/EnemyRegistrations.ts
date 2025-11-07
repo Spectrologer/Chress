@@ -5,18 +5,6 @@
 import { ContentRegistry } from '@core/ContentRegistry';
 import { SPAWN_PROBABILITIES } from '@core/constants/index';
 
-interface EnemySpawnRules {
-    level1: number;
-    level2: number;
-    level3: number;
-    level4: number;
-}
-
-interface EnemyStats {
-    health: number;
-    damage: number;
-}
-
 /**
  * Register all enemies with the ContentRegistry
  */

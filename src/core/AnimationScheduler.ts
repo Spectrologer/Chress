@@ -73,6 +73,13 @@ export class AnimationSequence {
     }
 
     /**
+     * Get the sequence ID
+     */
+    getId(): number {
+        return this.id;
+    }
+
+    /**
      * Add a delay step to the sequence
      * @param {number} ms - Milliseconds to wait
      * @returns {AnimationSequence} This sequence for chaining

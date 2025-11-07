@@ -14,7 +14,16 @@
       "Bash(npx tsc:*)",
       "Bash(dir:*)",
       "Bash(nul)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run lint:fix:*)",
+      "Bash(find:*)",
+      "Bash(findstr:*)",
+      "Bash(printf:*)",
+      "Bash(\"c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chress\\src\\core\\GameContext.ts\")",
+      "Bash(xargs:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

@@ -101,7 +101,7 @@ export const StateActions = {
   /**
    * Change zone
    */
-  changeZone(x: number, y: number, dimension: string, depth: number = 0): void {
+  changeZone(x: number, y: number, dimension: string, depth = 0): void {
     const oldZone = store.get('persistent.player.currentZone');
     const newZone = { x, y, dimension, depth };
 
@@ -172,7 +172,7 @@ export const StateActions = {
   /**
    * Mark player as having just attacked
    */
-  setPlayerAttacked(attacked: boolean = true): void {
+  setPlayerAttacked(attacked = true): void {
     store.set('transient.combat.playerJustAttacked', attacked, 'set_player_attacked');
   },
 
@@ -295,7 +295,7 @@ export const StateActions = {
   /**
    * Set pitfall zone state
    */
-  setPitfallZone(active: boolean, turnsRemaining: number = 0): void {
+  setPitfallZone(active: boolean, turnsRemaining = 0): void {
     store.batchSet({
       'transient.zoneTransition.pitfallZoneActive': active,
       'transient.zoneTransition.pitfallTurnsRemaining': turnsRemaining
@@ -391,7 +391,7 @@ export const StateActions = {
   /**
    * Set spawn flag
    */
-  setSpawnFlag(flag: string, value: boolean = true): void {
+  setSpawnFlag(flag: string, value = true): void {
     store.set(`session.zoneGeneration.spawnFlags.${flag}`, value, 'set_spawn_flag');
   },
 

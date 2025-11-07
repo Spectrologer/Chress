@@ -3,7 +3,7 @@
   "name": "Block",
   "type": "dialogue",
   "metadata": {
-    "description": "Straightlaced. Hates weird stuff. Never jaywalks.",
+    "description": "Cube who makes puns.",
     "created": "2025-11-03T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Rules exist for a reason. I follow them. ALL of them. That's how society functions properly.",
-        "buttonText": "Very proper."
+        "text": "Getting around is so hard here! I'm trying to get squared away.",
+        "buttonText": "What."
       },
       {
         "id": "msg_1",
-        "text": "Did you just... did you just walk on the grass? There's a SIGN. Right there. Unbelievable.",
+        "text": "No matter where I go, I'm blocked on all sides.",
         "buttonText": "Sorry?"
       },
       {
         "id": "msg_2",
-        "text": "Weird stuff? Can't stand it. Keep things normal, keep things orderly. That's my motto.",
+        "text": "I'm a cube.",
         "buttonText": "Noted."
       }
     ]

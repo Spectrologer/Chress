@@ -3,6 +3,7 @@ import { getDeltaToDirection } from '@core/utils/DirectionUtils';
 import audioManager from '@utils/AudioManager';
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
 import { getTileType, isTileObject } from '@utils/TypeChecks';
+import type { GameContext } from '@core/GameContext';
 
 interface PointerInfo {
     startX: number;
@@ -36,7 +37,7 @@ interface PointerResult {
  * - Convert screen coordinates to grid coordinates
  */
 export class GestureDetector {
-    private game: any;
+    private game: GameContext;
 
     // Pointer tracking state
     private activePointers: Map<number, PointerInfo>;
@@ -64,7 +65,7 @@ export class GestureDetector {
     private _boundPointerUp: ((e: PointerEvent) => void) | null;
     private _boundPointerCancel: ((e: PointerEvent) => void) | null;
 
-    constructor(game: any) {
+    constructor(game: GameContext) {
         this.game = game;
 
         // Pointer tracking state

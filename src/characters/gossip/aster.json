@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "The stars whisper secrets to those who listen... though mostly they complain about light pollution.",
-        "buttonText": "Mystical..."
+        "text": "What's YOUR star sign?",
+        "buttonText": "You."
       },
       {
         "id": "msg_1",
-        "text": "Your constellation suggests great fortune. Or maybe just indigestion. The celestial signs are unclear.",
+        "text": "Enemies have an increased spawn during mercury retrograde.",
         "buttonText": "I see."
       },
       {
         "id": "msg_2",
-        "text": "I've mapped every star in the sky. Turns out most of them have already burned out. Very metaphorical.",
+        "text": "I know I'm a star, but I'm worried I'll never be a *star*.",
         "buttonText": "Deep."
       }
     ]

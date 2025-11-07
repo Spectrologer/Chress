@@ -45,10 +45,10 @@ interface SerializedState {
 }
 
 export class ZoneGenerationState {
-    zoneCounter: number = 0;
-    enemyCounter: number = 0;
+    zoneCounter = 0;
+    enemyCounter = 0;
     spawnFlags: SpawnFlags;
-    firstWildsZonePlaced: boolean = false;
+    firstWildsZonePlaced = false;
     spawnLocations: SpawnLocations;
 
     constructor() {
@@ -165,7 +165,7 @@ export class ZoneGenerationState {
     /**
      * Mark an item/feature as spawned
      */
-    setSpawnFlag(flag: keyof SpawnFlags, value: boolean = true): void {
+    setSpawnFlag(flag: keyof SpawnFlags, value = true): void {
         this.spawnFlags[flag] = value;
     }
 

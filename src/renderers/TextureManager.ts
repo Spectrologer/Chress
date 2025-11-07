@@ -5,11 +5,12 @@ import { TileRenderer } from './TileRenderer';
 import { MultiTileHandler } from './MultiTileHandler';
 import { logger } from '@core/logger';
 import type { ImageCache } from './types';
+import type { Tile } from '@core/SharedTypes';
 
 export class TextureManager {
     private loader: TextureLoader;
     renderer: TileRenderer | null = null;
-    structureRenderer: any = null;
+    structureRenderer: unknown = null;
     onAllImagesLoaded: (() => void) | null = null;
 
     constructor() {
@@ -45,8 +46,8 @@ export class TextureManager {
         ctx: CanvasRenderingContext2D,
         x: number,
         y: number,
-        tileType: any,
-        grid: any,
+        tileType: Tile,
+        grid: unknown,
         zoneLevel: number,
         terrainTextures: Record<string, string> = {},
         rotations: Record<string, number> = {}
@@ -56,7 +57,8 @@ export class TextureManager {
         } else {
             // Fallback rendering if renderer is not initialized
             logger.warn('[TextureManager] Renderer not initialized, using fallback rendering');
-            const tileColor = TILE_COLORS[tileType] || TILE_COLORS[TILE_TYPES.FLOOR] || '#ffcb8d';
+            const tileTypeNum = typeof tileType === 'number' ? tileType : (typeof tileType === 'object' && tileType !== null ? (tileType as any).type : TILE_TYPES.FLOOR);
+            const tileColor = TILE_COLORS[tileTypeNum] || TILE_COLORS[TILE_TYPES.FLOOR] || '#ffcb8d';
             ctx.fillStyle = tileColor;
             ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }

@@ -97,7 +97,7 @@ export class ItemRepository {
     /**
      * Decrement quantity or uses for an item and remove if depleted
      */
-    decrementAndCleanup(player: Player, item: InventoryItem, amount: number = 1): boolean {
+    decrementAndCleanup(player: Player, item: InventoryItem, amount = 1): boolean {
         if (!player || !item) return false;
 
         // Decrement uses or quantity
@@ -251,7 +251,7 @@ export class ItemRepository {
      * @param amount - Amount to decrement (default 1)
      * @returns True if successfully decremented
      */
-    decrementItemByType(player: Player, itemType: string, amount: number = 1): boolean {
+    decrementItemByType(player: Player, itemType: string, amount = 1): boolean {
         if (!player || !itemType) return false;
 
         // Try main inventory first - use null to preserve slot positions

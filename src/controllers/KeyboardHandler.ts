@@ -7,12 +7,13 @@ import { findValidPlacement } from '@generators/GeneratorUtils';
 import { TILE_TYPES } from '@core/constants/index';
 import { ContentRegistry } from '@core/ContentRegistry';
 import type { Position } from '@core/Position';
+import type { GameContext } from '@core/GameContext';
 
 interface KeyPressResult {
     type: 'cancel_path' | 'movement';
     newX?: number;
     newY?: number;
-    currentPos?: any;
+    currentPos?: Position;
 }
 
 /**
@@ -25,7 +26,7 @@ interface KeyPressResult {
  * - Trigger appropriate game actions
  */
 export class KeyboardHandler {
-    private game: any;
+    private game: GameContext;
 
     // Audio state
     private _audioResumed: boolean;
@@ -42,7 +43,7 @@ export class KeyboardHandler {
     // Path execution check callback (deprecated)
     private onPathExecutionCheck?: () => boolean;
 
-    constructor(game: any) {
+    constructor(game: GameContext) {
         this.game = game;
 
         // Audio state
@@ -106,7 +107,7 @@ export class KeyboardHandler {
 
     private _handleKeyDown(event: KeyboardEvent): void {
         this._resumeAudioIfNeeded();
-        try { this.handleKeyPress(event); } catch (e) {}
+        try { this.handleKeyPress(event); } catch {}
     }
 
     /**
@@ -188,7 +189,7 @@ export class KeyboardHandler {
                 newX++;
                 break;
             case 'k':
-                try { this.game.player.startBackflip(); } catch (e) {}
+                try { this.game.player.startBackflip(); } catch {}
                 return null;
             case '1':
                 this.spawnEnemyAtPlayerPosition('lizardy');
@@ -225,7 +226,7 @@ export class KeyboardHandler {
                 }
                 audioManager.playSound('bloop', { game: this.game });
             }
-        } catch (e) {}
+        } catch {}
 
         // Return movement info
         return { type: 'movement', newX, newY, currentPos };
@@ -386,6 +387,6 @@ export class KeyboardHandler {
             if (this.game?.soundManager?.resumeAudioContext) {
                 this.game.soundManager.resumeAudioContext();
             }
-        } catch (e) {}
+        } catch {}
     }
 }

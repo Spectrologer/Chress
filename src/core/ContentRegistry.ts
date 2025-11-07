@@ -221,7 +221,7 @@ export class ContentRegistry {
     /**
      * Get items eligible for spawning in a zone
      */
-    static getSpawnableItems(zoneLevel: number, dimension: number, depth: number = 1): ItemDefinition[] {
+    static getSpawnableItems(zoneLevel: number, dimension: number, depth = 1): ItemDefinition[] {
         return Array.from(this.items.values()).filter(item => {
             if (item.spawnWeight! <= 0) return false;
 

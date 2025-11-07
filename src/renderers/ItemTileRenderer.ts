@@ -400,7 +400,7 @@ export class ItemTileRenderer {
         pixelY: number,
         color: string,
         emoji: string,
-        fontSize: number = 32
+        fontSize = 32
     ): void {
         // Fallback to colored square with emoji
         ctx.fillStyle = color;

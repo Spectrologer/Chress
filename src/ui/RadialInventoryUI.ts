@@ -6,6 +6,12 @@ import { ItemMetadata } from '@managers/inventory/ItemMetadata';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { EventListenerManager } from '@utils/EventListenerManager';
+import type { InventoryService } from '@managers/inventory/InventoryService';
+
+interface UseItemOptions {
+    fromRadial?: boolean;
+    isDoubleClick?: boolean;
+}
 
 interface InventoryItem {
     type: string;
@@ -29,12 +35,12 @@ interface InputManager {
 }
 
 interface InventoryInteractionHandler {
-    handleItemUse(item: InventoryItem, options: any): void;
+    handleItemUse(item: InventoryItem, options: UseItemOptions): void;
 }
 
 export class RadialInventoryUI {
     private game: IGame;
-    private inventoryService: any;
+    private inventoryService: InventoryService;
     public open: boolean;
     private container: HTMLDivElement | null;
     // Map of slot elements to item indexes
@@ -42,7 +48,7 @@ export class RadialInventoryUI {
     private _openedAt: number | null;
     private eventManager: EventListenerManager;
 
-    constructor(game: IGame, inventoryService: any) {
+    constructor(game: IGame, inventoryService: InventoryService) {
         this.game = game;
         this.inventoryService = inventoryService;
         this.open = false;

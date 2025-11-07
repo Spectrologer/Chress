@@ -24,7 +24,7 @@ export class DialogueManager {
     /**
     * Show sign or NPC dialogue message
     */
-    showDialogue(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null, category: string = 'unknown', portraitBackground?: string): void {
+    showDialogue(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null, category = 'unknown', portraitBackground?: string): void {
         if (!this.messageOverlay) return;
 
         // Clear any overlay timeouts to prevent auto-hiding

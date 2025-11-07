@@ -25,7 +25,7 @@ export class CombatActionManager {
     /**
      * Finds a usable item of the specified type in player's inventory
      */
-    public findUsableItem(itemType: string, includeRadial: boolean = false): InventoryItem | null {
+    public findUsableItem(itemType: string, includeRadial = false): InventoryItem | null {
         // Use facade for inventory access
         const inventoryItems = this.game.playerFacade.getInventory() as InventoryItem[];
         const radialItems = includeRadial ? (this.game.playerFacade.getRadialInventory() as InventoryItem[]) : [];
@@ -33,7 +33,7 @@ export class CombatActionManager {
         return allItems.find(item => item && item.type === itemType && ('uses' in item) && typeof item.uses === 'number' && item.uses > 0 && !item.disabled) || null;
     }
 
-    public isValidBishopSpearCharge(gridCoords: Position, playerPos: Position, includeRadial: boolean = false): ChargeDetails | null {
+    public isValidBishopSpearCharge(gridCoords: Position, playerPos: Position, includeRadial = false): ChargeDetails | null {
         const bishopSpearItem = this.findUsableItem('bishop_spear', includeRadial);
         if (!bishopSpearItem) return null;
 
@@ -55,7 +55,7 @@ export class CombatActionManager {
         return null;
     }
 
-    public isValidHorseIconCharge(gridCoords: Position, playerPos: Position, includeRadial: boolean = false): ChargeDetails | null {
+    public isValidHorseIconCharge(gridCoords: Position, playerPos: Position, includeRadial = false): ChargeDetails | null {
         const horseIconItem = this.findUsableItem('horse_icon', includeRadial);
         if (!horseIconItem) return null;
 
@@ -79,7 +79,7 @@ export class CombatActionManager {
         return null;
     }
 
-    public isValidBowShot(gridCoords: Position, playerPos: Position, includeRadial: boolean = false): ChargeDetails | null {
+    public isValidBowShot(gridCoords: Position, playerPos: Position, includeRadial = false): ChargeDetails | null {
         const bowItem = this.findUsableItem('bow', includeRadial);
         if (!bowItem) return null;
 

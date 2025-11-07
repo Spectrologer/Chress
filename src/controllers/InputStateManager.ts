@@ -1,3 +1,6 @@
+import type { GameContext, Item } from '@core/GameContext';
+import type { InventoryItem } from '@managers/inventory/ItemMetadata';
+
 interface HighlightedTile {
     x: number | null;
     y: number | null;
@@ -18,12 +21,12 @@ interface PendingCharge {
  * - Provide state query methods for other components
  */
 export class InputStateManager {
-    private game: any;
+    private game: GameContext;
 
     // Visual feedback state
     public lastHighlightedTile: HighlightedTile;
 
-    constructor(game: any) {
+    constructor(game: GameContext) {
         this.game = game;
 
         // Visual feedback state
@@ -53,7 +56,7 @@ export class InputStateManager {
     /**
      * Get active shovel item
      */
-    getActiveShovel(): any {
+    getActiveShovel(): Item | null {
         return this.game.activeShovel;
     }
 
@@ -138,6 +141,6 @@ export class InputStateManager {
      * Check if there are any living enemies
      */
     hasLivingEnemies(): boolean {
-        return this.game.enemies?.some((e: any) => e.health > 0) ?? false;
+        return this.game.enemies?.some((e) => e.health > 0) ?? false;
     }
 }

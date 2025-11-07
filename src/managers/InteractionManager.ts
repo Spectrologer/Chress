@@ -4,6 +4,7 @@ import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { Position } from '@core/Position';
 import type { IGame, ICoordinates } from '@core/GameContext';
+import type { TileObject } from '@core/SharedTypes';
 import type { InputManager } from './InputManager';
 import type { NPCManager } from './NPCManager';
 import type { EnvironmentalInteractionManager } from './EnvironmentalInteractionManager';
@@ -18,6 +19,13 @@ import type { EnemyCollection } from '@facades/EnemyCollection';
 import type { PlayerFacade } from '@facades/PlayerFacade';
 import type { InventoryUI } from '@ui/InventoryUI';
 import type { CombatManager } from './CombatManager';
+
+// Extended game interface for legacy properties
+interface IGameWithLegacyProps extends IGame {
+    justEnteredZone?: boolean;
+    isInPitfallZone?: boolean;
+    pitfallTurnsSurvived?: number;
+}
 
 interface InteractionFacade {
     inputManager: InputManager;
@@ -49,7 +57,7 @@ export class InteractionManager {
     public combatManager: CombatActionManager;
     private bombManager: BombManager;
     private terrainManager: TerrainInteractionManager;
-    private zoneManager: ZoneManager;
+    public zoneManager: ZoneManager; // Public for external access from PathfindingController and PlayerMovement
     private itemPickupManager: ItemPickupManager;
     private interactionHandlers: InteractionHandler[];
 
@@ -83,20 +91,12 @@ export class InteractionManager {
         this.itemPickupManager = worldFacade.itemPickupManager;
 
         // Register interaction handlers for handleTap
+        // Handlers are checked in order - first match wins
         this.interactionHandlers = [
             (gridCoords, playerPos) => this.bombManager.handleBombPlacement(gridCoords),
-            (gridCoords, playerPos) => this.npcManager.interactWithPenne(gridCoords),
-            (gridCoords, playerPos) => this.npcManager.interactWithSquig(gridCoords),
-            (gridCoords, playerPos) => this.npcManager.interactWithRune(gridCoords),
-            (gridCoords, playerPos) => this.npcManager.interactWithNib(gridCoords),
-            (gridCoords, playerPos) => this.npcManager.interactWithMark(gridCoords),
-            (gridCoords, playerPos) => this.npcManager.interactWithCrayn(gridCoords),
-            (gridCoords, playerPos) => this.npcManager.interactWithFelt(gridCoords),
-            (gridCoords, playerPos) => this.npcManager.interactWithAxelotl(gridCoords),
-            (gridCoords, playerPos) => this.npcManager.interactWithGouge(gridCoords),
-            (gridCoords, playerPos) => this.npcManager.interactWithForge(gridCoords),
-            // Dynamic NPC handler for all NPCs registered in ContentRegistry (e.g., gossip NPCs)
-            (gridCoords, playerPos) => this.npcManager.interactWithDynamicNPC(gridCoords),
+            // Single generic NPC handler - handles both hardcoded NPCs and dynamic NPCs from ContentRegistry
+            // This replaces 10+ individual NPC handler calls (interactWithPenne, interactWithSquig, etc.)
+            (gridCoords, playerPos) => this.handleNPCInteraction(gridCoords),
             (gridCoords, playerPos) => this.environmentManager.handleSignTap(Position.from(gridCoords)),
             (gridCoords, playerPos) => this.environmentManager.handleStatueTap(Position.from(gridCoords)),
             (gridCoords, playerPos) => this.bombManager.triggerBombExplosion(Position.from(gridCoords), Position.from(playerPos)),
@@ -160,6 +160,35 @@ export class InteractionManager {
         ];
     }
 
+    /**
+     * Generic NPC interaction handler that consolidates all NPC interactions
+     * Tries all known NPC types in order until one handles the interaction
+     * This eliminates the need for individual handler registrations
+     */
+    private handleNPCInteraction(gridCoords: ICoordinates): boolean {
+        // List of all hardcoded NPCs that need to be checked
+        // Order matters - check specific NPCs first, then dynamic registry
+        const hardcodedNPCs = [
+            'penne', 'squig', 'rune', 'nib', 'mark',
+            'crayn', 'felt', 'axelotl', 'gouge', 'forge'
+        ];
+
+        // Try each hardcoded NPC interaction
+        for (const npcName of hardcodedNPCs) {
+            // Use the NPCManager's generic method to check this NPC type
+            const method = `interactWith${npcName.charAt(0).toUpperCase() + npcName.slice(1)}` as keyof NPCManager;
+            if (typeof this.npcManager[method] === 'function') {
+                const npcMethod = this.npcManager[method] as unknown as (coords: ICoordinates) => boolean;
+                if (npcMethod.call(this.npcManager, gridCoords)) {
+                    return true;
+                }
+            }
+        }
+
+        // Finally try dynamic NPCs from ContentRegistry
+        return this.npcManager.interactWithDynamicNPC(gridCoords);
+    }
+
     // Consolidated interaction delegation methods
     checkPenneInteraction(): boolean {
         // Example: delegate to NPC manager or handle directly
@@ -177,8 +206,12 @@ export class InteractionManager {
     }
 
     useMapNote(): boolean {
-        // Use InventoryUI instead of inventoryManager
-        return (this.game.inventoryUI as any)?.useMapNote?.() ?? false;
+        // Call useMapNote on the game context
+        if (typeof this.game.useMapNote === 'function') {
+            this.game.useMapNote();
+            return true;
+        }
+        return false;
     }
 
     handleTap(gridCoords: ICoordinates): boolean {
@@ -235,7 +268,7 @@ export class InteractionManager {
         try {
             if (playerPos.equals(clickedPos)) {
                 const tileUnderPlayer = playerPos.getTile(this.game.grid);
-                const tileType = (typeof tileUnderPlayer === 'object' && (tileUnderPlayer as any)?.type !== undefined) ? (tileUnderPlayer as any).type : tileUnderPlayer;
+                const tileType = (typeof tileUnderPlayer === 'object' && (tileUnderPlayer as TileObject)?.type !== undefined) ? (tileUnderPlayer as TileObject).type : tileUnderPlayer;
                 if (tileType === TILE_TYPES.PORT) {
                     console.log('[InteractionManager] PORT tile detected, calling handlePortTransition');
                     try { this.zoneManager.handlePortTransition(); } catch (e) { console.error('[InteractionManager] PORT transition error:', e); }
@@ -305,12 +338,13 @@ export class InteractionManager {
                     }
 
                 // Trigger enemy turns (unless we just entered a zone)
-                if ((this.game as any).justEnteredZone) {
-                    (this.game as any).justEnteredZone = false;
+                const gameWithLegacy = this.game as IGameWithLegacyProps;
+                if (gameWithLegacy.justEnteredZone) {
+                    gameWithLegacy.justEnteredZone = false;
                 } else {
                     try { this.game.startEnemyTurns?.(); } catch (e) {}
-                    if ((this.game as any).isInPitfallZone) {
-                        (this.game as any).pitfallTurnsSurvived++;
+                    if (gameWithLegacy.isInPitfallZone) {
+                        gameWithLegacy.pitfallTurnsSurvived = (gameWithLegacy.pitfallTurnsSurvived ?? 0) + 1;
                     }
                 }
 

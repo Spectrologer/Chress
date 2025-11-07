@@ -22,7 +22,9 @@ import { ZoneEventEmitter } from './ZoneEventEmitter';
 import { ZoneGenerationOrchestrator } from './ZoneGenerationOrchestrator';
 import { ZonePersistenceManager } from './ZonePersistenceManager';
 import type { Coordinates } from '@core/PositionTypes';
+import { Position } from '@core/Position';
 import type { IGame } from '@core/GameContext';
+import type { Game } from '@core/game';
 import type { Player } from '@entities/Player';
 import type { PlayerFacade } from '@facades/PlayerFacade';
 import type { EnemyCollection } from '@facades/EnemyCollection';
@@ -34,6 +36,7 @@ import type { ConnectionManager } from './ConnectionManager';
 import type { TransientGameState } from '@state/TransientGameState';
 import type { ServiceContainer } from '@core/ServiceContainer';
 import type { NPCRenderer } from '@renderers/NPCRenderer';
+import type { ZoneTransitionManager } from './ZoneTransitionManager';
 
 interface EnemyData {
     x: number;
@@ -81,11 +84,11 @@ export class ZoneManager {
      */
     constructor(game: IGame) {
         this.game = game;
-        this.transitionCoordinator = new ZoneTransitionCoordinator(game as any);
-        this.treasureManager = new ZoneTreasureManager(game as any);
-        this.eventEmitter = new ZoneEventEmitter(game as any);
-        this.generationOrchestrator = new ZoneGenerationOrchestrator(game as any, this.transitionCoordinator);
-        this.persistenceManager = new ZonePersistenceManager(game as any);
+        this.transitionCoordinator = new ZoneTransitionCoordinator(game as Game);
+        this.treasureManager = new ZoneTreasureManager(game as Game);
+        this.eventEmitter = new ZoneEventEmitter(game as Game);
+        this.generationOrchestrator = new ZoneGenerationOrchestrator(game as Game, this.transitionCoordinator);
+        this.persistenceManager = new ZonePersistenceManager(game as Game);
     }
 
     /**
@@ -176,9 +179,12 @@ export class ZoneManager {
     checkForZoneTransitionGesture(tapCoords: Coordinates, playerPos: Coordinates): boolean {
         // This is typically handled by ZoneTransitionManager, but for compatibility
         // we check if the game has a zoneTransitionManager
-        const zoneTransitionManager = (this.game as any).zoneTransitionManager;
+        const game = this.game as Game;
+        const zoneTransitionManager = game.zoneTransitionManager as ZoneTransitionManager | undefined;
         if (zoneTransitionManager && typeof zoneTransitionManager.checkForZoneTransitionGesture === 'function') {
-            return zoneTransitionManager.checkForZoneTransitionGesture(tapCoords, playerPos);
+            const tapPos = new Position(tapCoords.x, tapCoords.y);
+            const playerPosition = new Position(playerPos.x, playerPos.y);
+            return zoneTransitionManager.checkForZoneTransitionGesture(tapPos, playerPosition);
         }
         return false;
     }
@@ -192,9 +198,12 @@ export class ZoneManager {
      * @returns True if transition is eligible
      */
     isTransitionEligible(gridCoords: Coordinates, playerPos: Coordinates): boolean {
-        const zoneTransitionManager = (this.game as any).zoneTransitionManager;
+        const game = this.game as Game;
+        const zoneTransitionManager = game.zoneTransitionManager as ZoneTransitionManager | undefined;
         if (zoneTransitionManager && typeof zoneTransitionManager.isTransitionEligible === 'function') {
-            return zoneTransitionManager.isTransitionEligible(gridCoords, playerPos);
+            const gridPosition = new Position(gridCoords.x, gridCoords.y);
+            const playerPosition = new Position(playerPos.x, playerPos.y);
+            return zoneTransitionManager.isTransitionEligible(gridPosition, playerPosition);
         }
         return false;
     }
@@ -204,7 +213,8 @@ export class ZoneManager {
      * Delegates to ZoneTransitionManager if available.
      */
     handlePortTransition(): void {
-        const zoneTransitionManager = (this.game as any).zoneTransitionManager;
+        const game = this.game as Game;
+        const zoneTransitionManager = game.zoneTransitionManager as ZoneTransitionManager | undefined;
         if (zoneTransitionManager && typeof zoneTransitionManager.handlePortTransition === 'function') {
             zoneTransitionManager.handlePortTransition();
         }
@@ -218,7 +228,8 @@ export class ZoneManager {
      * @param exitY - Y coordinate of exit
      */
     handleExitTap(exitX: number, exitY: number): void {
-        const zoneTransitionManager = (this.game as any).zoneTransitionManager;
+        const game = this.game as Game;
+        const zoneTransitionManager = game.zoneTransitionManager as ZoneTransitionManager | undefined;
         if (zoneTransitionManager && typeof zoneTransitionManager.handleExitTap === 'function') {
             zoneTransitionManager.handleExitTap(exitX, exitY);
         }

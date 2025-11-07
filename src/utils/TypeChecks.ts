@@ -434,80 +434,80 @@ export function isStatue(tile: Tile): boolean {
 // ========================================
 
 // Core utilities
-export const getTileType = (...args: any[]) => TileTypeChecker.getTileType(...args);
-export const isTileObject = (...args: any[]) => TileTypeChecker.isTileObject(...args);
-export const isTileType = (...args: any[]) => TileTypeChecker.isTileType(...args);
-export const isValidTile = (...args: any[]) => TileTypeChecker.isValidTile(...args);
+export const getTileType = (tile: Tile) => TileTypeChecker.getTileType(tile);
+export const isTileObject = (tile: any) => TileTypeChecker.isTileObject(tile);
+export const isTileType = (tile: Tile, tileType: number) => TileTypeChecker.isTileType(tile, tileType);
+export const isValidTile = (tile: Tile) => TileTypeChecker.isValidTile(tile);
 
 // Tile type checkers
-export const isFloor = (...args: any[]) => TileTypeChecker.isFloor(...args);
-export const isWall = (...args: any[]) => TileTypeChecker.isWall(...args);
-export const isGrass = (...args: any[]) => TileTypeChecker.isGrass(...args);
-export const isExit = (...args: any[]) => TileTypeChecker.isExit(...args);
-export const isRock = (...args: any[]) => TileTypeChecker.isRock(...args);
-export const isHouse = (...args: any[]) => TileTypeChecker.isHouse(...args);
-export const isShack = (...args: any[]) => TileTypeChecker.isShack(...args);
-export const isWater = (...args: any[]) => TileTypeChecker.isWater(...args);
-export const isFood = (...args: any[]) => TileTypeChecker.isFood(...args);
-export const isShrubbery = (...args: any[]) => TileTypeChecker.isShrubbery(...args);
-export const isWell = (...args: any[]) => TileTypeChecker.isWell(...args);
-export const isDeadTree = (...args: any[]) => TileTypeChecker.isDeadTree(...args);
-export const isAxe = (...args: any[]) => TileTypeChecker.isAxe(...args);
-export const isHammer = (...args: any[]) => TileTypeChecker.isHammer(...args);
-export const isBishopSpear = (...args: any[]) => TileTypeChecker.isBishopSpear(...args);
-export const isBow = (...args: any[]) => TileTypeChecker.isBow(...args);
-export const isShovel = (...args: any[]) => TileTypeChecker.isShovel(...args);
-export const isBomb = (...args: any[]) => TileTypeChecker.isBomb(...args);
-export const isHeart = (...args: any[]) => TileTypeChecker.isHeart(...args);
-export const isNote = (...args: any[]) => TileTypeChecker.isNote(...args);
-export const isBookOfTimeTravel = (...args: any[]) => TileTypeChecker.isBookOfTimeTravel(...args);
-export const isHorseIcon = (...args: any[]) => TileTypeChecker.isHorseIcon(...args);
-export const isSign = (...args: any[]) => TileTypeChecker.isSign(...args);
-export const isPort = (...args: any[]) => TileTypeChecker.isPort(...args);
-export const isCistern = (...args: any[]) => TileTypeChecker.isCistern(...args);
-export const isPitfall = (...args: any[]) => TileTypeChecker.isPitfall(...args);
-export const isTable = (...args: any[]) => TileTypeChecker.isTable(...args);
-export const isBombStatue = (...args: any[]) => TileTypeChecker.isBombStatue(...args);
-export const isSpearStatue = (...args: any[]) => TileTypeChecker.isSpearStatue(...args);
-export const isBowStatue = (...args: any[]) => TileTypeChecker.isBowStatue(...args);
-export const isHorseStatue = (...args: any[]) => TileTypeChecker.isHorseStatue(...args);
-export const isBookStatue = (...args: any[]) => TileTypeChecker.isBookStatue(...args);
-export const isShovelStatue = (...args: any[]) => TileTypeChecker.isShovelStatue(...args);
+export const isFloor = (tile: Tile) => TileTypeChecker.isFloor(tile);
+export const isWall = (tile: Tile) => TileTypeChecker.isWall(tile);
+export const isGrass = (tile: Tile) => TileTypeChecker.isGrass(tile);
+export const isExit = (tile: Tile) => TileTypeChecker.isExit(tile);
+export const isRock = (tile: Tile) => TileTypeChecker.isRock(tile);
+export const isHouse = (tile: Tile) => TileTypeChecker.isHouse(tile);
+export const isShack = (tile: Tile) => TileTypeChecker.isShack(tile);
+export const isWater = (tile: Tile) => TileTypeChecker.isWater(tile);
+export const isFood = (tile: Tile) => TileTypeChecker.isFood(tile);
+export const isShrubbery = (tile: Tile) => TileTypeChecker.isShrubbery(tile);
+export const isWell = (tile: Tile) => TileTypeChecker.isWell(tile);
+export const isDeadTree = (tile: Tile) => TileTypeChecker.isDeadTree(tile);
+export const isAxe = (tile: Tile) => TileTypeChecker.isAxe(tile);
+export const isHammer = (tile: Tile) => TileTypeChecker.isHammer(tile);
+export const isBishopSpear = (tile: Tile) => TileTypeChecker.isBishopSpear(tile);
+export const isBow = (tile: Tile) => TileTypeChecker.isBow(tile);
+export const isShovel = (tile: Tile) => TileTypeChecker.isShovel(tile);
+export const isBomb = (tile: Tile) => TileTypeChecker.isBomb(tile);
+export const isHeart = (tile: Tile) => TileTypeChecker.isHeart(tile);
+export const isNote = (tile: Tile) => TileTypeChecker.isNote(tile);
+export const isBookOfTimeTravel = (tile: Tile) => TileTypeChecker.isBookOfTimeTravel(tile);
+export const isHorseIcon = (tile: Tile) => TileTypeChecker.isHorseIcon(tile);
+export const isSign = (tile: Tile) => TileTypeChecker.isSign(tile);
+export const isPort = (tile: Tile) => TileTypeChecker.isPort(tile);
+export const isCistern = (tile: Tile) => TileTypeChecker.isCistern(tile);
+export const isPitfall = (tile: Tile) => TileTypeChecker.isPitfall(tile);
+export const isTable = (tile: Tile) => TileTypeChecker.isTable(tile);
+export const isBombStatue = (tile: Tile) => TileTypeChecker.isBombStatue(tile);
+export const isSpearStatue = (tile: Tile) => TileTypeChecker.isSpearStatue(tile);
+export const isBowStatue = (tile: Tile) => TileTypeChecker.isBowStatue(tile);
+export const isHorseStatue = (tile: Tile) => TileTypeChecker.isHorseStatue(tile);
+export const isBookStatue = (tile: Tile) => TileTypeChecker.isBookStatue(tile);
+export const isShovelStatue = (tile: Tile) => TileTypeChecker.isShovelStatue(tile);
 
 // Tile category checkers
-export const isWalkable = (...args: any[]) => TileTypeChecker.isWalkable(...args);
-export const isItem = (...args: any[]) => TileTypeChecker.isItem(...args);
-export const isChoppable = (...args: any[]) => TileTypeChecker.isChoppable(...args);
-export const isBreakable = (...args: any[]) => TileTypeChecker.isBreakable(...args);
+export const isWalkable = (tile: Tile) => TileTypeChecker.isWalkable(tile);
+export const isItem = (tile: Tile) => TileTypeChecker.isItem(tile);
+export const isChoppable = (tile: Tile) => TileTypeChecker.isChoppable(tile);
+export const isBreakable = (tile: Tile) => TileTypeChecker.isBreakable(tile);
 
 // Tile property helpers
-export const getTileProperty = (...args: any[]) => TileTypeChecker.getTileProperty(...args);
-export const hasTileProperty = (...args: any[]) => TileTypeChecker.hasTileProperty(...args);
-export const isTileObjectOfType = (...args: any[]) => TileTypeChecker.isTileObjectOfType(...args);
-export const isTileObjectWithProperty = (...args: any[]) => TileTypeChecker.isTileObjectWithProperty(...args);
+export const getTileProperty = (tile: Tile, property: string) => TileTypeChecker.getTileProperty(tile, property);
+export const hasTileProperty = (tile: Tile, property: string) => TileTypeChecker.hasTileProperty(tile, property);
+export const isTileObjectOfType = (tile: any, tileType: number) => TileTypeChecker.isTileObjectOfType(tile, tileType);
+export const isTileObjectWithProperty = (tile: any, tileType: number, property: string, expectedValue: any) => TileTypeChecker.isTileObjectWithProperty(tile, tileType, property, expectedValue);
 
 // Entity type checkers
-export const isPenne = (...args: any[]) => EntityTypeChecker.isPenne(...args);
-export const isSquig = (...args: any[]) => EntityTypeChecker.isSquig(...args);
-export const isNib = (...args: any[]) => EntityTypeChecker.isNib(...args);
-export const isRune = (...args: any[]) => EntityTypeChecker.isRune(...args);
-export const isCrayn = (...args: any[]) => EntityTypeChecker.isCrayn(...args);
-export const isFelt = (...args: any[]) => EntityTypeChecker.isFelt(...args);
-export const isForge = (...args: any[]) => EntityTypeChecker.isForge(...args);
-export const isMark = (...args: any[]) => EntityTypeChecker.isMark(...args);
-export const isAxolotl = (...args: any[]) => EntityTypeChecker.isAxolotl(...args);
-export const isGouge = (...args: any[]) => EntityTypeChecker.isGouge(...args);
-export const isEnemy = (...args: any[]) => EntityTypeChecker.isEnemy(...args);
-export const isLizardyStatue = (...args: any[]) => EntityTypeChecker.isLizardyStatue(...args);
-export const isLizardoStatue = (...args: any[]) => EntityTypeChecker.isLizardoStatue(...args);
-export const isLizardeauxStatue = (...args: any[]) => EntityTypeChecker.isLizardeauxStatue(...args);
-export const isZardStatue = (...args: any[]) => EntityTypeChecker.isZardStatue(...args);
-export const isLazerdStatue = (...args: any[]) => EntityTypeChecker.isLazerdStatue(...args);
-export const isLizordStatue = (...args: any[]) => EntityTypeChecker.isLizordStatue(...args);
+export const isPenne = (tile: Tile) => EntityTypeChecker.isPenne(tile);
+export const isSquig = (tile: Tile) => EntityTypeChecker.isSquig(tile);
+export const isNib = (tile: Tile) => EntityTypeChecker.isNib(tile);
+export const isRune = (tile: Tile) => EntityTypeChecker.isRune(tile);
+export const isCrayn = (tile: Tile) => EntityTypeChecker.isCrayn(tile);
+export const isFelt = (tile: Tile) => EntityTypeChecker.isFelt(tile);
+export const isForge = (tile: Tile) => EntityTypeChecker.isForge(tile);
+export const isMark = (tile: Tile) => EntityTypeChecker.isMark(tile);
+export const isAxolotl = (tile: Tile) => EntityTypeChecker.isAxolotl(tile);
+export const isGouge = (tile: Tile) => EntityTypeChecker.isGouge(tile);
+export const isEnemy = (tile: Tile) => EntityTypeChecker.isEnemy(tile);
+export const isLizardyStatue = (tile: Tile) => EntityTypeChecker.isLizardyStatue(tile);
+export const isLizardoStatue = (tile: Tile) => EntityTypeChecker.isLizardoStatue(tile);
+export const isLizardeauxStatue = (tile: Tile) => EntityTypeChecker.isLizardeauxStatue(tile);
+export const isZardStatue = (tile: Tile) => EntityTypeChecker.isZardStatue(tile);
+export const isLazerdStatue = (tile: Tile) => EntityTypeChecker.isLazerdStatue(tile);
+export const isLizordStatue = (tile: Tile) => EntityTypeChecker.isLizordStatue(tile);
 
 // Entity category checkers
-export const isNPC = (...args: any[]) => EntityTypeChecker.isNPC(...args);
-export const isEnemyStatue = (...args: any[]) => EntityTypeChecker.isEnemyStatue(...args);
+export const isNPC = (tile: Tile) => EntityTypeChecker.isNPC(tile);
+export const isEnemyStatue = (tile: Tile) => EntityTypeChecker.isEnemyStatue(tile);
 
 // ========================================
 // MIGRATION ALIASES

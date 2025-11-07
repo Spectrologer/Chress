@@ -7,8 +7,8 @@ import { TILE_TYPES } from '@core/constants/index';
 
 console.log('🧪 Testing Generated TypeChecks.ts\n');
 
-let passed: number = 0;
-let failed: number = 0;
+let passed = 0;
+let failed = 0;
 
 function test(name: string, condition: boolean): void {
     if (condition) {

@@ -2,8 +2,9 @@ import { TILE_TYPES, INVENTORY_CONSTANTS, GAMEPLAY_CONSTANTS } from '@core/const
 import { InventoryService } from './inventory/InventoryService';
 import { ItemMetadata, type InventoryItem } from './inventory/ItemMetadata';
 import { isTileType } from '@utils/TileUtils';
+import { TileTypeChecker } from '@utils/TypeChecks';
 import type { Game } from '@core/game';
-import type { Tile } from '@core/SharedTypes';
+import type { Tile, TileObject } from '@core/SharedTypes';
 
 interface Player {
     inventory: InventoryItem[];
@@ -14,8 +15,8 @@ interface Player {
 }
 
 interface GridManager {
-    getTile: (x: number, y: number) => any;
-    setTile: (x: number, y: number, value: any) => void;
+    getTile: (x: number, y: number) => Tile;
+    setTile: (x: number, y: number, value: Tile | number) => void;
 }
 
 /**
@@ -73,7 +74,7 @@ export class ItemManager {
      * @param sound - Sound effect to play on success
      * @returns True if successfully added, false if inventory full
      */
-    addItemToInventory(player: Player, item: InventoryItem, sound: string = 'pickup'): boolean {
+    addItemToInventory(player: Player, item: InventoryItem, sound = 'pickup'): boolean {
         return this.service.pickupItem(item, sound);
     }
 
@@ -106,7 +107,7 @@ export class ItemManager {
         const tile = gridManager.getTile(x, y);
         if (!tile) return;
 
-        const pickup = (item: InventoryItem, sound: string = 'pickup') => {
+        const pickup = (item: InventoryItem, sound = 'pickup') => {
             const success = this.service.pickupItem(item, sound);
             if (success) {
                 gridManager.setTile(x, y, TILE_TYPES.FLOOR);
@@ -153,7 +154,7 @@ export class ItemManager {
 
             default:
                 // Handle object-based tiles
-                if (tile.type) {
+                if (TileTypeChecker.isTileObject(tile)) {
                     switch (tile.type) {
                         case TILE_TYPES.FOOD:
                             if (canPickupOrStack) {
@@ -215,7 +216,7 @@ export class ItemManager {
             hasExistingStack = player.inventory.some(i => i && i.type === 'note');
         } else if (isTileType(tile, TILE_TYPES.FOOD)) {
             // Food requires matching foodType for stacking
-            const tileObj = tile as any;
+            const tileObj = tile as TileObject;
             hasExistingStack = player.inventory.some(i =>
                 i && i.type === 'food' && i.foodType === tileObj.foodType
             );

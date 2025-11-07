@@ -5,7 +5,7 @@ import type { ImageCache } from './types';
 
 export class TextureLoader {
     private images: ImageCache = {};
-    private imagesLoaded: number = 0;
+    private imagesLoaded = 0;
     private totalImages: number = TOTAL_IMAGES;
     private onAllImagesLoaded: (() => void) | null = null;
 

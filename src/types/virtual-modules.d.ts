@@ -7,6 +7,33 @@ declare module 'virtual:npc-list' {
     export const npcPaths: Array<{ id: string; path: string }>;
 }
 
+declare module 'virtual:asset-manifest' {
+    export const IMAGE_ASSETS: string[];
+
+    export interface AssetCategories {
+        walls: string[];
+        floors: string[];
+        flora: string[];
+        doodads: string[];
+        obstacles: string[];
+        trim: string[];
+        characters: string[];
+        items: string[];
+        ui: string[];
+        effects: string[];
+        other: string[];
+    }
+
+    export const ASSET_CATEGORIES: AssetCategories;
+    export const WALL_ASSETS: string[];
+    export const FLOOR_ASSETS: string[];
+    export const FLORA_ASSETS: string[];
+    export const DOODAD_ASSETS: string[];
+
+    export function getAssetKey(assetPath: string): string;
+    export function getAssetKeyWithCategory(assetPath: string): string;
+}
+
 /**
  * Global window augmentation for overlay animations
  */

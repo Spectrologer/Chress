@@ -4,6 +4,8 @@ import { GestureDetector } from './GestureDetector';
 import { PathfindingController } from './PathfindingController';
 import { KeyboardHandler } from './KeyboardHandler';
 import { InputStateManager } from './InputStateManager';
+import type { GameContext } from '@core/GameContext';
+import type { InventoryService } from '@managers/inventory/InventoryService';
 
 interface GridCoords {
     x: number;
@@ -27,8 +29,8 @@ interface GridCoords {
  * - InputUIHandler: UI interactions (signs, shovel mode, stats, charges, radial menu)
  */
 export class InputController {
-    private game: any;
-    private inventoryService: any;
+    private game: GameContext;
+    private inventoryService: InventoryService;
 
     // Architecture components
     public coordinator: InputCoordinator;
@@ -43,7 +45,7 @@ export class InputController {
     // Visual feedback compatibility
     public lastHighlightedTile: { x: number | null; y: number | null };
 
-    constructor(game: any, inventoryService: any) {
+    constructor(game: GameContext, inventoryService: InventoryService) {
         this.game = game;
         this.inventoryService = inventoryService;
 
@@ -83,7 +85,7 @@ export class InputController {
         return this.coordinator.handleTap(screenX, screenY);
     }
 
-    handleKeyPress(event: KeyboardEvent): any {
+    handleKeyPress(event: KeyboardEvent): void {
         return this.coordinator.handleKeyPress(event);
     }
 
@@ -99,7 +101,7 @@ export class InputController {
         return this.coordinator.handleExitTap(x, y);
     }
 
-    getTileType(tile: any): number | undefined {
+    getTileType(tile: number | object): number | undefined {
         return this.coordinator.getTileType(tile);
     }
 

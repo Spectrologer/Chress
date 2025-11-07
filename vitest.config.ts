@@ -41,7 +41,9 @@ export default defineConfig({
         '**/*.spec.js',
         '**/*.spec.ts',
         'vite.config.js',
+        'vite.config.ts',
         'vitest.config.js',
+        'vitest.config.ts',
         'babel.config.cjs',
       ],
       // Coverage thresholds

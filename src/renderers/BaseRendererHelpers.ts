@@ -17,8 +17,8 @@ export function renderOverlay(
     pixelX: number,
     pixelY: number,
     tileSize: number,
-    fallbackColor: string = '#888888',
-    fallbackText: string = '?',
+    fallbackColor = '#888888',
+    fallbackText = '?',
     textStyle: TextStyle = { font: '20px Arial', fillStyle: '#FFFFFF' },
     options: RenderOverlayOptions = {}
 ): boolean {

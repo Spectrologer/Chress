@@ -6,11 +6,22 @@ import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { EventListenerManager } from '@utils/EventListenerManager';
 
+interface UseItemOptions {
+    fromRadial?: boolean;
+    isDoubleClick?: boolean;
+}
+
 // UI-specific extension of InventoryItem with additional transient properties
 type UIInventoryItem = InventoryItem & {
     image?: string;
     _suppressContextMenuUntil?: number;
     _pendingToggle?: boolean;
+};
+
+// Extended HTMLElement for inventory slots with pointer tracking
+type InventorySlotElement = HTMLElement & {
+    _pressStartX?: number;
+    _pressStartY?: number;
 };
 
 interface Player {
@@ -19,13 +30,13 @@ interface Player {
 }
 
 interface InventoryService {
-    useItem(item: InventoryItem, options?: any): boolean;
+    useItem(item: InventoryItem, options?: UseItemOptions): boolean;
     toggleItemDisabled(item: InventoryItem): void;
 }
 
 interface InventoryInteractionHandler {
-    handleBombInteraction(bombItem: InventoryItem, options: any): void;
-    handleItemUse(item: InventoryItem, options: any): void;
+    handleBombInteraction(bombItem: InventoryItem, options: UseItemOptions): void;
+    handleItemUse(item: InventoryItem, options: UseItemOptions): void;
 }
 
 export class InventoryUI {
@@ -295,17 +306,17 @@ export class InventoryUI {
                     item._suppressContextMenuUntil = Date.now() + TIMING_CONSTANTS.ITEM_CONTEXT_MENU_SUPPRESS;
                 }
             }, TIMING_CONSTANTS.LONG_PRESS_TIMEOUT);
-            (e.target as any)?.setPointerCapture?.(e.pointerId);
+            (e.target as Element)?.setPointerCapture?.(e.pointerId);
             // store start coords on the slot element so move handler can access them
-            (slot as any)._pressStartX = startX;
-            (slot as any)._pressStartY = startY;
+            (slot as InventorySlotElement)._pressStartX = startX;
+            (slot as InventorySlotElement)._pressStartY = startY;
         };
 
         const onPointerMove = (e: PointerEvent): void => {
             if (pressPointerId !== e.pointerId) return;
             // cancel long-press only if pointer moved significantly
-            const sx = (slot as any)._pressStartX || 0;
-            const sy = (slot as any)._pressStartY || 0;
+            const sx = (slot as InventorySlotElement)._pressStartX || 0;
+            const sy = (slot as InventorySlotElement)._pressStartY || 0;
             const dx = (e.clientX || 0) - sx;
             const dy = (e.clientY || 0) - sy;
             const distSq = dx * dx + dy * dy;
@@ -338,7 +349,7 @@ export class InventoryUI {
                     _lastPointerTriggeredUseTime = Date.now();
                 }
             }
-            (e.target as any)?.releasePointerCapture?.(e.pointerId);
+            (e.target as Element)?.releasePointerCapture?.(e.pointerId);
             // If a long-press created a pending toggle, commit it now (stable place to change data)
             if (item._pendingToggle) {
                 delete item._pendingToggle;

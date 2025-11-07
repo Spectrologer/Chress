@@ -7,12 +7,27 @@
 
 import { TILE_TYPES } from './constants/index';
 import { npcList, npcPaths } from 'virtual:npc-list';
-import type { ContentRegistry } from './ContentRegistry';
+import type { TradeData } from './SharedTypes';
+import type { ContentRegistry, NPCConfig } from './ContentRegistry';
+
+interface DialogueNode {
+    text: string;
+    choices?: Array<{
+        text: string;
+        next?: string | number;
+    }>;
+}
 
 interface NPCData {
     id: string;
     name: string;
     type: string;
+    metadata?: {
+        description?: string;
+        created?: string;
+        version?: string;
+        category?: string;
+    };
     display: {
         tileType: string;
         portrait: string;
@@ -22,9 +37,9 @@ interface NPCData {
     interaction?: {
         type?: string;
         greeting?: string;
-        trades?: any[];
+        trades?: TradeData[];
         cycleMode?: string;
-        dialogueTree?: any[];
+        dialogueTree?: DialogueNode[];
     };
     audio?: {
         voicePitch?: number;
@@ -51,13 +66,13 @@ const npcCharacterData = new Map<string, NPCData>();
 /**
  * Load a single NPC from JSON data
  */
-function loadNPCFromJSON(npcData: NPCData): any {
+function loadNPCFromJSON(npcData: NPCData): NPCConfig {
     // Store the full character data for later use
     npcCharacterData.set(npcData.id, npcData);
 
     // Convert to ContentRegistry format
-    const registryConfig: any = {
-        tileType: (TILE_TYPES as any)[npcData.display.tileType],
+    const registryConfig: NPCConfig = {
+        tileType: (TILE_TYPES as Record<string, number>)[npcData.display.tileType],
         action: npcData.type === 'dialogue' ? 'dialogue' : 'barter',
         placement: {}
     };
@@ -105,7 +120,7 @@ function loadNPCFromJSON(npcData: NPCData): any {
  * Load all NPC JSON files
  * Auto-discovers NPCs from src/characters/*.json files
  */
-export async function loadAllNPCs(registry: any): Promise<void> {
+export async function loadAllNPCs(registry: typeof ContentRegistry): Promise<void> {
     if (!registry || typeof registry.registerNPC !== 'function') {
         throw new Error('NPCLoader.loadAllNPCs requires a valid ContentRegistry instance');
     }

@@ -13,7 +13,7 @@ export class RecordsPanelManager {
     private game: GameInstance;
     private recordsOverlay: HTMLElement | null;
     private recordsOpenTime: number | null = null;
-    private _recordsHandlerAttached: boolean = false;
+    private _recordsHandlerAttached = false;
     private _showStatsPanelCallback?: () => void;
     private eventManager: EventListenerManager;
 

@@ -66,8 +66,8 @@ export abstract class BaseItemEffect {
         game: Game,
         text: string,
         imageSrc: string | null = null,
-        instant: boolean = true,
-        noTypewriter: boolean = false
+        instant = true,
+        noTypewriter = false
     ): void {
         if (game.uiManager && typeof game.uiManager.showOverlayMessage === 'function') {
             game.uiManager.showOverlayMessage(text, imageSrc, instant, true, noTypewriter);

@@ -13,14 +13,10 @@
 import { logger } from '@core/logger';
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
 import MethodChecker from './MethodChecker';
+import type { GameInstance } from '../types/game';
 
 interface SoundManager {
   playSound(soundName: string): void;
-}
-
-interface GameInstance {
-  soundManager?: SoundManager;
-  [key: string]: any; // Allow any additional properties for Game compatibility
 }
 
 interface PlaySoundOptions {
@@ -67,7 +63,7 @@ class AudioManager {
       }
 
       // Strategy 2: Try window.soundManager (global fallback)
-      if (typeof window !== 'undefined' && MethodChecker.call((window as any).soundManager, 'playSound', [soundName])) {
+      if (typeof window !== 'undefined' && MethodChecker.call((window as Window & { soundManager?: SoundManager }).soundManager, 'playSound', [soundName])) {
         return true;
       }
 
@@ -110,7 +106,7 @@ class AudioManager {
     }
 
     // Check window.soundManager
-    if (typeof window !== 'undefined' && MethodChecker.exists((window as any).soundManager, 'playSound')) {
+    if (typeof window !== 'undefined' && MethodChecker.exists((window as Window & { soundManager?: SoundManager }).soundManager, 'playSound')) {
       return true;
     }
 

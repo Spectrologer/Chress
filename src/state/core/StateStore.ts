@@ -79,7 +79,7 @@ export class StateStore {
     /**
      * Set state at a specific path
      */
-    set(path: string, value: any, mutation: string = 'setState'): void {
+    set(path: string, value: any, mutation = 'setState'): void {
         // Record mutation for debugging
         this.historyManager.recordMutation(mutation, path, this.get(path), value);
 
@@ -105,7 +105,7 @@ export class StateStore {
     /**
      * Update multiple paths atomically
      */
-    batchSet(updates: Record<string, any>, mutation: string = 'batchSetState'): void {
+    batchSet(updates: Record<string, any>, mutation = 'batchSetState'): void {
         // Record mutations
         for (const [path, value] of Object.entries(updates)) {
             this.historyManager.recordMutation(mutation, path, this.get(path), value);
@@ -213,14 +213,14 @@ export class StateStore {
     /**
      * Get mutation history
      */
-    getMutations(count: number = 10): any[] {
+    getMutations(count = 10): any[] {
         return this.historyManager.getMutations(count);
     }
 
     /**
      * Get state history
      */
-    getHistory(count: number = 10): any[] {
+    getHistory(count = 10): any[] {
         return this.historyManager.getHistory(count);
     }
 
@@ -285,7 +285,7 @@ export class StateStore {
      * Get state statistics
      */
     getStats(): StateStats {
-        const countNodes = (obj: any, depth: number = 0): { count: number; memory: number } => {
+        const countNodes = (obj: any, depth = 0): { count: number; memory: number } => {
             if (depth > 10) return { count: 0, memory: 0 };
             if (obj === null || typeof obj !== 'object') return { count: 1, memory: 0 };
 

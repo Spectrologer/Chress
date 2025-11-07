@@ -190,7 +190,7 @@ export class Player {
         this.stats.setHealth(value);
     }
 
-    takeDamage(amount: number = 1): void {
+    takeDamage(amount = 1): void {
         try {
             this.consecutiveKills = 0;
         } catch (e) {
@@ -202,19 +202,19 @@ export class Player {
         this.stats.takeDamage(amount);
     }
 
-    decreaseThirst(amount: number = 1): void {
+    decreaseThirst(amount = 1): void {
         this.stats.decreaseThirst(amount);
     }
 
-    decreaseHunger(amount: number = 1): void {
+    decreaseHunger(amount = 1): void {
         this.stats.decreaseHunger(amount);
     }
 
-    restoreThirst(amount: number = 10): void {
+    restoreThirst(amount = 10): void {
         this.stats.restoreThirst(amount);
     }
 
-    restoreHunger(amount: number = 10): void {
+    restoreHunger(amount = 10): void {
         this.stats.restoreHunger(amount);
     }
 
@@ -254,7 +254,7 @@ export class Player {
         this.animations.startBump(deltaX, deltaY);
     }
 
-    startBackflip(frames: number = 20): void {
+    startBackflip(frames = 20): void {
         this.animations.startBackflip(frames);
     }
 

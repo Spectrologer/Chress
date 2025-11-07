@@ -1,24 +1,35 @@
 import { readdir, stat } from 'fs/promises';
 import { resolve, basename, join } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import type { Plugin } from 'vite';
 import { BUILD_CONSTANTS } from './src/core/constants/ui.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+interface NPCData {
+  id: string;
+  path: string;
+}
 
 /**
  * Vite plugin to auto-discover NPC JSON files and generate a virtual module
  * that exports the list of NPC IDs and their paths
  */
-export function npcDiscoveryPlugin() {
+export function npcDiscoveryPlugin(): Plugin {
   const virtualModuleId = 'virtual:npc-list';
   const resolvedVirtualModuleId = '\0' + virtualModuleId;
 
   /**
    * Recursively scan a directory for JSON files
-   * @param {string} dir - Directory to scan
-   * @param {string} relativePath - Relative path from characters root
-   * @returns {Promise<Array>} Array of {id, path} objects
+   * @param dir - Directory to scan
+   * @param relativePath - Relative path from characters root
+   * @returns Array of {id, path} objects
    */
-  async function scanDirectory(dir, relativePath = '') {
+  async function scanDirectory(dir: string, relativePath: string = ''): Promise<NPCData[]> {
     const entries = await readdir(dir);
-    const results = [];
+    const results: NPCData[] = [];
 
     for (const entry of entries) {
       const fullPath = join(dir, entry);
@@ -42,13 +53,13 @@ export function npcDiscoveryPlugin() {
   return {
     name: 'vite-plugin-npc-discovery',
 
-    async resolveId(id) {
+    async resolveId(id: string) {
       if (id === virtualModuleId) {
         return resolvedVirtualModuleId;
       }
     },
 
-    async load(id) {
+    async load(id: string) {
       if (id === resolvedVirtualModuleId) {
         // Read the characters directory recursively
         const charactersDir = resolve(__dirname, 'src/characters');

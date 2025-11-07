@@ -1,6 +1,18 @@
 import type { Grid } from './SharedTypes';
-import type { Enemy } from '@entities/Enemy';
+import type { Enemy, EnemyData } from '@entities/Enemy';
 import type { Player } from '@entities/Player';
+
+/**
+ * Represents the state that can be saved/loaded
+ */
+export interface WorldState {
+    grid: Grid | null;
+    zones: Array<[string, unknown]>;
+    specialZones: Array<[string, unknown]>;
+    currentRegion: string | null;
+    enemies: Array<EnemyData | ReturnType<Enemy['serialize']>>;
+    defeatedEnemies: string[];
+}
 
 /**
  * GameWorld
@@ -15,8 +27,8 @@ import type { Player } from '@entities/Player';
 export class GameWorld {
     // Grid and zone state
     grid: Grid | null;
-    zones: Map<string, any>;
-    specialZones: Map<string, any>;
+    zones: Map<string, unknown>;
+    specialZones: Map<string, unknown>;
     currentRegion: string | null;
 
     // Entities
@@ -53,7 +65,7 @@ export class GameWorld {
     /**
      * Get serializable state for saving
      */
-    getState(): any {
+    getState(): WorldState {
         return {
             grid: this.grid,
             zones: Array.from(this.zones.entries()),
@@ -68,14 +80,14 @@ export class GameWorld {
     /**
      * Restore state from saved data
      */
-    setState(state: any, EnemyClass: any): void {
+    setState(state: WorldState, EnemyClass: new (data: EnemyData) => Enemy): void {
         this.grid = state.grid || null;
         this.zones = new Map(state.zones || []);
         this.specialZones = new Map(state.specialZones || []);
         this.currentRegion = state.currentRegion || null;
         // IMPORTANT: Clear and repopulate array in place to preserve EnemyCollection reference
         this.enemies.length = 0;
-        const newEnemies = (state.enemies || []).map((e: any) => new EnemyClass(e));
+        const newEnemies = (state.enemies || []).map((e) => new EnemyClass(e as EnemyData));
         this.enemies.push(...newEnemies);
         this.defeatedEnemies = new Set(state.defeatedEnemies || []);
         // Note: Transient state is reset on load by TransientGameState, not persisted

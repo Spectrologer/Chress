@@ -88,7 +88,7 @@ export function isValidZoneKey(zoneKey: string): boolean {
     try {
         parseZoneKey(zoneKey);
         return true;
-    } catch (e) {
+    } catch {
         return false;
     }
 }

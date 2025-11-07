@@ -92,7 +92,7 @@ export class PositionCalculator {
    * @param allowDiagonal - Whether to consider diagonal adjacency
    * @returns True if adjacent
    */
-  static isAdjacent(pos1: Coordinates, pos2: Coordinates, allowDiagonal: boolean = true): boolean {
+  static isAdjacent(pos1: Coordinates, pos2: Coordinates, allowDiagonal = true): boolean {
     const { dx, dy } = this.absDelta(pos1, pos2);
     if (dx === 0 && dy === 0) return false; // Same position
 
@@ -160,8 +160,8 @@ export class PositionCalculator {
   static lineTo(
     from: Coordinates,
     to: Coordinates,
-    includeStart: boolean = false,
-    includeEnd: boolean = true
+    includeStart = false,
+    includeEnd = true
   ): Coordinates[] {
     const positions: Coordinates[] = [];
     let x0 = from.x;
@@ -209,7 +209,7 @@ export class PositionCalculator {
   static rectangleBetween(
     corner1: Coordinates,
     corner2: Coordinates,
-    includeEdges: boolean = true
+    includeEdges = true
   ): Coordinates[] {
     const positions: Coordinates[] = [];
     const minX = Math.min(corner1.x, corner2.x);
@@ -241,7 +241,7 @@ export class PositionCalculator {
   static positionsWithinRadius(
     center: Coordinates,
     radius: number,
-    includeCenter: boolean = false
+    includeCenter = false
   ): Coordinates[] {
     const positions: Coordinates[] = [];
     for (let dy = -radius; dy <= radius; dy++) {
@@ -258,7 +258,7 @@ export class PositionCalculator {
    * @param allowDiagonal - Whether to include diagonal neighbors
    * @returns Array of offset objects
    */
-  static getNeighborOffsets(allowDiagonal: boolean = true): Coordinates[] {
+  static getNeighborOffsets(allowDiagonal = true): Coordinates[] {
     if (allowDiagonal) {
       return [
         { x: 0, y: -1 },  // North
@@ -286,7 +286,7 @@ export class PositionCalculator {
    * @param allowDiagonal - Whether to include diagonal neighbors
    * @returns Array of neighbor positions
    */
-  static getNeighbors(center: Coordinates, allowDiagonal: boolean = true): Coordinates[] {
+  static getNeighbors(center: Coordinates, allowDiagonal = true): Coordinates[] {
     const offsets = this.getNeighborOffsets(allowDiagonal);
     return offsets.map(offset => ({
       x: center.x + offset.x,

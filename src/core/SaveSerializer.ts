@@ -1,8 +1,9 @@
-import { Sign } from '@ui/Sign';
 import type { GameContext } from './GameContext';
 import type { SaveGameData, SavedPlayerData, SavedPlayerStats, SavedEnemyData, Grid } from './SharedTypes';
 import type { Player } from '@entities/Player';
+import type { PlayerStats } from '@entities/PlayerStats';
 import type { Enemy } from '@entities/Enemy';
+import type { ZoneRepository } from '@repositories/ZoneRepository';
 
 /**
  * Helper class for serializing game state to a save format.
@@ -12,7 +13,7 @@ export class SaveSerializer {
     /**
      * Serializes the current game state into a plain object ready for JSON serialization.
      */
-    static serializeGameState(game: GameContext & { zoneRepository?: any; messageLog?: string[] }): SaveGameData {
+    static serializeGameState(game: GameContext & { zoneRepository?: ZoneRepository; messageLog?: string[] }): SaveGameData {
         return {
             // Player state
             player: SaveSerializer.serializePlayer(game.world.player),
@@ -53,7 +54,7 @@ export class SaveSerializer {
     /**
      * Serializes player settings/stats.
      */
-    static serializePlayerStats(player: Player & { stats?: any }): SavedPlayerStats {
+    static serializePlayerStats(player: Player): SavedPlayerStats {
         return {
             musicEnabled: (player.stats && typeof player.stats.musicEnabled !== 'undefined')
                 ? !!player.stats.musicEnabled

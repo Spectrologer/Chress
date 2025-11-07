@@ -27,7 +27,7 @@
   },
   "interaction": {
     "type": "barter",
-    "greeting": "Gimme discoveries, I'll give you a hammer.",
+    "greeting": "Show me what you found, and I'll give you a hammer.",
     "trades": [
       {
         "id": "gouge_hammer",
@@ -50,7 +50,7 @@
     "postTradeDialogue": [
       {
         "id": "post_trade",
-        "text": "Mind the cracks. The hammer helps, but it won't fix everything.",
+        "text": "A hammer is just a hammer.",
         "condition": "hasAbility:hammer",
         "buttonText": "Okay..."
       }

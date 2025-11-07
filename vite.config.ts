@@ -283,5 +283,5 @@ export default defineConfig({
   assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
 
   // Public directory for static assets
-  publicDir: 'static', 
+  publicDir: 'static',
 });

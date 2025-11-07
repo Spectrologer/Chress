@@ -9,7 +9,7 @@ interface StructurePosition {
 }
 
 export class MultiTileHandler {
-    static findHousePosition(targetX: number, targetY: number, gridManager: GridManager, isStrictCheck: boolean = false): StructurePosition | null {
+    static findHousePosition(targetX: number, targetY: number, gridManager: GridManager, isStrictCheck = false): StructurePosition | null {
         // Find the top-left corner of the 4x3 club that contains this tile
         for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
             for (let startX = Math.max(0, targetX - 3); startX <= Math.min(GRID_SIZE - 4, targetX); startX++) {
@@ -71,7 +71,7 @@ export class MultiTileHandler {
         return this._find2x2StructurePosition(targetX, targetY, gridManager, TILE_TYPES.DEADTREE);
     }
 
-    static findShackPosition(targetX: number, targetY: number, gridManager: GridManager, isStrictCheck: boolean = false): StructurePosition | null {
+    static findShackPosition(targetX: number, targetY: number, gridManager: GridManager, isStrictCheck = false): StructurePosition | null {
         // Handle gridManager validity
         const targetTileInitial = gridManager.getTile(targetX, targetY);
         if (targetTileInitial === undefined) {

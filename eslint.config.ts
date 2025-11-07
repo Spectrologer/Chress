@@ -1,13 +1,19 @@
 import enforceEventTypes from './eslint-rules/enforce-event-types.js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
+import type { Linter } from 'eslint';
 
 export default [
+  {
+    ignores: ['node_modules/**', '.git/**', 'dev-dist/**', 'dist/**', 'build/**']
+  },
   {
     files: ['**/*.js'],
     ignores: [
       'node_modules/**',
       '.git/**',
+      'dev-dist/**',
+      'dist/**',
       'temp_*.js',
       'temp_*.cjs'
     ],
@@ -90,7 +96,9 @@ export default [
     files: ['**/*.ts', '**/*.tsx'],
     ignores: [
       'node_modules/**',
-      '.git/**'
+      '.git/**',
+      'dev-dist/**',
+      'dist/**'
     ],
     languageOptions: {
       parser: tsparser,
@@ -111,4 +119,4 @@ export default [
       '@typescript-eslint/no-inferrable-types': 'warn'
     }
   }
-];
+] as Linter.Config[];

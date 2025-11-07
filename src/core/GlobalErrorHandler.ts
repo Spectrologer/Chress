@@ -218,7 +218,7 @@ export class GlobalErrorHandler {
   /**
    * Manually trigger error handling (for testing)
    */
-  triggerTestError(message: string = 'Test error'): never {
+  triggerTestError(message = 'Test error'): never {
     throw new Error(message);
   }
 

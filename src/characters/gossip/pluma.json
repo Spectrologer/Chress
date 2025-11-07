@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*squelch* Don't mind the smell. That's just my essence... returning to the earth. Very natural.",
-        "buttonText": "Ew."
+        "text": "I'm returning to the earth. The cycle of life and death continues.",
+        "buttonText": "Cool."
       },
       {
         "id": "msg_1",
-        "text": "I'm technically composting while we speak. Circle of life and all that. *drips slightly*",
+        "text": "Don't help me! I'm getting paid to do this.*",
         "buttonText": "Gross."
       },
       {
         "id": "msg_2",
-        "text": "Used to be firm. Had structure. Now I'm basically sentient mush. Still got personality though!",
+        "text": "Time is a flat circle.",
         "buttonText": "Sure..."
       }
     ]

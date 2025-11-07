@@ -33,8 +33,8 @@ export class RendererUtils {
         image: HTMLImageElement,
         x: number,
         y: number,
-        flipX: boolean = false,
-        flipY: boolean = false,
+        flipX = false,
+        flipY = false,
         tileSize: number = TILE_SIZE
     ): void {
         ctx.save();

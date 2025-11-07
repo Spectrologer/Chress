@@ -1,7 +1,6 @@
 import {
     calculateStepDirection,
     getLineType,
-    checkLineOfSight,
     checkOrthogonalLineOfSight,
     checkDiagonalLineOfSight,
     checkQueenLineOfSight

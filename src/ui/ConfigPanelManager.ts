@@ -14,7 +14,7 @@ interface GameInstance {
 export class ConfigPanelManager {
     private game: GameInstance;
     private configOverlay: HTMLElement | null;
-    private configHandlersAttached: boolean = false;
+    private configHandlersAttached = false;
     private configOpenTime: number | null = null;
     private eventManager: EventListenerManager;
 

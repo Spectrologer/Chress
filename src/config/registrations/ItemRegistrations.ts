@@ -350,7 +350,7 @@ function formatFoodName(foodType: string): string {
     try {
         // Extract just the filename (e.g., 'items/consumables/meat.png' -> 'meat')
         return foodType.split('/').pop()!.replace('.png', '');
-    } catch (e) {
+    } catch {
         return foodType.replace('.png', '');
     }
 }

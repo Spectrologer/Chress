@@ -12,6 +12,7 @@ import { EnemyMovementHandler } from './combat/EnemyMovementHandler';
 import { PlayerCombatHandler, type AttackResult } from './combat/PlayerCombatHandler';
 import { CollisionDetectionSystem } from './combat/CollisionDetectionSystem';
 import type { IGame, ICoordinates } from '@core/GameContext';
+import type { Game } from '@core/game';
 import { Position } from '@core/Position';
 import type { Player } from '@entities/Player';
 import type { PlayerFacade } from '@facades/PlayerFacade';
@@ -57,9 +58,9 @@ export class CombatManager {
         this.defeatFlow = defeatFlow;
 
         // Initialize sub-handlers
-        this.movementHandler = new EnemyMovementHandler(game as any, occupiedTiles);
-        this.playerCombatHandler = new PlayerCombatHandler(game as any, (enemy, initiator) => this.defeatEnemy(enemy, initiator || null));
-        this.collisionSystem = new CollisionDetectionSystem(game as any, bombManager, (enemy, initiator) => this.defeatEnemy(enemy, initiator || null));
+        this.movementHandler = new EnemyMovementHandler(game as Game, occupiedTiles);
+        this.playerCombatHandler = new PlayerCombatHandler(game as Game, (enemy, initiator) => this.defeatEnemy(enemy, initiator || null));
+        this.collisionSystem = new CollisionDetectionSystem(game as Game, bombManager, (enemy, initiator) => this.defeatEnemy(enemy, initiator || null));
     }
 
     /**

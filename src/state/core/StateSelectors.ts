@@ -54,7 +54,7 @@ export const StateSelectors = {
     return store.get('persistent.zones');
   },
 
-  getZone(x: number, y: number, dimension: string, depth: number = 0) {
+  getZone(x: number, y: number, dimension: string, depth = 0) {
     const zones = store.get('persistent.zones');
     if (!zones) return null;
     const key = `${x},${y},${dimension},${depth}`;
@@ -71,7 +71,7 @@ export const StateSelectors = {
     return store.get('persistent.specialZones');
   },
 
-  isSpecialZone(x: number, y: number, dimension: string, depth: number = 0): boolean {
+  isSpecialZone(x: number, y: number, dimension: string, depth = 0): boolean {
     const specialZones = store.get('persistent.specialZones');
     if (!specialZones) return false;
     const key = `${x},${y},${dimension},${depth}`;
@@ -82,7 +82,7 @@ export const StateSelectors = {
     return store.get('persistent.player.visitedZones');
   },
 
-  hasVisitedZone(x: number, y: number, dimension: string, depth: number = 0): boolean {
+  hasVisitedZone(x: number, y: number, dimension: string, depth = 0): boolean {
     const visitedZones = store.get('persistent.player.visitedZones');
     if (!visitedZones) return false;
     const key = `${x},${y},${dimension},${depth}`;

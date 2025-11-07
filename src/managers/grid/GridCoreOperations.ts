@@ -94,7 +94,7 @@ export class GridCoreOperations {
     /**
      * Clear a tile (set to floor)
      */
-    clearTile(x: number, y: number, floorType: number = 0): boolean {
+    clearTile(x: number, y: number, floorType = 0): boolean {
         return this.setTile(x, y, floorType);
     }
 

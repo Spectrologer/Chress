@@ -16,7 +16,7 @@ export class TypewriterController {
     public game: GameInstance | null;
     public currentTypewriterInterval: TypewriterEffect | null = null;
     public typewriterSpeed: number;
-    public typewriterSfxEnabled: boolean = true;
+    public typewriterSfxEnabled = true;
 
     // Voice settings cache and state
     public _voiceCache: Map<string, any> = new Map(); // name -> voiceSettings

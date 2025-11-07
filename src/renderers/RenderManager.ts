@@ -11,6 +11,7 @@ import { isTileType } from '@utils/TileUtils';
 import { logger } from '@core/logger';
 import type { TapFeedback } from './types';
 import type { IGame } from '@core/GameContext';
+import type { Grid, Tile } from '@core/SharedTypes';
 
 interface Zone {
     x: number;
@@ -30,7 +31,7 @@ interface Enemy {
     health: number;
     enemyType: string;
     movementDirection: number;
-    isWalkable(x: number, y: number, grid: any[][]): boolean;
+    isWalkable(x: number, y: number, grid: Grid): boolean;
 }
 
 interface EnemyCollection {
@@ -39,9 +40,8 @@ interface EnemyCollection {
 }
 
 interface GridManager {
-    getTile(x: number, y: number): any;
+    getTile(x: number, y: number): Tile;
     getSize(): number;
-    [y: number]: any[];
 }
 
 interface ZoneGenerator {
@@ -85,14 +85,20 @@ export class RenderManager {
 
         // Disable image smoothing for crisp pixel art
         this.ctx.imageSmoothingEnabled = false;
-        (this.ctx as any).webkitImageSmoothingEnabled = false; // For Chrome, Safari
-        (this.ctx as any).mozImageSmoothingEnabled = false;    // For Firefox
-        (this.ctx as any).msImageSmoothingEnabled = false;     // For IE
+        // Browser-specific properties for older browsers
+        const ctx = this.ctx as CanvasRenderingContext2D & {
+            webkitImageSmoothingEnabled?: boolean;
+            mozImageSmoothingEnabled?: boolean;
+            msImageSmoothingEnabled?: boolean;
+        };
+        ctx.webkitImageSmoothingEnabled = false; // For Chrome, Safari
+        ctx.mozImageSmoothingEnabled = false;    // For Firefox
+        ctx.msImageSmoothingEnabled = false;     // For IE
     }
 
     // Show a transient tap feedback at grid coordinates (tileX, tileY).
     // durationMs controls how long the effect lasts (default 200ms).
-    showTapFeedback(tileX: number, tileY: number, durationMs: number = 200): void {
+    showTapFeedback(tileX: number, tileY: number, durationMs = 200): void {
         this.tapFeedback = {
             x: tileX,
             y: tileY,
@@ -198,7 +204,7 @@ export class RenderManager {
             }
         };
 
-        const stopRay = (x: number, y: number, dx: number, dy: number, orthogonalOnly: boolean = false) => {
+        const stopRay = (x: number, y: number, dx: number, dy: number, orthogonalOnly = false) => {
             let cx = x + dx;
             let cy = y + dy;
             while (cx >= 0 && cy >= 0 && cy < grid.length && cx < grid[0].length) {
@@ -308,8 +314,9 @@ export class RenderManager {
         this.enemyRenderer.drawEnemySmokeAnimation();
 
         // Draw NPCs (sprites with animations)
-        if ((this.game as any).npcRenderer) {
-            (this.game as any).npcRenderer.drawNPCs();
+        const gameWithNPC = this.game as IGame & { npcRenderer?: NPCRenderer };
+        if (gameWithNPC.npcRenderer) {
+            gameWithNPC.npcRenderer.drawNPCs();
         }
 
         // Draw player (sprite, smoke, exit indicators)
@@ -382,7 +389,7 @@ export class RenderManager {
 
         // Three-pass rendering to ensure proper layering:
         // Pass 1: Render terrain only (floors and walls)
-        GridIterator.forEach(this.game.grid, (tile: any, x: number, y: number) => {
+        GridIterator.forEach(this.game.grid, (tile: Tile, x: number, y: number) => {
             try {
                 // Only render terrain in this pass
                 if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.WALL) {
@@ -431,14 +438,14 @@ export class RenderManager {
         }
 
         // Pass 3: Render features (statues, items, NPCs, etc.) on top of overlays
-        GridIterator.forEach(this.game.grid, (tile: any, x: number, y: number) => {
+        GridIterator.forEach(this.game.grid, (tile: Tile, x: number, y: number) => {
             try {
                 // Only render features in this pass (not terrain)
                 if (tile && tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.WALL) {
                     if (isTileType(tile, TILE_TYPES.BOMB)) {
                         this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
-                    } else if (tile && tile.type === 'food') {
-                        this.textureManager.renderTile(this.ctx, x, y, tile.type, this.game.gridManager, zoneLevel, terrainTextures, rotations);
+                    } else if (typeof tile === 'object' && tile !== null && 'type' in tile && (tile as any).type === TILE_TYPES.FOOD) {
+                        this.textureManager.renderTile(this.ctx, x, y, (tile as any).type, this.game.gridManager, zoneLevel, terrainTextures, rotations);
                     } else {
                         this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
                     }

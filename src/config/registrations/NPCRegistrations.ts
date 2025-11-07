@@ -13,12 +13,6 @@ interface NPCPlacement {
     spawnWeight?: number;
 }
 
-interface NPCConfig {
-    tileType: number;
-    action: string;
-    placement?: NPCPlacement;
-}
-
 /**
  * Register all NPCs with the ContentRegistry
  */

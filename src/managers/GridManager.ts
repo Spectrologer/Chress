@@ -84,7 +84,7 @@ export class GridManager {
         return this.coreOps.cloneTile(x, y) ?? null;
     }
 
-    clearTile(x: number, y: number, floorType: number = 0): void {
+    clearTile(x: number, y: number, floorType = 0): void {
         this.coreOps.clearTile(x, y, floorType);
     }
 
@@ -134,7 +134,7 @@ export class GridManager {
         return this.queryOps.toArray(options);
     }
 
-    getNeighbors(x: number, y: number, includeDiagonals: boolean = false): NeighborTile[] {
+    getNeighbors(x: number, y: number, includeDiagonals = false): NeighborTile[] {
         return this.queryOps.getNeighbors(x, y, includeDiagonals);
     }
 
@@ -170,7 +170,7 @@ export class GridManager {
         return GRID_SIZE;
     }
 
-    debugLog(label: string = 'Grid State'): void {
+    debugLog(label = 'Grid State'): void {
         logger.debug(`${label}:`);
         this.grid.forEach((row, y) => {
             const rowStr = row.map(tile => {

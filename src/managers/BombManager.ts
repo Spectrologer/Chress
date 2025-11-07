@@ -187,7 +187,7 @@ export class BombManager {
 
         const clickedPos = Position.from(gridCoords);
         const bombPositions = transientState.getBombPlacementPositions();
-        const placed = bombPositions.find((p: any) => clickedPos.equals(p));
+        const placed = bombPositions.find((p: Position) => clickedPos.equals(p));
 
         if (!placed) {
             return false;

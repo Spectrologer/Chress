@@ -93,7 +93,7 @@ export class InputManager {
     }
 
     set currentPathSequence(v: AnimationSequence | null) {
-        this.controller.pathfindingController.setCurrentPathSequence(v as any);
+        this.controller.pathfindingController.setCurrentPathSequence(v);
     }
 
     get currentPathSequenceFallback(): NodeJS.Timeout | null {

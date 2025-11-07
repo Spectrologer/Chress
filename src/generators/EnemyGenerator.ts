@@ -16,8 +16,8 @@ export class EnemyGenerator {
     private depth: number;
     private depthMultiplier: number;
     private gridManager: any;
-    private zoneX: number = 0;
-    private zoneY: number = 0;
+    private zoneX = 0;
+    private zoneY = 0;
     private items: any[] = [];
 
     constructor(enemies: any[], depth = 0) {

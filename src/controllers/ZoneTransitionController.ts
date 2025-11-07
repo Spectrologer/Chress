@@ -1,5 +1,7 @@
-import { logger } from '@core/logger';
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
+import { Position } from '@core/Position';
+import type { GameContext } from '@core/GameContext';
+import type { Treasure } from '@managers/ZoneManager';
 
 interface GridCoords {
     x: number;
@@ -14,9 +16,9 @@ interface GridCoords {
  * for transitioning between zones, handling ports, and managing pitfalls.
  */
 export class ZoneTransitionController {
-    private game: any;
+    private game: GameContext;
 
-    constructor(game: any) {
+    constructor(game: GameContext) {
         this.game = game;
     }
 
@@ -84,7 +86,9 @@ export class ZoneTransitionController {
      */
     checkForZoneTransitionGesture(tapCoords: GridCoords, playerPos: GridCoords): boolean {
         try {
-            return this.game.zoneTransitionManager.checkForZoneTransitionGesture(tapCoords, playerPos);
+            const tapPos = new Position(tapCoords.x, tapCoords.y);
+            const playerPosition = new Position(playerPos.x, playerPos.y);
+            return this.game.zoneTransitionManager.checkForZoneTransitionGesture(tapPos, playerPosition);
         } catch (error) {
             errorHandler.handle(error, ErrorSeverity.ERROR, {
                 component: 'ZoneTransitionController',
@@ -102,7 +106,9 @@ export class ZoneTransitionController {
      */
     isTransitionEligible(gridCoords: GridCoords, playerPos: GridCoords): boolean {
         try {
-            return this.game.zoneTransitionManager.isTransitionEligible(gridCoords, playerPos);
+            const gridPosition = new Position(gridCoords.x, gridCoords.y);
+            const playerPosition = new Position(playerPos.x, playerPos.y);
+            return this.game.zoneTransitionManager.isTransitionEligible(gridPosition, playerPosition);
         } catch (error) {
             errorHandler.handle(error, ErrorSeverity.ERROR, {
                 component: 'ZoneTransitionController',
@@ -146,7 +152,7 @@ export class ZoneTransitionController {
      * Spawns treasures on the grid for special zones.
      * @param treasures - Array of treasure items to spawn
      */
-    spawnTreasuresOnGrid(treasures: any[]): void {
+    spawnTreasuresOnGrid(treasures: Treasure[]): void {
         try {
             this.game.zoneManager.spawnTreasuresOnGrid(treasures);
         } catch (error) {

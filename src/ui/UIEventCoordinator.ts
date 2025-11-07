@@ -3,7 +3,7 @@ import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 
 interface MessageManager {
-    showSignMessage(message: string, portrait: string | null, name: string | null, buttonText: string | null): void;
+    showSignMessage(message: string, portrait: string | null, name: string | null, buttonText: string | null, category?: string, portraitBackground?: string): void;
     hideOverlayMessage(): void;
     addMessageToLog(messageText: string): void;
     showRegionNotification(x: number, y: number): void;

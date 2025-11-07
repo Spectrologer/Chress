@@ -66,14 +66,15 @@ export interface GridManager {
     iterateTiles?(callback: (tile: any, x: number, y: number) => void): void;
 }
 
-// Zone Manager interface
+// Zone Manager interface (simplified for compatibility)
 export interface ZoneManager {
-    getCurrentZone(): Coordinates;
-    getZoneAt(x: number, y: number): any;
+    getCurrentZone?(): Coordinates;
+    getZoneAt?(x: number, y: number): any;
     handlePortTransition?(direction: string): void;
-    handleExitTap?(): void;
+    handleExitTap?(exitX?: number, exitY?: number): void;
     checkForZoneTransitionGesture?(pos: Position): boolean;
     isTransitionEligible?(): boolean;
+    [key: string]: any; // Allow additional properties
 }
 
 // NPC Manager interface

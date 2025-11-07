@@ -263,7 +263,7 @@ export class EventListenerManager {
      * Useful after showing overlays to prevent accidental clicks
      */
     installCaptureBlocker(
-        duration: number = 300,
+        duration = 300,
         allowedContainer: HTMLElement | null = null
     ): void {
         const captureHandler = (ev: Event): void => {

@@ -114,7 +114,7 @@ export class MessageManager {
     /**
      * Show overlay message with typewriter effect
      */
-    showOverlayMessage(text: string, imageSrc: string | null = null, isPersistent: boolean = false, isLargeText: boolean = false, useTypewriter: boolean = true): void {
+    showOverlayMessage(text: string, imageSrc: string | null = null, isPersistent = false, isLargeText = false, useTypewriter = true): void {
         this.showMessage(text, imageSrc, true, isPersistent, isLargeText, useTypewriter);
     }
 
@@ -128,7 +128,7 @@ export class MessageManager {
     /**
      * Generic message display method (backward compatibility)
      */
-    showMessage(text: string, imageSrc: string | null = null, useOverlay: boolean = false, isPersistent: boolean = false, isLargeText: boolean = false, useTypewriter: boolean = true): void {
+    showMessage(text: string, imageSrc: string | null = null, useOverlay = false, isPersistent = false, isLargeText = false, useTypewriter = true): void {
         if (!useOverlay) {
             logger.warn('MessageManager.showMessage: useOverlay=false is deprecated');
             return;
@@ -178,7 +178,7 @@ export class MessageManager {
     /**
     * Show sign or NPC dialogue
     */
-    showSignMessage(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null, category: string = 'unknown', portraitBackground?: string): void {
+    showSignMessage(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null, category = 'unknown', portraitBackground?: string): void {
     this.dialogueManager.showDialogue(text, imageSrc, name, buttonText, category, portraitBackground);
     }
 

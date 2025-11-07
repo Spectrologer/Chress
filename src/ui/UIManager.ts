@@ -9,6 +9,8 @@ import { UIEventCoordinator } from './UIEventCoordinator';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { EventListenerManager } from '@utils/EventListenerManager';
+import type { TreasureFoundEvent } from '@core/events/PlayerEvents';
+import type { GameResetEvent } from '@core/events/GameStateEvents';
 
 interface Player {
     getPosition(): Coordinates;
@@ -66,7 +68,7 @@ export class UIManager {
 
         // Treasure found
         this._unsubscribers.push(
-            eventBus.on(EventTypes.TREASURE_FOUND, (data: any) => {
+            eventBus.on(EventTypes.TREASURE_FOUND, (data: TreasureFoundEvent) => {
                 this.addMessageToLog(data.message);
                 eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             })
@@ -74,7 +76,7 @@ export class UIManager {
 
         // Game reset
         this._unsubscribers.push(
-            eventBus.on(EventTypes.GAME_RESET, (data: any) => {
+            eventBus.on(EventTypes.GAME_RESET, (data: GameResetEvent) => {
                 this.updatePlayerPosition();
                 this.updateZoneDisplay();
                 eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
@@ -114,7 +116,7 @@ export class UIManager {
         // Close contextual windows on move
         this.panelManager.hideBarterWindow();
         this.panelManager.hideStatueInfoWindow();
-        Sign.hideMessageForSign(this.game as any); // Hide signs too
+        Sign.hideMessageForSign(this.game); // Hide signs too
     }
 
     updateZoneDisplay(): void {
@@ -161,7 +163,7 @@ export class UIManager {
         this.messageManager.hideOverlayMessage();
     }
 
-    showSignMessage(text: string, imageSrc: string, name: string | null = null, buttonText: string | null = null, category: string = 'unknown', portraitBackground?: string): void {
+    showSignMessage(text: string, imageSrc: string, name: string | null = null, buttonText: string | null = null, category = 'unknown', portraitBackground?: string): void {
     this.messageManager.showSignMessage(text, imageSrc, name, buttonText, category, portraitBackground);
     }
 
@@ -189,7 +191,7 @@ export class UIManager {
         this.messageManager.showOverlayMessageSilent(text, imageSrc);
     }
 
-    showOverlayMessage(text: string, imageSrc: string, isPersistent: boolean = false, isLargeText: boolean = false, useTypewriter: boolean = true): void {
+    showOverlayMessage(text: string, imageSrc: string, isPersistent = false, isLargeText = false, useTypewriter = true): void {
         this.messageManager.showOverlayMessage(text, imageSrc, isPersistent, isLargeText, useTypewriter);
     }
 

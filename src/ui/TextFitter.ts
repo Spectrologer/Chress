@@ -58,7 +58,7 @@ export function fitTextToContainer(container: HTMLElement | null, options: FitTe
         fontSize = Math.max(minFontSize, fontSize - 1);
         el.style.fontSize = `${fontSize}px`;
         // Force layout
-        // eslint-disable-next-line no-unused-expressions
+         
         el.getBoundingClientRect && el.getBoundingClientRect();
         iterations++;
     }

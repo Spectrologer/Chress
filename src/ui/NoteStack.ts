@@ -5,7 +5,7 @@ import { UI_CONSTANTS, UI_TIMING_CONSTANTS } from '@core/constants/ui';
 import { EventListenerManager } from '@utils/EventListenerManager';
 
 export class NoteStack {
-    private noteIdCounter: number = 0;
+    private noteIdCounter = 0;
     private activeNotes: Map<string, number> = new Map(); // id -> timeoutId
     private eventManager: EventListenerManager;
 

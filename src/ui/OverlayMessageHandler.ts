@@ -37,7 +37,7 @@ export class OverlayMessageHandler {
     /**
      * Show an overlay message with optional image
      */
-    show(text: string, imageSrc: string | null = null, isPersistent: boolean = false, isLargeText: boolean = false, onComplete: (() => void) | null = null): void {
+    show(text: string, imageSrc: string | null = null, isPersistent = false, isLargeText = false, onComplete: (() => void) | null = null): void {
         if (!this.messageOverlay) return;
 
         logger.log(`OverlayMessageHandler.show: "${text}", imageSrc: ${imageSrc}, isPersistent: ${isPersistent}`);

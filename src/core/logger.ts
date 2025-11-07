@@ -12,7 +12,7 @@ interface Logger {
 export const logger: Logger = {
   log(...args: any[]): void {
     // Always show general logs
-    // eslint-disable-next-line no-console
+     
     console.log(...args);
   },
 
@@ -32,18 +32,18 @@ export const logger: Logger = {
 
   debug(...args: any[]): void {
     if (this.isDebug()) {
-      // eslint-disable-next-line no-console
+       
       console.log(...args);
     }
   },
 
   info(...args: any[]): void {
-    // eslint-disable-next-line no-console
+     
     console.info(...args);
   },
 
   warn(...args: any[]): void {
-    // eslint-disable-next-line no-console
+     
     console.warn(...args);
   },
 
@@ -62,14 +62,14 @@ export const logger: Logger = {
       return arg;
     });
 
-    // eslint-disable-next-line no-console
+     
     console.error(...processedArgs);
 
     // In debug mode, also log stack traces separately for visibility
     if (this.isDebug()) {
       args.forEach(arg => {
         if (arg instanceof Error && arg.stack) {
-          // eslint-disable-next-line no-console
+           
           console.error('Stack trace:', arg.stack);
         }
       });

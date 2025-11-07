@@ -8,6 +8,11 @@
  * - Game state flags (gameStarted, previewMode)
  */
 import type { Coordinates } from './PositionTypes';
+import type { UIManager } from '@ui/UIManager';
+import type { OverlayManager } from '@ui/OverlayManager';
+import type { InventoryUI } from '@ui/InventoryUI';
+import type { RadialInventoryUI } from '@ui/RadialInventoryUI';
+import type { Player } from '@entities/Player';
 
 export class GameUI {
     // Canvas elements and contexts
@@ -17,10 +22,10 @@ export class GameUI {
     mapCtx: CanvasRenderingContext2D | null;
 
     // UI Managers (set by ServiceContainer)
-    uiManager: any;
-    overlayManager: any;
-    inventoryUI: any;
-    radialInventoryUI: any;
+    uiManager: UIManager | null;
+    overlayManager: OverlayManager | null;
+    inventoryUI: InventoryUI | null;
+    radialInventoryUI: RadialInventoryUI | null;
 
     // Game state flags
     gameStarted: boolean;
@@ -53,7 +58,7 @@ export class GameUI {
     /**
      * Initialize canvas references
      */
-    initializeCanvas(canvasId: string = 'gameCanvas', mapCanvasId: string = 'zoneMap'): void {
+    initializeCanvas(canvasId = 'gameCanvas', mapCanvasId = 'zoneMap'): void {
         this.canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
         this.ctx = this.canvas?.getContext('2d') || null;
         this.mapCanvas = document.getElementById(mapCanvasId) as HTMLCanvasElement | null;
@@ -63,7 +68,7 @@ export class GameUI {
     /**
      * Update last known player position
      */
-    updateLastPlayerPosition(player: any): void {
+    updateLastPlayerPosition(player: Player | null): void {
         try {
             this._lastPlayerPos = player ? { x: player.x, y: player.y } : null;
         } catch (e) {
@@ -74,7 +79,7 @@ export class GameUI {
     /**
      * Check if player has moved since last update
      */
-    hasPlayerMoved(player: any): boolean {
+    hasPlayerMoved(player: Player | null): boolean {
         try {
             const cur = player ? { x: player.x, y: player.y } : null;
             const last = this._lastPlayerPos;

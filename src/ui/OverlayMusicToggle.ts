@@ -15,7 +15,7 @@ interface GameInstance {
  */
 export class OverlayMusicToggle {
     private game: GameInstance;
-    private overlayMusicPref: boolean = true; // Default music preference
+    private overlayMusicPref = true; // Default music preference
     private eventManager: EventListenerManager;
 
     constructor(game: GameInstance) {

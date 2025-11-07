@@ -25,13 +25,13 @@ export class StateHistoryManager {
   private mutations: StateMutation[] = [];
   private maxHistorySize: number;
   private maxMutations: number;
-  private isRecordingHistory: boolean = false;
+  private isRecordingHistory = false;
 
   /**
    * @param maxHistorySize - Maximum snapshots to keep
    * @param maxMutations - Maximum mutations to keep
    */
-  constructor(maxHistorySize: number = 50, maxMutations: number = 100) {
+  constructor(maxHistorySize = 50, maxMutations = 100) {
     this.maxHistorySize = maxHistorySize;
     this.maxMutations = maxMutations;
   }
@@ -88,7 +88,7 @@ export class StateHistoryManager {
    * Get mutation history
    * @param count - Number of recent mutations to return
    */
-  getMutations(count: number = 10): StateMutation[] {
+  getMutations(count = 10): StateMutation[] {
     return this.mutations.slice(-count);
   }
 
@@ -96,7 +96,7 @@ export class StateHistoryManager {
    * Get state history
    * @param count - Number of recent history entries to return
    */
-  getHistory(count: number = 10): StateSnapshot[] {
+  getHistory(count = 10): StateSnapshot[] {
     return this.history.slice(-count);
   }
 

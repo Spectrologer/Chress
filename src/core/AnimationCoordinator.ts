@@ -1,5 +1,8 @@
 import { eventBus } from './EventBus';
 import { EventTypes } from './EventTypes';
+import type { Player } from '@entities/Player';
+import type { AnimationBumpEvent, AnimationSmokeEvent } from './events/AnimationEvents';
+import type { PlayerKnockbackEvent } from './events/CombatEvents';
 
 /**
  * AnimationCoordinator - Centralizes player animation management
@@ -15,10 +18,10 @@ import { EventTypes } from './EventTypes';
  * - Allows for future animation queuing/prioritization if needed
  */
 export class AnimationCoordinator {
-  private player: any;
-  private listeners: Map<string, Function>;
+  private player: Player;
+  private listeners: Map<string, (data?: any) => void>;
 
-  constructor(player: any) {
+  constructor(player: Player) {
     this.player = player;
     this.listeners = new Map();
     this.setupListeners();
@@ -26,7 +29,7 @@ export class AnimationCoordinator {
 
   setupListeners() {
     // Bump animation - Used for knockback effects and collisions
-    const bumpListener = (data: any) => {
+    const bumpListener = (data: AnimationBumpEvent) => {
       if (this.player.startBump) {
         this.player.startBump(data.dx, data.dy);
       }
@@ -44,9 +47,9 @@ export class AnimationCoordinator {
     eventBus.on(EventTypes.ANIMATION_BACKFLIP, backflipListener);
 
     // Smoke animation - Used for special abilities or teleportation
-    const smokeListener = (data: any) => {
+    const smokeListener = (data: AnimationSmokeEvent) => {
       if (this.player.startSmokeAnimation) {
-        this.player.startSmokeAnimation(data.x, data.y);
+        this.player.startSmokeAnimation();
       }
     };
     this.listeners.set(EventTypes.ANIMATION_SMOKE, smokeListener);
@@ -62,10 +65,10 @@ export class AnimationCoordinator {
     eventBus.on(EventTypes.ANIMATION_ATTACK, attackListener);
 
     // Knockback - Updates player position (used with bump animation)
-    const knockbackListener = (data: any) => {
+    const knockbackListener = (data: PlayerKnockbackEvent) => {
       if (this.player.setPosition) {
-        // Use emitEvent=false because we're responding to an event already
-        this.player.setPosition(data.x, data.y, false);
+        // setPosition only takes x and y parameters
+        this.player.setPosition(data.x, data.y);
       }
     };
     this.listeners.set(EventTypes.PLAYER_KNOCKBACK, knockbackListener);
@@ -77,7 +80,7 @@ export class AnimationCoordinator {
    */
   destroy() {
     for (const [eventType, listener] of this.listeners.entries()) {
-      eventBus.off(eventType, listener as any);
+      eventBus.off(eventType, listener);
     }
     this.listeners.clear();
   }

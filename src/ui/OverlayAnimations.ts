@@ -12,7 +12,7 @@
 
                 // Force reflow and use requestAnimationFrame to avoid class-add-induced jumps
                 // (ensures the browser has applied any inline display changes before animating)
-                // eslint-disable-next-line no-unused-expressions
+                 
                 overlayElement.getBoundingClientRect();
                 requestAnimationFrame(() => requestAnimationFrame(() => {
                     // Add the furling class (slower, softer curl)

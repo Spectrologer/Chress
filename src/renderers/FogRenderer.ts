@@ -27,15 +27,15 @@ export class FogRenderer {
     private canvasHeight: number = TILE_SIZE * GRID_SIZE;
 
     // Scrolling offsets (pixels) and speed (pixels per frame)
-    private offsetX: number = 0;
-    private offsetY: number = 0;
+    private offsetX = 0;
+    private offsetY = 0;
     private speedX: number = MOTION_CONSTANTS.FOG_SPEED_X; // slow horizontal scroll
     private speedY: number = MOTION_CONSTANTS.FOG_SPEED_Y; // gentle vertical drift
 
     // Pattern instance cached per frame when available
     private _pattern: CanvasPattern | null = null;
     // Scaling factor for the fog tile ( >1 to make the fog tile larger)
-    private scale: number = 3.2;
+    private scale = 3.2;
     // Cached scaled canvas and a reference to the source image used to create it
     private _scaledCanvas: HTMLCanvasElement | null = null;
     private _sourceImageRef: HTMLImageElement | null = null;

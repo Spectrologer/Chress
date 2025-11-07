@@ -1,6 +1,6 @@
 import { TILE_TYPES } from '@core/constants/index';
 import { getExitDirection } from '@core/utils/TransitionUtils';
-import { getDeltaToDirection, getOffset, isAdjacent } from '@core/utils/DirectionUtils';
+import { getDeltaToDirection } from '@core/utils/DirectionUtils';
 import audioManager from '@utils/AudioManager';
 import { GestureDetector } from './GestureDetector';
 import { PathfindingController } from './PathfindingController';
@@ -13,6 +13,7 @@ import { getTileType, isTileObject } from '@utils/TileUtils';
 import { Position } from '@core/Position';
 import type { GameContext } from '@core/GameContext';
 import type { InventoryService } from '@managers/inventory/InventoryService';
+import type { TileObject } from '@core/SharedTypes';
 
 interface GridCoords {
     x: number;
@@ -167,30 +168,30 @@ export class InputCoordinator {
         if (result.type === 'tap') {
             this.handleTap(result.clientX!, result.clientY!);
         } else if (result.type === 'swipe') {
-            this.handleKeyPress({ key: result.direction!, preventDefault: () => {} } as any);
+            this.handleKeyPress({ key: result.direction!, preventDefault: () => {} } as KeyboardEvent);
         }
     }
 
     private _handlePointerDown(e: PointerEvent): void {
-        return (this.gestureDetector as any)._onPointerDown(e);
+        return (this.gestureDetector as unknown as { _onPointerDown: (e: PointerEvent) => void })._onPointerDown(e);
     }
 
     private _handlePointerMove(e: PointerEvent): void {
-        return (this.gestureDetector as any)._onPointerMove(e);
+        return (this.gestureDetector as unknown as { _onPointerMove: (e: PointerEvent) => void })._onPointerMove(e);
     }
 
-    private _handlePointerUp(e: PointerEvent): void {
-        const result = (this.gestureDetector as any)._onPointerUp(e);
+    private _handlePointerUp(e: PointerEvent): PointerResult | undefined {
+        const result = (this.gestureDetector as unknown as { _onPointerUp: (e: PointerEvent) => PointerResult | undefined })._onPointerUp(e);
         this._handlePointerRelease(result);
         return result;
     }
 
     private _handlePointerCancel(e: PointerEvent): void {
-        return (this.gestureDetector as any)._onPointerCancel(e);
+        return (this.gestureDetector as unknown as { _onPointerCancel: (e: PointerEvent) => void })._onPointerCancel(e);
     }
 
     private _handleKeyDown(event: KeyboardEvent): void {
-        return (this.keyboardHandler as any)._onKeyDown(event);
+        return (this.keyboardHandler as unknown as { _onKeyDown: (e: KeyboardEvent) => void })._onKeyDown(event);
     }
 
     // ========================================
@@ -261,11 +262,11 @@ export class InputCoordinator {
 
     private _playTapSound(enemyAtTile: object | null, isDoubleTap: boolean): void {
         if (enemyAtTile) {
-            audioManager.playSound('tap_enemy', { game: this.game as any });
+            audioManager.playSound('tap_enemy', { game: this.game });
         } else if (isDoubleTap) {
-            audioManager.playSound('double_tap', { game: this.game as any });
+            audioManager.playSound('double_tap', { game: this.game });
         } else {
-            audioManager.playSound('bloop', { game: this.game as any });
+            audioManager.playSound('bloop', { game: this.game });
         }
     }
 
@@ -282,7 +283,7 @@ export class InputCoordinator {
         if (!isDoubleTap && playerPos.equals(clickedPos)) {
             const currentTile = playerPos.getTile(this.game.grid);
             const currentTileType = getTileType(currentTile);
-            const portKind = isTileObject(currentTile) ? (currentTile as any).portKind : null;
+            const portKind = isTileObject(currentTile) ? (currentTile as TileObject).portKind : null;
 
             // console.log('[InputCoordinator] Single tap on player tile:', {
             //     currentTileType,
@@ -296,7 +297,7 @@ export class InputCoordinator {
                 this.performExitTap(gridCoords.x, gridCoords.y);
                 return;
             } else if (currentTileType === TILE_TYPES.PORT) {
-                (this.game.interactionManager as any).zoneManager.handlePortTransition();
+                this.game.interactionManager?.zoneManager.handlePortTransition();
                 return;
             }
 
@@ -411,7 +412,6 @@ export class InputCoordinator {
             const { newX, newY, currentPos } = result;
 
             // Combat or movement - use enemyCollection to properly filter living enemies
-            const targetPos = new Position(newX!, newY!);
             const enemyAtTarget = this.game.enemyCollection?.findAt(newX!, newY!, true);
 
             if (enemyAtTarget) {

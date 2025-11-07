@@ -4,6 +4,8 @@ import { EventTypes } from '@core/EventTypes';
 import { isWithinGrid } from '@utils/GridUtils';
 import { Position } from '@core/Position';
 import { isSign, getTileType } from '@utils/TypeChecks';
+import type { GameContext } from '@core/GameContext';
+import type { AnimationSequence } from '@core/AnimationScheduler';
 
 interface PathNode {
     pos: Position;
@@ -14,13 +16,6 @@ interface Direction {
     dx: number;
     dy: number;
     key: string;
-}
-
-interface AnimationSequence {
-    id: string;
-    then: (callback: () => void) => AnimationSequence;
-    wait: (duration: number) => AnimationSequence;
-    start: () => Promise<void> | void;
 }
 
 /**
@@ -34,7 +29,7 @@ interface AnimationSequence {
  * - Handle auto-use of transitions on path completion
  */
 export class PathfindingController {
-    private game: any;
+    private game: GameContext;
 
     // Path execution state
     public isExecutingPath: boolean;
@@ -47,7 +42,7 @@ export class PathfindingController {
     public autoUseNextTransition: 'exit' | 'port' | null;
     public autoUseNextExitReach: boolean;
 
-    constructor(game: any) {
+    constructor(game: GameContext) {
         this.game = game;
 
         // Path execution state
@@ -85,7 +80,7 @@ export class PathfindingController {
         }
 
         // Enemy at target - no autopathing allowed
-        const enemyAtTarget = this.game.enemies?.find((e: any) => e.getPositionObject().equals(targetPos) && e.health > 0);
+        const enemyAtTarget = this.game.enemies?.find((e) => e.getPositionObject().equals(targetPos) && e.health > 0);
         if (enemyAtTarget) {
             return null;
         }
@@ -183,7 +178,7 @@ export class PathfindingController {
             if (this.game?.renderManager?.startHoldFeedback) {
                 this.game.renderManager.startHoldFeedback(destX, destY);
             }
-        } catch (e) {}
+        } catch {}
 
         // Execute with animation
         if (this.game.player.stats?.verbosePathAnimations) {
@@ -223,7 +218,7 @@ export class PathfindingController {
 
         if (startResult && typeof startResult.then === 'function') {
             startResult.then(() => {
-                if (this.currentPathSequence?.id === seq.id) {
+                if (this.currentPathSequence?.getId() === seq.getId()) {
                     this.currentPathSequence = null;
                 }
                 if (this.currentPathSequenceFallback) {
@@ -231,7 +226,7 @@ export class PathfindingController {
                     this.currentPathSequenceFallback = null;
                 }
             }).catch(() => {
-                if (this.currentPathSequence?.id === seq.id) {
+                if (this.currentPathSequence?.getId() === seq.getId()) {
                     this.currentPathSequence = null;
                 }
                 if (this.currentPathSequenceFallback) {
@@ -241,7 +236,7 @@ export class PathfindingController {
             });
         } else {
             this.currentPathSequenceFallback = setTimeout(() => {
-                if (this.currentPathSequence?.id === seq.id) {
+                if (this.currentPathSequence?.getId() === seq.getId()) {
                     this.currentPathSequence = null;
                 }
                 this.currentPathSequenceFallback = null;
@@ -288,7 +283,7 @@ export class PathfindingController {
     /**
      * Trigger a key press event via the event bus
      */
-    private _triggerKeyPress(event: any): void {
+    private _triggerKeyPress(event: KeyboardEvent | { key: string; preventDefault: () => void; _synthetic: boolean }): void {
         // Emit event for InputController to handle
         eventBus.emit(EventTypes.INPUT_KEY_PRESS, event);
     }
@@ -301,7 +296,7 @@ export class PathfindingController {
             if (this.game?.renderManager?.clearFeedback) {
                 this.game.renderManager.clearFeedback();
             }
-        } catch (e) {}
+        } catch {}
 
         const playerPos = this.game.player.getPosition();
         const gridManager = this.game.gridManager;
@@ -323,11 +318,11 @@ export class PathfindingController {
                 if (this.autoUseNextTransition === 'port') {
                     try {
                         this.game.interactionManager.zoneManager.handlePortTransition();
-                    } catch (e) {}
+                    } catch {}
                     this.autoUseNextTransition = null;
                 }
             }
-        } catch (e) {}
+        } catch {}
 
         // Interact on reach
         if (this.game.player.interactOnReach) {
@@ -351,12 +346,12 @@ export class PathfindingController {
             if (this.game?.renderManager?.clearFeedback) {
                 this.game.renderManager.clearFeedback();
             }
-        } catch (e) {}
+        } catch {}
 
         if (this.currentPathSequence) {
             try {
                 this.game.animationScheduler.cancelSequence(this.currentPathSequence.id);
-            } catch (e) {}
+            } catch {}
             this.currentPathSequence = null;
         }
 

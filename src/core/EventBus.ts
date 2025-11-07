@@ -9,7 +9,7 @@ import type { EventType, EventDataMap } from './EventTypes';
  *   eventBus.off(EventTypes.ENEMY_DEFEATED, handler)
  */
 
-export type EventCallback<T = any> = (data: T) => void;
+export type EventCallback<T = unknown> = (data: T) => void;
 export type UnsubscribeFunction = () => void;
 
 export class EventBus {
@@ -109,10 +109,10 @@ export class EventBus {
    */
   emit<K extends EventType>(
     eventName: K,
-    data: K extends keyof EventDataMap ? EventDataMap[K] : any
+    data: K extends keyof EventDataMap ? EventDataMap[K] : unknown
   ): void;
-  emit(eventName: string, data?: any): void;
-  emit(eventName: string, data?: any): void {
+  emit(eventName: string, data?: unknown): void;
+  emit(eventName: string, data?: unknown): void {
     // if (this.debug) {
     //   console.log(`[EventBus] Emitting '${eventName}'`, data);
     // }

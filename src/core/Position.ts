@@ -215,7 +215,7 @@ export class Position {
    * @param distance - How far to move
    * @returns New position after moving
    */
-  move(direction: string, distance: number = 1): Position {
+  move(direction: string, distance = 1): Position {
     const offset = getOffset(direction);
     return new Position(
       this.x + offset.x * distance,
@@ -259,7 +259,7 @@ export class Position {
    * @param allowDiagonal - Whether to consider diagonal adjacency
    * @returns True if adjacent
    */
-  isAdjacentTo(other: Position | Coordinates, allowDiagonal: boolean = true): boolean {
+  isAdjacentTo(other: Position | Coordinates, allowDiagonal = true): boolean {
     return PositionCalculator.isAdjacent(this, other, allowDiagonal);
   }
 
@@ -268,7 +268,7 @@ export class Position {
    * @param allowDiagonal - Whether to include diagonal neighbors
    * @returns Array of adjacent positions
    */
-  getNeighbors(allowDiagonal: boolean = true): Position[] {
+  getNeighbors(allowDiagonal = true): Position[] {
     const neighbors = PositionCalculator.getNeighbors(this, allowDiagonal);
     return neighbors.map(pos => new Position(pos.x, pos.y));
   }
@@ -279,7 +279,7 @@ export class Position {
    * @param allowDiagonal - Whether to include diagonal neighbors
    * @returns Array of valid adjacent positions
    */
-  getValidNeighbors(validator: PositionPredicate, allowDiagonal: boolean = true): Position[] {
+  getValidNeighbors(validator: PositionPredicate, allowDiagonal = true): Position[] {
     return this.getNeighbors(allowDiagonal).filter(pos => validator(pos));
   }
 
@@ -468,7 +468,7 @@ export class Position {
    * @param includeEnd - Whether to include ending position
    * @returns Array of positions along the line
    */
-  lineTo(target: Position | Coordinates, includeStart: boolean = false, includeEnd: boolean = true): Position[] {
+  lineTo(target: Position | Coordinates, includeStart = false, includeEnd = true): Position[] {
     const positions = PositionCalculator.lineTo(this, target, includeStart, includeEnd);
     return positions.map(pos => new Position(pos.x, pos.y));
   }
@@ -479,7 +479,7 @@ export class Position {
    * @param includeEdges - Whether to include edge positions
    * @returns Array of positions in the rectangle
    */
-  rectangleTo(corner: Position | Coordinates, includeEdges: boolean = true): Position[] {
+  rectangleTo(corner: Position | Coordinates, includeEdges = true): Position[] {
     const positions = PositionCalculator.rectangleBetween(this, corner, includeEdges);
     return positions.map(pos => new Position(pos.x, pos.y));
   }
@@ -490,7 +490,7 @@ export class Position {
    * @param includeCenter - Whether to include this position
    * @returns Array of positions within radius
    */
-  positionsWithinRadius(radius: number, includeCenter: boolean = false): Position[] {
+  positionsWithinRadius(radius: number, includeCenter = false): Position[] {
     const positions = PositionCalculator.positionsWithinRadius(this, radius, includeCenter);
     return positions.map(pos => new Position(pos.x, pos.y));
   }

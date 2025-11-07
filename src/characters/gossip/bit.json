@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*eyes you suspiciously from inside hat* Who are you? What do you want? I wasn't doing anything.",
+        "text": "What do you want? I wasn't doing anything.",
         "buttonText": "Relax..."
       },
       {
         "id": "msg_1",
-        "text": "This hat? Found it fair and square. The leprechaun didn't need it anymore. Trust me.",
+        "text": "This hat? I'm a leprechaun. This is what leprechauns wear. Given to me by my grandfather.",
         "buttonText": "Sure..."
       },
       {
         "id": "msg_2",
-        "text": "Keep your distance, pal. My claws are VERY grabby. Accidentally. Mostly accidentally.",
+        "text": "My fingers are naturally sticky. I can't change that.",
         "buttonText": "Noted."
       }
     ]

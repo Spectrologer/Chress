@@ -1,5 +1,7 @@
 import { TILE_TYPES } from './constants/index';
 import { logger } from './logger';
+import type { Tile } from './SharedTypes';
+import type { EnemyData } from '@entities/Enemy';
 
 interface BoardData {
     size: [number, number];
@@ -18,7 +20,7 @@ interface BoardData {
 interface BoardResult {
     grid: number[][];
     playerSpawn: { x: number; y: number };
-    enemies: any[];
+    enemies: EnemyData[];
     terrainTextures: Record<string, string>;
     overlayTextures?: Record<string, string>;
     rotations: Record<string, number>;
@@ -41,7 +43,7 @@ export class BoardLoader {
     /**
      * Register a board for a specific zone location
      */
-    registerBoard(zoneX: number, zoneY: number, dimension: number, boardName: string, type: string = 'custom'): void {
+    registerBoard(zoneX: number, zoneY: number, dimension: number, boardName: string, type = 'custom'): void {
         const key = this.createBoardKey(zoneX, zoneY, dimension);
         const boardPath = `${type}/${boardName}`;
         this.boardRegistry.set(key, boardPath);
@@ -357,7 +359,7 @@ export class BoardLoader {
     /**
      * Convert a feature string to a tile type or object
      */
-    convertFeatureToTile(featureType: string, foodAssets: string[], signMessages: Record<string, string> = {}, posKey: string | null = null): any {
+    convertFeatureToTile(featureType: string, foodAssets: string[], signMessages: Record<string, string> = {}, posKey: string | null = null): Tile {
         // Handle special random item placeholders
         if (featureType === 'random_item') {
             return this.generateRandomItem(foodAssets);
@@ -400,13 +402,13 @@ export class BoardLoader {
         const tileTypeName = featureType.toUpperCase();
 
         if (tileTypeName in TILE_TYPES) {
-            return (TILE_TYPES as any)[tileTypeName];
+            return (TILE_TYPES as Record<string, number>)[tileTypeName];
         }
 
         // Try with underscores converted
         const normalizedName = featureType.replace(/-/g, '_').toUpperCase();
         if (normalizedName in TILE_TYPES) {
-            return (TILE_TYPES as any)[normalizedName];
+            return (TILE_TYPES as Record<string, number>)[normalizedName];
         }
 
         logger.warn(`Unknown feature type: ${featureType}`);
@@ -416,8 +418,8 @@ export class BoardLoader {
     /**
      * Generate a random item from the full starter item pool
      */
-    private generateRandomItem(foodAssets: string[]): any {
-        const itemPool = [
+    private generateRandomItem(foodAssets: string[]): Tile {
+        const itemPool: Tile[] = [
             { type: TILE_TYPES.FOOD, foodType: foodAssets[Math.floor(Math.random() * foodAssets.length)] },
             TILE_TYPES.WATER,
             TILE_TYPES.BOMB,
@@ -431,7 +433,7 @@ export class BoardLoader {
         const itemToSpawn = itemPool[Math.floor(Math.random() * itemPool.length)];
 
         // Handle food case where no assets are available
-        if ((itemToSpawn as any).type === TILE_TYPES.FOOD && (!foodAssets || foodAssets.length === 0)) {
+        if (typeof itemToSpawn === 'object' && itemToSpawn !== null && 'type' in itemToSpawn && itemToSpawn.type === TILE_TYPES.FOOD && (!foodAssets || foodAssets.length === 0)) {
             return TILE_TYPES.WATER;
         }
 
@@ -441,8 +443,8 @@ export class BoardLoader {
     /**
      * Generate a random radial item (weapons/activated items)
      */
-    private generateRandomRadialItem(): any {
-        const radialItems = [
+    private generateRandomRadialItem(): Tile {
+        const radialItems: Tile[] = [
             TILE_TYPES.BOMB,
             { type: TILE_TYPES.BISHOP_SPEAR, uses: 3 },
             { type: TILE_TYPES.HORSE_ICON, uses: 3 },
@@ -457,7 +459,7 @@ export class BoardLoader {
     /**
      * Generate a random food or water item
      */
-    private generateRandomFoodWater(foodAssets: string[]): any {
+    private generateRandomFoodWater(foodAssets: string[]): Tile {
         const isWater = Math.random() < 0.5;
 
         if (isWater) {

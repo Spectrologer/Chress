@@ -19,7 +19,7 @@ interface GameInstance {
 export class StatsPanelManager {
     private game: GameInstance;
     private statsPanelOverlay: HTMLElement | null;
-    private statsPanelOpen: boolean = false;
+    private statsPanelOpen = false;
     private _showConfigCallback: (() => void) | null = null;
     private _showRecordsCallback: (() => void) | null = null;
     private eventManager: EventListenerManager;

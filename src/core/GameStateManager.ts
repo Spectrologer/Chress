@@ -1,11 +1,9 @@
-import { GRID_SIZE, TILE_TYPES } from './constants/index';
+import { TILE_TYPES } from './constants/index';
 import { UI_TIMING_CONSTANTS } from './constants/ui';
 import { logger } from './logger';
 import { Sign } from '@ui/Sign';
-import { validateLoadedGrid } from '@generators/GeneratorUtils';
 import { eventBus } from './EventBus';
 import { EventTypes } from './EventTypes';
-import { ZoneStateManager } from '@generators/ZoneStateManager';
 import { isWithinGrid } from '@utils/GridUtils';
 import { SaveSerializer } from './SaveSerializer';
 import { SaveDeserializer } from './SaveDeserializer';
@@ -14,6 +12,7 @@ import { ZoneRepository } from '@repositories/ZoneRepository';
 import { boardLoader } from './BoardLoader';
 import { createZoneKey } from '@utils/ZoneKeyUtils';
 import type { GameContext } from './GameContext';
+import type { PlayerStats } from '@entities/PlayerStats';
 
 const GAME_STATE_KEY = 'chress_game_state';
 const SAVE_VERSION = 2; // bump if save format changes
@@ -21,9 +20,9 @@ const SAVE_VERSION = 2; // bump if save format changes
 export class GameStateManager {
     private game: GameContext;
     private saveDebounceMs: number;
-    private _saveTimer: any;
+    private _saveTimer: ReturnType<typeof setTimeout> | null;
     private saveIntervalMs: number;
-    private _saveIntervalId: any;
+    private _saveIntervalId: ReturnType<typeof setInterval> | null;
 
     constructor(game: GameContext) {
         this.game = game;
@@ -118,7 +117,7 @@ export class GameStateManager {
         this.game.currentRegion = this.game.uiManager!.generateRegionName(initialZone.x, initialZone.y);
 
         // Restore config settings
-        if (!this.game.player!.stats) this.game.player!.stats = {} as any;
+        if (!this.game.player!.stats) this.game.player!.stats = {} as PlayerStats;
         this.game.player!.stats.musicEnabled = prevConfig.musicEnabled;
         this.game.player!.stats.sfxEnabled = prevConfig.sfxEnabled;
 
@@ -314,7 +313,7 @@ export class GameStateManager {
             return true;
         } catch (error) {
             logger.error('Failed to load game state:', error);
-            logger.error('Error stack:', (error as any).stack);
+            logger.error('Error stack:', error instanceof Error ? error.stack : undefined);
             // If loading fails, clear corrupted data
             try {
                 await this.game.storageAdapter.remove(GAME_STATE_KEY);

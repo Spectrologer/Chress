@@ -3,6 +3,8 @@ import { validateLoadedGrid } from '@generators/GeneratorUtils';
 import { logger } from './logger';
 import type { GameContext } from './GameContext';
 import type { SavedPlayerData, SavedPlayerStats, SaveGameData } from './SharedTypes';
+import type { ZoneRepository } from '@repositories/ZoneRepository';
+import type { EnemyData } from '@entities/Enemy';
 
 /**
  * Helper class for deserializing game state from a save format.
@@ -37,11 +39,13 @@ export class SaveDeserializer {
         if (!statsData || !game.world.player) return;
 
         try {
-            (game.world.player as any).stats = (game.world.player as any).stats || {};
-            (game.world.player as any).stats.musicEnabled = typeof statsData.musicEnabled !== 'undefined'
+            if (!game.world.player.stats) {
+                throw new Error('Player stats not initialized');
+            }
+            game.world.player.stats.musicEnabled = typeof statsData.musicEnabled !== 'undefined'
                 ? !!statsData.musicEnabled
                 : true;
-            (game.world.player as any).stats.sfxEnabled = typeof statsData.sfxEnabled !== 'undefined'
+            game.world.player.stats.sfxEnabled = typeof statsData.sfxEnabled !== 'undefined'
                 ? !!statsData.sfxEnabled
                 : true;
 
@@ -54,7 +58,7 @@ export class SaveDeserializer {
     /**
      * Deserializes game state (zones, grid, enemies, etc.) from saved data.
      */
-    static deserializeGameState(game: GameContext & { zoneRepository?: any; messageLog?: string[] }, gameStateData: Partial<SaveGameData>): void {
+    static deserializeGameState(game: GameContext & { zoneRepository?: ZoneRepository; messageLog?: string[] }, gameStateData: Partial<SaveGameData>): void {
         // Restore game state with validation for grid data
         if (game.zoneRepository) {
             game.zoneRepository.restore(gameStateData.zones || []);
@@ -65,7 +69,7 @@ export class SaveDeserializer {
 
         game.world.grid = validateLoadedGrid(gameStateData.grid);
         // Modify enemies array in-place to preserve enemyCollection reference
-        const loadedEnemies = (gameStateData.enemies || []).map((e: any) => new game.Enemy(e));
+        const loadedEnemies = (gameStateData.enemies || []).map((e) => new game.Enemy(e as EnemyData));
         game.world.enemies.length = 0;
         game.world.enemies.push(...loadedEnemies);
         game.world.defeatedEnemies = new Set(gameStateData.defeatedEnemies || []);

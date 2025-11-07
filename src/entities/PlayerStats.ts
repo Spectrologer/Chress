@@ -73,23 +73,23 @@ export class PlayerStats {
         }
     }
 
-    takeDamage(amount: number = 1): void {
+    takeDamage(amount = 1): void {
         this.setHealth(this.health - amount);
     }
 
-    decreaseThirst(amount: number = 1): void {
+    decreaseThirst(amount = 1): void {
         this.setThirst(this.thirst - amount);
     }
 
-    decreaseHunger(amount: number = 1): void {
+    decreaseHunger(amount = 1): void {
         this.setHunger(this.hunger - amount);
     }
 
-    restoreThirst(amount: number = 10): void {
+    restoreThirst(amount = 10): void {
         this.setThirst(this.thirst + amount);
     }
 
-    restoreHunger(amount: number = 10): void {
+    restoreHunger(amount = 10): void {
         this.setHunger(this.hunger + amount);
     }
 

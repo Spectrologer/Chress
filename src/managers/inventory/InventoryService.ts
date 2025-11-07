@@ -52,7 +52,7 @@ export class InventoryService {
      * Pickup an item from the grid and add to inventory
      * Orchestrates: sound + animation + repository
      */
-    pickupItem(item: InventoryItem, sound: string = 'pickup'): boolean {
+    pickupItem(item: InventoryItem, sound = 'pickup'): boolean {
         if (!item || !this.game.player) return false;
 
         const success = this.repository.addToInventory(this.game.player, item, 'auto');

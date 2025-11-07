@@ -14,7 +14,12 @@ const projectRoot = path.join(__dirname, '..');
 const assetsUiPath = path.join(projectRoot, 'assets', 'ui');
 const sourcePath = path.join(assetsUiPath, 'title.png');
 
-const icons = [
+interface IconConfig {
+  name: string;
+  size: string;
+}
+
+const icons: IconConfig[] = [
   { name: 'icon-192.png', size: '192x192' },
   { name: 'icon-512.png', size: '512x512' },
   { name: 'icon-apple-touch.png', size: '180x180' }
@@ -39,7 +44,8 @@ icons.forEach(icon => {
     fs.copyFileSync(sourcePath, destPath);
     console.log(`✓ Created ${icon.name} (placeholder - needs ${icon.size})`);
   } catch (err) {
-    console.error(`❌ Failed to create ${icon.name}:`, err.message);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error(`❌ Failed to create ${icon.name}:`, errorMessage);
   }
 });
 

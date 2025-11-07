@@ -13,6 +13,7 @@ import { safeCall } from '@utils/SafeServiceCall';
 import type { Game } from '@core/game';
 import type { Position } from '@core/Position';
 import type { Enemy } from '@entities/Enemy';
+import type { BombManager } from '../BombManager';
 
 interface AttackResult {
     defeated: boolean;
@@ -21,10 +22,10 @@ interface AttackResult {
 
 export class CollisionDetectionSystem {
     private game: Game;
-    private bombManager: any;
+    private bombManager: BombManager;
     private defeatEnemy: (enemy: Enemy, initiator?: string) => AttackResult;
 
-    constructor(game: Game, bombManager: any, defeatEnemy: (enemy: Enemy, initiator?: string) => AttackResult) {
+    constructor(game: Game, bombManager: BombManager, defeatEnemy: (enemy: Enemy, initiator?: string) => AttackResult) {
         this.game = game;
         this.bombManager = bombManager;
         this.defeatEnemy = defeatEnemy;

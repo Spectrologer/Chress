@@ -1,7 +1,6 @@
 import { GRID_SIZE, CANVAS_SIZE, TILE_TYPES } from './constants/index';
 import { logger } from './logger';
 import { TextureManager } from '@renderers/TextureManager';
-import { ZoneStateManager } from '@generators/ZoneStateManager';
 import { eventBus } from './EventBus';
 import { EventTypes } from './EventTypes';
 import { errorHandler, ErrorSeverity } from './ErrorHandler';

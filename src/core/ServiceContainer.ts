@@ -46,7 +46,7 @@ import { CombatFacade } from '@facades/CombatFacade';
 import { WorldFacade } from '@facades/WorldFacade';
 import type { GameContext } from './GameContext';
 
-type ServiceFactory = () => any;
+type ServiceFactory = () => unknown;
 
 /**
  * Lightweight service container with lazy initialization for better testability.
@@ -55,7 +55,7 @@ type ServiceFactory = () => any;
  */
 export class ServiceContainer {
     private game: GameContext;
-    private _instances: Map<string, any>;
+    private _instances: Map<string, unknown>;
     private _serviceRegistry: Record<string, ServiceFactory>;
 
     constructor(game: GameContext) {
@@ -67,17 +67,17 @@ export class ServiceContainer {
     /**
      * Get or create a service instance by name.
      */
-    get(serviceName: string): any {
+    get<T = unknown>(serviceName: string): T {
         if (!this._instances.has(serviceName)) {
             this._instances.set(serviceName, this._createService(serviceName));
         }
-        return this._instances.get(serviceName);
+        return this._instances.get(serviceName) as T;
     }
 
     /**
      * Set a service instance (useful for testing/mocking)
      */
-    set(serviceName: string, instance: any): void {
+    set(serviceName: string, instance: unknown): void {
         this._instances.set(serviceName, instance);
     }
 
@@ -220,7 +220,7 @@ export class ServiceContainer {
      * Factory method that creates services based on name.
      * This maintains the same initialization order and dependencies as before.
      */
-    private _createService(serviceName: string): any {
+    private _createService(serviceName: string): unknown {
         const factory = this._serviceRegistry[serviceName];
         if (!factory) {
             throw new Error(`Unknown service: ${serviceName}`);

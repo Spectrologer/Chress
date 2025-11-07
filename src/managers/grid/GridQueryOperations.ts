@@ -91,7 +91,7 @@ export class GridQueryOperations {
     /**
      * Get neighbors of a tile (4-directional: up, down, left, right)
      */
-    getNeighbors(x: number, y: number, includeDiagonals: boolean = false): NeighborTile[] {
+    getNeighbors(x: number, y: number, includeDiagonals = false): NeighborTile[] {
         const neighbors: NeighborTile[] = [];
 
         // Cardinal directions

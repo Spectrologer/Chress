@@ -401,7 +401,7 @@ export class AnimationManager {
    * @param offsetY - Y offset
    * @param frames - Number of frames
    */
-  addBumpAnimation(offsetX: number, offsetY: number, frames: number = 15): void {
+  addBumpAnimation(offsetX: number, offsetY: number, frames = 15): void {
     const animation: BumpAnimation = { offsetX, offsetY, frames };
     DataContractValidator.validateAnimation('BUMP', animation);
     this.bumpAnimations.push(animation);
@@ -412,7 +412,7 @@ export class AnimationManager {
    * @param offsetY - Y offset
    * @param frames - Number of frames
    */
-  addLiftAnimation(offsetY: number, frames: number = 15): void {
+  addLiftAnimation(offsetY: number, frames = 15): void {
     const animation: LiftAnimation = { offsetY, frames };
     DataContractValidator.validateAnimation('LIFT', animation);
     this.liftAnimations.push(animation);
@@ -422,7 +422,7 @@ export class AnimationManager {
    * Adds a smoke animation
    * @param duration - Duration in frames
    */
-  addSmokeAnimation(duration: number = 6): void {
+  addSmokeAnimation(duration = 6): void {
     const animation: SmokeAnimation = { frame: duration };
     DataContractValidator.validateAnimation('SMOKE', animation);
     this.smokeAnimations.push(animation);
