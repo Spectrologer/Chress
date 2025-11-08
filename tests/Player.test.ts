@@ -1,4 +1,4 @@
-import { Player } from '../entities/Player\.ts';
+import { Player } from '../entities/Player';
 import { TILE_TYPES, GRID_SIZE, ZONE_CONSTANTS } from '@core/constants/index';
 
 describe('Player', () => {

@@ -1,4 +1,4 @@
-import { MiniMap } from '../ui/MiniMap\.ts';
+import { MiniMap } from '../ui/MiniMap';
 
 describe('MiniMap highlights cycling', () => {
   let miniMap;

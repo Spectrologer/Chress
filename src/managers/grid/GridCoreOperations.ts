@@ -5,7 +5,6 @@
  * Extracted from GridManager to reduce file size.
  */
 
-import { isWithinGrid } from '@utils/GridUtils';
 import { getTileType, isTileType, isWalkable as isWalkableTile } from '@utils/TileUtils';
 import { TileTypeChecker } from '@utils/TypeChecks';
 import { logger } from '@core/logger';
@@ -13,6 +12,8 @@ import type { Tile, Grid } from '@core/SharedTypes';
 
 export class GridCoreOperations {
     private grid: Grid;
+    private gridWidth: number;
+    private gridHeight: number;
 
     constructor(grid: Grid) {
         if (!grid || !Array.isArray(grid)) {
@@ -20,13 +21,22 @@ export class GridCoreOperations {
         }
 
         this.grid = grid;
+        this.gridHeight = grid.length;
+        this.gridWidth = grid[0]?.length || 0;
+    }
+
+    /**
+     * Check if coordinates are within the actual grid boundaries
+     */
+    isWithinBounds(x: number, y: number): boolean {
+        return x >= 0 && x < this.gridWidth && y >= 0 && y < this.gridHeight;
     }
 
     /**
      * Get tile at coordinates (safe access with bounds checking)
      */
     getTile(x: number, y: number): Tile | undefined {
-        if (!isWithinGrid(x, y)) {
+        if (!this.isWithinBounds(x, y)) {
             logger.warn(`GridCoreOperations.getTile: coordinates out of bounds (${x}, ${y})`);
             return undefined;
         }
@@ -37,19 +47,12 @@ export class GridCoreOperations {
      * Set tile at coordinates (safe write with bounds checking)
      */
     setTile(x: number, y: number, tile: Tile): boolean {
-        if (!isWithinGrid(x, y)) {
+        if (!this.isWithinBounds(x, y)) {
             logger.warn(`GridCoreOperations.setTile: coordinates out of bounds (${x}, ${y})`);
             return false;
         }
         this.grid[y][x] = tile;
         return true;
-    }
-
-    /**
-     * Check if coordinates are within grid boundaries
-     */
-    isWithinBounds(x: number, y: number): boolean {
-        return isWithinGrid(x, y);
     }
 
     /**
@@ -106,6 +109,8 @@ export class GridCoreOperations {
             throw new Error('GridCoreOperations.setGrid: Invalid grid provided');
         }
         this.grid = newGrid;
+        this.gridHeight = newGrid.length;
+        this.gridWidth = newGrid[0]?.length || 0;
     }
 
     /**

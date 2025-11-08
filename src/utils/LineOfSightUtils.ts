@@ -3,6 +3,8 @@
  * Provides shared LOS checking functionality for combat, AI, and pathfinding systems
  */
 
+import type { GridCompat } from '@types/core';
+
 export interface StepDirection {
   stepX: number; // Direction on X axis (-1, 0, or 1)
   stepY: number; // Direction on Y axis (-1, 0, or 1)
@@ -13,7 +15,7 @@ export interface Enemy {
   y: number;
 }
 
-export type IsWalkableFunction = (x: number, y: number, grid: any[][]) => boolean;
+export type IsWalkableFunction = (x: number, y: number, grid: GridCompat) => boolean;
 
 export type LineType = 'orthogonal' | 'diagonal' | null;
 
@@ -76,7 +78,7 @@ export function checkLineOfSight(
     fromY: number,
     toX: number,
     toY: number,
-    grid: any[][],
+    grid: GridCompat,
     options: LineOfSightOptions = {}
 ): boolean {
     const {
@@ -164,7 +166,7 @@ export function checkOrthogonalLineOfSight(
     fromY: number,
     toX: number,
     toY: number,
-    grid: any[][],
+    grid: GridCompat,
     options: LineOfSightOptions = {}
 ): boolean {
     return checkLineOfSight(fromX, fromY, toX, toY, grid, {
@@ -188,7 +190,7 @@ export function checkDiagonalLineOfSight(
     fromY: number,
     toX: number,
     toY: number,
-    grid: any[][],
+    grid: GridCompat,
     options: LineOfSightOptions = {}
 ): boolean {
     return checkLineOfSight(fromX, fromY, toX, toY, grid, {
@@ -212,7 +214,7 @@ export function checkQueenLineOfSight(
     fromY: number,
     toX: number,
     toY: number,
-    grid: any[][],
+    grid: GridCompat,
     options: LineOfSightOptions = {}
 ): boolean {
     const lineType = getLineType(fromX, fromY, toX, toY);

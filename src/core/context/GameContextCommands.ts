@@ -12,23 +12,23 @@ import type { Item } from './GameContextInterfaces';
  * Command methods mixin for GameContext
  * These methods delegate to the appropriate managers
  */
-export class GameContextCommands {
-    // Manager properties (must be set by GameContext)
-    turnManager: any;
-    renderManager: any;
-    combatManager: any;
-    interactionManager: any;
-    gameStateManager: any;
-    actionManager: any;
-    uiManager: any;
-    gameInitializer: any;
-    zoneManager: any;
-    shovelMode!: boolean;
-    activeShovel!: Item | null;
-    player: any;
-    grid: any;
-    ui: any;
-    radialInventoryUI: any;
+export abstract class GameContextCommands {
+    // Manager properties (abstract getters, implemented by GameContext)
+    abstract get turnManager(): any;
+    abstract get renderManager(): any;
+    abstract get combatManager(): any;
+    abstract get interactionManager(): any;
+    abstract get gameStateManager(): any;
+    abstract get actionManager(): any;
+    abstract get uiManager(): any;
+    abstract get gameInitializer(): any;
+    abstract get zoneManager(): any;
+    abstract shovelMode: boolean;
+    abstract activeShovel: Item | null;
+    abstract player: any;
+    abstract grid: any;
+    abstract ui: any;
+    abstract radialInventoryUI: any;
 
     handleTurnCompletion(): void {
         this.turnManager!.handleTurnCompletion();

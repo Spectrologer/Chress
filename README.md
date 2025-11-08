@@ -37,6 +37,15 @@ Visit `http://localhost:3000` to play!
 
 ## 🚀 Recent Updates
 
+### TypeScript Migration & Architecture Refactoring (v1.1.0)
+- ✅ **Complete TypeScript Migration** - 298 TS files, 0 JS files remaining
+- ✅ **GameContext Refactoring** - Eliminated god object anti-pattern
+  - Created ManagerRegistry for type-safe service access
+  - Introduced domain facades (combat, inventory, zones, etc.)
+  - Separated concerns with TurnState object
+- ✅ **Enhanced Type Safety** - Migration from loose JavaScript to strict TypeScript
+- ✅ **Improved Architecture** - Better separation of concerns and testability
+
 ### Build System & PWA (v1.0.0)
 - ✅ **Vite Build System** - Modern bundler with HMR and optimization
 - ✅ **Code Splitting** - Automatic chunking for faster loads
@@ -52,16 +61,19 @@ Visit `http://localhost:3000` to play!
 
 ## 📚 Documentation
 
+> **See [docs/README.md](docs/README.md) for the complete documentation index**
+
 ### Getting Started
 - **[Build & Deployment Guide](docs/BUILD.md)** - Complete build system documentation
 - **[PWA & Lazy Loading Guide](docs/PWA-LAZY-LOADING.md)** - Progressive Web App features
 - **[Project Overview](docs/PROJECT_OVERVIEW.md)** - Architecture and structure
 
 ### Development
-- **[TypeScript Migration Guide](docs/TYPESCRIPT_MIGRATION.md)** - TypeScript adoption
+- **[TypeScript Quickstart](docs/TYPESCRIPT_QUICKSTART.md)** - Working with TypeScript in the project
 - **[Type Checking Guide](docs/TYPE_CHECKING_MIGRATION_GUIDE.md)** - Runtime type validation
 - **[Testing Guide](docs/TESTING.md)** - Testing strategies and examples
 - **[Error Handling](docs/ERROR_HANDLING.md)** - Error management patterns
+- **[Refactoring Summary](REFACTORING_SUMMARY.md)** - Recent architecture improvements
 
 ### Architecture
 - **[State Management](docs/STATE_MANAGEMENT_SUMMARY.md)** - Game state architecture
@@ -92,9 +104,9 @@ The game uses a turn-based system where:
 ## 🛠️ Tech Stack
 
 - **Build**: Vite 6.x
-- **Language**: JavaScript (ES Modules) + TypeScript migration in progress
-- **Testing**: Vitest with happy-dom
-- **Linting**: ESLint 9.x
+- **Language**: TypeScript 5.9.3 (100% migrated from JavaScript)
+- **Testing**: Vitest 4.x with happy-dom
+- **Linting**: ESLint 9.x with TypeScript support
 - **PWA**: Workbox via vite-plugin-pwa
 
 ## 📦 Project Structure

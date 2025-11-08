@@ -1,7 +1,7 @@
-import { UIManager } from '../ui/UIManager\.ts';
+import { UIManager } from '../ui/UIManager';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
-import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks\.ts';
+import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks';
 
 describe('UIManager', () => {
   let uiManager;

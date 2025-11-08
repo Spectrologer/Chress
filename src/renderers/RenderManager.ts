@@ -57,7 +57,8 @@ interface NPCRenderer {
 
 export class RenderManager {
     private game: IGame;
-    private ctx: CanvasRenderingContext2D;
+    /** @internal Canvas rendering context (public for testing) */
+    public ctx: CanvasRenderingContext2D;
     private textureManager: TextureManager;
     private tapFeedback: TapFeedback | null = null;
     private playerRenderer: PlayerRenderer;

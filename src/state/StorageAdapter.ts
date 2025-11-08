@@ -13,6 +13,7 @@
 
 import { logger } from '@core/logger';
 import { compressionService } from '@services/CompressionService';
+import { SaveGameValidator, SaveGameValidationError } from '@utils/SaveGameValidator';
 
 interface PayloadData {
     compressed: boolean;
@@ -160,9 +161,18 @@ export class StorageAdapter {
             : payload.data;
 
         try {
-            return JSON.parse(dataString as string);
+            // Parse JSON
+            const parsed = JSON.parse(dataString as string);
+
+            // Validate and sanitize the parsed data
+            const validated = SaveGameValidator.validateAndSanitize(parsed);
+            return validated;
         } catch (error) {
-            logger.error('StorageAdapter: Failed to parse data:', error);
+            if (error instanceof SaveGameValidationError) {
+                logger.error('StorageAdapter: Save game validation failed:', error.message);
+            } else {
+                logger.error('StorageAdapter: Failed to parse data:', error);
+            }
             return null;
         }
     }
@@ -325,9 +335,23 @@ export class StorageAdapter {
     private _loadFromLocalStorage(key: string): any {
         try {
             const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : null;
+            if (!item) {
+                return null;
+            }
+
+            // Parse JSON
+            const parsed = JSON.parse(item);
+
+            // For PayloadData objects, validation will happen in the load() method
+            // For direct save game data, we could validate here, but we'll keep
+            // consistency with the load() method doing the validation
+            return parsed;
         } catch (error) {
-            logger.error('StorageAdapter: localStorage load failed:', error);
+            if (error instanceof SaveGameValidationError) {
+                logger.error('StorageAdapter: localStorage validation failed:', error.message);
+            } else {
+                logger.error('StorageAdapter: localStorage load failed:', error);
+            }
             return null;
         }
     }

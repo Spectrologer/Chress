@@ -1,5 +1,5 @@
-import { GridManager } from '../src/managers/GridManager\.ts';
-import { TILE_TYPES } from '../src/core/constants/index\.ts';
+import { GridManager } from '../src/managers/GridManager';
+import { TILE_TYPES } from '../src/core/constants/index';
 
 // Create a simple 9x9 grid filled with floors
 const testGrid = Array(9).fill(null).map(() =>

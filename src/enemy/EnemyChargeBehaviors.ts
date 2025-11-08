@@ -5,11 +5,12 @@ import {
     checkOrthogonalLineOfSight,
     checkQueenLineOfSight
 } from '@utils/LineOfSightUtils';
+import type { GridCompat } from '@types/core';
 
 interface Enemy {
     x: number;
     y: number;
-    isWalkable: (x: number, y: number, grid: unknown[][]) => boolean;
+    isWalkable: (x: number, y: number, grid: GridCompat) => boolean;
 }
 
 export class EnemyChargeBehaviors {
@@ -18,7 +19,7 @@ export class EnemyChargeBehaviors {
         enemy: Enemy,
         playerX: number,
         playerY: number,
-        grid: unknown[][],
+        grid: GridCompat,
         enemies: Enemy[]
     ): { x: number; y: number } | null {
         // Check clear line of sight using utility function
@@ -27,7 +28,7 @@ export class EnemyChargeBehaviors {
             playerX, playerY,
             grid,
             {
-                isWalkable: (x: number, y: number, grid: unknown[][]) => enemy.isWalkable(x, y, grid),
+                isWalkable: (x: number, y: number, grid: GridCompat) => enemy.isWalkable(x, y, grid),
                 checkEnemies: true,
                 enemies: enemies,
                 includeEndpoint: false
@@ -60,7 +61,7 @@ export class EnemyChargeBehaviors {
         enemy: Enemy,
         playerX: number,
         playerY: number,
-        grid: unknown[][],
+        grid: GridCompat,
         enemies: Enemy[]
     ): { x: number; y: number } | null {
         // Check clear line of sight using utility function
@@ -69,7 +70,7 @@ export class EnemyChargeBehaviors {
             playerX, playerY,
             grid,
             {
-                isWalkable: (x: number, y: number, grid: unknown[][]) => enemy.isWalkable(x, y, grid),
+                isWalkable: (x: number, y: number, grid: GridCompat) => enemy.isWalkable(x, y, grid),
                 checkEnemies: true,
                 enemies: enemies,
                 includeEndpoint: false
@@ -111,7 +112,7 @@ export class EnemyChargeBehaviors {
         enemy: Enemy,
         playerX: number,
         playerY: number,
-        grid: unknown[][],
+        grid: GridCompat,
         enemies: Enemy[]
     ): { x: number; y: number } | null {
         // Check clear line of sight using utility function
@@ -120,7 +121,7 @@ export class EnemyChargeBehaviors {
             playerX, playerY,
             grid,
             {
-                isWalkable: (x: number, y: number, grid: unknown[][]) => enemy.isWalkable(x, y, grid),
+                isWalkable: (x: number, y: number, grid: GridCompat) => enemy.isWalkable(x, y, grid),
                 checkEnemies: true,
                 enemies: enemies,
                 includeEndpoint: false

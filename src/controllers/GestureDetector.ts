@@ -447,7 +447,7 @@ export class GestureDetector {
         const scaleY = this.game.canvas.height / (rect.height * dpr);
         const adjustedX = canvasX * scaleX;
         const adjustedY = canvasY * scaleY;
-        const size = (this.game && this.game.TILE_SIZE) ? this.game.TILE_SIZE : TILE_SIZE;
+        const size = TILE_SIZE;
         const gridX = Math.floor(adjustedX / size);
         const gridY = Math.floor(adjustedY / size);
         return { x: gridX, y: gridY };

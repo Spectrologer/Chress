@@ -1,5 +1,5 @@
-import { MiniMap } from '../ui/MiniMap\.ts';
-import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks\.ts';
+import { MiniMap } from '../ui/MiniMap';
+import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks';
 
 describe('MiniMap', () => {
   let miniMap;

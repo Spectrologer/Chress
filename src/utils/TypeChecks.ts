@@ -20,7 +20,20 @@ import { TILE_TYPES, TileType } from '@core/constants/index';
 /**
  * A tile can be either a primitive number (tile type) or an object with a type property
  */
-export type Tile = number | { type: number; [key: string]: unknown } | null | undefined;
+export type Tile = number | {
+    type: number;
+    uses?: number;
+    message?: string;
+    foodType?: string;
+    name?: string;
+    icon?: string;
+    npcType?: string;
+    enemyType?: string;
+    direction?: string;
+    discovered?: boolean;
+    actionsSincePlaced?: number;
+    justPlaced?: boolean;
+} | null | undefined;
 
 // ========================================
 // TILE TYPE CHECKER CLASS
@@ -268,7 +281,7 @@ export class TileTypeChecker {
     /**
      * Safely gets a property from a tile object.
      */
-    static getTileProperty<K extends string>(tile: Tile, property: K): any {
+    static getTileProperty<K extends string>(tile: Tile, property: K): unknown {
         if (TileTypeChecker.isTileObject(tile)) {
             return tile[property];
         }
@@ -520,6 +533,6 @@ export function checkTileType(tile: Tile, tileType: number): boolean {
 }
 
 /** @deprecated Use isTileObject() instead */
-export function isTileObj(tile: any): tile is { type: number; [key: string]: any } {
+export function isTileObj(tile: unknown): tile is { type: number; [key: string]: unknown } {
     return TileTypeChecker.isTileObject(tile);
 }

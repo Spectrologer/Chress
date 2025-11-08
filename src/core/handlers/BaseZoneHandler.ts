@@ -1,5 +1,5 @@
-import { TILE_TYPES, GRID_SIZE } from '../constants/index';
-import { logger } from '../logger';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
+import { logger } from '@core/logger';
 import { ZoneStateManager } from '@generators/ZoneStateManager';
 import { FeatureGenerator } from '@generators/FeatureGenerator';
 import { ItemGenerator } from '@generators/ItemGenerator';

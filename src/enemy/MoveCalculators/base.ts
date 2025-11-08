@@ -23,6 +23,9 @@ import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '@core/constants/inde
 import { EnemyPathfinding } from '@enemy/EnemyPathfinding';
 import { EnemySpecialActions } from '@enemy/EnemySpecialActions';
 import { logger } from '@core/logger';
+import type { GridCompat } from '@/types/core';
+
+export type Grid = GridCompat;
 
 export interface Position {
     x: number;
@@ -58,21 +61,29 @@ export interface Player {
     isDead?: () => boolean;
 }
 
+export interface TacticalAI {
+    calculateLeaderMove?: (enemy: Enemy, playerX: number, playerY: number, grid: Grid, enemies: Enemy[]) => Position;
+    calculateFollowerMove?: (enemy: Enemy, playerX: number, playerY: number, grid: Grid, enemies: Enemy[]) => Position;
+    calculateAllyDistance?: (x: number, y: number, enemies: Enemy[], currentEnemy: Enemy) => number;
+    calculateDirectionDiversity?: (x: number, y: number, playerX: number, playerY: number, enemies: Enemy[], currentEnemy: Enemy) => number;
+    isStackedBehind?: (x: number, y: number, playerX: number, playerY: number, enemies: Enemy[], currentEnemy: Enemy) => boolean;
+    getDefensiveMoves?: (enemy: Enemy, playerX: number, playerY: number, proposedX: number, proposedY: number, grid: Grid, enemies: Enemy[]) => Position[];
+    [key: string]: unknown;
+}
+
 export interface Game {
     playerJustAttacked?: boolean;
-    zoneManager?: any;
+    zoneManager?: Record<string, unknown>;
     initialEnemyTilesThisTurn?: Set<string>;
     occupiedTilesThisTurn?: Set<string>;
 }
-
-export type Grid = number[][];
 
 import { applyAggressiveMovement } from './aggressive';
 import { applyTacticalAdjustments, applyDefensiveMoves } from './tactics';
 import { handlePlayerInteraction, handlePitfallTransition } from './interaction';
 
 export class BaseMoveCalculator {
-    public tacticalAI: any;
+    public tacticalAI: TacticalAI | null;
 
     constructor() {
         this.tacticalAI = null; // Will be set by movement mixin

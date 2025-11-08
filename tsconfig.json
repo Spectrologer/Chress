@@ -19,7 +19,7 @@
 
     // Strict type checking (start lenient, tighten over time)
     "strict": false,                  // Start with lenient checking
-    "noImplicitAny": false,          // Allow implicit any for now
+    "noImplicitAny": false,          // TODO: Enable after migration (see docs/TYPESCRIPT_STRICT_MODE_MIGRATION.md)
     "strictNullChecks": false,       // Enable later
     "strictFunctionTypes": false,    // Enable later
     "strictBindCallApply": false,    // Enable later

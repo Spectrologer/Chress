@@ -485,7 +485,7 @@ export class GameInitializer {
 
         // Apply audio settings
         try {
-            const currentZone = safeCall(this.game.player, 'getCurrentZone');
+            const currentZone = safeCall<object>(this.game.player, 'getCurrentZone');
             const dimension: number = safeGet(currentZone, 'dimension', 0);
 
             // Apply player settings

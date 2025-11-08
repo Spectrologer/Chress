@@ -1,6 +1,6 @@
-import { EnemyCollection } from '../src/facades/EnemyCollection\.ts';
-import { eventBus } from '../src/core/EventBus\.ts';
-import { EventTypes } from '../src/core/EventTypes\.ts';
+import { EnemyCollection } from '../src/facades/EnemyCollection';
+import { eventBus } from '../src/core/EventBus';
+import { EventTypes } from '../src/core/EventTypes';
 
 // Mock Enemy class
 class MockEnemy {

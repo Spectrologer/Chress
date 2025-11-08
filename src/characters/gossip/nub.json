@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I am THE CHOSEN ONE. The prophecy speaks of me. I am destined for greatness!",
+        "text": "I am destined for greatness.",
         "buttonText": "Sure you are."
       },
       {
         "id": "msg_1",
-        "text": "My powers are beyond your comprehension. I will save this realm! Just you wait!",
+        "text": "I was in the gifted program.",
         "buttonText": "Okay buddy."
       },
       {
         "id": "msg_2",
-        "text": "One day everyone will see my true potential! I AM THE CHOSEN ONE! Believe it!",
-        "buttonText": "Whatever you say."
+        "text": "I can read at a 7th grade level.",
+        "buttonText": "On god?"
       }
     ]
   },

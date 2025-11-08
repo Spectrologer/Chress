@@ -3,11 +3,12 @@ import {
     checkOrthogonalLineOfSight as checkOrthogonalLOS,
     checkQueenLineOfSight as checkQueenLOS
 } from '@utils/LineOfSightUtils';
+import type { GridCompat } from '@/types/core';
 
 interface Enemy {
     x: number;
     y: number;
-    isWalkable: (x: number, y: number, grid: unknown[][]) => boolean;
+    isWalkable: (x: number, y: number, grid: GridCompat) => boolean;
 }
 
 export class EnemyLineOfSight {
@@ -16,14 +17,14 @@ export class EnemyLineOfSight {
         enemy: Enemy,
         playerX: number,
         playerY: number,
-        grid: unknown[][]
+        grid: GridCompat
     ): boolean {
         return checkDiagonalLOS(
             enemy.x, enemy.y,
             playerX, playerY,
             grid,
             {
-                isWalkable: (x: number, y: number, grid: unknown[][]) => enemy.isWalkable(x, y, grid),
+                isWalkable: (x: number, y: number, grid: GridCompat) => enemy.isWalkable(x, y, grid),
                 checkEnemies: false,
                 includeEndpoint: false
             }
@@ -35,7 +36,7 @@ export class EnemyLineOfSight {
         enemy: Enemy,
         playerX: number,
         playerY: number,
-        grid: unknown[][],
+        grid: GridCompat,
         enemies: Enemy[]
     ): boolean {
         return checkOrthogonalLOS(
@@ -43,7 +44,7 @@ export class EnemyLineOfSight {
             playerX, playerY,
             grid,
             {
-                isWalkable: (x: number, y: number, grid: unknown[][]) => enemy.isWalkable(x, y, grid),
+                isWalkable: (x: number, y: number, grid: GridCompat) => enemy.isWalkable(x, y, grid),
                 checkEnemies: true,
                 enemies: enemies,
                 includeEndpoint: false
@@ -56,14 +57,14 @@ export class EnemyLineOfSight {
         enemy: Enemy,
         playerX: number,
         playerY: number,
-        grid: unknown[][]
+        grid: GridCompat
     ): boolean {
         return checkQueenLOS(
             enemy.x, enemy.y,
             playerX, playerY,
             grid,
             {
-                isWalkable: (x: number, y: number, grid: unknown[][]) => enemy.isWalkable(x, y, grid),
+                isWalkable: (x: number, y: number, grid: GridCompat) => enemy.isWalkable(x, y, grid),
                 checkEnemies: false,
                 includeEndpoint: false
             }

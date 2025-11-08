@@ -17,7 +17,17 @@ export type { Enemy, EnemyData, InventoryItem, Coordinates, ZoneCoordinates };
 export type TileValue = number;
 export type TileObject = {
     type: number;
-    [key: string]: any;
+    uses?: number;
+    message?: string;
+    foodType?: string;
+    name?: string;
+    icon?: string;
+    npcType?: string;
+    enemyType?: string;
+    direction?: string;
+    discovered?: boolean;
+    actionsSincePlaced?: number;
+    justPlaced?: boolean;
 };
 export type Tile = TileValue | TileObject | null | undefined;
 export type Grid = Tile[][];
@@ -35,7 +45,7 @@ export interface SavedPlayerData {
     abilities: string[];
     health: number;
     dead: boolean;
-    sprite: any;
+    sprite: string | null;
     points: number;
     visitedZones: string[];
     spentDiscoveries: number;
@@ -57,14 +67,17 @@ export interface SavedEnemyData {
 export interface SaveGameData {
     player: SavedPlayerData;
     playerStats: SavedPlayerStats;
-    zones: Array<[string, any]>;
+    zones: Array<[string, { grid: Grid; enemies: SavedEnemyData[]; discovered: boolean }]>;
     grid: Grid;
     enemies: SavedEnemyData[];
     defeatedEnemies: string[];
-    specialZones: Array<[string, any]>;
+    specialZones: Array<[string, { grid: Grid; enemies: SavedEnemyData[]; discovered: boolean }]>;
     messageLog: string[];
     currentRegion: string;
-    zoneGeneration?: any; // Zone generation state for session tracking
+    zoneGeneration?: {
+        itemLocations?: Map<string, { x: number; y: number }>;
+        visitedRegions?: Set<string>;
+    };
 }
 
 /**

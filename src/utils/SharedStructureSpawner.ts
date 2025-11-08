@@ -15,7 +15,7 @@ interface EnemyCollection {
 interface GameInstance {
   gridManager: GridManager;
   enemyCollection: EnemyCollection;
-  [key: string]: any; // Allow additional properties for Game compatibility
+  [key: string]: unknown; // Allow additional properties for Game compatibility
 }
 
 /**

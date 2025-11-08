@@ -1,5 +1,5 @@
-import { MessageManager } from '../ui/MessageManager\.ts';
-import { getVoiceSettingsForName } from '../ui/VoiceSettings\.ts';
+import { MessageManager } from '../ui/MessageManager';
+import { getVoiceSettingsForName } from '../ui/VoiceSettings';
 
 // Minimal fake animation scheduler used by many MessageManager flows
 const makeFakeAnimationScheduler = () => ({

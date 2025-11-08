@@ -5,12 +5,12 @@
  * Uses vi.fn() from Vitest for creating mock functions
  */
 
-import { TILE_TYPES, GRID_SIZE } from '../../src/core/constants/index\.ts';
+import { TILE_TYPES, GRID_SIZE } from '../../src/core/constants/index';
 
 /**
  * Creates a mock player object with common methods and properties
  */
-export function createMockPlayer(overrides = {}) {
+export function createMockPlayer(overrides: Record<string, any> = {}) {
     return {
         x: 2,
         y: 1,
@@ -61,7 +61,6 @@ export function createMockPlayer(overrides = {}) {
 
         // Stats
         getHealth: vi.fn().mockReturnValue(100),
-        getHunger: vi.fn().mockReturnValue(50),
 
         ...overrides,
     };
@@ -70,8 +69,8 @@ export function createMockPlayer(overrides = {}) {
 /**
  * Creates a mock enemy object
  */
-export function createMockEnemy(overrides = {}) {
-    const id = overrides.id || Math.random().toString(36).substr(2, 9);
+export function createMockEnemy(overrides: Record<string, any> = {}) {
+    const id = (overrides.id as string | undefined) || Math.random().toString(36).substr(2, 9);
     return {
         id,
         x: 5,
@@ -99,7 +98,7 @@ export function createMockGrid(size = GRID_SIZE, defaultTile = TILE_TYPES.FLOOR)
 /**
  * Creates a mock game object with all common dependencies
  */
-export function createMockGame(overrides = {}) {
+export function createMockGame(overrides: Record<string, any> = {}) {
     const mockPlayer = overrides.player || createMockPlayer();
     const mockGrid = overrides.grid || createMockGrid();
 

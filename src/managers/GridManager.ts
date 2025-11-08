@@ -11,10 +11,11 @@ import { getTileType } from '@utils/TileUtils';
 import type { Tile, Grid } from '@core/SharedTypes';
 import { logger } from '@core/logger';
 import { GridCoreOperations } from './grid/GridCoreOperations';
+import { CachedGridManager, type CachedGridOptions, type CacheStats } from './grid/CachedGridManager';
 import { GridQueryOperations, type TileWithPosition, type NeighborTile } from './grid/GridQueryOperations';
 import { GridIterationOperations } from './grid/GridIterationOperations';
 
-export type { Tile, Grid, TileWithPosition, NeighborTile };
+export type { Tile, Grid, TileWithPosition, NeighborTile, CachedGridOptions, CacheStats };
 
 export interface GridIteratorOptions {
     startX?: number;
@@ -22,6 +23,13 @@ export interface GridIteratorOptions {
     startY?: number;
     endY?: number;
     skipBorders?: boolean;
+}
+
+export interface GridManagerOptions {
+    /** Enable position caching for improved performance (default: false) */
+    enableCaching?: boolean;
+    /** Cache configuration options (only used if enableCaching is true) */
+    cacheOptions?: CachedGridOptions;
 }
 
 export type TilePredicate = (tile: Tile, x: number, y: number) => boolean;
@@ -32,10 +40,15 @@ export class GridManager {
     private queryOps: GridQueryOperations;
     private iterationOps: GridIterationOperations;
     public grid: Grid;
+    private readonly isCachingEnabled: boolean;
 
-    constructor(grid: Grid) {
-        // Initialize core operations
-        this.coreOps = new GridCoreOperations(grid);
+    constructor(grid: Grid, options: GridManagerOptions = {}) {
+        this.isCachingEnabled = options.enableCaching ?? false;
+
+        // Initialize core operations (with or without caching)
+        this.coreOps = this.isCachingEnabled
+            ? new CachedGridManager(grid, options.cacheOptions)
+            : new GridCoreOperations(grid);
 
         // Initialize query operations
         this.queryOps = new GridQueryOperations(
@@ -162,6 +175,96 @@ export class GridManager {
 
     cloneGrid(): Grid {
         return this.iterationOps.cloneGrid();
+    }
+
+    // ========== Cache Management Methods (only available when caching is enabled) ==========
+
+    /**
+     * Check if caching is enabled for this GridManager instance
+     */
+    isCached(): boolean {
+        return this.isCachingEnabled;
+    }
+
+    /**
+     * Pre-warm cache with tiles in a rectangular region
+     * Only works if caching is enabled
+     */
+    preloadRegion(x: number, y: number, width: number, height: number): void {
+        if (this.coreOps instanceof CachedGridManager) {
+            this.coreOps.preloadRegion(x, y, width, height);
+        }
+    }
+
+    /**
+     * Pre-warm cache with specific positions
+     * Only works if caching is enabled
+     */
+    preloadPositions(positions: Array<{ x: number; y: number }>): void {
+        if (this.coreOps instanceof CachedGridManager) {
+            this.coreOps.preloadPositions(positions);
+        }
+    }
+
+    /**
+     * Invalidate cache entries in a rectangular region
+     * Only works if caching is enabled
+     */
+    invalidateRegion(x: number, y: number, width: number, height: number): void {
+        if (this.coreOps instanceof CachedGridManager) {
+            this.coreOps.invalidateRegion(x, y, width, height);
+        }
+    }
+
+    /**
+     * Invalidate specific positions
+     * Only works if caching is enabled
+     */
+    invalidatePositions(positions: Array<{ x: number; y: number }>): void {
+        if (this.coreOps instanceof CachedGridManager) {
+            this.coreOps.invalidatePositions(positions);
+        }
+    }
+
+    /**
+     * Clear entire cache
+     * Only works if caching is enabled
+     */
+    clearCache(): void {
+        if (this.coreOps instanceof CachedGridManager) {
+            this.coreOps.clearCache();
+        }
+    }
+
+    /**
+     * Get cache statistics
+     * Returns null if caching is not enabled
+     */
+    getCacheStats(): CacheStats | null {
+        if (this.coreOps instanceof CachedGridManager) {
+            return this.coreOps.getStats();
+        }
+        return null;
+    }
+
+    /**
+     * Reset cache statistics counters
+     * Only works if caching is enabled
+     */
+    resetCacheStats(): void {
+        if (this.coreOps instanceof CachedGridManager) {
+            this.coreOps.resetStats();
+        }
+    }
+
+    /**
+     * Log cache statistics
+     * Only works if caching is enabled
+     */
+    logCacheStats(): void {
+        if (this.coreOps instanceof CachedGridManager) {
+            this.coreOps.logStats();
+        }
     }
 
     // ========== Utility Methods ==========

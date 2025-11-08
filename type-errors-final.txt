@@ -1,0 +1,311 @@
+src/core/BoardLoader.ts(311,21): error TS2322: Type 'Tile' is not assignable to type 'number'.
+  Type 'TileObject' is not assignable to type 'number'.
+src/core/Position.ts(332,7): error TS2322: Type 'unknown' is not assignable to type 'T'.
+  'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+src/core/ServiceContainer.ts(126,52): error TS2345: Argument of type 'GameContext' is not assignable to parameter of type 'ZoneGeneratorGame'.
+  Types of property 'zoneGenState' are incompatible.
+    Type 'ZoneGenerationState' is not assignable to type '{ [key: string]: unknown; initializeItemLocations: () => void; }'.
+      Index signature for type 'string' is missing in type 'ZoneGenerationState'.
+src/core/ServiceContainer.ts(139,21): error TS2322: Type 'import("c:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/managers/ItemManager").ItemManager' is not assignable to type 'import("c:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/entities/Player").ItemManager'.
+  Types of property 'handleItemPickup' are incompatible.
+    Type '(player: Player, x: number, y: number, gridManager: GridManager) => void' is not assignable to type '(player: Player, x: number, y: number, grid: Grid) => void'.
+      Types of parameters 'gridManager' and 'grid' are incompatible.
+        Type 'any[][]' is missing the following properties from type 'GridManager': getTile, setTile
+src/core/sound/SoundLifecycleManager.ts(108,13): error TS2322: Type 'Promise<unknown>' is not assignable to type 'Promise<void>'.
+  Type 'unknown' is not assignable to type 'void'.
+src/core/ZoneGenerator.ts(153,31): error TS2345: Argument of type 'this' is not assignable to parameter of type 'ZoneGenContext'.
+  Type 'ZoneGenerator' is not assignable to type 'ZoneGenContext'.
+    Property 'gridManager' is private in type 'ZoneGenerator' but not in type 'ZoneGenContext'.
+src/core/ZoneGenerator.ts(157,33): error TS2345: Argument of type 'this' is not assignable to parameter of type 'ZoneGenContext'.
+  Type 'ZoneGenerator' is not assignable to type 'ZoneGenContext'.
+    Property 'gridManager' is private in type 'ZoneGenerator' but not in type 'ZoneGenContext'.
+src/core/ZoneGenerator.ts(161,35): error TS2345: Argument of type 'this' is not assignable to parameter of type 'ZoneGenContext'.
+  Type 'ZoneGenerator' is not assignable to type 'ZoneGenContext'.
+    Property 'gridManager' is private in type 'ZoneGenerator' but not in type 'ZoneGenContext'.
+src/core/ZoneGenerator.ts(178,39): error TS2345: Argument of type 'this' is not assignable to parameter of type 'ZoneGenContext'.
+  Type 'ZoneGenerator' is not assignable to type 'ZoneGenContext'.
+    Property 'gridManager' is private in type 'ZoneGenerator' but not in type 'ZoneGenContext'.
+src/core/ZoneGenerator.ts(194,41): error TS2345: Argument of type 'this' is not assignable to parameter of type 'ZoneGenContext'.
+  Type 'ZoneGenerator' is not assignable to type 'ZoneGenContext'.
+    Property 'gridManager' is private in type 'ZoneGenerator' but not in type 'ZoneGenContext'.
+src/enemy/BaseEnemy.ts(198,39): error TS2345: Argument of type 'number' is not assignable to parameter of type '0 | 10 | 12 | 6 | 7 | 28 | 9 | 11 | 24 | 27 | 29 | 49'.
+src/enemy/EnemyChargeBehaviors.ts(8,33): error TS6137: Cannot import type declaration files. Consider importing 'core' instead of '@types/core'.
+src/enemy/EnemyLineOfSight.ts(6,33): error TS2307: Cannot find module '@/types/core' or its corresponding type declarations.
+src/enemy/MoveCalculators/base.ts(26,33): error TS2307: Cannot find module '@/types/core' or its corresponding type declarations.
+src/enemy/MoveCalculators/base.ts(183,152): error TS2345: Argument of type 'Logger' is not assignable to parameter of type 'Console'.
+  Type 'Logger' is missing the following properties from type 'Console': assert, clear, count, countReset, and 14 more.
+src/entities/Enemy.ts(40,5): error TS2416: Property 'serialize' in type 'Enemy' is not assignable to the same property in base type 'BaseEnemy'.
+  Type '() => SerializedEnemy' is not assignable to type '() => Record<string, unknown>'.
+    Type 'SerializedEnemy' is not assignable to type 'Record<string, unknown>'.
+      Index signature for type 'string' is missing in type 'SerializedEnemy'.
+src/managers/inventory/ItemMetadata.ts(145,55): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/managers/inventory/ItemMetadata.ts(146,56): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/managers/inventory/ItemMetadata.ts(155,57): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/managers/inventory/ItemMetadata.ts(172,56): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/renderers/TextureManager.ts(56,59): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'any[][] | GridManager'.
+src/ui/InventoryUI.ts(112,21): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/ui/InventoryUI.ts(116,21): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/ui/InventoryUI.ts(134,21): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/ui/InventoryUI.ts(138,21): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/ui/InventoryUI.ts(144,21): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/ui/Sign.ts(328,13): error TS2740: Type '{}' is missing the following properties from type 'DialogueNpcData': name, portrait, subclass, category, and 3 more.
+src/utils/LineOfSightUtils.ts(6,33): error TS6137: Cannot import type declaration files. Consider importing 'core' instead of '@types/core'.
+src/utils/MethodChecker.ts(250,7): error TS2322: Type '(target: Record<string, unknown>, prop: string | symbol) => unknown' is not assignable to type '(target: T, p: string | symbol, receiver: any) => any'.
+  Types of parameters 'target' and 'target' are incompatible.
+    Type 'T' is not assignable to type 'Record<string, unknown>'.
+      Type 'object' is not assignable to type 'Record<string, unknown>'.
+        Index signature for type 'string' is missing in type '{}'.
+tests/BarterWindow.test.ts(1,30): error TS2307: Cannot find module '../ui/BarterWindow' or its corresponding type declarations.
+tests/BarterWindow.test.ts(2,24): error TS2307: Cannot find module '../entities/Player' or its corresponding type declarations.
+tests/BarterWindow.test.ts(3,22): error TS2307: Cannot find module '../ui/Sign' or its corresponding type declarations.
+tests/BarterWindow.test.ts(4,28): error TS2307: Cannot find module '../core/NPCLoader' or its corresponding type declarations.
+tests/CombatActionManager.test.ts(9,27): error TS2554: Expected 1-3 arguments, but got 0.
+tests/CombatManager.test.ts(32,62): error TS2353: Object literal may only specify known properties, and 'getBomb' does not exist in type 'BombManager'.
+tests/dialogue-progression.test.ts(6,22): error TS2307: Cannot find module '../ui/Sign' or its corresponding type declarations.
+tests/dialogue-progression.test.ts(34,30): error TS2345: Argument of type '{ name: string; display: { portrait: string; }; audio: { voicePitch: number; }; interaction: { type: string; cycleMode: string; dialogueTree: { id: string; text: string; }[]; }; }' is not assignable to parameter of type 'NPCData'.
+  Type '{ name: string; display: { portrait: string; }; audio: { voicePitch: number; }; interaction: { type: string; cycleMode: string; dialogueTree: { id: string; text: string; }[]; }; }' is missing the following properties from type 'NPCData': id, type
+tests/EnemyAttackRange.test.ts(32,33): error TS2554: Expected 1-3 arguments, but got 0.
+tests/EnemyAttackRange.test.ts(52,34): error TS2345: Argument of type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is not assignable to parameter of type 'IGame'.
+  Type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is missing the following properties from type 'IGame': world, ui, audio, zoneGenState, and 77 more.
+tests/EnemyAttackRange.test.ts(55,5): error TS2740: Type '{ save: Mock<Procedure>; restore: Mock<Procedure>; fillRect: Mock<Procedure>; strokeRect: Mock<Procedure>; setLineDash: Mock<...>; lineWidth: number; strokeStyle: string; fillStyle: string; }' is missing the following properties from type 'CanvasRenderingContext2D': canvas, globalAlpha, globalCompositeOperation, drawImage, and 60 more.
+tests/EnemyAttackRange.test.ts(80,34): error TS2345: Argument of type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is not assignable to parameter of type 'IGame'.
+  Type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is missing the following properties from type 'IGame': world, ui, audio, zoneGenState, and 77 more.
+tests/EnemyAttackRange.test.ts(81,5): error TS2740: Type '{ save: Mock<Procedure>; restore: Mock<Procedure>; fillRect: Mock<Procedure>; strokeRect: Mock<Procedure>; setLineDash: Mock<...>; lineWidth: number; strokeStyle: string; fillStyle: string; }' is missing the following properties from type 'CanvasRenderingContext2D': canvas, globalAlpha, globalCompositeOperation, drawImage, and 60 more.
+tests/EnemyAttackRange.test.ts(95,34): error TS2345: Argument of type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is not assignable to parameter of type 'IGame'.
+  Type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is missing the following properties from type 'IGame': world, ui, audio, zoneGenState, and 77 more.
+tests/EnemyAttackRange.test.ts(96,5): error TS2740: Type '{ save: Mock<Procedure>; restore: Mock<Procedure>; fillRect: Mock<Procedure>; strokeRect: Mock<Procedure>; setLineDash: Mock<...>; lineWidth: number; strokeStyle: string; fillStyle: string; }' is missing the following properties from type 'CanvasRenderingContext2D': canvas, globalAlpha, globalCompositeOperation, drawImage, and 60 more.
+tests/FogRenderer.test.ts(37,11): error TS2339: Property 'getContext' does not exist on type '{ width: number; height: number; }'.
+tests/GameStateManager.test.ts(823,13): error TS2322: Type 'Mock<() => { tiles: any[]; }>' is not assignable to type '(zoneX: number, zoneY: number, dimension: number) => BoardData'.
+  Type '{ tiles: any[]; }' is missing the following properties from type 'BoardData': size, terrain, features
+tests/GameStateManager.test.ts(824,13): error TS2322: Type 'Mock<() => { terrainTextures: { '0,0': string; }; overlayTextures: {}; rotations: {}; overlayRotations: {}; }>' is not assignable to type '(boardData: BoardData, foodAssets?: string[]) => BoardResult'.
+  Type '{ terrainTextures: { '0,0': string; }; overlayTextures: {}; rotations: {}; overlayRotations: {}; }' is missing the following properties from type 'BoardResult': grid, playerSpawn, enemies
+tests/GridIterator.test.ts(91,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(92,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(104,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(105,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(119,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(120,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(147,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(169,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(224,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(232,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(306,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(312,49): error TS2367: This comparison appears to be unintentional because the types '0' and '1' have no overlap.
+tests/GridIterator.test.ts(320,13): error TS2322: Type '{ type: 24; timer: number; }' is not assignable to type '0'.
+tests/GridIterator.test.ts(321,13): error TS2322: Type '{ type: 24; timer: number; }' is not assignable to type '0'.
+tests/GridIterator.test.ts(334,31): error TS2339: Property 'timer' does not exist on type '0'.
+tests/GridIterator.test.ts(341,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(342,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(363,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/helpers/mocks.ts(64,9): error TS1117: An object literal cannot have multiple properties with the same name.
+tests/helpers/mocks.ts(96,24): error TS2554: Expected 1-3 arguments, but got 0.
+tests/InteractionManager.test.ts(76,43): error TS2345: Argument of type '{ npcManager: {}; environmentManager: {}; inputManager: {}; }' is not assignable to parameter of type 'InteractionFacade'.
+  Types of property 'inputManager' are incompatible.
+    Type '{}' is missing the following properties from type 'InputManager': game, inventoryService, controller, setupControls, and 13 more.
+tests/InventoryService.test.ts(27,60): error TS2345: Argument of type '() => void' is not assignable to parameter of type '(soundName: string, options?: PlaySoundOptions) => boolean'.
+  Type 'void' is not assignable to type 'boolean'.
+tests/InventoryUI.test.ts(1,29): error TS2307: Cannot find module '../ui/InventoryUI' or its corresponding type declarations.
+tests/InventoryUI.test.ts(42,42): error TS2345: Argument of type '{ player: { inventory: any[]; isDead: () => boolean; getPosition: () => { x: number; y: number; }; }; uiManager: { updatePlayerStats: Mock<Procedure>; }; animationScheduler: { createSequence: () => { ...; }; }; startEnemyTurns: Mock<...>; updatePlayerStats: Mock<...>; }' is not assignable to parameter of type 'Game'.
+  Type '{ player: { inventory: any[]; isDead: () => boolean; getPosition: () => { x: number; y: number; }; }; uiManager: { updatePlayerStats: Mock<Procedure>; }; animationScheduler: { createSequence: () => { ...; }; }; startEnemyTurns: Mock<...>; updatePlayerStats: Mock<...>; }' is missing the following properties from type 'Game': enemies, grid, gridManager, specialZones, and 88 more.
+tests/InventoryUI.test.ts(46,12): error TS2339: Property 'inventoryDebugMode' does not exist on type 'Window & typeof globalThis'.
+tests/InventoryUI.test.ts(54,7): error TS2322: Type '(type: any, props?: {}) => MouseEvent' is not assignable to type '{ new (type: string, eventInitDict?: PointerEventInit): PointerEvent; prototype: PointerEvent; }'.
+  Type '(type: any, props?: {}) => MouseEvent' provides no match for the signature 'new (type: string, eventInitDict?: PointerEventInit): PointerEvent'.
+tests/InventoryUI.test.ts(56,11): error TS2339: Property 'pointerId' does not exist on type 'MouseEvent'.
+tests/InventoryUI.test.ts(56,29): error TS2339: Property 'pointerId' does not exist on type '{}'.
+tests/InventoryUI.test.ts(57,11): error TS2339: Property 'pointerType' does not exist on type 'MouseEvent'.
+tests/InventoryUI.test.ts(57,31): error TS2339: Property 'pointerType' does not exist on type '{}'.
+tests/ItemManager.test.ts(32,9): error TS2561: Object literal may only specify known properties, but 'maxHealth' does not exist in type 'PlayerStats'. Did you mean to write 'health'?
+tests/ItemManager.test.ts(50,7): error TS2739: Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(51,7): error TS2322: Type 'Partial<SoundManager>' is not assignable to type 'SoundManager'.
+  Property 'playSound' is optional in type 'Partial<SoundManager>' but required in type 'SoundManager'.
+tests/ItemManager.test.ts(52,7): error TS2740: Type '{ getTile: Mock<(x: number, y: number) => Tile>; setTile: Mock<(x: number, y: number, tile: Tile) => void>; }' is missing the following properties from type 'GridManager': coreOps, queryOps, iterationOps, grid, and 24 more.
+tests/ItemManager.test.ts(55,35): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'Game'.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+tests/ItemManager.test.ts(75,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(81,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(87,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(94,38): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(102,38): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(109,38): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(119,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(125,38): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is not assignable to parameter of type 'Player'.
+  Property 'inventory' is optional in type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' but required in type 'Player'.
+tests/ItemManager.test.ts(131,38): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is not assignable to parameter of type 'Player'.
+  Property 'inventory' is optional in type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' but required in type 'Player'.
+tests/ItemManager.test.ts(139,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(147,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(155,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(164,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(172,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(178,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(184,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(190,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(199,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(209,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(219,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(228,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(237,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(246,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(253,49): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is not assignable to parameter of type 'Player'.
+  Property 'inventory' is optional in type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' but required in type 'Player'.
+tests/ItemManager.test.ts(258,49): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is not assignable to parameter of type 'Player'.
+  Property 'inventory' is optional in type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' but required in type 'Player'.
+tests/ItemManager.test.ts(263,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(274,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(284,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(299,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(318,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(328,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(340,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(349,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(356,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(364,49): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is not assignable to parameter of type 'Player'.
+  Property 'inventory' is optional in type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' but required in type 'Player'.
+tests/ItemManager.test.ts(369,49): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is not assignable to parameter of type 'Player'.
+  Property 'inventory' is optional in type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' but required in type 'Player'.
+tests/ItemManager.test.ts(374,49): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is not assignable to parameter of type 'Player'.
+  Property 'inventory' is optional in type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' but required in type 'Player'.
+tests/ItemManager.test.ts(385,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(389,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(393,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(402,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(406,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(411,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable>; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/Lizord.test.ts(36,29): error TS2554: Expected 1-3 arguments, but got 0.
+tests/Lizord.test.ts(49,132): error TS2345: Argument of type '{ initialEnemyTilesThisTurn: Set<unknown>; occupiedTilesThisTurn: Set<unknown>; playerJustAttacked: boolean; }' is not assignable to parameter of type 'Game'.
+  Types of property 'initialEnemyTilesThisTurn' are incompatible.
+    Type 'Set<unknown>' is not assignable to type 'Set<string>'.
+      Type 'unknown' is not assignable to type 'string'.
+tests/MessageLog.test.ts(1,28): error TS2307: Cannot find module '../ui/MessageLog' or its corresponding type declarations.
+tests/messageManager.test.ts(1,32): error TS2307: Cannot find module '../ui/MessageManager' or its corresponding type declarations.
+tests/messageManager.test.ts(2,41): error TS2307: Cannot find module '../ui/VoiceSettings' or its corresponding type declarations.
+tests/messageManager.test.ts(51,44): error TS2322: Type 'Timeout' is not assignable to type 'number'.
+tests/messageManager.test.ts(112,9): error TS2794: Expected 1 arguments, but got 0. Did you forget to include 'void' in your type argument to 'Promise'?
+tests/MiniMap.test.ts(1,25): error TS2307: Cannot find module '../ui/MiniMap' or its corresponding type declarations.
+tests/MiniMapHighlights.test.ts(1,25): error TS2307: Cannot find module '../ui/MiniMap' or its corresponding type declarations.
+tests/Player.test.ts(1,24): error TS2307: Cannot find module '../entities/Player' or its corresponding type declarations.
+tests/Player.test.ts(10,29): error TS2554: Expected 1-3 arguments, but got 0.
+tests/Player.test.ts(12,5): error TS2322: Type '(Window & typeof globalThis) | {}' is not assignable to type 'Window & typeof globalThis'.
+  Type '{}' is not assignable to type 'Window & typeof globalThis'.
+    Type '{}' is missing the following properties from type 'Window': clientInformation, closed, cookieStore, customElements, and 211 more.
+tests/Player.test.ts(13,19): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/Player.test.ts(13,48): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/Player.test.ts(14,19): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/Player.test.ts(15,19): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/Player.test.ts(116,26): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/PlayerStatsUI.test.ts(1,31): error TS2307: Cannot find module '../ui/PlayerStatsUI' or its corresponding type declarations.
+tests/PlayerStatsUI.test.ts(50,5): error TS1345: An expression of type 'void' cannot be tested for truthiness.
+tests/PlayerStatsUI.test.ts(50,36): error TS2339: Property 'offAll' does not exist on type 'EventBus'.
+tests/PlayerStatsUI.test.ts(58,5): error TS1345: An expression of type 'void' cannot be tested for truthiness.
+tests/PlayerStatsUI.test.ts(58,36): error TS2339: Property 'offAll' does not exist on type 'EventBus'.
+tests/PlayerStatsUI.test.ts(160,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(161,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(162,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(171,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(172,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(173,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(192,22): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(201,22): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(210,25): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(244,22): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(267,22): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(268,25): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/RecordsOverlay.test.ts(1,30): error TS2307: Cannot find module '../ui/PanelManager' or its corresponding type declarations.
+tests/SafeServiceCall.test.ts(226,31): error TS2339: Property 'gameStateManager' does not exist on type '{}'.
+tests/test-enemy-collection.ts(8,14): error TS2339: Property 'x' does not exist on type 'MockEnemy'.
+tests/test-enemy-collection.ts(9,14): error TS2339: Property 'y' does not exist on type 'MockEnemy'.
+tests/test-enemy-collection.ts(10,14): error TS2339: Property 'health' does not exist on type 'MockEnemy'.
+tests/test-enemy-collection.ts(11,14): error TS2339: Property 'enemyType' does not exist on type 'MockEnemy'.
+tests/test-enemy-collection.ts(12,14): error TS2339: Property 'id' does not exist on type 'MockEnemy'.
+tests/test-grid-manager.ts(45,27): error TS2339: Property 'type' does not exist on type 'Tile'.
+  Property 'type' does not exist on type 'number'.
+tests/test-grid-manager.ts(46,27): error TS2339: Property 'portKind' does not exist on type 'Tile'.
+  Property 'portKind' does not exist on type 'number'.
+tests/test-grid-manager.ts(71,16): error TS2367: This comparison appears to be unintentional because the types 'void' and 'boolean' have no overlap.
+tests/test-npc-distance.ts(10,29): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(16,42): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(22,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(28,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(34,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(40,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(52,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-player-facade.ts(16,1): error TS2740: Type '{ health: number; hunger: number; thirst: number; musicEnabled: true; }' is missing the following properties from type 'PlayerStats': player, points, spentDiscoveries, dead, and 21 more.
+tests/test-transient-game-state.ts(32,32): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(33,32): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(35,41): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(36,41): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(38,51): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(120,32): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(155,32): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(180,16): error TS2367: This comparison appears to be unintentional because the types 'false' and 'true' have no overlap.
+tests/test-transient-game-state.ts(200,32): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(207,31): error TS2353: Object literal may only specify known properties, and 'invalid' does not exist in type 'PortTransitionData'.
+tests/TileStrategyPattern.test.ts(36,66): error TS2345: Argument of type '{ findCisternPosition: Mock<() => any>; findShackPosition: Mock<() => any>; findHousePosition: Mock<() => any>; }' is not assignable to parameter of type 'MultiTileHandler'.
+  Type '{ findCisternPosition: Mock<() => any>; findShackPosition: Mock<() => any>; findHousePosition: Mock<() => any>; }' is missing the following properties from type 'MultiTileHandler': findWellPosition, findDeadTreePosition
+tests/UIEventCoordinator.test.ts(1,36): error TS2307: Cannot find module '../ui/UIEventCoordinator' or its corresponding type declarations.
+tests/UIEventCoordinator.test.ts(85,62): error TS2554: Expected 1 arguments, but got 0.
+tests/UIEventCoordinator.test.ts(216,64): error TS2554: Expected 1 arguments, but got 0.
+tests/UIManager.test.ts(1,27): error TS2307: Cannot find module '../ui/UIManager' or its corresponding type declarations.
+tests/UIManager.test.ts(68,22): error TS2339: Property 'getContext' does not exist on type 'HTMLElement'.
+tests/UIManager.test.ts(71,21): error TS2339: Property 'getContext' does not exist on type 'HTMLElement'.
+tests/UIManager.test.ts(86,5): error TS1345: An expression of type 'void' cannot be tested for truthiness.
+tests/UIManager.test.ts(86,36): error TS2339: Property 'offAll' does not exist on type 'EventBus'.
+tests/UIManager.test.ts(95,5): error TS1345: An expression of type 'void' cannot be tested for truthiness.
+tests/UIManager.test.ts(95,36): error TS2339: Property 'offAll' does not exist on type 'EventBus'.
+tests/ZoneKeyUtils.test.ts(71,39): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+tests/ZoneKeyUtils.test.ts(97,35): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+tests/zoneSpawnManager.test.ts(10,3): error TS2322: Type '1' is not assignable to type '0'.
+tests/zoneSpawnManager.test.ts(18,3): error TS2322: Type '1' is not assignable to type '0'.
+tests/ZoneStateManager.test.ts(1,34): error TS2307: Cannot find module '../generators/ZoneStateManager' or its corresponding type declarations.
+tools/zone-editor-assets.ts(5,59): error TS2307: Cannot find module 'virtual:asset-manifest' or its corresponding type declarations.

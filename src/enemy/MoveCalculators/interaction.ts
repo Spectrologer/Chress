@@ -60,6 +60,29 @@ export function handlePlayerInteraction(
     }
 }
 
+interface GameWithPitfall {
+    grid: number[][];
+    portTransitionData: Record<string, unknown>;
+    enemies: Enemy[];
+    player: {
+        currentZone: Record<string, unknown>;
+        undergroundDepth: number;
+    };
+    zones: Map<string, Record<string, unknown>>;
+    zoneGenerator: {
+        generateZone: (...args: unknown[]) => Record<string, unknown>;
+    };
+    connectionManager: {
+        zoneConnections: unknown;
+    };
+    availableFoodAssets: unknown;
+    turnManager?: {
+        initialEnemyTilesThisTurn?: Set<string>;
+        occupiedTilesThisTurn?: Set<string>;
+    };
+    occupiedTilesThisTurn?: Set<string>;
+}
+
 /**
  * Handles an enemy falling into a pitfall, transitioning them to an underground zone.
  * Updates the game state, creates underground zones if needed, and transfers the enemy.
@@ -69,8 +92,13 @@ export function handlePitfallTransition(
     enemy: Enemy,
     x: number,
     y: number,
-    game: any
+    game: GameWithPitfall | Game | null
 ): void {
+    if (!game) return;
+    // Type guard for GameWithPitfall
+    if (!('grid' in game && 'portTransitionData' in game && 'enemies' in game && 'player' in game)) {
+        return;
+    }
     // Moved logic from original file; rely on game APIs and zoneGenerator
     game.grid[y][x] = TILE_TYPES.PORT;
     game.portTransitionData = { from: 'pitfall', x, y };
@@ -92,8 +120,8 @@ export function handlePitfallTransition(
         undergroundZoneData.depth = depth;
         game.zones.set(undergroundZoneKey, undergroundZoneData);
     }
-    const undergroundZoneData = game.zones.get(undergroundZoneKey);
-    const updatedZoneData = { ...undergroundZoneData, enemies: [...(undergroundZoneData.enemies || []), { ...enemy, x: enemy.x, y: enemy.y, enemyType: enemy.enemyType, health: enemy.health, id: enemy.id }] };
+    const undergroundZoneData = game.zones.get(undergroundZoneKey) as Record<string, unknown> | undefined;
+    const updatedZoneData = { ...(undergroundZoneData || {}), enemies: [...((undergroundZoneData?.enemies as unknown[]) || []), { ...enemy, x: enemy.x, y: enemy.y, enemyType: enemy.enemyType, health: enemy.health, id: enemy.id }] };
     try {
         const startKey = `${enemy.x},${enemy.y}`;
         if (game && game.turnManager && game.turnManager.initialEnemyTilesThisTurn) game.turnManager.initialEnemyTilesThisTurn.delete(startKey);

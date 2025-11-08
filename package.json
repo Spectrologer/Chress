@@ -37,29 +37,35 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
-    "type-check:watch": "tsc --noEmit --watch"
+    "type-check:watch": "tsc --noEmit --watch",
+    "ts:strict-errors": "node scripts/typescript-migration-helper.cjs errors",
+    "ts:strict-progress": "node scripts/typescript-migration-helper.cjs progress",
+    "ts:strict-candidates": "node scripts/typescript-migration-helper.cjs candidates",
+    "ts:check-strict": "tsc --noEmit --strict",
+    "ts:check-no-implicit-any": "tsc --noEmit --noImplicitAny",
+    "ts:check-strict-null": "tsc --noEmit --strictNullChecks"
   },
   "dependencies": {
-    "@sentry/browser": "^10.19.0",
+    "@sentry/browser": "^10.23.0",
     "lz-string": "^1.5.0"
   },
   "devDependencies": {
-    "@types/node": "^24.9.2",
-    "@typescript-eslint/eslint-plugin": "^8.46.2",
-    "@typescript-eslint/parser": "^8.46.2",
-    "@vitest/coverage-v8": "^4.0.6",
-    "@vitest/ui": "^4.0.6",
-    "eslint": "^9.38.0",
+    "@types/node": "^24.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
+    "@typescript-eslint/parser": "^8.46.3",
+    "@vitest/coverage-v8": "^4.0.8",
+    "@vitest/ui": "^4.0.8",
+    "eslint": "^9.39.1",
     "glob": "^11.0.3",
     "happy-dom": "^20.0.10",
-    "rollup-plugin-visualizer": "^5.12.0",
-    "terser": "^5.36.0",
+    "rollup-plugin-visualizer": "^6.0.5",
+    "terser": "^5.44.1",
     "tsx": "^4.7.0",
     "typescript": "^5.9.3",
     "vite": "^6.0.7",
-    "vite-plugin-pwa": "^0.21.2",
+    "vite-plugin-pwa": "^1.1.0",
     "vite-plugin-static-copy": "^3.1.4",
-    "vitest": "^4.0.6",
+    "vitest": "^4.0.8",
     "workbox-window": "^7.3.0"
   }
 }

@@ -32,20 +32,21 @@
  * // With return value:
  * const zone = safeCall(this.game.player, 'getCurrentZone');
  */
-export function safeCall<T = any>(
-    service: any,
+export function safeCall<T = unknown>(
+    service: Record<string, unknown> | object | null | undefined,
     methodName: string,
-    ...args: any[]
+    ...args: unknown[]
 ): T | undefined {
     if (!service) {
         return undefined;
     }
 
-    if (typeof service[methodName] !== 'function') {
+    const svc = service as Record<string, unknown>;
+    if (typeof svc[methodName] !== 'function') {
         return undefined;
     }
 
-    return service[methodName](...args);
+    return (svc[methodName] as (...args: unknown[]) => T)(...args);
 }
 
 /**
@@ -71,20 +72,21 @@ export function safeCall<T = any>(
  * await safeCallAsync(this.game.soundManager, 'resumeAudioContext')
  *     .catch(err => console.error('Failed to resume audio', err));
  */
-export async function safeCallAsync<T = any>(
-    service: any,
+export async function safeCallAsync<T = unknown>(
+    service: Record<string, unknown> | object | null | undefined,
     methodName: string,
-    ...args: any[]
+    ...args: unknown[]
 ): Promise<T | undefined> {
     if (!service) {
         return undefined;
     }
 
-    if (typeof service[methodName] !== 'function') {
+    const svc = service as Record<string, unknown>;
+    if (typeof svc[methodName] !== 'function') {
         return undefined;
     }
 
-    return await service[methodName](...args);
+    return await (svc[methodName] as (...args: unknown[]) => Promise<T>)(...args);
 }
 
 /**
@@ -102,8 +104,8 @@ export async function safeCallAsync<T = any>(
  * // Use:
  * const musicEnabled = safeGet(this.game, 'player.stats.musicEnabled', false);
  */
-export function safeGet<T = any>(
-    obj: any,
+export function safeGet<T = unknown>(
+    obj: Record<string, unknown> | object | null | undefined,
     path: string,
     defaultValue?: T
 ): T | undefined {
@@ -112,16 +114,16 @@ export function safeGet<T = any>(
     }
 
     const keys = path.split('.');
-    let current = obj;
+    let current: unknown = obj;
 
     for (const key of keys) {
         if (current == null || typeof current !== 'object') {
             return defaultValue;
         }
-        current = current[key];
+        current = (current as Record<string, unknown>)[key];
     }
 
-    return current !== undefined ? current : defaultValue;
+    return current !== undefined ? (current as T) : defaultValue;
 }
 
 /**
@@ -136,6 +138,8 @@ export function safeGet<T = any>(
  *     // Service has the method
  * }
  */
-export function hasMethod(service: any, methodName: string): boolean {
-    return !!(service && typeof service[methodName] === 'function');
+export function hasMethod(service: Record<string, unknown> | object | null | undefined, methodName: string): boolean {
+    if (!service) return false;
+    const svc = service as Record<string, unknown>;
+    return !!(svc && typeof svc[methodName] === 'function');
 }

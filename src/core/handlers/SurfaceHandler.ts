@@ -1,11 +1,11 @@
-import { logger } from '../logger';
+import { logger } from '@core/logger';
 import { ZoneStateManager } from '@generators/ZoneStateManager';
 import { BaseZoneHandler } from './BaseZoneHandler';
-import { SPAWN_PROBABILITIES, TILE_TYPES } from '../constants/index';
-import { boardLoader } from '../BoardLoader';
+import { SPAWN_PROBABILITIES, TILE_TYPES } from '@core/constants/index';
+import { boardLoader } from '@core/BoardLoader';
 
 class SurfaceHandler extends BaseZoneHandler {
-    private zoneConnections: any;
+    private zoneConnections: Record<string, unknown>;
 
     constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets) {
         super(zoneGen, zoneX, zoneY, foodAssets, 0, 0);

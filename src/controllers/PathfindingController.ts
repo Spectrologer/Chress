@@ -350,7 +350,7 @@ export class PathfindingController {
 
         if (this.currentPathSequence) {
             try {
-                this.game.animationScheduler.cancelSequence(this.currentPathSequence.id);
+                this.game.animationScheduler.cancelSequence(this.currentPathSequence.getId());
             } catch {}
             this.currentPathSequence = null;
         }

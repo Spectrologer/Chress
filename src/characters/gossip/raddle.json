@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Want to hang out sometime? No? That's fine. Everyone says that. I'm used to it. Totally fine.",
+        "text": "Want to hang out sometime? Fine if you can't.",
         "buttonText": "Sorry..."
       },
       {
         "id": "msg_1",
-        "text": "I tried joining a social group once. They said I was 'too much.' Still not sure what that means.",
-        "buttonText": "Oof."
+        "text": "I'm free the whole week.",
+        "buttonText": "I'm sick that day."
       },
       {
         "id": "msg_2",
-        "text": "Maybe it's my face? Or my personality? Or everything? Probably everything. That's cool. I'm cool with it.",
-        "buttonText": "Sad."
+        "text": "I have a Gamecube.",
+        "buttonText": "Cool."
       }
     ]
   },

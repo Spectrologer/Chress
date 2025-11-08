@@ -18,11 +18,17 @@ import { createZoneKey } from '@utils/ZoneKeyUtils';
 import { boardLoader } from './BoardLoader';
 import { GridManager } from '@managers/GridManager';
 
+interface ZoneGeneratorGame {
+    player?: { x: number; y: number; currentZone?: { depth?: number }; undergroundDepth?: number; [key: string]: unknown };
+    zoneGenState?: { initializeItemLocations: () => void; [key: string]: unknown };
+    [key: string]: unknown;
+}
+
 export class ZoneGenerator {
-    private game: any;
-    public grid: any[][] | null;
+    private game: ZoneGeneratorGame;
+    public grid: number[][] | null;
     private gridManager: GridManager | null;
-    private enemies: any[] | null;
+    private enemies: Record<string, unknown>[] | null;
     private currentZoneX: number | null;
     private currentZoneY: number | null;
     private playerSpawn: Coordinates | null;
@@ -33,7 +39,7 @@ export class ZoneGenerator {
     private foodAssets: string[];
     private currentDimension: number;
 
-    constructor(game: any) {
+    constructor(game: ZoneGeneratorGame) {
         this.game = game;
         this.grid = null;
         this.gridManager = null;
@@ -48,7 +54,7 @@ export class ZoneGenerator {
         this.foodAssets = [];
         this.currentDimension = 0;
         // Initialize item locations if they haven't been set for this session
-        this.game.zoneGenState.initializeItemLocations();
+        this.game.zoneGenState?.initializeItemLocations();
     }
 
     /**
@@ -65,7 +71,7 @@ export class ZoneGenerator {
         this.currentDimension = dimension;
 
         // Check if this zone already exists (include dimension and depth for underground)
-        const depth = this.game.player.currentZone.depth || (this.game.player.undergroundDepth || 1);
+        const depth = this.game.player?.currentZone?.depth || (this.game.player?.undergroundDepth || 1);
         const zoneKey = createZoneKey(zoneX, zoneY, dimension, depth);
         if (existingZones.has(zoneKey)) {
             return existingZones.get(zoneKey);

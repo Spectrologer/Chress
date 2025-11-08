@@ -52,7 +52,7 @@ export class OverlayMusicToggle {
      */
     applyMusicPreference(): void {
         try {
-            const playerStats = safeGet(this.game, 'player.stats');
+            const playerStats = safeGet<Record<string, unknown>>(this.game, 'player.stats');
             if (playerStats) {
                 playerStats.musicEnabled = !!this.overlayMusicPref;
             }

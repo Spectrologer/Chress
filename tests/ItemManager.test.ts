@@ -3,13 +3,19 @@ import { TILE_TYPES, INVENTORY_CONSTANTS, GAMEPLAY_CONSTANTS } from '@core/const
 import type { IGame as Game } from '@core/context';
 import type { Player } from '@entities/Player';
 import type { GridManager } from '@managers/GridManager';
-import type { SoundManager } from '@managers/SoundManager';
+import type { SoundManager } from '@core/SoundManager';
+import type { Tile } from '@core/SharedTypes';
 
 describe('ItemManager', () => {
   let itemManager: ItemManager;
   let mockGame: Partial<Game>;
-  let mockPlayer: Partial<Player>;
-  let mockGridManager: Partial<GridManager>;
+  let mockPlayer: Partial<Player> & {
+    getHealth?: ReturnType<typeof vi.fn>;
+  };
+  let mockGridManager: {
+    getTile: ReturnType<typeof vi.fn<(x: number, y: number) => Tile>>;
+    setTile: ReturnType<typeof vi.fn<(x: number, y: number, tile: Tile) => void>>;
+  };
   let mockSoundManager: Partial<SoundManager>;
 
   beforeEach(() => {

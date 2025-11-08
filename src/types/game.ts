@@ -9,6 +9,7 @@ import type { Enemy } from '@entities/Enemy';
 import type { Player } from '@entities/Player';
 
 // Tile types (for backwards compatibility)
+// NOTE: For new code, use StrictTileObject from @types/StrictTypes
 export interface TileObject {
     type: number;
     uses?: number;
@@ -20,24 +21,34 @@ export interface TileObject {
     npcType?: string;
     direction?: string;
     discovered?: boolean;
-    [key: string]: unknown;
+    // Legacy compatibility - avoid using this in new code
+    actionsSincePlaced?: number;
+    justPlaced?: boolean;
 }
 
 // Zone Data interface
+// NOTE: For new code, use StrictZoneData from @types/StrictTypes
 export interface ZoneData {
     grid?: (number | TileObject | null)[][];
-    enemies?: unknown[];
+    enemies?: Array<{
+        x: number;
+        y: number;
+        enemyType: string;
+        health: number;
+        id: string;
+    }>;
     discovered?: boolean;
-    [key: string]: unknown;
+    // No index signature - all properties must be explicitly defined
 }
 
 // NPC interface
+// NOTE: For new code, use StrictNPC from @types/StrictTypes
 export interface NPC {
     x: number;
     y: number;
     type: string;
     name?: string;
-    [key: string]: unknown;
+    // No index signature - all properties must be explicitly defined
 }
 
 // Sound Manager interface
@@ -106,7 +117,7 @@ export interface ZoneManager {
     handleExitTap?(exitX?: number, exitY?: number): void;
     checkForZoneTransitionGesture?(tapCoords: Coordinates | Position, playerPos?: Coordinates | Position): boolean;
     isTransitionEligible?(gridCoords?: Coordinates, playerPos?: Coordinates): boolean;
-    [key: string]: unknown; // Allow additional properties
+    // Note: Removed index signature to be compatible with actual ZoneManager implementation
 }
 
 // NPC Manager interface
@@ -128,11 +139,14 @@ export interface NPCManager {
 }
 
 // Item type definitions
+// NOTE: For new code, use StrictInventoryItem from @types/StrictTypes
 export interface BaseItem {
     type: string;
     name?: string;
     icon?: string;
-    [key: string]: unknown;
+    // No index signature - all properties must be explicitly defined
+    uses?: number;
+    foodType?: string;
 }
 
 export interface FoodItem extends BaseItem {
@@ -152,10 +166,12 @@ export interface Item {
     name?: string;
     icon?: string;
     uses?: number;
-    [key: string]: unknown;
+    foodType?: string;
+    // No index signature - all properties must be explicitly defined
 }
 
 // Game Instance interface - consolidates all game systems
+// NOTE: For new code, prefer using GameContext from @core/context
 export interface GameInstance {
     player?: Player;
     enemies?: Enemy[];
@@ -169,9 +185,10 @@ export interface GameInstance {
     // Additional properties commonly used
     dimension?: number;
     currentZone?: Coordinates;
+    zones?: Map<string, ZoneData>; // Zone storage
 
-    // Allow for additional properties
-    [key: string]: unknown;
+    // No index signature - all properties must be explicitly defined
+    // If you need additional properties, add them explicitly here
 }
 
 // IGame interface for backward compatibility

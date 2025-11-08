@@ -312,7 +312,7 @@ export class BarterWindow {
             const discoveries = player.getVisitedZones().size - player.getSpentDiscoveries();
             return discoveries >= requiredAmount;
         } else {
-            const requiredItems = player.inventory.filter(item => item && item.type === 'food' && item.foodType?.startsWith(tradeData.requiredItem));
+            const requiredItems = player.inventory.filter(item => item && item.type === 'food' && 'foodType' in item && typeof item.foodType === 'string' && item.foodType.startsWith(tradeData.requiredItem));
             const totalCount = requiredItems.reduce((sum, item) => sum + (typeof item.quantity === 'number' ? item.quantity : 1), 0);
             return totalCount >= requiredAmount;
         }
@@ -442,7 +442,7 @@ export class BarterWindow {
             this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} discoveries for hammer ability.`, tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic
-            const requiredItem = this.game.player.inventory.find(item => item && item.type === 'food' && item.foodType?.startsWith(tradeData.requiredItem));
+            const requiredItem = this.game.player.inventory.find(item => item && item.type === 'food' && 'foodType' in item && typeof item.foodType === 'string' && item.foodType.startsWith(tradeData.requiredItem));
             if (requiredItem) {
                 const nonNullCount = this.game.player.inventory.filter(item => item !== null).length;
                 const canReceiveWater = nonNullCount < 6 || this.game.player.inventory.some(i => i && i.type === 'water');

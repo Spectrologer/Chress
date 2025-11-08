@@ -1,5 +1,6 @@
 /**
- * Animation Scheduler - Handles animation sequences using Promises instead of setTimeout chains
+ * Animation Scheduler - Handles animation sequences using Promises with requestAnimationFrame
+ * Provides better performance than setTimeout by syncing with browser's repaint cycle
  * Eliminates spaghetti async coupling by providing a clean Promise-based API for animation management
  */
 export class AnimationScheduler {
@@ -63,6 +64,7 @@ export class AnimationSequence {
     private steps: AnimationStep[];
     private cancelled: boolean;
     private currentDelay: NodeJS.Timeout | null;
+    private currentRafId: number | null;
 
     constructor(id: number, scheduler: AnimationScheduler) {
         this.id = id;
@@ -70,6 +72,7 @@ export class AnimationSequence {
         this.steps = [];
         this.cancelled = false;
         this.currentDelay = null;
+        this.currentRafId = null;
     }
 
     /**
@@ -166,6 +169,10 @@ export class AnimationSequence {
             clearTimeout(this.currentDelay);
             this.currentDelay = null;
         }
+        if (this.currentRafId !== null) {
+            cancelAnimationFrame(this.currentRafId);
+            this.currentRafId = null;
+        }
     }
 
     /**
@@ -227,7 +234,8 @@ export class AnimationSequence {
     }
 
     /**
-     * Promise-based delay
+     * Promise-based delay using requestAnimationFrame for better performance
+     * Falls back to setTimeout for delays > 50ms to avoid excessive RAF calls
      * @param {number} ms - Milliseconds to delay
      * @returns {Promise} Promise that resolves after delay
      */
@@ -238,15 +246,49 @@ export class AnimationSequence {
                 return;
             }
 
-            this.currentDelay = setTimeout(() => {
-                this.currentDelay = null;
-                if (!this.cancelled) {
-                    resolve(undefined);
-                } else {
-                    reject(new Error('Sequence was cancelled'));
-                }
-            }, ms);
+            // For very short delays (≤50ms), use RAF for smoother animations
+            // For longer delays, use setTimeout to avoid excessive RAF polling
+            if (ms <= 50) {
+                this.delayWithRAF(ms, resolve, reject);
+            } else {
+                this.currentDelay = setTimeout(() => {
+                    this.currentDelay = null;
+                    if (!this.cancelled) {
+                        resolve(undefined);
+                    } else {
+                        reject(new Error('Sequence was cancelled'));
+                    }
+                }, ms);
+            }
         });
+    }
+
+    /**
+     * Delay using requestAnimationFrame for frame-accurate timing
+     * @param {number} ms - Target delay in milliseconds
+     * @param {Function} resolve - Promise resolve function
+     * @param {Function} reject - Promise reject function
+     */
+    private delayWithRAF(ms: number, resolve: (value: unknown) => void, reject: (reason?: unknown) => void) {
+        const startTime = performance.now();
+        const targetTime = startTime + ms;
+
+        const tick = (currentTime: number) => {
+            if (this.cancelled) {
+                this.currentRafId = null;
+                reject(new Error('Sequence was cancelled'));
+                return;
+            }
+
+            if (currentTime >= targetTime) {
+                this.currentRafId = null;
+                resolve(undefined);
+            } else {
+                this.currentRafId = requestAnimationFrame(tick);
+            }
+        };
+
+        this.currentRafId = requestAnimationFrame(tick);
     }
 
     /**

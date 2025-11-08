@@ -18,6 +18,10 @@ export default defineConfig({
     npcDiscoveryPlugin(),
   ],
 
+  define: {
+    'import.meta.env.VITEST': 'true',
+  },
+
   test: {
     // Test environment (happy-dom for browser-like environment)
     environment: 'happy-dom',

@@ -5,7 +5,9 @@ import type { Position } from './Position';
 
 interface TileBase {
   type: number | string;
-  [key: string]: any;
+  name?: string;
+  icon?: string;
+  discovered?: boolean;
 }
 
 interface BombTile extends TileBase {
@@ -32,7 +34,18 @@ interface FoodTile extends TileBase {
 type Tile = number | TileBase;
 
 interface AnimationData {
-  [key: string]: any;
+  x?: number;
+  y?: number;
+  amount?: number;
+  multiplier?: number;
+  frame?: number;
+  startX?: number;
+  startY?: number;
+  endX?: number;
+  endY?: number;
+  startPos?: Position;
+  midPos?: Position;
+  endPos?: Position;
 }
 
 interface PointAnimation {

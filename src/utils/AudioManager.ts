@@ -14,21 +14,22 @@ import { logger } from '@core/logger';
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler';
 import MethodChecker from './MethodChecker';
 import type { GameInstance } from '../types/game';
+import type { IGame } from '@core/context';
 
 interface SoundManager {
   playSound(soundName: string): void;
 }
 
 interface PlaySoundOptions {
-  game?: GameInstance | null;
+  game?: GameInstance | IGame | null;
 }
 
 interface IsAvailableOptions {
-  game?: GameInstance | null;
+  game?: GameInstance | IGame | null;
 }
 
 class AudioManager {
-  private game: GameInstance | null;
+  private game: GameInstance | IGame | null;
 
   constructor() {
     this.game = null; // Will be set by GameInitializer or can be passed to methods
@@ -38,7 +39,7 @@ class AudioManager {
    * Set the game instance to access game.soundManager
    * @param game - The game instance
    */
-  setGame(game: GameInstance): void {
+  setGame(game: GameInstance | IGame): void {
     this.game = game;
   }
 
@@ -88,7 +89,7 @@ class AudioManager {
    * @param soundName - Name of the sound to play
    * @param gameInstance - Game instance to use
    */
-  playSafe(soundName: string, gameInstance: GameInstance | null = null): boolean {
+  playSafe(soundName: string, gameInstance: GameInstance | IGame | null = null): boolean {
     return this.playSound(soundName, { game: gameInstance });
   }
 

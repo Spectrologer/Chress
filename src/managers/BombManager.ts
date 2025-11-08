@@ -121,7 +121,7 @@ export class BombManager {
                 return;
             }
 
-            const bombTile = tile as BombTile;
+            const bombTile = tile as unknown as BombTile;
 
             if (bombTile.actionsSincePlaced >= 2) {
                 // Double-check that the tile is still a bomb before exploding
@@ -306,7 +306,7 @@ export class BombManager {
         const tapTile = clickedPos.getTile(this.game.grid);
         if (!isTileObjectOfType(tapTile, TILE_TYPES.BOMB)) return;
 
-        const bombTile = tapTile as BombTile;
+        const bombTile = tapTile as unknown as BombTile;
         // Force immediate explosion without action count
         bombTile.actionsSincePlaced = 2;  // Trigger immediate explosion
         this.game.explodeBomb(gridCoords.x, gridCoords.y);

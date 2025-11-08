@@ -6,13 +6,19 @@
 import { Position } from '@core/Position';
 import type { GameContext } from '@core/context';
 
+export interface SignData {
+    message?: string;
+    x?: number;
+    y?: number;
+}
+
 // Fix for IGame interface - make it compatible with GameContext
 export interface IGameCompat extends GameContext {
     // Add any missing properties that are expected
     justEnteredZone?: boolean;
     isInPitfallZone?: boolean;
     pitfallTurnsSurvived?: number;
-    displayingMessageForSign?: any;
+    displayingMessageForSign?: SignData;
 }
 
 // Position compatibility shim
@@ -23,39 +29,56 @@ export function toPosition(coords: { x: number; y: number } | Position): Positio
     return new Position(coords.x, coords.y);
 }
 
-// Item type with index signature for compatibility
+// Item type for compatibility
 export interface ItemWithIndex {
     type: string;
     name?: string;
     uses?: number;
     foodType?: string;
-    [key: string]: any;
+    icon?: string;
 }
 
 // Tile type that's compatible across the codebase
-export type TileCompat = number | object | any;
+export type TileCompat = number | {
+    type: number;
+    uses?: number;
+    message?: string;
+    foodType?: string;
+    name?: string;
+    icon?: string;
+    actionsSincePlaced?: number;
+    justPlaced?: boolean;
+};
 
-// Grid type
-export type GridCompat = any[][];
+// Grid type - using unknown instead of any for better type safety
+export type GridCompat = TileCompat[][];
 
 // Enemy type shim for compatibility
 export interface EnemyCompat {
     id?: string;
+    x?: number;
+    y?: number;
     health?: number;
     attack?: number;
     enemyType?: string;
     position?: { x: number; y: number };
-    serialize?: () => any;
+    lastX?: number;
+    lastY?: number;
+    justAttacked?: boolean;
+    attackAnimation?: number;
+    deathAnimation?: number;
+    isFrozen?: boolean;
+    showFrozenVisual?: boolean;
+    serialize?: () => Record<string, unknown>;
     takeDamage?: (amount: number) => boolean | void;
-    planMoveTowards?: (...args: any[]) => any;
-    [key: string]: any;
+    planMoveTowards?: (...args: unknown[]) => unknown;
 }
 
 // Type guards
-export function isPosition(obj: any): obj is Position {
-    return obj && typeof obj.x === 'number' && typeof obj.y === 'number';
+export function isPosition(obj: unknown): obj is Position {
+    return obj !== null && obj !== undefined && typeof obj === 'object' && 'x' in obj && 'y' in obj && typeof (obj as { x: unknown }).x === 'number' && typeof (obj as { y: unknown }).y === 'number';
 }
 
-export function isEnemy(obj: any): obj is EnemyCompat {
-    return obj && (typeof obj.health === 'number' || typeof obj.id === 'string');
+export function isEnemy(obj: unknown): obj is EnemyCompat {
+    return obj !== null && obj !== undefined && typeof obj === 'object' && ('health' in obj || 'id' in obj) && (typeof (obj as Record<string, unknown>).health === 'number' || typeof (obj as Record<string, unknown>).id === 'string');
 }

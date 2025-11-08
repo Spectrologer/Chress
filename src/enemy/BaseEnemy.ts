@@ -13,9 +13,6 @@ export interface SmokeAnimation extends Coordinates {
 }
 
 export class BaseEnemy {
-    // Index signature for dynamic properties
-    [key: string]: unknown;
-
     private _position: Position;
     private _lastPosition: Position;
 
@@ -195,10 +192,10 @@ export class BaseEnemy {
             TILE_TYPES.PITFALL
         ];
 
-        return walkableTypes.includes(tileType);
+        return walkableTypes.includes(tileType as number);
     }
 
-    serialize(): any {
+    serialize(): Record<string, unknown> {
         return {
             x: this.x,
             y: this.y,

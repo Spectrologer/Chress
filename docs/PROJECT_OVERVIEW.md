@@ -5,18 +5,22 @@
 **Repository**: https://github.com/Spectrologer/Chress
 **License**: ISC
 **Platform**: Modern browsers (HTML5 Canvas) — no native build required
-**Codebase**: ~28,000 lines of JavaScript organized in a modular architecture
+**Codebase**: ~51,500 lines of TypeScript (298 .ts files) organized in a modular architecture
+**Migration Status**: 100% TypeScript migration complete (0 JavaScript files remaining)
 
 This document summarizes the repository structure, how to run and test the project, key game systems, and where to look when making changes.
 
 ### Quick Start
 
-```powershell
-npm install      # Install dependencies
-npm start        # Launch dev server (live-server) at http://localhost:8080
-npm test         # Run Vitest tests
-npm test:watch   # Run tests in watch mode
-npm test:coverage # Generate test coverage report
+```bash
+npm install           # Install dependencies
+npm run dev           # Launch Vite dev server at http://localhost:3000
+npm run build         # Build for production
+npm run preview       # Preview production build
+npm test              # Run Vitest tests
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Generate test coverage report
+npm run type-check    # Run TypeScript type checking
 ```
 
 ### Core Gameplay Features
@@ -37,21 +41,30 @@ npm test:coverage # Generate test coverage report
 ### Technology Stack
 
 **Frontend**:
-- JavaScript (ES Modules)
+- TypeScript 5.9.3 (ES2020 target with ES Modules)
 - HTML5 Canvas 2D rendering
-- Vanilla JavaScript with CSS Grid/Flexbox
+- Modern CSS with Grid/Flexbox
 - Web Audio API for sound
 
+**Build & Development**:
+- **Bundler**: Vite 6.x with HMR and code splitting
+- **Testing**: Vitest 4.x with happy-dom
+- **Type Checking**: TypeScript with strict type safety
+- **Linting**: ESLint 9.x with TypeScript plugin
+- **PWA**: vite-plugin-pwa with Workbox
+
 **Dependencies**:
-- **Runtime**: Sentry (error tracking, currently disabled)
-- **Dev**: Vitest, Babel, live-server
+- **Runtime**: @sentry/browser (error tracking), lz-string (compression)
+- **Dev**: TypeScript, Vitest, ESLint, rollup-plugin-visualizer
 
 **Architecture Patterns**:
 - Dependency Injection via `ServiceContainer`
 - Event-driven architecture via `EventBus`
-- Strategy pattern for item effects
+- Strategy pattern for item effects and rendering
 - Repository pattern for data access
-- Clean separation of concerns across 15+ specialized managers
+- Facade pattern for domain-specific APIs
+- Clean separation of concerns across 30+ specialized managers
+- Composition over inheritance (ManagerRegistry, TurnState)
 
 ### Directory Structure & Key Systems
 
@@ -98,17 +111,21 @@ Chress/
 - [package.json](package.json) — Dependencies and scripts
 
 #### Core Systems ([src/core/](src/core/))
-- **[[GameInitializer.js](src/core/](src/core/GameInitializer.js)** — Bootstrap: canvas setup, assets, event listeners
-- **[[Game.js](src/core/](src/core/game.js)** — Main Game class extending GameContext
-- **[[GameStateManager.js](src/core/](src/core/GameStateManager.js)** — Save/load, zone caching, message logs
-- **[[ServiceContainer.js](src/core/](src/core/ServiceContainer.js)** — Dependency injection with lazy initialization (30+ services)
-- **[[EventBus.js](src/core/](src/core/EventBus.js)** — Centralized pub-sub event system
-- **[[TurnManager.js](src/core/](src/core/TurnManager.js)** — Turn queue and combat turn execution
-- **[[ZoneGenerator.js](src/core/](src/core/ZoneGenerator.js)** — Main zone generation orchestrator
-- **[[SaveSerializer.js](src/core/SaveSerializer.js)** / **[SaveDeserializer.js](src/core/](src/core/SaveDeserializer.js)** — Save system
-- **[[ErrorHandler.js](src/core/ErrorHandler.js)** / **[GlobalErrorHandler.js](src/core/](src/core/GlobalErrorHandler.js)** — Error handling with Sentry
-- **Zone Handlers**: [[BaseZoneHandler.js](src/core/handlers/BaseZoneHandler.js), [surfaceHandler.js](src/core/handlers/surfaceHandler.js), [undergroundHandler.js](src/core/](src/core/handlers/undergroundHandler.js)
-- **Spawn Commands**: [[BaseSpawnCommand.js](src/core/commands/spawn/BaseSpawnCommand.js), [EnemySpawnCommands.js](src/core/](src/core/commands/spawn/EnemySpawnCommands.js)
+- **GameContext Architecture** (NEW - refactored from god object):
+  - [GameContextCore.ts](src/core/context/GameContextCore.ts) — Refactored main game context
+  - [ManagerRegistry.ts](src/core/context/ManagerRegistry.ts) — Type-safe service locator for all managers
+  - [TurnState.ts](src/core/context/TurnState.ts) — Isolated turn-based game state
+  - [GameFacades.ts](src/core/context/GameFacades.ts) — Domain-specific API facades
+- **[[GameInitializer.ts](src/core/](src/core/GameInitializer.ts)** — Bootstrap: canvas setup, assets, event listeners
+- **[[Game.ts](src/core/](src/core/game.ts)** — Main Game class extending GameContext
+- **[[GameStateManager.ts](src/core/](src/core/GameStateManager.ts)** — Save/load, zone caching, message logs
+- **[[ServiceContainer.ts](src/core/](src/core/ServiceContainer.ts)** — Dependency injection with lazy initialization (30+ services)
+- **[[EventBus.ts](src/core/](src/core/EventBus.ts)** — Centralized pub-sub event system
+- **[[TurnManager.ts](src/core/](src/core/TurnManager.ts)** — Turn queue and combat turn execution
+- **[[ZoneGenerator.ts](src/core/](src/core/ZoneGenerator.ts)** — Main zone generation orchestrator
+- **[[SaveSerializer.ts](src/core/SaveSerializer.ts)** / **[SaveDeserializer.ts](src/core/](src/core/SaveDeserializer.ts)** — Save system
+- **[[ErrorHandler.ts](src/core/ErrorHandler.ts)** / **[GlobalErrorHandler.ts](src/core/](src/core/GlobalErrorHandler.ts)** — Error handling with Sentry
+- **Zone Handlers**: [[BaseZoneHandler.ts](src/core/handlers/BaseZoneHandler.ts), [SurfaceHandler.ts](src/core/handlers/SurfaceHandler.ts), [UndergroundHandler.ts](src/core/](src/core/handlers/UndergroundHandler.ts)
 
 #### Managers ([[managers/](src/managers/](src/managers/)) — 15+ Specialized Managers
 
@@ -377,15 +394,27 @@ See [ADDING_CONTENT.md](docs/ADDING_CONTENT.md) for detailed guides on:
 
 ### Recent Development Focus
 
-Based on recent commits, the project has been actively refactored with focus on:
-- **Modular Architecture**: Splitting responsibilities across specialized managers
-- **ServiceContainer Improvements**: Better dependency injection
-- **Event System Refactoring**: Loose coupling via EventBus
-- **Enemy Freezing Mechanic**: Freeze enemies when player is on exit tile
-- **Asset Viewer Tool**: Development tool for viewing game assets
-- **Position Class Migration**: Complete migration to Position abstraction (100% complete, 99/99 tests)
-- **Inventory System Refactoring**: Clean architecture with effect strategies
-- **UI Component Consolidation**: Organized UI into dedicated directory
+Based on recent commits, the project has undergone significant modernization:
+
+**TypeScript Migration (2024-2025)**:
+- ✅ **100% Complete**: 298 TypeScript files, 0 JavaScript files remaining
+- ✅ **Type Safety**: Migrated from loose JavaScript to TypeScript
+- ✅ **Modern Tooling**: Full IDE support with autocomplete and type checking
+
+**Architecture Refactoring**:
+- ✅ **GameContext Refactoring**: Eliminated god object anti-pattern
+  - Created ManagerRegistry for type-safe service access
+  - Introduced domain facades (combat, inventory, zones, actions, etc.)
+  - Separated concerns with TurnState object
+- ✅ **Position Class**: Complete migration to Position abstraction (99/99 tests passing)
+- ✅ **Inventory System**: Clean architecture with effect strategies
+- ✅ **Event System**: Loose coupling via EventBus
+
+**Build System & Performance**:
+- ✅ **Vite Migration**: From live-server to modern Vite build system
+- ✅ **PWA Support**: Offline play with service workers
+- ✅ **Code Splitting**: Optimized bundle sizes
+- ✅ **Asset Viewer Tool**: Development tool for browsing game assets
 
 ### Items & Abilities
 
@@ -446,4 +475,4 @@ Each enemy type has unique tactical AI behaviors and movement patterns inspired 
 
 ---
 
-**Last Updated**: October 26, 2025 — Comprehensive update reflecting current project structure, all game systems, recent refactoring work, and complete architecture documentation.
+**Last Updated**: November 7, 2025 — Updated to reflect 100% TypeScript migration completion, GameContext refactoring, and current project architecture. Codebase now at 51.5k lines of TypeScript across 298 files.

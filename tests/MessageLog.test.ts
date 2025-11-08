@@ -1,5 +1,5 @@
-import { MessageLog } from '../ui/MessageLog\.ts';
-import { createMockGame, setupDOMFixture, teardownDOMFixture } from './helpers/mocks\.ts';
+import { MessageLog } from '../ui/MessageLog';
+import { createMockGame, setupDOMFixture, teardownDOMFixture } from './helpers/mocks';
 
 describe('MessageLog', () => {
   let messageLog;

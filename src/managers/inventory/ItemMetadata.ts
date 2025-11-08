@@ -79,7 +79,8 @@ export type InventoryItem =
     | NoteItem
     | BookOfTimeTravelItem
     | BowItem
-    | ShovelItem;
+    | ShovelItem
+    | BaseItem; // Fallback for generic items
 
 export type ItemType = InventoryItem['type'];
 
@@ -199,7 +200,7 @@ export class ItemMetadata {
     static getImageKey(item: InventoryItem | null | undefined): string | null {
         if (!item) return null;
 
-        if (item.type === 'food' && item.foodType) {
+        if (item.type === 'food' && 'foodType' in item && typeof item.foodType === 'string') {
             // Extract just the filename to match TextureLoader's food asset registration
             // e.g., 'items/consumables/aguamelin.png' -> 'aguamelin'
             return item.foodType.split('/').pop()?.replace('.png', '') || null;

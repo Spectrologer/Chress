@@ -134,7 +134,7 @@ export class ServiceContainer {
             itemManager: () => {
                 const itemManager = new ItemManager(this.game);
                 // Cross-reference: player needs itemManager
-                const player = this.get('player');
+                const player = this.get<Player>('player');
                 if (player) {
                     player.itemManager = itemManager;
                 }
@@ -194,7 +194,7 @@ export class ServiceContainer {
             // Managers with dependencies
             combatManager: () => new CombatManager(
                 this.game,
-                this.get('turnManager').occupiedTilesThisTurn,
+                this.get<TurnManager>('turnManager').occupiedTilesThisTurn,
                 this.get('bombManager'),
                 this.get('enemyDefeatFlow')
             ),
@@ -318,10 +318,38 @@ export class ServiceContainer {
             // These services use lazy initialization - they'll be created on first access
         ];
 
-        // Create all services
+        // Create all services and register managers in ManagerRegistry
         serviceNames.forEach(name => {
-            (this.game as any)[name] = this.get(name);
+            const service = this.get(name);
+            (this.game as any)[name] = service;
+
+            // Also register in ManagerRegistry if it's a manager type
+            // This provides both backward compatibility (game.combatManager)
+            // and new facade access (game.managers.get('combatManager'))
+            const managerNames = [
+                'textureManager', 'connectionManager', 'zoneGenerator', 'inputManager',
+                'renderManager', 'combatManager', 'interactionManager', 'itemManager',
+                'inventoryService', 'zoneManager', 'zoneTransitionManager',
+                'zoneTransitionController', 'actionManager', 'turnManager',
+                'gameStateManager', 'animationScheduler', 'assetLoader',
+                'gridManager', 'npcManager', 'bombManager', 'npcInteractionManager',
+                'terrainInteractionManager', 'itemRepository', 'inventoryInteractionHandler'
+            ];
+
+            if (managerNames.includes(name) && service) {
+                this.game.managers.register(name as any, service);
+            }
         });
+
+        // Also set animationManager from animationScheduler
+        if (this.game.animationScheduler) {
+            this.game.managers.register('animationManager', this.game.animationScheduler as any);
+        }
+
+        // Also set gameInitializer in managers
+        if (this.game.gameInitializer) {
+            this.game.managers.register('gameInitializer', this.game.gameInitializer);
+        }
 
         // Initialize global error handlers early (after service creation)
         if ((this.game as any).globalErrorHandler) {

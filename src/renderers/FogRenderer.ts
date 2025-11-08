@@ -33,11 +33,13 @@ export class FogRenderer {
     private speedY: number = MOTION_CONSTANTS.FOG_SPEED_Y; // gentle vertical drift
 
     // Pattern instance cached per frame when available
-    private _pattern: CanvasPattern | null = null;
+    /** @internal Pattern instance (public for testing) */
+    public _pattern: CanvasPattern | null = null;
     // Scaling factor for the fog tile ( >1 to make the fog tile larger)
     private scale = 3.2;
     // Cached scaled canvas and a reference to the source image used to create it
-    private _scaledCanvas: HTMLCanvasElement | null = null;
+    /** @internal Scaled canvas (public for testing) */
+    public _scaledCanvas: HTMLCanvasElement | null = null;
     private _sourceImageRef: HTMLImageElement | null = null;
 
     constructor(game: IGame) {

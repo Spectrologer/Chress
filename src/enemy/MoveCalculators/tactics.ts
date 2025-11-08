@@ -10,14 +10,7 @@
 
 import { GRID_SIZE } from '@core/constants/index';
 import { EnemyPathfinding } from '@enemy/EnemyPathfinding';
-import type { Position, Enemy, Player, Grid, Game } from './base';
-
-export interface TacticalAI {
-    calculateAllyDistance: (x: number, y: number, enemies: Enemy[], currentEnemy: Enemy) => number;
-    calculateDirectionDiversity: (x: number, y: number, playerX: number, playerY: number, enemies: Enemy[], currentEnemy: Enemy) => number;
-    isStackedBehind: (x: number, y: number, playerX: number, playerY: number, enemies: Enemy[], currentEnemy: Enemy) => boolean;
-    getDefensiveMoves: (enemy: Enemy, playerX: number, playerY: number, proposedX: number, proposedY: number, grid: Grid, enemies: Enemy[]) => Position[];
-}
+import type { Position, Enemy, Player, Grid, Game, TacticalAI } from './base';
 
 /**
  * Adjusts enemy movement to improve tactical positioning through better
@@ -131,7 +124,7 @@ export function applyDefensiveMoves(
     enemies: Enemy[],
     isSimulation: boolean,
     game: Game | null,
-    logger: any
+    logger: Console | null
 ): Position {
     if (!tacticalAI) return next;
 

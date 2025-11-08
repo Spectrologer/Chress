@@ -7,12 +7,21 @@ interface UIManager {
 
 interface GameInstance {
   uiManager?: UIManager;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Declare Sentry global for TypeScript
+interface SentrySDK {
+  SDK_VERSION?: string;
+  getCurrentHub(): {
+    getClient(): {
+      getOptions(): { enabled: boolean };
+    } | null;
+  };
+}
+
 declare global {
-  const Sentry: any;
+  const Sentry: SentrySDK;
 }
 
 export class ConsentManager {

@@ -143,16 +143,21 @@ export function isPWA(): boolean {
          (window.navigator as any).standalone === true;
 }
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
 /**
  * Show install prompt if available
  */
 export function setupInstallPrompt(): void {
-  let deferredPrompt: any;
+  let deferredPrompt: BeforeInstallPromptEvent | null = null;
 
   window.addEventListener('beforeinstallprompt', (e: Event) => {
     // Prevent the default prompt
     e.preventDefault();
-    deferredPrompt = e;
+    deferredPrompt = e as BeforeInstallPromptEvent;
 
     // Show custom install button/banner
     showInstallBanner(deferredPrompt);
@@ -173,7 +178,7 @@ export function setupInstallPrompt(): void {
 /**
  * Show custom install banner
  */
-function showInstallBanner(deferredPrompt: any): void {
+function showInstallBanner(deferredPrompt: BeforeInstallPromptEvent): void {
   // Don't show if already installed
   if (isPWA()) {
     return;

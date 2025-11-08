@@ -110,5 +110,5 @@ export function isCoordinates(obj: unknown): obj is Coordinates {
  * Type guard to check if an object has zone coordinates
  */
 export function isZoneCoordinates(obj: unknown): obj is ZoneCoordinates {
-  return isCoordinates(obj) && typeof (obj as Record<string, unknown>).dimension === 'number';
+  return isCoordinates(obj) && typeof (obj as unknown as Record<string, unknown>).dimension === 'number';
 }

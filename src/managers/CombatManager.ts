@@ -68,10 +68,10 @@ export class CombatManager {
      */
     getCurrentZone(): ZoneInfo {
         try {
-            const zone = safeCall(this.game.player, 'getCurrentZone');
+            const zone = safeCall<ZoneInfo>(this.game.player, 'getCurrentZone');
             if (zone) return zone;
 
-            const currentZone = safeGet(this.game, 'player.currentZone');
+            const currentZone = safeGet<ZoneInfo>(this.game, 'player.currentZone');
             if (currentZone) return currentZone;
         } catch (e) {
             errorHandler.handle(e as Error, ErrorSeverity.WARNING, {

@@ -19,7 +19,7 @@ import type { PlayerKnockbackEvent } from './events/CombatEvents';
  */
 export class AnimationCoordinator {
   private player: Player;
-  private listeners: Map<string, (data?: any) => void>;
+  private listeners: Map<string, (data?: unknown) => void>;
 
   constructor(player: Player) {
     this.player = player;
