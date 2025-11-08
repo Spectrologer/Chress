@@ -1,6 +1,6 @@
 import { TILE_TYPES } from '@core/constants/index';
 import { getExitDirection } from '@core/utils/TransitionUtils';
-import { getDeltaToDirection } from '@core/utils/DirectionUtils';
+import { getDeltaToDirection, isAdjacent } from '@core/utils/DirectionUtils';
 import audioManager from '@utils/AudioManager';
 import { GestureDetector } from './GestureDetector';
 import { PathfindingController } from './PathfindingController';
@@ -11,6 +11,7 @@ import { EventTypes } from '@core/EventTypes';
 import { TileRegistry } from '@core/TileRegistry';
 import { getTileType, isTileObject } from '@utils/TileUtils';
 import { Position } from '@core/Position';
+import { ContentRegistry } from '@core/ContentRegistry';
 import type { GameContext } from '@core/context';
 import type { InventoryService } from '@managers/inventory/InventoryService';
 import type { TileObject } from '@core/SharedTypes';
@@ -340,10 +341,72 @@ export class InputCoordinator {
         return false;
     }
 
+    /**
+     * Check if a tile type is an NPC that can be interacted with
+     * @param tileType - The tile type to check
+     * @returns True if the tile is an NPC
+     */
+    private _isNPCTile(tileType: number | undefined): boolean {
+        if (tileType === undefined) {
+            return false;
+        }
+        // Check ContentRegistry for dynamic NPCs
+        const npcConfig = ContentRegistry.getNPCByTileType(tileType);
+        if (npcConfig) {
+            return true;
+        }
+        // Also check TileRegistry for hardcoded NPCs
+        return TileRegistry.NPC_TYPES.includes(tileType);
+    }
+
+    /**
+     * Check if a tile type is a statue that can be interacted with
+     * @param tileType - The tile type to check
+     * @returns True if the tile is a statue
+     */
+    private _isStatueTile(tileType: number | undefined): boolean {
+        if (tileType === undefined) {
+            return false;
+        }
+        return TileRegistry.ALL_STATUE_TYPES.includes(tileType);
+    }
+
+    /**
+     * Check if two positions are adjacent (including diagonals)
+     * @param pos1 - First position
+     * @param pos2 - Second position
+     * @returns True if positions are adjacent
+     */
+    private _isAdjacentTo(pos1: Position, pos2: Position): boolean {
+        const dx = Math.abs(pos1.x - pos2.x);
+        const dy = Math.abs(pos1.y - pos2.y);
+        return isAdjacent(dx, dy);
+    }
+
+    /**
+     * Force pathfinding to an interactive tile, bypassing enemy checks
+     * Used for double-click interactions with NPCs and terrain
+     * @param gridCoords - Target coordinates
+     */
+    private _forcePathToInteractive(gridCoords: GridCoords): void {
+        const playerPos = this.game.player.getPositionObject();
+        const clickedPos = Position.from(gridCoords);
+
+        // Find nearest walkable adjacent tile to the target
+        const adjacentTile = this.pathfindingController.findNearestWalkableAdjacent(clickedPos.x, clickedPos.y);
+        if (adjacentTile) {
+            const path = this.findPath(playerPos.x, playerPos.y, adjacentTile.x, adjacentTile.y);
+            if (path?.length > 0) {
+                this.executePath(path);
+            }
+        }
+    }
+
     private _handleDoubleTap(gridCoords: GridCoords, clickedTileType: number | undefined): void {
         const playerPos = this.game.player.getPositionObject();
         const clickedPos = Position.from(gridCoords);
 
+        // Handle exits and ports (existing behavior)
         if (clickedTileType === TILE_TYPES.EXIT || clickedTileType === TILE_TYPES.PORT) {
             if (playerPos.equals(clickedPos)) {
                 // Trigger transition
@@ -357,11 +420,52 @@ export class InputCoordinator {
                 this.pathfindingController.autoUseNextTransition = (clickedTileType === TILE_TYPES.EXIT) ? 'exit' : 'port';
                 this.executeMovementOrInteraction(gridCoords);
             }
-        } else {
-            // Interact on reach
-            this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
-            this.executeMovementOrInteraction(gridCoords);
+            return;
         }
+
+        // Handle NPCs - talk immediately if adjacent, otherwise path and talk
+        if (this._isNPCTile(clickedTileType)) {
+            if (this._isAdjacentTo(playerPos, clickedPos)) {
+                // Already adjacent - talk immediately using public triggerInteractAt
+                this.game.interactionManager?.triggerInteractAt(gridCoords);
+            } else {
+                // Not adjacent - path to NPC directly (bypassing enemy check)
+                this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
+                this._forcePathToInteractive(gridCoords);
+            }
+            return;
+        }
+
+        // Handle statues - interact immediately if adjacent, otherwise path and interact
+        if (this._isStatueTile(clickedTileType)) {
+            if (this._isAdjacentTo(playerPos, clickedPos)) {
+                // Already adjacent - interact immediately using public triggerInteractAt
+                this.game.interactionManager?.triggerInteractAt(gridCoords);
+            } else {
+                // Not adjacent - path to statue directly (bypassing enemy check)
+                this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
+                this._forcePathToInteractive(gridCoords);
+            }
+            return;
+        }
+
+        // Handle choppable/breakable terrain - interact if adjacent, otherwise path and interact
+        if (clickedTileType !== undefined &&
+            (TileRegistry.isChoppable(clickedTileType) || TileRegistry.isBreakable(clickedTileType))) {
+            if (this._isAdjacentTo(playerPos, clickedPos)) {
+                // Already adjacent - chop/smash immediately using public triggerInteractAt
+                this.game.interactionManager?.triggerInteractAt(gridCoords);
+            } else {
+                // Not adjacent - path to object directly (bypassing enemy check)
+                this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
+                this._forcePathToInteractive(gridCoords);
+            }
+            return;
+        }
+
+        // Default behavior - interact on reach for other interactive objects
+        this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
+        this.executeMovementOrInteraction(gridCoords);
     }
 
     // ========================================

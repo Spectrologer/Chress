@@ -21,17 +21,20 @@ interface ZoneSnapshot {
     portTransitionData: PortTransitionData | null;
     isInPitfallZone: boolean;
     pitfallTurnsSurvived: number;
+    currentRegion: string | null;
 }
 
 export class ZoneStateManager {
     private _portTransitionData: PortTransitionData | null;
     private _isInPitfallZone: boolean;
     private _pitfallTurnsSurvived: number;
+    private _currentRegion: string | null;
 
     constructor() {
         this._portTransitionData = null;
         this._isInPitfallZone = false;
         this._pitfallTurnsSurvived = 0;
+        this._currentRegion = null;
     }
 
     // ========================================
@@ -151,6 +154,32 @@ export class ZoneStateManager {
     }
 
     // ========================================
+    // REGION TRACKING
+    // ========================================
+
+    /**
+     * Get current region
+     */
+    getCurrentRegion(): string | null {
+        return this._currentRegion;
+    }
+
+    /**
+     * Set current region
+     */
+    setCurrentRegion(region: string): void {
+        this._currentRegion = region;
+        logger.debug('ZoneStateManager: Current region set to', region);
+    }
+
+    /**
+     * Clear current region
+     */
+    clearCurrentRegion(): void {
+        this._currentRegion = null;
+    }
+
+    // ========================================
     // UTILITIES
     // ========================================
 
@@ -168,6 +197,7 @@ export class ZoneStateManager {
         this._portTransitionData = null;
         this._isInPitfallZone = false;
         this._pitfallTurnsSurvived = 0;
+        this._currentRegion = null;
     }
 
     /**
@@ -177,7 +207,8 @@ export class ZoneStateManager {
         return {
             portTransitionData: this._portTransitionData,
             isInPitfallZone: this._isInPitfallZone,
-            pitfallTurnsSurvived: this._pitfallTurnsSurvived
+            pitfallTurnsSurvived: this._pitfallTurnsSurvived,
+            currentRegion: this._currentRegion
         };
     }
 }

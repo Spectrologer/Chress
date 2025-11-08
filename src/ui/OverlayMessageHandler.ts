@@ -2,6 +2,7 @@ import { logger } from '@core/logger';
 import { fitTextToContainer } from './TextFitter';
 import { EventListenerManager } from '@utils/EventListenerManager';
 import type { IGame } from '@core/context';
+import { Sign } from './Sign';
 
 /**
  * Handles overlay message display with auto-hide functionality.
@@ -25,10 +26,7 @@ export class OverlayMessageHandler {
 
                 // Only close if clicking directly on the overlay background, not its children
                 if (e.target === this.messageOverlay && this.game.displayingMessageForSign) {
-                    // Import Sign dynamically to avoid circular deps
-                    import('./Sign').then(({ Sign }) => {
-                        Sign.hideMessageForSign(this.game);
-                    });
+                    Sign.hideMessageForSign(this.game);
                 }
             });
         }

@@ -152,10 +152,35 @@ export class StorageAdapter {
 
         // Handle old uncompressed format (backward compatibility)
         if (typeof payload === 'object' && !payload.compressed && !payload.data) {
-            return payload; // Old format, return as-is
+            // This might be old format save data with version/state structure
+            // or direct SaveGameData - we'll validate it below
+            if (payload.version !== undefined && payload.state !== undefined) {
+                // Old format with version wrapper - validate the state
+                try {
+                    const validated = SaveGameValidator.validateAndSanitize(payload.state);
+                    // Return the full payload with validated state
+                    return { ...payload, state: validated };
+                } catch (error) {
+                    if (error instanceof SaveGameValidationError) {
+                        logger.error('StorageAdapter: Save game validation failed:', error.message);
+                    } else {
+                        logger.error('StorageAdapter: Failed to validate old format:', error);
+                    }
+                    return null;
+                }
+            }
+            // Otherwise try validating as direct SaveGameData
+            try {
+                const validated = SaveGameValidator.validateAndSanitize(payload);
+                return validated;
+            } catch (error) {
+                // If validation fails, return as-is for backward compatibility
+                logger.warn('StorageAdapter: Could not validate old format, returning as-is');
+                return payload;
+            }
         }
 
-        // New format
+        // New format with compression
         const dataString = payload.compressed
             ? compressionService.decompress(payload.data)
             : payload.data;
@@ -164,9 +189,18 @@ export class StorageAdapter {
             // Parse JSON
             const parsed = JSON.parse(dataString as string);
 
-            // Validate and sanitize the parsed data
-            const validated = SaveGameValidator.validateAndSanitize(parsed);
-            return validated;
+            // Check if parsed data has version/state structure (SavePayload)
+            // or if it's direct SaveGameData
+            if (parsed.version !== undefined && parsed.state !== undefined) {
+                // SavePayload format - validate the state property
+                const validated = SaveGameValidator.validateAndSanitize(parsed.state);
+                // Return the full payload with validated state
+                return { ...parsed, state: validated };
+            } else {
+                // Direct SaveGameData format - validate it directly
+                const validated = SaveGameValidator.validateAndSanitize(parsed);
+                return validated;
+            }
         } catch (error) {
             if (error instanceof SaveGameValidationError) {
                 logger.error('StorageAdapter: Save game validation failed:', error.message);

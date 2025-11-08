@@ -219,6 +219,22 @@ export class TransientStateCoordinator {
     }
 
     // ========================================
+    // REGION TRACKING (ZoneStateManager)
+    // ========================================
+
+    getCurrentRegion(): string | null {
+        return this._zone.getCurrentRegion();
+    }
+
+    setCurrentRegion(region: string): void {
+        this._zone.setCurrentRegion(region);
+    }
+
+    clearCurrentRegion(): void {
+        this._zone.clearCurrentRegion();
+    }
+
+    // ========================================
     // COMBAT STATE FLAGS (CombatStateManager)
     // ========================================
 

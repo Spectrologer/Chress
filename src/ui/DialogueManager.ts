@@ -3,6 +3,7 @@ import { fitTextToContainer } from './TextFitter';
 import type { TypewriterController } from './TypewriterController';
 import { EventListenerManager } from '@utils/EventListenerManager';
 import type { IGame } from '@core/context';
+import { Sign } from './Sign';
 
 /**
  * Manages sign and NPC dialogue display with portraits and buttons.
@@ -159,10 +160,7 @@ export class DialogueManager {
             const closeButton = this.messageOverlay?.querySelector('.dialogue-close-button');
             if (closeButton) {
                 this.eventManager.add(closeButton, 'click', () => {
-                    // Import Sign dynamically to avoid circular deps
-                    import('./Sign').then(({ Sign }) => {
-                        Sign.hideMessageForSign(this.game);
-                    });
+                    Sign.hideMessageForSign(this.game);
                 });
             }
         } catch (e) {
