@@ -203,12 +203,12 @@ export class BoardLoader {
         const wallFolderItems = [
             '90s', 'astrocrag', 'blocklily', 'boulder', 'bush',
             'chargedwall', 'clubwall', 'clubwall1', 'clubwall2', 'clubwall4', 'clubwall5', 'clubwall6',
-            'cobble', 'coralwall', 'cube', 'deco', 'fortwall', 'heartstone',
+            'cobble', 'coralwall', 'deco', 'fortwall', 'heartstone',
             'lavawall', 'rockwall', 'stump', 'succulent', 'wall', 'zydeco'
         ];
 
         const obstacleFolderItems = ['rock', 'shrubbery'];
-        const blockingDoodads = ['hole', 'pitfall'];
+        const blockingDoodads = ['cube', 'hole', 'pitfall'];
         const nonWalkableFloors = ['aqua'];
 
         return wallFolderItems.includes(terrain) ||

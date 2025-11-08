@@ -125,6 +125,13 @@ export class MessageManager {
     }
 
     /**
+     * Show overlay message with a confirm button
+     */
+    showOverlayMessageWithButton(text: string, buttonText: string, onConfirm: () => void, imageSrc: string | null = null, isLargeText = false): void {
+        this.overlayHandler.showWithButton(text, buttonText, onConfirm, imageSrc, isLargeText);
+    }
+
+    /**
      * Generic message display method (backward compatibility)
      */
     showMessage(text: string, imageSrc: string | null = null, useOverlay = false, isPersistent = false, isLargeText = false, useTypewriter = true): void {

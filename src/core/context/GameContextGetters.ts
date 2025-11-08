@@ -48,6 +48,12 @@ export class GameContextGetters {
     get specialZones(): Map<string, any> { return this.world.specialZones; }
     set specialZones(value: Map<string, any>) { this.world.specialZones = value; }
 
+    get partnerCubes(): Map<string, any> { return this.world.partnerCubes; }
+    set partnerCubes(value: Map<string, any>) { this.world.partnerCubes = value; }
+
+    get cubeLinkages(): Map<string, any> { return this.world.cubeLinkages; }
+    set cubeLinkages(value: Map<string, any>) { this.world.cubeLinkages = value; }
+
     get defeatedEnemies(): Set<string> { return this.world.defeatedEnemies; }
     set defeatedEnemies(value: Set<string>) { this.world.defeatedEnemies = value; }
 

@@ -14,14 +14,16 @@ import type {
     BombItem,
     BookOfTimeTravelItem,
     BowItem,
-    ShovelItem
+    ShovelItem,
+    FischersWandItem,
+    CubeItem
 } from '@managers/inventory/ItemMetadata';
 
 // Import item effects
 import { FoodEffect, WaterEffect, HeartEffect } from '@managers/inventory/effects/ConsumableEffects';
 import { AxeEffect, HammerEffect } from '@managers/inventory/effects/ToolEffects';
 import { BombEffect, BowEffect, BishopSpearEffect, HorseIconEffect } from '@managers/inventory/effects/WeaponEffects';
-import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect } from '@managers/inventory/effects/SpecialEffects';
+import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect, FischersWandEffect, CubeEffect } from '@managers/inventory/effects/SpecialEffects';
 
 /**
  * Register all items with the ContentRegistry
@@ -234,8 +236,45 @@ export function registerItems(): void {
         getTooltip: (item: BookOfTimeTravelItem) => `Book of Time Travel - Passes one turn, allowing enemies to move. Has ${item.uses} charges.`,
         getImageKey: () => 'book',
         metadata: {
+            defaultUses: 3
+        }
+    });
+
+    ContentRegistry.registerItem('fischers_wand', {
+        tileType: TILE_TYPES.FISCHERS_WAND,
+        stackable: true,
+        radial: true,
+        effect: new FischersWandEffect(),
+        spawnWeight: SPAWN_PROBABILITIES.SPECIAL_ITEMS.FISCHERS_WAND,
+        spawnRules: {
+            minLevel: 1,
+            maxLevel: 4,
+            dimension: 'any',
+            isActivated: true
+        },
+        getTooltip: (item: FischersWandItem) => {
+            const disabledText = item.disabled ? ' (DISABLED)' : '';
+            return `Fischer's Cube${disabledText} - Shuffles all enemies and obstacles in the zone. Has ${item.uses} charges.`;
+        },
+        getImageKey: () => 'doodads/cube',
+        metadata: {
             defaultUses: 1
         }
+    });
+
+    ContentRegistry.registerItem('cube', {
+        tileType: TILE_TYPES.CUBE,
+        stackable: false,
+        radial: true,
+        effect: new CubeEffect(),
+        spawnWeight: 0, // Not naturally spawned (placed manually in museum)
+        getTooltip: (item: CubeItem) => {
+            if (item.originZone) {
+                return `Return Branch - Teleports back to zone (${item.originZone.x}, ${item.originZone.y})`;
+            }
+            return 'Teleportation Branch - Teleports you 10 zones away and creates a return branch';
+        },
+        getImageKey: () => 'branch'
     });
 
     // ==================== NPCs (as items for spawning) ====================

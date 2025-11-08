@@ -67,6 +67,17 @@ export interface ShovelItem extends BaseItem {
     uses: number;
 }
 
+export interface FischersWandItem extends BaseItem {
+    type: 'fischers_wand';
+    uses: number;
+}
+
+export interface CubeItem extends BaseItem {
+    type: 'cube';
+    partnerId?: string; // ID of the partner cube (if exists)
+    originZone?: { x: number; y: number; dimension: number }; // Where this cube teleports to
+}
+
 export type InventoryItem =
     | FoodItem
     | WaterItem
@@ -80,6 +91,8 @@ export type InventoryItem =
     | BookOfTimeTravelItem
     | BowItem
     | ShovelItem
+    | FischersWandItem
+    | CubeItem
     | BaseItem; // Fallback for generic items
 
 export type ItemType = InventoryItem['type'];
@@ -107,7 +120,8 @@ export class ItemMetadata {
         'horse_icon',
         'book_of_time_travel',
         'bow',
-        'shovel'
+        'shovel',
+        'fischers_wand'
     ];
 
     // Items that go into radial quick-action inventory instead of main inventory
@@ -116,7 +130,9 @@ export class ItemMetadata {
         'horse_icon',
         'bow',
         'bishop_spear',
-        'book_of_time_travel'
+        'book_of_time_travel',
+        'fischers_wand',
+        'cube'
     ];
 
     // Tile type to item type mapping for pickup
@@ -125,7 +141,9 @@ export class ItemMetadata {
         [TILE_TYPES.BISHOP_SPEAR]: 'bishop_spear',
         [TILE_TYPES.HORSE_ICON]: 'horse_icon',
         [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: 'book_of_time_travel',
-        [TILE_TYPES.SHOVEL]: 'shovel'
+        [TILE_TYPES.SHOVEL]: 'shovel',
+        [TILE_TYPES.FISCHERS_WAND]: 'fischers_wand',
+        [TILE_TYPES.CUBE]: 'cube'
     };
 
     /**
@@ -188,6 +206,17 @@ export class ItemMetadata {
             case 'shovel':
                 return `Shovel - Digs a hole in an adjacent empty tile. Has ${item.uses} uses.`;
 
+            case 'fischers_wand':
+                return `Fischer's Cube${disabledText} - Shuffles all enemies and obstacles in the zone. Has ${item.uses} charges.`;
+
+            case 'cube': {
+                const cubeItem = item as CubeItem;
+                if (cubeItem.originZone) {
+                    return `Return Branch - Teleports back to zone (${cubeItem.originZone.x}, ${cubeItem.originZone.y})`;
+                }
+                return 'Teleportation Branch - Teleports you 10 zones away and creates a return branch';
+            }
+
             default:
                 return '';
         }
@@ -217,6 +246,8 @@ export class ItemMetadata {
             'book_of_time_travel': 'book',
             'bow': 'bow',
             'shovel': 'shovel',
+            'fischers_wand': 'doodads/cube',
+            'cube': 'branch',
             'food': 'food', // Handled above
             'hammer': 'hammer'
         };
@@ -283,12 +314,13 @@ export class ItemMetadata {
             delete itemWithUses.quantity;
         }
 
-        // Initialize uses for items that need them (shovel, bow, bishop_spear, horse_icon)
+        // Initialize uses for items that need them (shovel, bow, bishop_spear, horse_icon, fischers_wand)
         const itemsWithUses: Record<string, number> = {
             'shovel': 3,
             'bow': 3,
             'bishop_spear': 3,
-            'horse_icon': 3
+            'horse_icon': 3,
+            'fischers_wand': 1
         };
         if (item.type && item.type in itemsWithUses) {
             const itemWithUsesProp = item as Record<string, unknown>;

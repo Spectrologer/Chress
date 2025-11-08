@@ -119,6 +119,10 @@ export interface IGame {
     defeatedEnemies: Set<string>;
     currentRegion: string | null;
 
+    // Cube teleportation data
+    partnerCubes: Map<string, any>;
+    cubeLinkages: Map<string, any>;
+
     // Canvas contexts
     canvas: HTMLCanvasElement | null;
     ctx: CanvasRenderingContext2D | null;

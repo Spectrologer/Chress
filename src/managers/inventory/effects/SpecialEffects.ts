@@ -5,10 +5,11 @@ import { logger } from '@core/logger';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { isAdjacent } from '@core/utils/DirectionUtils';
-import type { InventoryItem, ShovelItem, NoteItem, BookOfTimeTravelItem } from '../ItemMetadata';
+import type { InventoryItem, ShovelItem, NoteItem, BookOfTimeTravelItem, FischersWandItem, CubeItem } from '../ItemMetadata';
+import { DIMENSION_CONSTANTS } from '@core/constants/gameplay';
 
 /**
- * Special effects - Shovel, Note, Book of Time Travel
+ * Special effects - Shovel, Note, Book of Time Travel, Cube
  */
 
 export class ShovelEffect extends BaseItemEffect {
@@ -185,5 +186,265 @@ export class BookOfTimeTravelEffect extends BaseItemEffect {
         }
 
         return { consumed: true, uses: 1, success: true };
+    }
+}
+
+export class FischersWandEffect extends BaseItemEffect {
+    apply(game: Game, item: InventoryItem, context: ItemEffectContext = {}): ItemEffectResult {
+        // Show visual feedback
+        eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
+            text: 'Fischer\'s Cube swirls the zone...<br>Everything shifts!',
+            imageSrc: 'assets/environment/doodads/cube.png',
+            isPersistent: true,
+            isLargeText: false,
+            useTypewriter: false
+        });
+
+        // Immovable tiles that should NOT be shuffled
+        const IMMOVABLE_TILES = [
+            TILE_TYPES.WALL,
+            TILE_TYPES.EXIT,
+            TILE_TYPES.GRASS, // Grass is decorative background
+            TILE_TYPES.FLOOR  // Floor is the empty space
+        ];
+
+        // Collect all movable entities and tiles with their positions
+        const entities: Array<{ x: number; y: number; tileType: any; isPlayer?: boolean; isEnemy?: boolean; isNPC?: boolean }> = [];
+
+        // Collect player position
+        const playerPos = game.player.getPosition();
+        entities.push({ x: playerPos.x, y: playerPos.y, tileType: 'PLAYER', isPlayer: true });
+
+        // Collect enemies
+        if (game.enemies && Array.isArray(game.enemies)) {
+            game.enemies.forEach((enemy: any) => {
+                entities.push({ x: enemy.x, y: enemy.y, tileType: 'ENEMY', isEnemy: true });
+            });
+        }
+
+        // Collect NPCs (check for various NPC properties on game object)
+        const npcArrays = [
+            (game as any).npcs,
+            (game as any).merchants,
+            (game as any).tutorialNPCs
+        ];
+
+        npcArrays.forEach(npcArray => {
+            if (npcArray && Array.isArray(npcArray)) {
+                npcArray.forEach((npc: any) => {
+                    if (npc && typeof npc.x === 'number' && typeof npc.y === 'number') {
+                        entities.push({ x: npc.x, y: npc.y, tileType: npc, isNPC: true });
+                    }
+                });
+            }
+        });
+
+        // Collect all other movable tiles from the grid
+        for (let y = 0; y < game.grid.length; y++) {
+            for (let x = 0; x < game.grid[y].length; x++) {
+                const tile = game.grid[y][x];
+
+                // Skip immovable tiles and positions already accounted for (player/enemies/NPCs)
+                if (IMMOVABLE_TILES.includes(tile as number)) {
+                    continue;
+                }
+
+                // Check if this position is already accounted for
+                const alreadyTracked = entities.some(e => e.x === x && e.y === y);
+                if (!alreadyTracked && tile !== TILE_TYPES.FLOOR) {
+                    entities.push({ x, y, tileType: tile });
+                }
+            }
+        }
+
+        if (entities.length === 0) {
+            this._showMessage(game, 'Nothing to shuffle!', null, false, false);
+            return { consumed: false, success: false };
+        }
+
+        // Get all positions
+        const positions = entities.map(e => ({ x: e.x, y: e.y }));
+
+        // Fisher-Yates shuffle of positions
+        for (let i = positions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [positions[i], positions[j]] = [positions[j], positions[i]];
+        }
+
+        // Clear old positions on grid (everything except walls/exits/grass)
+        entities.forEach(entity => {
+            if (!entity.isPlayer && !entity.isEnemy && !entity.isNPC) {
+                game.grid[entity.y][entity.x] = TILE_TYPES.FLOOR;
+            }
+        });
+
+        // Apply shuffled positions
+        entities.forEach((entity, index) => {
+            const newPos = positions[index];
+
+            if (entity.isPlayer) {
+                // Move player
+                game.player.x = newPos.x;
+                game.player.y = newPos.y;
+            } else if (entity.isEnemy) {
+                // Find the enemy and update its position
+                const enemy = game.enemies?.find((e: any) => e.x === entity.x && e.y === entity.y);
+                if (enemy) {
+                    enemy.x = newPos.x;
+                    enemy.y = newPos.y;
+                }
+            } else if (entity.isNPC) {
+                // Update NPC position
+                const npc = entity.tileType;
+                if (npc) {
+                    npc.x = newPos.x;
+                    npc.y = newPos.y;
+                }
+            } else {
+                // Place tile at new position
+                game.grid[newPos.y][newPos.x] = entity.tileType;
+            }
+        });
+
+        // Start enemy turns
+        if (typeof game.startEnemyTurns === 'function') {
+            game.startEnemyTurns();
+        }
+
+        return { consumed: true, uses: 1, success: true };
+    }
+}
+
+export class CubeEffect extends BaseItemEffect {
+    apply(game: Game, item: InventoryItem, context: ItemEffectContext = {}): ItemEffectResult {
+        const cubeItem = item as CubeItem;
+        const currentZone = game.player.getCurrentZone();
+
+        // Check if this cube has a permanent linkage first
+        const currentZoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+        const linkedDestination = game.cubeLinkages.get(currentZoneKey) || null;
+
+        // If this cube has a partner (either from item data or from linkage map), teleport to the partner's location
+        if (cubeItem.originZone || linkedDestination) {
+            const destination = linkedDestination || cubeItem.originZone!;
+            const targetX = destination.x;
+            const targetY = destination.y;
+            const targetDimension = destination.dimension || DIMENSION_CONSTANTS.SURFACE;
+
+            // Show message
+            eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
+                text: 'The cube glows and teleports you back!',
+                imageSrc: 'assets/environment/doodads/cube.png',
+                isPersistent: false,
+                isLargeText: false,
+                useTypewriter: false
+            });
+
+            // Set the player's dimension before transitioning
+            game.player.setCurrentZone(targetX, targetY, targetDimension);
+
+            // Teleport to the origin zone
+            game.transitionToZone(targetX, targetY, 'teleport', game.player.x, game.player.y);
+
+            // Remove this return cube from inventory after use
+            return { consumed: true, quantity: 1, success: true };
+        }
+
+        // This is an origin cube with no linkage yet - create a partner cube and teleport 10 zones away
+        // ALWAYS teleport to dimension 0 (surface), never to interiors or underground
+        const targetDimension = DIMENSION_CONSTANTS.SURFACE;
+
+        // Find a valid zone exactly 10 zones away (Chebyshev distance)
+        const candidates: Array<{ x: number; y: number }> = [];
+
+        // Generate all positions that are exactly 10 zones away on the surface
+        for (let dx = -10; dx <= 10; dx++) {
+            for (let dy = -10; dy <= 10; dy++) {
+                const distance = Math.max(Math.abs(dx), Math.abs(dy));
+                if (distance === 10) {
+                    const targetX = currentZone.x + dx;
+                    const targetY = currentZone.y + dy;
+                    // Add to candidates (all will be surface zones)
+                    candidates.push({ x: targetX, y: targetY });
+                }
+            }
+        }
+
+        if (candidates.length === 0) {
+            this._showMessage(game, 'The cube fizzles... nowhere to teleport!', null, false, false);
+            return { consumed: false, success: false };
+        }
+
+        // Select a random candidate
+        const target = candidates[Math.floor(Math.random() * candidates.length)];
+
+        // Store partner cube data in game state to be spawned in the target zone
+        // Use zone key format without dimension to match ZoneManager's key format
+        const zoneKey = `${target.x},${target.y}`;
+        game.partnerCubes.set(zoneKey, {
+            x: target.x,
+            y: target.y,
+            dimension: targetDimension,
+            originZone: {
+                x: currentZone.x,
+                y: currentZone.y,
+                dimension: currentZone.dimension
+            }
+        });
+
+        // Store permanent cube linkage data that persists across zone transitions
+        // Create bidirectional linkage between the two cubes
+        const originKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
+        const targetKey = `${target.x},${target.y}:${targetDimension}`;
+
+        game.cubeLinkages.set(originKey, {
+            x: target.x,
+            y: target.y,
+            dimension: targetDimension
+        });
+        game.cubeLinkages.set(targetKey, {
+            x: currentZone.x,
+            y: currentZone.y,
+            dimension: currentZone.dimension
+        });
+
+        // Show message
+        eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
+            text: `The branch activates! Teleporting to zone (${target.x}, ${target.y})...`,
+            imageSrc: 'assets/items/misc/branch.png',
+            isPersistent: false,
+            isLargeText: false,
+            useTypewriter: false
+        });
+
+        // Add message to log
+        if (game.uiManager && typeof game.uiManager.addMessageToLog === 'function') {
+            game.uiManager.addMessageToLog(`Teleported to zone (${target.x}, ${target.y})! A return branch awaits.`);
+        }
+
+        // Update the origin cube tile to remember this destination
+        // This makes the two cubes form a permanent pair
+        if (context.cubeGridCoords && game.gridManager) {
+            const cubeGridCoords = context.cubeGridCoords as { x: number; y: number };
+            const cubeTile = game.gridManager.getTile(cubeGridCoords.x, cubeGridCoords.y);
+            if (cubeTile && typeof cubeTile === 'object') {
+                // Store the destination as this cube's origin zone
+                (cubeTile as any).originZone = {
+                    x: target.x,
+                    y: target.y,
+                    dimension: targetDimension
+                };
+            }
+        }
+
+        // Set the player's dimension to surface before transitioning
+        game.player.setCurrentZone(target.x, target.y, targetDimension);
+
+        // Teleport to the target zone
+        game.transitionToZone(target.x, target.y, 'teleport', game.player.x, game.player.y);
+
+        // Don't consume the cube - it stays in the original location
+        // The player should be able to find it again if they return
+        return { consumed: false, success: true };
     }
 }

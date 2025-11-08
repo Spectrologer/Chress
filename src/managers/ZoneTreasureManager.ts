@@ -18,11 +18,42 @@ export class ZoneTreasureManager {
      * Handle special zone treasures if player reached a marked zone
      */
     public handleSpecialZoneTreasures(zoneKey: string): void {
-        const specialZones = (this.game as any).specialZones as Map<string, any[]>;
-        if (specialZones.has(zoneKey)) {
-            const treasures = specialZones.get(zoneKey)!;
+        if (this.game.specialZones.has(zoneKey)) {
+            const treasures = this.game.specialZones.get(zoneKey)!;
             this.spawnTreasuresOnGrid(treasures);
-            specialZones.delete(zoneKey);
+            this.game.specialZones.delete(zoneKey);
+        }
+
+        // Check if a partner cube should spawn in this zone
+        this.handlePartnerCubeSpawn(zoneKey);
+    }
+
+    /**
+     * Handle partner cube spawning for teleportation cubes
+     */
+    private handlePartnerCubeSpawn(zoneKey: string): void {
+        if (this.game.partnerCubes.has(zoneKey)) {
+            const cubeData = this.game.partnerCubes.get(zoneKey)!;
+
+            // Create a return cube with origin zone data
+            const returnCube = {
+                type: TILE_TYPES.CUBE,
+                originZone: cubeData.originZone
+            };
+
+            // Spawn the return cube on the grid
+            this.spawnTreasuresOnGrid([returnCube]);
+
+            // Remove from partner cubes map after spawning
+            this.game.partnerCubes.delete(zoneKey);
+
+            // Add message to log
+            eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
+                text: 'A glowing cube materializes nearby!',
+                category: 'treasure',
+                priority: 'info',
+                timestamp: Date.now()
+            });
         }
     }
 

@@ -13,7 +13,9 @@
       "Bash(nul)",
       "Bash(findstr:*)",
       "Bash(dir /s /b srccharactersstatues*.json 2)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(echo:*)",
+      "Bash(\"src\\managers\\inventory\\effects\\SpecialEffects.ts\")"
     ],
     "deny": [],
     "ask": []

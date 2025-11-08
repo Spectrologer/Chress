@@ -4,7 +4,8 @@ import { TileRegistry } from '@core/TileRegistry';
 import { isAdjacent } from '@core/utils/DirectionUtils';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
-import { isTileObjectOfType, TileTypeChecker } from '@utils/TypeChecks';
+import { isTileObjectOfType, TileTypeChecker, getTileType } from '@utils/TypeChecks';
+import { CubeEffect } from '@managers/inventory/effects/SpecialEffects';
 import type { Game } from '@core/game';
 import type { Position } from '@core/Position';
 
@@ -87,6 +88,52 @@ export class EnvironmentalInteractionManager {
         return false;
     }
 
+    public handleCubeTap(gridCoords: Position): boolean {
+        const gridManager = this.game.gridManager;
+        const tile = gridManager.getTile(gridCoords.x, gridCoords.y);
+
+        // Check if this is a cube tile
+        if (!isTileObjectOfType(tile, TILE_TYPES.CUBE) && getTileType(tile) !== TILE_TYPES.CUBE) {
+            return false;
+        }
+
+        // Check if player is adjacent to the cube
+        const playerPos = (this.game.player as any).getPosition() as Position;
+        const dx = Math.abs(gridCoords.x - playerPos.x);
+        const dy = Math.abs(gridCoords.y - playerPos.y);
+
+        if (isAdjacent(dx, dy)) {
+            // Create cube item from the tile
+            const cubeItem = isTileObjectOfType(tile, TILE_TYPES.CUBE) && (tile as any).originZone
+                ? { type: 'cube' as const, originZone: (tile as any).originZone }
+                : { type: 'cube' as const };
+
+            // Show confirmation prompt with button
+            const message = cubeItem.originZone
+                ? `Teleport back to zone (${cubeItem.originZone.x}, ${cubeItem.originZone.y})?`
+                : 'Activate branch and teleport 10 zones away?';
+
+            // Show confirmation with button
+            if (this.game.uiManager && this.game.uiManager.messageManager) {
+                this.game.uiManager.messageManager.showOverlayMessageWithButton(
+                    message,
+                    'Confirm',
+                    () => {
+                        // Execute cube effect, passing the grid coordinates
+                        const effect = new CubeEffect();
+                        effect.apply(this.game as any, cubeItem, { cubeGridCoords: gridCoords });
+                    },
+                    'assets/items/misc/branch.png',
+                    false
+                );
+            }
+
+            return true; // Interaction handled
+        }
+
+        return false;
+    }
+
     public forceInteractAt(gridCoords: Position): void {
         const gridManager = this.game.gridManager;
         const playerPos = (this.game.player as any).getPosition() as Position;
@@ -112,6 +159,35 @@ export class EnvironmentalInteractionManager {
                     priority: 'info'
                 });
                 transientState.setLastSignMessage(signTile.message);
+            }
+            return;
+        }
+
+        // Check for cube - show confirmation prompt for teleportation
+        if (isTileObjectOfType(tile, TILE_TYPES.CUBE) || getTileType(tile) === TILE_TYPES.CUBE) {
+            // Create cube item from the tile
+            const cubeItem = isTileObjectOfType(tile, TILE_TYPES.CUBE) && (tile as any).originZone
+                ? { type: 'cube' as const, originZone: (tile as any).originZone }
+                : { type: 'cube' as const };
+
+            // Show confirmation prompt with button
+            const message = cubeItem.originZone
+                ? `Teleport back to zone (${cubeItem.originZone.x}, ${cubeItem.originZone.y})?`
+                : 'Activate branch and teleport 10 zones away?';
+
+            // Show confirmation with button
+            if (this.game.uiManager && this.game.uiManager.messageManager) {
+                this.game.uiManager.messageManager.showOverlayMessageWithButton(
+                    message,
+                    'Confirm',
+                    () => {
+                        // Execute cube effect, passing the grid coordinates
+                        const effect = new CubeEffect();
+                        effect.apply(this.game as any, cubeItem, { cubeGridCoords: gridCoords });
+                    },
+                    'assets/items/misc/branch.png',
+                    false
+                );
             }
             return;
         }

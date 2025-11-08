@@ -17,7 +17,7 @@ export const DISCOVERED_WALLS = [
   "environment/walls/clubwall6.png",
   "environment/walls/cobble.png",
   "environment/walls/coralwall.png",
-  "environment/walls/cube.png",
+  "environment/doodads/cube.png",
   "environment/walls/deco.png",
   "environment/walls/fortwall.png",
   "environment/walls/heartstone.png",

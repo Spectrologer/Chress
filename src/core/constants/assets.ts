@@ -29,7 +29,6 @@ export const IMAGE_ASSETS = [
     'environment/walls/chargedwall.png',
     'environment/walls/cobble.png',
     'environment/walls/coralwall.png',
-    'environment/walls/cube.png',
     'environment/walls/deco.png',
     'environment/walls/fortwall.png',
     'environment/walls/heartstone.png',
@@ -39,6 +38,7 @@ export const IMAGE_ASSETS = [
     'environment/obstacles/shrubbery.png',
     'environment/walls/bush.png',
     'environment/doodads/club.png',
+    'environment/doodads/cube.png',
     'environment/doodads/table.png',
     'items/consumables/water.png',
     'environment/doodads/shack.png',
@@ -58,6 +58,7 @@ export const IMAGE_ASSETS = [
     'items/misc/heart.png',
     'items/misc/note.png',
     'items/misc/book.png',
+    'items/misc/branch.png',
     'items/equipment/bow.png',
     'environment/doodads/stairdown.png',
     // Use the actual stairup filename present in the repo; TextureLoader will accept both names

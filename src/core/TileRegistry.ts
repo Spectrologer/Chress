@@ -92,7 +92,8 @@ export class TileRegistry {
         TILE_TYPES.CISTERN,
         TILE_TYPES.PITFALL,
         TILE_TYPES.PORT,
-        TILE_TYPES.SHOVEL
+        TILE_TYPES.SHOVEL,
+        TILE_TYPES.FISCHERS_WAND
     ];
 
     /**

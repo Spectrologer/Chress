@@ -1,7 +1,7 @@
 import { FoodEffect, WaterEffect, HeartEffect } from './effects/ConsumableEffects';
 import { AxeEffect, HammerEffect } from './effects/ToolEffects';
 import { BombEffect, BowEffect, BishopSpearEffect, HorseIconEffect } from './effects/WeaponEffects';
-import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect } from './effects/SpecialEffects';
+import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect, FischersWandEffect } from './effects/SpecialEffects';
 import type { BaseItemEffect, ItemEffectContext, ItemEffectResult, Game } from './effects/BaseItemEffect';
 import type { InventoryItem, ItemType } from './ItemMetadata';
 
@@ -42,7 +42,8 @@ export class ItemEffectStrategy {
                 'horse_icon': new HorseIconEffect(),
                 'shovel': new ShovelEffect(),
                 'note': new NoteEffect(),
-                'book_of_time_travel': new BookOfTimeTravelEffect()
+                'book_of_time_travel': new BookOfTimeTravelEffect(),
+                'fischers_wand': new FischersWandEffect()
             };
         }
         return this._effects;

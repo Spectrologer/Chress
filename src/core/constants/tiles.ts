@@ -51,6 +51,8 @@ export const TILE_TYPES = {
     PITFALL: 49,
     TABLE: 56,
     HOLE: 57, // Hole tile type
+    FISCHERS_WAND: 108, // Fischer's Cube - Shuffles enemies and obstacles
+    CUBE: 110, // Teleportation Branch
     // New NPCs
     ASTER: 58,
     BLOT: 59,

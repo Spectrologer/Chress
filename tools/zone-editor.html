@@ -653,7 +653,7 @@
             'walls/clubwall6': '../assets/environment/walls/clubwall6.png',
             'walls/cobble': '../assets/environment/walls/cobble.png',
             'walls/coralwall': '../assets/environment/walls/coralwall.png',
-            'walls/cube': '../assets/environment/walls/cube.png',
+            'doodads/cube': '../assets/environment/doodads/cube.png',
             'walls/deco': '../assets/environment/walls/deco.png',
             'walls/fortwall': '../assets/environment/walls/fortwall.png',
             'walls/heartstone': '../assets/environment/walls/heartstone.png',
@@ -675,6 +675,7 @@
 
             // STRUCTURE
             'cistern': '../assets/environment/doodads/cistern.png',
+            'cube': '../assets/environment/doodads/cube.png',
             'deadtree': '../assets/environment/doodads/deadtree.png',
             'house': '../assets/environment/doodads/club.png',
             'shack': '../assets/environment/doodads/shack.png',
@@ -830,7 +831,7 @@
                 // Wall tiles
                 'walls/wall', 'walls/rockwall', 'walls/cobble', 'walls/clubwall', 'walls/clubwall1', 'walls/clubwall2', 'walls/clubwall4', 'walls/clubwall5', 'walls/clubwall6',
                 'walls/fortwall', 'walls/coralwall', 'walls/lavawall', 'walls/heartstone', 'walls/chargedwall',
-                'walls/90s', 'walls/astrocrag', 'walls/cube', 'walls/deco', 'walls/zydeco',
+                'walls/90s', 'walls/astrocrag', 'walls/deco', 'walls/zydeco',
                 // Flora/obstacles in walls folder
                 'walls/blocklily', 'walls/boulder', 'walls/bush', 'walls/stump', 'walls/succulent',
                 null
@@ -840,7 +841,7 @@
                 null
             ],
             STRUCTURE: [
-                'cistern', 'deadtree', 'house', 'shack', 'sign', 'table', 'well',
+                'cistern', 'cube', 'deadtree', 'house', 'shack', 'sign', 'table', 'well',
                 // Obstacles
                 'obstacles/rock', 'obstacles/shrubbery', 'hole', 'pitfall',
                 null
@@ -1425,12 +1426,15 @@
             const wallItems = [
                 'wall', '90s', 'astrocrag', 'blocklily', 'bordertrim', 'boulder', 'bush',
                 'chargedwall', 'clubwall', 'clubwall1', 'clubwall2', 'clubwall4', 'clubwall5', 'clubwall6',
-                'cobble', 'coralwall', 'cube', 'deco', 'fortwall', 'heartstone',
+                'cobble', 'coralwall', 'deco', 'fortwall', 'heartstone',
                 'lavawall', 'rockwall', 'stump', 'succulent', 'zydeco'
             ];
 
             // Obstacle items -> add 'obstacles/' prefix
             const obstacleItems = ['rock', 'shrubbery'];
+
+            // Doodad items (cube, hole, pitfall, etc.) - no prefix needed
+            const doodadItems = ['cube', 'hole', 'pitfall'];
 
             // Floor items -> add 'floors/' prefix
             const floorItems = [
@@ -1442,6 +1446,8 @@
                 return `walls/${terrain}`;
             } else if (obstacleItems.includes(terrain)) {
                 return `obstacles/${terrain}`;
+            } else if (doodadItems.includes(terrain)) {
+                return `doodads/${terrain}`;
             } else if (floorItems.includes(terrain)) {
                 return `floors/${terrain}`;
             }

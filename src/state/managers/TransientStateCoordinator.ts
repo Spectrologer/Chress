@@ -87,6 +87,26 @@ export class TransientStateCoordinator {
     }
 
     // ========================================
+    // CUBE ACTIVATION STATE (ItemAbilityStateManager)
+    // ========================================
+
+    getPendingCubeActivation(): any {
+        return this._itemAbility.getPendingCubeActivation();
+    }
+
+    hasPendingCubeActivation(): boolean {
+        return this._itemAbility.hasPendingCubeActivation();
+    }
+
+    setPendingCubeActivation(data: any): void {
+        this._itemAbility.setPendingCubeActivation(data);
+    }
+
+    clearPendingCubeActivation(): void {
+        this._itemAbility.clearPendingCubeActivation();
+    }
+
+    // ========================================
     // BOMB PLACEMENT STATE (ItemAbilityStateManager)
     // ========================================
 

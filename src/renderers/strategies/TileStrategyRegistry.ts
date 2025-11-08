@@ -170,10 +170,16 @@ export class TileStrategyRegistry {
         this.register(TILE_TYPES.SHOVEL, new SimpleItemRenderStrategy(
             this.images, this.tileSize, 'shovel', TILE_TYPES.SHOVEL, '⛏️', { scale: 1.0 }
         ));
+        this.register(TILE_TYPES.FISCHERS_WAND, new SimpleItemRenderStrategy(
+            this.images, this.tileSize, 'doodads/cube', TILE_TYPES.FISCHERS_WAND, '🧊', { scale: 0.75 }
+        ));
 
         // Special tiles
         this.register(TILE_TYPES.TABLE, new SimpleOverlayRenderStrategy(
             this.images, this.tileSize, 'doodads/table', TILE_TYPES.TABLE, null, null
+        ));
+        this.register(TILE_TYPES.CUBE, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'branch', TILE_TYPES.CUBE, null, null
         ));
         this.register(TILE_TYPES.CISTERN, new CisternRenderStrategy(this.images, this.tileSize, this.structureRenderer));
         this.register(TILE_TYPES.PITFALL, new PitfallRenderStrategy(this.images, this.tileSize, this.structureRenderer));

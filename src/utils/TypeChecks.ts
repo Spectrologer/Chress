@@ -254,7 +254,8 @@ export class TileTypeChecker {
                type === TILE_TYPES.NOTE ||
                type === TILE_TYPES.BOOK_OF_TIME_TRAVEL ||
                type === TILE_TYPES.BOW ||
-               type === TILE_TYPES.SHOVEL;
+               type === TILE_TYPES.SHOVEL ||
+               type === TILE_TYPES.FISCHERS_WAND;
     }
 
     /**

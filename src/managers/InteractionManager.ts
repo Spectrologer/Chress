@@ -3,6 +3,7 @@ import audioManager from '@utils/AudioManager';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { Position } from '@core/Position';
+import { CubeEffect } from '@managers/inventory/effects/SpecialEffects';
 import type { IGame, ICoordinates } from '@core/context';
 import type { TileObject } from '@core/SharedTypes';
 import type { InputManager } from './InputManager';
@@ -99,6 +100,7 @@ export class InteractionManager {
             (gridCoords, playerPos) => this.handleNPCInteraction(gridCoords),
             (gridCoords, playerPos) => this.environmentManager.handleSignTap(Position.from(gridCoords)),
             (gridCoords, playerPos) => this.environmentManager.handleStatueTap(Position.from(gridCoords)),
+            (gridCoords, playerPos) => this.environmentManager.handleCubeTap(Position.from(gridCoords)),
             (gridCoords, playerPos) => this.bombManager.triggerBombExplosion(Position.from(gridCoords), Position.from(playerPos)),
             (gridCoords, playerPos) => {
                 const bishopSpearCharge = this.combatManager.isValidBishopSpearCharge(Position.from(gridCoords), Position.from(playerPos));
@@ -217,6 +219,26 @@ export class InteractionManager {
     handleTap(gridCoords: ICoordinates): boolean {
         const clickedPos = Position.from(gridCoords);
         const transientState = this.game.transientGameState;
+
+        // Handle pending cube activation confirmation or cancellation
+        if ((transientState as any).hasPendingCubeActivation?.()) {
+            const pending = (transientState as any).getPendingCubeActivation?.();
+            if (pending && pending.gridCoords) {
+                const cubePos = Position.from(pending.gridCoords);
+                if (clickedPos.equals(cubePos)) {
+                    // Confirmed - execute the cube effect
+                    const effect = new CubeEffect();
+                    effect.apply(this.game as any, pending.cubeItem, {});
+                    (transientState as any).clearPendingCubeActivation?.();
+                    eventBus.emit(EventTypes.UI_HIDE_MESSAGE, {});
+                } else {
+                    // Cancelled - tapped somewhere else
+                    (transientState as any).clearPendingCubeActivation?.();
+                    eventBus.emit(EventTypes.UI_HIDE_MESSAGE, {});
+                }
+            }
+            return true;
+        }
 
         // Handle pending charge confirmation or cancellation
         if (transientState.hasPendingCharge()) {

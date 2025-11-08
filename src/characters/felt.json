@@ -55,6 +55,11 @@
         "id": "msg_5",
         "text": "Forge is a LIAR.",
         "buttonText": "Okay..."
+      },
+      {
+        "id": "msg_6",
+        "text": "Stop saying it's a 'teleport stick or whatever'. I literally see you walk out the door every time after you touch it.",
+        "buttonText": "Okay..."
       }
     ]
   },

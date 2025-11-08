@@ -6,6 +6,8 @@ import { Enemy } from '@entities/Enemy';
 import { findValidPlacement } from '@generators/GeneratorUtils';
 import { TILE_TYPES } from '@core/constants/index';
 import { ContentRegistry } from '@core/ContentRegistry';
+import { ItemMetadata } from '@managers/inventory/ItemMetadata';
+import { ItemRepository } from '@managers/inventory/ItemRepository';
 import type { Position } from '@core/Position';
 import type { GameContext } from '@core/context';
 
@@ -166,6 +168,10 @@ export class KeyboardHandler {
             this.spawnRandomGossipNPC();
             return null;
         }
+        if (event.key === 'e' || event.key === 'E') {
+            this.spawnRandomRadialItemOnFloor();
+            return null;
+        }
 
         // New position
         const currentPos = this.game.player.getPosition();
@@ -276,6 +282,52 @@ export class KeyboardHandler {
         if (pos) {
             this.game.gridManager?.setTile(pos.x, pos.y, TILE_TYPES.PITFALL);
             this.game.render?.();
+        }
+    }
+
+    /**
+     * Spawn a random radial item on a floor tile (debug feature)
+     */
+    private spawnRandomRadialItemOnFloor(): void {
+        // Get random radial item type (exclude cube - only placed manually in museum)
+        const radialTypes = ItemMetadata.RADIAL_TYPES.filter(type => type !== 'cube');
+        const randomType = radialTypes[Math.floor(Math.random() * radialTypes.length)];
+
+        // Determine tile type and data
+        let tileData: any;
+
+        if (randomType === 'bow' || randomType === 'bishop_spear' || randomType === 'horse_icon' || randomType === 'book_of_time_travel') {
+            tileData = { type: this.getTileTypeForItem(randomType), uses: randomType === 'book_of_time_travel' ? 3 : 3 };
+        } else if (randomType === 'fischers_wand') {
+            tileData = { type: TILE_TYPES.FISCHERS_WAND, uses: 1 };
+        } else if (randomType === 'shovel') {
+            tileData = { type: TILE_TYPES.SHOVEL, uses: 3 };
+        } else if (randomType === 'bomb') {
+            tileData = TILE_TYPES.BOMB;
+        }
+
+        // Find valid floor tile
+        const pos = findValidPlacement({
+            maxAttempts: 50,
+            validate: (x: number, y: number): boolean => this.isFloorTileAvailable(x, y)
+        });
+
+        if (pos) {
+            this.game.gridManager?.setTile(pos.x, pos.y, tileData);
+            this.game.render?.();
+        }
+    }
+
+    /**
+     * Get tile type constant for item type
+     */
+    private getTileTypeForItem(itemType: string): number {
+        switch (itemType) {
+            case 'bow': return TILE_TYPES.BOW;
+            case 'bishop_spear': return TILE_TYPES.BISHOP_SPEAR;
+            case 'horse_icon': return TILE_TYPES.HORSE_ICON;
+            case 'book_of_time_travel': return TILE_TYPES.BOOK_OF_TIME_TRAVEL;
+            default: return TILE_TYPES.BOMB;
         }
     }
 

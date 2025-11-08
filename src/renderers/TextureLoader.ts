@@ -80,6 +80,10 @@ export class TextureLoader {
                     imageKey = 'bush';
                 } else if (assetPath === 'environment/doodads/club.png') {
                     imageKey = 'doodads/club';
+                } else if (assetPath === 'environment/doodads/cube.png') {
+                    imageKey = 'doodads/cube';
+                } else if (assetPath === 'items/misc/branch.png') {
+                    imageKey = 'branch';
                 } else if (assetPath === 'environment/doodads/well.png') {
                     imageKey = 'doodads/well';
                 } else if (assetPath === 'environment/doodads/deadtree.png') {

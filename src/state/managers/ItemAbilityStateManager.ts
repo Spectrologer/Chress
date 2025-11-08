@@ -16,19 +16,27 @@ interface ChargeData {
     [key: string]: any;
 }
 
+interface CubeActivationData {
+    gridCoords: { x: number; y: number };
+    cubeItem: any;
+}
+
 interface ItemAbilitySnapshot {
     pendingCharge: ChargeData | null;
+    pendingCubeActivation: CubeActivationData | null;
     bombPlacementMode: boolean;
     bombPlacementPositions: Position[];
 }
 
 export class ItemAbilityStateManager {
     private _pendingCharge: ChargeData | null;
+    private _pendingCubeActivation: CubeActivationData | null;
     private _bombPlacementMode: boolean;
     private _bombPlacementPositions: Position[];
 
     constructor() {
         this._pendingCharge = null;
+        this._pendingCubeActivation = null;
         this._bombPlacementMode = false;
         this._bombPlacementPositions = [];
     }
@@ -78,6 +86,42 @@ export class ItemAbilityStateManager {
             });
 
             logger.debug('ItemAbilityStateManager: Pending charge cleared');
+        }
+    }
+
+    // ========================================
+    // CUBE ACTIVATION STATE
+    // ========================================
+
+    /**
+     * Get pending cube activation data
+     */
+    getPendingCubeActivation(): CubeActivationData | null {
+        return this._pendingCubeActivation;
+    }
+
+    /**
+     * Check if cube activation is pending
+     */
+    hasPendingCubeActivation(): boolean {
+        return this._pendingCubeActivation !== null;
+    }
+
+    /**
+     * Set pending cube activation
+     */
+    setPendingCubeActivation(data: CubeActivationData): void {
+        this._pendingCubeActivation = data;
+        logger.debug('ItemAbilityStateManager: Pending cube activation set', data);
+    }
+
+    /**
+     * Clear pending cube activation
+     */
+    clearPendingCubeActivation(): void {
+        if (this._pendingCubeActivation) {
+            this._pendingCubeActivation = null;
+            logger.debug('ItemAbilityStateManager: Pending cube activation cleared');
         }
     }
 
@@ -197,6 +241,7 @@ export class ItemAbilityStateManager {
     clear(): void {
         this.exitBombPlacementMode();
         this.clearPendingCharge();
+        this.clearPendingCubeActivation();
     }
 
     /**
@@ -204,6 +249,7 @@ export class ItemAbilityStateManager {
      */
     reset(): void {
         this._pendingCharge = null;
+        this._pendingCubeActivation = null;
         this._bombPlacementMode = false;
         this._bombPlacementPositions = [];
     }
@@ -214,6 +260,7 @@ export class ItemAbilityStateManager {
     getSnapshot(): ItemAbilitySnapshot {
         return {
             pendingCharge: this._pendingCharge,
+            pendingCubeActivation: this._pendingCubeActivation,
             bombPlacementMode: this._bombPlacementMode,
             bombPlacementPositions: [...this._bombPlacementPositions]
         };

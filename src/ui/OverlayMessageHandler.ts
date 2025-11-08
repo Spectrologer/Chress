@@ -98,6 +98,65 @@ export class OverlayMessageHandler {
     }
 
     /**
+     * Show an overlay message with a confirm button
+     */
+    showWithButton(text: string, buttonText: string, onConfirm: () => void, imageSrc: string | null = null, isLargeText = false): void {
+        if (!this.messageOverlay) return;
+
+        logger.log(`OverlayMessageHandler.showWithButton: "${text}", buttonText: ${buttonText}`);
+
+        let displayText = text;
+        if (!displayText || displayText.trim() === '') {
+            displayText = '[No message found]';
+        }
+
+        // Clear any existing timeout
+        this.clearTimeout();
+
+        // Build HTML content with button
+        let html = '';
+        if (imageSrc) {
+            let imgStyle = 'width: 128px; height: auto; max-height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;';
+            html += `<img src="${imageSrc}" style="${imgStyle}">`;
+        }
+        html += `<div class="dialogue-text">${displayText}</div>`;
+        html += `<button id="confirmButton" class="confirm-button" style="margin-top: 15px; padding: 10px 20px; font-size: 18px; cursor: pointer; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">${buttonText}</button>`;
+
+        this.messageOverlay.innerHTML = html;
+
+        // Add click handler to button
+        const button = document.getElementById('confirmButton');
+        if (button) {
+            this.eventManager.add(button, 'click', (e: Event) => {
+                e.stopPropagation();
+                onConfirm();
+                this.hide();
+            });
+        }
+
+        // Apply text fitting
+        try {
+            fitTextToContainer(this.messageOverlay, {
+                childSelector: '.dialogue-text',
+                minFontSize: 12
+            });
+        } catch (e) {}
+
+        // Apply large text styling
+        if (isLargeText) {
+            this.messageOverlay.classList.add('large-text');
+        } else {
+            this.messageOverlay.classList.remove('large-text');
+        }
+
+        // Show overlay
+        this.messageOverlay.classList.add('show');
+        this.messageOverlay.classList.add('textbox-dialogue');
+
+        logger.log("Overlay message with button shown");
+    }
+
+    /**
      * Schedule auto-hide after a delay
      */
     scheduleAutoHide(delay: number): void {
