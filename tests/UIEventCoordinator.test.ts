@@ -55,7 +55,7 @@ describe('UIEventCoordinator', () => {
             expect(mockPanelManager.showBarterWindow).toHaveBeenCalledWith('penne');
         });
 
-        test('UI_DIALOG_SHOW with sign type shows sign message', () => {
+        test('UI_DIALOG_SHOW withtextbox type showstextbox message', () => {
             eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
                 type: 'sign',
                 message: 'Welcome to the tavern!',
@@ -111,7 +111,7 @@ describe('UIEventCoordinator', () => {
             expect(mockPanelManager.hideStatueInfoWindow).toHaveBeenCalled();
         });
 
-        test('UI_DIALOG_HIDE with sign type hides overlay message', () => {
+        test('UI_DIALOG_HIDE withtextbox type hides overlay message', () => {
             eventBus.emit(EventTypes.UI_DIALOG_HIDE, {
                 type: 'sign'
             });

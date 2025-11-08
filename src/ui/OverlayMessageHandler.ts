@@ -2,7 +2,7 @@ import { logger } from '@core/logger';
 import { fitTextToContainer } from './TextFitter';
 import { EventListenerManager } from '@utils/EventListenerManager';
 import type { IGame } from '@core/context';
-import { Sign } from './Sign';
+import { TextBox } from './textbox';
 
 /**
  * Handles overlay message display with auto-hide functionality.
@@ -26,7 +26,7 @@ export class OverlayMessageHandler {
 
                 // Only close if clicking directly on the overlay background, not its children
                 if (e.target === this.messageOverlay && this.game.displayingMessageForSign) {
-                    Sign.hideMessageForSign(this.game);
+                    TextBox.hideMessageForSign(this.game);
                 }
             });
         }
@@ -82,7 +82,7 @@ export class OverlayMessageHandler {
 
         // Show overlay
         this.messageOverlay.classList.add('show');
-        this.messageOverlay.classList.add('sign-dialogue');
+        this.messageOverlay.classList.add('textbox-dialogue');
 
         logger.log("Overlay message shown");
 
@@ -128,7 +128,7 @@ export class OverlayMessageHandler {
 
             // Remove sign-specific styling
             try {
-                this.messageOverlay.classList.remove('sign-dialogue');
+                this.messageOverlay.classList.remove('textbox-dialogue');
             } catch (e) {}
 
             logger.log("Hiding overlay message.");

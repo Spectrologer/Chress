@@ -283,7 +283,7 @@ export class ItemTileRenderer {
         }
     }
 
-    renderSignTile(
+    renderTextBoxTile(
         ctx: CanvasRenderingContext2D,
         x: number,
         y: number,
@@ -296,7 +296,7 @@ export class ItemTileRenderer {
         // First draw the base tile
         baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        // Try to draw the sign image if loaded, otherwise use fallback
+        // Try to draw the textbox image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'sign')) {
             ctx.drawImage(this.images.sign, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {

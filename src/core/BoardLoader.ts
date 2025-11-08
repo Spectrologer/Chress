@@ -388,7 +388,7 @@ export class BoardLoader {
             return TILE_TYPES.EXIT;
         }
 
-        // Handle sign with message
+        // Handletextbox with message
         if (featureType === 'sign' || featureType.toUpperCase() === 'SIGN') {
             const message = posKey ? signMessages[posKey] : undefined;
             if (!message) {

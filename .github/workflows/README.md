@@ -9,7 +9,9 @@ This directory contains CI/CD workflows for the Chress project.
 Runs on every push and pull request to `main` and `develop` branches.
 
 **Jobs:**
+
 - **Test**: Runs on Node.js 18.x and 20.x
+
   - Lints code with ESLint
   - Runs type checking with TypeScript
   - Executes test suite with coverage
@@ -25,7 +27,9 @@ Runs on every push and pull request to `main` and `develop` branches.
 Automatically deploys to GitHub Pages when code is pushed to `main` branch.
 
 **Jobs:**
+
 - **Build**:
+
   - Runs tests
   - Builds production bundle
   - Prepares artifacts for GitHub Pages
@@ -47,13 +51,12 @@ Automatically deploys to GitHub Pages when code is pushed to `main` branch.
 
 ### 2. Optional: Enable Codecov (for coverage reports)
 
-1. Sign up at [codecov.io](https://codecov.io)
-2. Add your repository
-3. No additional secrets needed - Codecov automatically authenticates GitHub Actions
+1.textbox up at [codecov.io](https://codecov.io) 2. Add your repository 3. No additional secrets needed - Codecov automatically authenticates GitHub Actions
 
 ### 3. Branch Protection (Recommended)
 
 Consider adding branch protection rules for `main`:
+
 1. Go to Settings > Branches
 2. Add rule for `main` branch:
    - Require status checks to pass before merging
@@ -77,16 +80,19 @@ Add these badges to your main README.md:
 ## Troubleshooting
 
 ### Deploy workflow fails
+
 - Ensure GitHub Pages is enabled in repository settings
 - Check that the `pages` environment has proper permissions
 - Verify that the `GITHUB_TOKEN` has `pages: write` permission
 
 ### CI workflow fails
+
 - Check that all npm scripts exist in package.json
 - Verify Node.js version compatibility
 - Review the specific failing step in the Actions logs
 
 ### Build artifacts are too large
+
 - Review the build size report in the CI workflow
 - Consider adjusting the code splitting in vite.config.js
 - Check for unintentionally bundled large dependencies

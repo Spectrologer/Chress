@@ -5,7 +5,15 @@
       "Bash(npm test:*)",
       "Bash(node --check:*)",
       "Bash(node -e \"console.log(localStorage.getItem(''''chress_game_state''''))\")",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(cat:*)",
+      "Bash(git mv:*)",
+      "Bash(node -e:*)",
+      "Bash(dir /s /b public*.png 2)",
+      "Bash(nul)",
+      "Bash(findstr:*)",
+      "Bash(dir /s /b srccharactersstatues*.json 2)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

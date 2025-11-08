@@ -16,7 +16,7 @@ Could not scan directory c:\Users\virgi\OneDrive\Desktop\Apps\Chress\public\asse
 OverlayMessageHandler.show: "Hello world!", imageSrc: null, isPersistent: false
 Overlay message shown
 
-[90mstdout[2m | tests/messageManager.test.ts[2m > [22m[2mMessageManager typing & blip behavior[2m > [22m[2mPenneMessageHandler shows message only if no sign message active
+[90mstdout[2m | tests/messageManager.test.ts[2m > [22m[2mMessageManager typing & blip behavior[2m > [22m[2mPenneMessageHandler shows message only if notextbox message active
 [22m[39mOverlayMessageHandler.show: "<span class="character-name">Penne</span><br>Give me meat!", imageSrc: assets/fauna/penne.png, isPersistent: false
 Overlay message shown
 

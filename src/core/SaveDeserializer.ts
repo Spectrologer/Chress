@@ -1,4 +1,4 @@
-import { Sign } from '@ui/Sign';
+import { TextBox } from '@ui/textbox';
 import { validateLoadedGrid } from '@generators/GeneratorUtils';
 import { logger } from './logger';
 import type { GameContext } from './context/GameContextCore';
@@ -79,9 +79,9 @@ export class SaveDeserializer {
     }
 
     /**
-     * Deserializes Sign spawned messages from saved data.
+     * Deserializestextbox spawned messages from saved data.
      */
     static deserializeSignMessages(signMessages: string[]): void {
-        Sign.spawnedMessages = new Set(signMessages || []);
+        TextBox.spawnedMessages = new Set(signMessages || []);
     }
 }

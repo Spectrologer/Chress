@@ -3,7 +3,7 @@ import type { Coordinates, ZoneCoordinates } from '@core/PositionTypes';
 import { MessageManager } from './MessageManager';
 import { PanelManager } from './PanelManager';
 import { PlayerStatsUI } from './PlayerStatsUI';
-import { Sign } from './Sign';
+import { TextBox } from './textbox';
 import { MiniMap } from './MiniMap';
 import { UIEventCoordinator } from './UIEventCoordinator';
 import { eventBus } from '@core/EventBus';
@@ -116,7 +116,7 @@ export class UIManager {
         // Close contextual windows on move
         this.panelManager.hideBarterWindow();
         this.panelManager.hideStatueInfoWindow();
-        Sign.hideMessageForSign(this.game); // Hide signs too
+        TextBox.hideMessageForSign(this.game); // Hide textboxes too
     }
 
     updateZoneDisplay(): void {

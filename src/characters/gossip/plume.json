@@ -3,7 +3,7 @@
   "name": "Plume",
   "type": "dialogue",
   "metadata": {
-    "description": "A duck sign signaling people to duck.",
+    "description": "A ducktextbox signaling people to duck.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "DUCK! Quick, duck! Oh wait, that's just my name. Awkward. But seriously, stay alert out there.",
+        "text": "Yo Chesse champion in the making! I'm Plume, the DUCK sign.",
         "buttonText": "Will do."
       },
       {
         "id": "msg_1",
-        "text": "I'm the DUCK sign. My whole purpose is telling people to duck. It's very important work.",
+        "text": "I'm the DUCK sign. I'm here to remind you 'duck' when you see me.",
         "buttonText": "Got it."
       },
       {
         "id": "msg_2",
-        "text": "Low clearance ahead! I mean, probably. I'm a sign, I don't actually know. Just duck to be safe.",
-        "buttonText": "Thanks."
+        "text": "Why are you crouching? Is it because DUCK is a SYNONYM for DUCK?",
+        "buttonText": "English is hard."
       }
     ]
   },

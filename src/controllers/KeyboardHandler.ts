@@ -1,4 +1,4 @@
-import { Sign } from '@ui/Sign';
+import { TextBox } from '@ui/textbox';
 import audioManager from '@utils/AudioManager';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
@@ -132,7 +132,7 @@ export class KeyboardHandler {
         if (!isPathExecuting) {
             const transientState = this.game.transientGameState;
             if (this.game.displayingMessageForSign) {
-                Sign.hideMessageForSign(this.game);
+                TextBox.hideMessageForSign(this.game);
             } else if (transientState && transientState.isBombPlacementMode()) {
                 transientState.exitBombPlacementMode();
                 this.game.hideOverlayMessage();

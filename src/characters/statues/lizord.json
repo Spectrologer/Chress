@@ -1,0 +1,18 @@
+{
+  "id": "lizord",
+  "name": "Lizord Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting the Lizord enemy type",
+    "category": "statue",
+    "subcategory": "enemy"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_LIZORD"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Moves in <strong>L-shapes</strong>.<br><br><em>A real fork in the road.</em>"
+  }
+}

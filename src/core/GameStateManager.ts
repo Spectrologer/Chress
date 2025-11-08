@@ -1,7 +1,7 @@
 import { TILE_TYPES } from './constants/index';
 import { UI_TIMING_CONSTANTS } from './constants/ui';
 import { logger } from './logger';
-import { Sign } from '@ui/Sign';
+import { TextBox } from '@ui/textbox';
 import { eventBus } from './EventBus';
 import { EventTypes } from './EventTypes';
 import { isWithinGrid } from '@utils/GridUtils';
@@ -99,7 +99,7 @@ export class GameStateManager {
         (this.game as any).zoneRepository.clear();
         this.game.connectionManager!.clear();
         this.game.zoneGenState.reset(); // Reset zone generation state (replaces ZoneStateManager.resetSessionData())
-        Sign.spawnedMessages.clear(); // Reset spawned message tracking
+        TextBox.spawnedMessages.clear(); // Reset spawned message tracking
         this.game.specialZones.clear(); // Reset special zones
         (this.game as any).messageLog = []; // Reset message log
         if ((this.game as any).dialogueState) {
@@ -114,8 +114,8 @@ export class GameStateManager {
         }
         this.game.defeatedEnemies = new Set();
         this.game.currentRegion = null; // Reset region tracking
-        (this.game as any).lastSignMessage = null; // Reset sign message tracking
-        (this.game as any).displayingMessageForSign = null; // Reset sign message display tracking
+        (this.game as any).lastSignMessage = null; // Reset textbox message tracking
+        (this.game as any).displayingMessageForSign = null; // Reset textbox message display tracking
         this.game.animationManager!.clearAll(); // Reset all animations
         (this.game.player as any).spentDiscoveries = 0; // Reset spent discoveries
         (this.game as any).lastExitSide = null; // Reset for new game entrance animation

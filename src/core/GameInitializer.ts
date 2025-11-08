@@ -180,7 +180,7 @@ export class GameInitializer {
             const playerX: number = this.game.player!.x;
             if (isWithinGrid(playerX, playerY)) {
                 const startTile = this.game.gridManager!.getTile(playerX, playerY);
-                // Don't overwrite SIGN or EXIT tiles - use TypeChecks utility
+                // Don't overwritetextbox or EXIT tiles - use TypeChecks utility
                 const isSign: boolean = TileTypeChecker.isTileType(startTile, TILE_TYPES.SIGN);
                 const isExit: boolean = TileTypeChecker.isTileType(startTile, TILE_TYPES.EXIT);
                 const shouldSetFloor: boolean = !startTile || (!isSign && !isExit);

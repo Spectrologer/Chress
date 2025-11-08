@@ -144,13 +144,6 @@ export const TILE_COLORS: Record<number, string> = {
     [TILE_TYPES.HEART]: '#FF69B4', // Hot pink for heart
     [TILE_TYPES.SIGN]: '#8B4513', // Saddle brown for sign
     [TILE_TYPES.PORT]: '#ffcb8d', // Same as floor, transparent
-    // Enemy statue colors (grey for stone statues)
-    [TILE_TYPES.LIZARDY_STATUE]: '#A0A0A0',
-    [TILE_TYPES.LIZARDO_STATUE]: '#A0A0A0',
-    [TILE_TYPES.LIZARDEAUX_STATUE]: '#A0A0A0',
-    [TILE_TYPES.ZARD_STATUE]: '#A0A0A0',
-    [TILE_TYPES.LAZERD_STATUE]: '#A0A0A0',
-    [TILE_TYPES.LIZORD_STATUE]: '#A0A0A0',
     [TILE_TYPES.CRAYN]: '#8A2BE2', // Blueviolet for Crayn
     [TILE_TYPES.FELT]: '#8A2BE2', // Blueviolet for Felt
     [TILE_TYPES.FORGE]: '#8A2BE2', // Blueviolet for Forge
@@ -214,14 +207,7 @@ export const TILE_COLORS: Record<number, string> = {
     [TILE_TYPES.SHADE]: '#2F4F4F', // Dark slate gray for Shade
     [TILE_TYPES.SKRIB]: '#4B0082', // Indigo for Skrib
     [TILE_TYPES.STICK]: '#8B4513', // Saddle brown for Stick
-    [TILE_TYPES.WASH]: '#87CEEB', // Sky blue for Wash
-    // Stone statue fallbacks (grey) for item statues
-    [TILE_TYPES.BOMB_STATUE]: '#A0A0A0',
-    [TILE_TYPES.SPEAR_STATUE]: '#A0A0A0',
-    [TILE_TYPES.BOW_STATUE]: '#A0A0A0',
-    [TILE_TYPES.HORSE_STATUE]: '#A0A0A0',
-    [TILE_TYPES.BOOK_STATUE]: '#A0A0A0',
-    [TILE_TYPES.SHOVEL_STATUE]: '#A0A0A0'
+    [TILE_TYPES.WASH]: '#87CEEB' // Sky blue for Wash
 };
 
 // Direction constants for exits and movements

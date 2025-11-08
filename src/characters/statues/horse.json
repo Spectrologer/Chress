@@ -1,0 +1,18 @@
+{
+  "id": "horse",
+  "name": "Horse Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting a horse item",
+    "category": "statue",
+    "subcategory": "item"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_HORSE"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Tap an enemy in an L-shape (like a knight) to charge them."
+  }
+}

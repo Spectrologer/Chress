@@ -1,4 +1,4 @@
-import { Sign } from '@ui/Sign';
+import { TextBox } from '@ui/textbox';
 import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '@core/constants/index';
 import { randomInt, findValidPlacement, getGridCenter, isWithinBounds } from './GeneratorUtils';
 import { ZoneStateManager } from './ZoneStateManager';

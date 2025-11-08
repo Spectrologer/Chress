@@ -1,5 +1,5 @@
 import type { IGame } from '@core/context';
-import { Sign } from './Sign';
+import { TextBox } from './textbox';
 import { EventListenerManager } from '@utils/EventListenerManager';
 
 export class StatueInfoWindow {
@@ -27,7 +27,7 @@ export class StatueInfoWindow {
         }
 
         const enemyType = statueNpcType.substring(7); // Remove 'statue_' prefix
-        const statueDetails = Sign.getStatueData(enemyType);
+        const statueDetails = TextBox.getStatueData(enemyType);
         const name = enemyType.charAt(0).toUpperCase() + enemyType.slice(1) + ' Statue';
         // Use fauna portraits for enemy statues, but item-statues use item images so we don't 404
         const itemPortraitMap: Record<string, string> = {

@@ -1,5 +1,5 @@
 import type { IGame } from '@core/context';
-import { Sign, Trade } from './Sign';
+import { TextBox, Trade } from './textbox';
 import { FOOD_ASSETS, TILE_TYPES } from '@core/constants/index';
 import { fitTextToContainer } from './TextFitter';
 import audioManager from '@utils/AudioManager';
@@ -90,7 +90,7 @@ export class BarterWindow {
         if ((npcType === 'axelotl' && this.game.player.abilities.has('axe')) ||
             (npcType === 'gouge' && this.game.player.abilities.has('hammer'))) {
             // Get the character data from JSON
-            const characterData = Sign.getNPCCharacterData(npcType);
+            const characterData = TextBox.getNPCCharacterData(npcType);
             if (characterData && characterData.interaction) {
                 let message: string | null = null;
 
@@ -129,7 +129,7 @@ export class BarterWindow {
             return;
         }
 
-        const npcData = Sign.getBarterNpcData(npcType);
+        const npcData = TextBox.getBarterNpcData(npcType);
         if (!npcData) {
             return; // No data for this NPC type
         }
@@ -156,7 +156,7 @@ export class BarterWindow {
 
         if (this.barterNPCMessage) {
             // Set message HTML then run the typewriter effect so merchant text
-            // appears character-by-character like sign messages.
+            // appears character-by-character liketextbox messages.
             this.barterNPCMessage.innerHTML = `<div class="dialogue-text">${message}</div>`;
             // Ensure the element has the dialogue class for styling parity
             this.barterNPCMessage.classList.add('dialogue-text');
@@ -413,7 +413,7 @@ export class BarterWindow {
             this.game.player.abilities.add('axe');
 
             // Show the onComplete message if available
-            const characterData = Sign.getNPCCharacterData('axolotl');
+            const characterData = TextBox.getNPCCharacterData('axolotl');
             const completedTrade = characterData?.interaction?.trades?.find((t: any) => t.id === 'axelotl_axe');
             if (completedTrade?.onComplete?.message) {
                 eventBus.emit(EventTypes.UI_MESSAGE_LOG, {

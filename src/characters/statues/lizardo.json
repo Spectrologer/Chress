@@ -1,0 +1,18 @@
+{
+  "id": "lizardo",
+  "name": "Lizardo Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting the Lizardo enemy type",
+    "category": "statue",
+    "subcategory": "enemy"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_LIZARDO"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Moves <strong>orthogonally and diagonally</strong> (8-way).<br><br><em>Wants to be like the lazerd.</em>"
+  }
+}

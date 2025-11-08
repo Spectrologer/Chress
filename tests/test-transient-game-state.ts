@@ -46,9 +46,9 @@ state.exitBombPlacementMode();
 console.assert(state.isBombPlacementMode() === false, 'should exit bomb mode');
 console.log('✓ Bomb placement state works');
 
-// Test 3: Sign Message State
-console.log('\n=== Test 3: Sign Message State ===');
-console.assert(state.isDisplayingSignMessage() === false, 'should start with no sign message');
+// Test 3:textbox Message State
+console.log('\n=== Test 3:textbox Message State ===');
+console.assert(state.isDisplayingSignMessage() === false, 'should start with notextbox message');
 console.assert(state.getDisplayingSignMessage() === null, 'should return null initially');
 console.assert(state.getLastSignMessage() === null, 'should have no last message');
 
@@ -66,7 +66,7 @@ console.assert(state.getLastSignMessage() === 'Welcome traveler!', 'should keep 
 
 state.clearLastSignMessage();
 console.assert(state.getLastSignMessage() === null, 'should clear last message');
-console.log('✓ Sign message state works');
+console.log('✓textbox message state works');
 
 // Test 4: Port Transition Data
 console.log('\n=== Test 4: Port Transition Data ===');
@@ -129,8 +129,8 @@ state.clearZoneTransientState();
 
 console.assert(state.hasPendingCharge() === false, 'should clear pending charge');
 console.assert(state.isBombPlacementMode() === false, 'should exit bomb mode');
-console.assert(state.isDisplayingSignMessage() === false, 'should clear sign message');
-console.assert(state.getLastSignMessage() === null, 'should clear last sign message');
+console.assert(state.isDisplayingSignMessage() === false, 'should clear textbox message');
+console.assert(state.getLastSignMessage() === null, 'should clear last textbox message');
 console.assert(state.didPlayerJustAttack() === false, 'should clear attack flag');
 
 // Port data and pitfall should persist
@@ -212,7 +212,7 @@ console.log('\n✅ All TransientGameState tests passed!');
 console.log('\n📊 Summary:');
 console.log('- Pending charge state: Working');
 console.log('- Bomb placement state: Working');
-console.log('- Sign message state: Working');
+console.log('-textbox message state: Working');
 console.log('- Port transition data: Working');
 console.log('- Pitfall zone state: Working');
 console.log('- Combat state flags: Working');

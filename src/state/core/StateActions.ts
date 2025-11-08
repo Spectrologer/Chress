@@ -186,7 +186,7 @@ export const StateActions = {
   // ==================== INTERACTION ACTIONS ====================
 
   /**
-   * Show sign message
+   * Showtextbox message
    */
   showSignMessage(message: string): void {
     store.batchSet({
@@ -196,7 +196,7 @@ export const StateActions = {
   },
 
   /**
-   * Clear sign message
+   * Cleartextbox message
    */
   clearSignMessage(): void {
     store.set('transient.interactions.signMessage', null, 'clear_sign_message');

@@ -11,7 +11,7 @@ import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { UI_TIMING_CONSTANTS } from '@core/constants/ui';
 import { Position } from '@core/Position';
-import { Sign } from './Sign';
+import { TextBox } from './textbox';
 
 /**
  * Coordinates message display across the application.
@@ -72,7 +72,7 @@ export class MessageManager {
             })
         );
 
-        // Hide persistent messages when player moves (unless it's a sign message)
+        // Hide persistent messages when player moves (unless it's a textbox message)
         this._unsubscribers.push(
             eventBus.on(EventTypes.PLAYER_MOVED, (positionData: any) => {
                 if (!this.game.displayingMessageForSign) {
@@ -92,7 +92,7 @@ export class MessageManager {
                             logger.log('Player walked away from NPC, closing message');
 
                             // Hide sign/dialogue message
-                            Sign.hideMessageForSign(this.game);
+                            TextBox.hideMessageForSign(this.game);
 
                             // Clear NPC position tracking
                             transientState.clearCurrentNPCPosition();
@@ -175,7 +175,7 @@ export class MessageManager {
     // ========================================
 
     /**
-    * Show sign or NPC dialogue
+    * Showtextbox or NPC dialogue
     */
     showSignMessage(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null, category = 'unknown', portraitBackground?: string): void {
     this.dialogueManager.showDialogue(text, imageSrc, name, buttonText, category, portraitBackground);

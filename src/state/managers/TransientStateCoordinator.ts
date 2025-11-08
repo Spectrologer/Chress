@@ -15,7 +15,7 @@ import type { Position } from '@core/Position';
  *
  * Architecture:
  * - ItemAbilityStateManager: Horse charge, bomb placement
- * - InteractionStateManager: Sign messages, NPC interactions
+ * - InteractionStateManager:textbox messages, NPC interactions
  * - ZoneStateManager: Port transitions, pitfall zones
  * - CombatStateManager: Combat flags
  *
@@ -31,7 +31,7 @@ interface ChargeData {
     [key: string]: any;
 }
 
-interface SignData {
+interface TextBoxData {
     message?: string;
 }
 
@@ -123,10 +123,10 @@ export class TransientStateCoordinator {
     }
 
     // ========================================
-    // SIGN MESSAGE STATE (InteractionStateManager)
+    //textbox MESSAGE STATE (InteractionStateManager)
     // ========================================
 
-    getDisplayingSignMessage(): SignData | null {
+    getDisplayingSignMessage(): TextBoxData | null {
         return this._interaction.getDisplayingSignMessage();
     }
 
@@ -134,7 +134,7 @@ export class TransientStateCoordinator {
         return this._interaction.isDisplayingSignMessage();
     }
 
-    setDisplayingSignMessage(signData: SignData): void {
+    setDisplayingSignMessage(signData: TextBoxData): void {
         this._interaction.setDisplayingSignMessage(signData);
     }
 

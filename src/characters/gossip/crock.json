@@ -3,7 +3,7 @@
   "name": "Crock",
   "type": "dialogue",
   "metadata": {
-    "description": "A pots (sic) sign who signals people to pots.",
+    "description": "A pots (sic)textbox who signals people to pots.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"

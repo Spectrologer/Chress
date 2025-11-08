@@ -1,7 +1,7 @@
 HARDCODED ZONE DATA & CUSTOM BOARD ANALYSIS - FINDINGS SUMMARY
 ==============================================================
 
-SEARCH COMPLETED: Thorough analysis of zone data, custom boards, and sign interactions.
+SEARCH COMPLETED: Thorough analysis of zone data, custom boards, andtextbox interactions.
 
 KEY FILES IDENTIFIED:
 ====================
@@ -54,7 +54,7 @@ KEY FILES IDENTIFIED:
    - src/characters/penne.json, squig.json
      * "zone": "0,0" designation
 
-5. SIGN INTERACTIONS
+5.textbox INTERACTIONS
    - src/ui/Sign.js
      * Static class with message handling
      * getProceduralMessage() - generates messages by zone distance
@@ -62,11 +62,11 @@ KEY FILES IDENTIFIED:
    
    - src/managers/EnvironmentalInteractionManager.js
      * handleSignTap(gridCoords) - coordinate-agnostic
-     * Works with sign at ANY location
+     * Works withtextbox at ANY location
      * Uses tile data, NOT hardcoded coordinates
    
    - src/generators/StructureGenerator.js (lines 61-71)
-     * addSign() places sign at fixed (2,5) for home zone
+     * addSign() placestextbox at fixed (2,5) for home zone
      * Hardcoded message position
      * ONLY runs if no custom board
 
@@ -86,10 +86,10 @@ CONFLICT 2: Hardcoded NPC Zones [MEDIUM]
 - No validation that NPCs successfully place
 - Status: REAL RISK - ADD VALIDATION
 
-CONFLICT 3: Sign at Fixed (2,5) [MEDIUM - MITIGATED]
+CONFLICT 3:textbox at Fixed (2,5) [MEDIUM - MITIGATED]
 - StructureGenerator.addSign() hardcodes (2,5) for (0,0)
 - Code never runs if board loaded (early return at line 79)
-- Sign interaction handler is coordinate-agnostic
+-textbox interaction handler is coordinate-agnostic
 - Status: LOW RISK DUE TO ARCHITECTURE
 
 CONFLICT 4: Zone Level Inheritance [LOW]
@@ -97,9 +97,9 @@ CONFLICT 4: Zone Level Inheritance [LOW]
 - Boards are static, don't use level-based spawning
 - Status: NO CONFLICT
 
-CONFLICT 5: Sign Interaction Coordinates [NONE]
-- Sign handler uses tile data, NOT coordinates
-- Works with sign at ANY location
+CONFLICT 5:textbox Interaction Coordinates [NONE]
+-textbox handler uses tile data, NOT coordinates
+- Works withtextbox at ANY location
 - Coordinate agnostic design
 - Status: NO CONFLICT
 
@@ -159,9 +159,9 @@ SAFETY MECHANISMS:
   - Falls through to procedural generation
   - Safe behavior if board not pre-loaded
 
-✓ Coordinate-Agnostic Sign System
-  - Sign handler doesn't assume coordinate
-  - Works with sign at ANY location
+✓ Coordinate-Agnostictextbox System
+  -textbox handler doesn't assume coordinate
+  - Works withtextbox at ANY location
   - No hardcoding in interaction layer
 
 ✓ Independent NPC Spawning
@@ -208,7 +208,7 @@ between the two systems.
 Strengths:
 ✓ Clean early return architecture
 ✓ Fallback behavior exists
-✓ Sign system is coordinate-agnostic
+✓textbox system is coordinate-agnostic
 ✓ NPC system is independent
 ✓ Complete documentation in code
 

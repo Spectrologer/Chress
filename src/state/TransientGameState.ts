@@ -7,7 +7,7 @@ import { TransientStateCoordinator } from './managers/TransientStateCoordinator'
  *
  * Original file (564 lines) decomposed into:
  * - ItemAbilityStateManager: Horse charge, bomb placement
- * - InteractionStateManager: Sign messages, NPC interactions
+ * - InteractionStateManager:textbox messages, NPC interactions
  * - ZoneStateManager: Port transitions, pitfall zones
  * - CombatStateManager: Combat flags
  * - TransientStateCoordinator: Facade maintaining backward compatibility

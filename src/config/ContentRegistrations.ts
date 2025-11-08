@@ -12,7 +12,7 @@
 
 import { ContentRegistry } from '@core/ContentRegistry';
 import { boardLoader } from '@core/BoardLoader';
-import { loadAllNPCs } from '@core/NPCLoader';
+import { loadAllNPCs, loadAllStatues } from '@core/NPCLoader';
 
 // Import registration modules
 import { registerItems } from './registrations/ItemRegistrations';
@@ -26,6 +26,7 @@ import { registerBoards } from './registrations/BoardRegistrations';
 export async function registerAllContent(): Promise<void> {
     registerItems();
     await loadAllNPCs(ContentRegistry); // Load NPCs from JSON files, passing ContentRegistry as dependency
+    await loadAllStatues(); // Load statue data from JSON files
     registerEnemies();
     registerBoards();
     // Zone handlers registered separately in ZoneGenerator

@@ -1,6 +1,6 @@
 import { BaseItemEffect, type ItemEffectContext, type ItemEffectResult, type Game } from './BaseItemEffect';
 import { TILE_TYPES } from '@core/constants/index';
-import { Sign } from '@ui/Sign';
+import { TextBox } from '@ui/textbox';
 import { logger } from '@core/logger';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
@@ -79,7 +79,7 @@ export class NoteEffect extends BaseItemEffect {
                 .wait(2000)
                 .then(() => {
                     if ((game as any).displayingMessageForSign && (game as any).displayingMessageForSign.message === noteMessageText) {
-                        Sign.hideMessageForSign(game as any);
+                        TextBox.hideMessageForSign(game as any);
                     }
                 })
                 .start();
@@ -91,6 +91,10 @@ export class NoteEffect extends BaseItemEffect {
     private _useMapNote(game: Game, zoneX: number, zoneY: number): void {
         const currentZone = game.player.getCurrentZone();
         const visited = game.player.getVisitedZones();
+
+        // Notes reveal locations: 70% surface (dimension 0), 30% underground (dimension 2 z-1)
+        const targetDimension = Math.random() < 0.7 ? 0 : 2;
+        const isUnderground = targetDimension === 2;
 
         const candidates: Array<{ x: number; y: number; distance: number }> = [];
         for (let cZoneX = currentZone.x - 50; cZoneX <= currentZone.x + 50; cZoneX++) {
@@ -121,17 +125,25 @@ export class NoteEffect extends BaseItemEffect {
             () => ({ type: TILE_TYPES.BISHOP_SPEAR, uses: 3 })
         ];
 
+        // Underground locations get more treasures (6 instead of 4)
+        const treasureCount = isUnderground ? 6 : 4;
         const treasures: any[] = [];
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < treasureCount; i++) {
             const getRandomTreasure = treasurePool[Math.floor(Math.random() * treasurePool.length)];
             treasures.push(getRandomTreasure());
         }
 
         (game as any).specialZones?.set(zoneKey, treasures);
-        game.player.markZoneVisited(selected.x, selected.y, currentZone.dimension);
+        game.player.markZoneVisited(selected.x, selected.y, targetDimension);
 
+        // Play sound for underground treasure
+        if (isUnderground && game.audioManager) {
+            game.audioManager.playSound('point');
+        }
+
+        const treasureType = isUnderground ? 'Secret Treasure' : 'Secret Stash';
         if (game.uiManager && typeof game.uiManager.addMessageToLog === 'function') {
-            game.uiManager.addMessageToLog(`A distant location has been revealed on your map: (${selected.x}, ${selected.y})`);
+            game.uiManager.addMessageToLog(`${treasureType} located at (${selected.x}, ${selected.y})!`);
         }
 
         eventBus.emit(EventTypes.UI_UPDATE_STATS, {});

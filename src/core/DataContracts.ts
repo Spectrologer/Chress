@@ -23,7 +23,7 @@ interface BowTile extends TileBase {
   uses: number;
 }
 
-interface SignTile extends TileBase {
+interface TextBoxTile extends TileBase {
   message: string;
 }
 
@@ -164,7 +164,7 @@ export class DataContractValidator {
       case 'BOW':
         return this.validateBowTile(tile as BowTile);
       case 'SIGN':
-        return this.validateSignTile(tile as SignTile);
+        return this.validateTextBoxTile(tile as TextBoxTile);
       case 'FOOD':
         return this.validateFoodTile(tile as FoodTile);
       default:
@@ -216,11 +216,11 @@ export class DataContractValidator {
   }
 
   /**
-   * Validates sign tile properties
+   * Validates textbox tile properties
    */
-  static validateSignTile(tile: SignTile): boolean {
+  static validateTextBoxTile(tile: TextBoxTile): boolean {
     if (typeof tile.message !== 'string') {
-      throw new Error('Sign tile must have string "message" property');
+      throw new Error('TextBox tile must have string "message" property');
     }
     return true;
   }

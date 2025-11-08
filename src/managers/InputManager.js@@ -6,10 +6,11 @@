@@ -1,6 +1,6 @@
 import { GRID_SIZE, CANVAS_SIZE, TILE_SIZE, TILE_TYPES, FOOD_ASSETS, INPUT_CONSTANTS, ANIMATION_CONSTANTS, SIMULATION_CONSTANTS } from '../core/constants.js';
 import { Enemy } from '../entities/Enemy.js';
-import { Sign } from '../ui/Sign.js';
+import {textbox } from '../ui/Sign.js';
 import consoleCommands from '../core/consoleCommands.js';
 import logger from '../core/logger.js';
 
@@ -439,7 +439,7 @@ export class InputManager {
             return true;
         }
 
-        // Lions (barter)
+        // Penne's (barter)
         if (tile === TILE_TYPES.LION) {
             return true;
         }
@@ -561,7 +561,7 @@ export class InputManager {
         // Only hide messages if not auto-pathing, as path execution handles this.
         if (!this.isExecutingPath) {
             // When the player acts, hide any open overlay message.
-            // This now includes sign messages, which will close upon movement.
+            // This now includestextbox messages, which will close upon movement.
             if (this.game.displayingMessageForSign) {
                 Sign.hideMessageForSign(this.game);
             } else if (this.game.shovelMode) {

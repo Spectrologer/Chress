@@ -7,23 +7,23 @@ import { Position } from '@core/Position';
  * InteractionStateManager - Manages world interaction state (Signs, NPCs)
  *
  * Responsibilities:
- * - Sign message display state
+ * -textbox message display state
  * - NPC interaction position tracking
  * - Distance-based interaction validation
  */
 
-interface SignData {
+interface TextBoxData {
     message?: string;
 }
 
 interface InteractionSnapshot {
-    displayingMessageForSign: SignData | null;
+    displayingMessageForSign: TextBoxData | null;
     lastSignMessage: string | null;
     currentNPCPosition: Position | null;
 }
 
 export class InteractionStateManager {
-    private _displayingMessageForSign: SignData | null;
+    private _displayingMessageForSign: TextBoxData | null;
     private _lastSignMessage: string | null;
     private _currentNPCPosition: Position | null;
 
@@ -34,27 +34,27 @@ export class InteractionStateManager {
     }
 
     // ========================================
-    // SIGN MESSAGE STATE
+    //textbox MESSAGE STATE
     // ========================================
 
     /**
-     * Get currently displaying sign message
+     * Get currently displayingtextbox message
      */
-    getDisplayingSignMessage(): SignData | null {
+    getDisplayingSignMessage(): TextBoxData | null {
         return this._displayingMessageForSign;
     }
 
     /**
-     * Check if a sign message is currently displaying
+     * Check if a textbox message is currently displaying
      */
     isDisplayingSignMessage(): boolean {
         return this._displayingMessageForSign !== null;
     }
 
     /**
-     * Set displaying sign message
+     * Set displaying textbox message
      */
-    setDisplayingSignMessage(signData: SignData): void {
+    setDisplayingSignMessage(signData: TextBoxData): void {
         this._displayingMessageForSign = signData;
 
         eventBus.emit(EventTypes.SIGN_MESSAGE_DISPLAYED, {
@@ -63,7 +63,7 @@ export class InteractionStateManager {
     }
 
     /**
-     * Clear displaying sign message
+     * Clear displaying textbox message
      */
     clearDisplayingSignMessage(): void {
         if (this._displayingMessageForSign) {
@@ -74,21 +74,21 @@ export class InteractionStateManager {
     }
 
     /**
-     * Get last sign message (for deduplication)
+     * Get last textbox message (for deduplication)
      */
     getLastSignMessage(): string | null {
         return this._lastSignMessage;
     }
 
     /**
-     * Set last sign message
+     * Set last textbox message
      */
     setLastSignMessage(message: string): void {
         this._lastSignMessage = message;
     }
 
     /**
-     * Clear last sign message
+     * Clear last textbox message
      */
     clearLastSignMessage(): void {
         this._lastSignMessage = null;

@@ -112,9 +112,8 @@ export class AssetScanner {
           // Also add by name for redundancy
           npcs[data.name.toLowerCase()] = npcInfo;
 
-          // Special case for Penne who is a lion
           if (key === 'penne') {
-            npcs['lion'] = npcInfo;
+            npcs['penne'] = npcInfo;
           }
         }
       });

@@ -17,7 +17,7 @@ interface PendingCharge {
  * Responsibilities:
  * - Track highlighted tiles for visual feedback
  * - Manage selection modes (shovel, charge, etc.)
- * - Track UI state (stats panel, radial menu, sign messages)
+ * - Track UI state (stats panel, radial menu,textbox messages)
  * - Provide state query methods for other components
  */
 export class InputStateManager {
@@ -40,7 +40,7 @@ export class InputStateManager {
     // ========================================
 
     /**
-     * Check if displaying a sign message
+     * Check if displaying a textbox message
      */
     isDisplayingSignMessage(): boolean {
         return !!this.game.displayingMessageForSign;

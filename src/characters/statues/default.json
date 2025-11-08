@@ -1,0 +1,18 @@
+{
+  "id": "default",
+  "name": "Unknown Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A mysterious ancient statue",
+    "category": "statue",
+    "subcategory": "default"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_DEFAULT"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "An ancient statue depicting a mysterious creature from the wilderness."
+  }
+}

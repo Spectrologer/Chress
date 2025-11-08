@@ -1,0 +1,18 @@
+{
+  "id": "spear",
+  "name": "Spear Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting a spear item",
+    "category": "statue",
+    "subcategory": "item"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_SPEAR"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Tap an enemy on a diagonal line to charge through them."
+  }
+}

@@ -6,7 +6,7 @@ interface GameInstance {
 
 /**
  * Handles Penne-specific interaction messages.
- * Manages conflicts with sign messages.
+ * Manages conflicts withtextbox messages.
  */
 export class PenneMessageHandler {
     private game: GameInstance;
@@ -19,10 +19,10 @@ export class PenneMessageHandler {
 
     /**
      * Show Penne interaction message
-     * Only shows if no sign message is currently displayed
+     * Only shows if no textbox message is currently displayed
      */
     showInteractionMessage(): void {
-        // Do not show the Penne message if a sign message is already displayed
+        // Do not show the Penne message if a textbox message is already displayed
         if (this.game.displayingMessageForSign) {
             return;
         }
@@ -39,10 +39,10 @@ export class PenneMessageHandler {
 
     /**
      * Hide Penne interaction message
-     * Only hides if not a sign message
+     * Only hides if not a textbox message
      */
     hideInteractionMessage(): void {
-        // Hide the overlay, but only if a sign message isn't the one being displayed
+        // Hide the overlay, but only if a textbox message isn't the one being displayed
         if (this.overlayHandler.isShowing() && !this.game.displayingMessageForSign) {
             this.overlayHandler.hide();
         }

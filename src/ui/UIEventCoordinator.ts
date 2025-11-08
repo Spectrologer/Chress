@@ -141,7 +141,7 @@ export class UIEventCoordinator {
 
             case 'sign':
             if (!message) {
-            console.error('[UIEventCoordinator] Sign dialog requires message property');
+            console.error('[UIEventCoordinator]textbox dialog requires message property');
             return;
             }
             this.messageManager.showSignMessage(message, portrait || null, name || null, buttonText || null, category, portraitBackground);

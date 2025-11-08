@@ -17,6 +17,7 @@ StateStore (Single Source of Truth)
 ### State Slices
 
 #### 1. **Persistent State** (`persistent`)
+
 Saved to IndexedDB/localStorage, survives app restarts.
 
 - `player` - Position, inventory, abilities, stats, visited zones
@@ -28,6 +29,7 @@ Saved to IndexedDB/localStorage, survives app restarts.
 - `currentRegion` - Current region name
 
 #### 2. **Session State** (`session`)
+
 Resets on game over, persists during session.
 
 - `gameStarted` - Boolean flag
@@ -38,19 +40,21 @@ Resets on game over, persists during session.
   - `spawnZones` - Pre-determined spawn locations
 - `currentGrid` - Active zone grid
 - `enemies` - Active enemies in current zone
-- `signSpawnedMessages` - Set of spawned sign messages
+- `signSpawnedMessages` - Set of spawnedtextbox messages
 
 #### 3. **Transient State** (`transient`)
+
 Resets on zone transitions or specific actions.
 
 - `combat.playerJustAttacked` - Turn-based combat flag
-- `interactions` - Sign messages, NPC positions
+- `interactions` -textbox messages, NPC positions
 - `itemAbilities` - Charge pending, bomb placement
 - `zoneTransition` - Exit side, port data, pitfall state
 - `turn` - Turn queue, occupied tiles, turn flags
 - `entrance` - Entrance animation state
 
 #### 4. **UI State** (`ui`)
+
 Never persisted, only affects visual/interaction state.
 
 - `panels` - Stats/config panel open states, preview mode
@@ -62,7 +66,9 @@ Never persisted, only affects visual/interaction state.
 ## Core Files
 
 ### [StateStore.js](./core/StateStore.js)
+
 The central state store with:
+
 - `get(path)` - Get state at dot-notation path
 - `set(path, value)` - Set state (immutable)
 - `batchSet(updates)` - Update multiple paths atomically
@@ -73,7 +79,9 @@ The central state store with:
 - Time-travel capabilities
 
 ### [StatePersistence.js](./core/StatePersistence.js)
+
 Handles saving/loading with:
+
 - **IndexedDB** as primary storage (unlimited size)
 - **localStorage** as fallback
 - **LZ-string compression** (40-60% size reduction)
@@ -82,13 +90,15 @@ Handles saving/loading with:
 - Export/import save files
 
 ### [StateSelectors.js](./core/StateSelectors.js)
+
 Type-safe accessors for common queries:
+
 ```javascript
-import { StateSelectors } from './core/StateSelectors.js';
+import { StateSelectors } from "./core/StateSelectors.js";
 
 // Player queries
 const player = StateSelectors.getPlayer();
-const hasAxe = StateSelectors.hasAbility('axe');
+const hasAxe = StateSelectors.hasAbility("axe");
 const inventory = StateSelectors.getPlayerInventory();
 
 // Zone queries
@@ -101,9 +111,11 @@ const settings = StateSelectors.getSettings();
 ```
 
 ### [StateActions.js](./core/StateActions.js)
+
 High-level action creators for common mutations:
+
 ```javascript
-import { StateActions } from './core/StateActions.js';
+import { StateActions } from "./core/StateActions.js";
 
 // Player actions
 StateActions.movePlayer(5, 10);
@@ -111,7 +123,7 @@ StateActions.addToInventory(item);
 StateActions.updatePlayerStats({ health: 90 });
 
 // Zone actions
-StateActions.changeZone(1, 0, 'overworld');
+StateActions.changeZone(1, 0, "overworld");
 StateActions.cacheZone(x, y, dimension, depth, zoneData);
 
 // UI actions
@@ -120,7 +132,9 @@ StateActions.updateSettings({ musicEnabled: false });
 ```
 
 ### [StateDebugger.js](./core/StateDebugger.js)
+
 Visual debugging tool (press **Ctrl+Shift+D**):
+
 - Real-time state visualization
 - Mutation history with diffs
 - State statistics
@@ -132,12 +146,12 @@ Visual debugging tool (press **Ctrl+Shift+D**):
 ### Reading State
 
 ```javascript
-import { store } from './state/core/StateStore.js';
-import { StateSelectors } from './state/core/StateSelectors.js';
+import { store } from "./state/core/StateStore.js";
+import { StateSelectors } from "./state/core/StateSelectors.js";
 
 // Direct access (use selectors when available)
-const health = store.get('persistent.player.stats.health');
-const enemies = store.get('session.enemies');
+const health = store.get("persistent.player.stats.health");
+const enemies = store.get("session.enemies");
 
 // Using selectors (preferred)
 const health = StateSelectors.getPlayerStats().health;
@@ -147,29 +161,29 @@ const enemies = StateSelectors.getCurrentEnemies();
 ### Writing State
 
 ```javascript
-import { StateActions } from './state/core/StateActions.js';
+import { StateActions } from "./state/core/StateActions.js";
 
 // Using actions (preferred - semantic and type-safe)
 StateActions.movePlayer(x, y);
 StateActions.addToInventory(item);
 
 // Direct mutations (when no action exists)
-import { store } from './state/core/StateStore.js';
-store.set('persistent.player.stats.health', 80);
+import { store } from "./state/core/StateStore.js";
+store.set("persistent.player.stats.health", 80);
 store.batchSet({
-  'persistent.player.stats.health': 80,
-  'persistent.player.stats.hunger': 70
+  "persistent.player.stats.health": 80,
+  "persistent.player.stats.hunger": 70,
 });
 ```
 
 ### Subscribing to Changes
 
 ```javascript
-import { store } from './state/core/StateStore.js';
+import { store } from "./state/core/StateStore.js";
 
 // Subscribe to entire slice
-const unsubscribe = store.subscribe('persistent', (state, path) => {
-  console.log('Persistent state changed:', path);
+const unsubscribe = store.subscribe("persistent", (state, path) => {
+  console.log("Persistent state changed:", path);
 });
 
 // Unsubscribe when done
@@ -179,7 +193,7 @@ unsubscribe();
 ### Saving and Loading
 
 ```javascript
-import { persistence } from './state/core/StatePersistence.js';
+import { persistence } from "./state/core/StatePersistence.js";
 
 // Save current state
 await persistence.save();
@@ -210,6 +224,7 @@ The state store includes **automatic migration** from the old save format:
 ### Migrating Existing Code
 
 **Before:**
+
 ```javascript
 // Scattered across game object and managers
 game.player.x = 5;
@@ -219,6 +234,7 @@ GameStateManager.save();
 ```
 
 **After:**
+
 ```javascript
 // Centralized state
 StateActions.movePlayer(5, 10);
@@ -230,35 +246,41 @@ await persistence.save();
 ## Benefits
 
 ### ✅ Single Source of Truth
+
 - All state in one place (`StateStore`)
 - No duplication across managers
 - Clear ownership and access patterns
 
 ### ✅ Improved Debugging
+
 - Visual debugger (Ctrl+Shift+D)
 - Mutation history with diffs
 - State snapshots and time-travel
 - Console access: `window.chressStore`
 
 ### ✅ Unlimited Storage
+
 - **IndexedDB** primary storage (no 5-10MB limit)
 - Compression reduces size 40-60%
 - Zone pruning prevents unbounded growth
 - localStorage fallback for compatibility
 
 ### ✅ Better Performance
+
 - Immutable updates enable optimization
 - Batched mutations reduce re-renders
 - Selective subscriptions (slice-level)
 - Lazy loading of zones
 
 ### ✅ Easier Testing
+
 - Predictable state mutations
 - Snapshot/restore for tests
 - No static properties
 - Clear action boundaries
 
 ### ✅ Type Safety (with JSDoc)
+
 - Full TypeScript-style comments
 - IDE autocomplete
 - Compile-time checking (if using TypeScript)
@@ -266,42 +288,46 @@ await persistence.save();
 ## Best Practices
 
 ### 1. Always Use Selectors for Reads
+
 ```javascript
 // ❌ Bad
-const health = store.get('persistent.player.stats.health');
+const health = store.get("persistent.player.stats.health");
 
 // ✅ Good
 const health = StateSelectors.getPlayerStats().health;
 ```
 
 ### 2. Always Use Actions for Writes
+
 ```javascript
 // ❌ Bad
-store.set('persistent.player.inventory', [...inventory, item]);
+store.set("persistent.player.inventory", [...inventory, item]);
 
 // ✅ Good
 StateActions.addToInventory(item);
 ```
 
 ### 3. Batch Related Mutations
+
 ```javascript
 // ❌ Bad
-store.set('persistent.player.stats.health', 80);
-store.set('persistent.player.stats.hunger', 70);
-store.set('persistent.player.stats.thirst', 60);
+store.set("persistent.player.stats.health", 80);
+store.set("persistent.player.stats.hunger", 70);
+store.set("persistent.player.stats.thirst", 60);
 
 // ✅ Good
 StateActions.updatePlayerStats({
   health: 80,
   hunger: 70,
-  thirst: 60
+  thirst: 60,
 });
 ```
 
 ### 4. Never Mutate State Directly
+
 ```javascript
 // ❌ Bad - mutates state!
-const player = store.get('persistent.player');
+const player = store.get("persistent.player");
 player.x = 5;
 
 // ✅ Good - immutable update
@@ -309,10 +335,11 @@ StateActions.movePlayer(5, 10);
 ```
 
 ### 5. Use Subscriptions Sparingly
+
 ```javascript
 // Only subscribe when you need reactive updates
 // Most components can just query state when needed
-const unsubscribe = store.subscribe('ui', (state) => {
+const unsubscribe = store.subscribe("ui", (state) => {
   updateUI(state);
 });
 
@@ -323,15 +350,18 @@ component.onDestroy = () => unsubscribe();
 ## Debugging
 
 ### Open State Debugger
+
 Press **Ctrl+Shift+D** or:
+
 ```javascript
 window.chressDebugger.toggle();
 ```
 
 ### Console Access
+
 ```javascript
 // Access store
-window.chressStore.get('persistent.player');
+window.chressStore.get("persistent.player");
 window.chressStore.debugPrint();
 
 // View mutations
@@ -345,6 +375,7 @@ window.chressStore.getStats();
 ```
 
 ### Export Save for Analysis
+
 ```javascript
 await persistence.exportSave();
 // Downloads JSON file with full save data
@@ -353,12 +384,14 @@ await persistence.exportSave();
 ## Performance
 
 ### Storage Optimization
+
 - **Zone Pruning**: Keeps only 100 most recent/special zones
 - **Message Log**: Limited to 50 recent messages
 - **Compression**: 40-60% size reduction with LZ-string
 - **IndexedDB**: No 5-10MB localStorage limit
 
 ### Runtime Optimization
+
 - **Immutable Updates**: Enables React-style optimization
 - **Slice Subscriptions**: Only notified of relevant changes
 - **Lazy Loading**: Zones loaded on-demand
@@ -367,14 +400,14 @@ await persistence.exportSave();
 ## Testing
 
 ```javascript
-import { store } from './state/core/StateStore.js';
+import { store } from "./state/core/StateStore.js";
 
 // Take snapshot before test
 const snapshot = store.getSnapshot();
 
 // Run test
 StateActions.movePlayer(5, 10);
-assert(store.get('persistent.player.position.x') === 5);
+assert(store.get("persistent.player.position.x") === 5);
 
 // Restore state after test
 store.restoreSnapshot(snapshot);
@@ -392,6 +425,7 @@ store.restoreSnapshot(snapshot);
 ## Support
 
 For issues or questions:
+
 1. Check the [State Debugger](#debugging) (Ctrl+Shift+D)
 2. Review [mutation history](#console-access)
 3. Export save file for analysis

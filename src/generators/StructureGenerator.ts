@@ -54,7 +54,7 @@ export class StructureGenerator {
 
         // Always add a cistern behind the house in the home zone (0,0)
         if (zoneX === 0 && zoneY === 0) {
-            // Place PORT tile two tiles above the sign (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
+            // Place PORT tile two tiles above the textbox (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
             this.gridManager.setTile(2, 3, TILE_TYPES.PORT);     // Top part (entrance) - two tiles above the sign
             this.gridManager.setTile(2, 4, TILE_TYPES.CISTERN); // Bottom part
         }
@@ -162,7 +162,7 @@ export class StructureGenerator {
         // Handle forced placement for home zone
         if (zoneX === 0 && zoneY === 0 && force) {
             // Always add the cistern behind the house in the home zone (0,0)
-            // Place PORT tile two tiles above the sign (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
+            // Place PORT tile two tiles above the textbox (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
             this.gridManager.setTile(2, 3, TILE_TYPES.PORT);     // Top part (entrance)
             this.gridManager.setTile(2, 4, TILE_TYPES.CISTERN); // Bottom part
             return;

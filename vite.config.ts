@@ -164,6 +164,10 @@ export default defineConfig({
           src: 'src/characters/gossip/*.json',
           dest: 'characters/gossip'
         },
+        {
+          src: 'src/characters/statues/*.json',
+          dest: 'characters/statues'
+        },
       ],
       // Watch for changes in development
       watch: {

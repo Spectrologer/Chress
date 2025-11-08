@@ -5,12 +5,15 @@ Track the incremental migration of JavaScript files to TypeScript (via JSDoc + @
 ## ✅ Completed Files (39 files)
 
 ### Tools
+
 - ✅ [tools/asset-scanner.js](../tools/asset-scanner.js) - Asset scanning and categorization
 
 ### State Management
+
 - ✅ [src/state/core/StateStore.js](../src/state/core/StateStore.js) - Centralized state store with comprehensive type definitions
 
 ### Utilities
+
 - ✅ [src/utils/TypeChecks.js](../src/utils/TypeChecks.js) - Tile type checking utilities
 - ✅ [src/utils/TileUtils.js](../src/utils/TileUtils.js) - Tile utilities and helpers
 - ✅ [src/utils/GridUtils.js](../src/utils/GridUtils.js) - Grid coordinate utilities
@@ -19,11 +22,13 @@ Track the incremental migration of JavaScript files to TypeScript (via JSDoc + @
 - ✅ [src/utils/SafeServiceCall.js](../src/utils/SafeServiceCall.js) - Error handling wrapper utilities
 
 ### Facades
+
 - ✅ [src/facades/PlayerPositionFacade.js](../src/facades/PlayerPositionFacade.js) - Player position and zone management
 - ✅ [src/facades/PlayerStatsFacade.js](../src/facades/PlayerStatsFacade.js) - Player stats and animations
 - ✅ [src/facades/PlayerInventoryFacade.js](../src/facades/PlayerInventoryFacade.js) - Inventory and abilities management
 
 ### Enemy AI
+
 - ✅ [src/enemy/BaseEnemy.js](../src/enemy/BaseEnemy.js) - Base enemy class with position tracking and animations
 - ✅ [src/enemy/MoveCalculators/base.js](../src/enemy/MoveCalculators/base.js) - Base move calculator with layered AI pipeline
 - ✅ [src/enemy/MoveCalculators/neighbors.js](../src/enemy/MoveCalculators/neighbors.js) - Neighbor tile utilities
@@ -31,6 +36,7 @@ Track the incremental migration of JavaScript files to TypeScript (via JSDoc + @
 - ✅ [src/enemy/MoveCalculators/aggressive.js](../src/enemy/MoveCalculators/aggressive.js) - Aggressive multi-tile charging movement
 
 ### Managers
+
 - ✅ [src/managers/inventory/effects/BaseItemEffect.js](../src/managers/inventory/effects/BaseItemEffect.js) - Base class for item effects
 - ✅ [src/managers/BombManager.js](../src/managers/BombManager.js) - Bomb placement, timing, and explosion system
 - ✅ [src/managers/ActionManager.js](../src/managers/ActionManager.js) - Action execution and special weapon attacks
@@ -39,17 +45,21 @@ Track the incremental migration of JavaScript files to TypeScript (via JSDoc + @
 - ✅ [src/managers/ZoneManager.js](../src/managers/ZoneManager.js) - Zone transitions, generation, and persistence
 
 ### Renderers
+
 - ✅ [src/renderers/strategies/TileRenderStrategy.js](../src/renderers/strategies/TileRenderStrategy.js) - Base tile rendering strategy interface
 - ✅ [src/renderers/RendererUtils.js](../src/renderers/RendererUtils.js) - Shared rendering utilities and helpers
 
 ### Entities
+
 - ✅ [src/entities/Enemy.js](../src/entities/Enemy.js) - Enemy entity with mixins for movement and attack
 - ✅ [src/entities/Player.js](../src/entities/Player.js) - Player entity with movement, combat, stats, and inventory
 
 ### UI
-- ✅ [src/ui/Sign.js](../src/ui/Sign.js) - Static utility class for sign and NPC message handling
+
+- ✅ [src/ui/Sign.js](../src/ui/Sign.js) - Static utility class fortextbox and NPC message handling
 
 ### Core
+
 - ✅ [src/core/Position.js](../src/core/Position.js) - Position abstraction with distance calculations and grid utilities
 - ✅ [src/core/PositionCalculator.js](../src/core/PositionCalculator.js) - Position calculation utilities (distance, delta, line/area generation)
 - ✅ [src/core/PositionValidator.js](../src/core/PositionValidator.js) - Position validation and bounds checking
@@ -66,11 +76,13 @@ Track the incremental migration of JavaScript files to TypeScript (via JSDoc + @
 ## 🎯 Next Priority Files
 
 These files are recommended for migration next based on:
+
 - High impact (frequently used)
 - Low complexity (easier to type)
 - Foundation for other files
 
 ### Priority 1: Core Game Logic & Systems
+
 - [ ] `src/managers/InputManager.js` - Input handling and player movement
 
 ## 📊 Progress Statistics
@@ -97,6 +109,7 @@ These files are recommended for migration next based on:
 ## 📝 Migration Templates
 
 ### Simple Utility Function
+
 ```javascript
 // @ts-check
 
@@ -106,11 +119,12 @@ These files are recommended for migration next based on:
  * @returns {string} Zone key
  */
 export function createZoneKey(x, y) {
-    return `${x},${y}`;
+  return `${x},${y}`;
 }
 ```
 
 ### Class with Properties
+
 ```javascript
 // @ts-check
 
@@ -121,25 +135,26 @@ export function createZoneKey(x, y) {
  */
 
 export class MyManager {
-    constructor() {
-        /** @type {Config[]} */
-        this.configs = [];
+  constructor() {
+    /** @type {Config[]} */
+    this.configs = [];
 
-        /** @type {boolean} */
-        this.isActive = false;
-    }
+    /** @type {boolean} */
+    this.isActive = false;
+  }
 
-    /**
-     * @param {Config} config
-     * @returns {void}
-     */
-    addConfig(config) {
-        this.configs.push(config);
-    }
+  /**
+   * @param {Config} config
+   * @returns {void}
+   */
+  addConfig(config) {
+    this.configs.push(config);
+  }
 }
 ```
 
 ### Complex Object Type
+
 ```javascript
 // @ts-check
 
@@ -157,7 +172,7 @@ export class MyManager {
  * @returns {Enemy|null}
  */
 export function findWeakestEnemy(enemies) {
-    // ...
+  // ...
 }
 ```
 
@@ -180,17 +195,20 @@ export function findWeakestEnemy(enemies) {
 **Recent migrations (2025-10-29):**
 
 **Batch 2:**
+
 - Added 6 new files: ZoneKeyUtils, LineOfSightUtils, SafeServiceCall, and all 3 Player facades
 - Created comprehensive type definitions for Position, ZoneInfo, PlayerStats, InventoryItem, and more
 - All utilities and facades now have full type safety
 
 **Batch 3:**
+
 - Added 3 new files: Enemy AI (base, neighbors) and BaseItemEffect
 - Created detailed type definitions for Enemy, Player, Game, Item, ItemEffectContext, ItemEffectResult
 - Enemy AI system now fully typed with comprehensive documentation
 - Total progress: 15 files migrated (25% increase from batch 2)
 
 **Batch 4:**
+
 - Added 3 new files: Enemy AI (tactics, aggressive) and BombManager
 - Completed the Enemy AI MoveCalculators subsystem (4 files fully typed)
 - Added comprehensive types for TacticalAI, Direction, Position, GridCoords, BombManager
@@ -198,6 +216,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 18 files migrated (20% increase from batch 3)
 
 **Batch 5:**
+
 - Added ActionManager.js - Complete action execution system
 - Added comprehensive types for Item, Enemy, Game (extended)
 - Covers all special weapon attacks (Bishop Spear, Horse Icon, Bow)
@@ -205,6 +224,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 19 files migrated
 
 **Batch 6:**
+
 - Added CombatManager.js - Complete combat management system
 - Added comprehensive types for ZoneInfo, DefeatResult, Enemy (13 properties), PlayerPos, Game
 - Covers enemy movement, pitfall traps, lizord charge animations, player attacks, combat flow
@@ -217,6 +237,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 20 files migrated
 
 **Batch 7:**
+
 - Added 2 renderer files: TileRenderStrategy.js and RendererUtils.js
 - Created type definitions:
   - ImageCache: Typed image cache with HTMLImageElement values
@@ -233,6 +254,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 22 files migrated (10% increase from batch 6)
 
 **Batch 8:**
+
 - Added GridManager.js - Complete grid abstraction layer
 - Created 7 comprehensive type definitions:
   - Tile: Union type for number or object tiles
@@ -254,6 +276,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 23 files migrated (~4% increase from batch 7)
 
 **Batch 9:**
+
 - Added ZoneManager.js - Complete zone orchestration system (449 lines)
 - Created 6 comprehensive type definitions:
   - Game: Main game instance with all managers and state
@@ -279,6 +302,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 24 files migrated (~4% increase from batch 8)
 
 **Batch 10:**
+
 - Added Enemy.js - Enemy entity class with mixin composition
 - Created 1 type definition:
   - EnemyData: Enemy initialization data (x, y, enemyType, id, health)
@@ -287,9 +311,10 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 25 files migrated (~4% increase from batch 9)
 
 **Batch 11:**
-- Added Sign.js - Complete sign and NPC message system (348 lines)
+
+- Added Sign.js - Completetextbox and NPC message system (348 lines)
 - Created 6 comprehensive type definitions:
-  - SignData: Sign message data with coordinates
+  - SignData:textbox message data with coordinates
   - StatueData: Statue dialogue data
   - BarterNpcData: NPC barter/merchant data with trades
   - Trade: Individual trade definition (required/received items)
@@ -300,7 +325,7 @@ export function findWeakestEnemy(enemies) {
   - Statue/NPC data: getStatueData(), getBarterNpcData(), getDialogueNpcData(), getNPCCharacterData()
   - Interaction handling: handleClick(), displayMessageForSign(), hideMessageForSign()
   - Special behaviors: makeAxolotlLeave() (animated NPC exit)
-- Covers complete sign system:
+- Covers completetextbox system:
   - Procedural message generation with used message tracking
   - Area-based message sets (home, woods, wilds, frontier, canyon)
   - Statue descriptions for enemies and items
@@ -310,6 +335,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 26 files migrated (~4% increase from batch 10)
 
 **Batch 12:**
+
 - Added BaseEnemy.js - Core enemy class (169 lines)
 - Created 2 type definitions:
   - EnemyData: Enemy initialization data (x, y, enemyType, id, health)
@@ -330,6 +356,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 27 files migrated (~4% increase from batch 11)
 
 **Batch 13:**
+
 - Added Position.js - Core position abstraction class (512 lines)
 - Created 6 comprehensive type definitions:
   - Coordinates: Basic {x, y} coordinate object
@@ -354,6 +381,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 28 files migrated (~4% increase from batch 12)
 
 **Batch 14:**
+
 - Added Player.js - Main player entity class (683 lines)
 - Created 3 comprehensive type definitions:
   - ZoneCoords: Zone coordinates with dimension and depth
@@ -377,6 +405,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 29 files migrated (~4% increase from batch 13)
 
 **Batch 15:**
+
 - Added 5 core game system files: game.js, GameContext.js, GameWorld.js, GameUI.js, GameAudio.js, EventBus.js
 - Created comprehensive type definitions:
   - ServiceContainer: Service management and dependency injection
@@ -415,6 +444,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 34 files migrated (~17% increase from batch 14)
 
 **Batch 16:**
+
 - Added 2 core system files: TurnManager.js and ServiceContainer.js
 - Created comprehensive type definitions:
   - ServiceFactory: Factory function type for creating services
@@ -442,6 +472,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 36 files migrated (~6% increase from batch 15)
 
 **Batch 17:**
+
 - Added 2 position utility files: PositionCalculator.js and PositionValidator.js
 - Created 2 type definitions:
   - Coordinates: Basic {x, y} coordinate object (used in both files)
@@ -467,6 +498,7 @@ export function findWeakestEnemy(enemies) {
 - Total progress: 38 files migrated (~6% increase from batch 16)
 
 **Batch 18:**
+
 - Added 1 core initialization file: GameInitializer.js
 - Created 1 type definition:
   - GameContext: Reference to main game context interface
@@ -484,7 +516,7 @@ export function findWeakestEnemy(enemies) {
 - Used extensive @ts-ignore for:
   - Window property additions (game, gameInstance, soundManager, console commands)
   - Manager properties set by ServiceContainer
-  - Transient properties (_entranceAnimationInProgress, _newGameSpawnPosition)
+  - Transient properties (\_entranceAnimationInProgress, \_newGameSpawnPosition)
   - TILE_TYPES string/number type compatibility
   - ErrorHandler.try method
 - All files pass type-check with zero errors

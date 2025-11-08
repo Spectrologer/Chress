@@ -3,10 +3,10 @@ import { fitTextToContainer } from './TextFitter';
 import type { TypewriterController } from './TypewriterController';
 import { EventListenerManager } from '@utils/EventListenerManager';
 import type { IGame } from '@core/context';
-import { Sign } from './Sign';
+import { TextBox } from './textbox';
 
 /**
- * Manages sign and NPC dialogue display with portraits and buttons.
+ * Managestextbox and NPC dialogue display with portraits and buttons.
  * Handles persistent dialogue that requires user interaction to dismiss.
  */
 export class DialogueManager {
@@ -23,7 +23,7 @@ export class DialogueManager {
     }
 
     /**
-    * Show sign or NPC dialogue message
+    * Showtextbox or NPC dialogue message
     */
     showDialogue(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null, category = 'unknown', portraitBackground?: string): void {
         if (!this.messageOverlay) return;
@@ -118,7 +118,7 @@ export class DialogueManager {
         </div>
         </div>`;
         } else if (imgPath) {
-            // Sign with image
+            //textbox with image
             let imgStyle = 'width: 128px; height: auto; max-height: 128px; display: block; margin: 0 auto 10px auto; image-rendering: pixelated;';
 
             // Special handling for bow asset
@@ -135,7 +135,7 @@ export class DialogueManager {
                     <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
                 </div>`;
         } else {
-            // Sign without image
+            //textbox without image
             this.messageOverlay.innerHTML = /*html*/`
                 <div class="dialogue-text" style="text-align:center;">${text}</div>
                 <div id="dialogue-button-container" style="text-align: center; margin-top: 20px;">
@@ -160,7 +160,7 @@ export class DialogueManager {
             const closeButton = this.messageOverlay?.querySelector('.dialogue-close-button');
             if (closeButton) {
                 this.eventManager.add(closeButton, 'click', () => {
-                    Sign.hideMessageForSign(this.game);
+                    TextBox.hideMessageForSign(this.game);
                 });
             }
         } catch (e) {

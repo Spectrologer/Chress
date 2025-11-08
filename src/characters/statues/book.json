@@ -1,0 +1,18 @@
+{
+  "id": "book",
+  "name": "Book Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting a book item",
+    "category": "statue",
+    "subcategory": "item"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_BOOK"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Use from inventory to pass your turn, allowing enemies to move while you stand still.<br><br><em>A tactical tool for repositioning foes.</em>"
+  }
+}

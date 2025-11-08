@@ -1,0 +1,18 @@
+{
+  "id": "shovel",
+  "name": "Shovel Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting a shovel item",
+    "category": "statue",
+    "subcategory": "item"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_SHOVEL"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Select from inventory, then tap an adjacent empty floor tile to dig a hole.<br><br><em>What lies beneath?</em>"
+  }
+}

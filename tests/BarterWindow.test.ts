@@ -1,6 +1,6 @@
 import { BarterWindow } from '../ui/BarterWindow';
 import { Player } from '../entities/Player';
-import { Sign } from '../ui/Sign';
+import { TextBox } from '../ui/textbox';
 import * as NPCLoader from '../core/NPCLoader';
 
 // Mock NPC data
@@ -85,7 +85,7 @@ describe('BarterWindow discovery trades', () => {
   });
 
   test('axelotl_axe trade consumes discoveries and grants axe ability', () => {
-    const npcData = Sign.getBarterNpcData('axelotl');
+    const npcData = TextBox.getBarterNpcData('axelotl');
     expect(npcData).toBeDefined();
 
     // sanity check: requiredAmount should be defined

@@ -1,0 +1,18 @@
+{
+  "id": "bomb",
+  "name": "Bomb Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting a bomb item",
+    "category": "statue",
+    "subcategory": "item"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_BOMB"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Select from inventory to place on an adjacent tile. It explodes after two turns, or if you tap it.<br><br><em>Destroys walls, enemies, and can even launch you.</em>"
+  }
+}

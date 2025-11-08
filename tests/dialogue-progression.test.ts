@@ -3,7 +3,7 @@
  * Verifies that dialogue state persists across multiple interactions
  */
 
-import { Sign } from '../ui/Sign';
+import { TextBox } from '../ui/textbox';
 import * as NPCLoader from '@core/NPCLoader';
 
 // Mock character data for testing
@@ -40,7 +40,7 @@ describe('NPC Dialogue Progression with Sequential Mode', () => {
     });
 
     test('Initial dialogue data creation', () => {
-        const data1 = Sign.getDialogueNpcData('testnpc', mockGame);
+        const data1 = TextBox.getDialogueNpcData('testnpc', mockGame);
 
         expect(data1.currentMessageIndex).toBe(0);
         expect(data1.cycleMode).toBe('sequential');
@@ -48,7 +48,7 @@ describe('NPC Dialogue Progression with Sequential Mode', () => {
     });
 
     test('State persistence after advancing', () => {
-        const data1 = Sign.getDialogueNpcData('testnpc', mockGame);
+        const data1 = TextBox.getDialogueNpcData('testnpc', mockGame);
 
         // Advance the dialogue
         if (data1.cycleMode === 'sequential' && data1.currentMessageIndex < data1.messages.length - 1) {
@@ -58,14 +58,14 @@ describe('NPC Dialogue Progression with Sequential Mode', () => {
         expect(data1.currentMessageIndex).toBe(1);
 
         // Get the dialogue data again
-        const data2 = Sign.getDialogueNpcData('testnpc', mockGame);
+        const data2 = TextBox.getDialogueNpcData('testnpc', mockGame);
 
         expect(data2.currentMessageIndex).toBe(1);
         expect(data1).toBe(data2); // Same object reference
     });
 
     test('Advancing through all messages', () => {
-        const data = Sign.getDialogueNpcData('testnpc', mockGame);
+        const data = TextBox.getDialogueNpcData('testnpc', mockGame);
 
         // Advance through all messages (5 times)
         for (let i = 0; i < 5; i++) {
@@ -79,13 +79,13 @@ describe('NPC Dialogue Progression with Sequential Mode', () => {
     });
 
     test('Different NPC has independent state', () => {
-        const data1 = Sign.getDialogueNpcData('testnpc', mockGame);
+        const data1 = TextBox.getDialogueNpcData('testnpc', mockGame);
 
         // Advance testnpc to index 2
         data1.currentMessageIndex = 2;
 
         // Create another NPC
-        const data2 = Sign.getDialogueNpcData('anothernpc', mockGame);
+        const data2 = TextBox.getDialogueNpcData('anothernpc', mockGame);
 
         expect(data2.currentMessageIndex).toBe(0); // New NPC starts at 0
         expect(data1.currentMessageIndex).toBe(2); // Original NPC remains at 2

@@ -36,6 +36,10 @@ export function npcDiscoveryPlugin(): Plugin {
       const entryStat = await stat(fullPath);
 
       if (entryStat.isDirectory()) {
+        // Skip the statues directory - statues are loaded separately via loadAllStatues()
+        if (entry === 'statues') {
+          continue;
+        }
         // Recursively scan subdirectories
         const subResults = await scanDirectory(fullPath, relativePath ? `${relativePath}/${entry}` : entry);
         results.push(...subResults);

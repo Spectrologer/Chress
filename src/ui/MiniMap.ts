@@ -27,7 +27,8 @@ interface RenderParams {
     offsetY?: number;
     isExpanded?: boolean;
     canvasSize?: number | null;
-    zOffset?: number;
+    zOffset?: number; // Dimension offset
+    depthOffset?: number; // Depth offset when underground (0 = current depth, ±N = N levels away)
 }
 
 export class MiniMap {
@@ -143,7 +144,7 @@ export class MiniMap {
             });
             this.eventManager.add(upButton, 'pointerup', (e: PointerEvent) => {
                 e.stopPropagation();
-                this.changeZLevel(1);
+                this.changeZLevel(-1);  // -1 to go UP (decrease depth/dimension)
             });
         }
 
@@ -153,7 +154,7 @@ export class MiniMap {
             });
             this.eventManager.add(downButton, 'pointerup', (e: PointerEvent) => {
                 e.stopPropagation();
-                this.changeZLevel(-1);
+                this.changeZLevel(1);  // +1 to go DOWN (increase depth/dimension)
             });
         }
     }
@@ -172,7 +173,36 @@ export class MiniMap {
     }
 
     private changeZLevel(delta: number): void {
-        this.viewZOffset += delta;
+        const currentZone = this.game.player.getCurrentZone();
+
+        // When underground (dimension 2), treat viewZOffset as depth offset
+        if (currentZone.dimension === 2) {
+            const currentDepth = currentZone.depth || 1;
+            const newViewDepth = currentDepth + this.viewZOffset + delta;
+
+            // Allow navigating up to surface (viewDepth <= 0) or deeper underground
+            if (newViewDepth >= 0 || delta === -1) {
+                this.viewZOffset += delta;
+            }
+        } else if (currentZone.dimension === 0) {
+            // On surface: viewZOffset represents dimension offset
+            // Down goes to underground (dimension 2), up goes back to surface
+            if (delta > 0 && this.viewZOffset < 2) {
+                this.viewZOffset += delta;
+                // Skip interior (dimension 1) - jump straight to underground (dimension 2)
+                if (this.viewZOffset === 1) {
+                    this.viewZOffset = 2;
+                }
+            } else if (delta < 0 && this.viewZOffset > 0) {
+                // Going up from underground (viewZOffset=2) should jump back to surface (viewZOffset=0)
+                // Skip interior dimension
+                this.viewZOffset = 0;
+            }
+        } else {
+            // For interior or other dimensions
+            this.viewZOffset += delta;
+        }
+
         this.renderExpanded();
     }
 
@@ -191,20 +221,75 @@ export class MiniMap {
 
         if (indicator) {
             const currentZone = this.game.player.getCurrentZone();
-            const viewDimension = currentZone.dimension + this.viewZOffset;
-            indicator.textContent = `z${viewDimension}`;
 
-            // Hide up button when at z0 or above (can't go into the sky)
-            if (upButton) {
-                if (viewDimension >= 0) {
-                    upButton.style.display = 'none';
+            // When underground (dimension 2), navigate through depths instead of dimensions
+            if (currentZone.dimension === 2) {
+                const currentDepth = currentZone.depth || 1;
+                const viewDepth = currentDepth + this.viewZOffset;
+
+                // Show surface when viewDepth becomes 0 or negative
+                if (viewDepth <= 0) {
+                    indicator.textContent = 'Surface';
                 } else {
-                    upButton.style.display = 'flex';
+                    indicator.textContent = `z${viewDepth}`;
+                }
+
+                // Hide up button when viewing surface from underground
+                if (upButton) {
+                    upButton.style.display = viewDepth <= 0 ? 'none' : 'flex';
+                }
+            } else if (currentZone.dimension === 0) {
+                // On surface: can only view surface or underground
+                const viewDimension = currentZone.dimension + this.viewZOffset;
+
+                if (viewDimension <= 0) {
+                    indicator.textContent = 'Surface';
+                    // Hide up button when on surface
+                    if (upButton) {
+                        upButton.style.display = 'none';
+                    }
+                } else if (viewDimension === 2) {
+                    // Viewing underground from surface - show z1 (first depth)
+                    indicator.textContent = 'z1';
+                    if (upButton) {
+                        upButton.style.display = 'flex';
+                    }
+                } else {
+                    // Viewing other dimensions
+                    indicator.textContent = `Dim ${viewDimension}`;
+                    if (upButton) {
+                        upButton.style.display = 'flex';
+                    }
+                }
+            } else {
+                // Interior or other dimensions - just show dimension number
+                const viewDimension = currentZone.dimension + this.viewZOffset;
+                indicator.textContent = `Dim ${viewDimension}`;
+                if (upButton) {
+                    upButton.style.display = viewDimension >= 0 ? 'none' : 'flex';
                 }
             }
         }
 
-        this.renderZoneMap({ctx: this.expandedCtx, offsetX: this.panX, offsetY: this.panY, isExpanded: true, canvasSize: size, zOffset: this.viewZOffset});
+        // Calculate the actual dimension offset and depth offset to pass to renderZoneMap
+        const currentZone = this.game.player.getCurrentZone();
+        let dimensionOffset = this.viewZOffset;
+        let depthOffset = 0;
+
+        // When underground, convert depth offset to dimension offset
+        if (currentZone.dimension === 2) {
+            const currentDepth = currentZone.depth || 1;
+            const viewDepth = currentDepth + this.viewZOffset;
+            depthOffset = this.viewZOffset; // Track the depth offset
+            // If viewing surface from underground (depth <= 0), set dimension offset to -2
+            if (viewDepth <= 0) {
+                dimensionOffset = -2; // From dimension 2 to dimension 0
+            } else {
+                dimensionOffset = 0; // Stay at dimension 2
+            }
+        }
+
+        this.renderZoneMap({ctx: this.expandedCtx, offsetX: this.panX, offsetY: this.panY, isExpanded: true, canvasSize: size, zOffset: dimensionOffset, depthOffset});
     }
 
     // Handle clicks on the expanded minimap to cycle highlight shapes
@@ -258,7 +343,7 @@ export class MiniMap {
     }
 
     renderZoneMap(params: RenderParams = {}): void {
-        const { ctx = this.game.mapCtx, offsetX = 0, offsetY = 0, isExpanded = false, canvasSize = null, zOffset = 0 } = params;
+        const { ctx = this.game.mapCtx, offsetX = 0, offsetY = 0, isExpanded = false, canvasSize = null, zOffset = 0, depthOffset = 0 } = params;
 
         // Responsive square size
         const mapSize = canvasSize || Math.min(ctx.canvas.width, ctx.canvas.height);
@@ -320,7 +405,12 @@ export class MiniMap {
 
                 // Determine zone color with parchment-friendly palette
                 let color = '#C8B99C'; // Unexplored - darker parchment tone
-                if (this.game.player.hasVisitedZone(zoneX, zoneY, viewDimension)) {
+
+                // When viewing a different underground depth, treat as unexplored
+                // (hasVisitedZone doesn't support querying arbitrary depths)
+                const isViewingDifferentDepth = (viewDimension === 2 && depthOffset !== 0);
+
+                if (!isViewingDifferentDepth && this.game.player.hasVisitedZone(zoneX, zoneY, viewDimension)) {
                     if (viewDimension === 2) {
                         color = '#4B0082'; // Indigo for visited underground
                     } else {
@@ -342,7 +432,13 @@ export class MiniMap {
                         }
                     }
                 }
-                if (zoneX === currentZone.x && zoneY === currentZone.y) {
+                // Only highlight current zone if we're viewing the correct dimension/depth
+                const isCurrentZone = zoneX === currentZone.x && zoneY === currentZone.y;
+                const isViewingCurrentLevel = (currentZone.dimension === 2)
+                    ? (viewDimension === 2 && depthOffset === 0) // Underground: only if viewing current depth (depthOffset === 0)
+                    : (viewDimension === currentZone.dimension); // Other dimensions: check dimension matches
+
+                if (isCurrentZone && isViewingCurrentLevel) {
                     color = '#CD853F'; // Current - warm brown/gold
                 }
 
@@ -384,8 +480,8 @@ export class MiniMap {
                     ctx.fillText('♣', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
                 }
 
-                // Draw player icon (king symbol) for the current zone (only when viewing current dimension)
-                if (zoneX === currentZone.x && zoneY === currentZone.y && zOffset === 0) {
+                // Draw player icon (king symbol) for the current zone (only when viewing current dimension/depth)
+                if (isCurrentZone && isViewingCurrentLevel) {
                     ctx.fillStyle = '#2F1B14'; // Dark brown for the symbol
                     // Make the font size relative to the zone tile size for good scaling
                     ctx.font = `bold ${zoneSize * 0.8}px serif`;

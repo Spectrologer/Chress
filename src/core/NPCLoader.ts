@@ -27,10 +27,11 @@ interface NPCData {
         created?: string;
         version?: string;
         category?: string;
+        subcategory?: string;
     };
     display: {
         tileType: string;
-        portrait: string;
+        portrait?: string;
         sprite: string;
         portraitBackground?: string;
     };
@@ -40,6 +41,7 @@ interface NPCData {
         trades?: TradeData[];
         cycleMode?: string;
         dialogueTree?: DialogueNode[];
+        message?: string; // For statue messages
     };
     audio?: {
         voicePitch?: number;
@@ -62,6 +64,11 @@ interface NPCPath {
  * NPC character data loaded from JSON files
  */
 const npcCharacterData = new Map<string, NPCData>();
+
+/**
+ * Statue data loaded from JSON files
+ */
+const statueData = new Map<string, NPCData>();
 
 /**
  * Load a single NPC from JSON data
@@ -166,4 +173,42 @@ export function getNPCCharacterData(npcId: string): NPCData | null {
  */
 export function getAllNPCCharacterData(): Map<string, NPCData> {
     return new Map(npcCharacterData);
+}
+
+/**
+ * Load all statue JSON files
+ * Statues are simpler than NPCs - they just contain display messages
+ */
+export async function loadAllStatues(): Promise<void> {
+    const statueTypes = [
+        'lizardy', 'lizardo', 'lizardeaux', 'zard', 'lazerd', 'lizord',
+        'bomb', 'spear', 'bow', 'horse', 'book', 'shovel', 'default'
+    ];
+
+    const loadPromises = statueTypes.map(async (statueType) => {
+        try {
+            const basePath = import.meta.env.BASE_URL || '/';
+            const isProduction = import.meta.env.PROD;
+            const characterPath = isProduction ? 'characters' : 'src/characters';
+            const response = await fetch(`${basePath}${characterPath}/statues/${statueType}.json`);
+            if (!response.ok) {
+                console.warn(`[NPCLoader] Failed to load statue ${statueType}.json: ${response.status}`);
+                return;
+            }
+
+            const data: NPCData = await response.json();
+            statueData.set(statueType, data);
+        } catch (error) {
+            console.error(`[NPCLoader] Error loading statue ${statueType}:`, error);
+        }
+    });
+
+    await Promise.all(loadPromises);
+}
+
+/**
+ * Get statue data by type
+ */
+export function getStatueData(statueType: string): NPCData | null {
+    return statueData.get(statueType) || statueData.get('default') || null;
 }

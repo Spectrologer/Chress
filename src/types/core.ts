@@ -6,7 +6,7 @@
 import { Position } from '@core/Position';
 import type { GameContext } from '@core/context';
 
-export interface SignData {
+export interface TextBoxData {
     message?: string;
     x?: number;
     y?: number;
@@ -18,7 +18,7 @@ export interface IGameCompat extends GameContext {
     justEnteredZone?: boolean;
     isInPitfallZone?: boolean;
     pitfallTurnsSurvived?: number;
-    displayingMessageForSign?: SignData;
+    displayingMessageForSign?: TextBoxData;
 }
 
 // Position compatibility shim

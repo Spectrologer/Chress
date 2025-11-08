@@ -1,0 +1,18 @@
+{
+  "id": "lizardy",
+  "name": "Lizardy Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting the Lizardy enemy type",
+    "category": "statue",
+    "subcategory": "enemy"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_LIZARDY"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Moves <strong>north and south</strong> one tile at a time and can only attack diagonally in the direction it is traveling.<br><br><em>If it could only be so simple.</em>"
+  }
+}

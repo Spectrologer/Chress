@@ -42,7 +42,7 @@ export class ZoneTransitionCoordinator {
     }
 
     /**
-     * Initialize transition state (pitfall tracking, sign reset, etc.)
+     * Initialize transition state (pitfall tracking,textbox reset, etc.)
      */
     public initializeTransitionState(exitSide: string): void {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,7 +50,7 @@ export class ZoneTransitionCoordinator {
 
         const transientState = this.game.transientGameState;
 
-        // Reset sign message tracking for the new zone
+        // Reset textbox message tracking for the new zone
         transientState.clearLastSignMessage();
         transientState.clearDisplayingSignMessage();
 

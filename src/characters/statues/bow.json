@@ -1,0 +1,18 @@
+{
+  "id": "bow",
+  "name": "Bow Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting a bow item",
+    "category": "statue",
+    "subcategory": "item"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_BOW"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Tap an enemy in a straight line (up, down, left, or right) to shoot an arrow.<br><br><em>Patience is key.</em>"
+  }
+}

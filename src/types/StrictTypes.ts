@@ -150,9 +150,9 @@ export interface ToolTile extends BaseTileObject {
 }
 
 /**
- * Sign tile with message
+ * TextBox tile with message
  */
-export interface SignTile extends BaseTileObject {
+export interface TextBoxTile extends BaseTileObject {
     type: number; // TILE_TYPES.SIGN
     message: string;
     name?: string;
@@ -206,7 +206,7 @@ export type StrictTileObject =
     | BombTile
     | FoodTile
     | ToolTile
-    | SignTile
+    | TextBoxTile
     | EnemyTile
     | NPCTile
     | ExitTile
@@ -255,9 +255,9 @@ export function isToolTile(tile: StrictTile): tile is ToolTile {
 }
 
 /**
- * Type guard to check if a tile is a sign
+ * Type guard to check if a tile is a textbox
  */
-export function isSignTile(tile: StrictTile): tile is SignTile {
+export function isTextBoxTile(tile: StrictTile): tile is TextBoxTile {
     return isTileObject(tile) && 'message' in tile && typeof (tile as any).message === 'string';
 }
 
@@ -334,13 +334,13 @@ export interface ToolItem extends BaseItem {
 export type StrictInventoryItem = FoodItem | ToolItem | BaseItem;
 
 // ============================================================================
-// SIGN DATA
+//textbox DATA
 // ============================================================================
 
 /**
- * Sign data with strict types
+ * TextBox data with strict types
  */
-export interface StrictSignData {
+export interface StrictTextBoxData {
     message?: string;
     x?: number;
     y?: number;

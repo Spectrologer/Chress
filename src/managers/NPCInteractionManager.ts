@@ -1,4 +1,4 @@
-import { Sign } from '@ui/Sign';
+import { TextBox } from '@ui/textbox';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { isAdjacent } from '@core/utils/DirectionUtils';
@@ -51,7 +51,7 @@ export class NPCInteractionManager {
             // Handle based on NPC action type
             if (npcConfig.action === 'dialogue') {
                 const characterId = (characterData as any)?.id || 'unknown';
-                const npcData = Sign.getDialogueNpcData(characterId, this.game as any);
+                const npcData = TextBox.getDialogueNpcData(characterId, this.game as any);
                 if (npcData) {
                     const message = npcData.messages[npcData.currentMessageIndex];
                     const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
@@ -149,7 +149,7 @@ export class NPCInteractionManager {
                         npcPos: gridCoords
                     });
                 } else if (config.action === 'dialogue') {
-                    const npcData = Sign.getDialogueNpcData(npcName, this.game as any);
+                    const npcData = TextBox.getDialogueNpcData(npcName, this.game as any);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
                         const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
@@ -232,7 +232,7 @@ export class NPCInteractionManager {
                         npcPos: gridCoords
                     });
                 } else if (config.action === 'dialogue') {
-                    const npcData = Sign.getDialogueNpcData(npcName, this.game as any);
+                    const npcData = TextBox.getDialogueNpcData(npcName, this.game as any);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
                         const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;

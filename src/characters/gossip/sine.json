@@ -29,12 +29,12 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Yeah, I'm a sign. But I don't do that boring 'exit this way' stuff. I've got PERSONALITY.",
+        "text": "Yeah, I'm a sign. But I've got PERSONALITY.",
         "buttonText": "Sure."
       },
       {
         "id": "msg_1",
-        "text": "Other signs? Basic. Me? I bring VIBES. I bring ENERGY. I'm the sign people remember.",
+        "text": "Other signs? Basic. Me? I bring VIBES. I bring ENERGY. I'm thetextbox people remember.",
         "buttonText": "Cool."
       },
       {

@@ -1,0 +1,18 @@
+{
+  "id": "zard",
+  "name": "Zard Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting the Zard enemy type",
+    "category": "statue",
+    "subcategory": "enemy"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_ZARD"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Moves and <strong>charges diagonally</strong> to attack from a distance.<br><br><em>Hard to catch, too.</em>"
+  }
+}

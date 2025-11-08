@@ -1,0 +1,18 @@
+{
+  "id": "lazerd",
+  "name": "Lazerd Statue",
+  "type": "statue",
+  "metadata": {
+    "description": "A statue depicting the Lazerd enemy type",
+    "category": "statue",
+    "subcategory": "enemy"
+  },
+  "display": {
+    "sprite": "environment/doodads/statue.png",
+    "tileType": "STATUE_LAZERD"
+  },
+  "interaction": {
+    "type": "statue",
+    "message": "Moves and <strong>charges in any direction</strong>.<br><br><em>A master of all directional movement.</em>"
+  }
+}

@@ -129,7 +129,7 @@ describe('MessageManager typing & blip behavior', () => {
     expect(fakeGame.messageLog[0]).toContain('darkgreen');
   });
 
-  test('PenneMessageHandler shows message only if no sign message active', () => {
+  test('PenneMessageHandler shows message only if notextbox message active', () => {
     const fakeGame = {
       messageLog: [],
       animationScheduler: makeFakeAnimationScheduler(),
@@ -143,7 +143,7 @@ describe('MessageManager typing & blip behavior', () => {
     expect(overlay.classList.contains('show')).toBe(true);
     expect(overlay.innerHTML).toContain('Penne');
 
-    // Now set sign flag and try again
+    // Now settextbox flag and try again
     fakeGame.displayingMessageForSign = true;
     overlay.classList.remove('show');
 

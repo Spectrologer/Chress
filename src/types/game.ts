@@ -88,13 +88,13 @@ export interface UIManager {
 
 // Transient Game State interface
 export interface TransientGameState {
-    getDisplayingSignMessage(): SignData | null;
-    setDisplayingSignMessage(data: SignData | null): void;
+    getDisplayingSignMessage(): TextBoxData | null;
+    setDisplayingSignMessage(data: TextBoxData | null): void;
     hasSaveFile(): boolean;
 }
 
-// Sign Data interface
-export interface SignData {
+// TextBox Data interface
+export interface TextBoxData {
     message?: string;
     x?: number;
     y?: number;
@@ -197,7 +197,7 @@ export interface IGame extends GameInstance {
     justEnteredZone?: boolean;
     isInPitfallZone?: boolean;
     pitfallTurnsSurvived?: number;
-    displayingMessageForSign?: SignData;
+    displayingMessageForSign?: TextBoxData;
 }
 
 // Coordinates interface - now just an alias for the core Coordinates type

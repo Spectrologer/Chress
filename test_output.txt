@@ -72,7 +72,7 @@ Overlay message shown
 [ConfigPanelManager] Overlay display style: block
 
  [32m✓[39m tests/MiniMap.test.js [2m([22m[2m34 tests[22m[2m)[22m[32m 176[2mms[22m[39m
-[90mstdout[2m | tests/messageManager.test.js[2m > [22m[2mMessageManager typing & blip behavior[2m > [22m[2mPenneMessageHandler shows message only if no sign message active
+[90mstdout[2m | tests/messageManager.test.js[2m > [22m[2mMessageManager typing & blip behavior[2m > [22m[2mPenneMessageHandler shows message only if notextbox message active
 [22m[39mOverlayMessageHandler.show: "<span class="character-name">Penne</span><br>Give me meat!", imageSrc: assets/fauna/penne.png, isPersistent: false
 Overlay message shown
 

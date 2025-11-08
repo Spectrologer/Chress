@@ -1,5 +1,5 @@
 import { TILE_TYPES } from '@core/constants/index';
-import { Sign } from '@ui/Sign';
+import { TextBox } from '@ui/textbox';
 import { TileRegistry } from '@core/TileRegistry';
 import { isAdjacent } from '@core/utils/DirectionUtils';
 import { eventBus } from '@core/EventBus';
@@ -8,7 +8,7 @@ import { isTileObjectOfType, TileTypeChecker } from '@utils/TypeChecks';
 import type { Game } from '@core/game';
 import type { Position } from '@core/Position';
 
-interface SignTile {
+interface TextBoxTile {
     type: string;
     message: string;
     [key: string]: any;
@@ -25,7 +25,7 @@ export class EnvironmentalInteractionManager {
         const gridManager = this.game.gridManager;
         const tile = gridManager.getTile(gridCoords.x, gridCoords.y);
         if (!isTileObjectOfType(tile, TILE_TYPES.SIGN)) return false;
-        const signTile = tile as unknown as SignTile;
+        const signTile = tile as unknown as TextBoxTile;
 
         // Check if player is adjacent to this sign
         const playerPos = (this.game.player as any).getPosition() as Position;
@@ -40,14 +40,14 @@ export class EnvironmentalInteractionManager {
             const isAlreadyDisplayed = displayingSign && displayingSign.message === signTile.message;
             const showingNewMessage = !isAlreadyDisplayed;
 
-            // Let Sign class handle the toggle logic
-            Sign.handleClick(signTile, this.game as any, true);
+            // Lettextbox class handle the toggle logic
+            TextBox.handleClick(signTile, this.game as any, true);
 
             // Add to log only when first showing the message
             const lastMessage = transientState.getLastSignMessage();
             if (showingNewMessage && signTile.message !== lastMessage) {
                 eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
-                    text: `A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`,
+                    text: `Atextbox reads: "${signTile.message.replace(/<br>/g, ' ')}"`,
                     category: 'environment',
                     priority: 'info'
                 });
@@ -99,15 +99,15 @@ export class EnvironmentalInteractionManager {
         // Check if sign
         const tile = gridManager.getTile(gridCoords.x, gridCoords.y);
         if (isTileObjectOfType(tile, TILE_TYPES.SIGN)) {
-            const signTile = tile as unknown as SignTile;
-            Sign.handleClick(signTile, this.game as any, true);
+            const signTile = tile as unknown as TextBoxTile;
+            TextBox.handleClick(signTile, this.game as any, true);
             const displayingSign = transientState.getDisplayingSignMessage();
             const isAlreadyDisplayed = displayingSign && displayingSign.message === signTile.message;
             const showingNewMessage = !isAlreadyDisplayed;
             const lastMessage = transientState.getLastSignMessage();
             if (showingNewMessage && signTile.message !== lastMessage) {
                 eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
-                    text: `A sign reads: "${signTile.message.replace(/<br>/g, ' ')}"`,
+                    text: `Atextbox reads: "${signTile.message.replace(/<br>/g, ' ')}"`,
                     category: 'environment',
                     priority: 'info'
                 });

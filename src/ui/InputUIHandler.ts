@@ -1,6 +1,6 @@
 import type { IGame } from '@core/context';
 import { TILE_TYPES } from '@core/constants/index';
-import { Sign } from './Sign';
+import { TextBox } from './textbox';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { isAdjacent } from '@core/utils/DirectionUtils';
@@ -65,7 +65,7 @@ interface RadialInventoryUI {
  * InputUIHandler - Handles UI-specific input interactions
  *
  * Responsibilities:
- * - Handle sign message interactions
+ * - Handletextbox message interactions
  * - Manage shovel mode UI
  * - Handle stats panel interactions
  * - Manage charge selection UI
@@ -123,7 +123,7 @@ export class InputUIHandler {
     private _handleTap(event: InputTapEvent): void {
         const { gridCoords } = event;
 
-        // Handle sign message
+        // Handletextbox message
         if (this._handleSignMessage(gridCoords)) {
             event.handled = true;
             return;
@@ -197,7 +197,7 @@ export class InputUIHandler {
     // ========================================
 
     /**
-     * Handle sign message interaction
+     * Handletextbox message interaction
      * Returns true if handled, false otherwise
      */
     private _handleSignMessage(gridCoords: GridCoords): boolean {
@@ -206,7 +206,7 @@ export class InputUIHandler {
                 this.game.interactionManager.triggerInteractAt(gridCoords);
                 return true;
             } else {
-                Sign.hideMessageForSign(this.game as any);
+                TextBox.hideMessageForSign(this.game as any);
             }
         }
         return false;
