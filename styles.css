@@ -24,6 +24,7 @@
     justify-content: center;
     max-width: 95vw;
     max-height: 85vh;
+    position: relative;
 }
 #expandedMapCanvas {
     aspect-ratio: 1 / 1;
@@ -37,6 +38,70 @@
     cursor: grab;
     display: block;
     touch-action: none;
+}
+
+/* Z-level navigation buttons */
+.map-zlevel-btn {
+    position: absolute;
+    right: 24px;
+    width: 36px;
+    height: 36px;
+    background: #fffbe9;
+    border: 2px solid #8B4513;
+    border-radius: 8px;
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(139, 69, 19, 0.3);
+}
+
+.map-zlevel-btn:hover {
+    background: #f5f1d9;
+    transform: scale(1.05);
+    box-shadow: 0 3px 8px rgba(139, 69, 19, 0.4);
+}
+
+.map-zlevel-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 3px rgba(139, 69, 19, 0.3);
+}
+
+.map-zlevel-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.map-zlevel-up {
+    top: 24px;
+}
+
+.map-zlevel-up img {
+    transform: rotate(180deg);
+}
+
+.map-zlevel-down {
+    bottom: 24px;
+}
+
+/* Z-level indicator text */
+.map-zlevel-indicator {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    background: rgba(255, 251, 233, 0.95);
+    border: 2px solid #8B4513;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: "Press Start 2P", cursive;
+    font-size: 18px;
+    font-weight: bold;
+    color: #2F1B14;
+    box-shadow: 0 2px 6px rgba(139, 69, 19, 0.3);
+    pointer-events: none;
 }
 
 /* Start Overlay (player card) - occupy the full player card like other overlays */

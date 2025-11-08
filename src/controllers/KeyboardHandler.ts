@@ -209,6 +209,9 @@ export class KeyboardHandler {
             case '6':
                 this.spawnEnemyAtPlayerPosition('zard');
                 return null;
+            case 'p':
+                this.generatePitfallOnFloorTile();
+                return null;
             case 'escape':
                 this.game.resetGame();
                 return null;
@@ -257,6 +260,21 @@ export class KeyboardHandler {
                 id: `${enemyType}_${Date.now()}_${Math.random()}`
             });
             this.game.enemyCollection?.add(enemy);
+            this.game.render?.();
+        }
+    }
+
+    /**
+     * Generate a pitfall on a random available floor tile
+     */
+    private generatePitfallOnFloorTile(): void {
+        const pos = findValidPlacement({
+            maxAttempts: 50,
+            validate: (x: number, y: number): boolean => this.isFloorTileAvailable(x, y)
+        });
+
+        if (pos) {
+            this.game.gridManager?.setTile(pos.x, pos.y, TILE_TYPES.PITFALL);
             this.game.render?.();
         }
     }

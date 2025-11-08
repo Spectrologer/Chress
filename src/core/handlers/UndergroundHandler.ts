@@ -65,6 +65,9 @@ class UndergroundHandler extends BaseZoneHandler {
         this.handleRandomStairdownPlacement();
         this.handleEnemySpawning();
         this.handleGossipNPCSpawning();
+
+        // IMPORTANT: ensureExitAccess must run AFTER all feature generation
+        // to guarantee that walls placed by addRandomFeatures/mazes don't block exits
         this.ensureExitAccess();
 
         const transientState = this.zoneGen.game.transientGameState;

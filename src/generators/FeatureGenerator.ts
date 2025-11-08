@@ -3,7 +3,7 @@ import { GENERATOR_CONSTANTS } from '@core/constants/ui';
 import { randomInt, findValidPlacement, isWithinBounds, getGridCenter } from './GeneratorUtils';
 import { ZoneStateManager } from './ZoneStateManager';
 import { logger } from '@core/logger';
-import { isFloor, isWall } from '@utils/TypeChecks';
+import { isFloor, isWall, isExit } from '@utils/TypeChecks';
 import type { GridManager } from '../types/game';
 import type { ZoneGenerationState } from '../state/ZoneGenerationState';
 
@@ -173,17 +173,25 @@ export class FeatureGenerator {
             }
         }
 
-        // Step 2: Pick random starting position on odd coordinates
+        // Step 2: Clear entry corridors from all exits to prevent blocking
+        // This ensures exits have at least a 3-tile corridor leading inward
+        this.clearExitCorridors();
+
+        // Step 3: Pick random starting position on odd coordinates
         // Formula: random(0 to maxCells/2) * 2 + 1 gives odd numbers
         // Example: GRID_SIZE=20 -> picks from {1, 3, 5, 7, 9, 11, 13, 15, 17}
         const startX = Math.floor(Math.random() * ((GRID_SIZE - 3) / 2)) * 2 + 1;
         const startY = Math.floor(Math.random() * ((GRID_SIZE - 3) / 2)) * 2 + 1;
 
-        // Step 3: Carve maze passages recursively
+        // Step 4: Carve maze passages recursively
         this.carveMaze(startX, startY);
 
-        // Step 4: Add strategic blockages for increased difficulty
+        // Step 5: Add strategic blockages for increased difficulty
         this.addMazeBlockages();
+
+        // Step 6: Re-clear exit corridors as a final safety measure
+        // This ensures no maze carving inadvertently blocked exits
+        this.clearExitCorridors();
     }
 
     /**
@@ -255,6 +263,64 @@ export class FeatureGenerator {
         // When all directions exhausted, backtrack (function returns)
     }
 
+    /**
+     * Clears entry corridors from all exits to prevent maze walls from blocking them.
+     * Creates a 3-tile deep corridor from each exit leading into the maze interior.
+     *
+     * This is critical for mazes because:
+     * - generateMaze() fills the entire interior with walls first
+     * - Without clearing, exits would have walls immediately in front of them
+     * - Players would spawn on exit tiles with no way to enter the zone
+     */
+    clearExitCorridors(): void {
+        // Find all exit tiles
+        const exits = this.gridManager.findTiles((tile) => isExit(tile));
+
+        exits.forEach(({ x, y }) => {
+            // For each exit, clear a wider area to ensure connectivity
+            // This prevents the maze from blocking the entrance entirely
+            if (y === 0) {
+                // North exit - clear downward with width
+                for (let dy = 1; dy <= 4 && dy < GRID_SIZE - 1; dy++) {
+                    // Clear center line
+                    this.gridManager.setTile(x, dy, TILE_TYPES.FLOOR);
+                    // Clear adjacent tiles for first 2 rows to create wider entry
+                    if (dy <= 2) {
+                        if (x > 0) this.gridManager.setTile(x - 1, dy, TILE_TYPES.FLOOR);
+                        if (x < GRID_SIZE - 1) this.gridManager.setTile(x + 1, dy, TILE_TYPES.FLOOR);
+                    }
+                }
+            } else if (y === GRID_SIZE - 1) {
+                // South exit - clear upward with width
+                for (let dy = 1; dy <= 4 && GRID_SIZE - 1 - dy > 0; dy++) {
+                    this.gridManager.setTile(x, GRID_SIZE - 1 - dy, TILE_TYPES.FLOOR);
+                    if (dy <= 2) {
+                        if (x > 0) this.gridManager.setTile(x - 1, GRID_SIZE - 1 - dy, TILE_TYPES.FLOOR);
+                        if (x < GRID_SIZE - 1) this.gridManager.setTile(x + 1, GRID_SIZE - 1 - dy, TILE_TYPES.FLOOR);
+                    }
+                }
+            } else if (x === 0) {
+                // West exit - clear rightward with width
+                for (let dx = 1; dx <= 4 && dx < GRID_SIZE - 1; dx++) {
+                    this.gridManager.setTile(dx, y, TILE_TYPES.FLOOR);
+                    if (dx <= 2) {
+                        if (y > 0) this.gridManager.setTile(dx, y - 1, TILE_TYPES.FLOOR);
+                        if (y < GRID_SIZE - 1) this.gridManager.setTile(dx, y + 1, TILE_TYPES.FLOOR);
+                    }
+                }
+            } else if (x === GRID_SIZE - 1) {
+                // East exit - clear leftward with width
+                for (let dx = 1; dx <= 4 && GRID_SIZE - 1 - dx > 0; dx++) {
+                    this.gridManager.setTile(GRID_SIZE - 1 - dx, y, TILE_TYPES.FLOOR);
+                    if (dx <= 2) {
+                        if (y > 0) this.gridManager.setTile(GRID_SIZE - 1 - dx, y - 1, TILE_TYPES.FLOOR);
+                        if (y < GRID_SIZE - 1) this.gridManager.setTile(GRID_SIZE - 1 - dx, y + 1, TILE_TYPES.FLOOR);
+                    }
+                }
+            }
+        });
+    }
+
     addMazeBlockages(): void {
         // Add some rocks and shrubbery to block alternative paths
         // Slightly increase number of blockages with depth
@@ -263,7 +329,15 @@ export class FeatureGenerator {
         for (let i = 0; i < blockages; i++) {
             const pos = findValidPlacement({
                 maxAttempts: 20,
-                validate: (x: number, y: number): boolean => isFloor(this.gridManager.getTile(x, y))
+                validate: (x: number, y: number): boolean => {
+                    // Only place on floor tiles
+                    if (!isFloor(this.gridManager.getTile(x, y))) return false;
+
+                    // Don't place blockages in the entry corridors (within 3 tiles of border)
+                    if (x <= 3 || x >= GRID_SIZE - 4 || y <= 3 || y >= GRID_SIZE - 4) return false;
+
+                    return true;
+                }
             });
             if (pos) {
                 const { x, y } = pos;
@@ -305,6 +379,7 @@ export class FeatureGenerator {
         }
 
         // Underground Strategy: Use only rocks, scaled by depth
+        // Place rocks ADJACENT to exits (one tile inward), not ON the exit tiles
         if (isUnderground) {
             // Calculate rock chance with depth scaling
             // Base: 55% (FEATURE_CHANCE_MULTIPLIER)
@@ -316,17 +391,18 @@ export class FeatureGenerator {
             );
 
             // Apply to each exit direction if it exists
+            // Place rocks one tile inward from the exit (not on the exit itself)
             if (connections.north !== null && Math.random() < rockChance) {
-                this.gridManager.setTile(connections.north, 0, TILE_TYPES.ROCK);
+                this.gridManager.setTile(connections.north, 1, TILE_TYPES.ROCK);
             }
             if (connections.south !== null && Math.random() < rockChance) {
-                this.gridManager.setTile(connections.south, GRID_SIZE - 1, TILE_TYPES.ROCK);
+                this.gridManager.setTile(connections.south, GRID_SIZE - 2, TILE_TYPES.ROCK);
             }
             if (connections.west !== null && Math.random() < rockChance) {
-                this.gridManager.setTile(0, connections.west, TILE_TYPES.ROCK);
+                this.gridManager.setTile(1, connections.west, TILE_TYPES.ROCK);
             }
             if (connections.east !== null && Math.random() < rockChance) {
-                this.gridManager.setTile(GRID_SIZE - 1, connections.east, TILE_TYPES.ROCK);
+                this.gridManager.setTile(GRID_SIZE - 2, connections.east, TILE_TYPES.ROCK);
             }
         }
         // Surface Frontier Strategy: Mix of rocks and shrubbery

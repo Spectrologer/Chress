@@ -27,6 +27,7 @@ interface RenderParams {
     offsetY?: number;
     isExpanded?: boolean;
     canvasSize?: number | null;
+    zOffset?: number;
 }
 
 export class MiniMap {
@@ -43,6 +44,7 @@ export class MiniMap {
     // highlights keyed by "x,y,dimension" -> shape string ("circle","triangle","star","diamond")
     private highlights: Record<string, string>;
     private eventManager: EventListenerManager;
+    private viewZOffset: number; // Offset from current dimension (0 = current, -1 = one level down, +1 = one level up)
 
     constructor(game: IGame) {
         this.game = game;
@@ -57,6 +59,7 @@ export class MiniMap {
         this.dragMoved = false;
         this.highlights = {};
         this.eventManager = new EventListenerManager();
+        this.viewZOffset = 0;
     }
 
     setupEvents(): void {
@@ -129,6 +132,30 @@ export class MiniMap {
         this.eventManager.add(this.expandedCanvas, 'pointerleave', () => {
             this.isDragging = false;
         });
+
+        // Z-level navigation buttons
+        const upButton = document.getElementById('mapZLevelUp');
+        const downButton = document.getElementById('mapZLevelDown');
+
+        if (upButton) {
+            this.eventManager.add(upButton, 'pointerdown', (e: PointerEvent) => {
+                e.stopPropagation();
+            });
+            this.eventManager.add(upButton, 'pointerup', (e: PointerEvent) => {
+                e.stopPropagation();
+                this.changeZLevel(1);
+            });
+        }
+
+        if (downButton) {
+            this.eventManager.add(downButton, 'pointerdown', (e: PointerEvent) => {
+                e.stopPropagation();
+            });
+            this.eventManager.add(downButton, 'pointerup', (e: PointerEvent) => {
+                e.stopPropagation();
+                this.changeZLevel(-1);
+            });
+        }
     }
 
     expand(): void {
@@ -136,10 +163,16 @@ export class MiniMap {
         this.isExpanded = true;
         this.panX = 0;
         this.panY = 0;
+        this.viewZOffset = 0; // Reset to current dimension
         const overlay = document.getElementById('expandedMapOverlay');
         if (overlay) {
             overlay.classList.add('show');
         }
+        this.renderExpanded();
+    }
+
+    private changeZLevel(delta: number): void {
+        this.viewZOffset += delta;
         this.renderExpanded();
     }
 
@@ -151,7 +184,27 @@ export class MiniMap {
         const size = Math.floor(Math.min(rect.width, rect.height));
         this.expandedCanvas.width = size;
         this.expandedCanvas.height = size;
-        this.renderZoneMap({ctx: this.expandedCtx, offsetX: this.panX, offsetY: this.panY, isExpanded: true, canvasSize: size});
+
+        // Update z-level indicator text and button visibility
+        const indicator = document.getElementById('mapZLevelIndicator');
+        const upButton = document.getElementById('mapZLevelUp');
+
+        if (indicator) {
+            const currentZone = this.game.player.getCurrentZone();
+            const viewDimension = currentZone.dimension + this.viewZOffset;
+            indicator.textContent = `z${viewDimension}`;
+
+            // Hide up button when at z0 or above (can't go into the sky)
+            if (upButton) {
+                if (viewDimension >= 0) {
+                    upButton.style.display = 'none';
+                } else {
+                    upButton.style.display = 'flex';
+                }
+            }
+        }
+
+        this.renderZoneMap({ctx: this.expandedCtx, offsetX: this.panX, offsetY: this.panY, isExpanded: true, canvasSize: size, zOffset: this.viewZOffset});
     }
 
     // Handle clicks on the expanded minimap to cycle highlight shapes
@@ -173,9 +226,10 @@ export class MiniMap {
         const dy = Math.round(relY / zoneSize);
 
         const currentZone = this.game.player.getCurrentZone();
+        const viewDimension = currentZone.dimension + this.viewZOffset;
         const zoneX = currentZone.x + dx - Math.round(this.panX);
         const zoneY = currentZone.y + dy - Math.round(this.panY);
-        const hk = `${zoneX},${zoneY},${currentZone.dimension}`;
+        const hk = `${zoneX},${zoneY},${viewDimension}`;
 
         const shapes = ['circle', 'triangle', 'star', 'diamond', 'heart', 'club', null];
         const current = this.highlights?.[hk] ?? null;
@@ -204,7 +258,7 @@ export class MiniMap {
     }
 
     renderZoneMap(params: RenderParams = {}): void {
-        const { ctx = this.game.mapCtx, offsetX = 0, offsetY = 0, isExpanded = false, canvasSize = null } = params;
+        const { ctx = this.game.mapCtx, offsetX = 0, offsetY = 0, isExpanded = false, canvasSize = null, zOffset = 0 } = params;
 
         // Responsive square size
         const mapSize = canvasSize || Math.min(ctx.canvas.width, ctx.canvas.height);
@@ -221,6 +275,7 @@ export class MiniMap {
         // Calculate visible range around current zone
         const range = Math.floor(mapSize / zoneSize / 2) + 1; // Dynamically calculate range
         const currentZone = this.game.player.getCurrentZone();
+        const viewDimension = currentZone.dimension + zOffset; // Adjust dimension based on z-offset
 
         // Special case for Museum interior: show a pawn icon instead of the map
         if (currentZone.x === 0 && currentZone.y === 0 && currentZone.dimension === 1) {
@@ -265,8 +320,8 @@ export class MiniMap {
 
                 // Determine zone color with parchment-friendly palette
                 let color = '#C8B99C'; // Unexplored - darker parchment tone
-                if (this.game.player.hasVisitedZone(zoneX, zoneY, currentZone.dimension)) {
-                    if (currentZone.dimension === 2) {
+                if (this.game.player.hasVisitedZone(zoneX, zoneY, viewDimension)) {
+                    if (viewDimension === 2) {
                         color = '#4B0082'; // Indigo for visited underground
                     } else {
                         // Color code by zone level for the overworld
@@ -320,7 +375,7 @@ export class MiniMap {
                 }
 
                 // Draw club icon for the home zone (0,0) in the overworld
-                if (zoneX === 0 && zoneY === 0 && currentZone.dimension === 0) {
+                if (zoneX === 0 && zoneY === 0 && viewDimension === 0) {
                     ctx.fillStyle = '#2F1B14'; // Dark brown for the symbol
                     ctx.font = `bold ${zoneSize * 0.8}px serif`;
                     ctx.textAlign = 'center';
@@ -329,8 +384,8 @@ export class MiniMap {
                     ctx.fillText('♣', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
                 }
 
-                // Draw player icon (king symbol) for the current zone
-                if (zoneX === currentZone.x && zoneY === currentZone.y) {
+                // Draw player icon (king symbol) for the current zone (only when viewing current dimension)
+                if (zoneX === currentZone.x && zoneY === currentZone.y && zOffset === 0) {
                     ctx.fillStyle = '#2F1B14'; // Dark brown for the symbol
                     // Make the font size relative to the zone tile size for good scaling
                     ctx.font = `bold ${zoneSize * 0.8}px serif`;
@@ -341,7 +396,7 @@ export class MiniMap {
                 }
 
                 // Draw highlight marker if present (only meaningful for expanded map but harmless otherwise)
-                const hk = `${zoneX},${zoneY},${currentZone.dimension}`;
+                const hk = `${zoneX},${zoneY},${viewDimension}`;
                 const shape = this.highlights?.[hk];
                 if (shape) {
                     // Map shape names to text glyphs and colors for crisp scaling
