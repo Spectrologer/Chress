@@ -29,10 +29,10 @@ function makeMinimalGame() {
   const canvas = makeMockCanvas();
   const ctx = makeMockCtx();
   const textureManager = { renderTile: vi.fn() };
-  const grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR));
-  const enemies = [];
+  const grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR));
+  const enemies: any[] = [];
   const enemyCollection = {
-    findAt: vi.fn((x, y) => enemies.find(e => e.x === x && e.y === y)),
+    findAt: vi.fn((x: number, y: number) => enemies.find((e: any) => e.x === x && e.y === y)),
     getAll: () => enemies
   };
   return {
@@ -43,7 +43,7 @@ function makeMinimalGame() {
     enemies,
     enemyCollection,
     player: { getCurrentZone: () => ({ dimension: 0 }) }
-  };
+  } as any;
 }
 
 describe('RenderManager enemy attack range overlay', () => {
@@ -52,12 +52,12 @@ describe('RenderManager enemy attack range overlay', () => {
     const rm = new RenderManager(game);
     // Inject our mock ctx onto the game/render manager
     game.ctx = game.ctx || game.ctx;
-    rm.ctx = game.ctx;
+    (rm as any).ctx = game.ctx as any;
 
     // Place a lizardy at (3,3) facing south
     const enemy = {
       x: 3, y: 3, health: 1, enemyType: 'lizardy', movementDirection: 1,
-      isWalkable: (x, y, g) => true
+      isWalkable: (x: number, y: number, g: number[][]) => true
     };
     game.enemies.push(enemy);
 
@@ -65,42 +65,42 @@ describe('RenderManager enemy attack range overlay', () => {
     rm.startHoldFeedback(3, 3);
 
     // Call internal draw to render the hold feedback and overlay
-    rm['_drawTapFeedback']();
+    (rm as any)['_drawTapFeedback']();
 
     // For lizardy we expect two diagonal target fills: (2,4) and (4,4)
     expect(game.ctx.fillRect).toHaveBeenCalled();
-    const calls = game.ctx.fillRect.mock.calls.map(c => [c[0], c[1]]);
+    const calls = (game.ctx.fillRect as any).mock.calls.map((c: any) => [c[0], c[1]]);
     // Convert pixel positions to tile coords
-    const tiles = calls.map(([px, py]) => [Math.round(px / TILE_SIZE), Math.round(py / TILE_SIZE)]);
+    const tiles = calls.map(([px, py]: [number, number]) => [Math.round(px / TILE_SIZE), Math.round(py / TILE_SIZE)]);
     expect(tiles).toEqual(expect.arrayContaining([[2,4],[4,4]]));
   });
 
   test('lizord shows knight move endpoints', () => {
     const game = makeMinimalGame();
     const rm = new RenderManager(game);
-    rm.ctx = game.ctx;
+    (rm as any).ctx = game.ctx as any;
 
     const enemy = { x: 4, y: 4, health: 1, enemyType: 'lizord', isWalkable: () => true };
     game.enemies.push(enemy);
     rm.startHoldFeedback(4, 4);
-    rm['_drawTapFeedback']();
+    (rm as any)['_drawTapFeedback']();
 
     // Expect at least one knight endpoint to be drawn, e.g., (6,5)
-    const tiles = game.ctx.fillRect.mock.calls.map(([px,py]) => [Math.round(px / TILE_SIZE), Math.round(py / TILE_SIZE)]);
+    const tiles = (game.ctx.fillRect as any).mock.calls.map(([px, py]: [number, number]) => [Math.round(px / TILE_SIZE), Math.round(py / TILE_SIZE)]);
     expect(tiles).toEqual(expect.arrayContaining([[6,5]]));
   });
 
   test('lizardeaux shows orthogonal rays until blocked', () => {
     const game = makeMinimalGame();
     const rm = new RenderManager(game);
-    rm.ctx = game.ctx;
+    (rm as any).ctx = game.ctx as any;
 
     // Put a blocking non-walkable tile at (4,2)
     game.grid[2][4] = TILE_TYPES.EXIT; // still walkable in default rules, but we'll mock isWalkable
 
     const enemy = {
       x: 4, y: 4, health: 1, enemyType: 'lizardeaux',
-      isWalkable: (x, y, g) => {
+      isWalkable: (x: number, y: number, g: any) => {
         // block north one tile away
         if (x === 4 && y === 3) return false;
         return true;
@@ -109,9 +109,9 @@ describe('RenderManager enemy attack range overlay', () => {
     game.enemies.push(enemy);
 
     rm.startHoldFeedback(4, 4);
-    rm['_drawTapFeedback']();
+    (rm as any)['_drawTapFeedback']();
 
-    const tiles = game.ctx.fillRect.mock.calls.map(([px,py]) => [Math.round(px / TILE_SIZE), Math.round(py / TILE_SIZE)]);
+    const tiles = (game.ctx.fillRect as any).mock.calls.map(([px, py]: [number, number]) => [Math.round(px / TILE_SIZE), Math.round(py / TILE_SIZE)]);
     // Since north is blocked at (4,3), we should not see (4,2) as target; but east should be present (5,4)
     expect(tiles).toEqual(expect.arrayContaining([[5,4]]));
     expect(tiles).not.toEqual(expect.arrayContaining([[4,2]]));

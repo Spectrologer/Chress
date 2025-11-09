@@ -1,4 +1,4 @@
-import { PlayerStatsUI } from '../ui/PlayerStatsUI';
+import { PlayerStatsUI } from '../src/ui/PlayerStatsUI';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks';
@@ -47,7 +47,7 @@ describe('PlayerStatsUI', () => {
     });
 
     // Clear event bus
-    eventBus.clear?.() || eventBus.offAll?.();
+    if (eventBus.clear) eventBus.clear();
 
     // Create PlayerStatsUI instance
     playerStatsUI = new PlayerStatsUI(mockGame);
@@ -55,7 +55,7 @@ describe('PlayerStatsUI', () => {
 
   afterEach(() => {
     teardownDOMFixture();
-    eventBus.clear?.() || eventBus.offAll?.();
+    if (eventBus.clear) eventBus.clear();
   });
 
   describe('Initialization', () => {
@@ -80,27 +80,27 @@ describe('PlayerStatsUI', () => {
 
   describe('updateProgressBar()', () => {
     test('should update bar width based on percentage', () => {
-      const bar = document.getElementById('thirst-progress');
+      const bar = document.getElementById('thirst-progress') as HTMLElement;
 
       playerStatsUI.updateProgressBar('thirst-progress', 25, 50);
 
-      expect(bar.style.width).toBe('50%');
+      expect(bar?.style.width).toBe('50%');
     });
 
     test('should handle full bar (100%)', () => {
-      const bar = document.getElementById('hunger-progress');
+      const bar = document.getElementById('hunger-progress') as HTMLElement;
 
       playerStatsUI.updateProgressBar('hunger-progress', 50, 50);
 
-      expect(bar.style.width).toBe('100%');
+      expect(bar?.style.width).toBe('100%');
     });
 
     test('should handle empty bar (0%)', () => {
-      const bar = document.getElementById('thirst-progress');
+      const bar = document.getElementById('thirst-progress') as HTMLElement;
 
       playerStatsUI.updateProgressBar('thirst-progress', 0, 50);
 
-      expect(bar.style.width).toBe('0%');
+      expect(bar?.style.width).toBe('0%');
     });
 
     test('should handle missing bar element gracefully', () => {
@@ -117,11 +117,11 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const thirstBar = document.getElementById('thirst-progress');
-      const hungerBar = document.getElementById('hunger-progress');
+      const thirstBar = document.getElementById('thirst-progress') as HTMLElement;
+      const hungerBar = document.getElementById('hunger-progress') as HTMLElement;
 
-      expect(thirstBar.style.width).toBe('80%'); // 40/50 = 80%
-      expect(hungerBar.style.width).toBe('50%'); // 25/50 = 50%
+      expect(thirstBar?.style.width).toBe('80%'); // 40/50 = 80%
+      expect(hungerBar?.style.width).toBe('50%'); // 25/50 = 50%
     });
 
     test('should add pulsating class when hunger is low', () => {
@@ -129,8 +129,8 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const hungerLabel = document.querySelector('.hunger-bar .bar-label');
-      expect(hungerLabel.classList.contains('pulsating')).toBe(true);
+      const hungerLabel = document.querySelector('.hunger-bar .bar-label') as HTMLElement;
+      expect(hungerLabel?.classList.contains('pulsating')).toBe(true);
     });
 
     test('should add pulsating class when thirst is low', () => {
@@ -138,8 +138,8 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const thirstLabel = document.querySelector('.thirst-bar .bar-label');
-      expect(thirstLabel.classList.contains('pulsating')).toBe(true);
+      const thirstLabel = document.querySelector('.thirst-bar .bar-label') as HTMLElement;
+      expect(thirstLabel?.classList.contains('pulsating')).toBe(true);
     });
 
     test('should remove pulsating class when hunger is not low', () => {
@@ -147,8 +147,8 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const hungerLabel = document.querySelector('.hunger-bar .bar-label');
-      expect(hungerLabel.classList.contains('pulsating')).toBe(false);
+      const hungerLabel = document.querySelector('.hunger-bar .bar-label') as HTMLElement;
+      expect(hungerLabel?.classList.contains('pulsating')).toBe(false);
     });
 
     test('should update heart display based on health', () => {
@@ -156,10 +156,10 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const hearts = document.querySelectorAll('.heart-icon');
-      expect(hearts[0].style.opacity).toBe('1');
-      expect(hearts[1].style.opacity).toBe('1');
-      expect(hearts[2].style.opacity).toBe('0.3');
+      const hearts = document.querySelectorAll<HTMLElement>('.heart-icon');
+      expect(hearts[0]?.style.opacity).toBe('1');
+      expect(hearts[1]?.style.opacity).toBe('1');
+      expect(hearts[2]?.style.opacity).toBe('0.3');
     });
 
     test('should add grayscale filter to lost hearts', () => {
@@ -167,10 +167,10 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const hearts = document.querySelectorAll('.heart-icon');
-      expect(hearts[0].style.filter).toBe('none');
-      expect(hearts[1].style.filter).toBe('grayscale(100%)');
-      expect(hearts[2].style.filter).toBe('grayscale(100%)');
+      const hearts = document.querySelectorAll<HTMLElement>('.heart-icon');
+      expect(hearts[0]?.style.filter).toBe('none');
+      expect(hearts[1]?.style.filter).toBe('grayscale(100%)');
+      expect(hearts[2]?.style.filter).toBe('grayscale(100%)');
     });
 
     test('should add pulsating class to last heart when health is 1', () => {
@@ -188,8 +188,8 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const axeIcon = document.querySelector('.axe-ability-icon');
-      expect(axeIcon.style.display).toBe('block');
+      const axeIcon = document.querySelector('.axe-ability-icon') as HTMLElement;
+      expect(axeIcon?.style.display).toBe('block');
     });
 
     test('should hide axe icon when player does not have axe ability', () => {
@@ -197,8 +197,8 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const axeIcon = document.querySelector('.axe-ability-icon');
-      expect(axeIcon.style.display).toBe('none');
+      const axeIcon = document.querySelector('.axe-ability-icon') as HTMLElement;
+      expect(axeIcon?.style.display).toBe('none');
     });
 
     test('should show hammer icon when player has hammer ability', () => {
@@ -206,8 +206,8 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const hammerIcon = document.querySelector('.hammer-ability-icon');
-      expect(hammerIcon.style.display).toBe('block');
+      const hammerIcon = document.querySelector('.hammer-ability-icon') as HTMLElement;
+      expect(hammerIcon?.style.display).toBe('block');
     });
 
     test('should update inventory display when inventoryManager exists', () => {
@@ -239,9 +239,9 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const hearts = document.querySelectorAll('.heart-icon');
+      const hearts = document.querySelectorAll<HTMLElement>('.heart-icon');
       hearts.forEach(heart => {
-        expect(heart.style.opacity).toBe('0.3');
+        expect(heart?.style.opacity).toBe('0.3');
       });
     });
 
@@ -261,11 +261,11 @@ describe('PlayerStatsUI', () => {
 
       playerStatsUI.updatePlayerStats();
 
-      const axeIcon = document.querySelector('.axe-ability-icon');
-      const hammerIcon = document.querySelector('.hammer-ability-icon');
+      const axeIcon = document.querySelector('.axe-ability-icon') as HTMLElement;
+      const hammerIcon = document.querySelector('.hammer-ability-icon') as HTMLElement;
 
-      expect(axeIcon.style.display).toBe('block');
-      expect(hammerIcon.style.display).toBe('block');
+      expect(axeIcon?.style.display).toBe('block');
+      expect(hammerIcon?.style.display).toBe('block');
     });
   });
 

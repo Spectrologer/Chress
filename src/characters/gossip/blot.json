@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Got a promotion, dream house, loving partner. Still wake up sad. Maybe happiness is broken?",
-        "buttonText": "Sorry..."
+        "text": "Every day I wake up in spite of everything, against everything.",
+        "buttonText": "It's all about framing, man."
       },
       {
         "id": "msg_1",
-        "text": "Everything's perfect on paper. So why does it feel like I'm living in a really boring dystopia?",
-        "buttonText": "I feel that."
+        "text": "Have you seen the news lately? What's the point?",
+        "buttonText": "You're an object of histroy bro."
       },
       {
         "id": "msg_2",
-        "text": "Achieved all my goals by 30. Turns out goals were just distractions from the void. Cool.",
-        "buttonText": "Relatable."
+        "text": "They nerfed my main.",
+        "buttonText": "I'm so sorry."
       }
     ]
   },

@@ -3,7 +3,7 @@
   "name": "Brush",
   "type": "dialogue",
   "metadata": {
-    "description": "An artistic character who paints the world with color.",
+    "description": "An artistic character living inside of a bush who dreams of the world in hypercolor.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Every stroke tells a story. This one says 'existential dread in cerulean.' Beautiful, no?",
-        "buttonText": "Sure."
+        "text": "Oh, beautiful, yes, stand just like that, your face at that angle",
+        "buttonText": "Huh?"
       },
       {
         "id": "msg_1",
-        "text": "I don't just paint landscapes. I paint EMOTIONS. This canvas is feeling very Tuesday.",
-        "buttonText": "Artsy."
+        "text": "It's the golden hour. The sun is setting and the sky is on fire. It burns in your eyes.",
+        "buttonText": "Ummm?"
       },
       {
         "id": "msg_2",
-        "text": "My magnum opus? A single dot. Took me seven years. The critics don't understand genius.",
-        "buttonText": "Deep."
+        "text": "You could be my masterpiece.",
+        "buttonText": "I have to get going."
       }
     ]
   },

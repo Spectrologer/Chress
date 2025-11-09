@@ -68,7 +68,7 @@ export class InventoryUI {
 
             // Render all slots up to MAX_INVENTORY_SIZE, creating empty slots for null items
             for (let idx = 0; idx < INVENTORY_CONSTANTS.MAX_INVENTORY_SIZE; idx++) {
-                const item = this.game.player.inventory[idx];
+                const item = this.game.player?.inventory[idx];
                 let slot: HTMLDivElement;
 
                 if (item && item !== null) {
@@ -88,7 +88,7 @@ export class InventoryUI {
     private createInventorySlot(item: UIInventoryItem, idx: number): HTMLDivElement {
         const slot = document.createElement('div');
         slot.className = 'inventory-slot';
-        slot.style.cursor = this.game.player.isDead() ? 'not-allowed' : 'pointer';
+        slot.style.cursor = this.game.playerFacade?.isDead() ? 'not-allowed' : 'pointer';
 
         // Visuals
         this.addItemVisuals(slot, item);
@@ -109,11 +109,11 @@ export class InventoryUI {
         switch (item.type) {
             case 'food':
                 this._createItemImage(slot, `assets/${item.foodType}`, item);
-                if ((item.quantity || 0) > 1) this._addUsesIndicator(slot, item);
+                if (typeof item.quantity === 'number' && item.quantity > 1) this._addUsesIndicator(slot, item);
                 break;
             case 'water':
                 slot.classList.add('item-water');
-                if ((item.quantity || 0) > 1) this._addUsesIndicator(slot, item);
+                if (typeof item.quantity === 'number' && item.quantity > 1) this._addUsesIndicator(slot, item);
                 break;
             case 'axe':
                 slot.classList.add('item-axe');
@@ -131,17 +131,17 @@ export class InventoryUI {
                 break;
             case 'bomb':
                 this._createItemImage(slot, 'assets/items/misc/bomb.png', item);
-                if ((item.quantity || 0) > 1) this._addUsesIndicator(slot, item);
+                if (typeof item.quantity === 'number' && item.quantity > 1) this._addUsesIndicator(slot, item);
                 break;
             case 'heart':
                 slot.classList.add('item-heart');
-                if ((item.quantity || 0) > 1) {
+                if (typeof item.quantity === 'number' && item.quantity > 1) {
                     this._addUsesIndicator(slot, item);
                 }
                 break;
             case 'note':
                 slot.classList.add('item-note');
-                if ((item.quantity || 0) > 1) this._addUsesIndicator(slot, item);
+                if (typeof item.quantity === 'number' && item.quantity > 1) this._addUsesIndicator(slot, item);
                 break;
             case 'book_of_time_travel':
                 slot.classList.add('item-book');
@@ -208,7 +208,7 @@ export class InventoryUI {
             if (!itemToUse) return false;
 
             // Verify the item is still in the inventory
-            const stillInInventory = this.game.player.inventory.includes(itemToUse);
+            const stillInInventory = this.game.player?.inventory.includes(itemToUse);
             if (!stillInInventory) {
                 if ((window as any).inventoryDebugMode) logger.debug('[INV.UI] item no longer in inventory', { itemType: itemToUse.type });
                 return false;
@@ -262,7 +262,7 @@ export class InventoryUI {
             if (_lastPointerTriggeredUseTime && (now - _lastPointerTriggeredUseTime) < TIMING_CONSTANTS.POINTER_ACTION_DEBOUNCE) return;
             // Also ignore click if it follows a touch pointer (legacy behavior)
             if (_lastPointerWasTouch && (now - _lastPointerTime) < TIMING_CONSTANTS.TOUCH_DEBOUNCE) return;
-            if (this.game.player.isDead()) return;
+            if (this.game.playerFacade?.isDead()) return;
             if (item.type === 'bomb') return; // bomb handled differently
             if (!isDisablable || !item.disabled) {
                 useItem(item);
@@ -306,7 +306,10 @@ export class InventoryUI {
                     item._suppressContextMenuUntil = Date.now() + TIMING_CONSTANTS.ITEM_CONTEXT_MENU_SUPPRESS;
                 }
             }, TIMING_CONSTANTS.LONG_PRESS_TIMEOUT);
-            (e.target as Element)?.setPointerCapture?.(e.pointerId);
+            const downTarget = e.target as Element;
+            if (downTarget?.setPointerCapture) {
+                downTarget.setPointerCapture(e.pointerId);
+            }
             // store start coords on the slot element so move handler can access them
             (slot as InventorySlotElement)._pressStartX = startX;
             (slot as InventorySlotElement)._pressStartY = startY;
@@ -342,14 +345,17 @@ export class InventoryUI {
             if (pressPointerId !== e.pointerId) return;
             if (pressTimeout) { clearTimeout(pressTimeout); pressTimeout = null; }
             if (!isLongPress) {
-                if (this.game.player.isDead()) return;
+                if (this.game.playerFacade?.isDead()) return;
                 if (clickedItem && clickedItem.type === 'bomb') return;
                 if (clickedItem && (!isDisablable || !clickedItem.disabled)) {
                     useItem(clickedItem);
                     _lastPointerTriggeredUseTime = Date.now();
                 }
             }
-            (e.target as Element)?.releasePointerCapture?.(e.pointerId);
+            const upTarget = e.target as Element;
+            if (upTarget?.releasePointerCapture) {
+                upTarget.releasePointerCapture(e.pointerId);
+            }
             // If a long-press created a pending toggle, commit it now (stable place to change data)
             if (item._pendingToggle) {
                 delete item._pendingToggle;
@@ -384,13 +390,13 @@ export class InventoryUI {
                 lastBombClickTime = now;
 
                 // Delegate to unified interaction handler
-                const bombItem = this.game.player.inventory.find(i => i.type === 'bomb');
+                const bombItem = this.game.player?.inventory.find(i => i.type === 'bomb');
                 if (bombItem) {
                     const last = this._itemLastUsed.get(bombItem) || 0;
                     const now = Date.now();
                     if (now - last >= TIMING_CONSTANTS.ITEM_USE_DEBOUNCE) {
                         this._itemLastUsed.set(bombItem, now);
-                        this.game.inventoryInteractionHandler.handleBombInteraction(bombItem, {
+                        this.game.inventoryInteractionHandler?.handleBombInteraction(bombItem, {
                             fromRadial: false,
                             isDoubleClick: isDouble
                         });

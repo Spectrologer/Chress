@@ -1,5 +1,6 @@
 import { PanelEventHandler } from './PanelEventHandler';
 import { EventListenerManager } from '@utils/EventListenerManager';
+import { logger } from '@core/logger';
 
 interface GameInstance {
     player: any;
@@ -28,9 +29,9 @@ export class ConfigPanelManager {
      * Shows the config overlay with current settings
      */
     showConfigOverlay(): void {
-        console.log('[ConfigPanelManager] showConfigOverlay called');
+        logger.log('[ConfigPanelManager] showConfigOverlay called');
         if (!this.configOverlay) {
-            console.error('[ConfigPanelManager] configOverlay element not found!');
+            logger.error('[ConfigPanelManager] configOverlay element not found!');
             return;
         }
 
@@ -41,8 +42,8 @@ export class ConfigPanelManager {
 
         // Make overlay visible
         this.configOverlay.classList.add('show');
-        console.log('[ConfigPanelManager] Overlay classList after adding show:', this.configOverlay.classList.toString());
-        console.log('[ConfigPanelManager] Overlay display style:', window.getComputedStyle(this.configOverlay).display);
+        logger.log('[ConfigPanelManager] Overlay classList after adding show:', this.configOverlay.classList.toString());
+        logger.log('[ConfigPanelManager] Overlay display style:', window.getComputedStyle(this.configOverlay).display);
 
         // Show inner panel immediately (animations removed)
         const inner = this.configOverlay.querySelector<HTMLElement>('.stats-panel');

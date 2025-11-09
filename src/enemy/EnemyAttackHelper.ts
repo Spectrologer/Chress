@@ -2,6 +2,9 @@ import audioManager from '@utils/AudioManager';
 import { ANIMATION_CONSTANTS } from '@core/constants/index';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
+import type { Enemy } from '@entities/Enemy';
+import type { Player } from '@entities/Player';
+import type { Grid } from '@types/game';
 
 interface AttackOptions {
     skipKnockback?: boolean;
@@ -18,7 +21,7 @@ export class EnemyAttackHelper {
      * @param {Object} enemy - The attacking enemy
      * @param {Object} audioManager - Audio manager instance (optional, uses default if not provided)
      */
-    static performAttackAnimation(enemy, audioManagerInstance = audioManager) {
+    static performAttackAnimation(enemy: Enemy, audioManagerInstance: typeof audioManager = audioManager): void {
         enemy.justAttacked = true;
         enemy.attackAnimation = ANIMATION_CONSTANTS.ATTACK_ANIMATION_FRAMES;
 
@@ -34,7 +37,7 @@ export class EnemyAttackHelper {
      * @param {number} playerX - Player's X position
      * @param {number} playerY - Player's Y position
      */
-    static emitBumpEvent(enemy, playerX, playerY) {
+    static emitBumpEvent(enemy: Enemy, playerX: number, playerY: number): void {
         eventBus.emit(EventTypes.ANIMATION_BUMP, {
             dx: enemy.x - playerX,
             dy: enemy.y - playerY,
@@ -50,7 +53,7 @@ export class EnemyAttackHelper {
      * @param {number} playerX - Player's X position
      * @param {number} playerY - Player's Y position
      */
-    static emitBumpEventWithDirection(dx, dy, playerX, playerY) {
+    static emitBumpEventWithDirection(dx: number, dy: number, playerX: number, playerY: number): void {
         eventBus.emit(EventTypes.ANIMATION_BUMP, {
             dx: dx,
             dy: dy,
@@ -65,7 +68,7 @@ export class EnemyAttackHelper {
      * @param {number} knockbackY - Target Y position after knockback
      * @param {string} source - Source identifier for knockback (e.g., 'enemy_ram', 'enemy_charge')
      */
-    static emitKnockbackEvent(knockbackX, knockbackY, source) {
+    static emitKnockbackEvent(knockbackX: number, knockbackY: number, source: string): void {
         eventBus.emit(EventTypes.PLAYER_KNOCKBACK, {
             x: knockbackX,
             y: knockbackY,
@@ -83,7 +86,7 @@ export class EnemyAttackHelper {
      * @param {string} source - Attack source identifier (e.g., 'enemy_ram')
      * @param {AttackOptions} options - Optional configuration
      */
-    static performCompleteAttack(enemy, player, playerX, playerY, grid, source, options: AttackOptions = {}) {
+    static performCompleteAttack(enemy: Enemy, player: Player, playerX: number, playerY: number, grid: Grid, source: string, options: AttackOptions = {}): void {
         // Deal damage
         player.takeDamage(enemy.attack);
 
@@ -130,7 +133,7 @@ export class EnemyAttackHelper {
      * @param {number} playerY - Player's current Y
      * @returns {Object} Knockback position {x, y}
      */
-    static calculateKnockbackPosition(attackDx, attackDy, playerX, playerY) {
+    static calculateKnockbackPosition(attackDx: number, attackDy: number, playerX: number, playerY: number): { x: number; y: number } {
         const absDx = Math.abs(attackDx);
         const absDy = Math.abs(attackDy);
         let knockbackX = playerX;

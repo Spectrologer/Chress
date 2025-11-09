@@ -262,7 +262,7 @@ export class MessageManager {
     /**
      * Add a small note card to the stacked note container
      */
-    addNoteToStack(text: string, imageSrc: string | null = null, timeout: number = UI_TIMING_CONSTANTS.NOTE_DEFAULT_TIMEOUT): string {
+    addNoteToStack(text: string, imageSrc: string | null = null, timeout: number = UI_TIMING_CONSTANTS.NOTE_DEFAULT_TIMEOUT): string | null {
         return this.noteStack.addNoteToStack(text, imageSrc, timeout);
     }
 

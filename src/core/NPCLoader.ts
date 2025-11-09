@@ -9,6 +9,7 @@ import { TILE_TYPES } from './constants/index';
 import { npcList, npcPaths } from 'virtual:npc-list';
 import type { TradeData } from './SharedTypes';
 import type { ContentRegistry, NPCConfig } from './ContentRegistry';
+import { logger } from '@core/logger';
 
 interface DialogueNode {
     text: string;
@@ -145,7 +146,7 @@ export async function loadAllNPCs(registry: typeof ContentRegistry): Promise<voi
             const characterPath = isProduction ? 'characters' : 'src/characters';
             const response = await fetch(`${basePath}${characterPath}/${npc.path}.json`);
             if (!response.ok) {
-                console.warn(`[NPCLoader] Failed to load ${npc.path}.json: ${response.status}`);
+                logger.warn(`[NPCLoader] Failed to load ${npc.path}.json: ${response.status}`);
                 return;
             }
 
@@ -154,7 +155,7 @@ export async function loadAllNPCs(registry: typeof ContentRegistry): Promise<voi
 
             registry.registerNPC(npc.id, registryConfig);
         } catch (error) {
-            console.error(`[NPCLoader] Error loading ${npc.id}:`, error);
+            logger.error(`[NPCLoader] Error loading ${npc.id}:`, error);
         }
     });
 
@@ -192,14 +193,14 @@ export async function loadAllStatues(): Promise<void> {
             const characterPath = isProduction ? 'characters' : 'src/characters';
             const response = await fetch(`${basePath}${characterPath}/statues/${statueType}.json`);
             if (!response.ok) {
-                console.warn(`[NPCLoader] Failed to load statue ${statueType}.json: ${response.status}`);
+                logger.warn(`[NPCLoader] Failed to load statue ${statueType}.json: ${response.status}`);
                 return;
             }
 
             const data: NPCData = await response.json();
             statueData.set(statueType, data);
         } catch (error) {
-            console.error(`[NPCLoader] Error loading statue ${statueType}:`, error);
+            logger.error(`[NPCLoader] Error loading statue ${statueType}:`, error);
         }
     });
 

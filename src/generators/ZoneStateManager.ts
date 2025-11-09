@@ -16,11 +16,11 @@ export class ZoneStateManager {
     /**
      * Get the zone level (region) for given coordinates
      *
-     * @param {number} zoneX - Zone X coordinate
-     * @param {number} zoneY - Zone Y coordinate
-     * @returns {number} Zone level (1-5)
+     * @param zoneX - Zone X coordinate
+     * @param zoneY - Zone Y coordinate
+     * @returns Zone level (1-5)
      */
-    static getZoneLevel(zoneX, zoneY) {
+    static getZoneLevel(zoneX: number, zoneY: number): number {
         const dist = Math.max(Math.abs(zoneX), Math.abs(zoneY));
         return getZoneLevelFromDistance(dist);
     }
@@ -30,10 +30,10 @@ export class ZoneStateManager {
      *
      * Used for seeded random generation based on zone coordinates
      *
-     * @param {string} str - String to hash (e.g., "0,0" for zone coords)
-     * @returns {number} Hash code
+     * @param str - String to hash (e.g., "0,0" for zone coords)
+     * @returns Hash code
      */
-    static hashCode(str) {
+    static hashCode(str: string): number {
         let hash = 0;
         if (str.length === 0) return hash;
         for (const char of str) {

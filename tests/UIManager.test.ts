@@ -1,4 +1,4 @@
-import { UIManager } from '../ui/UIManager';
+import { UIManager } from '../src/ui/UIManager';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks';
@@ -40,8 +40,8 @@ describe('UIManager', () => {
     mockGame = createMockGame({ player: mockPlayer });
 
     // Mock canvas context for MiniMap
-    const expandedCanvas = document.getElementById('expandedMapCanvas');
-    const zoneMapCanvas = document.getElementById('zoneMap');
+    const expandedCanvas = document.getElementById('expandedMapCanvas') as any;
+    const zoneMapCanvas = document.getElementById('zoneMap') as any;
     const mockCtx = {
       canvas: expandedCanvas,
       clearRect: vi.fn(),
@@ -83,7 +83,7 @@ describe('UIManager', () => {
     };
 
     // Clear event bus
-    eventBus.clear?.() || eventBus.offAll?.();
+    (eventBus as any).clear?.() || (eventBus as any).offAll?.();
 
     // Create UIManager
     uiManager = new UIManager(mockGame);
@@ -92,7 +92,7 @@ describe('UIManager', () => {
   afterEach(() => {
     teardownDOMFixture();
     // Clear event listeners
-    eventBus.clear?.() || eventBus.offAll?.();
+    (eventBus as any).clear?.() || (eventBus as any).offAll?.();
   });
 
   describe('Initialization', () => {
@@ -126,7 +126,7 @@ describe('UIManager', () => {
       eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
 
       // Points should be updated
-      expect(pointsElement.textContent).toBe('100');
+      expect(pointsElement?.textContent).toBe('100');
     });
 
     test('should update stats when player stats change', () => {
@@ -229,7 +229,7 @@ describe('UIManager', () => {
       uiManager.updateZoneDisplay();
 
       const mapInfo = document.getElementById('map-info');
-      expect(mapInfo.innerHTML).toContain("Museum");
+      expect(mapInfo?.innerHTML).toContain("Museum");
     });
 
     test('should display underground depth info for dimension 2', () => {
@@ -241,9 +241,9 @@ describe('UIManager', () => {
       uiManager.updateZoneDisplay();
 
       const mapInfo = document.getElementById('map-info');
-      expect(mapInfo.innerHTML).toContain('Z-5');
-      expect(mapInfo.innerHTML).toContain('3,4');
-      expect(mapInfo.innerHTML).toContain('DISCOVERIES: 2'); // 3 visited - 1 spent
+      expect(mapInfo?.innerHTML).toContain('Z-5');
+      expect(mapInfo?.innerHTML).toContain('3,4');
+      expect(mapInfo?.innerHTML).toContain('DISCOVERIES: 2'); // 3 visited - 1 spent
     });
 
     test('should respond to ZONE_CHANGED event', () => {

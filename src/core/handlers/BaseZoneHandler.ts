@@ -65,7 +65,7 @@ export class BaseZoneHandler {
     /**
      * Generate zone exits based on connections
      */
-    generateExits(zoneConnections) {
+    generateExits(zoneConnections: Record<string, unknown>): void {
         this.zoneGen.generateExits(
             this.zoneX,
             this.zoneY,
@@ -127,7 +127,7 @@ export class BaseZoneHandler {
     /**
      * Calculate enemy probability based on zone level and counter
      */
-    calculateEnemyProbability(baseProbabilities, multiplier = 1) {
+    calculateEnemyProbability(baseProbabilities: Record<number, number>, multiplier = 1): number {
         const baseEnemyProbability = baseProbabilities[this.zoneLevel] || baseProbabilities[1];
         const zoneCounter = this.game.zoneGenState.getZoneCounter();
         return (baseEnemyProbability + Math.floor(zoneCounter / 10) * 0.01) * multiplier;
@@ -136,7 +136,7 @@ export class BaseZoneHandler {
     /**
      * Attempt to spawn an enemy based on probability
      */
-    spawnEnemyIfProbable(probability) {
+    spawnEnemyIfProbable(probability: number): void {
         if (Math.random() < probability) {
             this.enemyGenerator.addRandomEnemyWithValidation(
                 this.zoneLevel,

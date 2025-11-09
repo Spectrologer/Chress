@@ -71,6 +71,8 @@ export class GameContext extends GameContextCommands implements IGame {
     declare specialZones: Map<string, any>;
     declare defeatedEnemies: Set<string>;
     declare currentRegion: string | null;
+    declare partnerCubes: Map<string, any>;
+    declare cubeLinkages: Map<string, any>;
     declare canvas: HTMLCanvasElement | null;
     declare ctx: CanvasRenderingContext2D | null;
     declare mapCanvas: HTMLCanvasElement | null;

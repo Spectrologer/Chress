@@ -170,7 +170,7 @@ export class ItemManager {
                         case TILE_TYPES.BOOK_OF_TIME_TRAVEL:
                         case TILE_TYPES.BOW:
                         case TILE_TYPES.SHOVEL:
-                        case TILE_TYPES.FISCHERS_WAND:
+                        case TILE_TYPES.FISCHERS_CUBE:
                             const itemType = ItemMetadata.TILE_TYPE_MAP[tile.type];
                             if (itemType) {
                                 pickup({ type: itemType, uses: tile.uses } as InventoryItem);

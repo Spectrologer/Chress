@@ -26,6 +26,7 @@ export type TileObject = {
     enemyType?: string;
     direction?: string;
     discovered?: boolean;
+    portKind?: string;
     actionsSincePlaced?: number;
     justPlaced?: boolean;
 };

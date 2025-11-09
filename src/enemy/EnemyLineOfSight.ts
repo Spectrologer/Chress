@@ -3,7 +3,7 @@ import {
     checkOrthogonalLineOfSight as checkOrthogonalLOS,
     checkQueenLineOfSight as checkQueenLOS
 } from '@utils/LineOfSightUtils';
-import type { GridCompat } from '@/types/core';
+import type { GridCompat } from '@types/core';
 
 interface Enemy {
     x: number;

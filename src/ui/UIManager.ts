@@ -103,14 +103,14 @@ export class UIManager {
                 // Update player card points
                 const pointsValueElement = document.querySelector<HTMLElement>('.player-points .points-value');
                 if (pointsValueElement) {
-                    pointsValueElement.textContent = String(this.game.player.getPoints());
+                    pointsValueElement.textContent = String(this.game.playerFacade?.getPoints() ?? 0);
                 }
             })
         );
     }
 
     updatePlayerPosition(): void {
-        const pos = this.game.player.getPosition();
+        const pos = this.game.playerFacade?.getPosition();
         // document.getElementById('player-pos').textContent = `${pos.x}, ${pos.y}`;
 
         // Close contextual windows on move
@@ -120,7 +120,8 @@ export class UIManager {
     }
 
     updateZoneDisplay(): void {
-        const zone = this.game.player.getCurrentZone();
+        const zone = this.game.playerFacade?.getCurrentZone();
+        if (!zone) return;
         // document.getElementById('current-zone').textContent = `${zone.x}, ${zone.y}`;
         this.miniMap.renderZoneMap();
 
@@ -137,14 +138,14 @@ export class UIManager {
             } else if (zone.dimension === 2) {
                 // Underground
                 // Display depth (z-1, z-2, ...)
-                const depth = this.game.player.undergroundDepth || 1;
-                const totalDiscoveries = this.game.player.getVisitedZones().size;
-                const spentDiscoveries = this.game.player.getSpentDiscoveries() || 0;
+                const depth = this.game.playerFacade?.getUndergroundDepth() || 1;
+                const totalDiscoveries = this.game.playerFacade?.getVisitedZones().size ?? 0;
+                const spentDiscoveries = this.game.playerFacade?.getSpentDiscoveries() || 0;
                 const availableDiscoveries = totalDiscoveries - spentDiscoveries;
                 mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">Z-${depth}, ${zone.x},${zone.y}<br>DISCOVERIES: ${availableDiscoveries}</span>`;
             } else {
-                const totalDiscoveries = this.game.player.getVisitedZones().size;
-                const spentDiscoveries = this.game.player.getSpentDiscoveries() || 0;
+                const totalDiscoveries = this.game.playerFacade?.getVisitedZones().size ?? 0;
+                const spentDiscoveries = this.game.playerFacade?.getSpentDiscoveries() || 0;
                 const availableDiscoveries = totalDiscoveries - spentDiscoveries;
                 const dimensionText = zone.dimension === 1 ? 'Interior' : '';
                 mapInfo.innerHTML = `<span style="font-variant: small-caps; font-weight: bold; font-size: 1.1em; padding: 4px 8px;">${zone.x}, ${zone.y}${dimensionText}<br>DISCOVERIES: ${availableDiscoveries}</span>`;
@@ -195,7 +196,7 @@ export class UIManager {
         this.messageManager.showOverlayMessageSilent(text, imageSrc);
     }
 
-    showOverlayMessage(text: string, imageSrc: string, isPersistent = false, isLargeText = false, useTypewriter = true): void {
+    showOverlayMessage(text: string, imageSrc: string | null = null, isPersistent = false, isLargeText = false, useTypewriter = true): void {
         this.messageManager.showOverlayMessage(text, imageSrc, isPersistent, isLargeText, useTypewriter);
     }
 
@@ -203,7 +204,7 @@ export class UIManager {
         const overlay = document.getElementById('game-over-overlay');
         const zonesDiscovered = document.getElementById('zones-discovered');
         if (zonesDiscovered) {
-            zonesDiscovered.textContent = String(this.game.player.getVisitedZones().size);
+            zonesDiscovered.textContent = String(this.game.playerFacade?.getVisitedZones().size ?? 0);
         }
         if (overlay) {
             overlay.style.display = 'flex';

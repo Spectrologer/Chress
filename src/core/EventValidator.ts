@@ -1,4 +1,5 @@
 import { EventTypes } from './EventTypes';
+import { logger } from '@core/logger';
 
 interface FieldValidator {
     required?: boolean;
@@ -53,7 +54,7 @@ export class EventValidator {
             return { valid: true, errors: [] };
         }
 
-        const errors = [];
+        const errors: string[] = [];
 
         // Validate required fields
         for (const [fieldName, validator] of Object.entries(schema)) {
@@ -104,7 +105,7 @@ export class EventValidator {
      * Enable or disable validation
      * @param {boolean} enabled - Whether validation is enabled
      */
-    setEnabled(enabled) {
+    setEnabled(enabled: boolean): void {
         this.enabled = enabled;
     }
 
@@ -113,14 +114,14 @@ export class EventValidator {
      * In strict mode, validation failures throw errors instead of just logging
      * @param {boolean} strict - Whether strict mode is enabled
      */
-    setStrictMode(strict) {
+    setStrictMode(strict: boolean): void {
         this.strictMode = strict;
     }
 
     /**
      * Register default schemas for core event types
      */
-    registerDefaultSchemas() {
+    registerDefaultSchemas(): void {
         // UI Dialog Events
         this.registerSchema(EventTypes.UI_DIALOG_SHOW, {
             type: {
@@ -135,7 +136,7 @@ export class EventValidator {
             buttonText: { type: 'string' },
             playerPos: {
                 type: 'object',
-                validator: (val) => {
+                validator: (val: any) => {
                     if (!val) return true;
                     if (typeof val.x !== 'number' || typeof val.y !== 'number') {
                         return 'playerPos must have numeric x and y properties';
@@ -145,7 +146,7 @@ export class EventValidator {
             },
             npcPos: {
                 type: 'object',
-                validator: (val) => {
+                validator: (val: any) => {
                     if (!val) return true;
                     if (typeof val.x !== 'number' || typeof val.y !== 'number') {
                         return 'npcPos must have numeric x and y properties';
@@ -233,7 +234,7 @@ export class EventValidator {
             startPos: {
                 required: true,
                 type: 'object',
-                validator: (val) => {
+                validator: (val: any) => {
                     if (typeof val.x !== 'number' || typeof val.y !== 'number') {
                         return 'startPos must have numeric x and y properties';
                     }
@@ -243,7 +244,7 @@ export class EventValidator {
             midPos: {
                 required: true,
                 type: 'object',
-                validator: (val) => {
+                validator: (val: any) => {
                     if (typeof val.x !== 'number' || typeof val.y !== 'number') {
                         return 'midPos must have numeric x and y properties';
                     }
@@ -253,7 +254,7 @@ export class EventValidator {
             endPos: {
                 required: true,
                 type: 'object',
-                validator: (val) => {
+                validator: (val: any) => {
                     if (typeof val.x !== 'number' || typeof val.y !== 'number') {
                         return 'endPos must have numeric x and y properties';
                     }
@@ -286,10 +287,10 @@ export const eventValidator = new EventValidator();
  * @param {Object} eventBus - The event bus to wrap
  * @returns {Object} - The wrapped event bus
  */
-export function wrapEventBusWithValidation(eventBus) {
+export function wrapEventBusWithValidation(eventBus: any): any {
     const originalEmit = eventBus.emit.bind(eventBus);
 
-    eventBus.emit = function(eventType, data) {
+    eventBus.emit = function(eventType: string, data: any): any {
         const validation = eventValidator.validate(eventType, data);
 
         if (!validation.valid) {
@@ -298,8 +299,8 @@ export function wrapEventBusWithValidation(eventBus) {
             if (eventValidator.strictMode) {
                 throw new Error(errorMessage);
             } else {
-                console.error(errorMessage);
-                console.error('Event data:', data);
+                logger.error(errorMessage);
+                logger.error('Event data:', data);
             }
         }
 

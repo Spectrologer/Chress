@@ -126,7 +126,9 @@ export class DialogueManager {
                 if (typeof imgPath === 'string' && imgPath.toLowerCase().endsWith('/bow.png')) {
                     imgStyle += ' transform: rotate(-90deg); transform-origin: center center;';
                 }
-            } catch (e) {}
+            } catch (e) {
+                logger.warn('[DialogueManager] Failed to check bow asset:', e);
+            }
 
             this.messageOverlay.innerHTML = /*html*/`
                 <img src="${imgPath}" style="${imgStyle}">
@@ -149,7 +151,9 @@ export class DialogueManager {
                 childSelector: '.dialogue-text',
                 minFontSize: 12
             });
-        } catch (e) {}
+        } catch (e) {
+            logger.warn('[DialogueManager] Failed to fit text:', e);
+        }
     }
 
     /**

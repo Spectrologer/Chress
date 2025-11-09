@@ -222,6 +222,14 @@ export class TileTypeChecker {
         return TileTypeChecker.isTileType(tile, TILE_TYPES.SHOVEL_STATUE);
     }
 
+    static isFischersCube(tile: Tile): boolean {
+        return TileTypeChecker.isTileType(tile, TILE_TYPES.FISCHERS_CUBE);
+    }
+
+    static isTeleportBranch(tile: Tile): boolean {
+        return TileTypeChecker.isTileType(tile, TILE_TYPES.TELEPORT_BRANCH);
+    }
+
     // ========================================
     // CATEGORY CHECKERS
     // ========================================
@@ -255,6 +263,8 @@ export class TileTypeChecker {
                type === TILE_TYPES.BOOK_OF_TIME_TRAVEL ||
                type === TILE_TYPES.BOW ||
                type === TILE_TYPES.SHOVEL ||
+               type === TILE_TYPES.FISCHERS_CUBE ||
+               type === TILE_TYPES.TELEPORT_BRANCH ||
                type === TILE_TYPES.FISCHERS_WAND;
     }
 
@@ -488,6 +498,8 @@ export const isBowStatue = (tile: Tile) => TileTypeChecker.isBowStatue(tile);
 export const isHorseStatue = (tile: Tile) => TileTypeChecker.isHorseStatue(tile);
 export const isBookStatue = (tile: Tile) => TileTypeChecker.isBookStatue(tile);
 export const isShovelStatue = (tile: Tile) => TileTypeChecker.isShovelStatue(tile);
+export const isFischersCube = (tile: Tile) => TileTypeChecker.isFischersCube(tile);
+export const isTeleportBranch = (tile: Tile) => TileTypeChecker.isTeleportBranch(tile);
 
 // Tile category checkers
 export const isWalkable = (tile: Tile) => TileTypeChecker.isWalkable(tile);

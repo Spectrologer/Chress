@@ -4,6 +4,7 @@ import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { Position } from '@core/Position';
 import { TeleportBranchEffect } from '@managers/inventory/effects/SpecialEffects';
+import { logger } from '@core/logger';
 import type { IGame, ICoordinates } from '@core/context';
 import type { TileObject } from '@core/SharedTypes';
 import type { InputManager } from './InputManager';
@@ -106,8 +107,8 @@ export class InteractionManager {
             (gridCoords, playerPos) => {
                 const bishopSpearCharge = this.combatManager.isValidBishopSpearCharge(Position.from(gridCoords), Position.from(playerPos));
                 // Only auto-start a bishop charge if the item is present in the main inventory (via facade)
-                if (bishopSpearCharge && this.game.playerFacade.findInInventory((item) => item === bishopSpearCharge.item)) {
-                    this.game.transientGameState.setPendingCharge(bishopSpearCharge);
+                if (bishopSpearCharge && this.game.playerFacade?.findInInventory((item) => item === bishopSpearCharge.item)) {
+                    this.game.transientGameState?.setPendingCharge(bishopSpearCharge);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
                         message: 'Tap again to confirm Bishop Charge',
@@ -124,8 +125,8 @@ export class InteractionManager {
             (gridCoords, playerPos) => {
                 const horseIconCharge = this.combatManager.isValidHorseIconCharge(Position.from(gridCoords), Position.from(playerPos));
                 // Only auto-start a knight charge if the item is present in the main inventory (via facade)
-                if (horseIconCharge && this.game.playerFacade.findInInventory((item) => item === horseIconCharge.item)) {
-                    this.game.transientGameState.setPendingCharge(horseIconCharge);
+                if (horseIconCharge && this.game.playerFacade?.findInInventory((item) => item === horseIconCharge.item)) {
+                    this.game.transientGameState?.setPendingCharge(horseIconCharge);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
                         message: 'Tap again to confirm Knight Charge',
@@ -142,8 +143,8 @@ export class InteractionManager {
             (gridCoords, playerPos) => {
                 const bowShot = this.combatManager.isValidBowShot(Position.from(gridCoords), Position.from(playerPos));
                 // Only auto-start a bow shot if the bow is in the main inventory (via facade)
-                if (bowShot && this.game.playerFacade.findInInventory((item) => item === bowShot.item)) {
-                    this.game.transientGameState.setPendingCharge(bowShot);
+                if (bowShot && this.game.playerFacade?.findInInventory((item) => item === bowShot.item)) {
+                    this.game.transientGameState?.setPendingCharge(bowShot);
                     // Emit event for confirmation prompt instead of direct UI call
                     eventBus.emit(EventTypes.UI_CONFIRMATION_SHOW, {
                         message: 'Tap again to confirm Bow Shot',
@@ -197,11 +198,15 @@ export class InteractionManager {
         // Example: delegate to NPC manager or handle directly
         // (Penne is a type of NPC or tile)
         // You may want to refactor this to a more generic handler if needed
-        return this.npcManager.interactWithPenne({ x: this.game.player.getPosition().x + 1, y: this.game.player.getPosition().y });
+        const pos = this.game.playerFacade?.getPosition();
+        if (!pos) return false;
+        return this.npcManager.interactWithPenne({ x: pos.x + 1, y: pos.y });
     }
 
     checkSquigInteraction(): boolean {
-        return this.npcManager.interactWithSquig({ x: this.game.player.getPosition().x + 1, y: this.game.player.getPosition().y });
+        const pos = this.game.playerFacade?.getPosition();
+        if (!pos) return false;
+        return this.npcManager.interactWithSquig({ x: pos.x + 1, y: pos.y });
     }
 
     checkItemPickup(): boolean {
@@ -231,27 +236,28 @@ export class InteractionManager {
                     const effect = new TeleportBranchEffect();
                     effect.apply(this.game as any, pending.cubeItem, {});
                     (transientState as any).clearPendingCubeActivation?.();
-                    eventBus.emit(EventTypes.UI_HIDE_MESSAGE, {});
+                    eventBus.emit(EventTypes.UI_DIALOG_HIDE, {});
                 } else {
                     // Cancelled - tapped somewhere else
                     (transientState as any).clearPendingCubeActivation?.();
-                    eventBus.emit(EventTypes.UI_HIDE_MESSAGE, {});
+                    eventBus.emit(EventTypes.UI_DIALOG_HIDE, {});
                 }
             }
             return true;
         }
 
         // Handle pending charge confirmation or cancellation
-        if (transientState.hasPendingCharge()) {
+        if (transientState?.hasPendingCharge()) {
             const pending = transientState.getPendingCharge();
-            let chargeDetails = null;
+            let chargeDetails: any = null;
 
             // If pending was initiated from the radial UI it will contain a
             // selectionType and an item but not a concrete target. Re-run the
             // validator for the tapped gridCoords to obtain a proper
             // chargeDetails object to confirm.
             if (pending && pending.selectionType) {
-                const playerPos = this.game.player.getPosition();
+                const playerPos = this.game.playerFacade?.getPosition();
+                if (!playerPos) return false;
                 // Re-run validators including radial inventory because selection
                 // originated from the radial UI and the item may live there.
                 if (pending.selectionType === 'bishop_spear') chargeDetails = this.combatManager.isValidBishopSpearCharge(Position.from(gridCoords), Position.from(playerPos), true);
@@ -276,11 +282,12 @@ export class InteractionManager {
             return true;
         }
 
-        const playerPos = this.game.player.getPositionObject();
+        const playerPos = this.game.playerFacade?.getPositionObject();
+        if (!playerPos) return false;
 
         // Delegate to specialized managers based on tile type and context
         for (const handler of this.interactionHandlers) {
-            if (handler(gridCoords, playerPos.toObject())) return true;
+            if (handler(gridCoords, playerPos)) return true;
         }
 
         // Fallback: if the player tapped their own tile and it's an exit/port,
@@ -289,27 +296,28 @@ export class InteractionManager {
         // in the controller (touch/mouse edge-cases). Keep best-effort try/catch
         // to avoid throwing during interaction processing.
         try {
-            if (playerPos.equals(clickedPos)) {
-                const tileUnderPlayer = playerPos.getTile(this.game.grid);
+            const clickPos = Position.from(clickedPos);
+            if (playerPos.x === clickPos.x && playerPos.y === clickPos.y) {
+                const tileUnderPlayer = this.game.gridManager?.getTile(playerPos.x, playerPos.y);
                 const tileType = (typeof tileUnderPlayer === 'object' && (tileUnderPlayer as TileObject)?.type !== undefined) ? (tileUnderPlayer as TileObject).type : tileUnderPlayer;
                 if (tileType === TILE_TYPES.PORT) {
-                    console.log('[InteractionManager] PORT tile detected, calling handlePortTransition');
-                    try { this.zoneManager.handlePortTransition(); } catch (e) { console.error('[InteractionManager] PORT transition error:', e); }
+                    logger.log('[InteractionManager] PORT tile detected, calling handlePortTransition');
+                    try { this.zoneManager.handlePortTransition(); } catch (e) { logger.error('[InteractionManager] PORT transition error:', e); }
                     return true;
                 }
                 if (tileType === TILE_TYPES.EXIT) {
-                    console.log('[InteractionManager] EXIT tile detected, calling handleExitTap');
-                    try { this.zoneManager.handleExitTap(playerPos.x, playerPos.y); } catch (e) { console.error('[InteractionManager] EXIT transition error:', e); }
+                    logger.log('[InteractionManager] EXIT tile detected, calling handleExitTap');
+                    try { this.zoneManager.handleExitTap(playerPos.x, playerPos.y); } catch (e) { logger.error('[InteractionManager] EXIT transition error:', e); }
                     return true;
                 }
             }
-        } catch (e) { console.error('[InteractionManager] Error checking port/exit:', e); }
+        } catch (e) { logger.error('[InteractionManager] Error checking port/exit:', e); }
 
     // If the tapped tile contains a live enemy, handle it here.
         // - If the player is adjacent, perform an immediate attack.
         // - Otherwise, mark the tap handled to prevent auto-pathing onto the enemy.
         const enemyCollection = this.game.enemyCollection;
-        const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y, true); // aliveOnly=true
+        const enemyAtCoords = enemyCollection?.findAt(gridCoords.x, gridCoords.y, true); // aliveOnly=true
         if (enemyAtCoords) {
             const dx = Math.abs(gridCoords.x - playerPos.x);
                 const dy = Math.abs(gridCoords.y - playerPos.y);
@@ -322,7 +330,7 @@ export class InteractionManager {
                 // Perform immediate player attack on the adjacent enemy
                     try {
                         // Start attack animation
-                        this.game.player.startAttackAnimation();
+                        this.game.playerFacade?.startAttackAnimation();
 
                         // Let enemy show its bump away from player
                         if (typeof enemyAtCoords.startBump === 'function') {
@@ -332,32 +340,35 @@ export class InteractionManager {
                         // If player has the axe, play the file-backed 'slash' SFX
                         // and mark the enemy to suppress the generic 'attack' sound
                         // in CombatManager (prevents double-playing). Use facade for ability check.
-                        if (this.game.playerFacade.hasAbility('axe')) {
+                        if (this.game.playerFacade?.hasAbility('axe')) {
                             audioManager.playSound('slash', { game: this.game });
                             enemyAtCoords._suppressAttackSound = true;
                         }
 
                         // Mark that player performed an attack (may be the start of a combo)
-                        try { this.game.player.setAction('attack'); } catch (e) {}
+                        try { this.game.playerFacade?.setAction('attack'); } catch (e) {
+                            logger.warn('[InteractionManager] Failed to set player action:', e);
+                        }
 
                         // Resolve defeat/points/removal via CombatManager. Pass initiator to
                         // allow consecutive-kill tracking. CombatManager returns info including
                         // consecutiveKills which we use to choose the animation.
-                        const result = this.game.combatManager.defeatEnemy(enemyAtCoords, 'player');
+                        const result = this.game.combatManager?.defeatEnemy(enemyAtCoords, 'player');
 
                         // CombatManager will record the action result for combo logic
 
-                        if (result && result.defeated) {
+                        if (result?.defeated) {
                             // If this was a consecutive kill (2 or more), perform a backflip
-                            if (result.consecutiveKills >= 2) {
-                                this.game.player.startBackflip();
+                            if (result.consecutiveKills && result.consecutiveKills >= 2) {
+                                this.game.playerFacade?.startBackflip();
                             } else {
                                 // Otherwise perform the normal bump towards enemy
-                                this.game.player.startBump(enemyAtCoords.x - playerPos.x, enemyAtCoords.y - playerPos.y);
+                                this.game.playerFacade?.startBump(enemyAtCoords.x - playerPos.x, enemyAtCoords.y - playerPos.y);
                             }
                         }
                     } catch (e) {
                         // Best-effort: don't let an animation error block game flow
+                        logger.warn('[InteractionManager] Attack animation error:', e);
                     }
 
                 // Trigger enemy turns (unless we just entered a zone)
@@ -365,15 +376,21 @@ export class InteractionManager {
                 if (gameWithLegacy.justEnteredZone) {
                     gameWithLegacy.justEnteredZone = false;
                 } else {
-                    try { this.game.startEnemyTurns?.(); } catch (e) {}
+                    try { this.game.startEnemyTurns?.(); } catch (e) {
+                        logger.warn('[InteractionManager] Failed to start enemy turns:', e);
+                    }
                     if (gameWithLegacy.isInPitfallZone) {
                         gameWithLegacy.pitfallTurnsSurvived = (gameWithLegacy.pitfallTurnsSurvived ?? 0) + 1;
                     }
                 }
 
                 // Update player visuals/stats after the attack
-                try { this.game.updatePlayerPosition(); } catch (e) {}
-                try { eventBus.emit(EventTypes.UI_UPDATE_STATS, {}); } catch (e) {}
+                try { this.game.updatePlayerPosition(); } catch (e) {
+                    logger.warn('[InteractionManager] Failed to update player position:', e);
+                }
+                try { eventBus.emit(EventTypes.UI_UPDATE_STATS, {}); } catch (e) {
+                    logger.warn('[InteractionManager] Failed to emit stats update:', e);
+                }
 
                 return true;
             }
@@ -393,7 +410,10 @@ export class InteractionManager {
         // Check adjacency and delegate to appropriate managers
         this.npcManager.forceInteractAt(Position.from(gridCoords));
         this.environmentManager.forceInteractAt(Position.from(gridCoords));
-        this.terrainManager.forceChoppableAction(Position.from(gridCoords), Position.from(this.game.player.getPosition()));
+        const playerPos = this.game.playerFacade?.getPosition();
+        if (playerPos) {
+            this.terrainManager.forceChoppableAction(Position.from(gridCoords), Position.from(playerPos));
+        }
 
         // Handle bomb force trigger
         this.bombManager.forceBombTrigger(gridCoords);

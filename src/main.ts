@@ -8,11 +8,12 @@ import { TILE_TYPES } from '@core/constants/index';
 import { registerAllContent } from '@config/ContentRegistrations';
 import { initializePWA } from '@utils/pwa-register';
 import { preloadCriticalModules } from '@utils/LazyLoader';
+import { logger } from '@core/logger';
 
 // Initialize game when the page loads
 window.addEventListener('DOMContentLoaded', async () => {
     // Initialize PWA features (service worker, install prompt)
-    initializePWA().catch(err => console.warn('[PWA] Initialization failed:', err));
+    initializePWA().catch(err => logger.warn('[PWA] Initialization failed:', err));
 
     // Preload critical modules in background
     preloadCriticalModules();

@@ -60,14 +60,18 @@ export class ZoneEventEmitter {
             }
         }
 
-        this.game.gameStateManager.saveGameState();
+        if (this.game.gameStateManager) {
+            this.game.gameStateManager.saveGameState();
+        }
 
         // Clear the one-time transition data
         const transientState = this.game.transientGameState;
         const portData = transientState.getPortTransitionData();
         try {
             logger?.debug?.(`Clearing portTransitionData (was=${JSON.stringify(portData)})`);
-        } catch (e) {}
+        } catch (e) {
+            logger.warn('[ZoneEventEmitter] Logger debug failed:', e);
+        }
         transientState.clearPortTransitionData();
     }
 }

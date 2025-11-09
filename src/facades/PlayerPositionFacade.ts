@@ -1,6 +1,7 @@
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { logger } from '@core/logger';
+import { Position as PositionClass } from '@core/Position';
 
 export interface Position {
     x: number;
@@ -57,6 +58,14 @@ export class PlayerPositionFacade {
      */
     getPosition(): Position {
         return this.player.getPosition();
+    }
+
+    /**
+     * Get player position as Position class instance (for methods like equals)
+     */
+    getPositionObject(): PositionClass {
+        const pos = this.player.getPosition();
+        return PositionClass.from(pos);
     }
 
     /**
@@ -242,6 +251,20 @@ export class PlayerPositionFacade {
         if (this.player.onZoneTransition) {
             this.player.onZoneTransition();
         }
+    }
+
+    /**
+     * Get visited zones set
+     */
+    getVisitedZones(): Set<string> {
+        return this.player.getVisitedZones?.() ?? new Set();
+    }
+
+    /**
+     * Check if a zone has been visited
+     */
+    hasVisitedZone(x: number, y: number, dimension: number = 0): boolean {
+        return this.player.hasVisitedZone?.(x, y, dimension) ?? false;
     }
 }
 

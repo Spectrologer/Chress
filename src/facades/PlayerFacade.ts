@@ -66,7 +66,7 @@ export class PlayerFacade {
     getPosition() { return this.position.getPosition(); }
 
     /** @param {number} x @param {number} y @param {boolean} emitEvent */
-    setPosition(x, y, emitEvent = true) { return this.position.setPosition(x, y, emitEvent); }
+    setPosition(x: number, y: number, emitEvent: boolean = true) { return this.position.setPosition(x, y, emitEvent); }
 
     /** @returns {number} */
     getX() { return this.position.getX(); }
@@ -78,16 +78,16 @@ export class PlayerFacade {
     getLastPosition() { return this.position.getLastPosition(); }
 
     /** @param {number} x @param {number} y */
-    setLastPosition(x, y) { return this.position.setLastPosition(x, y); }
+    setLastPosition(x: number, y: number) { return this.position.setLastPosition(x, y); }
 
     /** @param {number} x @param {number} y @param {Array} grid @param {number} fromX @param {number} fromY @returns {boolean} */
-    isWalkable(x, y, grid, fromX = -1, fromY = -1) { return this.position.isWalkable(x, y, grid, fromX, fromY); }
+    isWalkable(x: number, y: number, grid: any[][], fromX: number = -1, fromY: number = -1) { return this.position.isWalkable(x, y, grid, fromX, fromY); }
 
     /** @param {number} x @param {number} y @param {Array} grid @param {Function} onZoneTransition */
-    move(x, y, grid, onZoneTransition) { return this.position.move(x, y, grid, onZoneTransition); }
+    move(x: number, y: number, grid: any[][], onZoneTransition: () => void) { return this.position.move(x, y, grid, onZoneTransition); }
 
     /** @param {Array} grid */
-    ensureValidPosition(grid) { return this.position.ensureValidPosition(grid); }
+    ensureValidPosition(grid: any[][]) { return this.position.ensureValidPosition(grid); }
 
     // ========================================
     // ZONE & DIMENSION OPERATIONS (delegated to PlayerPositionFacade)
@@ -97,34 +97,40 @@ export class PlayerFacade {
     getCurrentZone() { return this.position.getCurrentZone(); }
 
     /** @param {number} x @param {number} y */
-    setCurrentZone(x, y) { return this.position.setCurrentZone(x, y); }
+    setCurrentZone(x: number, y: number) { return this.position.setCurrentZone(x, y); }
 
     /** @returns {number} */
     getZoneDimension() { return this.position.getZoneDimension(); }
 
     /** @param {number} dimension */
-    setZoneDimension(dimension) { return this.position.setZoneDimension(dimension); }
+    setZoneDimension(dimension: number) { return this.position.setZoneDimension(dimension); }
 
     /** @returns {number} */
     getUndergroundDepth() { return this.position.getUndergroundDepth(); }
 
     /** @param {number} depth */
-    setUndergroundDepth(depth) { return this.position.setUndergroundDepth(depth); }
+    setUndergroundDepth(depth: number) { return this.position.setUndergroundDepth(depth); }
 
     /** @returns {string|undefined} */
     getPortType() { return this.position.getPortType(); }
 
     /** @param {string} portType */
-    setPortType(portType) { return this.position.setPortType(portType); }
+    setPortType(portType: string) { return this.position.setPortType(portType); }
 
     /** @param {Object} zoneUpdate */
-    updateZoneState(zoneUpdate) { return this.position.updateZoneState(zoneUpdate); }
+    updateZoneState(zoneUpdate: any) { return this.position.updateZoneState(zoneUpdate); }
 
     /** @param {string} zoneKey */
-    markZoneVisited(zoneKey) { return this.position.markZoneVisited(zoneKey); }
+    markZoneVisited(zoneKey: string) { return this.position.markZoneVisited(zoneKey); }
 
     /** Trigger zone transition lifecycle */
     onZoneTransition() { return this.position.onZoneTransition(); }
+
+    /** @returns {Set<string>} */
+    getVisitedZones() { return this.position.getVisitedZones(); }
+
+    /** @param {number} x @param {number} y @param {number} dimension @returns {boolean} */
+    hasVisitedZone(x: number, y: number, dimension: number = 0) { return this.position.hasVisitedZone(x, y, dimension); }
 
     // ========================================
     // INVENTORY OPERATIONS (delegated to PlayerInventoryFacade)
@@ -137,13 +143,13 @@ export class PlayerFacade {
     getInventoryRef() { return this.inventory.getInventoryRef(); }
 
     /** @param {Object} item @returns {boolean} */
-    addToInventory(item) { return this.inventory.addToInventory(item); }
+    addToInventory(item: any) { return this.inventory.addToInventory(item); }
 
     /** @param {number} index @returns {Object|null} */
-    removeFromInventory(index) { return this.inventory.removeFromInventory(index); }
+    removeFromInventory(index: number) { return this.inventory.removeFromInventory(index); }
 
     /** @param {Function} predicate @returns {Object|undefined} */
-    findInInventory(predicate) { return this.inventory.findInInventory(predicate); }
+    findInInventory(predicate: (item: any) => boolean) { return this.inventory.findInInventory(predicate); }
 
     /** @returns {number} */
     getInventoryCount() { return this.inventory.getInventoryCount(); }
@@ -155,20 +161,20 @@ export class PlayerFacade {
     getRadialInventory() { return this.inventory.getRadialInventory(); }
 
     /** @param {Array<Object>} items */
-    setRadialInventory(items) { return this.inventory.setRadialInventory(items); }
+    setRadialInventory(items: any[]) { return this.inventory.setRadialInventory(items); }
 
     // ========================================
     // ABILITIES OPERATIONS (delegated to PlayerInventoryFacade)
     // ========================================
 
     /** @param {string} ability @returns {boolean} */
-    hasAbility(ability) { return this.inventory.hasAbility(ability); }
+    hasAbility(ability: string) { return this.inventory.hasAbility(ability); }
 
     /** @param {string} ability */
-    addAbility(ability) { return this.inventory.addAbility(ability); }
+    addAbility(ability: string) { return this.inventory.addAbility(ability); }
 
     /** @param {string} ability */
-    removeAbility(ability) { return this.inventory.removeAbility(ability); }
+    removeAbility(ability: string) { return this.inventory.removeAbility(ability); }
 
     /** @returns {Array<string>} */
     getAbilities() { return this.inventory.getAbilities(); }
@@ -193,35 +199,35 @@ export class PlayerFacade {
     getThirst() { return this.stats.getThirst(); }
 
     /** @param {number} amount */
-    takeDamage(amount) { return this.stats.takeDamage(amount); }
+    takeDamage(amount: number) { return this.stats.takeDamage(amount); }
 
     /** @param {number} amount */
-    restoreHealth(amount) { return this.stats.restoreHealth(amount); }
+    restoreHealth(amount: number) { return this.stats.restoreHealth(amount); }
 
     /** @param {number} amount */
-    restoreHunger(amount) { return this.stats.restoreHunger(amount); }
+    restoreHunger(amount: number) { return this.stats.restoreHunger(amount); }
 
     /** @returns {number} */
     getPoints() { return this.stats.getPoints(); }
 
     /** @param {number} points */
-    addPoints(points) { return this.stats.addPoints(points); }
+    addPoints(points: number) { return this.stats.addPoints(points); }
 
     /** @returns {number} */
     getSpentDiscoveries() { return this.stats.getSpentDiscoveries(); }
 
     /** @param {number} count */
-    setSpentDiscoveries(count) { return this.stats.setSpentDiscoveries(count); }
+    setSpentDiscoveries(count: number) { return this.stats.setSpentDiscoveries(count); }
 
     /** @param {string} statName @param {*} value */
-    updateStat(statName, value) { return this.stats.updateStat(statName, value); }
+    updateStat(statName: string, value: any) { return this.stats.updateStat(statName, value); }
 
     // ========================================
     // ANIMATION & VISUAL STATE (delegated to PlayerStatsFacade)
     // ========================================
 
     /** @param {number} dx @param {number} dy */
-    startBump(dx, dy) { return this.stats.startBump(dx, dy); }
+    startBump(dx: number, dy: number) { return this.stats.startBump(dx, dy); }
 
     /** Start backflip animation */
     startBackflip() { return this.stats.startBackflip(); }
@@ -230,19 +236,19 @@ export class PlayerFacade {
     startAttackAnimation() { return this.stats.startAttackAnimation(); }
 
     /** @param {number} x @param {number} y */
-    startSplodeAnimation(x, y) { return this.stats.startSplodeAnimation(x, y); }
+    startSplodeAnimation(x: number, y: number) { return this.stats.startSplodeAnimation(x, y); }
 
     /** @param {number} x @param {number} y */
-    startSmokeAnimation(x, y) { return this.stats.startSmokeAnimation(x, y); }
+    startSmokeAnimation(x: number, y: number) { return this.stats.startSmokeAnimation(x, y); }
 
     /** @param {string} action */
-    setAction(action) { return this.stats.setAction(action); }
+    setAction(action: string) { return this.stats.setAction(action); }
 
     /** @returns {number} */
     getConsecutiveKills() { return this.stats.getConsecutiveKills(); }
 
     /** @param {number} count */
-    setConsecutiveKills(count) { return this.stats.setConsecutiveKills(count); }
+    setConsecutiveKills(count: number) { return this.stats.setConsecutiveKills(count); }
 
     // ========================================
     // INTERACTION STATE (delegated to PlayerStatsFacade)
@@ -252,10 +258,72 @@ export class PlayerFacade {
     getInteractOnReach() { return this.stats.getInteractOnReach(); }
 
     /** @param {Object} target */
-    setInteractOnReach(target) { return this.stats.setInteractOnReach(target); }
+    setInteractOnReach(target: any) { return this.stats.setInteractOnReach(target); }
 
     /** Clear interact on reach */
     clearInteractOnReach() { return this.stats.clearInteractOnReach(); }
+
+    // ========================================
+    // PLAYER STATE QUERIES
+    // ========================================
+
+    /** @returns {boolean} */
+    isDead() { return this.stats.isDead(); }
+
+    /** @returns {Object} */
+    getPositionObject() { return this.position.getPositionObject(); }
+
+    // ========================================
+    // ANIMATION STATE QUERIES (delegated to PlayerStatsFacade)
+    // ========================================
+
+    /** @returns {number} */
+    getAttackAnimation() { return this.stats.getAttackAnimation(); }
+
+    /** @returns {number} */
+    getActionAnimation() { return this.stats.getActionAnimation(); }
+
+    /** @returns {number} */
+    getBumpOffsetX() { return this.stats.getBumpOffsetX(); }
+
+    /** @returns {number} */
+    getBumpOffsetY() { return this.stats.getBumpOffsetY(); }
+
+    /** @returns {number} */
+    getBackflipAngle() { return this.stats.getBackflipAngle(); }
+
+    /** @returns {number} */
+    getBackflipLiftOffsetY() { return this.stats.getBackflipLiftOffsetY(); }
+
+    /** @returns {number} */
+    getLiftOffsetY() { return this.stats.getLiftOffsetY(); }
+
+    /** @returns {Array<Object>} */
+    getSmokeAnimations() { return this.stats.getSmokeAnimations(); }
+
+    /** @returns {Array<Object>} */
+    getSplodeAnimations() { return this.stats.getSplodeAnimations(); }
+
+    /** @returns {Object|null} */
+    getPickupHover() { return this.stats.getPickupHover(); }
+
+    /** @param {number} x @param {number} y @param {number} frames */
+    addSmokeAnimation(x: number, y: number, frames: number) { return this.stats.addSmokeAnimation(x, y, frames); }
+
+    /** @param {Object} data */
+    setPickupHover(data: any) { return this.stats.setPickupHover(data); }
+
+    /** Clear pickup hover */
+    clearPickupHover() { return this.stats.clearPickupHover(); }
+
+    /** @param {Object} data */
+    setBowShot(data: any) { return this.stats.setBowShot(data); }
+
+    /** Clear bow shot */
+    clearBowShot() { return this.stats.clearBowShot(); }
+
+    /** @returns {boolean} */
+    hasAnimations() { return this.stats.hasAnimations(); }
 
     // ========================================
     // RAW ACCESS (Use sparingly)

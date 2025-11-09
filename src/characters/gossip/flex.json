@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*chewing* Mmm! I love candy! *munches on own arm* Wait, is this... am I... oh well! *keeps eating*",
+        "text": "*chewing* Mmm! I love candy!",
         "buttonText": "Uh..."
       },
       {
         "id": "msg_1",
-        "text": "Best thing about being made of candy? You're never far from a snack! *takes another bite*",
-        "buttonText": "That's... dark."
+        "text": "Best thing about being made of candy? You're never far from a snack!",
+        "buttonText": "True."
       },
       {
         "id": "msg_2",
-        "text": "Some call it cannibalism. I call it self-care! Plus I grow back. Probably.",
-        "buttonText": "Yikes."
+        "text": "Do you want a bite? *wiggles*",
+        "buttonText": "Hold on now."
       }
     ]
   },

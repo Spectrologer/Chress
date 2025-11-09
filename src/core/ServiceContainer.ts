@@ -45,6 +45,8 @@ import { InteractionFacade } from '@facades/InteractionFacade';
 import { CombatFacade } from '@facades/CombatFacade';
 import { WorldFacade } from '@facades/WorldFacade';
 import type { GameContext } from './context/GameContextCore';
+import type { IGame } from './context';
+import type { Game } from './game';
 
 type ServiceFactory = () => unknown;
 
@@ -54,11 +56,11 @@ type ServiceFactory = () => unknown;
  * or partially initialize the game without creating all 30+ dependencies.
  */
 export class ServiceContainer {
-    private game: GameContext;
+    private game: IGame;
     private _instances: Map<string, unknown>;
     private _serviceRegistry: Record<string, ServiceFactory>;
 
-    constructor(game: GameContext) {
+    constructor(game: IGame) {
         this.game = game;
         this._instances = new Map();
         this._serviceRegistry = this._buildServiceRegistry();
@@ -102,20 +104,20 @@ export class ServiceContainer {
     private _buildServiceRegistry(): Record<string, ServiceFactory> {
         return {
             // Grid abstraction layer (initialize early, needed by many services)
-            gridManager: () => new GridManager(this.game.grid),
+            gridManager: () => new GridManager(this.game.grid!),
 
             // Player facade (initialize after player entity is created)
-            playerFacade: () => new PlayerFacade(this.game.player),
+            playerFacade: () => new PlayerFacade(this.game.player!),
 
             // Animation coordinator (handles player animation events)
-            animationCoordinator: () => new AnimationCoordinator(this.game.player),
+            animationCoordinator: () => new AnimationCoordinator(this.game.player!),
 
             // Enemy collection facade (wraps enemies array for controlled access)
             enemyCollection: () => new EnemyCollection(this.game.enemies, this.game),
 
             // NPC management (like enemies but for friendly NPCs)
-            npcManager: () => new NPCManager(this.game as any),
-            npcRenderer: () => new NPCRenderer(this.game as any),
+            npcManager: () => new NPCManager(this.game),
+            npcRenderer: () => new NPCRenderer(this.game),
 
             // Transient state container (session-specific, non-persisted state)
             transientGameState: () => new TransientGameState(),
@@ -123,57 +125,75 @@ export class ServiceContainer {
             // Visual / external services
             textureManager: () => new TextureManager(),
             connectionManager: () => new ConnectionManager(),
-            zoneGenerator: () => new ZoneGenerator(this.game),
+            /**
+             * ZoneGenerator uses a minimal interface for dependency injection.
+             * IGame satisfies this interface at runtime through its index signature.
+             * Using as unknown as for incompatible structural types.
+             */
+            zoneGenerator: () => new ZoneGenerator(this.game as unknown as ConstructorParameters<typeof ZoneGenerator>[0]),
 
             // Entities
             player: () => new Player(),
             Enemy: () => Enemy, // expose class for GameStateManager
 
-            // Consolidated inventory system
-            inventoryService: () => new InventoryService(this.game),
+            /**
+             * Inventory services expect Game type (which extends GameContext).
+             * IGame is structurally compatible at runtime.
+             */
+            inventoryService: () => new InventoryService(this.game as Game),
             itemManager: () => {
-                const itemManager = new ItemManager(this.game);
+                const itemManager = new ItemManager(this.game as Game);
                 // Cross-reference: player needs itemManager
+                // Note: Player defines its own ItemManager interface, but the class is compatible
                 const player = this.get<Player>('player');
                 if (player) {
-                    player.itemManager = itemManager;
+                    player.itemManager = itemManager as unknown as Player['itemManager'];
                 }
                 return itemManager;
             },
             itemService: () => this.get('inventoryService'), // Backward compatibility alias
             itemUsageHandler: () => null, // Replaced by ItemEffectStrategy
             itemUsageManager: () => null, // Replaced by ItemEffectStrategy
-            inventoryInteractionHandler: () => new InventoryInteractionHandler(this.game as any),
-            inventoryUI: () => new InventoryUI(this.game as any, this.get('inventoryService')),
-            radialInventoryUI: () => new RadialInventoryUI(this.game as any, this.get('inventoryService')),
+            inventoryInteractionHandler: () => new InventoryInteractionHandler(this.game),
+            inventoryUI: () => new InventoryUI(this.game, this.get('inventoryService')),
+            radialInventoryUI: () => new RadialInventoryUI(this.game, this.get('inventoryService')),
 
-            // Input and UI
-            inputManager: () => new InputManager(this.game as any, this.get('inventoryService')),
-            uiManager: () => new UIManager(this.game as any),
-            assetLoader: () => new AssetLoader(this.game as any),
-            overlayManager: () => new OverlayManager(this.game as any),
-            gameInitializer: () => new GameInitializer(this.game as any),
+            /**
+             * Input and UI managers expect GameContext type.
+             * IGame implements GameContext and is compatible at runtime.
+             */
+            inputManager: () => new InputManager(this.game as GameContext, this.get('inventoryService')),
+            uiManager: () => new UIManager(this.game as GameContext),
+            assetLoader: () => new AssetLoader(this.game as GameContext),
+            overlayManager: () => new OverlayManager(this.game as GameContext),
+            gameInitializer: () => new GameInitializer(this.game as GameContext),
 
             // Rendering
-            renderManager: () => new RenderManager(this.game as any),
+            renderManager: () => new RenderManager(this.game as GameContext),
 
-            // Core managers
-            actionManager: () => new ActionManager(this.game as any),
-            consentManager: () => new ConsentManager(this.game as any),
+            /**
+             * Core managers - ActionManager expects IGame, ConsentManager expects local GameInstance interface.
+             * Using type assertions where needed (ConsentManager defines own GameInstance locally).
+             */
+            actionManager: () => new ActionManager(this.game),
+            consentManager: () => new ConsentManager(this.game as unknown as ConstructorParameters<typeof ConsentManager>[0]),
 
             // Systems / utilities
             animationScheduler: () => new AnimationScheduler(),
             soundManager: () => new SoundManager(),
-            turnManager: () => new TurnManager(this.game as any),
+            turnManager: () => new TurnManager(this.game as GameContext),
 
-            // Sub-managers for InteractionManager
-            npcInteractionManager: () => new NPCInteractionManager(this.game as any),
-            itemPickupManager: () => new ItemPickupManager(this.game as any),
-            combatActionManager: () => new CombatActionManager(this.game as any),
-            bombManager: () => new BombManager(this.game as any),
-            terrainInteractionManager: () => new TerrainInteractionManager(this.game as any),
-            environmentalInteractionManager: () => new EnvironmentalInteractionManager(this.game as any),
-            enemyDefeatFlow: () => new EnemyDefeatFlow(this.game as any),
+            /**
+             * Sub-managers for InteractionManager.
+             * Most expect Game type (GameContext subclass), some expect IGame.
+             */
+            npcInteractionManager: () => new NPCInteractionManager(this.game),
+            itemPickupManager: () => new ItemPickupManager(this.game as Game),
+            combatActionManager: () => new CombatActionManager(this.game as Game),
+            bombManager: () => new BombManager(this.game),
+            terrainInteractionManager: () => new TerrainInteractionManager(this.game),
+            environmentalInteractionManager: () => new EnvironmentalInteractionManager(this.game as Game),
+            enemyDefeatFlow: () => new EnemyDefeatFlow(this.game as Game),
 
             // Facades for grouping related dependencies
             interactionFacade: () => new InteractionFacade(
@@ -205,14 +225,20 @@ export class ServiceContainer {
                 this.get('worldFacade')
             ),
 
-            // Zone management
-            zoneManager: () => new ZoneManager(this.game as any),
-            zoneTransitionManager: () => new ZoneTransitionManager(this.game, this.get('inputManager')),
-            zoneTransitionController: () => new ZoneTransitionController(this.game),
+            /**
+             * Zone management - requires various game types.
+             * ZoneTransitionManager expects Game, others expect IGame or GameContext.
+             */
+            zoneManager: () => new ZoneManager(this.game),
+            zoneTransitionManager: () => new ZoneTransitionManager(this.game as Game, this.get('inputManager')),
+            zoneTransitionController: () => new ZoneTransitionController(this.game as GameContext),
 
-            // Error and state management
-            globalErrorHandler: () => new GlobalErrorHandler(this.game as any),
-            gameStateManager: () => new GameStateManager(this.game)
+            /**
+             * Error and state management.
+             * GlobalErrorHandler expects local GameInstance interface, GameStateManager expects GameContext.
+             */
+            globalErrorHandler: () => new GlobalErrorHandler(this.game as unknown as ConstructorParameters<typeof GlobalErrorHandler>[0]),
+            gameStateManager: () => new GameStateManager(this.game as GameContext)
         };
     }
 
@@ -321,7 +347,9 @@ export class ServiceContainer {
         // Create all services and register managers in ManagerRegistry
         serviceNames.forEach(name => {
             const service = this.get(name);
-            (this.game as any)[name] = service;
+            // Use type assertion to set dynamic properties on IGame
+            // These properties are defined in IGame but TypeScript needs help with dynamic access
+            (this.game as Record<string, unknown>)[name] = service;
 
             // Also register in ManagerRegistry if it's a manager type
             // This provides both backward compatibility (game.combatManager)
@@ -337,13 +365,14 @@ export class ServiceContainer {
             ];
 
             if (managerNames.includes(name) && service) {
-                this.game.managers.register(name as any, service);
+                // Type assertion needed because manager names are a union of string literals
+                this.game.managers.register(name as Parameters<typeof this.game.managers.register>[0], service);
             }
         });
 
         // Also set animationManager from animationScheduler
         if (this.game.animationScheduler) {
-            this.game.managers.register('animationManager', this.game.animationScheduler as any);
+            this.game.managers.register('animationManager', this.game.animationScheduler);
         }
 
         // Also set gameInitializer in managers
@@ -352,8 +381,10 @@ export class ServiceContainer {
         }
 
         // Initialize global error handlers early (after service creation)
-        if ((this.game as any).globalErrorHandler) {
-            (this.game as any).globalErrorHandler.initialize();
+        const gameWithHandlers = this.game as Record<string, unknown>;
+        const globalErrorHandler = gameWithHandlers.globalErrorHandler as { initialize?: () => void } | undefined;
+        if (globalErrorHandler?.initialize) {
+            globalErrorHandler.initialize();
         }
 
         // Load persisted radial items (if any)

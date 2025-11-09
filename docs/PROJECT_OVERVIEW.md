@@ -5,7 +5,8 @@
 **Repository**: https://github.com/Spectrologer/Chress
 **License**: ISC
 **Platform**: Modern browsers (HTML5 Canvas) — no native build required
-**Codebase**: ~51,500 lines of TypeScript (298 .ts files) organized in a modular architecture
+**Codebase**: ~55,800 lines of TypeScript (302 .ts files) organized in a modular architecture
+**Character System**: 73 JSON character definitions (main NPCs, gossip characters, statues)
 **Migration Status**: 100% TypeScript migration complete (0 JavaScript files remaining)
 
 This document summarizes the repository structure, how to run and test the project, key game systems, and where to look when making changes.
@@ -31,10 +32,14 @@ npm run type-check    # Run TypeScript type checking
   - **Surface** (dimension 0, depth 0) — Main overworld
   - **Underground** (dimension 0, depth 1+) — Progressive cave/dungeon depths
   - **Interior** (varying dimensions) — Buildings, shops, special locations
+  - **Custom Boards** — Pre-designed zones with unique layouts (Fischer's cube, etc.)
 - **Inventory System**: 6-slot main inventory + radial quick-access inventory for consumables
 - **Chess-Inspired Enemy AI**: 6 enemy types with tactical movement patterns (lizardy, lizardo, lizord, zard, lizardeaux, lazerd)
 - **Points & Combos**: Score system (1-9 pts per enemy) with consecutive kill tracking
-- **NPC System**: 10 NPCs with barter and dialogue interactions
+- **Rich NPC System**: 73+ characters organized into categories
+  - **10 Main NPCs** — Traders and dialogue characters (penne, squig, rune, nib, mark, axelotl, gouge, crayn, felt, forge)
+  - **50+ Gossip NPCs** — Background characters with dialogue
+  - **13 Statue Characters** — Interactive statues with lore
 - **Resource Management**: Hunger/thirst mechanics with consumable items
 - **Save/Load**: Autosave every 750ms + periodic saves every 30s
 
@@ -88,18 +93,34 @@ Chress/
 │   │   └── misc/      # Other items
 │   ├── ui/            # UI elements
 │   └── hidden/        # Unused/easter egg assets
-├── src/               # All JavaScript source code
-│   ├── core/          # Core game systems
+├── src/               # All TypeScript source code (302 files, 55.8k lines)
+│   ├── characters/    # 73 JSON character definitions
+│   │   ├── gossip/   # 50 gossip NPC definitions
+│   │   ├── statues/  # 13 interactive statue definitions
+│   │   └── *.json    # 10 main character definitions
+│   ├── core/          # Core game systems and constants
+│   │   └── constants/ # 14 organized constant files
 │   ├── managers/      # Game logic managers
+│   │   ├── combat/   # Combat system modules
+│   │   ├── grid/     # Grid operation modules
+│   │   └── inventory/ # Inventory system
+│   ├── facades/       # Domain-specific API facades (8 facades)
 │   ├── renderers/     # Rendering systems
-│   ├── ui/            # UI components
-│   ├── entities/      # Game entities
+│   ├── ui/            # UI components (30+ components)
+│   ├── enemy/         # Enemy AI and behaviors
 │   ├── controllers/   # Input/game controllers
 │   ├── generators/    # Procedural generation
-│   ├── state/         # State management
+│   ├── repositories/  # Data access layer
+│   ├── services/      # Business services
+│   ├── npc/           # NPC base classes
 │   └── utils/         # Utility functions
 ├── boards/            # Pre-made board definitions
-├── tests/             # Vitest unit tests
+├── zones/             # Custom zone configurations
+├── tests/             # Vitest unit tests (576+ passing)
+├── tools/             # Development tools
+│   ├── character-editor.html  # Character creation tool
+│   ├── asset-viewer.html      # Asset browser
+│   └── zone-editor tools      # Zone design tools
 ├── docs/              # Documentation
 ├── sfx/               # Sound effects
 └── fonts/             # Web fonts
@@ -111,11 +132,13 @@ Chress/
 - [package.json](package.json) — Dependencies and scripts
 
 #### Core Systems ([src/core/](src/core/))
-- **GameContext Architecture** (NEW - refactored from god object):
+- **GameContext Architecture** (Refactored from god object):
   - [GameContextCore.ts](src/core/context/GameContextCore.ts) — Refactored main game context
   - [ManagerRegistry.ts](src/core/context/ManagerRegistry.ts) — Type-safe service locator for all managers
   - [TurnState.ts](src/core/context/TurnState.ts) — Isolated turn-based game state
   - [GameFacades.ts](src/core/context/GameFacades.ts) — Domain-specific API facades
+- **Constants Organization** ([src/core/constants/](src/core/constants/)) — 14 organized constant files
+  - AI, Animation, Assets, Audio, Gameplay, Physics, Player, Rendering, Spawning, Tiles, Timing, UI, Zones
 - **[[GameInitializer.ts](src/core/](src/core/GameInitializer.ts)** — Bootstrap: canvas setup, assets, event listeners
 - **[[Game.ts](src/core/](src/core/game.ts)** — Main Game class extending GameContext
 - **[[GameStateManager.ts](src/core/](src/core/GameStateManager.ts)** — Save/load, zone caching, message logs
@@ -127,16 +150,27 @@ Chress/
 - **[[ErrorHandler.ts](src/core/ErrorHandler.ts)** / **[GlobalErrorHandler.ts](src/core/](src/core/GlobalErrorHandler.ts)** — Error handling with Sentry
 - **Zone Handlers**: [[BaseZoneHandler.ts](src/core/handlers/BaseZoneHandler.ts), [SurfaceHandler.ts](src/core/handlers/SurfaceHandler.ts), [UndergroundHandler.ts](src/core/](src/core/handlers/UndergroundHandler.ts)
 
-#### Managers ([[managers/](src/managers/](src/managers/)) — 15+ Specialized Managers
+#### Managers ([[managers/](src/managers/](src/managers/)) — 30+ Specialized Managers
 
-**Combat & Interaction**:
-- **[[CombatManager.js](src/managers/](src/managers/CombatManager.js)** — Enemy movements, collisions, defeat flow
-- **[[CombatActionManager.js](src/managers/](src/managers/CombatActionManager.js)** — Individual combat actions
-- **[[EnemyDefeatFlow.js](src/managers/](src/managers/EnemyDefeatFlow.js)** — Defeat logic, rewards, combo tracking
-- **[[InteractionManager.js](src/managers/](src/managers/InteractionManager.js)** — Player tile interactions
-- **[[NPCInteractionManager.js](src/managers/](src/managers/NPCInteractionManager.js)** — NPC dialogue and barter
-- **[[EnvironmentalInteractionManager.js](src/managers/](src/managers/EnvironmentalInteractionManager.js)** — Environmental tiles (pits, etc.)
-- **[[TerrainInteractionManager.js](src/managers/](src/managers/TerrainInteractionManager.js)** — Terrain-specific interactions
+**Combat System** ([managers/combat/](managers/combat/)):
+- **CollisionDetectionSystem.ts** — Collision detection and resolution
+- **EnemyMovementHandler.ts** — Enemy movement coordination
+- **PlayerCombatHandler.ts** — Player combat actions
+- **[[CombatManager.ts](src/managers/](src/managers/CombatManager.ts)** — Main combat orchestrator
+- **[[CombatActionManager.ts](src/managers/](src/managers/CombatActionManager.ts)** — Individual combat actions
+- **[[EnemyDefeatFlow.ts](src/managers/](src/managers/EnemyDefeatFlow.ts)** — Defeat logic, rewards, combo tracking
+
+**Grid Operations** ([managers/grid/](managers/grid/)):
+- **CachedGridManager.ts** — Grid state caching
+- **GridCoreOperations.ts** — Core grid operations
+- **GridIterationOperations.ts** — Grid iteration utilities
+- **GridQueryOperations.ts** — Grid queries and lookups
+
+**Interaction**:
+- **[[InteractionManager.ts](src/managers/](src/managers/InteractionManager.ts)** — Player tile interactions
+- **[[NPCInteractionManager.ts](src/managers/](src/managers/NPCInteractionManager.ts)** — NPC dialogue and barter
+- **[[EnvironmentalInteractionManager.ts](src/managers/](src/managers/EnvironmentalInteractionManager.ts)** — Environmental tiles (pits, etc.)
+- **[[TerrainInteractionManager.ts](src/managers/](src/managers/TerrainInteractionManager.ts)** — Terrain-specific interactions
 
 **Inventory & Items**:
 - **[[ItemManager.js](src/managers/](src/managers/ItemManager.js)** — Item pickup and placement
@@ -225,9 +259,17 @@ Chress/
 - **[[GestureDetector.js](src/controllers/](src/controllers/GestureDetector.js)** — Mobile gesture recognition
 - **[[ZoneTransitionController.js](src/controllers/](src/controllers/ZoneTransitionController.js)** — Zone transition input
 
+#### Characters & NPCs ([src/characters/](src/characters/))
+- **Character System**: 73 JSON character definitions organized by type
+  - **Main Characters** (10): crayn.json, felt.json, forge.json, axelotl.json, mark.json, nib.json, rune.json, penne.json, squig.json, gouge.json
+  - **Gossip NPCs** ([gossip/](gossip/), 50+): aster, bit, block, brush, calli, capybara, cinnabar, etc.
+  - **Statues** ([statues/](statues/), 13): bomb, book, bow, horse, lazerd, lizardeaux, lizardo, lizardy, lizord, shovel, spear, zard, default
+- **Character Editor**: tools/character-editor.html for creating and editing character definitions
+- **[BaseNPC.ts](src/npc/BaseNPC.ts)** — Base NPC class implementation
+
 #### Content & Configuration ([config/](config/))
-- **[ContentRegistrations.js](config/ContentRegistrations.js)** — Unified registry for items, NPCs, enemies, zones
-- **[NPCConfig.js](config/NPCConfig.js)** — NPC configuration (10 NPCs: penne, squig, rune, nib, mark, axelotl, gouge, crayn, felt, forge)
+- **[ContentRegistrations.ts](config/ContentRegistrations.ts)** — Unified registry for items, NPCs, enemies, zones
+- **[NPCConfig.ts](config/NPCConfig.ts)** — NPC configuration and registration
 
 #### Utilities ([[utils/](src/utils/](src/utils/))
 - **[[Position.js](src/utils/](src/utils/Position.js)** — Rich position abstraction (40+ methods, 99/99 tests passing)
@@ -248,9 +290,27 @@ Chress/
 - **[Sounds/](Sounds/)** & **[sfx/](sfx/)** — Audio files
 - **[fonts/](fonts/)** — Custom game fonts
 
+#### Facades ([src/facades/](src/facades/))
+Domain-specific API facades for cleaner access patterns:
+- **CombatFacade.ts** — Combat system operations
+- **InteractionFacade.ts** — Interaction handling
+- **PlayerFacade.ts** — Player state and operations
+- **PlayerInventoryFacade.ts** — Inventory management
+- **PlayerPositionFacade.ts** — Position operations
+- **PlayerStatsFacade.ts** — Player statistics
+- **WorldFacade.ts** — World/zone operations
+- **EnemyCollection.ts** — Enemy management
+
+#### Repositories & Services
+- **[ZoneRepository.ts](src/repositories/ZoneRepository.ts)** — Zone data access layer
+- **[CompressionService.ts](src/services/CompressionService.ts)** — Data compression utilities
+
 #### Tests ([tests/](tests/))
-- Vitest unit tests covering managers and generators
-- **[Position.test.js](tests/Position.test.js)** — 99 tests for Position class
+- **576+ passing tests** covering managers, generators, and core systems
+- **[Position.test.ts](tests/Position.test.ts)** — 99 tests for Position class
+- **[FischersWand.test.ts](tests/FischersWand.test.ts)** — Fischer's Wand feature tests
+- **[CustomBoardZoneKeyFix.test.ts](tests/CustomBoardZoneKeyFix.test.ts)** — Custom board system tests
+- Comprehensive coverage of combat, inventory, zones, and UI systems
 
 ### Game Loop Flow
 
@@ -397,24 +457,40 @@ See [ADDING_CONTENT.md](docs/ADDING_CONTENT.md) for detailed guides on:
 Based on recent commits, the project has undergone significant modernization:
 
 **TypeScript Migration (2024-2025)**:
-- ✅ **100% Complete**: 298 TypeScript files, 0 JavaScript files remaining
+- ✅ **100% Complete**: 302 TypeScript files (55,800+ lines), 0 JavaScript files remaining
 - ✅ **Type Safety**: Migrated from loose JavaScript to TypeScript
 - ✅ **Modern Tooling**: Full IDE support with autocomplete and type checking
+- ✅ **Constants Organization**: Refactored into 14 organized constant files
 
 **Architecture Refactoring**:
 - ✅ **GameContext Refactoring**: Eliminated god object anti-pattern
   - Created ManagerRegistry for type-safe service access
-  - Introduced domain facades (combat, inventory, zones, actions, etc.)
+  - Introduced 8 domain facades (combat, inventory, zones, actions, etc.)
   - Separated concerns with TurnState object
 - ✅ **Position Class**: Complete migration to Position abstraction (99/99 tests passing)
 - ✅ **Inventory System**: Clean architecture with effect strategies
 - ✅ **Event System**: Loose coupling via EventBus
+- ✅ **Grid Refactoring**: Modularized grid operations (cached, core, iteration, query)
+- ✅ **Combat Refactoring**: Separated combat system into specialized modules
+
+**Character System**:
+- ✅ **JSON Character Definitions**: 73 character definitions in structured hierarchy
+  - 10 main NPCs, 50+ gossip characters, 13 interactive statues
+- ✅ **Character Editor**: Built-in tool for creating and editing characters
+- ✅ **Character Organization**: Dedicated src/characters/ directory structure
 
 **Build System & Performance**:
 - ✅ **Vite Migration**: From live-server to modern Vite build system
 - ✅ **PWA Support**: Offline play with service workers
 - ✅ **Code Splitting**: Optimized bundle sizes
-- ✅ **Asset Viewer Tool**: Development tool for browsing game assets
+- ✅ **Development Tools**: Asset viewer, character editor, zone editor
+
+**Recent Features**:
+- ✅ **Custom Boards**: Support for pre-designed zones (Fischer's cube, etc.)
+- ✅ **Fischer's Wand**: Special item with unique mechanics
+- ✅ **Z-Level Maps**: Multi-level zone support
+- ✅ **Auto-Talk/Chop**: Quality of life improvements
+- ✅ **Level Announcements**: Better player feedback
 
 ### Items & Abilities
 
@@ -452,13 +528,23 @@ Based on recent commits, the project has undergone significant modernization:
 
 Each enemy type has unique tactical AI behaviors and movement patterns inspired by chess pieces.
 
-### NPCs
+### NPCs & Characters
 
-**Barter NPCs** (Trading):
-- Penne, Squig, Rune, Nib, Mark, Axelotl, Gouge
+The game features 73+ characters organized into three categories:
 
-**Dialogue NPCs** (Conversation):
-- Crayn, Felt, Forge
+**Main NPCs** (10) - Primary traders and dialogue characters:
+- **Trading**: Penne, Squig, Rune, Nib, Mark, Axelotl, Gouge
+- **Dialogue**: Crayn, Felt, Forge
+
+**Gossip NPCs** (50+) - Background characters with dialogue:
+- Aster, Bit, Block, Brush, Calli, Capybara, Cinnabar, and 43+ more
+- Add flavor and world-building through conversations
+- Located in various zones throughout the game
+
+**Interactive Statues** (13) - Lore-providing statues:
+- Bomb, Book, Bow, Horse, Lazerd, Lizardeaux, Lizardo, Lizardy, Lizord, Shovel, Spear, Zard, Default
+- Provide backstory and item information
+- Decorative and educational elements
 
 ### Contribution & Reporting Issues
 
@@ -475,4 +561,10 @@ Each enemy type has unique tactical AI behaviors and movement patterns inspired 
 
 ---
 
-**Last Updated**: November 7, 2025 — Updated to reflect 100% TypeScript migration completion, GameContext refactoring, and current project architecture. Codebase now at 51.5k lines of TypeScript across 298 files.
+**Last Updated**: November 9, 2025 — Updated to reflect:
+- 302 TypeScript files (55,800+ lines)
+- 73 JSON character definitions with character editor
+- Modular architecture refactoring (grid, combat, constants)
+- 8 domain facades for clean API access
+- Custom board support and recent feature additions
+- 576+ passing tests

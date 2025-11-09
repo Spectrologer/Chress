@@ -1,3 +1,8 @@
+import type { NPCManager } from '@managers/NPCManager';
+import type { EnvironmentalInteractionManager } from '@managers/EnvironmentalInteractionManager';
+import type { InputUIHandler } from '@ui/InputUIHandler';
+import type { Coordinates } from '@core/PositionTypes';
+
 /**
  * InteractionFacade - Groups interaction-related dependencies
  *
@@ -8,73 +13,77 @@
  * from 9 to 4 parameters.
  */
 export class InteractionFacade {
-    public npcManager: any;
-    public environmentManager: any;
-    public inputManager: any;
+    public npcManager: NPCManager;
+    public environmentManager: EnvironmentalInteractionManager;
+    public inputManager: InputUIHandler;
 
     /**
-     * @param {Object} npcManager - Handles NPC interactions
-     * @param {Object} environmentManager - Manages environmental interactions (signs, statues)
-     * @param {Object} inputManager - Handles user input
+     * @param npcManager - Handles NPC interactions
+     * @param environmentManager - Manages environmental interactions (signs, statues)
+     * @param inputManager - Handles user input
      */
-    constructor(npcManager, environmentManager, inputManager) {
+    constructor(
+        npcManager: NPCManager,
+        environmentManager: EnvironmentalInteractionManager,
+        inputManager: InputUIHandler
+    ) {
         this.npcManager = npcManager;
         this.environmentManager = environmentManager;
         this.inputManager = inputManager;
     }
 
     // NPC interaction methods
-    interactWithPenne(coords) {
+    interactWithPenne(coords: Coordinates): boolean {
         return this.npcManager.interactWithPenne(coords);
     }
 
-    interactWithSquig(coords) {
+    interactWithSquig(coords: Coordinates): boolean {
         return this.npcManager.interactWithSquig(coords);
     }
 
-    interactWithRune(coords) {
+    interactWithRune(coords: Coordinates): boolean {
         return this.npcManager.interactWithRune(coords);
     }
 
-    interactWithNib(coords) {
+    interactWithNib(coords: Coordinates): boolean {
         return this.npcManager.interactWithNib(coords);
     }
 
-    interactWithMark(coords) {
+    interactWithMark(coords: Coordinates): boolean {
         return this.npcManager.interactWithMark(coords);
     }
 
-    interactWithCrayn(coords) {
+    interactWithCrayn(coords: Coordinates): boolean {
         return this.npcManager.interactWithCrayn(coords);
     }
 
-    interactWithFelt(coords) {
+    interactWithFelt(coords: Coordinates): boolean {
         return this.npcManager.interactWithFelt(coords);
     }
 
-    interactWithAxelotl(coords) {
+    interactWithAxelotl(coords: Coordinates): boolean {
         return this.npcManager.interactWithAxelotl(coords);
     }
 
-    interactWithGouge(coords) {
+    interactWithGouge(coords: Coordinates): boolean {
         return this.npcManager.interactWithGouge(coords);
     }
 
-    interactWithForge(coords) {
+    interactWithForge(coords: Coordinates): boolean {
         return this.npcManager.interactWithForge(coords);
     }
 
     // Environmental interaction methods
-    handleSignTap(coords) {
+    handleSignTap(coords: Coordinates): boolean {
         return this.environmentManager.handleSignTap(coords);
     }
 
-    handleStatueTap(coords) {
+    handleStatueTap(coords: Coordinates): boolean {
         return this.environmentManager.handleStatueTap(coords);
     }
 
     // Input handling methods
-    handleKeyPress(event) {
+    handleKeyPress(event: KeyboardEvent): boolean {
         return this.inputManager.handleKeyPress(event);
     }
 }

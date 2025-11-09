@@ -12,6 +12,7 @@ import { TileRegistry } from '@core/TileRegistry';
 import { getTileType, isTileObject } from '@utils/TileUtils';
 import { Position } from '@core/Position';
 import { ContentRegistry } from '@core/ContentRegistry';
+import { logger } from '@core/logger';
 import type { GameContext } from '@core/context';
 import type { InventoryService } from '@managers/inventory/InventoryService';
 import type { TileObject } from '@core/SharedTypes';
@@ -258,7 +259,7 @@ export class InputCoordinator {
             this.game?.renderManager?.showTapFeedback?.(gridCoords.x, gridCoords.y);
         } else {
             // If on enemy and adjacent (will trigger immediate attack), clear feedback
-            const playerPos = this.game.player.getPosition();
+            const playerPos = this.game.playerFacade.getPosition();
             const dx = Math.abs(gridCoords.x - playerPos.x);
             const dy = Math.abs(gridCoords.y - playerPos.y);
             const isAdjacent = (dx + dy === 1); // Cardinal adjacency only
@@ -289,7 +290,7 @@ export class InputCoordinator {
     }
 
     private _handleGameplayTap(gridCoords: GridCoords, clickedTileType: number | undefined, isDoubleTap: boolean): void {
-        const playerPos = this.game.player.getPositionObject();
+        const playerPos = this.game.playerFacade.getPositionObject();
         const clickedPos = Position.from(gridCoords);
 
         // Cancel path if different tile clicked
@@ -303,12 +304,12 @@ export class InputCoordinator {
             const currentTileType = getTileType(currentTile);
             const portKind = isTileObject(currentTile) ? (currentTile as TileObject).portKind : null;
 
-            // console.log('[InputCoordinator] Single tap on player tile:', {
-            //     currentTileType,
-            //     portKind,
-            //     isExit: currentTileType === TILE_TYPES.EXIT,
-            //     isPort: currentTileType === TILE_TYPES.PORT
-            // });
+            logger.debug('[InputCoordinator] Single tap on player tile:', {
+                currentTileType,
+                portKind,
+                isExit: currentTileType === TILE_TYPES.EXIT,
+                isPort: currentTileType === TILE_TYPES.PORT
+            });
 
             // Handle EXIT/PORT tiles immediately on single tap
             if (currentTileType === TILE_TYPES.EXIT) {
@@ -320,7 +321,7 @@ export class InputCoordinator {
             }
 
             // Otherwise emit event for radial menu
-            // console.log('[InputCoordinator] Emitting INPUT_PLAYER_TILE_TAP event');
+            logger.debug('[InputCoordinator] Emitting INPUT_PLAYER_TILE_TAP event');
             eventBus.emit(EventTypes.INPUT_PLAYER_TILE_TAP, {
                 gridCoords,
                 tileType: currentTileType,
@@ -414,21 +415,21 @@ export class InputCoordinator {
      * @param gridCoords - Target coordinates
      */
     private _forcePathToInteractive(gridCoords: GridCoords): void {
-        const playerPos = this.game.player.getPositionObject();
+        const playerPos = this.game.playerFacade.getPositionObject();
         const clickedPos = Position.from(gridCoords);
 
         // Find nearest walkable adjacent tile to the target
         const adjacentTile = this.pathfindingController.findNearestWalkableAdjacent(clickedPos.x, clickedPos.y);
         if (adjacentTile) {
             const path = this.findPath(playerPos.x, playerPos.y, adjacentTile.x, adjacentTile.y);
-            if (path?.length > 0) {
+            if (path && path.length > 0) {
                 this.executePath(path);
             }
         }
     }
 
     private _handleDoubleTap(gridCoords: GridCoords, clickedTileType: number | undefined): void {
-        const playerPos = this.game.player.getPositionObject();
+        const playerPos = this.game.playerFacade.getPositionObject();
         const clickedPos = Position.from(gridCoords);
 
         // Handle exits and ports (existing behavior)
@@ -455,7 +456,7 @@ export class InputCoordinator {
                 this.game.interactionManager?.triggerInteractAt(gridCoords);
             } else {
                 // Not adjacent - path to NPC directly (bypassing enemy check)
-                this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
+                this.game.playerFacade.setInteractOnReach(gridCoords.x, gridCoords.y);
                 this._forcePathToInteractive(gridCoords);
             }
             return;
@@ -468,7 +469,7 @@ export class InputCoordinator {
                 this.game.interactionManager?.triggerInteractAt(gridCoords);
             } else {
                 // Not adjacent - path to statue directly (bypassing enemy check)
-                this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
+                this.game.playerFacade.setInteractOnReach(gridCoords.x, gridCoords.y);
                 this._forcePathToInteractive(gridCoords);
             }
             return;
@@ -482,14 +483,14 @@ export class InputCoordinator {
                 this.game.interactionManager?.triggerInteractAt(gridCoords);
             } else {
                 // Not adjacent - path to object directly (bypassing enemy check)
-                this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
+                this.game.playerFacade.setInteractOnReach(gridCoords.x, gridCoords.y);
                 this._forcePathToInteractive(gridCoords);
             }
             return;
         }
 
         // Default behavior - interact on reach for other interactive objects
-        this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
+        this.game.playerFacade.setInteractOnReach(gridCoords.x, gridCoords.y);
         this.executeMovementOrInteraction(gridCoords);
     }
 
@@ -546,6 +547,8 @@ export class InputCoordinator {
         if (result.type === 'movement') {
             const { newX, newY, currentPos } = result;
 
+            if (!currentPos) return;
+
             // Combat or movement - use enemyCollection to properly filter living enemies
             const enemyAtTarget = this.game.enemyCollection?.findAt(newX!, newY!, true);
 
@@ -554,7 +557,7 @@ export class InputCoordinator {
                 this.game.combatManager?.handlePlayerAttack(enemyAtTarget, currentPos);
             } else {
                 this.game.incrementBombActions();
-                this.game.player.move(newX!, newY!, this.game.gridManager as any, (zoneX: number, zoneY: number, exitSide: string) => {
+                this.game.playerFacade.move(newX!, newY!, this.game.gridManager as any, (zoneX: number, zoneY: number, exitSide: string) => {
                     this.game.transitionToZone(zoneX, zoneY, exitSide, currentPos.x, currentPos.y);
                 });
             }
@@ -583,9 +586,11 @@ export class InputCoordinator {
             return;
         }
 
-        const playerPos = this.game.player.getPositionObject();
+        if (!this.game.player) return;
+
+        const playerPos = this.game.playerFacade.getPositionObject();
         const clickedPos = Position.from(gridCoords);
-        const handled = this.game.interactionManager.handleTap(gridCoords);
+        const handled = this.game.interactionManager?.handleTap(gridCoords) || false;
 
         if (!handled) {
             // Disable autopathing entirely when enemies are present
@@ -603,7 +608,7 @@ export class InputCoordinator {
                 // Calculate step position using Position
                 const stepPos = playerPos.move(stepKey);
 
-                if (this.game.player.isWalkable(stepPos.x, stepPos.y, this.game.grid, playerPos.x, playerPos.y)) {
+                if (this.game.playerFacade.isWalkable(stepPos.x, stepPos.y, this.game.grid, playerPos.x, playerPos.y)) {
                     this.executePath([stepKey]);
                 }
                 return;
@@ -616,13 +621,13 @@ export class InputCoordinator {
                 const adjacentTile = this.pathfindingController.findNearestWalkableAdjacent(clickedPos.x, clickedPos.y);
                 if (adjacentTile) {
                     const path = this.findPath(playerPos.x, playerPos.y, adjacentTile.x, adjacentTile.y);
-                    if (path?.length > 0) {
+                    if (path && path.length > 0) {
                         this.executePath(path);
                     }
                 }
             } else {
                 const path = this.findPath(playerPos.x, playerPos.y, clickedPos.x, clickedPos.y);
-                if (path?.length > 0) {
+                if (path && path.length > 0) {
                     this.executePath(path);
                 }
             }

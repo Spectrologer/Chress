@@ -13,6 +13,7 @@
 import { ContentRegistry } from '@core/ContentRegistry';
 import { boardLoader } from '@core/BoardLoader';
 import { loadAllNPCs, loadAllStatues } from '@core/NPCLoader';
+import { logger } from '@core/logger';
 import { ItemEffectStrategy } from '@managers/inventory/ItemEffectStrategy';
 
 // Import registration modules
@@ -42,6 +43,6 @@ export async function registerAllContent(): Promise<void> {
     const stats = ContentRegistry.getStats();
 
     if (stats.items === 0 || stats.npcs === 0 || stats.enemies === 0) {
-        console.error('[ContentRegistry] WARNING: Some content categories are empty!', stats);
+        logger.error('[ContentRegistry] WARNING: Some content categories are empty!', stats);
     }
 }

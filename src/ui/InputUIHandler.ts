@@ -7,6 +7,7 @@ import { isAdjacent } from '@core/utils/DirectionUtils';
 import { getTileType } from '@utils/TileUtils';
 import { TileRegistry } from '@core/TileRegistry';
 import { Position } from '@core/Position';
+import { logger } from '@core/logger';
 
 interface GridCoords {
     x: number;
@@ -156,7 +157,7 @@ export class InputUIHandler {
     private _handlePlayerTileTap(event: InputPlayerTileTapEvent): void {
         const { gridCoords, tileType, portKind } = event;
 
-        console.log('[InputUIHandler] Player tile tap event received:', {
+        logger.log('[InputUIHandler] Player tile tap event received:', {
             gridCoords,
             tileType,
             portKind,
@@ -170,7 +171,7 @@ export class InputUIHandler {
                             portKind === 'stairup';
 
         if (isExitOrPort) {
-            console.log('[InputUIHandler] Exit/port tile detected, skipping radial menu');
+            logger.log('[InputUIHandler] Exit/port tile detected, skipping radial menu');
             // Close radial menu if open
             if (this.game.radialInventoryUI?.open) {
                 this.game.radialInventoryUI.close();
@@ -181,14 +182,14 @@ export class InputUIHandler {
 
         // Single tap on player tile opens radial menu (if available)
         if (this.game.radialInventoryUI) {
-            console.log('[InputUIHandler] Toggling radial menu. Currently open:', this.game.radialInventoryUI.open);
+            logger.log('[InputUIHandler] Toggling radial menu. Currently open:', this.game.radialInventoryUI.open);
             if (this.game.radialInventoryUI.open) {
                 this.game.radialInventoryUI.close();
             } else {
                 this.game.radialInventoryUI.openAtPlayer();
             }
         } else {
-            console.error('[InputUIHandler] radialInventoryUI is not available!');
+            logger.error('[InputUIHandler] radialInventoryUI is not available!');
         }
     }
 
@@ -203,7 +204,7 @@ export class InputUIHandler {
     private _handleSignMessage(gridCoords: GridCoords): boolean {
         if (this.game.displayingMessageForSign) {
             if (this._isTileInteractive(gridCoords.x, gridCoords.y)) {
-                this.game.interactionManager.triggerInteractAt(gridCoords);
+                this.game.interactionManager?.triggerInteractAt(gridCoords);
                 return true;
             } else {
                 TextBox.hideMessageForSign(this.game as any);
@@ -221,12 +222,13 @@ export class InputUIHandler {
             return false;
         }
 
-        const playerPos = this.game.player.getPosition();
+        const playerPos = this.game.playerFacade?.getPosition();
+        if (!playerPos) return false;
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);
 
         if (isAdjacent(dx, dy)) {
-            const success = this.inventoryService.useItem(this.game.activeShovel, {
+            const success = this.inventoryService.useItem(this.game.activeShovel!, {
                 targetX: gridCoords.x,
                 targetY: gridCoords.y
             });
@@ -244,8 +246,8 @@ export class InputUIHandler {
      * Returns true if handled, false otherwise
      */
     private _handleStatsPanelClose(): boolean {
-        if (this.game.uiManager.isStatsPanelOpen()) {
-            this.game.uiManager.hideStatsPanel();
+        if (this.game.uiManager?.isStatsPanelOpen()) {
+            this.game.uiManager?.hideStatsPanel();
             return true;
         }
         return false;
@@ -263,12 +265,13 @@ export class InputUIHandler {
 
         const selType = pendingCharge.selectionType;
         let chargeDetails: any = null;
-        const playerPos = this.game.player.getPosition();
+        const playerPos = this.game.playerFacade?.getPosition();
+        if (!playerPos) return false;
 
         // Use interactionManager.combatManager (CombatActionManager) for charge validation
         const combatActionManager = this.game.interactionManager?.combatManager;
         if (!combatActionManager) {
-            console.error('[InputUIHandler] CombatActionManager not available');
+            logger.error('[InputUIHandler] CombatActionManager not available');
             return false;
         }
 
@@ -296,10 +299,10 @@ export class InputUIHandler {
     // ========================================
 
     private _isTileInteractive(x: number, y: number): boolean {
-        const tile = this.game.grid[y]?.[x];
+        const tile = this.game.grid?.[y]?.[x];
         if (!tile) return false;
 
         const tileType = getTileType(tile);
-        return TileRegistry.isInteractive(tileType);
+        return TileRegistry.isInteractive(tileType!);
     }
 }

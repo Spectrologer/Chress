@@ -40,6 +40,8 @@ export class CollisionDetectionSystem {
         safeCall(this.bombManager, 'tickBombsAndExplode');
 
         const enemyCollection = this.game.enemyCollection;
+        if (!enemyCollection) return false;
+
         const playerPos = (this.game.player as any).getPosition() as Position;
         const toRemove: Enemy[] = [];
         let playerWasAttacked = false;

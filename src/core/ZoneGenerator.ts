@@ -25,10 +25,10 @@ interface ZoneGeneratorGame {
 }
 
 export class ZoneGenerator {
-    private game: ZoneGeneratorGame;
-    public grid: number[][] | null;
-    private gridManager: GridManager | null;
-    private enemies: Record<string, unknown>[] | null;
+    public game: ZoneGeneratorGame;
+    public grid: (number | any)[][];
+    public gridManager: GridManager | null;
+    public enemies: unknown[];
     private currentZoneX: number | null;
     private currentZoneY: number | null;
     private playerSpawn: Coordinates | null;
@@ -37,13 +37,13 @@ export class ZoneGenerator {
     public rotations: Record<string, number>;
     public overlayRotations: Record<string, number>;
     private foodAssets: string[];
-    private currentDimension: number;
+    public currentDimension: number;
 
     constructor(game: ZoneGeneratorGame) {
         this.game = game;
-        this.grid = null;
+        this.grid = [];
         this.gridManager = null;
-        this.enemies = null;
+        this.enemies = [];
         this.currentZoneX = null;
         this.currentZoneY = null;
         this.playerSpawn = null; // {x, y}
@@ -60,11 +60,11 @@ export class ZoneGenerator {
     /**
      * Checks if a tile is free for player spawn (not occupied, not impassable)
      */
-    isTileFree(x, y) {
+    isTileFree(x: number, y: number): boolean {
         return _isTileFree(this, x, y);
     }
 
-    generateZone(zoneX, zoneY, dimension, existingZones, zoneConnections, foodAssets, exitSide) {
+    generateZone(zoneX: number, zoneY: number, dimension: number, existingZones: Map<string, any>, zoneConnections: any, foodAssets: string[], exitSide?: string): any {
         this.foodAssets = foodAssets || [];
         this.currentZoneX = zoneX;
         this.currentZoneY = zoneY;
@@ -119,11 +119,11 @@ export class ZoneGenerator {
 
     // Find a valid spawn tile for the player that is not occupied by an enemy, item, or impassable tile.
     // Returns {x, y} or null if none found.
-    findValidPlayerSpawn(avoidEntrance = false) {
+    findValidPlayerSpawn(avoidEntrance: boolean = false): Coordinates | null {
         return _findValidPlayerSpawn(this, avoidEntrance);
     }
 
-    initialize() {
+    initialize(): void {
         // Initialize grid with floor tiles using safe initialization
         this.grid = initializeGrid();
         this.gridManager = new GridManager(this.grid);
@@ -135,7 +135,8 @@ export class ZoneGenerator {
         this.addWallBorders();
     }
 
-    addWallBorders() {
+    addWallBorders(): void {
+        if (!this.gridManager) return;
         // Add some walls around the borders
         for (let i = 0; i < GRID_SIZE; i++) {
             this.gridManager.setTile(i, 0, TILE_TYPES.WALL); // Top border
@@ -145,20 +146,20 @@ export class ZoneGenerator {
         }
     }
 
-    addRegionNotes(zoneKey, structureGenerator) {
-        return _addRegionNotes(zoneKey, structureGenerator, this.currentZoneX, this.currentZoneY);
+    addRegionNotes(zoneKey: string, structureGenerator: StructureGenerator): void {
+        return _addRegionNotes(zoneKey, structureGenerator, this.currentZoneX!, this.currentZoneY!);
     }
 
-    generateExits(zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel) {
-        return _generateExits(this, zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel);
+    generateExits(zoneX: number, zoneY: number, zoneConnections: any, featureGenerator: FeatureGenerator, zoneLevel: number): void {
+        return _generateExits(this as any, zoneX, zoneY, zoneConnections, featureGenerator, zoneLevel);
     }
 
-    clearPathToExit(exitX, exitY) {
-        return _clearPathToExit(this, exitX, exitY);
+    clearPathToExit(exitX: number, exitY: number): void {
+        return _clearPathToExit(this as any, exitX, exitY);
     }
 
-    clearPathToCenter(startX, startY) {
-        return _clearPathToCenter(this, startX, startY);
+    clearPathToCenter(startX: number, startY: number): void {
+        return _clearPathToCenter(this as any, startX, startY);
     }
 
     /**
@@ -166,16 +167,16 @@ export class ZoneGenerator {
      * @param {number} requiredNeighbors - The minimum number of walkable neighbors.
      * @returns {{x, y}|null}
      */
-    findOpenNpcSpawn(requiredNeighbors) {
-        return _findOpenNpcSpawn(this, requiredNeighbors);
+    findOpenNpcSpawn(requiredNeighbors: number): Coordinates | null {
+        return _findOpenNpcSpawn(this as any, requiredNeighbors);
     }
 
     /**
      * Clears all features from the zone except exits, leaving only floor tiles.
      * Used for the first wilds zone to ensure the shack spawns reliably.
      */
-    clearZoneForShackOnly() {
-        return _clearZoneForShackOnly(this);
+    clearZoneForShackOnly(): void {
+        return _clearZoneForShackOnly(this as any);
     }
 
     /**
@@ -185,12 +186,12 @@ export class ZoneGenerator {
      * @param {number} zoneY - The y-coordinate of the zone.
      * @returns {boolean} - True if the shack was placed successfully.
      */
-    forcePlaceShackInCenter(zoneX, zoneY) {
+    forcePlaceShackInCenter(zoneX: number, zoneY: number): boolean {
         // Since the zone is cleared, we can place it near the center.
         // Center is (4,4). A 3x3 shack would be from (3,3) to (5,5).
         const startX = 3;
         const startY = 3;
 
-        return _forcePlaceShackInCenter(this, zoneX, zoneY);
+        return _forcePlaceShackInCenter(this as any, zoneX, zoneY);
     }
 }

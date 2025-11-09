@@ -65,7 +65,7 @@ describe('EventValidator', () => {
             });
 
             expect(result.valid).toBe(false);
-            expect(result.errors.some(err => err.includes('Invalid type for "oldValue"'))).toBe(true);
+            expect(result.errors.some((err: string) => err.includes('Invalid type for "oldValue"'))).toBe(true);
         });
 
         test('allows optional fields to be missing', () => {
@@ -128,7 +128,7 @@ describe('EventValidator', () => {
             });
 
             expect(result.valid).toBe(false);
-            expect(result.errors.some(err => err.includes('Invalid value for "type"'))).toBe(true);
+            expect(result.errors.some((err: string) => err.includes('Invalid value for "type"'))).toBe(true);
         });
     });
 
@@ -138,7 +138,7 @@ describe('EventValidator', () => {
                 position: {
                     required: true,
                     type: 'object',
-                    validator: (val) => {
+                    validator: (val: any) => {
                         if (typeof val.x !== 'number' || typeof val.y !== 'number') {
                             return 'position must have numeric x and y';
                         }
@@ -159,7 +159,7 @@ describe('EventValidator', () => {
                 position: {
                     required: true,
                     type: 'object',
-                    validator: (val) => {
+                    validator: (val: any) => {
                         if (typeof val.x !== 'number' || typeof val.y !== 'number') {
                             return 'position must have numeric x and y';
                         }
@@ -173,7 +173,7 @@ describe('EventValidator', () => {
             });
 
             expect(result.valid).toBe(false);
-            expect(result.errors.some(err => err.includes('position must have numeric x and y'))).toBe(true);
+            expect(result.errors.some((err: string) => err.includes('position must have numeric x and y'))).toBe(true);
         });
     });
 

@@ -104,6 +104,11 @@ export function createMockGame(overrides: Record<string, any> = {}) {
 
     return {
         player: mockPlayer,
+        playerFacade: overrides.playerFacade || {
+            getCurrentZone: mockPlayer.getCurrentZone,
+            getUndergroundDepth: mockPlayer.getUndergroundDepth || vi.fn().mockReturnValue(1),
+            getPositionObject: mockPlayer.getPositionObject || mockPlayer.getPosition || vi.fn().mockReturnValue({ x: 0, y: 0 }),
+        },
         grid: mockGrid,
         enemies: [],
         npcs: [],
@@ -203,7 +208,7 @@ export function createMockEventBus() {
     const listeners = new Map();
 
     return {
-        on: vi.fn((event, callback) => {
+        on: vi.fn((event, callback: any) => {
             if (!listeners.has(event)) {
                 listeners.set(event, []);
             }
@@ -211,7 +216,7 @@ export function createMockEventBus() {
         }),
         emit: vi.fn((event, data) => {
             if (listeners.has(event)) {
-                listeners.get(event).forEach(callback => callback(data));
+                listeners.get(event).forEach((callback: any) => callback(data));
             }
         }),
         off: vi.fn((event, callback) => {

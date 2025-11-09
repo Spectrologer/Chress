@@ -34,7 +34,7 @@ export class MusicController {
      * @param {number} [volume] - Volume level (0-1)
      * @returns {void}
      */
-    playBackground(filePath, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME) {
+    playBackground(filePath: string, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME): void {
         try {
             if (this.musicEnabled === false) {
                 this.currentMusicTrack = filePath;
@@ -48,7 +48,7 @@ export class MusicController {
             audio.loop = true;
             audio.volume = volume;
             this.currentMusicVolume = volume;
-            audio.play().catch(err => {
+            audio.play().catch((err: unknown) => {
                 errorHandler.handle(err, ErrorSeverity.WARNING, {
                     component: 'MusicController',
                     action: 'play background music',
@@ -56,8 +56,11 @@ export class MusicController {
                 });
             });
             this.backgroundAudioElement = audio;
-        } catch (e) {
-            // ignore background play errors
+        } catch (e: unknown) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'MusicController',
+                action: 'playBackground setup'
+            });
         }
     }
 
@@ -65,13 +68,23 @@ export class MusicController {
      * Stop background music
      * @returns {void}
      */
-    stopBackground() {
+    stopBackground(): void {
         try {
             if (this.backgroundAudioElement) {
-                try { this.backgroundAudioElement.pause(); } catch (e) {}
+                try { this.backgroundAudioElement.pause(); } catch (e: unknown) {
+                    errorHandler.handle(e, ErrorSeverity.WARNING, {
+                        component: 'MusicController',
+                        action: 'pause background audio'
+                    });
+                }
                 this.backgroundAudioElement = null;
             }
-        } catch (e) {}
+        } catch (e: unknown) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'MusicController',
+                action: 'stopBackground'
+            });
+        }
     }
 
     /**
@@ -80,7 +93,7 @@ export class MusicController {
      * @param {number} [options.dimension] - Zone dimension (0=surface, 1=interior, 2=underground)
      * @returns {void}
      */
-    setMusicForZone({ dimension = 0 } = {}) {
+    setMusicForZone({ dimension = 0 }: { dimension?: number } = {}): void {
         const peacefulPath = 'sfx/music/peaceful.ogg';
         const tensionPath = 'sfx/music/tension.ogg';
         const cavePath = 'sfx/music/cave.ogg';
@@ -105,7 +118,7 @@ export class MusicController {
      * @param {number} [crossfadeMs] - Crossfade duration in milliseconds
      * @returns {void}
      */
-    playBackgroundContinuous(filePath, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, crossfadeMs = VOLUME_CONSTANTS.DEFAULT_CROSSFADE_DURATION) {
+    playBackgroundContinuous(filePath: string, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, crossfadeMs = VOLUME_CONSTANTS.DEFAULT_CROSSFADE_DURATION): void {
         try {
             if (this.musicEnabled === false) {
                 this.currentMusicTrack = filePath;
@@ -139,7 +152,7 @@ export class MusicController {
             nextSource.connect(nextGain).connect(this.audioContext.destination);
 
             // Start playing the next track
-            nextAudio.play().catch(err => {
+            nextAudio.play().catch((err: unknown) => {
                 errorHandler.handle(err, ErrorSeverity.WARNING, {
                     component: 'MusicController',
                     action: 'play next background track',
@@ -160,11 +173,21 @@ export class MusicController {
                     this.backgroundGain.gain.cancelScheduledValues(now);
                     this.backgroundGain.gain.setValueAtTime(this.backgroundGain.gain.value, now);
                     this.backgroundGain.gain.linearRampToValueAtTime(0, now + fadeSec);
-                } catch (e) {}
+                } catch (e: unknown) {
+                    errorHandler.handle(e, ErrorSeverity.WARNING, {
+                        component: 'MusicController',
+                        action: 'fade out previous track'
+                    });
+                }
 
                 const oldAudio = this.backgroundAudioElement;
                 setTimeout(() => {
-                    try { oldAudio.pause(); } catch (e) {}
+                    try { oldAudio.pause(); } catch (e: unknown) {
+                        errorHandler.handle(e, ErrorSeverity.WARNING, {
+                            component: 'MusicController',
+                            action: 'pause old audio'
+                        });
+                    }
                 }, Math.ceil(fadeSec * 1000) + 50);
             }
 
@@ -172,9 +195,20 @@ export class MusicController {
             this.backgroundAudioElement = nextAudio;
             this.backgroundSource = nextSource;
             this.backgroundGain = nextGain;
-        } catch (e) {
+        } catch (e: unknown) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'MusicController',
+                action: 'playBackgroundContinuous',
+                filePath
+            });
             // Fallback to simple HTMLAudio playback
-            try { this.playBackground(filePath, volume); } catch (ee) {}
+            try { this.playBackground(filePath, volume); } catch (ee: unknown) {
+                errorHandler.handle(ee, ErrorSeverity.WARNING, {
+                    component: 'MusicController',
+                    action: 'playBackground fallback',
+                    filePath
+                });
+            }
         }
     }
 
@@ -182,7 +216,7 @@ export class MusicController {
      * Get music enabled state
      * @returns {boolean}
      */
-    getMusicEnabled() {
+    getMusicEnabled(): boolean {
         return this.musicEnabled;
     }
 
@@ -191,35 +225,66 @@ export class MusicController {
      * @param {boolean} enabled - Whether music is enabled
      * @returns {void}
      */
-    setMusicEnabled(enabled) {
+    setMusicEnabled(enabled: boolean): void {
         this.musicEnabled = !!enabled;
         try {
             if (!this.musicEnabled) {
                 // Mute or pause background
                 if (this.backgroundGain) {
-                    try { this.backgroundGain.gain.setValueAtTime(0, this.audioContext ? this.audioContext.currentTime : 0); } catch (e) {}
+                    try { this.backgroundGain.gain.setValueAtTime(0, this.audioContext ? this.audioContext.currentTime : 0); } catch (e: unknown) {
+                        errorHandler.handle(e, ErrorSeverity.WARNING, {
+                            component: 'MusicController',
+                            action: 'mute background gain'
+                        });
+                    }
                 }
                 if (this.backgroundAudioElement && !this.backgroundGain) {
-                    try { this.backgroundAudioElement.pause(); } catch (e) {}
+                    try { this.backgroundAudioElement.pause(); } catch (e: unknown) {
+                        errorHandler.handle(e, ErrorSeverity.WARNING, {
+                            component: 'MusicController',
+                            action: 'pause background audio'
+                        });
+                    }
                 }
             } else {
                 // Restore music
                 if (this.backgroundGain && this.backgroundAudioElement) {
-                    try { this.backgroundGain.gain.setValueAtTime(this.currentMusicVolume || VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, this.audioContext.currentTime); } catch (e) {}
+                    try { this.backgroundGain.gain.setValueAtTime(this.currentMusicVolume || VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, this.audioContext!.currentTime); } catch (e: unknown) {
+                        errorHandler.handle(e, ErrorSeverity.WARNING, {
+                            component: 'MusicController',
+                            action: 'restore background gain'
+                        });
+                    }
                 } else if (this.backgroundAudioElement) {
-                    try { this.backgroundAudioElement.play().catch(() => {}); } catch (e) {}
+                    try { this.backgroundAudioElement.play().catch(() => {}); } catch (e: unknown) {
+                        errorHandler.handle(e, ErrorSeverity.WARNING, {
+                            component: 'MusicController',
+                            action: 'resume background audio'
+                        });
+                    }
                 } else if (this.currentMusicTrack) {
-                    try { this.playBackgroundContinuous(this.currentMusicTrack, this.currentMusicVolume || VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME); } catch (e) {}
+                    try { this.playBackgroundContinuous(this.currentMusicTrack, this.currentMusicVolume || VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME); } catch (e: unknown) {
+                        errorHandler.handle(e, ErrorSeverity.WARNING, {
+                            component: 'MusicController',
+                            action: 'restart background music'
+                        });
+                    }
                 }
             }
-        } catch (e) {}
+        } catch (e: unknown) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'MusicController',
+                action: 'setMusicEnabled',
+                enabled
+            });
+        }
     }
 
     /**
      * Get audio context (create if needed)
      * @returns {AudioContext|null}
      */
-    getAudioContext() {
+    getAudioContext(): AudioContext | null {
         if (!this.audioContext) {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }

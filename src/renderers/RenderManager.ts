@@ -70,8 +70,8 @@ export class RenderManager {
 
     constructor(game: IGame) {
         this.game = game;
-        this.ctx = game.ctx;
-        this.textureManager = game.textureManager;
+        this.ctx = game.ctx!;
+        this.textureManager = game.textureManager!;
 
         // Tap feedback state: { x, y, startTime, duration, hold }
         // If hold === true the feedback persists until cleared by clearFeedback()
@@ -200,7 +200,7 @@ export class RenderManager {
         // Reuse a single array to avoid Set allocation and string concatenation
         const tiles: number[] = [];
         const push = (x: number, y: number) => {
-            if (x >= 0 && y >= 0 && y < grid.length && x < grid[0].length) {
+            if (x >= 0 && y >= 0 && y < grid.length && x < grid[0]!.length) {
                 tiles.push(x, y); // Store x,y pairs sequentially
             }
         };
@@ -208,7 +208,7 @@ export class RenderManager {
         const stopRay = (x: number, y: number, dx: number, dy: number, orthogonalOnly = false) => {
             let cx = x + dx;
             let cy = y + dy;
-            while (cx >= 0 && cy >= 0 && cy < grid.length && cx < grid[0].length) {
+            while (cx >= 0 && cy >= 0 && cy < grid.length && cx < grid[0]!.length) {
                 // stop if tile is not walkable for charging/en-route
                 if (!enemy.isWalkable(cx, cy, grid)) break;
                 // stop if another enemy occupies the tile
@@ -300,7 +300,7 @@ export class RenderManager {
 
     render(): void {
         // Clear canvas
-        this.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+        this.ctx.clearRect(0, 0, this.game.canvas!.width, this.game.canvas!.height);
 
         // Draw grid
         this.drawGrid();
@@ -345,7 +345,7 @@ export class RenderManager {
         this.uiRenderer.drawChargeConfirmationIndicator();
 
         // --- Apply overlays and atmospheric effects last ---
-        const currentZone = this.game.player.getCurrentZone();
+        const currentZone = this.game.playerFacade!.getCurrentZone();
         // Coerce to number so comparisons work even if a dimension value was
         // deserialized as a string in saved state. Treat only numeric 2 as
         // underground.
@@ -353,7 +353,7 @@ export class RenderManager {
             // 1. Draw the dark overlay on top of everything drawn so far
             this.ctx.save();
             this.ctx.fillStyle = 'rgba(0, 0, 0, 0.50)'; // 50% black overlay (balanced brightness)
-            this.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+            this.ctx.fillRect(0, 0, this.game.canvas!.width, this.game.canvas!.height);
             this.ctx.restore();
 
             // 2. Draw the fog on top of the dark overlay
@@ -371,7 +371,7 @@ export class RenderManager {
         }
 
         // Calculate zone level for texture rendering
-        const zone = this.game.player.getCurrentZone();
+        const zone = this.game.playerFacade!.getCurrentZone();
         let zoneLevel: number;
         if (zone.dimension === 2) {
             zoneLevel = 6; // Underground zones
@@ -425,14 +425,14 @@ export class RenderManager {
                     const centerY = pixelY + TILE_SIZE / 2;
                     this.ctx.translate(centerX, centerY);
                     this.ctx.rotate((rotation * Math.PI) / 180);
-                    this.ctx.drawImage(this.textureManager.renderer.images[textureName], -TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
+                    this.ctx.drawImage(this.textureManager.renderer!.images[textureName], -TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
                 } else {
-                    this.ctx.drawImage(this.textureManager.renderer.images[textureName], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    this.ctx.drawImage(this.textureManager.renderer!.images[textureName], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
                 }
                 this.ctx.restore();
             } else if (!this._missingTextureLogged) {
-                console.warn('[RenderManager] Missing overlay texture:', textureName, 'at', coord);
-                console.warn('[RenderManager] Available textures containing "border" or "trim":',
+                logger.warn('[RenderManager] Missing overlay texture:', textureName, 'at', coord);
+                logger.warn('[RenderManager] Available textures containing "border" or "trim":',
                     Object.keys(this.textureManager.renderer?.images || {}).filter(k => k.includes('border') || k.includes('trim')));
                 this._missingTextureLogged = true;
             }
@@ -461,7 +461,7 @@ export class RenderManager {
     // (excluding the wall tiles at the edges of the 10x10 grid)
     drawExteriorBorderOverlay(): void {
         // Don't draw border overlay in underground zones
-        const currentZone = this.game.player.getCurrentZone();
+        const currentZone = this.game.playerFacade!.getCurrentZone();
         if (Number(currentZone.dimension) === 2) {
             return;
         }

@@ -15,38 +15,38 @@ export class CombatFacade {
      * @param {Object} combatActionManager - Manages combat actions (charges, bow shots)
      * @param {Object} bombManager - Handles bomb placement and explosions
      */
-    constructor(combatActionManager, bombManager) {
+    constructor(combatActionManager: any, bombManager: any) {
         this.combatActionManager = combatActionManager;
         this.bombManager = bombManager;
     }
 
     // Combat action methods
-    isValidBishopSpearCharge(gridCoords, playerPos) {
+    isValidBishopSpearCharge(gridCoords: any, playerPos: any): boolean {
         return this.combatActionManager.isValidBishopSpearCharge(gridCoords, playerPos);
     }
 
-    isValidHorseIconCharge(gridCoords, playerPos) {
+    isValidHorseIconCharge(gridCoords: any, playerPos: any): boolean {
         return this.combatActionManager.isValidHorseIconCharge(gridCoords, playerPos);
     }
 
-    isValidBowShot(gridCoords, playerPos) {
+    isValidBowShot(gridCoords: any, playerPos: any): boolean {
         return this.combatActionManager.isValidBowShot(gridCoords, playerPos);
     }
 
-    isValidRookTowerCharge(gridCoords, playerPos) {
+    isValidRookTowerCharge(gridCoords: any, playerPos: any): boolean {
         return this.combatActionManager.isValidRookTowerCharge(gridCoords, playerPos);
     }
 
     // Bomb methods
-    handleBombPlacement(gridCoords) {
+    handleBombPlacement(gridCoords: any): void {
         return this.bombManager.handleBombPlacement(gridCoords);
     }
 
-    triggerBombExplosion(gridCoords, playerPos) {
+    triggerBombExplosion(gridCoords: any, playerPos: any): void {
         return this.bombManager.triggerBombExplosion(gridCoords, playerPos);
     }
 
-    tickBombsAndExplode() {
+    tickBombsAndExplode(): void {
         return this.bombManager.tickBombsAndExplode();
     }
 }

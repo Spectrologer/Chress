@@ -11,6 +11,7 @@
 
 import { store } from './StateStore';
 import * as LZString from 'lz-string';
+import { logger } from '@core/logger';
 
 export interface SerializedData {
   version: number;
@@ -69,7 +70,7 @@ export class StatePersistence {
    */
   async initIndexedDB(): Promise<void> {
     if (!window.indexedDB) {
-      console.warn('IndexedDB not available, falling back to localStorage');
+      logger.warn('IndexedDB not available, falling back to localStorage');
       this.dbError = 'IndexedDB not supported';
       return;
     }
@@ -78,14 +79,14 @@ export class StatePersistence {
       const request = indexedDB.open(this.INDEXEDDB_NAME, this.INDEXEDDB_VERSION);
 
       request.onerror = () => {
-        console.error('IndexedDB error:', request.error);
+        logger.error('IndexedDB error:', request.error);
         this.dbError = request.error;
       };
 
       request.onsuccess = () => {
         this.db = request.result;
         this.dbReady = true;
-        console.log('✅ IndexedDB ready');
+        logger.log('✅ IndexedDB ready');
       };
 
       request.onupgradeneeded = (event) => {
@@ -97,7 +98,7 @@ export class StatePersistence {
         }
       };
     } catch (error) {
-      console.error('Failed to initialize IndexedDB:', error);
+      logger.error('Failed to initialize IndexedDB:', error);
       this.dbError = error;
     }
   }
@@ -142,17 +143,17 @@ export class StatePersistence {
       if (useIndexedDB && this.dbReady) {
         try {
           await this.saveToIndexedDB('currentGame', serialized);
-          console.log('✅ Saved to IndexedDB');
+          logger.log('✅ Saved to IndexedDB');
           return true;
         } catch (error) {
-          console.warn('IndexedDB save failed, falling back to localStorage:', error);
+          logger.warn('IndexedDB save failed, falling back to localStorage:', error);
         }
       }
 
       // Fallback to localStorage
       return this.saveToLocalStorage(serialized);
     } catch (error) {
-      console.error('Failed to save state:', error);
+      logger.error('Failed to save state:', error);
       return false;
     }
   }
@@ -169,10 +170,10 @@ export class StatePersistence {
         try {
           serialized = await this.loadFromIndexedDB('currentGame');
           if (serialized) {
-            console.log('✅ Loaded from IndexedDB');
+            logger.log('✅ Loaded from IndexedDB');
           }
         } catch (error) {
-          console.warn('IndexedDB load failed, trying localStorage:', error);
+          logger.warn('IndexedDB load failed, trying localStorage:', error);
         }
       }
 
@@ -180,12 +181,12 @@ export class StatePersistence {
       if (!serialized) {
         serialized = this.loadFromLocalStorage();
         if (serialized) {
-          console.log('✅ Loaded from localStorage');
+          logger.log('✅ Loaded from localStorage');
         }
       }
 
       if (!serialized) {
-        console.log('No saved state found');
+        logger.log('No saved state found');
         return false;
       }
 
@@ -195,7 +196,7 @@ export class StatePersistence {
 
       return true;
     } catch (error) {
-      console.error('Failed to load state:', error);
+      logger.error('Failed to load state:', error);
       return false;
     }
   }
@@ -225,7 +226,7 @@ export class StatePersistence {
       try {
         await this.deleteFromIndexedDB('currentGame');
       } catch (error) {
-        console.error('Failed to clear IndexedDB:', error);
+        logger.error('Failed to clear IndexedDB:', error);
       }
     }
 
@@ -233,7 +234,7 @@ export class StatePersistence {
     localStorage.removeItem(this.LOCALSTORAGE_KEY);
     localStorage.removeItem(this.LOCALSTORAGE_BACKUP_KEY);
 
-    console.log('✅ Cleared all saved state');
+    logger.log('✅ Cleared all saved state');
   }
 
   /**
@@ -301,7 +302,7 @@ export class StatePersistence {
       prunedMap.set(key, zone);
     });
 
-    console.log(`🗜️ Pruned zones: ${zones.size} -> ${prunedMap.size}`);
+    logger.log(`🗜️ Pruned zones: ${zones.size} -> ${prunedMap.size}`);
     return prunedMap;
   }
 
@@ -318,7 +319,7 @@ export class StatePersistence {
     // Compress if enabled
     if (this.COMPRESSION_ENABLED && LZString) {
       const compressed = LZString.compressToUTF16(json);
-      console.log(`🗜️ Compressed: ${json.length} -> ${compressed.length} (${Math.round((1 - compressed.length / json.length) * 100)}% reduction)`);
+      logger.log(`🗜️ Compressed: ${json.length} -> ${compressed.length} (${Math.round((1 - compressed.length / json.length) * 100)}% reduction)`);
       return {
         version: 3,
         compressed: true,
@@ -395,7 +396,7 @@ export class StatePersistence {
    * Migrate old save format to new format
    */
   migrateOldFormat(oldState: any): any {
-    console.log('📦 Migrating old save format...');
+    logger.log('📦 Migrating old save format...');
 
     // Create new state structure
     const newState = store.createInitialState();
@@ -456,7 +457,7 @@ export class StatePersistence {
       }
     }
 
-    console.log('✅ Migration complete');
+    logger.log('✅ Migration complete');
     return newState;
   }
 
@@ -517,10 +518,10 @@ export class StatePersistence {
 
       // Check size
       const sizeKB = new Blob([json]).size / 1024;
-      console.log(`💾 localStorage save size: ${sizeKB.toFixed(2)} KB`);
+      logger.log(`💾 localStorage save size: ${sizeKB.toFixed(2)} KB`);
 
       if (sizeKB > 5000) {
-        console.warn('⚠️ Save data exceeds 5MB, may fail on some browsers');
+        logger.warn('⚠️ Save data exceeds 5MB, may fail on some browsers');
       }
 
       // Create backup of previous save
@@ -531,16 +532,16 @@ export class StatePersistence {
 
       // Save new data
       localStorage.setItem(this.LOCALSTORAGE_KEY, json);
-      console.log('✅ Saved to localStorage');
+      logger.log('✅ Saved to localStorage');
       return true;
     } catch (error) {
-      console.error('localStorage save failed:', error);
+      logger.error('localStorage save failed:', error);
 
       // Try to restore backup if save failed
       const backup = localStorage.getItem(this.LOCALSTORAGE_BACKUP_KEY);
       if (backup) {
         localStorage.setItem(this.LOCALSTORAGE_KEY, backup);
-        console.log('⚠️ Restored from backup');
+        logger.log('⚠️ Restored from backup');
       }
 
       return false;
@@ -557,17 +558,17 @@ export class StatePersistence {
 
       return JSON.parse(json);
     } catch (error) {
-      console.error('localStorage load failed:', error);
+      logger.error('localStorage load failed:', error);
 
       // Try backup
       try {
         const backup = localStorage.getItem(this.LOCALSTORAGE_BACKUP_KEY);
         if (backup) {
-          console.log('⚠️ Loading from backup');
+          logger.log('⚠️ Loading from backup');
           return JSON.parse(backup);
         }
       } catch (backupError) {
-        console.error('Backup load also failed:', backupError);
+        logger.error('Backup load also failed:', backupError);
       }
 
       return null;

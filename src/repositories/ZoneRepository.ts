@@ -21,7 +21,7 @@ export class ZoneRepository {
      * @param {number} depth - Underground depth (default 1)
      * @returns {Object|undefined} Zone data or undefined if not found
      */
-    get(x, y, dimension, depth = 1) {
+    get(x: number, y: number, dimension: number, depth: number = 1): any | undefined {
         const key = createZoneKey(x, y, dimension, depth);
         return this._zones.get(key);
     }
@@ -31,7 +31,7 @@ export class ZoneRepository {
      * @param {string} key - Zone key in format "x,y,dimension,depth"
      * @returns {Object|undefined} Zone data or undefined if not found
      */
-    getByKey(key) {
+    getByKey(key: string): any | undefined {
         return this._zones.get(key);
     }
 
@@ -43,7 +43,7 @@ export class ZoneRepository {
      * @param {number} depth - Underground depth (default 1)
      * @returns {boolean} True if zone exists
      */
-    has(x, y, dimension, depth = 1) {
+    has(x: number, y: number, dimension: number, depth: number = 1): boolean {
         const key = createZoneKey(x, y, dimension, depth);
         return this._zones.has(key);
     }
@@ -53,7 +53,7 @@ export class ZoneRepository {
      * @param {string} key - Zone key in format "x,y,dimension,depth"
      * @returns {boolean} True if zone exists
      */
-    hasByKey(key) {
+    hasByKey(key: string): boolean {
         return this._zones.has(key);
     }
 
@@ -65,7 +65,7 @@ export class ZoneRepository {
      * @param {Object} zoneData - Zone data to store
      * @param {number} depth - Underground depth (default 1)
      */
-    set(x, y, dimension, zoneData, depth = 1) {
+    set(x: number, y: number, dimension: number, zoneData: any, depth: number = 1): void {
         const key = createZoneKey(x, y, dimension, depth);
         this._zones.set(key, zoneData);
     }
@@ -75,7 +75,7 @@ export class ZoneRepository {
      * @param {string} key - Zone key in format "x,y,dimension,depth"
      * @param {Object} zoneData - Zone data to store
      */
-    setByKey(key, zoneData) {
+    setByKey(key: string, zoneData: any): void {
         this._zones.set(key, zoneData);
     }
 
@@ -87,7 +87,7 @@ export class ZoneRepository {
      * @param {number} depth - Underground depth (default 1)
      * @returns {boolean} True if zone was deleted
      */
-    delete(x, y, dimension, depth = 1) {
+    delete(x: number, y: number, dimension: number, depth: number = 1): boolean {
         const key = createZoneKey(x, y, dimension, depth);
         return this._zones.delete(key);
     }
@@ -97,14 +97,14 @@ export class ZoneRepository {
      * @param {string} key - Zone key in format "x,y,dimension,depth"
      * @returns {boolean} True if zone was deleted
      */
-    deleteByKey(key) {
+    deleteByKey(key: string): boolean {
         return this._zones.delete(key);
     }
 
     /**
      * Clear all zones
      */
-    clear() {
+    clear(): void {
         this._zones.clear();
     }
 
@@ -112,7 +112,7 @@ export class ZoneRepository {
      * Get all zone entries as an array for serialization
      * @returns {Array<[string, Object]>} Array of [key, zoneData] tuples
      */
-    entries() {
+    entries(): Array<[string, any]> {
         return Array.from(this._zones.entries());
     }
 
@@ -120,7 +120,7 @@ export class ZoneRepository {
      * Get the number of cached zones
      * @returns {number} Number of zones
      */
-    size() {
+    size(): number {
         return this._zones.size;
     }
 
@@ -128,7 +128,7 @@ export class ZoneRepository {
      * Restore zones from a serialized array
      * @param {Array<[string, Object]>} entries - Array of [key, zoneData] tuples
      */
-    restore(entries) {
+    restore(entries: Array<[string, any]>): void {
         this._zones = new Map(entries);
     }
 
@@ -137,7 +137,7 @@ export class ZoneRepository {
      * @returns {Map<string, Object>} The internal zones Map
      * @deprecated Use the repository methods instead of direct Map access
      */
-    getMap() {
+    getMap(): Map<string, any> {
         return this._zones;
     }
 }

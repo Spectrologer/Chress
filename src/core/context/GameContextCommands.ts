@@ -7,6 +7,7 @@ import type { Enemy } from '@entities/Enemy';
 import type { InventoryItem } from '@managers/inventory/ItemMetadata';
 import type { Treasure } from '@managers/ZoneManager';
 import type { Item } from './GameContextInterfaces';
+import { logger } from '@core/logger';
 
 /**
  * Command methods mixin for GameContext
@@ -100,7 +101,9 @@ export abstract class GameContextCommands {
                 }
             }
             this.ui.updateLastPlayerPosition(this.player);
-        } catch (e) {}
+        } catch (e) {
+            logger.warn('[GameContextCommands] Failed to update UI player position:', e);
+        }
     }
 
     updatePlayerStats(): void {

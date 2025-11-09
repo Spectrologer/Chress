@@ -29,24 +29,35 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Nothing to hide here. Just a normal mantis doing normal mantis things. Why are you looking at me?",
-        "buttonText": "Okay..."
+        "text": "Mind your business.",
+        "buttonText": "What?"
       },
       {
         "id": "msg_1",
-        "text": "That bag? It's definitely not full of suspicious items. It's... groceries. Normal groceries.",
-        "buttonText": "Sure."
+        "text": "I'm not doing anything illegal.",
+        "buttonText": "Okay?"
       },
       {
         "id": "msg_2",
-        "text": "I'm not doing anything illegal. You can't prove otherwise. Wait, why would I say that? Forget it.",
-        "buttonText": "Right..."
+        "text": "I never saw anything! I don't know what's going on.",
+        "buttonText": "I have to get going."
+      },   
+      {
+        "id": "msg_4",
+        "text": "Please don't tell anyone you saw me.",
+        "buttonText": "I'm out."
+      },
+      {
+        "id": "msg_5",
+        "text": "It's just a donut! I'm not a criminal!",
+        "buttonText": "Aaaaaaahh."
       }
     ]
   },
   "behavior": {
     "movementType": "stationary",
-    "walkable": false
+    "walkable": false,
+    "leaveAfterTrade": true
   },
   "audio": {
     "voicePitch": 90

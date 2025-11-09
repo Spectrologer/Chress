@@ -1,10 +1,10 @@
-import { BarterWindow } from '../ui/BarterWindow';
-import { Player } from '../entities/Player';
-import { TextBox } from '../ui/textbox';
-import * as NPCLoader from '../core/NPCLoader';
+import { BarterWindow } from '@ui/BarterWindow';
+import { Player } from '@entities/Player';
+import { TextBox } from '@ui/textbox';
+import * as NPCLoader from '@core/NPCLoader';
 
 // Mock NPC data
-vi.mock('../core/NPCLoader', () => ({
+vi.mock('@core/NPCLoader', () => ({
   getNPCCharacterData: vi.fn((npcId) => {
     if (npcId === 'axelotl' || npcId === 'axolotl') {
       return {
@@ -68,6 +68,11 @@ describe('BarterWindow discovery trades', () => {
     player = new Player();
     mockGame = {
       player,
+      playerFacade: {
+        getSpentDiscoveries: () => player.getSpentDiscoveries(),
+        setSpentDiscoveries: (val) => player.setSpentDiscoveries(val),
+        addAbility: (ability) => player.abilities.add(ability)
+      },
       uiManager: {
         addMessageToLog: vi.fn(),
         showOverlayMessage: vi.fn(),

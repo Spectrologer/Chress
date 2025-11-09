@@ -33,7 +33,8 @@ export class AnimationRenderer {
     }
 
     drawSplodeAnimation(): void {
-        this.game.player.animations.splodeAnimations.forEach(anim => {
+        const splodeAnimations = this.game.playerFacade.getSplodeAnimations();
+        splodeAnimations.forEach(anim => {
             if (anim.frame > 0) {
                 // Calculate a frame index from 1..8. If totalFrames is missing, fall back.
                 let frameNumber = 1;

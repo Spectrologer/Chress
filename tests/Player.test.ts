@@ -1,4 +1,4 @@
-import { Player } from '../entities/Player';
+import { Player } from '../src/entities/Player';
 import { TILE_TYPES, GRID_SIZE, ZONE_CONSTANTS } from '@core/constants/index';
 
 describe('Player', () => {
@@ -7,14 +7,14 @@ describe('Player', () => {
 
   beforeEach(() => {
     player = new Player();
-    grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR));
+    grid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR));
     // Provide minimal global window stubs used by Player.move
-    global.window = global.window || {};
-    global.window.gameInstance = global.window.gameInstance || {};
-    global.window.gameInstance.isPlayerTurn = true;
-    global.window.gameInstance.startEnemyTurns = vi.fn();
-    global.window.gameInstance.explodeBomb = vi.fn();
-    global.window.soundManager = global.window.soundManager || { playSound: vi.fn() };
+    (global.window as any) = global.window || {};
+    (global.window as any).gameInstance = (global.window as any).gameInstance || {};
+    (global.window as any).gameInstance.isPlayerTurn = true;
+    (global.window as any).gameInstance.startEnemyTurns = vi.fn();
+    (global.window as any).gameInstance.explodeBomb = vi.fn();
+    (global.window as any).soundManager = (global.window as any).soundManager || { playSound: vi.fn() };
   });
 
   test('initial state and reset', () => {
@@ -52,7 +52,7 @@ describe('Player', () => {
 
     grid[player.y][player.x] = TILE_TYPES.EXIT;
     let sawCallback = false;
-    const moved = player.move(-1, 0, grid, (nx, ny, side) => { sawCallback = true; expect(typeof side).toBe('string'); });
+    const moved = player.move(-1, 0, grid, (nx: number, ny: number, side: string) => { sawCallback = true; expect(typeof side).toBe('string'); });
     expect(moved).toBe(true);
     expect(sawCallback).toBe(true);
   });
@@ -114,7 +114,7 @@ describe('Player', () => {
     const moved = player.move(4, 3, grid);
     // Player should not move, but explosion should be triggered
     expect(moved).toBe(false);
-    expect(global.window.gameInstance.explodeBomb).toHaveBeenCalledWith(4, 3);
+    expect((global.window as any).gameInstance.explodeBomb).toHaveBeenCalledWith(4, 3);
   });
 });
 

@@ -3,17 +3,19 @@ import { randomInt, findValidPlacement, isAllowedTile, validateAndSetTile } from
 import { ZoneStateManager } from './ZoneStateManager';
 import { logger } from '@core/logger';
 import { isTileType, isTileObjectOfType, isFloor } from '@utils/TypeChecks';
+import type { GridManager } from '@managers/GridManager';
+import type { IGame } from '@core/context';
 
 export class StructureGenerator {
-    private gridManager: any;
-    private game: any;
+    private gridManager: GridManager;
+    private game: IGame | null;
 
-    constructor(gridManager: any, game: any = null) {
+    constructor(gridManager: GridManager, game: IGame | null = null) {
         this.gridManager = gridManager;
         this.game = game; // For accessing zoneGenState
     }
 
-    addHouse(zoneX, zoneY) {
+    addHouse(zoneX: number, zoneY: number): void {
         // Place a 4x3 club in the center-left area of zone (0,0)
         // Position it so the player can spawn in front of it (to the south)
         const houseStartX = ZONE_CONSTANTS.HOUSE_START_POSITION.x;
@@ -60,7 +62,7 @@ export class StructureGenerator {
         }
     }
 
-    _placeStructure(width, height, tileType, onPlacedCallback) {
+    _placeStructure(width: number, height: number, tileType: number, onPlacedCallback?: (x: number, y: number) => void): boolean {
         const allowedTiles = [TILE_TYPES.FLOOR, TILE_TYPES.ROCK, TILE_TYPES.SHRUBBERY, TILE_TYPES.GRASS, TILE_TYPES.WATER];
         const pos = findValidPlacement({
             maxAttempts: 50,
@@ -94,20 +96,20 @@ export class StructureGenerator {
         return false;
     }
 
-    addWell(zoneX, zoneY) {
+    addWell(zoneX: number, zoneY: number): void {
         this._placeStructure(2, 2, TILE_TYPES.WELL, () => {
-            this.game.zoneGenState.setSpawnFlag('well', true);
+            this.game?.zoneGenState.setSpawnFlag('well', true);
         });
     }
 
-    addDeadTree(zoneX, zoneY) {
+    addDeadTree(zoneX: number, zoneY: number): void {
         this._placeStructure(2, 2, TILE_TYPES.DEADTREE, () => {
-            this.game.zoneGenState.setSpawnFlag('deadTree', true);
+            this.game?.zoneGenState.setSpawnFlag('deadTree', true);
             logger.log(`Dead tree spawned at zone (${zoneX}, ${zoneY})`);
         });
     }
 
-    addShack(zoneX, zoneY) {
+    addShack(zoneX: number, zoneY: number): boolean {
         // Place a 3x3 shack with a PORT at the middle bottom
         // Allow placement on floor, grass, rock, shrubbery, and water to ensure reliable spawning in wilds zones
         const allowedTiles = [TILE_TYPES.FLOOR, TILE_TYPES.GRASS, TILE_TYPES.ROCK, TILE_TYPES.SHRUBBERY, TILE_TYPES.WATER];
@@ -158,7 +160,7 @@ export class StructureGenerator {
         return false;
     }
 
-    addCistern(zoneX, zoneY, force = false, forcedX = null, forcedY = null) {
+    addCistern(zoneX: number, zoneY: number, force: boolean = false, forcedX: number | null = null, forcedY: number | null = null): void {
         // Handle forced placement for home zone
         if (zoneX === 0 && zoneY === 0 && force) {
             // Always add the cistern behind the house in the home zone (0,0)

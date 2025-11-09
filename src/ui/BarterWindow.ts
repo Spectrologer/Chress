@@ -8,6 +8,7 @@ import { EventTypes } from '@core/EventTypes';
 import { safeCall } from '@utils/SafeServiceCall';
 import { EventListenerManager } from '@utils/EventListenerManager';
 import type { InventoryItem } from '@managers/inventory/ItemMetadata';
+import { logger } from '@core/logger';
 
 interface Player {
     inventory: InventoryItem[];
@@ -87,8 +88,8 @@ export class BarterWindow {
 
     showBarterWindow(npcType: string): void {
         // If the player already has the ability granted by this NPC, show post-trade dialogue instead of trade.
-        if ((npcType === 'axelotl' && this.game.player.abilities.has('axe')) ||
-            (npcType === 'gouge' && this.game.player.abilities.has('hammer'))) {
+        if ((npcType === 'axelotl' && this.game.playerFacade?.hasAbility('axe')) ||
+            (npcType === 'gouge' && this.game.playerFacade?.hasAbility('hammer'))) {
             // Get the character data from JSON
             const characterData = TextBox.getNPCCharacterData(npcType);
             if (characterData && characterData.interaction) {
@@ -139,7 +140,9 @@ export class BarterWindow {
         if (this.barterNPCName) {
             this.barterNPCName.textContent = name;
             // Ensure the NPC name fits within its container on mobile devices
-            try { fitTextToContainer(this.barterNPCName, { minFontSize: 12 }); } catch (e) {}
+            try { fitTextToContainer(this.barterNPCName, { minFontSize: 12 }); } catch (e) {
+                logger.warn('[BarterWindow] Failed to fit NPC name text:', e);
+            }
         }
 
         if (this.barterNPCPortrait) {
@@ -161,7 +164,9 @@ export class BarterWindow {
             // Ensure the element has the dialogue class for styling parity
             this.barterNPCMessage.classList.add('dialogue-text');
             // Fit dialogue text to the message container (exclude lists which may scroll)
-            try { fitTextToContainer(this.barterNPCMessage, { childSelector: '.dialogue-text', minFontSize: 12 }); } catch (e) {}
+            try { fitTextToContainer(this.barterNPCMessage, { childSelector: '.dialogue-text', minFontSize: 12 }); } catch (e) {
+                logger.warn('[BarterWindow] Failed to fit message text:', e);
+            }
             try {
                 // Use the typewriter controller from message manager
                 const mm = this.game.uiManager && this.game.uiManager.messageManager;
@@ -176,7 +181,9 @@ export class BarterWindow {
                         // Typewriter complete
                     });
                 }
-            } catch (e) {}
+            } catch (e) {
+                logger.warn('[BarterWindow] Failed to start typewriter:', e);
+            }
         }
 
         const barterOffersContainer = document.getElementById('barterOffers');
@@ -247,6 +254,7 @@ export class BarterWindow {
 
     private checkTradeViability(tradeData: Trade): boolean {
         const player = this.game.player;
+        if (!player) return false;
         const requiredAmount = tradeData.requiredAmount || 1;
 
         // Only check for full inventory if the trade results in an item.
@@ -326,7 +334,9 @@ export class BarterWindow {
         try {
             const mm = this.game.uiManager && this.game.uiManager.messageManager;
             if (mm) mm._currentVoiceSettings = null;
-        } catch (e) {}
+        } catch (e) {
+            logger.warn('[BarterWindow] Failed to clear voice settings:', e);
+        }
         // Clear NPC position tracking when barter window closes
         if (this.game.transientGameState) {
             this.game.transientGameState.clearCurrentNPCPosition();
@@ -334,7 +344,7 @@ export class BarterWindow {
     }
 
     confirmTrade(tradeData?: Trade): void {
-        if (!tradeData) {
+        if (!tradeData || !this.game.player) {
             this.hideBarterWindow();
             return;
         }
@@ -350,13 +360,13 @@ export class BarterWindow {
             return;
         }
         if (tradeData.id === 'rune_food') {
-            this.game.playerFacade.addPoints(-tradeData.requiredAmount);
+            this.game.playerFacade?.addPoints(-tradeData.requiredAmount);
             const randomFood = FOOD_ASSETS[Math.floor(Math.random() * FOOD_ASSETS.length)];
             // Use ItemManager helper to merge into existing stacks when possible
-            this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: randomFood });
+            this.game.itemManager?.addItemToInventory(this.game.player, { type: 'food', foodType: randomFood });
             this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} points for food.`, tradeData.receivedItemImg);
         } else if (tradeData.id === 'rune_item') {
-            this.game.playerFacade.addPoints(-tradeData.requiredAmount);
+            this.game.playerFacade?.addPoints(-tradeData.requiredAmount);
             const items = [
                 TILE_TYPES.BOMB,
                 TILE_TYPES.BOW,
@@ -370,7 +380,7 @@ export class BarterWindow {
 
             let awardedImg = tradeData.receivedItemImg;
             if (inventoryItem) {
-                this.game.itemManager.addItemToInventory(this.game.player, inventoryItem as InventoryItem);
+                this.game.itemManager?.addItemToInventory(this.game.player, inventoryItem as InventoryItem);
                 // Map awarded type to appropriate asset for the overlay
                 if (inventoryItem.type === 'bomb') awardedImg = 'assets/items/misc/bomb.png';
                 else if (inventoryItem.type === 'bow') awardedImg = 'assets/items/equipment/bow.png';
@@ -378,7 +388,7 @@ export class BarterWindow {
             }
             this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} points for an item.`, awardedImg);
         } else if (tradeData.id === 'nib_item') {
-            this.game.playerFacade.addPoints(-tradeData.requiredAmount);
+            this.game.playerFacade?.addPoints(-tradeData.requiredAmount);
             // Normalize to the canonical radial book type so ItemManager stacks it correctly
             const rand = Math.random();
             let randomItem: Partial<InventoryItem>;
@@ -389,7 +399,7 @@ export class BarterWindow {
             } else {
                 randomItem = { type: 'shovel' as const, uses: 3 };
             }
-            this.game.itemManager.addItemToInventory(this.game.player, randomItem as InventoryItem);
+            this.game.itemManager?.addItemToInventory(this.game.player, randomItem as InventoryItem);
             // Choose overlay image based on awarded item
             let awardedImg2: string;
             if (randomItem.type === 'book_of_time_travel') {
@@ -403,14 +413,14 @@ export class BarterWindow {
 
         } else if (tradeData.id === 'mark_meat') { // Trade discoveries for meat
             // Update spent discoveries via the Player API
-            const cur = this.game.player.getSpentDiscoveries();
-            this.game.player.setSpentDiscoveries(cur + tradeData.requiredAmount);
-            this.game.itemManager.addItemToInventory(this.game.player, { type: 'food', foodType: 'items/consumables/meat.png' });
+            const cur = this.game.playerFacade?.getSpentDiscoveries() ?? 0;
+            this.game.playerFacade?.setSpentDiscoveries(cur + tradeData.requiredAmount);
+            this.game.itemManager?.addItemToInventory(this.game.player, { type: 'food', foodType: 'items/consumables/meat.png' });
             this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} Discoveries for meat.`, tradeData.receivedItemImg);
         } else if (tradeData.id === 'axelotl_axe') { // Trade discoveries for axe ability
-            const cur2 = this.game.player.getSpentDiscoveries();
-            this.game.player.setSpentDiscoveries(cur2 + tradeData.requiredAmount);
-            this.game.player.abilities.add('axe');
+            const cur2 = this.game.playerFacade?.getSpentDiscoveries() ?? 0;
+            this.game.playerFacade?.setSpentDiscoveries(cur2 + tradeData.requiredAmount);
+            this.game.playerFacade?.addAbility('axe');
 
             // Show the onComplete message if available
             const characterData = TextBox.getNPCCharacterData('axolotl');
@@ -436,16 +446,18 @@ export class BarterWindow {
                 useTypewriter: false
             });
         } else if (tradeData.id === 'gouge_hammer') { // Trade discoveries for hammer ability
-            const cur3 = this.game.player.getSpentDiscoveries();
-            this.game.player.setSpentDiscoveries(cur3 + tradeData.requiredAmount);
-            this.game.player.abilities.add('hammer');
+            const cur3 = this.game.playerFacade?.getSpentDiscoveries() ?? 0;
+            this.game.playerFacade?.setSpentDiscoveries(cur3 + tradeData.requiredAmount);
+            this.game.playerFacade?.addAbility('hammer');
             this.emitTradeSuccess(`Traded ${tradeData.requiredAmount} discoveries for hammer ability.`, tradeData.receivedItemImg);
         } else {
             // Legacy/single trade logic
-            const requiredItem = this.game.player.inventory.find(item => item && item.type === 'food' && 'foodType' in item && typeof item.foodType === 'string' && item.foodType.startsWith(tradeData.requiredItem));
+            const inventory = this.game.playerFacade?.getInventory();
+            if (!inventory) return;
+            const requiredItem = inventory.find(item => item && item.type === 'food' && 'foodType' in item && typeof item.foodType === 'string' && item.foodType.startsWith(tradeData.requiredItem));
             if (requiredItem) {
-                const nonNullCount = this.game.player.inventory.filter(item => item !== null).length;
-                const canReceiveWater = nonNullCount < 6 || this.game.player.inventory.some(i => i && i.type === 'water');
+                const nonNullCount = inventory.filter(item => item !== null).length;
+                const canReceiveWater = nonNullCount < 6 || inventory.some(i => i && i.type === 'water');
                 if (!canReceiveWater) {
                      eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
                          text: 'Inventory is full! Cannot complete trade.',
@@ -459,12 +471,12 @@ export class BarterWindow {
                 const currentQty = typeof requiredItem.quantity === 'number' ? requiredItem.quantity : 1;
                 requiredItem.quantity = currentQty - 1;
                 if (typeof requiredItem.quantity === 'number' && requiredItem.quantity <= 0) {
-                    const index = this.game.player.inventory.indexOf(requiredItem);
-                    this.game.player.inventory[index] = null as any;
+                    const index = inventory.indexOf(requiredItem);
+                    inventory[index] = null as any;
                 }
 
                 // Directly add the received item using ItemManager helper so stacking rules apply
-                this.game.itemManager.addItemToInventory(this.game.player, { type: 'water' });
+                this.game.itemManager?.addItemToInventory(this.game.player, { type: 'water' });
                 this.emitTradeSuccess('Trade successful!', tradeData.receivedItemImg);
             }
         }

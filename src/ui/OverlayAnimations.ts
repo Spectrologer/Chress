@@ -24,8 +24,8 @@
                     if (ev && ev.target !== overlayElement) return; // ignore bubbled events
                     overlayElement.removeEventListener('animationend', onEnd);
                     // Clean up class and hide overlay
-                    try { overlayElement.classList.remove('start-overlay-furling'); } catch (e) {}
-                    try { overlayElement.style.display = 'none'; } catch (e) {}
+                    try { overlayElement.classList.remove('start-overlay-furling'); } catch (e) { logger.warn('[OverlayAnimations] Failed to remove furling class (animationend):', e); }
+                    try { overlayElement.style.display = 'none'; } catch (e) { logger.warn('[OverlayAnimations] Failed to hide overlay (animationend):', e); }
                     resolve();
                 };
 
@@ -34,17 +34,18 @@
                 // Fallback timeout in case animationend doesn't fire — slightly longer
                 // than the CSS animation (1200ms) to be safe.
                 setTimeout(() => {
-                    try { overlayElement.classList.remove('start-overlay-furling'); } catch (e) {}
-                    try { overlayElement.style.display = 'none'; } catch (e) {}
+                    try { overlayElement.classList.remove('start-overlay-furling'); } catch (e) { logger.warn('[OverlayAnimations] Failed to remove furling class (timeout):', e); }
+                    try { overlayElement.style.display = 'none'; } catch (e) { logger.warn('[OverlayAnimations] Failed to hide overlay (timeout):', e); }
                     resolve();
                 }, 2000);
             } catch (e) {
-                try { overlayElement.style.display = 'none'; } catch (err) {}
+                logger.warn('[OverlayAnimations] Animation error:', e);
+                try { overlayElement.style.display = 'none'; } catch (err) { logger.warn('[OverlayAnimations] Failed to hide overlay after error:', err); }
                 resolve();
             }
         });
     }
 
     // Expose globally for simple call from GameInitializer without module import
-    try { window.animateOverlayCurl = animateOverlayCurl; } catch (e) { /* ignore */ }
+    try { window.animateOverlayCurl = animateOverlayCurl; } catch (e) { logger.warn('[OverlayAnimations] Failed to expose global function:', e); }
 })();

@@ -49,7 +49,7 @@ describe('CombatActionManager', () => {
       },
       // Add enemyCollection mock
       enemyCollection: {
-        findAt: vi.fn((x, y) => game.enemies.find(e => e.x === x && e.y === y))
+        findAt: vi.fn((x, y) => game.enemies.find((e: any) => e.x === x && e.y === y))
       }
     };
 

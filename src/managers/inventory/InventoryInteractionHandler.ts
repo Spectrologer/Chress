@@ -3,6 +3,7 @@ import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { isTileType } from '@utils/TileUtils';
 import { Position } from '@core/Position';
+import { logger } from '@core/logger';
 import type { IGame, ICoordinates } from '@core/context';
 import type { InventoryItem } from './ItemMetadata';
 
@@ -93,8 +94,15 @@ export class InventoryInteractionHandler {
      * @returns Success
      */
     private _placeImmediateBomb(item: InventoryItem): boolean {
-        const px = this.game.player.x;
-        const py = this.game.player.y;
+        if (!this.game.playerFacade) {
+            return false;
+        }
+        if (!this.game.grid) {
+            return false;
+        }
+
+        const px = this.game.playerFacade.getX();
+        const py = this.game.playerFacade.getY();
 
         // Place bomb on grid
         this.game.grid[py][px] = {
@@ -120,8 +128,18 @@ export class InventoryInteractionHandler {
      * @returns Success
      */
     private _enterBombPlacementMode(): boolean {
-        const px = this.game.player.x;
-        const py = this.game.player.y;
+        if (!this.game.playerFacade) {
+            return false;
+        }
+        if (!this.game.grid) {
+            return false;
+        }
+        if (!this.game.transientGameState) {
+            return false;
+        }
+
+        const px = this.game.playerFacade.getX();
+        const py = this.game.playerFacade.getY();
 
         // Use transientGameState for bomb placement
         const transientState = this.game.transientGameState;
@@ -169,7 +187,7 @@ export class InventoryInteractionHandler {
      */
     executeBombPlacement(gridCoords: ICoordinates): boolean {
         if (!this.game.bombManager) {
-            console.warn('BombManager not available');
+            logger.warn('BombManager not available');
             return false;
         }
 

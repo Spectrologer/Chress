@@ -4,7 +4,13 @@ import { EventTypes } from '../src/core/EventTypes';
 
 // Mock Enemy class
 class MockEnemy {
-    constructor({ x, y, health = 10, enemyType = 'lizardy', id = null }) {
+    x: number;
+    y: number;
+    health: number;
+    enemyType: string;
+    id: string;
+
+    constructor({ x, y, health = 10, enemyType = 'lizardy', id = null }: { x: number; y: number; health?: number; enemyType?: string; id?: string | null }) {
         this.x = x;
         this.y = y;
         this.health = health;
@@ -21,7 +27,7 @@ const enemies = [
     new MockEnemy({ x: 1, y: 1, id: 'e1' }),
     new MockEnemy({ x: 2, y: 2, id: 'e2' }),
     new MockEnemy({ x: 3, y: 3, id: 'e3', health: 0 }) // dead enemy
-];
+] as any[];
 const collection = new EnemyCollection(enemies);
 
 console.assert(collection.count() === 3, 'should have 3 enemies');
@@ -75,25 +81,25 @@ console.log('✓ Predicate methods work');
 
 // Test 5: Add Enemy
 console.log('\n=== Test 5: Add Enemy ===');
-let spawnEvent = null;
+let spawnEvent: any = null;
 const unsubSpawn = eventBus.on(EventTypes.ENEMY_SPAWNED, (data) => {
     spawnEvent = data;
 });
 
 const newEnemy = new MockEnemy({ x: 4, y: 4, id: 'e4' });
-collection.add(newEnemy);
+collection.add(newEnemy as any);
 
 console.assert(collection.count() === 4, 'should have 4 enemies after add');
 console.assert(collection.findAt(4, 4) !== null, 'should find newly added enemy');
 console.assert(spawnEvent !== null, 'should emit ENEMY_SPAWNED event');
-console.assert(spawnEvent.enemy.id === 'e4', 'event should include enemy data');
+console.assert(spawnEvent?.enemy?.id === 'e4', 'event should include enemy data');
 
 unsubSpawn();
 console.log('✓ Add enemy works');
 
 // Test 6: Remove Enemy
 console.log('\n=== Test 6: Remove Enemy ===');
-let removeEvent = null;
+let removeEvent: any = null;
 const unsubRemove = eventBus.on(EventTypes.ENEMY_REMOVED, (data) => {
     removeEvent = data;
 });
@@ -120,8 +126,8 @@ console.log('✓ Remove by ID works');
 
 // Test 8: Remove Where
 console.log('\n=== Test 8: Remove Where ===');
-collection.add(new MockEnemy({ x: 5, y: 5, health: 0, id: 'e5' })); // dead
-collection.add(new MockEnemy({ x: 6, y: 6, health: 0, id: 'e6' })); // dead
+collection.add(new MockEnemy({ x: 5, y: 5, health: 0, id: 'e5' }) as any); // dead
+collection.add(new MockEnemy({ x: 6, y: 6, health: 0, id: 'e6' }) as any); // dead
 
 const deadCount = collection.removeDead(false);
 console.assert(deadCount === 3, 'should remove 3 dead enemies');
@@ -130,7 +136,7 @@ console.log('✓ Remove where works');
 
 // Test 9: Clear
 console.log('\n=== Test 9: Clear ===');
-let clearEvent = null;
+let clearEvent: any = null;
 const unsubClear = eventBus.on(EventTypes.ENEMIES_CLEARED, (data) => {
     clearEvent = data;
 });
@@ -139,14 +145,14 @@ collection.clear();
 console.assert(collection.count() === 0, 'should have 0 enemies after clear');
 console.assert(collection.isEmpty() === true, 'should be empty');
 console.assert(clearEvent !== null, 'should emit ENEMIES_CLEARED event');
-console.assert(clearEvent.count === 1, 'event should include count');
+console.assert(clearEvent?.count === 1, 'event should include count');
 
 unsubClear();
 console.log('✓ Clear works');
 
 // Test 10: Replace All
 console.log('\n=== Test 10: Replace All ===');
-let replaceEvent = null;
+let replaceEvent: any = null;
 const unsubReplace = eventBus.on(EventTypes.ENEMIES_REPLACED, (data) => {
     replaceEvent = data;
 });
@@ -154,22 +160,22 @@ const unsubReplace = eventBus.on(EventTypes.ENEMIES_REPLACED, (data) => {
 const newEnemies = [
     new MockEnemy({ x: 10, y: 10, id: 'e10' }),
     new MockEnemy({ x: 11, y: 11, id: 'e11' })
-];
+] as any[];
 collection.replaceAll(newEnemies);
 
 console.assert(collection.count() === 2, 'should have 2 enemies after replace');
 console.assert(collection.findAt(10, 10) !== null, 'should find new enemy');
 console.assert(replaceEvent !== null, 'should emit ENEMIES_REPLACED event');
-console.assert(replaceEvent.oldCount === 0, 'event should show oldCount=0');
-console.assert(replaceEvent.newCount === 2, 'event should show newCount=2');
+console.assert(replaceEvent?.oldCount === 0, 'event should show oldCount=0');
+console.assert(replaceEvent?.newCount === 2, 'event should show newCount=2');
 
 unsubReplace();
 console.log('✓ Replace all works');
 
 // Test 11: Filter
 console.log('\n=== Test 11: Filter ===');
-collection.add(new MockEnemy({ x: 12, y: 12, health: 5, id: 'e12' }));
-collection.add(new MockEnemy({ x: 13, y: 13, health: 15, id: 'e13' }));
+collection.add(new MockEnemy({ x: 12, y: 12, health: 5, id: 'e12' }) as any);
+collection.add(new MockEnemy({ x: 13, y: 13, health: 15, id: 'e13' }) as any);
 
 const kept = collection.filter(e => e.health > 8, false);
 console.assert(kept === 2, 'should keep 2 enemies with health > 8');

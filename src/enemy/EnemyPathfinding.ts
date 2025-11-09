@@ -3,12 +3,14 @@
  *
  * Implements pathfinding for 6 different enemy types, each with unique
  * movement patterns inspired by chess pieces:
- * - lizardy: Vertical only (pawn-like)
- * - lizardo: 8-way movement (king-like)
- * - lizord: L-shaped jumps (knight-like)
- * - zard: Diagonal only (bishop-like)
- * - lizardeaux: Orthogonal any distance (rook-like)
- * - lazerd: Any direction any distance (queen-like)
+ *
+ * CHESS PIECE MAPPINGS:
+ * - lizardy: Vertical only (PAWN)
+ * - lizardo: 8-way movement, 1 square (KING)
+ * - lizord: L-shaped jumps (KNIGHT)
+ * - zard: Diagonal only (BISHOP)
+ * - lizardeaux: Orthogonal any distance (ROOK)
+ * - lazerd: Any direction any distance (QUEEN)
  *
  * Uses BFS instead of A* because:
  * 1. Guarantees shortest path in unweighted grid

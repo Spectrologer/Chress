@@ -21,6 +21,7 @@ export interface TileObject {
     npcType?: string;
     direction?: string;
     discovered?: boolean;
+    portKind?: string;
     // Legacy compatibility - avoid using this in new code
     actionsSincePlaced?: number;
     justPlaced?: boolean;

@@ -12,6 +12,7 @@
 
 import { store } from './StateStore';
 import { persistence } from './StatePersistence';
+import { logger } from '@core/logger';
 
 declare global {
   interface Window {
@@ -302,7 +303,7 @@ export class StateDebugger {
 
     this.container.querySelector('#debug-snapshot')!.addEventListener('click', () => {
       const snapshot = store.getSnapshot();
-      console.log('📸 State Snapshot:', snapshot);
+      logger.log('📸 State Snapshot:', snapshot);
       this.refresh();
     });
 
@@ -355,7 +356,7 @@ export class StateDebugger {
   /**
    * Render a single state slice as tree
    */
-  renderSliceTree(name, slice, indent = 0) {
+  renderSliceTree(name: string, slice: unknown, indent = 0): string {
     const indentStyle = `padding-left: ${indent * 20}px`;
 
     if (slice === null) {
@@ -431,16 +432,16 @@ export class StateDebugger {
   /**
    * Make state JSON-serializable
    */
-  makeJSONFriendly(obj) {
+  makeJSONFriendly(obj: unknown): unknown {
     if (obj === null || typeof obj !== 'object') return obj;
     if (obj instanceof Set) return Array.from(obj);
     if (obj instanceof Map) return Object.fromEntries(obj);
     if (Array.isArray(obj)) return obj.map(item => this.makeJSONFriendly(item));
 
-    const result = {};
+    const result: Record<string, unknown> = {};
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        result[key] = this.makeJSONFriendly(obj[key]);
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        result[key] = this.makeJSONFriendly((obj as Record<string, unknown>)[key]);
       }
     }
     return result;
@@ -567,7 +568,7 @@ export class StateDebugger {
   /**
    * Format value for display
    */
-  formatValue(value) {
+  formatValue(value: unknown): string {
     if (value === null) return 'null';
     if (value === undefined) return 'undefined';
     if (typeof value === 'string') return `"${this.escapeHtml(value)}"`;
@@ -583,7 +584,7 @@ export class StateDebugger {
   /**
    * Format timestamp
    */
-  formatTimestamp(timestamp) {
+  formatTimestamp(timestamp: unknown): string {
     if (!timestamp) return 'Never';
     const date = new Date(timestamp);
     return date.toLocaleString();
@@ -592,7 +593,7 @@ export class StateDebugger {
   /**
    * Escape HTML
    */
-  escapeHtml(text) {
+  escapeHtml(text: string): string {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;

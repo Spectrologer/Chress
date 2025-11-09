@@ -18,7 +18,7 @@ interface BoardData {
 }
 
 interface BoardResult {
-    grid: number[][];
+    grid: any[][];
     playerSpawn: { x: number; y: number };
     enemies: EnemyData[];
     terrainTextures: Record<string, string>;
@@ -324,8 +324,8 @@ export class BoardLoader {
                 } else {
                     // Non-enemy feature, place on grid
                     const tile = this.convertFeatureToTile(featureType, foodAssets, signMessages, posKey);
-                    if (tile !== null) {
-                        grid[y][x] = tile;
+                    if (tile !== null && tile !== undefined) {
+                        grid[y]![x] = tile as any;
                     }
                 }
             }

@@ -1,14 +1,15 @@
-// GeneratorUtils.js
+// GeneratorUtils.ts
 // Shared utilities for random placement, attempts loops, and tile validation in generators
 import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
 import { logger } from '@core/logger';
 import GridIterator from '@utils/GridIterator';
 import { Position } from '@core/Position';
+import type { Grid, Tile } from '@core/SharedTypes';
 
 /**
  * Returns a random integer between min (inclusive) and max (exclusive)
  */
-export function randomInt(min, max) {
+export function randomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
@@ -30,7 +31,7 @@ export function findValidPlacement({
     maxX?: number;
     maxY?: number;
     validate?: (x: number, y: number) => boolean;
-} = {}) {
+} = {}): Position | null {
     for (let attempts = 0; attempts < maxAttempts; attempts++) {
         const x = randomInt(minX, maxX);
         const y = randomInt(minY, maxY);
@@ -45,25 +46,26 @@ export function findValidPlacement({
  * Checks if a position is within grid bounds (excluding border)
  * Accepts either Position object or separate x, y coordinates
  */
-export function isWithinBounds(xOrPos, y) {
+export function isWithinBounds(xOrPos: Position | number, y?: number): boolean {
     if (xOrPos instanceof Position) {
         return xOrPos.isInInnerBounds(GRID_SIZE);
     }
-    const pos = new Position(xOrPos, y);
+    const pos = new Position(xOrPos, y!);
     return pos.isInInnerBounds(GRID_SIZE);
 }
 
 /**
  * Checks if a tile type is allowed for placement
  */
-export function isAllowedTile(tile, allowedTiles) {
-    return allowedTiles.includes(tile);
+export function isAllowedTile(tile: Tile, allowedTiles: number[]): boolean {
+    const tileType = typeof tile === 'object' && tile !== null && 'type' in tile ? tile.type : tile;
+    return allowedTiles.includes(tileType as number);
 }
 
 /**
  * Returns the center coordinates of the grid as a Position
  */
-export function getGridCenter() {
+export function getGridCenter(): Position {
     return Position.center(GRID_SIZE);
 }
 
@@ -71,15 +73,21 @@ export function getGridCenter() {
  * Safely sets a tile with validation to prevent corruption
  * Accepts either Position object or separate x, y coordinates
  */
-export function validateAndSetTile(grid, xOrPos, yOrTileType, tileType) {
-    let pos, tile;
+export function validateAndSetTile(
+    grid: Grid,
+    xOrPos: Position | number,
+    yOrTileType: number | Tile,
+    tileType?: number | Tile
+): void {
+    let pos: Position;
+    let tile: number | Tile;
 
     if (xOrPos instanceof Position) {
         pos = xOrPos;
         tile = yOrTileType;
     } else {
-        pos = new Position(xOrPos, yOrTileType);
-        tile = tileType;
+        pos = new Position(xOrPos, yOrTileType as number);
+        tile = tileType!;
     }
 
     if (grid[pos.y]?.[pos.x] === undefined) {
@@ -97,14 +105,14 @@ export function validateAndSetTile(grid, xOrPos, yOrTileType, tileType) {
 /**
  * Initializes grid safely with proper array allocation
  */
-export function initializeGrid() {
+export function initializeGrid(): Grid {
     return GridIterator.initialize(TILE_TYPES.FLOOR);
 }
 
 /**
  * Validates loaded grid data after deserialization
  */
-export function validateLoadedGrid(grid) {
+export function validateLoadedGrid(grid: Grid): Grid {
     if (!Array.isArray(grid) || grid.length !== GRID_SIZE) {
         logger.warn('Grid is not a proper array or wrong size, recreating');
         return initializeGrid();

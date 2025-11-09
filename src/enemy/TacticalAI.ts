@@ -15,6 +15,8 @@
  */
 import { GRID_SIZE, DIRECTION_QUADRANTS } from '@core/constants/index';
 import { EnemyPathfinding } from './EnemyPathfinding';
+import type { Enemy } from '@entities/Enemy';
+import type { Grid } from '@types/game';
 
 export class TacticalAI {
     /**
@@ -35,7 +37,7 @@ export class TacticalAI {
      * @param {Enemy} self - The enemy making the calculation (excluded from average)
      * @returns {number} Average Manhattan distance to allies (lower = tighter clustering)
      */
-    calculateAllyDistance(x, y, enemies, self) {
+    calculateAllyDistance(x: number, y: number, enemies: Enemy[], self: Enemy): number {
         let totalDist = 0;
         let count = 0;
 
@@ -81,7 +83,7 @@ export class TacticalAI {
      * @param {Enemy} self - The enemy making the calculation
      * @returns {number} Diversity score 0.0-1.0 (higher = more spread out)
      */
-    calculateDirectionDiversity(x, y, px, py, enemies, self) {
+    calculateDirectionDiversity(x: number, y: number, px: number, py: number, enemies: Enemy[], self: Enemy): number {
         // Calculate delta from player to proposed position
         const dx = x - px;
         const dy = y - py;
@@ -155,7 +157,7 @@ export class TacticalAI {
      * @param {Enemy} self - The enemy making the calculation
      * @returns {boolean} True if position would be stacked behind an ally
      */
-    isStackedBehind(x, y, px, py, enemies, self) {
+    isStackedBehind(x: number, y: number, px: number, py: number, enemies: Enemy[], self: Enemy): boolean {
         for (const enemy of enemies) {
             if (enemy === self) continue;
 
@@ -229,8 +231,8 @@ export class TacticalAI {
      * @param {Array<Enemy>} enemies - All enemies (to avoid occupied tiles)
      * @returns {Array<{x: number, y: number}>} Defensive positions, sorted by best improvement
      */
-    getDefensiveMoves(self, playerX, playerY, proposedX, proposedY, grid, enemies) {
-        const alternatives = [];
+    getDefensiveMoves(self: Enemy, playerX: number, playerY: number, proposedX: number, proposedY: number, grid: Grid, enemies: Enemy[]): Array<{x: number, y: number}> {
+        const alternatives: Array<{x: number, y: number, distance: number, improvement: number}> = [];
         const dirs = EnemyPathfinding.getMovementDirections(self.enemyType);
 
         // Calculate current distances
@@ -249,7 +251,7 @@ export class TacticalAI {
             if (!self.isWalkable(newX, newY, grid)) continue;
 
             // Must not be occupied by another enemy
-            if (enemies.find(e => e.x === newX && e.y === newY)) continue;
+            if (enemies.find((e: Enemy) => e.x === newX && e.y === newY)) continue;
 
             // Calculate distance from new position to player
             const newDist = Math.abs(newX - playerX) + Math.abs(newY - playerY);
@@ -273,7 +275,7 @@ export class TacticalAI {
         }
 
         // Sort by greatest distance improvement (best defensive moves first)
-        alternatives.sort((a, b) => b.improvement - a.improvement);
+        alternatives.sort((a: {improvement: number}, b: {improvement: number}) => b.improvement - a.improvement);
 
         // Return just the positions (strip metadata)
         return alternatives.map(alt => ({ x: alt.x, y: alt.y }));

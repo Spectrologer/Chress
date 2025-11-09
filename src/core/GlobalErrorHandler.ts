@@ -189,7 +189,8 @@ export class GlobalErrorHandler {
       } else if (this.game.overlayManager?.showMessage) {
         this.game.overlayManager.showMessage(message, 5000);
       } else {
-        // Fallback to alert (not ideal but better than nothing)
+        // Fallback to console.error (intentional - last resort when logger/overlay unavailable)
+        // eslint-disable-next-line no-console
         console.error('[GlobalErrorHandler] Could not show overlay, error was:', message);
       }
     } catch (e) {

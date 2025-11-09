@@ -1,4 +1,4 @@
-import { MiniMap } from '../ui/MiniMap';
+import { MiniMap } from '@ui/MiniMap';
 import { createMockGame, createMockPlayer, setupDOMFixture, teardownDOMFixture } from './helpers/mocks';
 
 describe('MiniMap', () => {
@@ -409,7 +409,7 @@ describe('MiniMap', () => {
 
       // Get the event listener that was attached and call it directly
       const listeners = addEventListenerSpy.mock.calls;
-      const pointerdownListener = listeners.find(call => call[0] === 'pointerdown');
+      const pointerdownListener = listeners.find((call: any[]) => call[0] === 'pointerdown');
 
       if (pointerdownListener) {
         pointerdownListener[1](event);
@@ -427,7 +427,7 @@ describe('MiniMap', () => {
 
       // Get the event listener that was attached and call it directly
       const listeners = addEventListenerSpy.mock.calls;
-      const pointerupListener = listeners.find(call => call[0] === 'pointerup');
+      const pointerupListener = listeners.find((call: any[]) => call[0] === 'pointerup');
 
       if (pointerupListener) {
         pointerupListener[1](event);

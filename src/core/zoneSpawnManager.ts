@@ -2,8 +2,22 @@ import { GRID_SIZE, TILE_TYPES } from './constants/index';
 import { logger } from './logger';
 import GridIterator from '@utils/GridIterator';
 import { isTileType } from '@utils/TileUtils';
+import type { TileObject } from '@types/game';
 
-export function isTileFree(zoneGen, x, y) {
+interface ZoneGenContext {
+    grid: (number | TileObject | null)[][];
+    enemies?: Array<{ x: number; y: number; [key: string]: unknown }>;
+    currentZoneX?: number | null;
+    currentZoneY?: number | null;
+    currentDimension?: number;
+    game?: {
+        portTransitionData?: { x: number; y: number; [key: string]: unknown };
+        [key: string]: unknown;
+    };
+    [key: string]: unknown;
+}
+
+export function isTileFree(zoneGen: ZoneGenContext, x: number, y: number): boolean {
     const tile = zoneGen.grid[y][x];
     if (isTileType(tile, TILE_TYPES.WALL) || isTileType(tile, TILE_TYPES.ROCK) || isTileType(tile, TILE_TYPES.SHRUBBERY) || isTileType(tile, TILE_TYPES.HOUSE) || isTileType(tile, TILE_TYPES.DEADTREE) || isTileType(tile, TILE_TYPES.WELL) || isTileType(tile, TILE_TYPES.SHACK) || isTileType(tile, TILE_TYPES.SIGN)) return false;
     if (zoneGen.enemies && zoneGen.enemies.some(e => e.x === x && e.y === y)) return false;
@@ -11,10 +25,10 @@ export function isTileFree(zoneGen, x, y) {
     return true;
 }
 
-export function findOpenNpcSpawn(zoneGen, requiredNeighbors) {
+export function findOpenNpcSpawn(zoneGen: ZoneGenContext, requiredNeighbors: number): { x: number; y: number } | null {
     const candidates = GridIterator.findTiles(
         zoneGen.grid,
-        (tile, x, y) => {
+        (tile: number | TileObject | null, x: number, y: number): boolean => {
             if (!isTileFree(zoneGen, x, y)) return false;
 
             let walkableNeighbors = 0;
@@ -36,11 +50,11 @@ export function findOpenNpcSpawn(zoneGen, requiredNeighbors) {
     return candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : null;
 }
 
-export function findValidPlayerSpawn(zoneGen, avoidEntrance = false) {
+export function findValidPlayerSpawn(zoneGen: ZoneGenContext, avoidEntrance = false): { x: number; y: number } | null {
     // Home zone spawn behavior - spawn on an exit tile for cinematic arrival
     if (zoneGen.currentZoneX === 0 && zoneGen.currentZoneY === 0 && zoneGen.currentDimension === 0) {
         // Find all exit tiles in the zone
-        const exitTiles = GridIterator.findTiles(zoneGen.grid, tile => isTileType(tile, TILE_TYPES.EXIT));
+        const exitTiles = GridIterator.findTiles(zoneGen.grid, (tile: number | TileObject | null) => isTileType(tile, TILE_TYPES.EXIT));
 
         // Spawn on a random exit tile if any exist
         if (exitTiles.length > 0) {
@@ -64,7 +78,7 @@ export function findValidPlayerSpawn(zoneGen, avoidEntrance = false) {
     const entrancePos = zoneGen.game?.portTransitionData;
     const candidates = GridIterator.findTiles(
         zoneGen.grid,
-        (tile, x, y) => {
+        (tile: number | TileObject | null, x: number, y: number): boolean => {
             if (avoidEntrance && entrancePos && x === entrancePos.x && y === entrancePos.y) return false;
             return isTileFree(zoneGen, x, y);
         },

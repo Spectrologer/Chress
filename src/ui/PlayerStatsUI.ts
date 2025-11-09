@@ -41,8 +41,8 @@ export class PlayerStatsUI {
         const lowStatThreshold = UI_RENDERING_CONSTANTS.LOW_STAT_THRESHOLD; // Pulsate when hunger/thirst is 10 or less
 
         // Update thirst and hunger bars
-        const thirst = this.game.player.getThirst();
-        const hunger = this.game.player.getHunger();
+        const thirst = this.game.playerFacade.getThirst();
+        const hunger = this.game.playerFacade.getHunger();
         this.updateProgressBar('thirst-progress', thirst, 50);
         this.updateProgressBar('hunger-progress', hunger, 50);
 
@@ -57,7 +57,7 @@ export class PlayerStatsUI {
         }
 
         // Update heart display
-        const health = this.game.player.getHealth();
+        const health = this.game.playerFacade.getHealth();
         const hearts = document.querySelectorAll<HTMLElement>('.heart-icon');
         hearts.forEach((heart, index) => {
             if (index < health) {
@@ -75,13 +75,13 @@ export class PlayerStatsUI {
         // Update axe ability display
         const axeIcon = document.querySelector<HTMLElement>('.axe-ability-icon');
         if (axeIcon) {
-            axeIcon.style.display = this.game.player.abilities.has('axe') ? 'block' : 'none';
+            axeIcon.style.display = this.game.playerFacade.hasAbility('axe') ? 'block' : 'none';
         }
 
         // Update hammer ability display
         const hammerIcon = document.querySelector<HTMLElement>('.hammer-ability-icon');
         if (hammerIcon) {
-            hammerIcon.style.display = this.game.player.abilities.has('hammer') ? 'block' : 'none';
+            hammerIcon.style.display = this.game.playerFacade.hasAbility('hammer') ? 'block' : 'none';
         }
 
         // Update inventory display

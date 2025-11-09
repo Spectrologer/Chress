@@ -48,8 +48,8 @@ export function applyTacticalAdjustments(
 
     // Evaluate tactical metrics of the proposed move
     const currentDistToPlayer = Math.abs(next.x - playerX) + Math.abs(next.y - playerY);
-    const currentClustering = tacticalAI.calculateAllyDistance(next.x, next.y, enemies, enemy);
-    const currentDiversity = tacticalAI.calculateDirectionDiversity(next.x, next.y, playerX, playerY, enemies, enemy);
+    const currentClustering = tacticalAI.calculateAllyDistance?.(next.x, next.y, enemies, enemy) ?? 0;
+    const currentDiversity = tacticalAI.calculateDirectionDiversity?.(next.x, next.y, playerX, playerY, enemies, enemy) ?? 0;
     const moveDirs = EnemyPathfinding.getMovementDirections(enemy.enemyType);
 
     // Evaluate all alternative moves from current position
@@ -64,8 +64,8 @@ export function applyTacticalAdjustments(
 
         // Calculate tactical metrics for this alternative
         const altDistToPlayer = Math.abs(altX - playerX) + Math.abs(altY - playerY);
-        const altClustering = tacticalAI.calculateAllyDistance(altX, altY, enemies, enemy);
-        const altDiversity = tacticalAI.calculateDirectionDiversity(altX, altY, playerX, playerY, enemies, enemy);
+        const altClustering = tacticalAI.calculateAllyDistance?.(altX, altY, enemies, enemy) ?? 0;
+        const altDiversity = tacticalAI.calculateDirectionDiversity?.(altX, altY, playerX, playerY, enemies, enemy) ?? 0;
 
         // Calculate tactical improvements
         // Lower clustering value = tighter formation (positive gain means moving closer to allies)
@@ -76,7 +76,7 @@ export function applyTacticalAdjustments(
         // Accept alternative if tactically superior and not too far from player
         if ((clusteringGain > 0.3 || diversityGain > 0) &&
             altDistToPlayer <= currentDistToPlayer + 2 &&
-            !tacticalAI.isStackedBehind(altX, altY, playerX, playerY, enemies, enemy)) {
+            !tacticalAI.isStackedBehind?.(altX, altY, playerX, playerY, enemies, enemy)) {
             next.x = altX;
             next.y = altY;
             break;  // Take first improvement found
@@ -151,7 +151,7 @@ export function applyDefensiveMoves(
 
     // If proposed move keeps enemy in threat range, consider defensive retreat
     if (nextDistance <= 2) {
-        const defensiveMoves = tacticalAI.getDefensiveMoves(enemy, playerX, playerY, next.x, next.y, grid, enemies);
+        const defensiveMoves = tacticalAI.getDefensiveMoves?.(enemy, playerX, playerY, next.x, next.y, grid, enemies) ?? [];
 
         if (defensiveMoves.length > 0) {
             // Debug logging for lizord defensive decisions

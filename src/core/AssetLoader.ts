@@ -22,13 +22,13 @@ export class AssetLoader {
      */
     async loadAssets(): Promise<void> {
         try {
-            await this.game.textureManager.loadAssets();
+            await this.game.textureManager!.loadAssets();
 
             // Filter food assets to only those that loaded successfully
             this.availableFoodAssets = FOOD_ASSETS.filter(foodAsset => {
                 // Extract just the filename for the image key (e.g., 'items/consumables/meat.png' -> 'meat')
                 const foodKey = foodAsset.split('/').pop()!.replace('.png', '');
-                return this.game.textureManager.isImageLoaded(foodKey);
+                return this.game.textureManager!.isImageLoaded(foodKey);
             });
 
             // Store on game instance for backward compatibility
@@ -47,7 +47,7 @@ export class AssetLoader {
         this.availableFoodAssets = FOOD_ASSETS.filter(foodAsset => {
             // Extract just the filename for the image key (e.g., 'items/consumables/meat.png' -> 'meat')
             const foodKey = foodAsset.split('/').pop()!.replace('.png', '');
-            return this.game.textureManager.isImageLoaded(foodKey);
+            return this.game.textureManager!.isImageLoaded(foodKey);
         });
         (this.game as any).availableFoodAssets = this.availableFoodAssets;
     }
@@ -56,7 +56,7 @@ export class AssetLoader {
      * Checks if a specific asset is loaded.
      */
     isAssetLoaded(assetKey: string): boolean {
-        return this.game.textureManager.isImageLoaded(assetKey);
+        return this.game.textureManager!.isImageLoaded(assetKey);
     }
 
     /**

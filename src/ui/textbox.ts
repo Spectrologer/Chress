@@ -1,6 +1,7 @@
 import { TILE_TYPES } from '@core/constants/index';
 import { getNPCCharacterData, getStatueData } from '@core/NPCLoader';
 import type { IGame } from '@core/context';
+import { logger } from '@core/logger';
 
 // Type-safe asset paths
 type PortraitPath = `assets/characters/${string}.png`;
@@ -196,19 +197,19 @@ export class TextBox {
         const gridManager = gameInstance.gridManager;
 
         if (!npcManager) {
-            console.warn('NPC Manager not available');
+            logger.warn('NPC Manager not available');
             return;
         }
 
         if (!gridManager) {
-            console.warn('Grid Manager not available');
+            logger.warn('Grid Manager not available');
             return;
         }
 
         // Find axolotl NPC
         const axolotls = npcManager.getByType('axelotl');
         if (axolotls.length === 0) {
-            console.warn('No axolotl NPC found');
+            logger.warn('No axolotl NPC found');
             return;
         }
 

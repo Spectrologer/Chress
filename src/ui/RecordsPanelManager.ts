@@ -1,5 +1,6 @@
 import { PanelEventHandler } from './PanelEventHandler';
 import { EventListenerManager } from '@utils/EventListenerManager';
+import { logger } from '@core/logger';
 
 interface GameInstance {
     [key: string]: any;
@@ -27,9 +28,9 @@ export class RecordsPanelManager {
      * Shows the records overlay with current record values
      */
     showRecordsOverlay(hideStatsPanelCallback?: () => void): void {
-        console.log('[RecordsPanelManager] showRecordsOverlay called');
+        logger.log('[RecordsPanelManager] showRecordsOverlay called');
         if (!this.recordsOverlay) {
-            console.error('[RecordsPanelManager] recordsOverlay element not found!');
+            logger.error('[RecordsPanelManager] recordsOverlay element not found!');
             return;
         }
 
@@ -45,8 +46,8 @@ export class RecordsPanelManager {
 
         // Make overlay visible
         this.recordsOverlay.classList.add('show');
-        console.log('[RecordsPanelManager] Overlay classList after adding show:', this.recordsOverlay.classList.toString());
-        console.log('[RecordsPanelManager] Overlay display style:', window.getComputedStyle(this.recordsOverlay).display);
+        logger.log('[RecordsPanelManager] Overlay classList after adding show:', this.recordsOverlay.classList.toString());
+        logger.log('[RecordsPanelManager] Overlay display style:', window.getComputedStyle(this.recordsOverlay).display);
 
         // Install capture blocker to prevent immediate re-clicks
         PanelEventHandler.installCaptureBlocker(300);

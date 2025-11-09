@@ -160,17 +160,19 @@ export class ItemMetadata {
 
         switch (item.type) {
             case 'food': {
-                const foodName = this._formatFoodName(item.foodType);
-                const foodQuantity = (item.quantity && item.quantity > 1) ? ` (x${item.quantity})` : '';
+                const foodItem = item as FoodItem;
+                const foodName = this._formatFoodName(foodItem.foodType);
+                const foodQuantity = (foodItem.quantity && foodItem.quantity > 1) ? ` (x${foodItem.quantity})` : '';
 
-                if (item.foodType === 'items/consumables/aguamelin.png') {
+                if (foodItem.foodType === 'items/consumables/aguamelin.png') {
                     return `${foodName}${foodQuantity} - Restores 5 hunger, 5 thirst`;
                 }
                 return `${foodName}${foodQuantity} - Restores 10 hunger`;
             }
 
             case 'water': {
-                const waterQuantity = (item.quantity && item.quantity > 1) ? ` (x${item.quantity})` : '';
+                const waterItem = item as WaterItem;
+                const waterQuantity = (waterItem.quantity && waterItem.quantity > 1) ? ` (x${waterItem.quantity})` : '';
                 return `Water${waterQuantity} - Restores 10 thirst`;
             }
 
@@ -187,7 +189,8 @@ export class ItemMetadata {
                 return `Horse Icon${disabledText} - Charge in L-shape (knight moves) towards enemies, has ${item.uses} charges`;
 
             case 'bomb': {
-                const bombQuantity = (item.quantity && item.quantity > 1) ? ` (x${item.quantity})` : '';
+                const bombItem = item as BombItem;
+                const bombQuantity = (bombItem.quantity && bombItem.quantity > 1) ? ` (x${bombItem.quantity})` : '';
                 return `Bomb${bombQuantity} - Blasts through walls to create exits`;
             }
 

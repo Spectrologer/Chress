@@ -93,7 +93,9 @@ export class ItemEffectFactory {
             apply(game: Game, item: InventoryItem, context: ItemEffectContext = {}): ItemEffectResult {
                 return this._applyRadialPattern(game, item, context, {
                     onRadial: (game, item) => {
-                        game.transientGameState.setPendingCharge({ selectionType, item });
+                        if (game.transientGameState) {
+                            game.transientGameState.setPendingCharge({ selectionType, item });
+                        }
                     },
                     message,
                     dropTileType: { type: tileType, uses: (item as any).uses || uses }
@@ -119,9 +121,11 @@ export class ItemEffectFactory {
             onRadial: (game, item) => {
                 enterPlacementMode(game);
                 const positions = getValidPositions(game);
-                positions.forEach(pos => {
-                    game.transientGameState.addBombPlacementPosition(Position.from(pos));
-                });
+                if (game.transientGameState) {
+                    positions.forEach(pos => {
+                        game.transientGameState!.addBombPlacementPosition(Position.from(pos));
+                    });
+                }
             },
             message,
             dropTileType

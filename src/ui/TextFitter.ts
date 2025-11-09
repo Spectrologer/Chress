@@ -24,7 +24,9 @@ export function fitTextToContainer(container: HTMLElement | null, options: FitTe
         if (el.querySelector && (el.querySelector('ul') || el.querySelector('ol') || el.querySelector('.scrollable'))) {
             return;
         }
-    } catch (e) {}
+    } catch (e) {
+        logger.warn('[TextFitter] Failed to check for scrollable content:', e);
+    }
 
     // Save original inline styles so we can preserve them if needed
     const originalFontSize = el.style.fontSize || '';
@@ -37,6 +39,7 @@ export function fitTextToContainer(container: HTMLElement | null, options: FitTe
         try {
             return el.scrollWidth <= el.clientWidth + 1 && el.scrollHeight <= el.clientHeight + 1;
         } catch (e) {
+            logger.warn('[TextFitter] Failed to check if text fits:', e);
             return true;
         }
     };
@@ -71,7 +74,9 @@ export function fitTextToContainer(container: HTMLElement | null, options: FitTe
             const scale = Math.max(0.6, Math.min(scaleX, scaleY)); // don't scale below 60%
             el.style.transformOrigin = 'left top';
             el.style.transform = `scale(${scale}, ${scale})`;
-        } catch (e) {}
+        } catch (e) {
+            logger.warn('[TextFitter] Failed to apply scale transform:', e);
+        }
     } else {
         // Remove any transform we might have applied previously
         el.style.transform = '';

@@ -369,7 +369,7 @@ describe('Position', () => {
         const pos = new Position(5, 5);
 
         it('should filter neighbors by validator', () => {
-            const validator = (p) => p.x > 5;
+            const validator = (p: Position) => p.x > 5;
             const neighbors = pos.getValidNeighbors(validator);
             expect(neighbors.every(n => n.x > 5)).toBe(true);
         });
@@ -507,13 +507,13 @@ describe('Position', () => {
 
         it('should return true when validator passes', () => {
             const pos = new Position(1, 1);
-            const validator = (tile) => tile === 5;
+            const validator = (tile: number) => tile === 5;
             expect(pos.isValidTile(grid, validator)).toBe(true);
         });
 
         it('should return false when validator fails', () => {
             const pos = new Position(0, 0);
-            const validator = (tile) => tile === 5;
+            const validator = (tile: number) => tile === 5;
             expect(pos.isValidTile(grid, validator)).toBe(false);
         });
 

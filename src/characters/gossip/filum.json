@@ -29,13 +29,13 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Ooh, hi! Where are you from? What do you do? Do you like it here? Tell me EVERYTHING!",
-        "buttonText": "Um..."
+        "text": "Ooh, hi! Where are you from?!",
+        "buttonText": "Over there."
       },
       {
         "id": "msg_1",
-        "text": "Wait wait wait - what's your favorite color? Mine changes hourly. Currently it's... asking you questions!",
-        "buttonText": "Okay..."
+        "text": "What's your favorite color?!",
+        "buttonText": "Hmmmm."
       },
       {
         "id": "msg_2",

@@ -30,17 +30,17 @@
       {
         "id": "msg_0",
         "text": "Getting around is so hard here! I'm trying to get squared away.",
-        "buttonText": "What."
+        "buttonText": "Stop."
       },
       {
         "id": "msg_1",
         "text": "No matter where I go, I'm blocked on all sides.",
-        "buttonText": "Sorry?"
+        "buttonText": "Okay."
       },
       {
         "id": "msg_2",
         "text": "I'm a cube.",
-        "buttonText": "Noted."
+        "buttonText": "Yeah."
       }
     ]
   },

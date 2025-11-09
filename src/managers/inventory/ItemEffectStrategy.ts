@@ -1,5 +1,6 @@
 import type { BaseItemEffect, ItemEffectContext, ItemEffectResult, Game } from './effects/BaseItemEffect';
 import type { InventoryItem, ItemType } from './ItemMetadata';
+import { logger } from '@core/logger';
 
 // Lazy-loaded effect classes to avoid circular dependencies
 let FoodEffect: any;
@@ -121,7 +122,7 @@ export class ItemEffectStrategy {
 
         const effect = this.effects[item.type as ItemType];
         if (!effect) {
-            console.warn(`No effect handler for item type: ${item.type}`);
+            logger.warn(`No effect handler for item type: ${item.type}`);
             return { consumed: false, success: false };
         }
 

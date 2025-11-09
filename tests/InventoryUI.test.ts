@@ -1,11 +1,11 @@
-import { InventoryUI } from '../ui/InventoryUI';
+import { InventoryUI } from '../src/ui/InventoryUI';
 import { InventoryService } from '@managers/inventory/InventoryService';
 import { ItemEffectStrategy } from '@managers/inventory/ItemEffectStrategy';
 
 function makeMockGame() {
-  const mockGame = {
+  const mockGame: any = {
     player: {
-      inventory: [],
+      inventory: [] as any[],
       isDead: () => false,
       getPosition: () => ({ x: 1, y: 1 }),
     },
@@ -47,7 +47,7 @@ describe('InventoryUI integration', () => {
     const ui = new InventoryUI(game, service);
 
     // Ensure debug mode off for test clarity
-    window.inventoryDebugMode = false;
+    (window as any).inventoryDebugMode = false;
 
     ui.updateInventoryDisplay();
     const slot = document.querySelector('.inventory-list .inventory-slot');
@@ -55,26 +55,26 @@ describe('InventoryUI integration', () => {
 
     // Polyfill PointerEvent for jsdom if missing
     if (typeof PointerEvent === 'undefined') {
-      global.PointerEvent = function(type, props = {}) {
-        const e = new MouseEvent(type, props);
+      (global as any).PointerEvent = function(type: string, props: any = {}) {
+        const e = new MouseEvent(type, props) as any;
         e.pointerId = props.pointerId || 1;
         e.pointerType = props.pointerType || 'mouse';
         return e;
-      };
+      } as any;
     }
 
     // Simulate touch pointer sequence: pointerdown -> pointerup (should trigger use)
-    const pd = new PointerEvent('pointerdown', { pointerId: 1, pointerType: 'touch', bubbles: true });
-    const pu = new PointerEvent('pointerup', { pointerId: 1, pointerType: 'touch', bubbles: true });
-    slot.dispatchEvent(pd);
-    slot.dispatchEvent(pu);
+    const pd = new PointerEvent('pointerdown', { pointerId: 1, pointerType: 'touch', bubbles: true } as any);
+    const pu = new PointerEvent('pointerup', { pointerId: 1, pointerType: 'touch', bubbles: true } as any);
+    slot!.dispatchEvent(pd);
+    slot!.dispatchEvent(pu);
 
     // Synthetic click that some browsers fire after touch
     const click = new MouseEvent('click', { bubbles: true });
-    slot.dispatchEvent(click);
+    slot!.dispatchEvent(click);
 
     // After the interaction, uses should be 2 (only one consumed)
-    expect(game.player.inventory[0].uses).toBe(2);
+    expect((game.player.inventory[0] as any).uses).toBe(2);
     // startEnemyTurns should have been called once via ItemUsageHandler
     expect(game.startEnemyTurns).toHaveBeenCalledTimes(1);
   });

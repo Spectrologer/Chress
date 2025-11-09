@@ -82,7 +82,9 @@ export class TypewriterController {
             if (!stopped) {
                 try {
                     clearInterval(this.currentTypewriterInterval as any);
-                } catch (e) {}
+                } catch (e) {
+                    logger.warn('[TypewriterController] Failed to clear typewriter interval:', e);
+                }
             }
             this.currentTypewriterInterval = null;
         }

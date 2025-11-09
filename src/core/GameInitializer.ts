@@ -437,7 +437,7 @@ export class GameInitializer {
 
         // Save on unload (mobile & refresh)
         window.addEventListener('pagehide', () => {
-            const saved: boolean = safeCall(this.game.gameStateManager, 'saveGameStateImmediate');
+            const saved: boolean = safeCall(this.game.gameStateManager, 'saveGameStateImmediate') || false;
             if (!saved) {
                 safeCall(this.game.gameStateManager, 'saveGameState');
             }
@@ -486,11 +486,11 @@ export class GameInitializer {
         // Apply audio settings
         try {
             const currentZone = safeCall<object>(this.game.player, 'getCurrentZone');
-            const dimension: number = safeGet(currentZone, 'dimension', 0);
+            const dimension: number = safeGet(currentZone, 'dimension', 0) ?? 0;
 
             // Apply player settings
-            const musicEnabled: boolean = safeGet(this.game, 'player.stats.musicEnabled', false);
-            const sfxEnabled: boolean = safeGet(this.game, 'player.stats.sfxEnabled', false);
+            const musicEnabled: boolean = safeGet(this.game, 'player.stats.musicEnabled', false) ?? false;
+            const sfxEnabled: boolean = safeGet(this.game, 'player.stats.sfxEnabled', false) ?? false;
 
             safeCall(this.game.soundManager, 'setMusicEnabled', !!musicEnabled);
             safeCall(this.game.soundManager, 'setSfxEnabled', !!sfxEnabled);

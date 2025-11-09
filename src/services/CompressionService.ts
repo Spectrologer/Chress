@@ -23,7 +23,7 @@ const LZString = {
      */
     compressToUTF16(input: string | null): string {
         if (input == null) return "";
-        return this._compress(input, 15, string => String.fromCharCode(string + 32)) + " ";
+        return this._compress(input, 15, (string: number) => String.fromCharCode(string + 32)) + " ";
     },
 
     /**
@@ -34,7 +34,7 @@ const LZString = {
     decompressFromUTF16(compressed: string | null): string | null {
         if (compressed == null) return "";
         if (compressed == "") return null;
-        return this._decompress(compressed.length, 16384, index => compressed.charCodeAt(index) - 32);
+        return this._decompress(compressed.length, 16384, (index: number) => compressed.charCodeAt(index) - 32);
     },
 
     /**

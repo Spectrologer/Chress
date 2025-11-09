@@ -29,18 +29,23 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Been around for eons. Honestly? Just happy to be here. Nice weather today, right?",
-        "buttonText": "Yeah."
+        "text": "Don't be scared, I'm chill.",
+        "buttonText": "I wasn't."
       },
       {
         "id": "msg_1",
-        "text": "Sure, I could destroy kingdoms with my breath. But have you tried just... talking things out?",
-        "buttonText": "Fair."
+        "text": "A lot of dragons are all about destroying stuff and hoarding treasure. I like to just chill though.",
+        "buttonText": "That's cool."
       },
       {
         "id": "msg_2",
-        "text": "Ancient wisdom? Just treat people nice and stay hydrated. That's pretty much it.",
-        "buttonText": "Simple."
+        "text": "Are you being sarcastic?",
+        "buttonText": "No."
+      },
+      {
+        "id": "msg_3",
+        "text": "Anyway... I'm busy right now so...",
+        "buttonText": "Cya."
       }
     ]
   },

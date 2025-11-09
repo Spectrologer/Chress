@@ -49,7 +49,7 @@ export async function initializeGame() {
 // EXAMPLE 2: Player Movement
 // =============================================================================
 
-export function handlePlayerMove(targetX, targetY) {
+export function handlePlayerMove(targetX: number, targetY: number): void {
   // Get current position
   const currentPos = StateSelectors.getPlayerPosition();
 
@@ -79,7 +79,7 @@ export function handlePlayerMove(targetX, targetY) {
 // EXAMPLE 3: Zone Transition
 // =============================================================================
 
-export function handleZoneTransition(newX, newY, dimension = 'overworld', depth = 0) {
+export function handleZoneTransition(newX: number, newY: number, dimension: string = 'overworld', depth: number = 0): void {
   console.log(`🌍 Transitioning to zone (${newX}, ${newY}, ${dimension}, ${depth})`);
 
   // Update zone
@@ -117,7 +117,7 @@ export function handleZoneTransition(newX, newY, dimension = 'overworld', depth 
 // EXAMPLE 4: Combat
 // =============================================================================
 
-export function handlePlayerAttack(enemyX, enemyY) {
+export function handlePlayerAttack(enemyX: number, enemyY: number): void {
   console.log(`⚔️ Player attacks enemy at (${enemyX}, ${enemyY})`);
 
   // Mark player as having attacked
@@ -125,7 +125,7 @@ export function handlePlayerAttack(enemyX, enemyY) {
 
   // Get enemy at position
   const enemies = StateSelectors.getCurrentEnemies();
-  const enemyIndex = enemies.findIndex(e => e.x === enemyX && e.y === enemyY);
+  const enemyIndex = enemies.findIndex((e: { x: number; y: number }) => e.x === enemyX && e.y === enemyY);
 
   if (enemyIndex !== -1) {
     const enemy = enemies[enemyIndex];
@@ -138,7 +138,7 @@ export function handlePlayerAttack(enemyX, enemyY) {
     );
 
     // Remove from active enemies
-    const updatedEnemies = enemies.filter((_, i) => i !== enemyIndex);
+    const updatedEnemies = enemies.filter((_: unknown, i: number) => i !== enemyIndex);
     StateActions.setEnemies(updatedEnemies);
 
     // Update consecutive kills
@@ -160,7 +160,7 @@ export function handlePlayerAttack(enemyX, enemyY) {
 // EXAMPLE 5: Inventory Management
 // =============================================================================
 
-export function handleItemPickup(item) {
+export function handleItemPickup(item: { type: string; name: string; grantsAbility?: string; [key: string]: unknown }): void {
   console.log(`📦 Picking up ${item.type}`);
 
   // Add to inventory
@@ -183,7 +183,7 @@ export function handleItemPickup(item) {
   scheduleAutosave();
 }
 
-export function handleItemUse(itemIndex) {
+export function handleItemUse(itemIndex: number): void {
   const inventory = StateSelectors.getPlayerInventory();
   const item = inventory[itemIndex];
 
@@ -217,7 +217,7 @@ export function toggleStatsPanel() {
   console.log(`📊 Stats panel ${!isOpen ? 'opened' : 'closed'}`);
 }
 
-export function updateGameSettings(settings) {
+export function updateGameSettings(settings: Record<string, unknown>): void {
   StateActions.updateSettings(settings);
 
   // Apply settings immediately
@@ -240,10 +240,10 @@ export function updateGameSettings(settings) {
 // EXAMPLE 7: Autosave
 // =============================================================================
 
-let autosaveTimeout;
-let autosaveInterval;
+let autosaveTimeout: ReturnType<typeof setTimeout> | undefined;
+let autosaveInterval: ReturnType<typeof setInterval> | undefined;
 
-export function setupAutosave() {
+export function setupAutosave(): void {
   // Debounced autosave on state changes
   store.subscribe('persistent', () => {
     scheduleAutosave();
@@ -256,7 +256,7 @@ export function setupAutosave() {
   }, 30000);
 }
 
-function scheduleAutosave() {
+function scheduleAutosave(): void {
   clearTimeout(autosaveTimeout);
   autosaveTimeout = setTimeout(async () => {
     console.log('💾 Autosaving...');
@@ -269,7 +269,7 @@ function scheduleAutosave() {
   }, 2000);
 }
 
-export function cleanupAutosave() {
+export function cleanupAutosave(): void {
   clearTimeout(autosaveTimeout);
   clearInterval(autosaveInterval);
 }
@@ -371,13 +371,21 @@ export function debugState() {
 // HELPER: Zone Generation (Example)
 // =============================================================================
 
-function generateZone(x, y, dimension, depth) {
+function generateZone(x: number, y: number, dimension: string, depth: number): {
+  x: number;
+  y: number;
+  dimension: string;
+  depth: number;
+  grid: unknown[][];
+  enemies: unknown[];
+  generated: number;
+} {
   // Example zone generation
   const grid = Array(16).fill(null).map(() =>
     Array(16).fill(null).map(() => ({ type: 'grass' }))
   );
 
-  const enemies = [];
+  const enemies: unknown[] = [];
 
   // Increment zone counter
   StateActions.incrementZoneCounter();

@@ -105,8 +105,8 @@ export class InventoryService {
      * Drop an item on the current tile
      */
     dropItem(itemType: string, tileType: number): boolean {
-        const px = this.game.player.x;
-        const py = this.game.player.y;
+        const px = this.game.playerFacade.getX();
+        const py = this.game.playerFacade.getY();
 
         // Check if player is within grid bounds
         if (py < 0 || py >= GRID_SIZE || px < 0 || px >= GRID_SIZE) {
@@ -187,16 +187,16 @@ export class InventoryService {
     private _playPickupAnimation(item: InventoryItem): void {
         try {
             const player = this.game.player;
-            if (!player || !player.animations) return;
+            if (!player || !this.game.playerFacade.hasAnimations()) return;
 
             const imageKey = ItemMetadata.getImageKey(item);
-            player.animations.pickupHover = {
+            this.game.playerFacade.setPickupHover({
                 imageKey: imageKey,
                 frames: 60,
                 totalFrames: 60,
                 type: item.type,
                 foodType: (item as any).foodType
-            };
+            });
         } catch (e) {
             // Animation is optional, don't fail pickup
         }

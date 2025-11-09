@@ -90,27 +90,27 @@ export class AssetScanner {
 
       // Convert to the format we need
       const npcs: Record<string, NPCInfo> = {};
-      allNPCData.forEach((data: any, key: string) => {
-        if (data.name) {
+      allNPCData.forEach((data: unknown, key: string) => {
+        if ((data as any).name) {
           // @ts-ignore - NPCData structure differs between runtime and types
-          const npcType = data.interaction?.type || 'npc';
+          const npcType = (data as any).interaction?.type || 'npc';
           // Ensure paths are absolute
-          const portrait = data.display?.portrait;
-          const sprite = data.display?.sprite;
+          const portrait = (data as any).display?.portrait;
+          const sprite = (data as any).display?.sprite;
           const npcInfo: NPCInfo = {
-            name: data.name,
+            name: (data as any).name,
             portrait: portrait ? (portrait.startsWith('/') ? portrait : '/' + portrait) : null,
             sprite: sprite ? (sprite.startsWith('/') ? sprite : '/' + sprite) : null,
             type: npcType,
             // @ts-ignore - NPCData structure differs between runtime and types
-            trades: data.interaction?.trades,
+            trades: (data as any).interaction?.trades,
             key: key
           };
 
           // Use the key as the lookup name
           npcs[key] = npcInfo;
           // Also add by name for redundancy
-          npcs[data.name.toLowerCase()] = npcInfo;
+          npcs[(data as any).name.toLowerCase()] = npcInfo;
 
           if (key === 'penne') {
             npcs['penne'] = npcInfo;
@@ -461,7 +461,7 @@ export class AssetScanner {
     const searchTerm = query.toLowerCase();
 
     Object.entries(this.categories).forEach(([category, items]) => {
-      items.forEach(item => {
+      items.forEach((item: AssetCategory | NPCAsset) => {
         const name = ('name' in item ? item.name : '').toLowerCase();
         const path = ('path' in item ? item.path : 'sprite' in item ? item.sprite : 'portrait' in item ? item.portrait : '');
         const pathLower = (path || '').toLowerCase();

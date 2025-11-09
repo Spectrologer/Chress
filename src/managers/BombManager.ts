@@ -113,6 +113,10 @@ export class BombManager {
      * Ensures all bombs tick in sync with player actions.
      */
     tickBombsAndExplode(): void {
+        if (!this.game.grid) {
+            return;
+        }
+
         const bombs = GridIterator.findTiles(this.game.grid, isBomb);
 
         bombs.forEach(({ tile, x, y }) => {
@@ -126,6 +130,9 @@ export class BombManager {
             if (bombTile.actionsSincePlaced >= 2) {
                 // Double-check that the tile is still a bomb before exploding
                 // (in case it was already exploded earlier in this iteration)
+                if (!this.game.gridManager) {
+                    return;
+                }
                 const currentTile = this.game.gridManager.getTile(x, y);
                 if (!isBomb(currentTile)) {
                     return;
@@ -193,6 +200,10 @@ export class BombManager {
             return false;
         }
 
+        if (!this.game.gridManager || !this.game.player) {
+            return false;
+        }
+
         // Place timed bomb here
         const placedPos = Position.from(placed);
         this.game.gridManager.setTile(placedPos.x, placedPos.y, { type: TILE_TYPES.BOMB, actionsSincePlaced: 0, justPlaced: true });
@@ -247,6 +258,10 @@ export class BombManager {
      * @returns True if bomb was successfully triggered, false if invalid
      */
     triggerBombExplosion(gridCoords: ICoordinates, playerPos: ICoordinates): boolean {
+        if (!this.game.grid) {
+            return false;
+        }
+
         const clickedPos = Position.from(gridCoords);
         const tapTile = clickedPos.getTile(this.game.grid);
         if (!isTileObjectOfType(tapTile, TILE_TYPES.BOMB)) return false;
@@ -302,6 +317,10 @@ export class BombManager {
      * @param gridCoords - {x, y} grid position of bomb to force-trigger
      */
     forceBombTrigger(gridCoords: ICoordinates): void {
+        if (!this.game.grid) {
+            return;
+        }
+
         const clickedPos = Position.from(gridCoords);
         const tapTile = clickedPos.getTile(this.game.grid);
         if (!isTileObjectOfType(tapTile, TILE_TYPES.BOMB)) return;
@@ -336,7 +355,7 @@ export class BombManager {
      */
     endBombPlacement(): void {
         const transientState = this.game.transientGameState;
-        if (!transientState.isBombPlacementMode()) return;
+        if (!transientState || !transientState.isBombPlacementMode()) return;
         transientState.exitBombPlacementMode();
         this.game.hideOverlayMessage();
     }

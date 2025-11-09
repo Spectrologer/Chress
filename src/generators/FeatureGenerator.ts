@@ -274,7 +274,7 @@ export class FeatureGenerator {
      */
     clearExitCorridors(): void {
         // Find all exit tiles
-        const exits = this.gridManager.findTiles((tile) => isExit(tile));
+        const exits = this.gridManager.findTiles((tile: unknown) => isExit(tile));
 
         exits.forEach(({ x, y }) => {
             // For each exit, clear a wider area to ensure connectivity

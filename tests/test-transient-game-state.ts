@@ -15,7 +15,7 @@ console.assert(state.getPendingCharge() === null, 'should return null initially'
 const chargeData = { targetX: 5, targetY: 3, distance: 4 };
 state.setPendingCharge(chargeData);
 console.assert(state.hasPendingCharge() === true, 'should have pending charge after set');
-console.assert(state.getPendingCharge().targetX === 5, 'should return correct charge data');
+console.assert(state.getPendingCharge()!.targetX === 5, 'should return correct charge data');
 
 state.clearPendingCharge();
 console.assert(state.hasPendingCharge() === false, 'should clear pending charge');
@@ -29,13 +29,13 @@ console.assert(state.getBombPlacementPositions().length === 0, 'should have no p
 state.enterBombPlacementMode();
 console.assert(state.isBombPlacementMode() === true, 'should enter bomb mode');
 
-state.addBombPlacementPosition({ x: 1, y: 1 });
-state.addBombPlacementPosition({ x: 2, y: 2 });
+state.addBombPlacementPosition({ x: 1, y: 1 } as any);
+state.addBombPlacementPosition({ x: 2, y: 2 } as any);
 console.assert(state.getBombPlacementPositions().length === 2, 'should have 2 positions');
-console.assert(state.hasBombPlacementAt({ x: 1, y: 1 }) === true, 'should detect position at 1,1');
-console.assert(state.hasBombPlacementAt({ x: 3, y: 3 }) === false, 'should not detect position at 3,3');
+console.assert(state.hasBombPlacementAt({ x: 1, y: 1 } as any) === true, 'should detect position at 1,1');
+console.assert(state.hasBombPlacementAt({ x: 3, y: 3 } as any) === false, 'should not detect position at 3,3');
 
-const removed = state.removeBombPlacementPosition({ x: 1, y: 1 });
+const removed = state.removeBombPlacementPosition({ x: 1, y: 1 } as any);
 console.assert(removed === true, 'should remove position');
 console.assert(state.getBombPlacementPositions().length === 1, 'should have 1 position left');
 
@@ -55,7 +55,7 @@ console.assert(state.getLastSignMessage() === null, 'should have no last message
 const signData = { message: 'Welcome traveler!', x: 5, y: 5 };
 state.setDisplayingSignMessage(signData);
 console.assert(state.isDisplayingSignMessage() === true, 'should be displaying message');
-console.assert(state.getDisplayingSignMessage().message === 'Welcome traveler!', 'should return correct message');
+console.assert(state.getDisplayingSignMessage()!.message === 'Welcome traveler!', 'should return correct message');
 
 state.setLastSignMessage('Welcome traveler!');
 console.assert(state.getLastSignMessage() === 'Welcome traveler!', 'should store last message');
@@ -76,7 +76,7 @@ console.assert(state.getPortTransitionData() === null, 'should return null initi
 const portData = { from: 'stairup', x: 4, y: 4 };
 state.setPortTransitionData(portData);
 console.assert(state.hasPortTransitionData() === true, 'should have port data');
-console.assert(state.getPortTransitionData().from === 'stairup', 'should return correct port data');
+console.assert(state.getPortTransitionData()!.from === 'stairup', 'should return correct port data');
 
 state.clearPortTransitionData();
 console.assert(state.hasPortTransitionData() === false, 'should clear port data');
@@ -117,7 +117,7 @@ console.log('\n=== Test 7: Zone Transition Helpers ===');
 // Set up some state
 state.setPendingCharge({ targetX: 1, targetY: 1 });
 state.enterBombPlacementMode();
-state.addBombPlacementPosition({ x: 2, y: 2 });
+state.addBombPlacementPosition({ x: 2, y: 2 } as any);
 state.setDisplayingSignMessage({ message: 'Test' });
 state.setLastSignMessage('Test');
 state.setPlayerJustAttacked(true);
@@ -152,7 +152,7 @@ console.log('✓ Reset all works');
 console.log('\n=== Test 9: Snapshot & Debug ===');
 state.setPendingCharge({ targetX: 1, targetY: 1 });
 state.enterBombPlacementMode();
-state.addBombPlacementPosition({ x: 5, y: 5 });
+state.addBombPlacementPosition({ x: 5, y: 5 } as any);
 
 const snapshot = state.getSnapshot();
 console.assert(snapshot.pendingCharge !== null, 'snapshot should include pendingCharge');
@@ -169,7 +169,7 @@ console.log('✓ Snapshot and debug works');
 // Test 10: Event Emission
 console.log('\n=== Test 10: Event Emission ===');
 let eventReceived = false;
-let eventData = null;
+let eventData: any = null;
 
 const unsubscribe = eventBus.on(EventTypes.CHARGE_STATE_CHANGED, (data) => {
     eventReceived = true;
@@ -178,8 +178,8 @@ const unsubscribe = eventBus.on(EventTypes.CHARGE_STATE_CHANGED, (data) => {
 
 state.setPendingCharge({ targetX: 7, targetY: 7 });
 console.assert(eventReceived === true, 'should emit charge state changed event');
-console.assert(eventData.isPending === true, 'should include isPending in event');
-console.assert(eventData.data.targetX === 7, 'should include charge data in event');
+console.assert(eventData?.isPending === true, 'should include isPending in event');
+console.assert(eventData?.data.targetX === 7, 'should include charge data in event');
 
 unsubscribe();
 console.log('✓ Event emission works');
@@ -197,14 +197,14 @@ state.exitPitfallZone();
 console.log('✓ Clearing empty state works');
 
 // Add bomb position when not in mode (should warn but not throw)
-state.addBombPlacementPosition({ x: 1, y: 1 });
+state.addBombPlacementPosition({ x: 1, y: 1 } as any);
 console.assert(state.getBombPlacementPositions().length === 0, 'should not add position outside bomb mode');
 console.log('✓ Validation works');
 
 // Invalid port data (should warn but not throw)
-state.setPortTransitionData(null);
+state.setPortTransitionData(null as any);
 console.assert(state.hasPortTransitionData() === false, 'should not set invalid port data');
-state.setPortTransitionData({ invalid: true });
+state.setPortTransitionData({ invalid: true } as any);
 console.assert(state.hasPortTransitionData() === false, 'should not set port data without "from"');
 console.log('✓ Port data validation works');
 

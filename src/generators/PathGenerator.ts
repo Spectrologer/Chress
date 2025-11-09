@@ -19,17 +19,18 @@
 import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 import { isPort, isTileType, isExit, isWall, isRock, isShrubbery } from '@utils/TypeChecks';
 import GridIterator from '@utils/GridIterator';
+import type { GridManager } from '@managers/GridManager';
 
 export class PathGenerator {
-    private gridManager: any;
+    private gridManager: GridManager;
     private zoneX = 0;
     private zoneY = 0;
 
-    constructor(gridManager: any) {
+    constructor(gridManager: GridManager) {
         this.gridManager = gridManager;
     }
 
-    ensureExitAccess() {
+    ensureExitAccess(): void {
         // Find all exit tiles and PORT tiles (for escape routes) and ensure they have clear paths
         const exits = this.gridManager.findTiles(tile => isExit(tile));
         const ports = this.gridManager.findTiles(isPort);
@@ -70,10 +71,10 @@ export class PathGenerator {
      * - Preserves ports, cisterns, exits, and other special tiles
      * - Avoids overwriting already-clear floor tiles
      *
-     * @param {number} exitX - X coordinate of the exit tile
-     * @param {number} exitY - Y coordinate of the exit tile
+     * @param exitX - X coordinate of the exit tile
+     * @param exitY - Y coordinate of the exit tile
      */
-    clearPathToExit(exitX, exitY) {
+    clearPathToExit(exitX: number, exitY: number): void {
         // Step 1: Calculate inward position (one tile from exit toward interior)
         let inwardX = exitX;
         let inwardY = exitY;
@@ -150,10 +151,10 @@ export class PathGenerator {
      * - Ports: Must preserve for escape mechanics
      * - Only clears walls, rocks, and shrubbery
      *
-     * @param {number} startX - Starting X coordinate
-     * @param {number} startY - Starting Y coordinate
+     * @param startX - Starting X coordinate
+     * @param startY - Starting Y coordinate
      */
-    clearPathToCenter(startX, startY) {
+    clearPathToCenter(startX: number, startY: number): void {
         // Calculate zone center
         const centerX = Math.floor(GRID_SIZE / 2);
         const centerY = Math.floor(GRID_SIZE / 2);
@@ -214,14 +215,14 @@ export class PathGenerator {
         }
     }
 
-    clearPathToCenterForItem(startX, startY, zoneX, zoneY) {
+    clearPathToCenterForItem(startX: number, startY: number, zoneX: number, zoneY: number): void {
         // Update zone coordinates for clearance logic
         this.zoneX = zoneX;
         this.zoneY = zoneY;
         this.clearPathToCenter(startX, startY);
     }
 
-    clearPathToExitWithZoneContext(exitX, exitY, zoneX, zoneY) {
+    clearPathToExitWithZoneContext(exitX: number, exitY: number, zoneX: number, zoneY: number): void {
         // Update zone coordinates for clearance logic
         this.zoneX = zoneX;
         this.zoneY = zoneY;

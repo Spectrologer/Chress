@@ -99,7 +99,10 @@ export class MiniMap {
                 this.dragMoved = false;
                 this.lastX = e.clientX;
                 this.lastY = e.clientY;
-                (e.target as any)?.setPointerCapture?.(e.pointerId);
+                const target = e.target as Element;
+                if (target?.setPointerCapture) {
+                    target.setPointerCapture(e.pointerId);
+                }
             },
             onMove: (e: PointerEvent) => {
                 if (this.isDragging && e.pointerType) {
@@ -126,7 +129,10 @@ export class MiniMap {
                 }
 
                 this.isDragging = false;
-                (e.target as any)?.releasePointerCapture?.(e.pointerId);
+                const target = e.target as Element;
+                if (target?.releasePointerCapture) {
+                    target.releasePointerCapture(e.pointerId);
+                }
             }
         });
 
@@ -173,7 +179,8 @@ export class MiniMap {
     }
 
     private changeZLevel(delta: number): void {
-        const currentZone = this.game.player.getCurrentZone();
+        const currentZone = this.game.playerFacade?.getCurrentZone();
+        if (!currentZone) return;
 
         // When underground (dimension 2), treat viewZOffset as depth offset
         if (currentZone.dimension === 2) {
@@ -220,7 +227,8 @@ export class MiniMap {
         const upButton = document.getElementById('mapZLevelUp');
 
         if (indicator) {
-            const currentZone = this.game.player.getCurrentZone();
+            const currentZone = this.game.playerFacade?.getCurrentZone();
+            if (!currentZone) return;
 
             // When underground (dimension 2), navigate through depths instead of dimensions
             if (currentZone.dimension === 2) {
@@ -272,7 +280,8 @@ export class MiniMap {
         }
 
         // Calculate the actual dimension offset and depth offset to pass to renderZoneMap
-        const currentZone = this.game.player.getCurrentZone();
+        const currentZone = this.game.playerFacade?.getCurrentZone();
+        if (!currentZone) return;
         let dimensionOffset = this.viewZOffset;
         let depthOffset = 0;
 
@@ -310,7 +319,8 @@ export class MiniMap {
         const dx = Math.round(relX / zoneSize);
         const dy = Math.round(relY / zoneSize);
 
-        const currentZone = this.game.player.getCurrentZone();
+        const currentZone = this.game.playerFacade?.getCurrentZone();
+        if (!currentZone) return;
         const viewDimension = currentZone.dimension + this.viewZOffset;
         const zoneX = currentZone.x + dx - Math.round(this.panX);
         const zoneY = currentZone.y + dy - Math.round(this.panY);
@@ -345,6 +355,8 @@ export class MiniMap {
     renderZoneMap(params: RenderParams = {}): void {
         const { ctx = this.game.mapCtx, offsetX = 0, offsetY = 0, isExpanded = false, canvasSize = null, zOffset = 0, depthOffset = 0 } = params;
 
+        if (!ctx) return;
+
         // Responsive square size
         const mapSize = canvasSize || Math.min(ctx.canvas.width, ctx.canvas.height);
         // More tiles visible in expanded mode
@@ -359,21 +371,26 @@ export class MiniMap {
 
         // Calculate visible range around current zone
         const range = Math.floor(mapSize / zoneSize / 2) + 1; // Dynamically calculate range
-        const currentZone = this.game.player.getCurrentZone();
+        const currentZone = this.game.playerFacade?.getCurrentZone();
+        if (!currentZone) return;
         const viewDimension = currentZone.dimension + zOffset; // Adjust dimension based on z-offset
 
         // Special case for Museum interior: show a pawn icon instead of the map
         if (currentZone.x === 0 && currentZone.y === 0 && currentZone.dimension === 1) {
-            const pawnImage = this.game.textureManager.getImage('ui/pawn_white');
+            const pawnImage = this.game.textureManager?.getImage('ui/pawn_white');
                 if (pawnImage && pawnImage.complete) {
                     // Draw the pawn icon in the center of the map canvas
                     // Turn off image smoothing so the scaled-up icon remains crisp
                     // Preserve previous smoothing settings and restore after draw
                     const prevSmoothing = ctx.imageSmoothingEnabled;
-                    const prevQuality = (ctx as any).imageSmoothingQuality;
+                    type ContextWithQuality = CanvasRenderingContext2D & { imageSmoothingQuality?: ImageSmoothingQuality };
+                    const ctxWithQuality = ctx as ContextWithQuality;
+                    const prevQuality = ctxWithQuality.imageSmoothingQuality;
                     ctx.imageSmoothingEnabled = false;
                     // Some browsers support imageSmoothingQuality; set to 'low' when disabling smoothing
-                    if (typeof (ctx as any).imageSmoothingQuality !== 'undefined') (ctx as any).imageSmoothingQuality = 'low';
+                    if (typeof ctxWithQuality.imageSmoothingQuality !== 'undefined') {
+                        ctxWithQuality.imageSmoothingQuality = 'low';
+                    }
 
                     const iconSize = mapSize * 0.7; // Make it large
                     const iconX = (mapSize - iconSize) / 2;
@@ -382,7 +399,9 @@ export class MiniMap {
 
                     // Restore previous smoothing settings
                     ctx.imageSmoothingEnabled = prevSmoothing;
-                    if (typeof prevQuality !== 'undefined' && typeof (ctx as any).imageSmoothingQuality !== 'undefined') (ctx as any).imageSmoothingQuality = prevQuality;
+                    if (typeof prevQuality !== 'undefined' && typeof ctxWithQuality.imageSmoothingQuality !== 'undefined') {
+                        ctxWithQuality.imageSmoothingQuality = prevQuality;
+                    }
             } else {
                 // Fallback text if image isn't loaded
                 ctx.fillStyle = '#2F1B14';
@@ -394,14 +413,18 @@ export class MiniMap {
 
         // Special case for Custom Boards (dimension 3): show a knight icon (name displays in map-info)
         if (currentZone.dimension === 3) {
-            const knightImage = this.game.textureManager.getImage('ui/knight_black');
+            const knightImage = this.game.textureManager?.getImage('ui/knight_black');
 
             if (knightImage && knightImage.complete) {
                 // Draw the knight icon in the center of the map canvas
                 const prevSmoothing = ctx.imageSmoothingEnabled;
-                const prevQuality = (ctx as any).imageSmoothingQuality;
+                type ContextWithQuality = CanvasRenderingContext2D & { imageSmoothingQuality?: ImageSmoothingQuality };
+                const ctxWithQuality = ctx as ContextWithQuality;
+                const prevQuality = ctxWithQuality.imageSmoothingQuality;
                 ctx.imageSmoothingEnabled = false;
-                if (typeof (ctx as any).imageSmoothingQuality !== 'undefined') (ctx as any).imageSmoothingQuality = 'low';
+                if (typeof ctxWithQuality.imageSmoothingQuality !== 'undefined') {
+                    ctxWithQuality.imageSmoothingQuality = 'low';
+                }
 
                 const iconSize = mapSize * 0.7; // Same size as museum pawn
                 const iconX = (mapSize - iconSize) / 2;
@@ -410,7 +433,9 @@ export class MiniMap {
 
                 // Restore previous smoothing settings
                 ctx.imageSmoothingEnabled = prevSmoothing;
-                if (typeof prevQuality !== 'undefined' && typeof (ctx as any).imageSmoothingQuality !== 'undefined') (ctx as any).imageSmoothingQuality = prevQuality;
+                if (typeof prevQuality !== 'undefined' && typeof ctxWithQuality.imageSmoothingQuality !== 'undefined') {
+                    ctxWithQuality.imageSmoothingQuality = prevQuality;
+                }
             }
             return; // Skip drawing the regular zone grid
         }
@@ -433,7 +458,7 @@ export class MiniMap {
                 // (hasVisitedZone doesn't support querying arbitrary depths)
                 const isViewingDifferentDepth = (viewDimension === 2 && depthOffset !== 0);
 
-                if (!isViewingDifferentDepth && this.game.player.hasVisitedZone(zoneX, zoneY, viewDimension)) {
+                if (!isViewingDifferentDepth && this.game.playerFacade?.hasVisitedZone(zoneX, zoneY, viewDimension)) {
                     if (viewDimension === 2) {
                         color = '#4B0082'; // Indigo for visited underground
                     } else {

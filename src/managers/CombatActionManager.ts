@@ -38,6 +38,7 @@ export class CombatActionManager {
         if (!bishopSpearItem) return null;
 
         const enemyCollection = this.game.enemyCollection;
+        if (!enemyCollection) return null;
         const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y, true) as Enemy | undefined;
         // Use gridManager for grid access
         const targetTile = this.game.gridManager.getTile(gridCoords.x, gridCoords.y);
@@ -60,6 +61,7 @@ export class CombatActionManager {
         if (!horseIconItem) return null;
 
         const enemyCollection = this.game.enemyCollection;
+        if (!enemyCollection) return null;
         const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y, true) as Enemy | undefined;
         // Use gridManager for grid access
         const targetTile = this.game.gridManager.getTile(gridCoords.x, gridCoords.y);
@@ -84,6 +86,7 @@ export class CombatActionManager {
         if (!bowItem) return null;
 
         const enemyCollection = this.game.enemyCollection;
+        if (!enemyCollection) return null;
         const enemyAtCoords = enemyCollection.findAt(gridCoords.x, gridCoords.y, true) as Enemy | undefined;
         if (!enemyAtCoords) return null;
 

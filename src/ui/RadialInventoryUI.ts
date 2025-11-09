@@ -92,14 +92,17 @@ export class RadialInventoryUI {
     openAtPlayer(): void {
         this.createContainer();
         this.close(); // clear
+    if (!this.game.canvas) return;
     const canvasRect = this.game.canvas.getBoundingClientRect();
     const player = this.game.player;
         // Note: Radial menu can now open even when standing on EXIT/PORT tiles.
         // Transitions are triggered via double-tap on the player tile.
         // If radial inventory is empty, try to migrate eligible items from main inventory
-        if ((!player.radialInventory || player.radialInventory.length === 0) && player.inventory && player.inventory.length > 0) {
-            for (let i = player.inventory.length - 1; i >= 0 && (player.radialInventory.length || 0) < UI_CONSTANTS.RADIAL_INVENTORY_MAX_SIZE; i--) {
-                const it = player.inventory[i];
+        const radialInv = this.game.playerFacade?.getRadialInventory();
+        const mainInv = this.game.playerFacade?.getInventory();
+        if ((!radialInv || radialInv.length === 0) && mainInv && mainInv.length > 0) {
+            for (let i = mainInv.length - 1; i >= 0 && (radialInv?.length || 0) < UI_CONSTANTS.RADIAL_INVENTORY_MAX_SIZE; i--) {
+                const it = mainInv[i];
                 if (it && ItemMetadata.RADIAL_TYPES.includes(it.type)) {
                     // Normalize book representation: prefer 'uses' for books
                     if (it.type === 'book_of_time_travel') {
@@ -109,9 +112,9 @@ export class RadialInventoryUI {
                         }
                         delete it.quantity;
                     }
-                    player.inventory.splice(i, 1);
-                    player.radialInventory = player.radialInventory || [];
-                    player.radialInventory.push(it);
+                    mainInv.splice(i, 1);
+                    const radial = radialInv || [];
+                    radial.push(it);
                 }
             }
             saveRadialInventory(this.game);
@@ -123,13 +126,15 @@ export class RadialInventoryUI {
     // Screen-space tile size (may differ on non-square scaling)
     const tileScreenW = TILE_SIZE * scaleX;
     const tileScreenH = TILE_SIZE * scaleY;
-    const centerX = canvasRect.left + (player.x + 0.5) * tileScreenW;
-    const centerY = canvasRect.top + (player.y + 0.5) * tileScreenH;
+    const playerX = this.game.playerFacade?.getX() ?? 0;
+    const playerY = this.game.playerFacade?.getY() ?? 0;
+    const centerX = canvasRect.left + (playerX + 0.5) * tileScreenW;
+    const centerY = canvasRect.top + (playerY + 0.5) * tileScreenH;
 
         // Positions for 8 surrounding tiles (clockwise starting north)
         const dirs = [ {dx:0,dy:-1},{dx:1,dy:-1},{dx:1,dy:0},{dx:1,dy:1},{dx:0,dy:1},{dx:-1,dy:1},{dx:-1,dy:0},{dx:-1,dy:-1} ];
 
-        this.game.radialInventorySnapshot = Array.from(this.game.player.radialInventory || []);
+        this.game.radialInventorySnapshot = Array.from(this.game.playerFacade?.getRadialInventory() || []);
 
     // Make icons occupy an entire tile visually (in screen pixels)
     const iconSizeW = tileScreenW;
@@ -137,7 +142,7 @@ export class RadialInventoryUI {
     // Use a square size for placement (use smaller of the two to avoid overflow)
     const iconSize = Math.min(iconSizeW, iconSizeH);
 
-        const radial = this.game.player.radialInventory || [];
+        const radial = this.game.playerFacade?.getRadialInventory() || [];
         if (radial.length === 0) {
             // Show an empty indicator so it's clear the radial opened
             const note = document.createElement('div');
@@ -169,7 +174,7 @@ export class RadialInventoryUI {
             el.style.width = `${iconSize}px`;
             el.style.height = `${iconSize}px`;
             el.style.pointerEvents = 'auto';
-            el.style.cursor = this.game.player.isDead() ? 'not-allowed' : 'pointer';
+            el.style.cursor = this.game.playerFacade?.isDead() ? 'not-allowed' : 'pointer';
 
             // Semi-transparent, subtly pulsating black background
             el.style.background = 'rgba(0,0,0,0.28)';
@@ -218,10 +223,10 @@ export class RadialInventoryUI {
 
             this.eventManager.add(el, 'click', (ev: Event) => {
                 ev.stopPropagation();
-                if (this.game.player.isDead()) return;
+                if (this.game.playerFacade?.isDead()) return;
 
                 // Delegate to unified interaction handler
-                this.game.inventoryInteractionHandler.handleItemUse(item, {
+                this.game.inventoryInteractionHandler?.handleItemUse(item, {
                     fromRadial: true,
                     isDoubleClick: false
                 });
@@ -247,7 +252,7 @@ export class RadialInventoryUI {
             // Convert screen coords to grid using the game's input manager
             const conv = this.game.inputManager?.convertScreenToGrid?.((ev as MouseEvent).clientX, (ev as MouseEvent).clientY);
             if (!conv) return;
-            const playerPos = this.game.player?.getPosition?.() ?? { x: this.game.player.x, y: this.game.player.y };
+            const playerPos = this.game.playerFacade?.getPosition?.() ?? { x: this.game.playerFacade?.getX() ?? 0, y: this.game.playerFacade?.getY() ?? 0 };
             if (conv.x === playerPos.x && conv.y === playerPos.y) {
                 // Close radial when clicking own tile
                 this.close();
@@ -262,7 +267,7 @@ export class RadialInventoryUI {
             if (!this.game?.inputManager) return;
             const conv = this.game.inputManager.convertScreenToGrid?.(ev.clientX, ev.clientY);
             if (!conv) return;
-            const playerPos = this.game.player?.getPosition?.() ?? { x: this.game.player.x, y: this.game.player.y };
+            const playerPos = this.game.playerFacade?.getPosition?.() ?? { x: this.game.playerFacade.getX(), y: this.game.playerFacade.getY() };
             if (conv.x === playerPos.x && conv.y === playerPos.y) {
                 this.close();
             }
@@ -275,7 +280,7 @@ export class RadialInventoryUI {
             if (this._openedAt && (now - this._openedAt) < TIMING_CONSTANTS.RADIAL_MENU_OPEN_IGNORE_WINDOW) return;
             const conv = this.game.inputManager?.convertScreenToGrid?.(ev.clientX, ev.clientY);
             if (!conv) return;
-            const playerPos = this.game.player?.getPosition?.() ?? { x: this.game.player.x, y: this.game.player.y };
+            const playerPos = this.game.playerFacade?.getPosition?.() ?? { x: this.game.playerFacade.getX(), y: this.game.playerFacade.getY() };
             if (conv.x === playerPos.x && conv.y === playerPos.y) {
                 this.close();
             }

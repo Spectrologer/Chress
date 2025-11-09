@@ -1,4 +1,4 @@
-import { MiniMap } from '../ui/MiniMap';
+import { MiniMap } from '@ui/MiniMap';
 
 describe('MiniMap highlights cycling', () => {
   let miniMap;
@@ -6,7 +6,7 @@ describe('MiniMap highlights cycling', () => {
 
   beforeEach(() => {
     const mockGame = {
-      player: {
+      playerFacade: {
         getCurrentZone: () => ({ ...currentZone })
       }
     };
@@ -26,6 +26,7 @@ describe('MiniMap highlights cycling', () => {
     // Ensure pan is zero so clicks map to center tile
     miniMap.panX = 0;
     miniMap.panY = 0;
+    miniMap.viewZOffset = 0;
   });
 
   test('cycles through shapes in expected order and then clears', () => {

@@ -1,6 +1,7 @@
 import { RendererUtils } from './RendererUtils';
 import { STROKE_CONSTANTS } from '@core/constants/index';
 import type { ImageCache, TextStyle, RenderOverlayOptions } from './types';
+import { logger } from '@core/logger';
 
 // Small helper to render an overlay image with a base already drawn by caller.
 // Options:
@@ -74,7 +75,7 @@ export function renderOverlay(
             return true;
         } catch (e: any) {
             // Fallthrough to fallback on draw error
-            console.warn('[renderOverlay] drawImage failed for', imageKey, e && e.message);
+            logger.warn('[renderOverlay] drawImage failed for', imageKey, e && e.message);
             ctx.restore();
         }
     }

@@ -1,12 +1,13 @@
 import { BaseZoneHandler } from './BaseZoneHandler';
 import { boardLoader } from '@core/BoardLoader';
+import { logger } from '@core/logger';
 
 class InteriorHandler extends BaseZoneHandler {
-    constructor(zoneGen, zoneX, zoneY, foodAssets) {
+    constructor(zoneGen: any, zoneX: number, zoneY: number, foodAssets: string[]) {
         super(zoneGen, zoneX, zoneY, foodAssets, 1, 0);
     }
 
-    async generate() {
+    async generate(): Promise<any> {
         if (this.isHomeZone) {
             return await this.generateHomeInterior();
         } else {
@@ -14,7 +15,7 @@ class InteriorHandler extends BaseZoneHandler {
         }
     }
 
-    async generateHomeInterior() {
+    async generateHomeInterior(): Promise<any> {
         // Home interior now uses custom board (boards/canon/museum.json)
         // Board system handles all layout, NPCs, statues, tables, and items
         const boardData = boardLoader.getBoardSync(0, 0, 1);
@@ -32,19 +33,19 @@ class InteriorHandler extends BaseZoneHandler {
             };
         } else {
             // Fallback to previous behavior if board is missing
-            // console.error('[InteriorHandler] Home interior should use board system (museum.json), not procedural generation');
+            logger.warn('[InteriorHandler] Home interior should use board system (museum.json), not procedural generation');
             return this.buildHomeResult();
         }
     }
 
-    generateShackInterior() {
+    generateShackInterior(): any {
         // Shack interior now uses custom board (boards/canon/gouges.json)
         // Board system handles all layout, NPCs, items, and ports
-    // console.error('[InteriorHandler] Shack interior should use board system (gouges.json), not procedural generation');
+        logger.warn('[InteriorHandler] Shack interior should use board system (gouges.json), not procedural generation');
         return this.buildHomeResult();
     }
 
-    buildHomeResult() {
+    buildHomeResult(): any {
         return {
             grid: JSON.parse(JSON.stringify(this.zoneGen.grid)),
             enemies: [],
@@ -53,7 +54,7 @@ class InteriorHandler extends BaseZoneHandler {
     }
 }
 
-export async function handleInterior(zoneGen, zoneX, zoneY, foodAssets) {
+export async function handleInterior(zoneGen: any, zoneX: number, zoneY: number, foodAssets: string[]): Promise<any> {
     const handler = new InteriorHandler(zoneGen, zoneX, zoneY, foodAssets);
     return await handler.generate();
 }

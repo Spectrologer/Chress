@@ -17,13 +17,16 @@
     "checkJs": false,                 // Don't check all JS files by default
     "noEmit": true,                   // Don't emit compiled files (just type checking)
 
-    // Strict type checking (start lenient, tighten over time)
-    "strict": false,                  // Start with lenient checking
-    "noImplicitAny": false,          // TODO: Enable after migration (see docs/TYPESCRIPT_STRICT_MODE_MIGRATION.md)
-    "strictNullChecks": false,       // Enable later
-    "strictFunctionTypes": false,    // Enable later
-    "strictBindCallApply": false,    // Enable later
-    "strictPropertyInitialization": false,  // Enable later
+    // Strict type checking - STRICT MODE ENABLED
+    "strict": true,                   // Full strict mode enabled
+    // Individual flags (all enabled by strict: true)
+    // "noImplicitAny": true,
+    // "strictNullChecks": true,
+    // "strictFunctionTypes": true,
+    // "strictBindCallApply": true,
+    // "strictPropertyInitialization": true,
+    // "noImplicitThis": true,
+    // "alwaysStrict": true
 
     // Additional checks to enable gradually
     "noUnusedLocals": false,         // Enable later

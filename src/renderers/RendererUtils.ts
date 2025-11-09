@@ -1,6 +1,7 @@
 // Shared utility functions for tile rendering
 import { TILE_SIZE, TILE_COLORS } from '@core/constants/index.js';
 import type { ImageCache, ScaledDimensions } from './types.js';
+import { logger } from '@core/logger';
 
 export class RendererUtils {
     // Cache for loaded image states to avoid redundant checks
@@ -126,7 +127,7 @@ export class RendererUtils {
     ): boolean {
         // Validate part coordinates
         if (partX < 0 || partX >= cols || partY < 0 || partY >= rows) {
-            console.warn(`[Image Slice Render Warning] Invalid part coordinates: partX=${partX}, partY=${partY}, cols=${cols}, rows=${rows}`);
+            logger.warn(`[Image Slice Render Warning] Invalid part coordinates: partX=${partX}, partY=${partY}, cols=${cols}, rows=${rows}`);
             return false;
         }
 
@@ -135,7 +136,7 @@ export class RendererUtils {
 
         // Validate source dimensions
         if (sourceW <= 0 || sourceH <= 0 || sourceW > image.width || sourceH > image.height) {
-            console.warn(`[Image Slice Render Warning] Invalid source dimensions: width=${image.width}, height=${image.height}, cols=${cols}, rows=${rows}`);
+            logger.warn(`[Image Slice Render Warning] Invalid source dimensions: width=${image.width}, height=${image.height}, cols=${cols}, rows=${rows}`);
             return false;
         }
 
@@ -145,7 +146,7 @@ export class RendererUtils {
             ctx.drawImage(image, sourceX, sourceY, sourceW, sourceH, pixelX, pixelY, destSize, destSize);
             return true;
         } catch (error: any) {
-            console.warn(`[Image Slice Render Error] Failed to draw image part at (${partX}, ${partY}): ${error.message}`);
+            logger.warn(`[Image Slice Render Error] Failed to draw image part at (${partX}, ${partY}): ${error.message}`);
             return false;
         }
     }

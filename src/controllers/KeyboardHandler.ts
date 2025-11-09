@@ -10,6 +10,7 @@ import { ItemMetadata } from '@managers/inventory/ItemMetadata';
 import { ItemRepository } from '@managers/inventory/ItemRepository';
 import type { Position } from '@core/Position';
 import type { GameContext } from '@core/context';
+import { logger } from '@core/logger';
 
 interface KeyPressResult {
     type: 'cancel_path' | 'movement';
@@ -121,7 +122,7 @@ export class KeyboardHandler {
         if (this.game.isPlayerTurn === false) {
             return { type: 'cancel_path' };
         }
-        if (this.game.player.isDead()) return null;
+        if (this.game.playerFacade.isDead()) return null;
 
         // Clear pending charge using transientGameState
         if (this.game.transientGameState && this.game.transientGameState.hasPendingCharge()) {
@@ -134,7 +135,7 @@ export class KeyboardHandler {
         if (!isPathExecuting) {
             const transientState = this.game.transientGameState;
             if (this.game.displayingMessageForSign) {
-                TextBox.hideMessageForSign(this.game);
+                TextBox.hideMessageForSign(this.game as any);
             } else if (transientState && transientState.isBombPlacementMode()) {
                 transientState.exitBombPlacementMode();
                 this.game.hideOverlayMessage();
@@ -152,7 +153,7 @@ export class KeyboardHandler {
         if (event.key === '9') {
             this.game.playerFacade.addPoints(1);
             const pos = this.game.playerFacade.getPosition();
-            this.game.combatManager.addPointAnimation(pos.x, pos.y, 1);
+            this.game.combatManager?.addPointAnimation(pos.x, pos.y, 1);
             return null;
         }
         if (event.key === '0') {
@@ -161,7 +162,7 @@ export class KeyboardHandler {
         }
         if (event.key === '8') {
             // Teleport to level 3 (Wilds) - zone (9,0) which has Manhattan distance 9, placing it in wilds
-            this.game.transitionToZone(9, 0, 'teleport', this.game.player.x, this.game.player.y);
+            this.game.transitionToZone(9, 0, 'teleport', this.game.playerFacade.getX(), this.game.playerFacade.getY());
             return null;
         }
         if (event.key === '7') {
@@ -174,7 +175,7 @@ export class KeyboardHandler {
         }
 
         // New position
-        const currentPos = this.game.player.getPosition();
+        const currentPos = this.game.playerFacade.getPosition();
         let newX = currentPos.x, newY = currentPos.y;
 
         switch (event.key.toLowerCase()) {
@@ -195,7 +196,7 @@ export class KeyboardHandler {
                 newX++;
                 break;
             case 'k':
-                try { this.game.player.startBackflip(); } catch {}
+                try { this.game.playerFacade.startBackflip(); } catch {}
                 return null;
             case '1':
                 this.spawnEnemyAtPlayerPosition('lizardy');
@@ -233,7 +234,7 @@ export class KeyboardHandler {
                 if (this.game?.renderManager?.showTapFeedback) {
                     this.game.renderManager.showTapFeedback(newX, newY);
                 }
-                audioManager.playSound('bloop', { game: this.game });
+                audioManager.playSound('bloop', { game: this.game as any });
             }
         } catch {}
 
@@ -345,7 +346,7 @@ export class KeyboardHandler {
         );
 
         if (gossipNPCs.length === 0) {
-            console.warn('[KeyboardHandler] No gossip NPCs found');
+            logger.warn('[KeyboardHandler] No gossip NPCs found');
             return;
         }
 
@@ -361,7 +362,7 @@ export class KeyboardHandler {
         }
 
         if (!pos) {
-            console.warn('[KeyboardHandler] No floor tile placement found for gossip NPC');
+            logger.warn('[KeyboardHandler] No floor tile placement found for gossip NPC');
             return;
         }
 
@@ -396,11 +397,13 @@ export class KeyboardHandler {
      * Find any floor tile for placement (fallback method)
      */
     private findAnyFloorTilePlacement(): Position | null {
+        if (!this.game.gridManager) return null;
+
         const { findValidPlacement } = require('@generators/GeneratorUtils');
         return findValidPlacement({
             maxAttempts: 100,
             validate: (x: number, y: number) => {
-                const tile = this.game.gridManager.getTile(x, y);
+                const tile = this.game.gridManager?.getTile(x, y);
                 const tileValue = tile && tile.type ? tile.type : tile;
                 return tileValue === TILE_TYPES.FLOOR;
             }
@@ -411,6 +414,8 @@ export class KeyboardHandler {
      * Check if a floor tile is available for NPC spawning
      */
     private isFloorTileAvailableForNPC(x: number, y: number): boolean {
+        if (!this.game.gridManager) return false;
+
         const tile = this.game.gridManager.getTile(x, y);
         const tileValue = tile && tile.type ? tile.type : tile;
 
@@ -436,6 +441,8 @@ export class KeyboardHandler {
      * Check if a floor tile is available for enemy spawning
      */
      private isFloorTileAvailable(x: number, y: number): boolean {
+        if (!this.game.gridManager) return false;
+
         const tile = this.game.gridManager.getTile(x, y);
         const tileValue = tile && tile.type ? tile.type : tile;
         // Only place on normal floor tiles

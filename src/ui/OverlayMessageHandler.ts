@@ -58,7 +58,9 @@ export class OverlayMessageHandler {
                 if (typeof imageSrc === 'string' && imageSrc.toLowerCase().endsWith('/bow.png')) {
                     imgStyle += ' transform: rotate(-90deg); transform-origin: center center;';
                 }
-            } catch (e) {}
+            } catch (e) {
+                logger.warn('[OverlayMessageHandler] Failed to check bow asset:', e);
+            }
 
             this.messageOverlay.innerHTML = `<img src="${imageSrc}" style="${imgStyle}"><div class="dialogue-text">${displayText}</div>`;
         } else {
@@ -71,7 +73,9 @@ export class OverlayMessageHandler {
                 childSelector: '.dialogue-text',
                 minFontSize: 12
             });
-        } catch (e) {}
+        } catch (e) {
+            logger.warn('[OverlayMessageHandler] Failed to fit text (show):', e);
+        }
 
         // Apply large text styling
         if (isLargeText) {
@@ -140,7 +144,9 @@ export class OverlayMessageHandler {
                 childSelector: '.dialogue-text',
                 minFontSize: 12
             });
-        } catch (e) {}
+        } catch (e) {
+            logger.warn('[OverlayMessageHandler] Failed to fit text (showWithButton):', e);
+        }
 
         // Apply large text styling
         if (isLargeText) {
@@ -188,7 +194,9 @@ export class OverlayMessageHandler {
             // Remove sign-specific styling
             try {
                 this.messageOverlay.classList.remove('textbox-dialogue');
-            } catch (e) {}
+            } catch (e) {
+                logger.warn('[OverlayMessageHandler] Failed to remove dialogue class:', e);
+            }
 
             logger.log("Hiding overlay message.");
         }

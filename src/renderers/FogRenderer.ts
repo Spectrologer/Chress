@@ -49,13 +49,13 @@ export class FogRenderer {
     }
 
     updateAndDrawFog(): void {
-        const currentZone = this.game.player.getCurrentZone();
+        const currentZone = this.game.playerFacade.getCurrentZone();
 
         // Coerce dimension to number to tolerate loaded/serialized state that may
         // have the value as a string (e.g. "2"). We only treat exact numeric 2
         // as underground.
         const isUnderground = Number(currentZone.dimension) === 2;
-        const depth = currentZone.depth || (this.game.player.undergroundDepth || 1);
+        const depth = currentZone.depth || (this.game.playerFacade.getUndergroundDepth() || 1);
         const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, isUnderground ? depth : undefined);
         if (this.lastZoneKey !== zoneKey) {
             // Reset scroll when changing zone to avoid visible jumps

@@ -13,6 +13,24 @@ interface NPCConfigEntry {
     action: 'barter' | 'dialogue';
 }
 
+interface CharacterData {
+    id: string;
+    name?: string;
+    portrait?: string;
+    category?: string;
+}
+
+interface InventoryItem {
+    type: string;
+    foodType?: string;
+    [key: string]: unknown;
+}
+
+// Type guard for character data
+function hasCharacterId(obj: unknown): obj is { id: string } {
+    return typeof obj === 'object' && obj !== null && 'id' in obj && typeof (obj as { id: unknown }).id === 'string';
+}
+
 export class NPCInteractionManager {
     private game: IGame;
     private npcConfig: Record<string, NPCConfigEntry>;
@@ -27,14 +45,19 @@ export class NPCInteractionManager {
      * This handles all NPCs defined in JSON files automatically
      */
     interactWithDynamicNPC(gridCoords: ICoordinates): boolean {
-        const playerPos = this.game.player.getPosition();
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        const playerPos = this.game.playerFacade?.getPosition();
+        if (!playerPos) return false;
+
+        if (!this.game.grid) return false;
+        const gridRow = this.game.grid[gridCoords.y];
+        if (!gridRow) return false;
+        const targetTile = gridRow[gridCoords.x];
 
         // Get the tile type using TypeChecks utility
         const tileType = TileTypeChecker.getTileType(targetTile);
 
         // Look up NPC by tile type in ContentRegistry
-        const npcConfig = ContentRegistry.getNPCByTileType(tileType);
+        const npcConfig = ContentRegistry.getNPCByTileType(tileType ?? 0);
         if (!npcConfig) return false;
 
         // Check if NPC has character data (dialogue NPCs)
@@ -46,19 +69,19 @@ export class NPCInteractionManager {
 
         if (isAdjacent(dx, dy)) {
             // Track NPC position for distance-based auto-close
-            this.game.transientGameState.setCurrentNPCPosition(Position.from(gridCoords));
+            this.game.transientGameState?.setCurrentNPCPosition(Position.from(gridCoords));
 
             // Handle based on NPC action type
             if (npcConfig.action === 'dialogue') {
-                const characterId = (characterData as any)?.id || 'unknown';
-                const npcData = TextBox.getDialogueNpcData(characterId, this.game as any);
+                const characterId = hasCharacterId(characterData) ? characterData.id : 'unknown';
+                const npcData = TextBox.getDialogueNpcData(characterId, this.game);
                 if (npcData) {
                     const message = npcData.messages[npcData.currentMessageIndex];
                     const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
                     const signData = { message: message, type: 'npc' };
 
                     // Set both old and new state for compatibility
-                    (this.game as any).displayingMessageForSign = signData;
+                    this.game.displayingMessageForSign = signData;
                     if (this.game.transientGameState) {
                         this.game.transientGameState.setDisplayingSignMessage(signData);
                     }
@@ -75,7 +98,8 @@ export class NPCInteractionManager {
                     });
 
                     // Advance dialogue based on cycle mode
-                    if (npcData.cycleMode === 'sequential') {
+                    const cycleMode = typeof npcData.cycleMode === 'string' ? npcData.cycleMode : 'loop';
+                    if (cycleMode === 'sequential') {
                         // Sequential: advance to next message, stop at last
                         if (npcData.currentMessageIndex < npcData.messages.length - 1) {
                             npcData.currentMessageIndex++;
@@ -87,7 +111,7 @@ export class NPCInteractionManager {
                 }
             } else if (npcConfig.action === 'barter') {
                 // Use event instead of direct UIManager call
-                const characterId = (characterData as any)?.id || 'unknown';
+                const characterId = hasCharacterId(characterData) ? characterData.id : 'unknown';
                 eventBus.emit(EventTypes.UI_DIALOG_SHOW, {
                     type: 'barter',
                     npc: characterId,
@@ -104,12 +128,17 @@ export class NPCInteractionManager {
 
     // Food/water trade
     tradeFoodForWater(foodType: string): void {
-        const index = this.game.player.inventory.findIndex((item: any) => item && item.type === 'food' && item.foodType.includes(foodType));
-        if (index >= 0) {
-            const nonNullCount = this.game.player.inventory.filter(item => item !== null).length;
+        const inventory = this.game.player?.inventory as InventoryItem[] | null | undefined;
+        if (!inventory) return;
+
+        const index = inventory.findIndex((item: InventoryItem | null) =>
+            item && item.type === 'food' && item.foodType?.includes(foodType)
+        );
+        if (index !== undefined && index >= 0) {
+            const nonNullCount = inventory.filter(item => item !== null).length;
             if (nonNullCount < 6) {
-                this.game.player.inventory[index] = null as any;
-                this.game.player.inventory.push({ type: 'water' });
+                inventory[index] = null;
+                inventory.push({ type: 'water' });
                 eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             } else {
                 // Use event instead of direct UIManager call
@@ -129,8 +158,13 @@ export class NPCInteractionManager {
         if (!config) return null;
 
         return (gridCoords: ICoordinates) => {
-            const playerPos = this.game.player.getPosition();
-            const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+            const playerPos = this.game.playerFacade?.getPosition();
+            if (!playerPos) return false;
+
+            if (!this.game.grid) return false;
+            const gridRow = this.game.grid[gridCoords.y];
+            if (!gridRow) return false;
+            const targetTile = gridRow[gridCoords.x];
             if (targetTile !== config.tileType) return false;
 
             const dx = Math.abs(gridCoords.x - playerPos.x);
@@ -138,7 +172,7 @@ export class NPCInteractionManager {
 
             if (isAdjacent(dx, dy)) {
                 // Track NPC position for distance-based auto-close
-                this.game.transientGameState.setCurrentNPCPosition(Position.from(gridCoords));
+                this.game.transientGameState?.setCurrentNPCPosition(Position.from(gridCoords));
 
                 if (config.action === 'barter') {
                     // Use event instead of direct UIManager call
@@ -149,14 +183,14 @@ export class NPCInteractionManager {
                         npcPos: gridCoords
                     });
                 } else if (config.action === 'dialogue') {
-                    const npcData = TextBox.getDialogueNpcData(npcName, this.game as any);
+                    const npcData = TextBox.getDialogueNpcData(npcName, this.game);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
                         const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
                         const signData = { message: message, type: 'npc' };
 
                         // Set both old and new state for compatibility
-                        (this.game as any).displayingMessageForSign = signData;
+                        this.game.displayingMessageForSign = signData;
                         if (this.game.transientGameState) {
                             this.game.transientGameState.setDisplayingSignMessage(signData);
                         }
@@ -173,7 +207,8 @@ export class NPCInteractionManager {
                         });
 
                         // Advance dialogue based on cycle mode
-                        if (npcData.cycleMode === 'sequential') {
+                        const cycleMode = typeof npcData.cycleMode === 'string' ? npcData.cycleMode : 'loop';
+                        if (cycleMode === 'sequential') {
                             // Sequential: advance to next message, stop at last
                             if (npcData.currentMessageIndex < npcData.messages.length - 1) {
                                 npcData.currentMessageIndex++;
@@ -210,18 +245,23 @@ export class NPCInteractionManager {
 
     // Force interaction for pathing
     forceInteractAt(gridCoords: ICoordinates): void {
-        const playerPos = this.game.player.getPosition();
+        const playerPos = this.game.playerFacade?.getPosition();
+        if (!playerPos) return;
+
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);
         if (!isAdjacent(dx, dy)) return;
 
-        const targetTile = this.game.grid[gridCoords.y]?.[gridCoords.x];
+        if (!this.game.grid) return;
+        const gridRow = this.game.grid[gridCoords.y];
+        if (!gridRow) return;
+        const targetTile = gridRow[gridCoords.x];
 
         // First try hardcoded NPCs from NPC_CONFIG
         for (const [npcName, config] of Object.entries(this.npcConfig)) {
             if (targetTile === config.tileType) {
                 // Track NPC position for distance-based auto-close
-                this.game.transientGameState.setCurrentNPCPosition(Position.from(gridCoords));
+                this.game.transientGameState?.setCurrentNPCPosition(Position.from(gridCoords));
 
                 if (config.action === 'barter') {
                     // Use event instead of direct UIManager call
@@ -232,14 +272,14 @@ export class NPCInteractionManager {
                         npcPos: gridCoords
                     });
                 } else if (config.action === 'dialogue') {
-                    const npcData = TextBox.getDialogueNpcData(npcName, this.game as any);
+                    const npcData = TextBox.getDialogueNpcData(npcName, this.game);
                     if (npcData) {
                         const message = npcData.messages[npcData.currentMessageIndex];
                         const buttonText = npcData.buttonTexts?.[npcData.currentMessageIndex] || null;
                         const signData = { message: message, type: 'npc' };
 
                         // Set both old and new state for compatibility
-                        (this.game as any).displayingMessageForSign = signData;
+                        this.game.displayingMessageForSign = signData;
                         if (this.game.transientGameState) {
                             this.game.transientGameState.setDisplayingSignMessage(signData);
                         }
@@ -256,7 +296,8 @@ export class NPCInteractionManager {
                         });
 
                         // Advance dialogue based on cycle mode
-                        if (npcData.cycleMode === 'sequential') {
+                        const cycleMode = typeof npcData.cycleMode === 'string' ? npcData.cycleMode : 'loop';
+                        if (cycleMode === 'sequential') {
                             // Sequential: advance to next message, stop at last
                             if (npcData.currentMessageIndex < npcData.messages.length - 1) {
                                 npcData.currentMessageIndex++;

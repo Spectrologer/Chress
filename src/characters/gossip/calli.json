@@ -29,8 +29,8 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "OH MY GOSH HI!!! Do you want to hang out?! We could be best friends! This is so exciting!",
-        "buttonText": "Whoa..."
+        "text": "Hi! *waves* Oh my god I love your outfit! It's so cool!",
+        "buttonText": "Thanks."
       },
       {
         "id": "msg_1",

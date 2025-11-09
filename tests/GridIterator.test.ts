@@ -87,7 +87,7 @@ describe('GridIterator', () => {
         });
 
         test('includes coordinates in results', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             grid[5][3] = TILE_TYPES.WALL;
             grid[7][2] = TILE_TYPES.WALL;
 
@@ -100,7 +100,7 @@ describe('GridIterator', () => {
 
     describe('findFirst', () => {
         test('finds first matching tile', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             grid[3][5] = TILE_TYPES.WALL;
             grid[7][2] = TILE_TYPES.WALL;
 
@@ -115,7 +115,7 @@ describe('GridIterator', () => {
         });
 
         test('respects custom bounds', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             grid[1][1] = TILE_TYPES.WALL;
             grid[5][5] = TILE_TYPES.WALL;
 
@@ -143,7 +143,7 @@ describe('GridIterator', () => {
 
     describe('some', () => {
         test('returns true if any tile matches', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             grid[5][5] = TILE_TYPES.WALL;
 
             const result = GridIterator.some(grid, tile => isTileType(tile, TILE_TYPES.WALL));
@@ -165,7 +165,7 @@ describe('GridIterator', () => {
         });
 
         test('returns false if any tile does not match', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             grid[5][5] = TILE_TYPES.WALL;
 
             const result = GridIterator.every(grid, tile => isTileType(tile, TILE_TYPES.FLOOR));
@@ -196,13 +196,13 @@ describe('GridIterator', () => {
 
         test('can build complex accumulator', () => {
             const grid = GridIterator.initialize((x, y) => ({ x, y }));
-            const coords = GridIterator.reduce(grid, (acc, tile) => {
+            const coords = GridIterator.reduce(grid, (acc: any[], tile: any) => {
                 if (tile.x === tile.y) acc.push(tile);
                 return acc;
-            }, []);
+            }, [] as any[]);
 
             expect(coords.length).toBe(GRID_SIZE);
-            coords.forEach(coord => expect(coord.x).toBe(coord.y));
+            coords.forEach((coord: any) => expect(coord.x).toBe(coord.y));
         });
     });
 
@@ -220,7 +220,7 @@ describe('GridIterator', () => {
         });
 
         test('returns false when predicate fails', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             grid[6][6] = TILE_TYPES.WALL;
 
             const result = GridIterator.canPlaceRegion(grid, 5, 5, 3, 3, tile => isTileType(tile, TILE_TYPES.FLOOR));
@@ -228,7 +228,7 @@ describe('GridIterator', () => {
         });
 
         test('checks all tiles in region', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             grid[5][7] = TILE_TYPES.WALL; // Edge of 3x3 region starting at (5,5)
 
             const result = GridIterator.canPlaceRegion(grid, 5, 5, 3, 3, tile => isTileType(tile, TILE_TYPES.FLOOR));
@@ -276,7 +276,7 @@ describe('GridIterator', () => {
     describe('forEachInRegion', () => {
         test('iterates over region', () => {
             const grid = GridIterator.initialize(0);
-            const visited = [];
+            const visited: any[] = [];
 
             GridIterator.forEachInRegion(grid, 5, 5, 3, 3, (tile, x, y) => {
                 visited.push({ x, y });
@@ -302,7 +302,7 @@ describe('GridIterator', () => {
 
     describe('toArray', () => {
         test('converts grid to flat array', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             grid[3][5] = TILE_TYPES.WALL;
 
             const array = GridIterator.toArray(grid);
@@ -316,11 +316,11 @@ describe('GridIterator', () => {
 
     describe('Integration tests', () => {
         test('finding and modifying bomb tiles', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             grid[3][5] = { type: TILE_TYPES.BOMB, timer: 0 };
             grid[7][2] = { type: TILE_TYPES.BOMB, timer: 1 };
 
-            const isBomb = tile => tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB;
+            const isBomb = (tile: any) => tile && typeof tile === 'object' && tile.type === TILE_TYPES.BOMB;
             const bombs = GridIterator.findTiles(grid, isBomb);
 
             expect(bombs.length).toBe(2);
@@ -336,7 +336,7 @@ describe('GridIterator', () => {
         });
 
         test('finding valid spawn positions', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             // Add some obstacles
             grid[5][5] = TILE_TYPES.WALL;
             grid[6][6] = TILE_TYPES.WALL;
@@ -359,7 +359,7 @@ describe('GridIterator', () => {
         });
 
         test('structure placement validation', () => {
-            const grid = GridIterator.initialize(TILE_TYPES.FLOOR);
+            const grid = GridIterator.initialize(TILE_TYPES.FLOOR) as any;
             grid[5][5] = TILE_TYPES.WALL;
 
             // Try to place 3x3 structure at (4, 4) - should fail because (5,5) has wall

@@ -1,32 +1,40 @@
-import { Enemy } from '@entities/Enemy';
+import { Enemy, type EnemyData } from '@entities/Enemy';
 import { TILE_TYPES, GRID_SIZE, SPAWN_PROBABILITIES } from '@core/constants/index';
 import { findValidPlacement } from './GeneratorUtils';
 import { ZoneStateManager } from './ZoneStateManager';
 import { ContentRegistry } from '@core/ContentRegistry';
+import type { GridManager } from '@managers/GridManager';
 
-const MAX_WEIGHT_PER_LEVEL = {
+const MAX_WEIGHT_PER_LEVEL: Record<number, number> = {
     1: 4,
     2: 6,
     3: 8,
     4: 10
 };
 
+interface ItemWithPosition {
+    x: number;
+    y: number;
+    [key: string]: unknown;
+}
+
 export class EnemyGenerator {
-    private enemies: any[];
+    private enemies: EnemyData[];
     private depth: number;
     private depthMultiplier: number;
-    private gridManager: any;
+    private gridManager: GridManager | null;
     private zoneX = 0;
     private zoneY = 0;
-    private items: any[] = [];
+    private items: ItemWithPosition[] = [];
 
-    constructor(enemies: any[], depth = 0) {
+    constructor(enemies: EnemyData[], depth: number = 0) {
         this.enemies = enemies;
         this.depth = depth || 0;
         this.depthMultiplier = 1 + Math.max(0, (this.depth - 1)) * 0.02; // +2% per depth beyond first
+        this.gridManager = null;
     }
 
-    selectEnemyType(zoneLevel) {
+    selectEnemyType(zoneLevel: number): string | null {
         // Get spawnable enemies from ContentRegistry
         const list = ContentRegistry.getSpawnableEnemies(zoneLevel);
         if (!list || list.length === 0) {
@@ -42,7 +50,7 @@ export class EnemyGenerator {
         return list[list.length - 1].type; // fallback
     }
 
-    addRandomEnemy(zoneLevel, zoneX, zoneY) {
+    addRandomEnemy(zoneLevel: number, zoneX: number, zoneY: number): void {
         // Scale max weight by depth multiplier but cap at 20
         const baseMax = MAX_WEIGHT_PER_LEVEL[zoneLevel] || 12;
         const scaledMax = Math.min(20, Math.floor(baseMax * this.depthMultiplier));
@@ -77,7 +85,7 @@ export class EnemyGenerator {
         }
     }
 
-    isTileOccupiedByEnemy(x, y) {
+    isTileOccupiedByEnemy(x: number, y: number): boolean {
         for (const enemy of this.enemies) {
             if (enemy.x === x && enemy.y === y) {
                 return true;
@@ -87,7 +95,7 @@ export class EnemyGenerator {
     }
 
     // Updated method that takes gridManager and items for full validation
-    addRandomEnemyWithValidation(zoneLevel, zoneX, zoneY, gridManager, items = []) {
+    addRandomEnemyWithValidation(zoneLevel: number, zoneX: number, zoneY: number, gridManager: GridManager, items: ItemWithPosition[] = []): void {
         this.gridManager = gridManager;
         this.zoneX = zoneX;
         this.zoneY = zoneY;
@@ -95,9 +103,10 @@ export class EnemyGenerator {
         this.addRandomEnemy(zoneLevel, zoneX, zoneY);
     }
 
-    isFloorTileAvailable(x, y, zoneX, zoneY) {
+    isFloorTileAvailable(x: number, y: number, zoneX: number, zoneY: number): boolean {
+        if (!this.gridManager) return false;
         const tile = this.gridManager.getTile(x, y);
-        const tileValue = tile && tile.type ? tile.type : tile;
+        const tileValue = tile && typeof tile === 'object' && 'type' in tile ? (tile as { type: number }).type : tile;
         // Only place on normal floor tiles
         if (tileValue !== TILE_TYPES.FLOOR) return false;
         // Check for enemy

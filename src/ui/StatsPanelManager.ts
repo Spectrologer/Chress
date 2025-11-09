@@ -5,6 +5,7 @@ import { EventListenerManager } from '@utils/EventListenerManager';
 interface GameInstance {
     defeatedEnemies?: Set<any>;
     player: any;
+    playerFacade?: any;
     resetGame: () => void;
     gameLoop?: () => void;
     gameStarted?: boolean;
@@ -105,11 +106,14 @@ export class StatsPanelManager {
         const statsInfoContainer = this.statsPanelOverlay?.querySelector('.stats-main-content .stats-info');
         if (!statsInfoContainer) return;
 
+        const playerFacade = this.game.playerFacade;
+        if (!playerFacade) return;
+
         const enemiesCaptured = this.game.defeatedEnemies ? this.game.defeatedEnemies.size : 0;
-        const playerPoints = this.game.player.getPoints();
-        const hunger = this.game.player.getHunger();
-        const thirst = this.game.player.getThirst();
-        const totalDiscoveries = this.game.player.getVisitedZones().size - this.game.player.getSpentDiscoveries();
+        const playerPoints = playerFacade.getPoints();
+        const hunger = playerFacade.getHunger();
+        const thirst = playerFacade.getThirst();
+        const totalDiscoveries = playerFacade.getVisitedZones().size - playerFacade.getSpentDiscoveries();
 
         statsInfoContainer.innerHTML = `
             <div class="stats-header">
@@ -146,8 +150,11 @@ export class StatsPanelManager {
      * Updates persistent records in localStorage if current stats exceed saved values
      */
     private _updatePersistentRecords(): void {
-        const visited = this.game.player.getVisitedZones().size;
-        const pointsNow = this.game.player.getPoints();
+        const playerFacade = this.game.playerFacade;
+        if (!playerFacade) return;
+
+        const visited = playerFacade.getVisitedZones().size;
+        const pointsNow = playerFacade.getPoints();
         const prevZones = parseInt(localStorage.getItem('chress:record:zones') || '0', 10) || 0;
         const prevPoints = parseInt(localStorage.getItem('chress:record:points') || '0', 10) || 0;
 

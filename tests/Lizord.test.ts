@@ -27,7 +27,7 @@ describe('Lizord movement and bump attack behavior', () => {
       lastX: undefined,
       lastY: undefined,
       startBump: vi.fn(),
-      isWalkable: function (x, y, g) {
+      isWalkable: function (x: number, y: number, g: number[][]) {
         if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) return false;
         return (g[y] && g[y][x]) === TILE_TYPES.FLOOR;
       }

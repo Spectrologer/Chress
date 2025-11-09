@@ -1,0 +1,1212 @@
+src/config/registrations/ItemRegistrations.ts(58,24): error TS2532: Object is possibly 'undefined'.
+src/config/registrations/ItemRegistrations.ts(292,9): error TS2322: Type 'null' is not assignable to type 'BaseItemEffect | undefined'.
+src/config/registrations/ItemRegistrations.ts(305,9): error TS2322: Type 'null' is not assignable to type 'BaseItemEffect | undefined'.
+src/config/registrations/ItemRegistrations.ts(318,9): error TS2322: Type 'null' is not assignable to type 'BaseItemEffect | undefined'.
+src/config/registrations/ItemRegistrations.ts(331,9): error TS2322: Type 'null' is not assignable to type 'BaseItemEffect | undefined'.
+src/config/registrations/ItemRegistrations.ts(344,9): error TS2322: Type 'null' is not assignable to type 'BaseItemEffect | undefined'.
+src/config/registrations/ItemRegistrations.ts(357,9): error TS2322: Type 'null' is not assignable to type 'BaseItemEffect | undefined'.
+src/config/registrations/ItemRegistrations.ts(367,9): error TS2322: Type 'null' is not assignable to type 'BaseItemEffect | undefined'.
+src/config/registrations/ItemRegistrations.ts(379,9): error TS2322: Type 'null' is not assignable to type 'BaseItemEffect | undefined'.
+src/config/registrations/NPCRegistrations.ts(60,13): error TS2322: Type 'null' is not assignable to type 'number | undefined'.
+src/config/registrations/NPCRegistrations.ts(61,13): error TS2322: Type 'null' is not assignable to type 'number | undefined'.
+src/controllers/GestureDetector.ts(236,47): error TS2322: Type 'GameContext' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'GameContext' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/controllers/GestureDetector.ts(300,51): error TS2322: Type 'GameContext' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'GameContext' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/controllers/GestureDetector.ts(371,37): error TS2322: Type 'ArrowDirection | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/controllers/GestureDetector.ts(443,22): error TS2531: Object is possibly 'null'.
+src/controllers/GestureDetector.ts(446,24): error TS2531: Object is possibly 'null'.
+src/controllers/GestureDetector.ts(447,24): error TS2531: Object is possibly 'null'.
+src/controllers/InputController.ts(54,45): error TS2345: Argument of type 'GameContext' is not assignable to parameter of type 'IGame'.
+  Type 'GameContext' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/controllers/InputCoordinator.ts(283,51): error TS2322: Type 'GameContext' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'GameContext' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/controllers/InputCoordinator.ts(285,52): error TS2322: Type 'GameContext' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'GameContext' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/controllers/InputCoordinator.ts(287,47): error TS2322: Type 'GameContext' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'GameContext' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/controllers/InputCoordinator.ts(304,86): error TS2339: Property 'portKind' does not exist on type 'TileObject'.
+src/controllers/InputCoordinator.ts(424,17): error TS18048: 'path.length' is possibly 'undefined'.
+src/controllers/InputCoordinator.ts(425,34): error TS2345: Argument of type 'string[] | null' is not assignable to parameter of type 'string[]'.
+  Type 'null' is not assignable to type 'string[]'.
+src/controllers/InputCoordinator.ts(554,76): error TS2345: Argument of type 'Position | undefined' is not assignable to parameter of type 'ICoordinates'.
+  Type 'undefined' is not assignable to type 'ICoordinates'.
+src/controllers/InputCoordinator.ts(558,72): error TS18048: 'currentPos' is possibly 'undefined'.
+src/controllers/InputCoordinator.ts(558,86): error TS18048: 'currentPos' is possibly 'undefined'.
+src/controllers/InputCoordinator.ts(588,25): error TS2531: Object is possibly 'null'.
+src/controllers/InputCoordinator.ts(619,25): error TS18048: 'path.length' is possibly 'undefined'.
+src/controllers/InputCoordinator.ts(620,42): error TS2345: Argument of type 'string[] | null' is not assignable to parameter of type 'string[]'.
+  Type 'null' is not assignable to type 'string[]'.
+src/controllers/InputCoordinator.ts(625,21): error TS18048: 'path.length' is possibly 'undefined'.
+src/controllers/InputCoordinator.ts(626,38): error TS2345: Argument of type 'string[] | null' is not assignable to parameter of type 'string[]'.
+  Type 'null' is not assignable to type 'string[]'.
+src/controllers/KeyboardHandler.ts(137,44): error TS2345: Argument of type 'GameContext' is not assignable to parameter of type 'IGame'.
+  Type 'GameContext' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/controllers/KeyboardHandler.ts(155,13): error TS2531: Object is possibly 'null'.
+src/controllers/KeyboardHandler.ts(236,51): error TS2322: Type 'GameContext' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'GameContext' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/controllers/PathfindingController.ts(199,21): error TS2531: Object is possibly 'null'.
+src/controllers/PathfindingController.ts(334,25): error TS2531: Object is possibly 'null'.
+src/controllers/PathfindingController.ts(345,13): error TS2531: Object is possibly 'null'.
+src/controllers/PathfindingController.ts(367,17): error TS2531: Object is possibly 'null'.
+src/controllers/ZoneTransitionController.ts(36,13): error TS2531: Object is possibly 'null'.
+src/controllers/ZoneTransitionController.ts(54,13): error TS2531: Object is possibly 'null'.
+src/controllers/ZoneTransitionController.ts(71,13): error TS2531: Object is possibly 'null'.
+src/controllers/ZoneTransitionController.ts(91,20): error TS2531: Object is possibly 'null'.
+src/controllers/ZoneTransitionController.ts(111,20): error TS2531: Object is possibly 'null'.
+src/controllers/ZoneTransitionController.ts(126,13): error TS2531: Object is possibly 'null'.
+src/controllers/ZoneTransitionController.ts(141,13): error TS2531: Object is possibly 'null'.
+src/controllers/ZoneTransitionController.ts(157,13): error TS2531: Object is possibly 'null'.
+src/core/AnimationScheduler.ts(127,37): error TS2358: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+src/core/AnimationScheduler.ts(127,88): error TS2339: Property 'steps' does not exist on type 'never'.
+src/core/AnimationScheduler.ts(195,19): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/core/AnimationScheduler.ts(198,31): error TS18048: 'step.actions' is possibly 'undefined'.
+src/core/AnimationScheduler.ts(201,40): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/core/AnimationScheduler.ts(201,40): error TS18048: 'step.condition' is possibly 'undefined'.
+src/core/AnimationScheduler.ts(210,26): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/core/AnimationScheduler.ts(211,39): error TS18048: 'step.loopBlock' is possibly 'undefined'.
+src/core/AssetLoader.ts(25,19): error TS2531: Object is possibly 'null'.
+src/core/AssetLoader.ts(31,24): error TS2531: Object is possibly 'null'.
+src/core/AssetLoader.ts(50,20): error TS2531: Object is possibly 'null'.
+src/core/AssetLoader.ts(59,16): error TS2531: Object is possibly 'null'.
+src/core/BoardLoader.ts(328,25): error TS2322: Type 'number | TileObject | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/core/BoardLoader.ts(422,45): error TS2353: Object literal may only specify known properties, and 'portKind' does not exist in type 'TileObject'.
+src/core/ContentRegistry.ts(119,13): error TS2322: Type 'BaseItemEffect | null' is not assignable to type 'BaseItemEffect | undefined'.
+  Type 'null' is not assignable to type 'BaseItemEffect | undefined'.
+src/core/ContentRegistry.ts(124,13): error TS2322: Type 'object | null' is not assignable to type 'object | undefined'.
+  Type 'null' is not assignable to type 'object | undefined'.
+src/core/ContentRegistry.ts(139,13): error TS2322: Type 'object | null' is not assignable to type 'object | undefined'.
+  Type 'null' is not assignable to type 'object | undefined'.
+src/core/ContentRegistry.ts(140,13): error TS2322: Type 'object | null' is not assignable to type 'object | undefined'.
+  Type 'null' is not assignable to type 'object | undefined'.
+src/core/ContentRegistry.ts(141,13): error TS2322: Type 'object | null' is not assignable to type 'object | undefined'.
+  Type 'null' is not assignable to type 'object | undefined'.
+src/core/context/GameContextCore.ts(65,14): error TS2420: Class 'GameContext' incorrectly implements interface 'IGame'.
+  Type 'GameContext' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/core/context/GameContextInterfaces.ts(54,46): error TS2305: Module '"../../types/game.js"' has no exported member 'SignData'.
+src/core/DataContracts.ts(419,53): error TS2559: Type 'BumpAnimation' has no properties in common with type 'AnimationData'.
+src/core/DataContracts.ts(430,53): error TS2559: Type 'LiftAnimation' has no properties in common with type 'AnimationData'.
+src/core/EventValidator.ts(64,29): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/core/EventValidator.ts(79,33): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/core/EventValidator.ts(85,29): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/core/EventValidator.ts(92,33): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+src/core/game.ts(18,47): error TS2345: Argument of type 'this' is not assignable to parameter of type 'IGame'.
+  Type 'Game' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/core/game.ts(38,9): error TS2531: Object is possibly 'null'.
+src/core/GameInitializer.ts(440,19): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
+  Type 'undefined' is not assignable to type 'boolean'.
+src/core/GameInitializer.ts(489,19): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/core/GameInitializer.ts(492,19): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
+  Type 'undefined' is not assignable to type 'boolean'.
+src/core/GameInitializer.ts(493,19): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
+  Type 'undefined' is not assignable to type 'boolean'.
+src/core/handlers/BaseZoneHandler.ts(192,33): error TS18048: 'npc.placement' is possibly 'undefined'.
+src/core/handlers/UndergroundHandler.ts(92,82): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'null | undefined'.
+  Type 'number' is not assignable to type 'null | undefined'.
+src/core/handlers/UndergroundHandler.ts(93,53): error TS18048: 'y' is possibly 'undefined'.
+src/core/logger.ts(57,11): error TS2783: 'message' is specified more than once, so this usage will be overwritten.
+src/core/logger.ts(59,11): error TS2783: 'name' is specified more than once, so this usage will be overwritten.
+src/core/NPCLoader.ts(95,21): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(97,21): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(100,13): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(101,13): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(102,13): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(105,13): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(110,13): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/Position.ts(332,7): error TS2322: Type 'unknown' is not assignable to type 'T | undefined'.
+src/core/SaveDeserializer.ts(29,9): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/core/SaveSerializer.ts(19,52): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/core/SaveSerializer.ts(21,62): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/core/SaveSerializer.ts(27,13): error TS2322: Type '[string, unknown][]' is not assignable to type '[string, { grid: Grid; enemies: SavedEnemyData[]; discovered: boolean; }][]'.
+  Type '[string, unknown]' is not assignable to type '[string, { grid: Grid; enemies: SavedEnemyData[]; discovered: boolean; }]'.
+    Type at position 1 in source is not compatible with type at position 1 in target.
+      Type 'unknown' is not assignable to type '{ grid: Grid; enemies: SavedEnemyData[]; discovered: boolean; }'.
+src/core/ServiceContainer.ts(106,48): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'Grid'.
+  Type 'null' is not assignable to type 'Tile[][]'.
+src/core/ServiceContainer.ts(112,66): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/core/ServiceContainer.ts(115,56): error TS2345: Argument of type 'Enemy[]' is not assignable to parameter of type 'never[]'.
+  Type 'Enemy' is not assignable to type 'never'.
+src/core/ServiceContainer.ts(127,52): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'ZoneGeneratorGame'.
+  Types of property 'player' are incompatible.
+    Type 'Player | null' is not assignable to type '{ [key: string]: unknown; x: number; y: number; currentZone?: { depth?: number | undefined; } | undefined; undergroundDepth?: number | undefined; } | undefined'.
+      Type 'null' is not assignable to type '{ [key: string]: unknown; x: number; y: number; currentZone?: { depth?: number | undefined; } | undefined; undergroundDepth?: number | undefined; } | undefined'.
+src/core/ServiceContainer.ts(134,58): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'Game'.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(136,53): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'Game'.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(140,21): error TS2322: Type 'import("c:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/managers/ItemManager").ItemManager' is not assignable to type 'import("c:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/entities/Player").ItemManager'.
+  Types of property 'handleItemPickup' are incompatible.
+    Type '(player: Player, x: number, y: number, gridManager: GridManager) => void' is not assignable to type '(player: Player, x: number, y: number, grid: Grid) => void'.
+      Types of parameters 'gridManager' and 'grid' are incompatible.
+        Type 'any[][]' is missing the following properties from type 'GridManager': getTile, setTile
+src/core/ServiceContainer.ts(152,50): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'GameContext'.
+  Type 'IGame' is missing the following properties from type 'GameContext': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(154,48): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'GameContext'.
+  Type 'IGame' is missing the following properties from type 'GameContext': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(156,56): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'GameContext'.
+  Type 'IGame' is missing the following properties from type 'GameContext': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(163,54): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'GameInstance'.
+  Types of property 'uiManager' are incompatible.
+    Type 'UIManager | null' is not assignable to type 'UIManager | undefined'.
+      Type 'null' is not assignable to type 'UIManager | undefined'.
+src/core/ServiceContainer.ts(168,48): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'GameContext'.
+  Type 'IGame' is missing the following properties from type 'GameContext': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(173,64): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'Game'.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(176,88): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'Game'.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(177,56): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'Game'.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(211,68): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'Game'.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(212,74): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'GameContext'.
+  Type 'IGame' is missing the following properties from type 'GameContext': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(215,62): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'GameInstance'.
+  Types of property 'overlayManager' are incompatible.
+    Type 'OverlayManager | null' is not assignable to type '{ showMessage?(message: string, duration: number): void; } | undefined'.
+      Type 'null' is not assignable to type '{ showMessage?(message: string, duration: number): void; } | undefined'.
+src/core/ServiceContainer.ts(216,58): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'GameContext'.
+  Type 'IGame' is missing the following properties from type 'GameContext': managers, combat, inventory, interaction, and 4 more.
+src/core/sound/MusicController.ts(60,50): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/MusicController.ts(75,58): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/MusicController.ts(83,50): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/MusicController.ts(177,58): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/MusicController.ts(186,62): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/MusicController.ts(206,55): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/MusicController.ts(235,62): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/MusicController.ts(243,62): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/MusicController.ts(252,133): error TS2531: Object is possibly 'null'.
+src/core/sound/MusicController.ts(253,62): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/MusicController.ts(260,62): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/MusicController.ts(267,62): error TS2339: Property 'LOW' does not exist on type '{ readonly CRITICAL: "critical"; readonly ERROR: "error"; readonly WARNING: "warning"; readonly INFO: "info"; }'.
+src/core/sound/SoundLifecycleManager.ts(60,9): error TS2322: Type 'boolean | null' is not assignable to type 'boolean'.
+  Type 'null' is not assignable to type 'boolean'.
+src/core/sound/SoundLifecycleManager.ts(108,13): error TS2322: Type 'Promise<unknown>' is not assignable to type 'Promise<void>'.
+  Type 'unknown' is not assignable to type 'void'.
+src/core/TileRegistry.ts(162,53): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/core/TurnManager.ts(75,37): error TS2339: Property 'gestureDetector' does not exist on type 'InputManager'.
+src/core/TurnManager.ts(76,36): error TS2339: Property 'gestureDetector' does not exist on type 'InputManager'.
+src/core/ZoneGenerator.ts(141,13): error TS2531: Object is possibly 'null'.
+src/core/ZoneGenerator.ts(142,13): error TS2531: Object is possibly 'null'.
+src/core/ZoneGenerator.ts(143,13): error TS2531: Object is possibly 'null'.
+src/core/ZoneGenerator.ts(144,13): error TS2531: Object is possibly 'null'.
+src/core/ZoneGenerator.ts(153,31): error TS2345: Argument of type 'this' is not assignable to parameter of type 'ZoneGenContext'.
+  Type 'ZoneGenerator' is not assignable to type 'ZoneGenContext'.
+    Types of property 'grid' are incompatible.
+      Type 'number[][] | null' is not assignable to type '(number | TileObject | null)[][]'.
+        Type 'null' is not assignable to type '(number | TileObject | null)[][]'.
+src/core/ZoneGenerator.ts(157,33): error TS2345: Argument of type 'this' is not assignable to parameter of type 'ZoneGenContext'.
+  Type 'ZoneGenerator' is not assignable to type 'ZoneGenContext'.
+    Types of property 'grid' are incompatible.
+      Type 'number[][] | null' is not assignable to type '(number | TileObject | null)[][]'.
+        Type 'null' is not assignable to type '(number | TileObject | null)[][]'.
+src/core/ZoneGenerator.ts(161,35): error TS2345: Argument of type 'this' is not assignable to parameter of type 'ZoneGenContext'.
+  Type 'ZoneGenerator' is not assignable to type 'ZoneGenContext'.
+    Types of property 'grid' are incompatible.
+      Type 'number[][] | null' is not assignable to type '(number | TileObject | null)[][]'.
+        Type 'null' is not assignable to type '(number | TileObject | null)[][]'.
+src/core/ZoneGenerator.ts(178,39): error TS2345: Argument of type 'this' is not assignable to parameter of type 'ZoneGenContext'.
+  Type 'ZoneGenerator' is not assignable to type 'ZoneGenContext'.
+    Types of property 'grid' are incompatible.
+      Type 'number[][] | null' is not assignable to type '(number | TileObject | null)[][]'.
+        Type 'null' is not assignable to type '(number | TileObject | null)[][]'.
+src/core/ZoneGenerator.ts(194,41): error TS2345: Argument of type 'this' is not assignable to parameter of type 'ZoneGenContext'.
+  Type 'ZoneGenerator' is not assignable to type 'ZoneGenContext'.
+    Types of property 'grid' are incompatible.
+      Type 'number[][] | null' is not assignable to type '(number | TileObject | null)[][]'.
+        Type 'null' is not assignable to type '(number | TileObject | null)[][]'.
+src/enemy/BaseEnemy.ts(195,39): error TS2345: Argument of type 'number' is not assignable to parameter of type '0 | 10 | 12 | 6 | 7 | 28 | 9 | 11 | 24 | 27 | 29 | 49'.
+src/enemy/EnemyAttack.ts(80,13): error TS2345: Argument of type 'Grid' is not assignable to parameter of type 'GridCompat'.
+  Type 'Tile[]' is not assignable to type 'TileCompat[]'.
+    Type 'Tile' is not assignable to type 'TileCompat'.
+      Type 'undefined' is not assignable to type 'TileCompat'.
+src/enemy/EnemyAttack.ts(108,36): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'never'.
+src/enemy/EnemyAttack.ts(112,71): error TS2339: Property 'x' does not exist on type 'never'.
+src/enemy/EnemyAttack.ts(112,79): error TS2339: Property 'y' does not exist on type 'never'.
+src/enemy/EnemyAttack.ts(163,13): error TS2345: Argument of type 'Grid' is not assignable to parameter of type 'GridCompat'.
+  Type 'Tile[]' is not assignable to type 'TileCompat[]'.
+    Type 'Tile' is not assignable to type 'TileCompat'.
+      Type 'undefined' is not assignable to type 'TileCompat'.
+src/enemy/EnemyChargeBehaviors.ts(8,33): error TS6137: Cannot import type declaration files. Consider importing 'core' instead of '@types/core'.
+src/enemy/EnemyLineOfSight.ts(6,33): error TS2307: Cannot find module '@/types/core' or its corresponding type declarations.
+src/enemy/MoveCalculators/base.ts(26,33): error TS2307: Cannot find module '@/types/core' or its corresponding type declarations.
+src/enemy/MoveCalculators/base.ts(148,40): error TS18049: 'leader' is possibly 'null' or 'undefined'.
+src/enemy/MoveCalculators/base.ts(149,40): error TS18049: 'leader' is possibly 'null' or 'undefined'.
+src/enemy/MoveCalculators/base.ts(183,152): error TS2345: Argument of type 'Logger' is not assignable to parameter of type 'Console'.
+  Type 'Logger' is missing the following properties from type 'Console': assert, clear, count, countReset, and 14 more.
+src/enemy/MoveCalculators/base.ts(300,13): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/MoveCalculators/base.ts(324,9): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/MoveCalculators/base.ts(328,13): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/MoveCalculators/base.ts(337,67): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/enemy/MoveCalculators/interaction.ts(37,90): error TS2345: Argument of type 'Game | null' is not assignable to parameter of type 'Game'.
+  Type 'null' is not assignable to type 'Game'.
+src/enemy/MoveCalculators/lizardy.ts(16,28): error TS2339: Property 'playerJustAttacked' does not exist on type 'never'.
+src/enemy/MoveCalculators/tactics.ts(51,31): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(51,31): error TS18048: 'tacticalAI.calculateAllyDistance' is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(52,30): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(52,30): error TS18048: 'tacticalAI.calculateDirectionDiversity' is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(67,31): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(67,31): error TS18048: 'tacticalAI.calculateAllyDistance' is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(68,30): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(68,30): error TS18048: 'tacticalAI.calculateDirectionDiversity' is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(79,14): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(79,14): error TS18048: 'tacticalAI.isStackedBehind' is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(154,32): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/MoveCalculators/tactics.ts(154,32): error TS18048: 'tacticalAI.getDefensiveMoves' is possibly 'undefined'.
+src/enemy/MoveCalculators/zard.ts(25,19): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/TacticalAI.ts(266,35): error TS2345: Argument of type '{ x: any; y: any; distance: number; improvement: number; }' is not assignable to parameter of type 'never'.
+src/enemy/TacticalAI.ts(276,39): error TS2339: Property 'improvement' does not exist on type 'never'.
+src/enemy/TacticalAI.ts(276,55): error TS2339: Property 'improvement' does not exist on type 'never'.
+src/enemy/TacticalAI.ts(279,50): error TS2339: Property 'x' does not exist on type 'never'.
+src/enemy/TacticalAI.ts(279,60): error TS2339: Property 'y' does not exist on type 'never'.
+src/entities/Enemy.ts(40,5): error TS2416: Property 'serialize' in type 'Enemy' is not assignable to the same property in base type 'BaseEnemy'.
+  Type '() => SerializedEnemy' is not assignable to type '() => Record<string, unknown>'.
+    Type 'SerializedEnemy' is not assignable to type 'Record<string, unknown>'.
+      Index signature for type 'string' is missing in type 'SerializedEnemy'.
+src/facades/PlayerFacade.ts(271,34): error TS2339: Property 'isDead' does not exist on type 'PlayerStatsFacade'.
+src/generators/FeatureGenerator.ts(277,40): error TS2339: Property 'findTiles' does not exist on type 'GridManager'.
+src/generators/ItemGenerator.ts(91,33): error TS18048: 'itemConfig.spawnWeight' is possibly 'undefined'.
+src/generators/ItemGenerator.ts(108,21): error TS2322: Type '(x: any, y: any) => void' is not assignable to type 'null'.
+src/generators/ItemGenerator.ts(130,17): error TS2349: This expression is not callable.
+  Type 'never' has no call signatures.
+src/loaders/CustomZoneLoader.ts(116,30): error TS2345: Argument of type '{ terrain: any; feature: any; x: number; y: number; }' is not assignable to parameter of type 'never'.
+src/loaders/CustomZoneLoader.ts(123,23): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'never'.
+src/managers/ActionManager.ts(62,13): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(63,13): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(86,46): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'Grid<number | { type: number; uses?: number | undefined; message?: string | undefined; foodType?: string | undefined; name?: string | undefined; icon?: string | undefined; npcType?: string | undefined; ... 4 more ...; justPlaced?: boolean | undefined; } | null | undefined>'.
+  Type 'null' is not assignable to type '(number | { type: number; uses?: number | undefined; message?: string | undefined; foodType?: string | undefined; name?: string | undefined; icon?: string | undefined; npcType?: string | undefined; ... 4 more ...; justPlaced?: boolean | undefined; } | null | undefined)[][]'.
+src/managers/ActionManager.ts(131,27): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(139,48): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/managers/ActionManager.ts(144,13): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(148,17): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(158,13): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(159,25): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(164,21): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(166,21): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(172,9): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(173,9): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(193,48): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/managers/ActionManager.ts(198,27): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(253,21): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(259,43): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(263,13): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(264,25): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(266,72): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(266,117): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(270,9): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(271,9): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(288,48): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/managers/ActionManager.ts(292,27): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(297,9): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(309,17): error TS18048: 'transientState' is possibly 'undefined'.
+src/managers/ActionManager.ts(312,21): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(313,21): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(322,36): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/ActionManager.ts(323,21): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(324,33): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(326,80): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(326,125): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(333,17): error TS18048: 'transientState' is possibly 'undefined'.
+src/managers/ActionManager.ts(345,9): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/ActionManager.ts(347,9): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(355,34): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(363,30): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/ActionManager.ts(366,21): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/ActionManager.ts(370,31): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/ActionManager.ts(372,21): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(376,35): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(389,29): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(391,51): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/ActionManager.ts(393,33): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(407,46): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(411,29): error TS2531: Object is possibly 'null'.
+src/managers/ActionManager.ts(413,25): error TS2532: Object is possibly 'undefined'.
+src/managers/ActionManager.ts(414,25): error TS2532: Object is possibly 'undefined'.
+src/managers/BombManager.ts(116,46): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'Grid<number | { type: number; uses?: number | undefined; message?: string | undefined; foodType?: string | undefined; name?: string | undefined; icon?: string | undefined; npcType?: string | undefined; ... 4 more ...; justPlaced?: boolean | undefined; } | null | undefined>'.
+  Type 'null' is not assignable to type '(number | { type: number; uses?: number | undefined; message?: string | undefined; foodType?: string | undefined; name?: string | undefined; icon?: string | undefined; npcType?: string | undefined; ... 4 more ...; justPlaced?: boolean | undefined; } | null | undefined)[][]'.
+src/managers/BombManager.ts(129,37): error TS2531: Object is possibly 'null'.
+src/managers/BombManager.ts(198,9): error TS2531: Object is possibly 'null'.
+src/managers/BombManager.ts(201,49): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/managers/BombManager.ts(251,44): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'GridManager | Grid<Tile>'.
+  Type 'null' is not assignable to type 'GridManager | Grid<Tile>'.
+src/managers/BombManager.ts(306,44): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'GridManager | Grid<Tile>'.
+  Type 'null' is not assignable to type 'GridManager | Grid<Tile>'.
+src/managers/BombManager.ts(339,14): error TS18048: 'transientState' is possibly 'undefined'.
+src/managers/BombManager.ts(340,9): error TS18048: 'transientState' is possibly 'undefined'.
+src/managers/combat/CollisionDetectionSystem.ts(47,9): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/combat/CollisionDetectionSystem.ts(80,50): error TS2322: Type 'Game' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'Game' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/managers/combat/CollisionDetectionSystem.ts(98,13): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/combat/EnemyMovementHandler.ts(32,45): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/combat/EnemyMovementHandler.ts(38,28): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/combat/EnemyMovementHandler.ts(88,9): error TS2531: Object is possibly 'null'.
+src/managers/combat/EnemyMovementHandler.ts(112,29): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/combat/PlayerCombatHandler.ts(54,47): error TS2322: Type 'Game' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'Game' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/managers/CombatActionManager.ts(41,31): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/CombatActionManager.ts(63,31): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/CombatActionManager.ts(87,31): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/CombatManager.ts(61,57): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/CombatManager.ts(62,60): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/CombatManager.ts(63,61): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/EnemyDefeatFlow.ts(52,43): error TS2322: Type 'Game' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'Game' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/managers/EnemyDefeatFlow.ts(68,48): error TS2322: Type 'Game' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'Game' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/managers/EnemyDefeatFlow.ts(152,47): error TS2322: Type 'Game' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'Game' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/managers/EnvironmentalInteractionManager.ts(72,61): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/managers/EnvironmentalInteractionManager.ts(98,50): error TS2339: Property 'CUBE' does not exist on type '{ readonly FLOOR: 0; readonly WALL: 1; readonly GRASS: 2; readonly EXIT: 3; readonly ROCK: 4; readonly HOUSE: 5; readonly WATER: 6; readonly FOOD: 7; readonly ENEMY: 8; readonly LIZARDY: 127; readonly LIZARDO: 128; ... 118 more ...; readonly SHOVEL_STATUE: 55; }'.
+src/managers/EnvironmentalInteractionManager.ts(99,37): error TS2339: Property 'CUBE' does not exist on type '{ readonly FLOOR: 0; readonly WALL: 1; readonly GRASS: 2; readonly EXIT: 3; readonly ROCK: 4; readonly HOUSE: 5; readonly WATER: 6; readonly FOOD: 7; readonly ENEMY: 8; readonly LIZARDY: 127; readonly LIZARDO: 128; ... 118 more ...; readonly SHOVEL_STATUE: 55; }'.
+src/managers/EnvironmentalInteractionManager.ts(111,66): error TS2339: Property 'CUBE' does not exist on type '{ readonly FLOOR: 0; readonly WALL: 1; readonly GRASS: 2; readonly EXIT: 3; readonly ROCK: 4; readonly HOUSE: 5; readonly WATER: 6; readonly FOOD: 7; readonly ENEMY: 8; readonly LIZARDY: 127; readonly LIZARDO: 128; ... 118 more ...; readonly SHOVEL_STATUE: 55; }'.
+src/managers/EnvironmentalInteractionManager.ts(128,68): error TS2353: Object literal may only specify known properties, and 'cubeGridCoords' does not exist in type 'ItemEffectContext'.
+src/managers/EnvironmentalInteractionManager.ts(437,85): error TS2339: Property 'foodAssets' does not exist on type 'Game'.
+src/managers/EnvironmentalInteractionManager.ts(537,49): error TS2339: Property 'CUBE' does not exist on type '{ readonly FLOOR: 0; readonly WALL: 1; readonly GRASS: 2; readonly EXIT: 3; readonly ROCK: 4; readonly HOUSE: 5; readonly WATER: 6; readonly FOOD: 7; readonly ENEMY: 8; readonly LIZARDY: 127; readonly LIZARDO: 128; ... 118 more ...; readonly SHOVEL_STATUE: 55; }'.
+src/managers/EnvironmentalInteractionManager.ts(538,35): error TS2339: Property 'CUBE' does not exist on type '{ readonly FLOOR: 0; readonly WALL: 1; readonly GRASS: 2; readonly EXIT: 3; readonly ROCK: 4; readonly HOUSE: 5; readonly WATER: 6; readonly FOOD: 7; readonly ENEMY: 8; readonly LIZARDY: 127; readonly LIZARDO: 128; ... 118 more ...; readonly SHOVEL_STATUE: 55; }'.
+src/managers/EnvironmentalInteractionManager.ts(541,66): error TS2339: Property 'CUBE' does not exist on type '{ readonly FLOOR: 0; readonly WALL: 1; readonly GRASS: 2; readonly EXIT: 3; readonly ROCK: 4; readonly HOUSE: 5; readonly WATER: 6; readonly FOOD: 7; readonly ENEMY: 8; readonly LIZARDY: 127; readonly LIZARDO: 128; ... 118 more ...; readonly SHOVEL_STATUE: 55; }'.
+src/managers/EnvironmentalInteractionManager.ts(558,68): error TS2353: Object literal may only specify known properties, and 'cubeGridCoords' does not exist in type 'ItemEffectContext'.
+src/managers/EnvironmentalInteractionManager.ts(570,61): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/managers/InteractionManager.ts(109,42): error TS2532: Object is possibly 'undefined'.
+src/managers/InteractionManager.ts(110,21): error TS2532: Object is possibly 'undefined'.
+src/managers/InteractionManager.ts(127,40): error TS2532: Object is possibly 'undefined'.
+src/managers/InteractionManager.ts(128,21): error TS2532: Object is possibly 'undefined'.
+src/managers/InteractionManager.ts(145,32): error TS2532: Object is possibly 'undefined'.
+src/managers/InteractionManager.ts(146,21): error TS2532: Object is possibly 'undefined'.
+src/managers/InteractionManager.ts(200,55): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(200,96): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(204,55): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(204,96): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(234,46): error TS2551: Property 'UI_HIDE_MESSAGE' does not exist on type '{ readonly SOUND_PLAY: "audio:sound:play"; readonly MUSIC_CHANGE: "audio:music:change"; readonly ANIMATION_REQUESTED: "animation:requested"; readonly ANIMATION_COMPLETED: "animation:completed"; ... 82 more ...; readonly ENEMIES_REPLACED: "enemies:replaced"; }'. Did you mean 'UI_SHOW_MESSAGE'?
+src/managers/InteractionManager.ts(238,46): error TS2551: Property 'UI_HIDE_MESSAGE' does not exist on type '{ readonly SOUND_PLAY: "audio:sound:play"; readonly MUSIC_CHANGE: "audio:music:change"; readonly ANIMATION_REQUESTED: "animation:requested"; readonly ANIMATION_COMPLETED: "animation:completed"; ... 82 more ...; readonly ENEMIES_REPLACED: "enemies:replaced"; }'. Did you mean 'UI_SHOW_MESSAGE'?
+src/managers/InteractionManager.ts(245,13): error TS18048: 'transientState' is possibly 'undefined'.
+src/managers/InteractionManager.ts(246,29): error TS18048: 'transientState' is possibly 'undefined'.
+src/managers/InteractionManager.ts(254,35): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(257,63): error TS2322: Type 'ChargeDetails | null' is not assignable to type 'null'.
+  Type 'ChargeDetails' is not assignable to type 'null'.
+src/managers/InteractionManager.ts(258,66): error TS2322: Type 'ChargeDetails | null' is not assignable to type 'null'.
+  Type 'ChargeDetails' is not assignable to type 'null'.
+src/managers/InteractionManager.ts(259,59): error TS2322: Type 'ChargeDetails | null' is not assignable to type 'null'.
+  Type 'ChargeDetails' is not assignable to type 'null'.
+src/managers/InteractionManager.ts(261,17): error TS2322: Type 'ChargeData | null' is not assignable to type 'null'.
+  Type 'ChargeData' is not assignable to type 'null'.
+src/managers/InteractionManager.ts(265,48): error TS2339: Property 'target' does not exist on type 'never'.
+src/managers/InteractionManager.ts(266,63): error TS2339: Property 'target' does not exist on type 'never'.
+src/managers/InteractionManager.ts(279,27): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(293,59): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'GridManager | Grid<Tile>'.
+  Type 'null' is not assignable to type 'GridManager | Grid<Tile>'.
+src/managers/InteractionManager.ts(312,31): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/InteractionManager.ts(325,25): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(335,29): error TS2532: Object is possibly 'undefined'.
+src/managers/InteractionManager.ts(341,31): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(346,40): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(353,33): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(356,33): error TS2531: Object is possibly 'null'.
+src/managers/InteractionManager.ts(396,91): error TS2531: Object is possibly 'null'.
+src/managers/inventory/effects/BaseItemEffect.ts(73,53): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/managers/inventory/effects/BaseItemEffect.ts(86,20): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/BaseItemEffect.ts(87,20): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/BaseItemEffect.ts(88,29): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/BaseItemEffect.ts(91,13): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/BaseItemEffect.ts(117,41): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/BaseItemEffect.ts(117,72): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/ConsumableEffects.ts(14,9): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/ConsumableEffects.ts(16,13): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/ConsumableEffects.ts(25,9): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/ConsumableEffects.ts(32,9): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/ConsumableEffects.ts(32,31): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/ItemEffectFactory.ts(96,25): error TS18048: 'game.transientGameState' is possibly 'undefined'.
+src/managers/inventory/effects/ItemEffectFactory.ts(123,21): error TS18048: 'game.transientGameState' is possibly 'undefined'.
+src/managers/inventory/effects/SpecialEffects.ts(28,27): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(37,13): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(49,9): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(63,29): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(79,13): error TS18047: 'game.animationScheduler' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(93,29): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(94,25): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(138,9): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(215,27): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(243,29): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(244,33): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(245,30): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(248,46): error TS2345: Argument of type 'number' is not assignable to parameter of type '0 | 1 | 2 | 3'.
+src/managers/inventory/effects/SpecialEffects.ts(277,17): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(287,17): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(288,17): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(305,17): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(321,29): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(344,13): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(347,65): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(347,80): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(427,21): error TS2339: Property 'cubeGridCoords' does not exist on type 'ItemEffectContext'.
+src/managers/inventory/effects/SpecialEffects.ts(428,44): error TS2339: Property 'cubeGridCoords' does not exist on type 'ItemEffectContext'.
+src/managers/inventory/effects/SpecialEffects.ts(441,9): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(444,63): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/SpecialEffects.ts(444,78): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/WeaponEffects.ts(18,28): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/WeaponEffects.ts(19,28): error TS18047: 'game.player' is possibly 'null'.
+src/managers/inventory/effects/WeaponEffects.ts(22,17): error TS18048: 'game.transientGameState' is possibly 'undefined'.
+src/managers/inventory/effects/WeaponEffects.ts(29,26): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/WeaponEffects.ts(29,68): error TS18047: 'game.grid' is possibly 'null'.
+src/managers/inventory/effects/WeaponEffects.ts(30,25): error TS18048: 'game.transientGameState' is possibly 'undefined'.
+src/managers/inventory/effects/WeaponEffects.ts(46,17): error TS18048: 'game.transientGameState' is possibly 'undefined'.
+src/managers/inventory/effects/WeaponEffects.ts(59,17): error TS18048: 'game.transientGameState' is possibly 'undefined'.
+src/managers/inventory/effects/WeaponEffects.ts(72,17): error TS18048: 'game.transientGameState' is possibly 'undefined'.
+src/managers/inventory/InventoryInteractionHandler.ts(96,20): error TS2531: Object is possibly 'null'.
+src/managers/inventory/InventoryInteractionHandler.ts(97,20): error TS2531: Object is possibly 'null'.
+src/managers/inventory/InventoryInteractionHandler.ts(100,9): error TS2531: Object is possibly 'null'.
+src/managers/inventory/InventoryInteractionHandler.ts(123,20): error TS2531: Object is possibly 'null'.
+src/managers/inventory/InventoryInteractionHandler.ts(124,20): error TS2531: Object is possibly 'null'.
+src/managers/inventory/InventoryInteractionHandler.ts(128,9): error TS18048: 'transientState' is possibly 'undefined'.
+src/managers/inventory/InventoryInteractionHandler.ts(143,30): error TS2531: Object is possibly 'null'.
+src/managers/inventory/InventoryInteractionHandler.ts(145,21): error TS18048: 'transientState' is possibly 'undefined'.
+src/managers/inventory/InventoryInteractionHandler.ts(154,17): error TS2345: Argument of type 'null' is not assignable to parameter of type 'string'.
+src/managers/inventory/InventoryService.ts(48,46): error TS2345: Argument of type 'Game' is not assignable to parameter of type 'IGame'.
+  Type 'Game' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/managers/inventory/InventoryService.ts(80,55): error TS2345: Argument of type 'Game' is not assignable to parameter of type 'IGame'.
+  Type 'Game' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/managers/inventory/InventoryService.ts(210,45): error TS2322: Type 'Game' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'Game' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/managers/inventory/ItemMetadata.ts(163,55): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/managers/inventory/ItemMetadata.ts(164,56): error TS2365: Operator '>' cannot be applied to types '{}' and 'number'.
+src/managers/inventory/ItemMetadata.ts(173,57): error TS2365: Operator '>' cannot be applied to types '{}' and 'number'.
+src/managers/inventory/ItemMetadata.ts(190,56): error TS2365: Operator '>' cannot be applied to types '{}' and 'number'.
+src/managers/inventory/ItemPickupManager.ts(24,33): error TS2531: Object is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(25,27): error TS2531: Object is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(28,38): error TS2531: Object is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(34,17): error TS2531: Object is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(42,17): error TS2531: Object is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(49,26): error TS18047: 'ui' is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(56,26): error TS18047: 'ui' is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(63,13): error TS2531: Object is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(64,13): error TS2531: Object is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(65,13): error TS18047: 'ui' is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(70,13): error TS2531: Object is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(71,13): error TS2531: Object is possibly 'null'.
+src/managers/inventory/ItemPickupManager.ts(72,13): error TS18047: 'ui' is possibly 'null'.
+src/managers/ItemManager.ts(173,41): error TS2339: Property 'FISCHERS_WAND' does not exist on type '{ readonly FLOOR: 0; readonly WALL: 1; readonly GRASS: 2; readonly EXIT: 3; readonly ROCK: 4; readonly HOUSE: 5; readonly WATER: 6; readonly FOOD: 7; readonly ENEMY: 8; readonly LIZARDY: 127; readonly LIZARDO: 128; ... 118 more ...; readonly SHOVEL_STATUE: 55; }'.
+src/managers/NPCInteractionManager.ts(30,27): error TS2531: Object is possibly 'null'.
+src/managers/NPCInteractionManager.ts(31,28): error TS2531: Object is possibly 'null'.
+src/managers/NPCInteractionManager.ts(37,60): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/managers/NPCInteractionManager.ts(49,13): error TS2532: Object is possibly 'undefined'.
+src/managers/NPCInteractionManager.ts(78,25): error TS2367: This comparison appears to be unintentional because the types 'CycleMode' and '"sequential"' have no overlap.
+src/managers/NPCInteractionManager.ts(107,23): error TS2531: Object is possibly 'null'.
+src/managers/NPCInteractionManager.ts(109,34): error TS2531: Object is possibly 'null'.
+src/managers/NPCInteractionManager.ts(111,17): error TS2531: Object is possibly 'null'.
+src/managers/NPCInteractionManager.ts(112,17): error TS2531: Object is possibly 'null'.
+src/managers/NPCInteractionManager.ts(132,31): error TS2531: Object is possibly 'null'.
+src/managers/NPCInteractionManager.ts(133,32): error TS2531: Object is possibly 'null'.
+src/managers/NPCInteractionManager.ts(141,17): error TS2532: Object is possibly 'undefined'.
+src/managers/NPCInteractionManager.ts(176,29): error TS2367: This comparison appears to be unintentional because the types 'CycleMode' and '"sequential"' have no overlap.
+src/managers/NPCInteractionManager.ts(213,27): error TS2531: Object is possibly 'null'.
+src/managers/NPCInteractionManager.ts(218,28): error TS2531: Object is possibly 'null'.
+src/managers/NPCInteractionManager.ts(224,17): error TS2532: Object is possibly 'undefined'.
+src/managers/NPCInteractionManager.ts(259,29): error TS2367: This comparison appears to be unintentional because the types 'CycleMode' and '"sequential"' have no overlap.
+src/managers/NPCManager.ts(167,14): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/NPCManager.ts(172,29): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/NPCManager.ts(175,9): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/NPCManager.ts(181,9): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(19,28): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(23,24): error TS2531: Object is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(24,27): error TS2531: Object is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(29,65): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/managers/TerrainInteractionManager.ts(34,17): error TS2531: Object is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(34,67): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'Grid'.
+  Type 'null' is not assignable to type 'any[][]'.
+src/managers/TerrainInteractionManager.ts(39,70): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/managers/TerrainInteractionManager.ts(43,17): error TS2531: Object is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(43,67): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'Grid'.
+  Type 'null' is not assignable to type 'any[][]'.
+src/managers/TerrainInteractionManager.ts(54,28): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(56,24): error TS2531: Object is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(57,27): error TS2531: Object is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(60,65): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/managers/TerrainInteractionManager.ts(64,17): error TS2531: Object is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(64,67): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'Grid'.
+  Type 'null' is not assignable to type 'any[][]'.
+src/managers/TerrainInteractionManager.ts(72,72): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/managers/TerrainInteractionManager.ts(75,17): error TS2531: Object is possibly 'null'.
+src/managers/TerrainInteractionManager.ts(75,67): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'Grid'.
+  Type 'null' is not assignable to type 'any[][]'.
+src/managers/ZoneEventEmitter.ts(63,9): error TS2531: Object is possibly 'null'.
+src/managers/ZoneGenerationOrchestrator.ts(207,30): error TS18047: 'zoneData.playerSpawn' is possibly 'null'.
+src/managers/ZoneGenerationOrchestrator.ts(208,30): error TS18047: 'zoneData.playerSpawn' is possibly 'null'.
+src/managers/ZoneGenerationOrchestrator.ts(210,17): error TS18047: 'zoneData.playerSpawn' is possibly 'null'.
+src/managers/ZoneGenerationOrchestrator.ts(212,24): error TS18047: 'zoneData.playerSpawn' is possibly 'null'.
+src/managers/ZoneGenerationOrchestrator.ts(214,24): error TS18047: 'zoneData.playerSpawn' is possibly 'null'.
+src/managers/ZoneGenerationOrchestrator.ts(216,24): error TS18047: 'zoneData.playerSpawn' is possibly 'null'.
+src/managers/ZoneGenerationOrchestrator.ts(283,9): error TS18047: 'enemyCollection' is possibly 'null'.
+src/managers/ZoneManager.ts(87,68): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/ZoneManager.ts(88,56): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/ZoneManager.ts(89,50): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/ZoneManager.ts(90,70): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/ZoneManager.ts(91,62): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/ZoneManager.ts(108,29): error TS18048: 'playerFacade' is possibly 'undefined'.
+src/managers/ZoneManager.ts(116,17): error TS18048: 'playerFacade' is possibly 'undefined'.
+src/managers/ZoneManager.ts(117,17): error TS18048: 'playerFacade' is possibly 'undefined'.
+src/managers/ZoneManager.ts(133,9): error TS18048: 'playerFacade' is possibly 'undefined'.
+src/managers/ZoneManager.ts(137,13): error TS18048: 'playerFacade' is possibly 'undefined'.
+src/managers/ZoneManager.ts(147,27): error TS18048: 'playerFacade' is possibly 'undefined'.
+src/managers/ZoneManager.ts(148,13): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/ZoneManager.ts(149,13): error TS18047: 'gridManager' is possibly 'null'.
+src/managers/ZoneManager.ts(153,9): error TS2531: Object is possibly 'null'.
+src/managers/ZoneManager.ts(153,46): error TS2345: Argument of type 'Grid | null' is not assignable to parameter of type 'Grid'.
+  Type 'null' is not assignable to type 'any[][]'.
+src/managers/ZoneManager.ts(156,9): error TS18048: 'playerFacade' is possibly 'undefined'.
+src/managers/ZoneManager.ts(202,22): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/ZoneManager.ts(221,22): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/ZoneManager.ts(236,22): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/ZoneManager.ts(251,22): error TS2352: Conversion of type 'IGame' to type 'Game' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/managers/ZoneTransitionManager.ts(147,47): error TS2322: Type 'Game' is not assignable to type 'GameInstance | IGame | null | undefined'.
+  Type 'Game' is missing the following properties from type 'IGame': partnerCubes, cubeLinkages
+src/managers/ZoneTransitionManager.ts(172,135): error TS2339: Property 'portKind' does not exist on type 'TileObject'.
+src/managers/ZoneTransitionManager.ts(183,135): error TS2339: Property 'portKind' does not exist on type 'TileObject'.
+src/managers/ZoneTransitionManager.ts(211,172): error TS2339: Property 'portKind' does not exist on type 'TileObject'.
+src/managers/ZoneTreasureManager.ts(35,23): error TS2339: Property 'partnerCubes' does not exist on type 'Game'.
+src/managers/ZoneTreasureManager.ts(36,40): error TS2339: Property 'partnerCubes' does not exist on type 'Game'.
+src/managers/ZoneTreasureManager.ts(48,23): error TS2339: Property 'partnerCubes' does not exist on type 'Game'.
+src/renderers/AnimationRenderer.ts(31,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/AnimationRenderer.ts(32,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/AnimationRenderer.ts(36,9): error TS2531: Object is possibly 'null'.
+src/renderers/AnimationRenderer.ts(64,28): error TS2531: Object is possibly 'null'.
+src/renderers/AnimationRenderer.ts(110,28): error TS2531: Object is possibly 'null'.
+src/renderers/AnimationRenderer.ts(138,28): error TS2531: Object is possibly 'null'.
+src/renderers/AnimationRenderer.ts(181,28): error TS2531: Object is possibly 'null'.
+src/renderers/EnemyRenderer.ts(18,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/EnemyRenderer.ts(19,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/EnemyRenderer.ts(66,32): error TS2531: Object is possibly 'null'.
+src/renderers/EnemyRenderer.ts(243,40): error TS2531: Object is possibly 'null'.
+src/renderers/FogRenderer.ts(47,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/FogRenderer.ts(48,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/FogRenderer.ts(52,29): error TS2531: Object is possibly 'null'.
+src/renderers/FogRenderer.ts(58,45): error TS2531: Object is possibly 'null'.
+src/renderers/NPCRenderer.ts(29,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/NPCRenderer.ts(30,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/NPCRenderer.ts(42,30): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(69,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/PlayerRenderer.ts(70,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/PlayerRenderer.ts(93,21): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(95,22): error TS18047: 'player' is possibly 'null'.
+src/renderers/PlayerRenderer.ts(97,13): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(99,20): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(101,20): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(104,29): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(107,43): error TS18047: 'player' is possibly 'null'.
+src/renderers/PlayerRenderer.ts(107,82): error TS18047: 'player' is possibly 'null'.
+src/renderers/PlayerRenderer.ts(112,28): error TS18047: 'player' is possibly 'null'.
+src/renderers/PlayerRenderer.ts(113,28): error TS18047: 'player' is possibly 'null'.
+src/renderers/PlayerRenderer.ts(114,26): error TS18047: 'player' is possibly 'null'.
+src/renderers/PlayerRenderer.ts(115,26): error TS18047: 'player' is possibly 'null'.
+src/renderers/PlayerRenderer.ts(167,25): error TS18047: 'player' is possibly 'null'.
+src/renderers/PlayerRenderer.ts(205,24): error TS18047: 'player' is possibly 'null'.
+src/renderers/PlayerRenderer.ts(276,29): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(277,29): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(281,32): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(297,119): error TS2339: Property 'portKind' does not exist on type 'TileObject'.
+src/renderers/PlayerRenderer.ts(298,41): error TS2339: Property 'portKind' does not exist on type 'TileObject'.
+src/renderers/PlayerRenderer.ts(299,46): error TS2339: Property 'portKind' does not exist on type 'TileObject'.
+src/renderers/PlayerRenderer.ts(300,46): error TS2339: Property 'portKind' does not exist on type 'TileObject'.
+src/renderers/PlayerRenderer.ts(302,41): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(303,48): error TS2339: Property 'portKind' does not exist on type 'TileObject'.
+src/renderers/PlayerRenderer.ts(305,41): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(313,41): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(316,41): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(332,21): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(351,9): error TS2531: Object is possibly 'null'.
+src/renderers/PlayerRenderer.ts(354,36): error TS2531: Object is possibly 'null'.
+src/renderers/RenderManager.ts(73,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/RenderManager.ts(74,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/RenderManager.ts(303,34): error TS2531: Object is possibly 'null'.
+src/renderers/RenderManager.ts(303,58): error TS2531: Object is possibly 'null'.
+src/renderers/RenderManager.ts(348,29): error TS2531: Object is possibly 'null'.
+src/renderers/RenderManager.ts(356,37): error TS2531: Object is possibly 'null'.
+src/renderers/RenderManager.ts(356,61): error TS2531: Object is possibly 'null'.
+src/renderers/RenderManager.ts(374,22): error TS2531: Object is possibly 'null'.
+src/renderers/RenderManager.ts(464,29): error TS2531: Object is possibly 'null'.
+src/renderers/strategies/SimpleOverlayRenderStrategy.ts(57,13): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/renderers/TextureManager.ts(56,59): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'any[][] | GridManager'.
+src/renderers/UIRenderer.ts(19,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/UIRenderer.ts(20,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/UIRenderer.ts(34,27): error TS2531: Object is possibly 'null'.
+src/services/CompressionService.ts(320,25): error TS2454: Variable 'c' is used before being assigned.
+src/services/CompressionService.ts(321,13): error TS2454: Variable 'c' is used before being assigned.
+src/services/CompressionService.ts(322,19): error TS2454: Variable 'c' is used before being assigned.
+src/state/core/StatePersistence.ts(170,11): error TS2322: Type 'SerializedData | null' is not assignable to type 'null'.
+  Type 'SerializedData' is not assignable to type 'null'.
+src/state/core/StatePersistence.ts(181,9): error TS2322: Type 'SerializedData | null' is not assignable to type 'null'.
+  Type 'SerializedData' is not assignable to type 'null'.
+src/state/core/StatePersistence.ts(274,11): error TS2322: Type '{ key: string; zone: any; isSpecial: boolean | undefined; isCurrent: any; timestamp: any; }[]' is not assignable to type 'ZoneMetadata[]'.
+  Type '{ key: string; zone: any; isSpecial: boolean | undefined; isCurrent: any; timestamp: any; }' is not assignable to type 'ZoneMetadata'.
+    Types of property 'isSpecial' are incompatible.
+      Type 'boolean | undefined' is not assignable to type 'boolean'.
+        Type 'undefined' is not assignable to type 'boolean'.
+src/ui/BarterWindow.ts(90,39): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(91,37): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(259,30): error TS18047: 'player' is possibly 'null'.
+src/ui/BarterWindow.ts(263,24): error TS18047: 'player' is possibly 'null'.
+src/ui/BarterWindow.ts(276,21): error TS18047: 'player' is possibly 'null'.
+src/ui/BarterWindow.ts(301,25): error TS18047: 'player' is possibly 'null'.
+src/ui/BarterWindow.ts(310,20): error TS18047: 'player' is possibly 'null'.
+src/ui/BarterWindow.ts(312,33): error TS18047: 'player' is possibly 'null'.
+src/ui/BarterWindow.ts(312,65): error TS18047: 'player' is possibly 'null'.
+src/ui/BarterWindow.ts(315,35): error TS18047: 'player' is possibly 'null'.
+src/ui/BarterWindow.ts(353,13): error TS2532: Object is possibly 'undefined'.
+src/ui/BarterWindow.ts(356,13): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(356,54): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/ui/BarterWindow.ts(359,13): error TS2532: Object is possibly 'undefined'.
+src/ui/BarterWindow.ts(373,17): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(373,58): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/ui/BarterWindow.ts(381,13): error TS2532: Object is possibly 'undefined'.
+src/ui/BarterWindow.ts(392,13): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(392,54): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/ui/BarterWindow.ts(406,25): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(407,13): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(408,13): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(408,54): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/ui/BarterWindow.ts(411,26): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(412,13): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(413,13): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(439,26): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(440,13): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(441,13): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(445,34): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(447,38): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(448,61): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(462,35): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(463,21): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(467,17): error TS2531: Object is possibly 'null'.
+src/ui/BarterWindow.ts(467,58): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/ui/InputUIHandler.ts(206,17): error TS2531: Object is possibly 'null'.
+src/ui/InputUIHandler.ts(224,27): error TS2531: Object is possibly 'null'.
+src/ui/InputUIHandler.ts(229,59): error TS2345: Argument of type 'Item | null' is not assignable to parameter of type 'object'.
+  Type 'null' is not assignable to type 'object'.
+src/ui/InputUIHandler.ts(247,13): error TS2531: Object is possibly 'null'.
+src/ui/InputUIHandler.ts(248,13): error TS2531: Object is possibly 'null'.
+src/ui/InputUIHandler.ts(266,27): error TS2531: Object is possibly 'null'.
+src/ui/InputUIHandler.ts(299,22): error TS2531: Object is possibly 'null'.
+src/ui/InputUIHandler.ts(303,43): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/ui/InventoryUI.ts(71,30): error TS2531: Object is possibly 'null'.
+src/ui/InventoryUI.ts(91,29): error TS2531: Object is possibly 'null'.
+src/ui/InventoryUI.ts(112,21): error TS2365: Operator '>' cannot be applied to types '{}' and 'number'.
+src/ui/InventoryUI.ts(116,21): error TS2365: Operator '>' cannot be applied to types '{}' and 'number'.
+src/ui/InventoryUI.ts(134,21): error TS2365: Operator '>' cannot be applied to types '{}' and 'number'.
+src/ui/InventoryUI.ts(138,21): error TS2365: Operator '>' cannot be applied to types '{}' and 'number'.
+src/ui/InventoryUI.ts(144,21): error TS2365: Operator '>' cannot be applied to types '{}' and 'number'.
+src/ui/InventoryUI.ts(211,38): error TS2531: Object is possibly 'null'.
+src/ui/InventoryUI.ts(265,17): error TS2531: Object is possibly 'null'.
+src/ui/InventoryUI.ts(348,21): error TS2531: Object is possibly 'null'.
+src/ui/InventoryUI.ts(393,34): error TS2531: Object is possibly 'null'.
+src/ui/InventoryUI.ts(399,25): error TS2532: Object is possibly 'undefined'.
+src/ui/MessageManager.ts(266,9): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/ui/MiniMap.ts(182,29): error TS2531: Object is possibly 'null'.
+src/ui/MiniMap.ts(229,33): error TS2531: Object is possibly 'null'.
+src/ui/MiniMap.ts(281,29): error TS2531: Object is possibly 'null'.
+src/ui/MiniMap.ts(319,29): error TS2531: Object is possibly 'null'.
+src/ui/MiniMap.ts(355,48): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(355,66): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(363,9): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(364,9): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(368,29): error TS2531: Object is possibly 'null'.
+src/ui/MiniMap.ts(373,31): error TS2531: Object is possibly 'null'.
+src/ui/MiniMap.ts(378,43): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(382,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(391,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(394,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(400,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(401,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(402,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(409,33): error TS2531: Object is possibly 'null'.
+src/ui/MiniMap.ts(413,39): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(417,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(425,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(428,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(454,49): error TS2531: Object is possibly 'null'.
+src/ui/MiniMap.ts(487,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(488,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(491,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(492,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(493,17): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(507,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(508,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(509,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(510,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(511,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(516,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(517,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(518,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(519,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(521,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(526,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(528,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(529,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(530,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(532,21): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(553,25): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(554,25): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(555,25): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(556,25): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(558,25): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(559,25): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(560,25): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(562,25): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(563,25): error TS18047: 'ctx' is possibly 'null'.
+src/ui/MiniMap.ts(564,25): error TS18047: 'ctx' is possibly 'null'.
+src/ui/OverlayMessageHandler.ts(165,9): error TS2531: Object is possibly 'null'.
+src/ui/PlayerStatsUI.ts(44,24): error TS2531: Object is possibly 'null'.
+src/ui/PlayerStatsUI.ts(45,24): error TS2531: Object is possibly 'null'.
+src/ui/PlayerStatsUI.ts(60,24): error TS2531: Object is possibly 'null'.
+src/ui/PlayerStatsUI.ts(78,37): error TS2531: Object is possibly 'null'.
+src/ui/PlayerStatsUI.ts(84,40): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(95,24): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(100,15): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(100,41): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(100,81): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(100,101): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(101,26): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(101,66): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(102,28): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(112,21): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(113,21): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(113,46): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(114,21): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(121,40): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(122,41): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(126,40): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(127,39): error TS18047: 'player' is possibly 'null'.
+src/ui/RadialInventoryUI.ts(132,56): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(140,24): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(172,31): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(221,21): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(224,17): error TS2532: Object is possibly 'undefined'.
+src/ui/RadialInventoryUI.ts(250,73): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(250,96): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(265,73): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(265,96): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(270,31): error TS2345: Argument of type 'HTMLCanvasElement | null' is not assignable to parameter of type 'EventTarget'.
+  Type 'null' is not assignable to type 'EventTarget'.
+src/ui/RadialInventoryUI.ts(278,73): error TS2531: Object is possibly 'null'.
+src/ui/RadialInventoryUI.ts(278,96): error TS2531: Object is possibly 'null'.
+src/ui/textbox.ts(90,17): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/ui/textbox.ts(93,25): error TS18048: 'characterData.interaction.trades' is possibly 'undefined'.
+src/ui/textbox.ts(316,27): error TS18048: 'characterData.interaction.dialogueTree' is possibly 'undefined'.
+src/ui/textbox.ts(317,30): error TS18048: 'characterData.interaction.dialogueTree' is possibly 'undefined'.
+src/ui/UIManager.ts(106,61): error TS2531: Object is possibly 'null'.
+src/ui/UIManager.ts(113,21): error TS2531: Object is possibly 'null'.
+src/ui/UIManager.ts(123,22): error TS2531: Object is possibly 'null'.
+src/ui/UIManager.ts(140,31): error TS2531: Object is possibly 'null'.
+src/ui/UIManager.ts(141,42): error TS2531: Object is possibly 'null'.
+src/ui/UIManager.ts(142,42): error TS2531: Object is possibly 'null'.
+src/ui/UIManager.ts(146,42): error TS2531: Object is possibly 'null'.
+src/ui/UIManager.ts(147,42): error TS2531: Object is possibly 'null'.
+src/ui/UIManager.ts(206,50): error TS2531: Object is possibly 'null'.
+src/utils/LineOfSightUtils.ts(6,33): error TS6137: Cannot import type declaration files. Consider importing 'core' instead of '@types/core'.
+src/utils/MethodChecker.ts(250,7): error TS2322: Type '(target: Record<string, unknown>, prop: string | symbol) => unknown' is not assignable to type '(target: T, p: string | symbol, receiver: any) => any'.
+  Types of parameters 'target' and 'target' are incompatible.
+    Type 'T' is not assignable to type 'Record<string, unknown>'.
+      Type 'object' is not assignable to type 'Record<string, unknown>'.
+        Index signature for type 'string' is missing in type '{}'.
+src/utils/TypeChecks.ts(258,36): error TS2339: Property 'FISCHERS_WAND' does not exist on type '{ readonly FLOOR: 0; readonly WALL: 1; readonly GRASS: 2; readonly EXIT: 3; readonly ROCK: 4; readonly HOUSE: 5; readonly WATER: 6; readonly FOOD: 7; readonly ENEMY: 8; readonly LIZARDY: 127; readonly LIZARDO: 128; ... 118 more ...; readonly SHOVEL_STATUE: 55; }'.
+src/utils/TypeChecks.ts(287,20): error TS2536: Type 'K' cannot be used to index type '{ type: number; uses?: number | undefined; message?: string | undefined; foodType?: string | undefined; name?: string | undefined; icon?: string | undefined; npcType?: string | undefined; ... 4 more ...; justPlaced?: boolean | undefined; }'.
+tests/BarterWindow.test.ts(1,30): error TS2307: Cannot find module '../ui/BarterWindow' or its corresponding type declarations.
+tests/BarterWindow.test.ts(2,24): error TS2307: Cannot find module '../entities/Player' or its corresponding type declarations.
+tests/BarterWindow.test.ts(3,25): error TS2307: Cannot find module '../ui/textbox' or its corresponding type declarations.
+tests/BarterWindow.test.ts(4,28): error TS2307: Cannot find module '../core/NPCLoader' or its corresponding type declarations.
+tests/BoardLoader.test.ts(178,30): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+tests/BoardLoader.test.ts(181,52): error TS2339: Property 'type' does not exist on type 'never'.
+tests/BoardLoader.test.ts(209,30): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+tests/BoardLoader.test.ts(212,52): error TS2339: Property 'type' does not exist on type 'never'.
+tests/CombatActionManager.test.ts(9,27): error TS2554: Expected 1-3 arguments, but got 0.
+tests/dialogue-progression.test.ts(6,25): error TS2307: Cannot find module '../ui/textbox' or its corresponding type declarations.
+tests/dialogue-progression.test.ts(34,30): error TS2345: Argument of type '{ name: string; display: { portrait: string; }; audio: { voicePitch: number; }; interaction: { type: string; cycleMode: string; dialogueTree: { id: string; text: string; }[]; }; }' is not assignable to parameter of type 'NPCData'.
+  Type '{ name: string; display: { portrait: string; }; audio: { voicePitch: number; }; interaction: { type: string; cycleMode: string; dialogueTree: { id: string; text: string; }[]; }; }' is missing the following properties from type 'NPCData': id, type
+tests/DirectionUtils.test.ts(119,38): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+tests/EnemyAttackRange.test.ts(32,33): error TS2554: Expected 1-3 arguments, but got 0.
+tests/EnemyAttackRange.test.ts(35,49): error TS2339: Property 'x' does not exist on type 'never'.
+tests/EnemyAttackRange.test.ts(35,62): error TS2339: Property 'y' does not exist on type 'never'.
+tests/EnemyAttackRange.test.ts(52,34): error TS2345: Argument of type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is not assignable to parameter of type 'IGame'.
+  Type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is missing the following properties from type 'IGame': world, ui, audio, zoneGenState, and 79 more.
+tests/EnemyAttackRange.test.ts(55,5): error TS2740: Type '{ save: Mock<Procedure>; restore: Mock<Procedure>; fillRect: Mock<Procedure>; strokeRect: Mock<Procedure>; setLineDash: Mock<...>; lineWidth: number; strokeStyle: string; fillStyle: string; }' is missing the following properties from type 'CanvasRenderingContext2D': canvas, globalAlpha, globalCompositeOperation, drawImage, and 60 more.
+tests/EnemyAttackRange.test.ts(62,23): error TS2345: Argument of type '{ x: number; y: number; health: number; enemyType: string; movementDirection: number; isWalkable: (x: any, y: any, g: any) => boolean; }' is not assignable to parameter of type 'never'.
+tests/EnemyAttackRange.test.ts(80,34): error TS2345: Argument of type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is not assignable to parameter of type 'IGame'.
+  Type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is missing the following properties from type 'IGame': world, ui, audio, zoneGenState, and 79 more.
+tests/EnemyAttackRange.test.ts(81,5): error TS2740: Type '{ save: Mock<Procedure>; restore: Mock<Procedure>; fillRect: Mock<Procedure>; strokeRect: Mock<Procedure>; setLineDash: Mock<...>; lineWidth: number; strokeStyle: string; fillStyle: string; }' is missing the following properties from type 'CanvasRenderingContext2D': canvas, globalAlpha, globalCompositeOperation, drawImage, and 60 more.
+tests/EnemyAttackRange.test.ts(84,23): error TS2345: Argument of type '{ x: number; y: number; health: number; enemyType: string; isWalkable: () => boolean; }' is not assignable to parameter of type 'never'.
+tests/EnemyAttackRange.test.ts(95,34): error TS2345: Argument of type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is not assignable to parameter of type 'IGame'.
+  Type '{ canvas: { width: number; height: number; getBoundingClientRect: Mock<Procedure>; addEventListener: Mock<(name: any, fn: any) => void>; __listeners: {}; }; ctx: { save: Mock<...>; ... 6 more ...; fillStyle: string; }; ... 4 more ...; player: { ...; }; }' is missing the following properties from type 'IGame': world, ui, audio, zoneGenState, and 79 more.
+tests/EnemyAttackRange.test.ts(96,5): error TS2740: Type '{ save: Mock<Procedure>; restore: Mock<Procedure>; fillRect: Mock<Procedure>; strokeRect: Mock<Procedure>; setLineDash: Mock<...>; lineWidth: number; strokeStyle: string; fillStyle: string; }' is missing the following properties from type 'CanvasRenderingContext2D': canvas, globalAlpha, globalCompositeOperation, drawImage, and 60 more.
+tests/EnemyAttackRange.test.ts(109,23): error TS2345: Argument of type '{ x: number; y: number; health: number; enemyType: string; isWalkable: (x: any, y: any, g: any) => boolean; }' is not assignable to parameter of type 'never'.
+tests/FischersWand.test.ts(264,25): error TS2339: Property 'uses' does not exist on type '{ type: "fischers_cube"; }'.
+tests/FogRenderer.test.ts(37,11): error TS2339: Property 'getContext' does not exist on type '{ width: number; height: number; }'.
+tests/GridIterator.test.ts(91,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(92,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(104,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(105,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(119,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(120,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(147,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(169,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(200,49): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'never'.
+tests/GridIterator.test.ts(205,50): error TS2339: Property 'x' does not exist on type 'never'.
+tests/GridIterator.test.ts(205,64): error TS2339: Property 'y' does not exist on type 'never'.
+tests/GridIterator.test.ts(224,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(232,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(282,30): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'never'.
+tests/GridIterator.test.ts(306,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(312,49): error TS2367: This comparison appears to be unintentional because the types '0' and '1' have no overlap.
+tests/GridIterator.test.ts(320,13): error TS2322: Type '{ type: 24; timer: number; }' is not assignable to type '0'.
+tests/GridIterator.test.ts(321,13): error TS2322: Type '{ type: 24; timer: number; }' is not assignable to type '0'.
+tests/GridIterator.test.ts(334,31): error TS2339: Property 'timer' does not exist on type '0'.
+tests/GridIterator.test.ts(341,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(342,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/GridIterator.test.ts(363,13): error TS2322: Type '1' is not assignable to type '0'.
+tests/helpers/mocks.ts(95,24): error TS2554: Expected 1-3 arguments, but got 0.
+tests/InteractionManager.test.ts(76,43): error TS2345: Argument of type '{ npcManager: {}; environmentManager: {}; inputManager: {}; }' is not assignable to parameter of type 'InteractionFacade'.
+  Types of property 'inputManager' are incompatible.
+    Type '{}' is missing the following properties from type 'InputManager': game, inventoryService, controller, setupControls, and 13 more.
+tests/InventoryUI.test.ts(1,29): error TS2307: Cannot find module '../ui/InventoryUI' or its corresponding type declarations.
+tests/InventoryUI.test.ts(44,30): error TS2322: Type '{ type: string; uses: number; }' is not assignable to type 'never'.
+tests/InventoryUI.test.ts(46,42): error TS2345: Argument of type '{ player: { inventory: never[]; isDead: () => boolean; getPosition: () => { x: number; y: number; }; }; uiManager: { updatePlayerStats: Mock<Procedure>; }; animationScheduler: { createSequence: () => { ...; }; }; startEnemyTurns: Mock<...>; updatePlayerStats: Mock<...>; }' is not assignable to parameter of type 'Game'.
+  Type '{ player: { inventory: never[]; isDead: () => boolean; getPosition: () => { x: number; y: number; }; }; uiManager: { updatePlayerStats: Mock<Procedure>; }; animationScheduler: { createSequence: () => { ...; }; }; startEnemyTurns: Mock<...>; updatePlayerStats: Mock<...>; }' is missing the following properties from type 'Game': enemies, grid, gridManager, specialZones, and 88 more.
+tests/InventoryUI.test.ts(50,12): error TS2339: Property 'inventoryDebugMode' does not exist on type 'Window & typeof globalThis'.
+tests/InventoryUI.test.ts(58,7): error TS2322: Type '(type: any, props?: {}) => MouseEvent' is not assignable to type '{ new (type: string, eventInitDict?: PointerEventInit | undefined): PointerEvent; prototype: PointerEvent; }'.
+  Type '(type: any, props?: {}) => MouseEvent' provides no match for the signature 'new (type: string, eventInitDict?: PointerEventInit | undefined): PointerEvent'.
+tests/InventoryUI.test.ts(60,11): error TS2339: Property 'pointerId' does not exist on type 'MouseEvent'.
+tests/InventoryUI.test.ts(60,29): error TS2339: Property 'pointerId' does not exist on type '{}'.
+tests/InventoryUI.test.ts(61,11): error TS2339: Property 'pointerType' does not exist on type 'MouseEvent'.
+tests/InventoryUI.test.ts(61,31): error TS2339: Property 'pointerType' does not exist on type '{}'.
+tests/InventoryUI.test.ts(69,5): error TS18047: 'slot' is possibly 'null'.
+tests/InventoryUI.test.ts(70,5): error TS18047: 'slot' is possibly 'null'.
+tests/InventoryUI.test.ts(74,5): error TS18047: 'slot' is possibly 'null'.
+tests/InventoryUI.test.ts(77,37): error TS2339: Property 'uses' does not exist on type 'never'.
+tests/ItemManager.test.ts(32,9): error TS2561: Object literal may only specify known properties, but 'maxHealth' does not exist in type 'PlayerStats'. Did you mean to write 'health'?
+tests/ItemManager.test.ts(50,7): error TS2322: Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is not assignable to type 'Player | null | undefined'.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(51,7): error TS2322: Type 'Partial<SoundManager>' is not assignable to type 'SoundManager'.
+  Types of property 'playSound' are incompatible.
+    Type '((soundName: any) => void) | undefined' is not assignable to type '(soundId: string) => void'.
+      Type 'undefined' is not assignable to type '(soundId: string) => void'.
+tests/ItemManager.test.ts(52,7): error TS2740: Type '{ getTile: Mock<(x: number, y: number) => Tile>; setTile: Mock<(x: number, y: number, tile: Tile) => void>; }' is missing the following properties from type 'GridManager': coreOps, queryOps, iterationOps, grid, and 34 more.
+tests/ItemManager.test.ts(55,35): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'Game'.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+tests/ItemManager.test.ts(75,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(81,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(87,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(94,38): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(102,38): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(109,38): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(119,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(125,38): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is not assignable to parameter of type 'Player'.
+  Types of property 'inventory' are incompatible.
+    Type 'InventoryItem[] | undefined' is not assignable to type 'InventoryItem[]'.
+      Type 'undefined' is not assignable to type 'InventoryItem[]'.
+tests/ItemManager.test.ts(131,38): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is not assignable to parameter of type 'Player'.
+  Types of property 'inventory' are incompatible.
+    Type 'InventoryItem[] | undefined' is not assignable to type 'InventoryItem[]'.
+      Type 'undefined' is not assignable to type 'InventoryItem[]'.
+tests/ItemManager.test.ts(139,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(147,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(155,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(162,7): error TS18048: 'mockPlayer.getHealth' is possibly 'undefined'.
+tests/ItemManager.test.ts(164,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(172,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(178,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(184,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(190,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(199,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(209,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(219,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(228,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(237,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(246,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(253,49): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is not assignable to parameter of type 'Player'.
+  Types of property 'inventory' are incompatible.
+    Type 'InventoryItem[] | undefined' is not assignable to type 'InventoryItem[]'.
+      Type 'undefined' is not assignable to type 'InventoryItem[]'.
+tests/ItemManager.test.ts(258,49): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is not assignable to parameter of type 'Player'.
+  Types of property 'inventory' are incompatible.
+    Type 'InventoryItem[] | undefined' is not assignable to type 'InventoryItem[]'.
+      Type 'undefined' is not assignable to type 'InventoryItem[]'.
+tests/ItemManager.test.ts(263,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(274,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(284,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(293,9): error TS2322: Type 'null' is not assignable to type 'InventoryItem'.
+tests/ItemManager.test.ts(294,9): error TS2322: Type 'null' is not assignable to type 'InventoryItem'.
+tests/ItemManager.test.ts(299,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(318,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(328,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(340,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(347,31): error TS2322: Type 'null' is not assignable to type 'InventoryItem'.
+tests/ItemManager.test.ts(347,54): error TS2322: Type 'null' is not assignable to type 'InventoryItem'.
+tests/ItemManager.test.ts(347,60): error TS2322: Type 'null' is not assignable to type 'InventoryItem'.
+tests/ItemManager.test.ts(349,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(356,53): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(364,49): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is not assignable to parameter of type 'Player'.
+  Types of property 'inventory' are incompatible.
+    Type 'InventoryItem[] | undefined' is not assignable to type 'InventoryItem[]'.
+      Type 'undefined' is not assignable to type 'InventoryItem[]'.
+tests/ItemManager.test.ts(369,49): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is not assignable to parameter of type 'Player'.
+  Types of property 'inventory' are incompatible.
+    Type 'InventoryItem[] | undefined' is not assignable to type 'InventoryItem[]'.
+      Type 'undefined' is not assignable to type 'InventoryItem[]'.
+tests/ItemManager.test.ts(374,49): error TS2345: Argument of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is not assignable to parameter of type 'Player'.
+  Types of property 'inventory' are incompatible.
+    Type 'InventoryItem[] | undefined' is not assignable to type 'InventoryItem[]'.
+      Type 'undefined' is not assignable to type 'InventoryItem[]'.
+tests/ItemManager.test.ts(385,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(389,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(393,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(402,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(406,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(411,36): error TS2352: Conversion of type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' to type 'Player' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/Lizord.test.ts(36,29): error TS2554: Expected 1-3 arguments, but got 0.
+tests/Lizord.test.ts(49,132): error TS2345: Argument of type '{ initialEnemyTilesThisTurn: Set<unknown>; occupiedTilesThisTurn: Set<unknown>; playerJustAttacked: boolean; }' is not assignable to parameter of type 'null | undefined'.
+tests/Lizord.test.ts(63,132): error TS2345: Argument of type '{ playerJustAttacked: boolean; }' is not assignable to parameter of type 'null | undefined'.
+tests/MessageLog.test.ts(1,28): error TS2307: Cannot find module '../ui/MessageLog' or its corresponding type declarations.
+tests/messageManager.test.ts(1,32): error TS2307: Cannot find module '../ui/MessageManager' or its corresponding type declarations.
+tests/messageManager.test.ts(2,41): error TS2307: Cannot find module '../ui/VoiceSettings' or its corresponding type declarations.
+tests/messageManager.test.ts(51,44): error TS2322: Type 'Timeout' is not assignable to type 'number'.
+tests/messageManager.test.ts(92,22): error TS18047: 'overlay' is possibly 'null'.
+tests/messageManager.test.ts(94,12): error TS18047: 'textNode' is possibly 'null'.
+tests/messageManager.test.ts(112,9): error TS2794: Expected 1 arguments, but got 0. Did you forget to include 'void' in your type argument to 'Promise'?
+tests/messageManager.test.ts(143,12): error TS18047: 'overlay' is possibly 'null'.
+tests/messageManager.test.ts(144,12): error TS18047: 'overlay' is possibly 'null'.
+tests/messageManager.test.ts(148,5): error TS18047: 'overlay' is possibly 'null'.
+tests/messageManager.test.ts(151,12): error TS18047: 'overlay' is possibly 'null'.
+tests/MiniMap.test.ts(1,25): error TS2307: Cannot find module '../ui/MiniMap' or its corresponding type declarations.
+tests/MiniMap.test.ts(103,21): error TS18048: 'pointerUpCall' is possibly 'undefined'.
+tests/MiniMapHighlights.test.ts(1,25): error TS2307: Cannot find module '../ui/MiniMap' or its corresponding type declarations.
+tests/Player.test.ts(1,24): error TS2307: Cannot find module '../entities/Player' or its corresponding type declarations.
+tests/Player.test.ts(10,29): error TS2554: Expected 1-3 arguments, but got 0.
+tests/Player.test.ts(13,19): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/Player.test.ts(13,48): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/Player.test.ts(14,19): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/Player.test.ts(15,19): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/Player.test.ts(16,19): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/Player.test.ts(117,26): error TS2339: Property 'gameInstance' does not exist on type 'Window & typeof globalThis'.
+tests/PlayerStatsUI.test.ts(1,31): error TS2307: Cannot find module '../ui/PlayerStatsUI' or its corresponding type declarations.
+tests/PlayerStatsUI.test.ts(50,5): error TS1345: An expression of type 'void' cannot be tested for truthiness.
+tests/PlayerStatsUI.test.ts(50,36): error TS2339: Property 'offAll' does not exist on type 'EventBus'.
+tests/PlayerStatsUI.test.ts(58,5): error TS1345: An expression of type 'void' cannot be tested for truthiness.
+tests/PlayerStatsUI.test.ts(58,36): error TS2339: Property 'offAll' does not exist on type 'EventBus'.
+tests/PlayerStatsUI.test.ts(87,14): error TS18047: 'bar' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(95,14): error TS18047: 'bar' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(103,14): error TS18047: 'bar' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(123,14): error TS18047: 'thirstBar' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(124,14): error TS18047: 'hungerBar' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(133,14): error TS18047: 'hungerLabel' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(142,14): error TS18047: 'thirstLabel' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(151,14): error TS18047: 'hungerLabel' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(160,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(161,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(162,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(171,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(172,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(173,24): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(192,14): error TS18047: 'axeIcon' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(192,22): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(201,14): error TS18047: 'axeIcon' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(201,22): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(210,14): error TS18047: 'hammerIcon' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(210,25): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(244,22): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(267,14): error TS18047: 'axeIcon' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(267,22): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/PlayerStatsUI.test.ts(268,14): error TS18047: 'hammerIcon' is possibly 'null'.
+tests/PlayerStatsUI.test.ts(268,25): error TS2339: Property 'style' does not exist on type 'Element'.
+tests/RecordsOverlay.test.ts(1,30): error TS2307: Cannot find module '../ui/PanelManager' or its corresponding type declarations.
+tests/RecordsOverlay.test.ts(49,12): error TS18047: 'rz' is possibly 'null'.
+tests/RecordsOverlay.test.ts(50,12): error TS18047: 'rp' is possibly 'null'.
+tests/RecordsOverlay.test.ts(51,12): error TS18047: 'rc' is possibly 'null'.
+tests/SafeServiceCall.test.ts(226,31): error TS2339: Property 'gameStateManager' does not exist on type '{}'.
+tests/test-enemy-collection.ts(8,14): error TS2339: Property 'x' does not exist on type 'MockEnemy'.
+tests/test-enemy-collection.ts(9,14): error TS2339: Property 'y' does not exist on type 'MockEnemy'.
+tests/test-enemy-collection.ts(10,14): error TS2339: Property 'health' does not exist on type 'MockEnemy'.
+tests/test-enemy-collection.ts(11,14): error TS2339: Property 'enemyType' does not exist on type 'MockEnemy'.
+tests/test-enemy-collection.ts(12,14): error TS2339: Property 'id' does not exist on type 'MockEnemy'.
+tests/test-enemy-collection.ts(21,33): error TS2322: Type 'string' is not assignable to type 'null | undefined'.
+tests/test-enemy-collection.ts(22,33): error TS2322: Type 'string' is not assignable to type 'null | undefined'.
+tests/test-enemy-collection.ts(23,33): error TS2322: Type 'string' is not assignable to type 'null | undefined'.
+tests/test-enemy-collection.ts(25,40): error TS2345: Argument of type 'MockEnemy[]' is not assignable to parameter of type 'never[]'.
+  Type 'MockEnemy' is not assignable to type 'never'.
+tests/test-enemy-collection.ts(80,5): error TS2322: Type 'EnemySpawnedEvent' is not assignable to type 'null'.
+tests/test-enemy-collection.ts(83,46): error TS2322: Type 'string' is not assignable to type 'null | undefined'.
+tests/test-enemy-collection.ts(89,16): error TS18047: 'spawnEvent' is possibly 'null'.
+tests/test-enemy-collection.ts(98,5): error TS2322: Type 'EnemyRemovedEvent' is not assignable to type 'null'.
+tests/test-enemy-collection.ts(123,55): error TS2322: Type 'string' is not assignable to type 'null | undefined'.
+tests/test-enemy-collection.ts(124,55): error TS2322: Type 'string' is not assignable to type 'null | undefined'.
+tests/test-enemy-collection.ts(135,5): error TS2322: Type 'EnemiesClearedEvent' is not assignable to type 'null'.
+tests/test-enemy-collection.ts(142,16): error TS18047: 'clearEvent' is possibly 'null'.
+tests/test-enemy-collection.ts(151,5): error TS2322: Type 'EnemiesReplacedEvent' is not assignable to type 'null'.
+tests/test-enemy-collection.ts(155,35): error TS2322: Type 'string' is not assignable to type 'null | undefined'.
+tests/test-enemy-collection.ts(156,35): error TS2322: Type 'string' is not assignable to type 'null | undefined'.
+tests/test-enemy-collection.ts(163,16): error TS18047: 'replaceEvent' is possibly 'null'.
+tests/test-enemy-collection.ts(164,16): error TS18047: 'replaceEvent' is possibly 'null'.
+tests/test-enemy-collection.ts(171,57): error TS2322: Type 'string' is not assignable to type 'null | undefined'.
+tests/test-enemy-collection.ts(172,58): error TS2322: Type 'string' is not assignable to type 'null | undefined'.
+tests/test-grid-manager.ts(43,52): error TS2353: Object literal may only specify known properties, and 'portKind' does not exist in type 'TileObject'.
+tests/test-grid-manager.ts(45,16): error TS18049: 'clonedTile' is possibly 'null' or 'undefined'.
+tests/test-grid-manager.ts(45,27): error TS2339: Property 'type' does not exist on type 'number | TileObject'.
+  Property 'type' does not exist on type 'number'.
+tests/test-grid-manager.ts(46,16): error TS18049: 'clonedTile' is possibly 'null' or 'undefined'.
+tests/test-grid-manager.ts(46,27): error TS2339: Property 'portKind' does not exist on type 'number | TileObject'.
+  Property 'portKind' does not exist on type 'number'.
+tests/test-grid-manager.ts(56,16): error TS18048: 'upNeighbor' is possibly 'undefined'.
+tests/test-grid-manager.ts(71,16): error TS2367: This comparison appears to be unintentional because the types 'void' and 'boolean' have no overlap.
+tests/test-npc-distance.ts(10,29): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(16,42): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(22,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(28,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(34,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(40,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(52,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-player-facade.ts(16,1): error TS2740: Type '{ health: number; hunger: number; thirst: number; musicEnabled: true; }' is missing the following properties from type 'PlayerStats': player, points, spentDiscoveries, dead, and 21 more.
+tests/test-transient-game-state.ts(18,16): error TS2531: Object is possibly 'null'.
+tests/test-transient-game-state.ts(32,32): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(33,32): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(35,41): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(36,41): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(38,51): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(58,16): error TS2531: Object is possibly 'null'.
+tests/test-transient-game-state.ts(79,16): error TS2531: Object is possibly 'null'.
+tests/test-transient-game-state.ts(120,32): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(155,32): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(176,5): error TS2322: Type 'ChargeStateChangedEvent' is not assignable to type 'null'.
+tests/test-transient-game-state.ts(180,16): error TS2367: This comparison appears to be unintentional because the types 'false' and 'true' have no overlap.
+tests/test-transient-game-state.ts(181,16): error TS18047: 'eventData' is possibly 'null'.
+tests/test-transient-game-state.ts(182,16): error TS18047: 'eventData' is possibly 'null'.
+tests/test-transient-game-state.ts(200,32): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-transient-game-state.ts(205,29): error TS2345: Argument of type 'null' is not assignable to parameter of type 'PortTransitionData'.
+tests/test-transient-game-state.ts(207,31): error TS2353: Object literal may only specify known properties, and 'invalid' does not exist in type 'PortTransitionData'.
+tests/TileStrategyPattern.test.ts(36,66): error TS2345: Argument of type '{ findCisternPosition: Mock<() => null>; findShackPosition: Mock<() => null>; findHousePosition: Mock<() => null>; }' is not assignable to parameter of type 'MultiTileHandler'.
+  Type '{ findCisternPosition: Mock<() => null>; findShackPosition: Mock<() => null>; findHousePosition: Mock<() => null>; }' is missing the following properties from type 'MultiTileHandler': findWellPosition, findDeadTreePosition
+tests/TurnManager.test.ts(20,51): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+tests/UIEventCoordinator.test.ts(1,36): error TS2307: Cannot find module '../ui/UIEventCoordinator' or its corresponding type declarations.
+tests/UIEventCoordinator.test.ts(85,62): error TS2554: Expected 1 arguments, but got 0.
+tests/UIEventCoordinator.test.ts(216,64): error TS2554: Expected 1 arguments, but got 0.
+tests/UIManager.test.ts(1,27): error TS2307: Cannot find module '../ui/UIManager' or its corresponding type declarations.
+tests/UIManager.test.ts(68,22): error TS2339: Property 'getContext' does not exist on type 'HTMLElement'.
+tests/UIManager.test.ts(71,21): error TS2339: Property 'getContext' does not exist on type 'HTMLElement'.
+tests/UIManager.test.ts(86,5): error TS1345: An expression of type 'void' cannot be tested for truthiness.
+tests/UIManager.test.ts(86,36): error TS2339: Property 'offAll' does not exist on type 'EventBus'.
+tests/UIManager.test.ts(95,5): error TS1345: An expression of type 'void' cannot be tested for truthiness.
+tests/UIManager.test.ts(95,36): error TS2339: Property 'offAll' does not exist on type 'EventBus'.
+tests/UIManager.test.ts(129,14): error TS18047: 'pointsElement' is possibly 'null'.
+tests/UIManager.test.ts(232,14): error TS18047: 'mapInfo' is possibly 'null'.
+tests/UIManager.test.ts(244,14): error TS18047: 'mapInfo' is possibly 'null'.
+tests/UIManager.test.ts(245,14): error TS18047: 'mapInfo' is possibly 'null'.
+tests/UIManager.test.ts(246,14): error TS18047: 'mapInfo' is possibly 'null'.
+tests/ZoneKeyUtils.test.ts(71,39): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+tests/ZoneKeyUtils.test.ts(97,35): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+tests/zoneSpawnManager.test.ts(10,3): error TS2322: Type '1' is not assignable to type '0'.
+tests/zoneSpawnManager.test.ts(18,3): error TS2322: Type '1' is not assignable to type '0'.
+tests/zoneSpawnManager.test.ts(22,15): error TS18047: 'pos' is possibly 'null'.
+tests/zoneSpawnManager.test.ts(22,22): error TS18047: 'pos' is possibly 'null'.
+tests/ZoneStateManager.test.ts(1,34): error TS2307: Cannot find module '../generators/ZoneStateManager' or its corresponding type declarations.
+tools/zone-editor-assets.ts(5,59): error TS2307: Cannot find module 'virtual:asset-manifest' or its corresponding type declarations.

@@ -85,7 +85,7 @@ export class PathfindingController {
             return null;
         }
 
-        if (!this.game.player.isWalkable(targetX, targetY, this.game.grid, startX, startY)) {
+        if (!this.game.playerFacade.isWalkable(targetX, targetY, this.game.grid, startX, startY)) {
             return null;
         }
 
@@ -113,7 +113,7 @@ export class PathfindingController {
                 visited.add(key);
 
                 if (isWithinGrid(newPos.x, newPos.y) &&
-                    this.game.player.isWalkable(newPos.x, newPos.y, this.game.grid, current.pos.x, current.pos.y)) {
+                    this.game.playerFacade.isWalkable(newPos.x, newPos.y, this.game.grid, current.pos.x, current.pos.y)) {
                     const newPath = [...current.path, dir.key];
                     if (newPos.equals(targetPos)) {
                         return newPath;
@@ -135,7 +135,7 @@ export class PathfindingController {
 
         for (const neighbor of neighbors) {
             if (isWithinGrid(neighbor.x, neighbor.y)) {
-                if (this.game.player.isWalkable(neighbor.x, neighbor.y, this.game.grid, -1, -1)) {
+                if (this.game.playerFacade.isWalkable(neighbor.x, neighbor.y, this.game.grid, -1, -1)) {
                     return neighbor.toObject();
                 }
             }
@@ -172,7 +172,7 @@ export class PathfindingController {
 
         // Final destination for feedback
         try {
-            const pos = this.game.player.getPosition();
+            const pos = this.game.playerFacade.getPosition();
             let destX = pos.x, destY = pos.y;
             for (const stepKey of path) {
                 switch ((stepKey || '').toLowerCase()) {
@@ -196,6 +196,10 @@ export class PathfindingController {
     }
 
     private _executePathWithScheduler(path: string[]): void {
+        if (!this.game.animationScheduler) {
+            this._executePathImmediate(path);
+            return;
+        }
         const seq = this.game.animationScheduler.createSequence();
         this.currentPathSequence = seq;
 
@@ -312,7 +316,7 @@ export class PathfindingController {
             }
         } catch {}
 
-        const playerPos = this.game.player.getPosition();
+        const playerPos = this.game.playerFacade.getPosition();
         const gridManager = this.game.gridManager;
 
         try {
@@ -331,7 +335,7 @@ export class PathfindingController {
             if (landedTileType === TILE_TYPES.PORT) {
                 if (this.autoUseNextTransition === 'port') {
                     try {
-                        this.game.interactionManager.zoneManager.handlePortTransition();
+                        this.game.interactionManager?.zoneManager.handlePortTransition();
                     } catch {}
                     this.autoUseNextTransition = null;
                 }
@@ -339,10 +343,10 @@ export class PathfindingController {
         } catch {}
 
         // Interact on reach
-        if (this.game.player.interactOnReach) {
-            const target = this.game.player.interactOnReach;
-            this.game.player.clearInteractOnReach();
-            this.game.interactionManager.triggerInteractAt(target);
+        if (this.game.playerFacade.getInteractOnReach()) {
+            const target = this.game.playerFacade.getInteractOnReach();
+            this.game.playerFacade.clearInteractOnReach();
+            this.game.interactionManager?.triggerInteractAt(target);
         }
     }
 
@@ -364,7 +368,7 @@ export class PathfindingController {
 
         if (this.currentPathSequence) {
             try {
-                this.game.animationScheduler.cancelSequence(this.currentPathSequence.getId());
+                this.game.animationScheduler?.cancelSequence(this.currentPathSequence.getId());
             } catch {}
             this.currentPathSequence = null;
         }

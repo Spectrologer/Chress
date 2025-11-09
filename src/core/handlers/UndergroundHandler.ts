@@ -103,7 +103,9 @@ class UndergroundHandler extends BaseZoneHandler {
 
     placeStairPort(x: number, y: number, portKind: string, from: string): void {
         this.zoneGen.gridManager.setTile(x, y, { type: TILE_TYPES.PORT, portKind });
-        try { logger?.debug?.(`undergroundHandler: placed ${portKind} at (${x},${y}) from ${from}`); } catch (e) {}
+        try { logger?.debug?.(`undergroundHandler: placed ${portKind} at (${x},${y}) from ${from}`); } catch (e) {
+            logger.warn('[UndergroundHandler] Logger debug failed (placeStairPort):', e);
+        }
     }
 
     handleRandomStairdownPlacement(): void {
@@ -120,7 +122,9 @@ class UndergroundHandler extends BaseZoneHandler {
 
                     // Skip the emergence location if present
                     if (avoidX !== undefined && avoidY !== undefined && sx === avoidX && sy === avoidY) {
-                        try { logger.debug?.(`Skipping random stairdown placement at emergence coords (${sx},${sy})`); } catch (e) {}
+                        try { logger.debug?.(`Skipping random stairdown placement at emergence coords (${sx},${sy})`); } catch (e) {
+                            logger.warn('[UndergroundHandler] Logger debug failed (skip emergence):', e);
+                        }
                         continue;
                     }
 
@@ -132,13 +136,15 @@ class UndergroundHandler extends BaseZoneHandler {
                     // Only place on a plain floor tile
                     if (isFloor && !isExit && !isObjectPort) {
                         this.zoneGen.gridManager.setTile(sx, sy, { type: TILE_TYPES.PORT, portKind: 'stairdown' });
-                        try { logger.debug?.(`Placed random stairdown at (${sx},${sy})`); } catch (e) {}
+                        try { logger.debug?.(`Placed random stairdown at (${sx},${sy})`); } catch (e) {
+                            logger.warn('[UndergroundHandler] Logger debug failed (placed stairdown):', e);
+                        }
                         break;
                     }
                 }
             }
         } catch (e) {
-            // Non-fatal if placement fails
+            logger.warn('[UndergroundHandler] Random stairdown placement error (non-fatal):', e);
         }
     }
 

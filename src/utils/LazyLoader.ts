@@ -3,6 +3,8 @@
  * Provides dynamic import capabilities for code splitting and lazy loading
  */
 
+import { logger } from '@core/logger';
+
 /**
  * Cache for loaded modules to avoid re-importing
  */
@@ -14,7 +16,7 @@ const moduleCache = new Map();
  * @param {string} cacheKey - Unique cache key for the module
  * @returns {Promise<any>} The loaded module
  */
-export async function lazyLoad(importFn, cacheKey) {
+export async function lazyLoad(importFn: () => Promise<unknown>, cacheKey: string): Promise<unknown> {
     if (moduleCache.has(cacheKey)) {
         return moduleCache.get(cacheKey);
     }
@@ -24,7 +26,7 @@ export async function lazyLoad(importFn, cacheKey) {
         moduleCache.set(cacheKey, module);
         return module;
     } catch (error) {
-        console.error(`Failed to lazy load module: ${cacheKey}`, error);
+        logger.error(`Failed to lazy load module: ${cacheKey}`, error);
         throw error;
     }
 }
@@ -34,11 +36,11 @@ export async function lazyLoad(importFn, cacheKey) {
  * @param {Function} importFn - Dynamic import function
  * @param {string} cacheKey - Unique cache key for the module
  */
-export function preloadModule(importFn, cacheKey) {
+export function preloadModule(importFn: () => Promise<unknown>, cacheKey: string): void {
     if (!moduleCache.has(cacheKey)) {
         // Load in background, don't await
         lazyLoad(importFn, cacheKey).catch(err => {
-            console.warn(`Failed to preload module: ${cacheKey}`, err);
+            logger.warn(`Failed to preload module: ${cacheKey}`, err);
         });
     }
 }
@@ -55,7 +57,7 @@ export function clearModuleCache() {
  * @param {string} cacheKey - Cache key to check
  * @returns {boolean}
  */
-export function isModuleLoaded(cacheKey) {
+export function isModuleLoaded(cacheKey: string): boolean {
     return moduleCache.has(cacheKey);
 }
 
@@ -105,12 +107,12 @@ export const LazyUI = {
  */
 export const LazyEditors = {
     loadZoneEditor: async () => {
-        console.log('Zone editor loaded via iframe');
+        logger.log('Zone editor loaded via iframe');
         return { default: null };
     },
 
     loadCharacterEditor: async () => {
-        console.log('Character editor loaded via iframe');
+        logger.log('Character editor loaded via iframe');
         return { default: null };
     }
 };
@@ -118,9 +120,9 @@ export const LazyEditors = {
 /**
  * Preload critical modules in the background during idle time
  */
-export function preloadCriticalModules() {
+export function preloadCriticalModules(): void {
     if ('requestIdleCallback' in window) {
-        requestIdleCallback(() => {
+        (requestIdleCallback as any)(() => {
             // Preload commonly used UI components
             preloadModule(() => import('../ui/RadialInventoryUI'), 'RadialInventoryUI');
             preloadModule(() => import('../ui/MessageLog'), 'MessageLog');

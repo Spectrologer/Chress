@@ -15,8 +15,8 @@ export class EnemyRenderer {
 
     constructor(game: IGame) {
         this.game = game;
-        this.ctx = game.ctx;
-        this.textureManager = game.textureManager;
+        this.ctx = game.ctx!;
+        this.textureManager = game.textureManager!;
     }
 
     drawEnemies(): void {
@@ -63,7 +63,7 @@ export class EnemyRenderer {
                 }
             }
 
-            const enemyImage = this.game.textureManager.getImage(enemyKey);
+            const enemyImage = this.game.textureManager!.getImage(enemyKey);
             if (enemyImage && enemyImage.complete) {
                 let pixelXBase: number, pixelYBase: number;
 
@@ -240,7 +240,7 @@ export class EnemyRenderer {
             enemy.smokeAnimations.forEach((anim: SmokeAnimation) => {
                 if (anim.frame > 0) {
                     const frameNumber = Math.floor((18 - anim.frame) / 3) + 1; // Map 18 frames to 6 smoke frames
-                    const smokeImage = this.game.textureManager.getImage(`smoke_frame_${frameNumber}`);
+                    const smokeImage = this.game.textureManager!.getImage(`smoke_frame_${frameNumber}`);
                     if (smokeImage && smokeImage.complete) {
                         this.ctx.drawImage(
                             smokeImage,

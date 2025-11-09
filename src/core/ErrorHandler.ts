@@ -82,6 +82,8 @@ export class ErrorHandler {
                 listener(error, severity, context);
             } catch (e: unknown) {
                 // Don't let listener errors break error handling
+                // Using console.error directly to avoid circular logging
+                // eslint-disable-next-line no-console
                 console.error('[ErrorHandler] Error in error listener:', e);
             }
         });
@@ -115,8 +117,11 @@ export class ErrorHandler {
         this._notifyListeners(errorObj, severity, errorContext);
 
         // In development, also log to console for debugging
+        // Using console.error directly for critical errors to ensure visibility
         if (this.isDevelopment && severity === ErrorSeverity.CRITICAL) {
+            // eslint-disable-next-line no-console
             console.error('[ErrorHandler] CRITICAL ERROR:', errorObj);
+            // eslint-disable-next-line no-console
             console.error('Context:', errorContext);
         }
     }

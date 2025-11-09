@@ -21,6 +21,9 @@ describe('AnimationRenderer - splode', () => {
           splodeAnimations: [],
         },
       },
+      playerFacade: {
+        getSplodeAnimations: () => mockGame.player.animations.splodeAnimations,
+      },
     };
   });
 

@@ -1,6 +1,8 @@
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { TILE_TYPES } from '@core/constants/index';
+import type { Enemy } from '@entities/Enemy';
+import { logger } from '@core/logger';
 
 /**
  * EnemyCollection
@@ -29,7 +31,7 @@ export class EnemyCollection {
      * @param {Array} enemiesArray - Reference to the game's enemies array
      * @param {Object} game - Reference to game instance for grid cleanup
      */
-    constructor(enemiesArray = [], game = null) {
+    constructor(enemiesArray: any[] = [], game: any = null) {
         this._enemies = enemiesArray;
         this._game = game;
     }
@@ -65,8 +67,8 @@ export class EnemyCollection {
      * @param {boolean} aliveOnly - Only return living enemies (health > 0)
      * @returns {Object|null} Enemy at coordinates or null
      */
-    findAt(x, y, aliveOnly = false) {
-        return this._enemies.find(e =>
+    findAt(x: number, y: number, aliveOnly: boolean = false): any | null {
+        return this._enemies.find((e: any) =>
             e.x === x &&
             e.y === y &&
             (!aliveOnly || e.health > 0)
@@ -78,7 +80,7 @@ export class EnemyCollection {
      * @param {Function} predicate - Function(enemy) => boolean
      * @returns {Array} Array of matching enemies
      */
-    findAll(predicate) {
+    findAll(predicate: (enemy: any) => boolean): any[] {
         return this._enemies.filter(predicate);
     }
 
@@ -87,7 +89,7 @@ export class EnemyCollection {
      * @param {Function} predicate - Function(enemy) => boolean
      * @returns {boolean}
      */
-    some(predicate) {
+    some(predicate: (enemy: any) => boolean): boolean {
         return this._enemies.some(predicate);
     }
 
@@ -96,7 +98,7 @@ export class EnemyCollection {
      * @param {Object} enemy
      * @returns {boolean}
      */
-    includes(enemy) {
+    includes(enemy: any): boolean {
         return this._enemies.includes(enemy);
     }
 
@@ -107,7 +109,7 @@ export class EnemyCollection {
      * @param {boolean} aliveOnly - Only check for living enemies
      * @returns {boolean}
      */
-    hasEnemyAt(x, y, aliveOnly = false) {
+    hasEnemyAt(x: number, y: number, aliveOnly: boolean = false): boolean {
         return this.findAt(x, y, aliveOnly) !== null;
     }
 
@@ -116,9 +118,9 @@ export class EnemyCollection {
      * @param {Object} enemy
      * @param {boolean} emitEvent - Whether to emit ENEMY_SPAWNED event
      */
-    add(enemy, emitEvent = true) {
+    add(enemy: any, emitEvent: boolean = true): void {
         if (!enemy) {
-            console.warn('EnemyCollection: Cannot add null/undefined enemy');
+            logger.warn('EnemyCollection: Cannot add null/undefined enemy');
             return;
         }
 
@@ -140,7 +142,7 @@ export class EnemyCollection {
      * @param {boolean} emitEvent - Whether to emit ENEMY_REMOVED event
      * @returns {boolean} True if enemy was removed
      */
-    remove(enemy, emitEvent = true) {
+    remove(enemy: any, emitEvent: boolean = true): boolean {
         const index = this._enemies.indexOf(enemy);
         if (index === -1) {
             return false;
@@ -164,7 +166,7 @@ export class EnemyCollection {
                 this._game.gridManager.setTile(enemyX, enemyY, replacementTile);
             } catch (e) {
                 // Non-fatal: grid cleanup failed, but enemy is removed from collection
-                console.warn('Failed to clear grid tile after enemy removal:', e);
+                logger.warn('Failed to clear grid tile after enemy removal:', e);
             }
         }
 
@@ -185,8 +187,8 @@ export class EnemyCollection {
      * @param {boolean} emitEvent - Whether to emit ENEMY_REMOVED event
      * @returns {boolean} True if enemy was removed
      */
-    removeById(id, emitEvent = true) {
-        const enemy = this._enemies.find(e => e.id === id);
+    removeById(id: string | number, emitEvent: boolean = true): boolean {
+        const enemy = this._enemies.find((e: any) => e.id === id);
         if (!enemy) {
             return false;
         }
@@ -199,7 +201,7 @@ export class EnemyCollection {
      * @param {boolean} emitEvent - Whether to emit events for each removal
      * @returns {number} Number of enemies removed
      */
-    removeWhere(predicate, emitEvent = true) {
+    removeWhere(predicate: (enemy: any) => boolean, emitEvent: boolean = true): number {
         const toRemove = this._enemies.filter(predicate);
         let removed = 0;
 
@@ -216,7 +218,7 @@ export class EnemyCollection {
      * Clear all enemies
      * @param {boolean} emitEvent - Whether to emit ENEMIES_CLEARED event
      */
-    clear(emitEvent = true) {
+    clear(emitEvent: boolean = true): void {
         const count = this._enemies.length;
         this._enemies.length = 0;
 
@@ -230,7 +232,7 @@ export class EnemyCollection {
      * @param {Array} newEnemies
      * @param {boolean} emitEvent - Whether to emit ENEMIES_REPLACED event
      */
-    replaceAll(newEnemies, emitEvent = true) {
+    replaceAll(newEnemies: any[], emitEvent: boolean = true): void {
         const oldCount = this._enemies.length;
         this._enemies.length = 0;
         this._enemies.push(...newEnemies);
@@ -249,7 +251,7 @@ export class EnemyCollection {
      * @param {boolean} emitEvent - Whether to emit event
      * @returns {number} Number of enemies kept
      */
-    filter(predicate, emitEvent = true) {
+    filter(predicate: (enemy: any) => boolean, emitEvent: boolean = true): number {
         const kept = this._enemies.filter(predicate);
         const removed = this._enemies.length - kept.length;
 
@@ -262,7 +264,7 @@ export class EnemyCollection {
      * Iterate over all enemies
      * @param {Function} callback - Function(enemy, index) => void
      */
-    forEach(callback) {
+    forEach(callback: (enemy: any, index: number) => void): void {
         this._enemies.forEach(callback);
     }
 
@@ -271,7 +273,7 @@ export class EnemyCollection {
      * @param {Function} callback - Function(enemy, index) => value
      * @returns {Array}
      */
-    map(callback) {
+    map<T>(callback: (enemy: any, index: number) => T): T[] {
         return this._enemies.map(callback);
     }
 
@@ -280,7 +282,7 @@ export class EnemyCollection {
      * @param {boolean} aliveOnly - Only include living enemies
      * @returns {Set<string>}
      */
-    getPositionsSet(aliveOnly = false): Set<string> {
+    getPositionsSet(aliveOnly: boolean = false): Set<string> {
         const positions = new Set<string>();
         for (const enemy of this._enemies) {
             if (!aliveOnly || enemy.health > 0) {
@@ -311,8 +313,8 @@ export class EnemyCollection {
      * @param {boolean} emitEvent - Whether to emit events
      * @returns {number} Number of dead enemies removed
      */
-    removeDead(emitEvent = true) {
-        return this.removeWhere(e => e.health <= 0, emitEvent);
+    removeDead(emitEvent: boolean = true): number {
+        return this.removeWhere((e: any) => e.health <= 0, emitEvent);
     }
 
     /**
@@ -325,7 +327,7 @@ export class EnemyCollection {
             living: this.getLiving().length,
             dead: this.getDead().length,
             positions: Array.from(this.getPositionsSet()),
-            types: this._enemies.reduce((acc, e) => {
+            types: this._enemies.reduce((acc: any, e: any) => {
                 acc[e.enemyType] = (acc[e.enemyType] || 0) + 1;
                 return acc;
             }, {})
@@ -336,6 +338,6 @@ export class EnemyCollection {
      * Debug log current state
      */
     debugLog() {
-        console.log('EnemyCollection State:', this.getSnapshot());
+        logger.log('EnemyCollection State:', this.getSnapshot());
     }
 }

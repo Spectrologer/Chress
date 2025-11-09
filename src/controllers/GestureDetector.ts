@@ -161,7 +161,7 @@ export class GestureDetector {
             const info = this.activePointers.get(e.pointerId);
             const t = info?.lastTile;
             if (e.pointerType !== 'mouse' && t && this.game?.player) {
-                const playerPos = this.game.player.getPosition();
+                const playerPos = this.game.playerFacade.getPosition();
                 if (t.x === playerPos.x && t.y === playerPos.y && this.game.radialInventoryUI) {
                     // Normalize tile
                     const currentTile = this.game.grid[playerPos.y]?.[playerPos.x];
@@ -217,7 +217,7 @@ export class GestureDetector {
             // Check if enemy is adjacent to player
             let shouldShowFeedback = true;
             if (enemyAtInitial && this.game?.player) {
-                const playerPos = this.game.player.getPosition();
+                const playerPos = this.game.playerFacade.getPosition();
                 const dx = Math.abs(gridCoords.x - playerPos.x);
                 const dy = Math.abs(gridCoords.y - playerPos.y);
                 const isAdjacent = (dx + dy === 1); // Cardinal adjacency only
@@ -247,7 +247,7 @@ export class GestureDetector {
         // Touch hover on player tile - open radial
         try {
             if (e.pointerType !== 'mouse' && this.game?.player && this.game.radialInventoryUI) {
-                const playerPos = this.game.player.getPosition();
+                const playerPos = this.game.playerFacade.getPosition();
                 if (gc.x === playerPos.x && gc.y === playerPos.y && !info._radialHoverOpened) {
                     const currentTile = this.game.grid[playerPos.y]?.[playerPos.x];
                     if (currentTile !== TILE_TYPES.EXIT && currentTile !== TILE_TYPES.PORT) {
@@ -276,7 +276,7 @@ export class GestureDetector {
             let shouldShowFeedback = true;
 
             if (enemyOnGc && this.game?.player) {
-                const playerPos = this.game.player.getPosition();
+                const playerPos = this.game.playerFacade.getPosition();
                 const dx = Math.abs(gc.x - playerPos.x);
                 const dy = Math.abs(gc.y - playerPos.y);
                 const isAdjacent = (dx + dy === 1); // Cardinal adjacency only
@@ -327,7 +327,7 @@ export class GestureDetector {
         // If adjacent, clear feedback immediately since it will trigger an attack
         let shouldClearFeedback = !enemyAtRelease;
         if (enemyAtRelease && gc && this.game?.player) {
-            const playerPos = this.game.player.getPosition();
+            const playerPos = this.game.playerFacade.getPosition();
             const dx = Math.abs(gc.x - playerPos.x);
             const dy = Math.abs(gc.y - playerPos.y);
             const isAdjacent = (dx + dy === 1); // Cardinal adjacency only
@@ -368,7 +368,7 @@ export class GestureDetector {
         } else if (distance > INPUT_CONSTANTS.MIN_SWIPE_DISTANCE) {
             // Swipe to direction using DirectionUtils
             const direction = getDeltaToDirection(deltaX, deltaY);
-            return { type: 'swipe', direction };
+            return { type: 'swipe', direction: direction ?? undefined };
         }
 
         return { type: 'none' };
@@ -440,7 +440,10 @@ export class GestureDetector {
 
     convertScreenToGrid(screenX: number, screenY: number): GridCoords {
         const dpr = window.devicePixelRatio || 1;
-        const rect = this.game.canvas.getBoundingClientRect();
+        const rect = this.game.canvas?.getBoundingClientRect();
+        if (!rect || !this.game.canvas) {
+            return { x: 0, y: 0 };
+        }
         const canvasX = (screenX - rect.left) * dpr;
         const canvasY = (screenY - rect.top) * dpr;
         const scaleX = this.game.canvas.width / (rect.width * dpr);

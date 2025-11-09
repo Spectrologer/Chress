@@ -70,7 +70,7 @@ export abstract class BaseItemEffect {
         noTypewriter = false
     ): void {
         if (game.uiManager && typeof game.uiManager.showOverlayMessage === 'function') {
-            game.uiManager.showOverlayMessage(text, imageSrc, instant, true, noTypewriter);
+            game.uiManager.showOverlayMessage(text, imageSrc || '', instant, true, noTypewriter);
         }
     }
 
@@ -83,6 +83,10 @@ export abstract class BaseItemEffect {
      * @returns True if item was dropped successfully
      */
     protected _dropItem(game: Game, itemType: string, tileType: number | { type: number; [key: string]: any }): boolean {
+        if (!game.player || !game.grid) {
+            return false;
+        }
+
         const px = game.player.x;
         const py = game.player.y;
         const currentTile = game.grid[py][px];
@@ -114,7 +118,7 @@ export abstract class BaseItemEffect {
         config: RadialPatternConfig
     ): ItemEffectResult {
         const { fromRadial = false } = context;
-        const isRadial = fromRadial || (game.player.radialInventory && game.player.radialInventory.indexOf(item) >= 0);
+        const isRadial = fromRadial || (game.player?.radialInventory && game.player.radialInventory.indexOf(item) >= 0);
 
         if (isRadial) {
             // Execute radial-specific behavior

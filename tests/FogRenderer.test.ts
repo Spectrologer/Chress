@@ -30,7 +30,7 @@ describe('FogRenderer', () => {
 
     // Mock document.createElement('canvas') so FogRenderer can create scaled canvas
     originalCreateElement = document.createElement.bind(document);
-    document.createElement = (tag) => {
+    document.createElement = (tag: string) => {
       if (tag === 'canvas') {
         // return a simple object that receives width/height and a 2D context
         const c = { width: 0, height: 0 };
@@ -44,17 +44,18 @@ describe('FogRenderer', () => {
       return originalCreateElement(tag);
     };
 
-    // Minimal player stub
-    const player = {
+    // Minimal player facade stub
+    const playerFacade = {
       undergroundDepth: 1,
-      getCurrentZone: () => ({ x: 0, y: 0, dimension: 2, depth: 1 })
+      getCurrentZone: () => ({ x: 0, y: 0, dimension: 2, depth: 1 }),
+      getUndergroundDepth: () => 1
     };
 
     // Game stub used by FogRenderer
     game = {
       ctx: mockCtx,
       textureManager: { getImage: vi.fn(() => fakeImage) },
-      player
+      playerFacade
     };
   });
 
@@ -72,7 +73,7 @@ describe('FogRenderer', () => {
   });
 
   test('creates a pattern for stringified underground dimension', () => {
-    game.player.getCurrentZone = () => ({ x: 0, y: 0, dimension: '2', depth: 1 });
+    game.playerFacade.getCurrentZone = () => ({ x: 0, y: 0, dimension: '2', depth: 1 });
     const fr = new FogRenderer(game);
     fr.updateAndDrawFog();
     expect(fr._scaledCanvas).toBeTruthy();
@@ -88,7 +89,7 @@ describe('FogRenderer', () => {
     const prevPattern = fr._pattern;
 
     // simulate zone change: change player's zone so lastZoneKey differs
-    game.player.getCurrentZone = () => ({ x: 1, y: 0, dimension: 2, depth: 1 });
+    game.playerFacade.getCurrentZone = () => ({ x: 1, y: 0, dimension: 2, depth: 1 });
     // Clear pattern to simulate an earlier code path that might have cleared it
     fr._pattern = null;
     fr.updateAndDrawFog();

@@ -160,6 +160,10 @@ export class NPCManager {
      */
     moveNPC(npc: BaseNPC, newX: number, newY: number): boolean {
         const gridManager = this.game.gridManager;
+        if (!gridManager) {
+            return false;
+        }
+
         const oldX = npc.x;
         const oldY = npc.y;
 

@@ -57,8 +57,8 @@ export function registerNPCs(): void {
         action: 'barter',
         placement: {
             zone: 'home_underground',
-            x: null, // Placed via special logic
-            y: null,
+            x: undefined, // Placed via special logic
+            y: undefined,
             dimension: 2
         }
     });

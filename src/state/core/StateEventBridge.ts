@@ -16,7 +16,7 @@ export class StateEventBridge {
    * @param {any} value - The new value
    * @returns {void}
    */
-  emitStateChangeEvent(path, value) {
+  emitStateChangeEvent(path: string, value: unknown): void {
     // Map state paths to existing EventTypes
     if (path.startsWith('persistent.player.stats')) {
       eventBus.emit(EventTypes.PLAYER_STATS_CHANGED);
@@ -42,7 +42,7 @@ export class StateEventBridge {
    * @param {Object} updates - Object with path -> value mappings
    * @returns {void}
    */
-  emitBatchEvents(updates) {
+  emitBatchEvents(updates: Record<string, unknown>): void {
     for (const [path, value] of Object.entries(updates)) {
       this.emitStateChangeEvent(path, value);
     }
@@ -53,7 +53,7 @@ export class StateEventBridge {
    * @param {string} sliceType - Type of reset ('transient', 'session', 'all')
    * @returns {void}
    */
-  emitResetEvent(sliceType) {
+  emitResetEvent(sliceType: string): void {
     if (sliceType === 'transient') {
       eventBus.emit(EventTypes.TRANSIENT_STATE_RESET);
     } else if (sliceType === 'session' || sliceType === 'all') {

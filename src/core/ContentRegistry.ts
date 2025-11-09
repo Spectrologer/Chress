@@ -116,12 +116,12 @@ export class ContentRegistry {
             tileType: config.tileType,
             stackable: config.stackable ?? false,
             radial: config.radial ?? false,
-            effect: config.effect ?? null,
+            effect: config.effect ?? undefined,
             spawnWeight: config.spawnWeight ?? 0,
             spawnRules: config.spawnRules ?? {},
             getTooltip: config.getTooltip,
             getImageKey: config.getImageKey,
-            renderStrategy: config.renderStrategy ?? null,
+            renderStrategy: config.renderStrategy ?? undefined,
             metadata: config.metadata ?? {}
         });
     }
@@ -136,9 +136,9 @@ export class ContentRegistry {
             tileType: config.tileType,
             action: config.action,
             placement: config.placement ?? {},
-            dialogue: config.dialogue ?? null,
-            barter: config.barter ?? null,
-            renderStrategy: config.renderStrategy ?? null,
+            dialogue: config.dialogue ?? undefined,
+            barter: config.barter ?? undefined,
+            renderStrategy: config.renderStrategy ?? undefined,
             metadata: config.metadata ?? {}
         });
     }

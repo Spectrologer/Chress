@@ -20,14 +20,30 @@
     <script>
         // Set random NPC favicon
         const npcSprites = [
-            'felt', 'nib', 'forge', 'dragon', 'mark', 'rune', 'penne', 'gouge',
-            'axolotl', 'squig', 'crayn', 'rok', 'stik', 'duk', 'snak', 'flub', 'dawrg'
+            // Tutorial NPCs
+            { name: 'felt', path: 'tutorial/felt' },
+            { name: 'crayn', path: 'tutorial/crayn' },
+            { name: 'forge', path: 'tutorial/forge' },
+            // Merchant NPCs
+            { name: 'nib', path: 'merchant/nib' },
+            { name: 'mark', path: 'merchant/mark' },
+            { name: 'rune', path: 'merchant/rune' },
+            { name: 'penne', path: 'merchant/penne' },
+            { name: 'gouge', path: 'merchant/gouge' },
+            { name: 'axolotl', path: 'merchant/axolotl' },
+            { name: 'squig', path: 'merchant/squig' },
+            // Gossip NPCs (sample)
+            { name: 'dragon', path: 'gossip/dragon' },
+            { name: 'calli', path: 'gossip/calli' },
+            { name: 'brush', path: 'gossip/brush' },
+            { name: 'quill', path: 'gossip/quill' },
+            { name: 'capybara', path: 'gossip/capybara' }
         ];
         const randomNPC = npcSprites[Math.floor(Math.random() * npcSprites.length)];
         const link = document.createElement('link');
         link.rel = 'icon';
         link.type = 'image/png';
-        link.href = `assets/characters/npcs/${randomNPC}.png`;
+        link.href = `assets/characters/npcs/${randomNPC.path}.png`;
         document.head.appendChild(link);
     </script>
 

@@ -2,142 +2,450 @@
 > chress@1.0.0 test
 > vitest run
 
+Could not scan directory c:\Users\virgi\OneDrive\Desktop\Apps\Chress\public\assets: ENOENT: no such file or directory, scandir 'c:\Users\virgi\OneDrive\Desktop\Apps\Chress\public\assets'
 
-[1m[46m RUN [49m[22m [36mv4.0.6 [39m[90mc:/Users/virgi/OneDrive/Desktop/Apps/Chress[39m
+[1m[46m RUN [49m[22m [36mv4.0.8 [39m[90mc:/Users/virgi/OneDrive/Desktop/Apps/Chress[39m
 
- [31m❯[39m tests/SoundManager.sfx.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 9[2mms[22m[39m
-     [32m✓[39m playSound uses file-backed audio when registered[32m 3[2mms[22m[39m
-[31m     [31m×[31m playSound falls back to procedural when unknown[39m[32m 5[2mms[22m[39m
- [31m❯[39m tests/pitfallPortAccessibility.test.js [2m([22m[2m6 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[32m 14[2mms[22m[39m
-[31m     [31m×[31m ensureExitAccess finds and clears paths to PORT tiles[39m[32m 9[2mms[22m[39m
-[31m     [31m×[31m ensureExitAccess handles multiple PORTs[39m[32m 1[2mms[22m[39m
-[31m     [31m×[31m clearPathToCenter does not overwrite PORT tiles[39m[32m 1[2mms[22m[39m
-[31m     [31m×[31m ensureExitAccess handles both EXIT and PORT tiles[39m[32m 1[2mms[22m[39m
-[31m     [31m×[31m pitfall zone with isolated PORT gets cleared path[39m[32m 1[2mms[22m[39m
-[31m     [31m×[31m clearPathToCenter clears obstacles but preserves important tiles[39m[32m 1[2mms[22m[39m
- [31m❯[39m tests/pitfallRoundtrip.test.js [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 22[2mms[22m[39m
-[31m     [31m×[31m player returns to original hole after falling and exiting[39m[32m 20[2mms[22m[39m
- [31m❯[39m tests/holeCisternDepth.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 26[2mms[22m[39m
-[31m     [31m×[31m undergroundDepth is set to 1 when entering via hole[39m[32m 19[2mms[22m[39m
-[31m     [31m×[31m undergroundDepth is set to 1 when entering via cistern[39m[32m 3[2mms[22m[39m
-[31m     [31m×[31m stairdown correctly increments depth after entering via hole[39m[32m 2[2mms[22m[39m
- [31m❯[39m tests/pitfallPersistence.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 16[2mms[22m[39m
-[31m     [31m×[31m preserves returnToSurface when reusing saved zone[39m[32m 12[2mms[22m[39m
-[31m     [31m×[31m does not overwrite returnToSurface on port transition when zone exists[39m[32m 2[2mms[22m[39m
- [31m❯[39m tests/Zard.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 21[2mms[22m[39m
-[31m     [31m×[31m diagonal adjacent attack damages player[39m[32m 11[2mms[22m[39m
-     [32m✓[39m orthogonal adjacent does not perform diagonal attack[32m 7[2mms[22m[39m
- [31m❯[39m tests/AutoPathWithEnemies.test.js [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 17[2mms[22m[39m
-[31m     [31m×[31m when OFF and enemies exist, clicking distant tile only moves one tile[39m[32m 13[2mms[22m[39m
-[31m     [31m×[31m when ON and enemies exist, clicking distant tile attempts multi-tile path[39m[32m 2[2mms[22m[39m
-[90mstdout[2m | tests/TypeChecks.test.js
-[22m[39m🧪 Running TypeChecks.js Tests...
+ [31m❯[39m tests/FogRenderer.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 23[2mms[22m[39m
+[31m     [31m×[31m creates a pattern for numeric underground dimension[39m[32m 13[2mms[22m[39m
+[31m     [31m×[31m creates a pattern for stringified underground dimension[39m[32m 4[2mms[22m[39m
+[31m     [31m×[31m preserves/recreates pattern across zone changes[39m[32m 3[2mms[22m[39m
+[90mstderr[2m | tests/UIEventCoordinator.test.ts[2m > [22m[2mUIEventCoordinator[2m > [22m[2mDialog Events[2m > [22m[2mUI_DIALOG_SHOW with invalid type logs error
+[22m[39mEvent validation failed for "ui:dialog:show":
+  Invalid value for "type": got "invalid_type", expected one of [barter, sign, statue]
+Event data: { type: [32m'invalid_type'[39m }
+[EventBus] Error in listener for 'ui:dialog:show': {
+  message: [32m'logger is not defined'[39m,
+  stack: [32m'ReferenceError: logger is not defined\n'[39m +
+    [32m'    at UIEventCoordinator.handleDialogShow (C:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/ui/UIEventCoordinator.ts:160:17)\n'[39m +
+    [32m'    at C:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/ui/UIEventCoordinator.ts:101:86\n'[39m +
+    [32m'    at C:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/core/EventBus.ts:126:11\n'[39m +
+    [32m'    at Array.forEach (<anonymous>)\n'[39m +
+    [32m'    at EventBus.emit (C:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/core/EventBus.ts:124:17)\n'[39m +
+    [32m'    at EventBus.eventBus.emit (C:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/core/EventValidator.ts:307:16)\n'[39m +
+    [32m'    at C:/Users/virgi/OneDrive/Desktop/Apps/Chress/tests/UIEventCoordinator.test.ts:87:22\n'[39m +
+    [32m'    at file:///c:/Users/virgi/OneDrive/Desktop/Apps/Chress/node_modules/@vitest/runner/dist/index.js:157:11\n'[39m +
+    [32m'    at file:///c:/Users/virgi/OneDrive/Desktop/Apps/Chress/node_modules/@vitest/runner/dist/index.js:753:26\n'[39m +
+    [32m'    at file:///c:/Users/virgi/OneDrive/Desktop/Apps/Chress/node_modules/@vitest/runner/dist/index.js:1636:20'[39m,
+  name: [32m'ReferenceError'[39m
+}
 
-Testing getTileType()...
-Testing isTileObject()...
-Testing isValidTile()...
-Testing isTileType()...
+ [31m❯[39m tests/MiniMapHighlights.test.ts [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 29[2mms[22m[39m
+[31m     [31m×[31m cycles through shapes in expected order and then clears[39m[32m 22[2mms[22m[39m
+[31m     [31m×[31m renders are triggered after cycling[39m[32m 3[2mms[22m[39m
+[90mstderr[2m | tests/UIEventCoordinator.test.ts[2m > [22m[2mUIEventCoordinator[2m > [22m[2mMessage Log Events[2m > [22m[2mUI_MESSAGE_LOG adds category prefix for error priority
+[22m[39m[EventBus] Error in listener for 'ui:message:log': {
+  message: [32m'logger is not defined'[39m,
+  stack: [32m'ReferenceError: logger is not defined\n'[39m +
+    [32m'    at UIEventCoordinator.handleMessageLog (C:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/ui/UIEventCoordinator.ts:262:13)\n'[39m +
+    [32m'    at C:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/ui/UIEventCoordinator.ts:120:86\n'[39m +
+    [32m'    at C:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/core/EventBus.ts:126:11\n'[39m +
+    [32m'    at Array.forEach (<anonymous>)\n'[39m +
+    [32m'    at EventBus.emit (C:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/core/EventBus.ts:124:17)\n'[39m +
+    [32m'    at EventBus.eventBus.emit (C:/Users/virgi/OneDrive/Desktop/Apps/Chress/src/core/EventValidator.ts:307:16)\n'[39m +
+    [32m'    at C:/Users/virgi/OneDrive/Desktop/Apps/Chress/tests/UIEventCoordinator.test.ts:218:22\n'[39m +
+    [32m'    at file:///c:/Users/virgi/OneDrive/Desktop/Apps/Chress/node_modules/@vitest/runner/dist/index.js:157:11\n'[39m +
+    [32m'    at file:///c:/Users/virgi/OneDrive/Desktop/Apps/Chress/node_modules/@vitest/runner/dist/index.js:753:26\n'[39m +
+    [32m'    at file:///c:/Users/virgi/OneDrive/Desktop/Apps/Chress/node_modules/@vitest/runner/dist/index.js:1636:20'[39m,
+  name: [32m'ReferenceError'[39m
+}
 
-Testing specific type checkers...
-
-Testing isTileObjectOfType()...
-
-Testing property helpers...
-
-Testing category checkers...
-
-Testing edge cases...
-
-==================================================
-📊 Test Results:
-==================================================
-✅ Passed: 59
-❌ Failed: 0
-📈 Total:  59
-🎯 Success Rate: 100.0%
-==================================================
-
-🎉 All tests passed! TypeChecks.js is working correctly.
-
-
- [32m✓[39m tests/PlayerStatsUI.test.js [2m([22m[2m25 tests[22m[2m)[22m[32m 201[2mms[22m[39m
-[90mstdout[2m | tests/messageManager.test.js[2m > [22m[2mMessageManager typing & blip behavior[2m > [22m[2mshowMessage with typewriterSpeed = 0 displays text immediately
-[22m[39mshowMessage: "Hello world!", useTypewriter: true
-OverlayMessageHandler.show: "Hello world!", imageSrc: null, isPersistent: false
-Overlay message shown
-
-[90mstdout[2m | tests/ConfigOverlay.test.js[2m > [22m[2mConfig overlay interactions[2m > [22m[2mclicking outside config overlay closes it and reopens stats panel
-[22m[39m[ConfigPanelManager] showConfigOverlay called
-[ConfigPanelManager] Overlay classList after adding show: stats-panel-overlay show
-[ConfigPanelManager] Overlay display style: block
-
- [32m✓[39m tests/MiniMap.test.js [2m([22m[2m34 tests[22m[2m)[22m[32m 176[2mms[22m[39m
-[90mstdout[2m | tests/messageManager.test.js[2m > [22m[2mMessageManager typing & blip behavior[2m > [22m[2mPenneMessageHandler shows message only if notextbox message active
-[22m[39mOverlayMessageHandler.show: "<span class="character-name">Penne</span><br>Give me meat!", imageSrc: assets/fauna/penne.png, isPersistent: false
-Overlay message shown
-
- [32m✓[39m tests/messageManager.test.js [2m([22m[2m6 tests[22m[2m)[22m[32m 181[2mms[22m[39m
- [32m✓[39m tests/ConfigOverlay.test.js [2m([22m[2m1 test[22m[2m)[22m[33m 404[2mms[22m[39m
-     [33m[2m✓[22m[39m clicking outside config overlay closes it and reopens stats panel [33m 392[2mms[22m[39m
- [32m✓[39m tests/UIManager.test.js [2m([22m[2m22 tests[22m[2m)[22m[32m 212[2mms[22m[39m
- [32m✓[39m tests/MessageLog.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 181[2mms[22m[39m
- [32m✓[39m tests/EventSystem.test.js [2m([22m[2m16 tests[22m[2m)[22m[32m 58[2mms[22m[39m
- [32m✓[39m tests/EnemyExitFreeze.test.js [2m([22m[2m20 tests[22m[2m)[22m[32m 63[2mms[22m[39m
-[90mstdout[2m | tests/RecordsOverlay.test.js[2m > [22m[2mshowRecordsOverlay reads values from localStorage and populates DOM
-[22m[39m[RecordsPanelManager] showRecordsOverlay called
-[RecordsPanelManager] Overlay classList after adding show: stats-panel-overlay show
-[RecordsPanelManager] Overlay display style: block
-
- [32m✓[39m tests/RecordsOverlay.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 34[2mms[22m[39m
- [32m✓[39m tests/GridIterator.test.js [2m([22m[2m35 tests[22m[2m)[22m[32m 47[2mms[22m[39m
- [32m✓[39m tests/TileStrategyPattern.test.js [2m([22m[2m12 tests[22m[2m)[22m[32m 26[2mms[22m[39m
- [32m✓[39m tests/UIEventCoordinator.test.js [2m([22m[2m19 tests[22m[2m)[22m[32m 37[2mms[22m[39m
- [32m✓[39m tests/Position.test.js [2m([22m[2m99 tests[22m[2m)[22m[32m 36[2mms[22m[39m
- [32m✓[39m tests/CombatManager.test.js [2m([22m[2m9 tests[22m[2m)[22m[32m 36[2mms[22m[39m
- [32m✓[39m tests/InventoryUI.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 26[2mms[22m[39m
-[90mstdout[2m | tests/BoardLoader.test.js[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Registration[2m > [22m[2mshould register a board for a specific zone
+ [31m❯[39m tests/UIEventCoordinator.test.ts [2m([22m[2m19 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 131[2mms[22m[39m
+       [32m✓[39m UI_DIALOG_SHOW with barter type shows barter window[32m 12[2mms[22m[39m
+       [32m✓[39m UI_DIALOG_SHOW withtextbox type showstextbox message[32m 5[2mms[22m[39m
+       [32m✓[39m UI_DIALOG_SHOW with statue type shows statue window[32m 5[2mms[22m[39m
+[31m       [31m×[31m UI_DIALOG_SHOW with invalid type logs error[39m[32m 61[2mms[22m[39m
+       [32m✓[39m UI_DIALOG_HIDE with barter type hides barter window[32m 2[2mms[22m[39m
+       [32m✓[39m UI_DIALOG_HIDE with statue type hides statue window[32m 12[2mms[22m[39m
+       [32m✓[39m UI_DIALOG_HIDE withtextbox type hides overlay message[32m 2[2mms[22m[39m
+       [32m✓[39m UI_CONFIRMATION_SHOW displays confirmation with action[32m 3[2mms[22m[39m
+       [32m✓[39m UI_CONFIRMATION_SHOW uses default values for optional params[32m 5[2mms[22m[39m
+       [32m✓[39m UI_OVERLAY_MESSAGE_SHOW displays overlay message[32m 2[2mms[22m[39m
+       [32m✓[39m UI_OVERLAY_MESSAGE_SHOW uses default values[32m 4[2mms[22m[39m
+       [32m✓[39m UI_OVERLAY_MESSAGE_HIDE hides overlay message[32m 1[2mms[22m[39m
+       [32m✓[39m UI_MESSAGE_LOG adds message to log[32m 1[2mms[22m[39m
+       [32m✓[39m UI_MESSAGE_LOG adds category prefix for error priority[32m 4[2mms[22m[39m
+       [32m✓[39m UI_MESSAGE_LOG works with minimal data[32m 1[2mms[22m[39m
+       [32m✓[39m UI_REGION_NOTIFICATION_SHOW displays region notification[32m 2[2mms[22m[39m
+       [32m✓[39m UI_REGION_NOTIFICATION_SHOW works without region name[32m 1[2mms[22m[39m
+       [32m✓[39m multiple events in sequence work correctly[32m 1[2mms[22m[39m
+       [32m✓[39m coordinator handles events independently[32m 1[2mms[22m[39m
+ [31m❯[39m tests/AnimationRenderer.test.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 15[2mms[22m[39m
+[31m     [31m×[31m drawSplodeAnimation draws a 3x3 splode image centered on bomb[39m[32m 12[2mms[22m[39m
+ [31m❯[39m tests/MiniMap.test.ts [2m([22m[2m34 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 464[2mms[22m[39m
+       [32m✓[39m should initialize with game reference[32m 58[2mms[22m[39m
+       [32m✓[39m should initialize with isExpanded as false[32m 14[2mms[22m[39m
+       [32m✓[39m should initialize pan coordinates to 0[32m 9[2mms[22m[39m
+       [32m✓[39m should initialize with empty highlights object[32m 4[2mms[22m[39m
+       [32m✓[39m should initialize drag state[32m 3[2mms[22m[39m
+       [32m✓[39m should find and initialize canvas elements[32m 9[2mms[22m[39m
+       [32m✓[39m should set up pointer event listeners[32m 41[2mms[22m[39m
+       [32m✓[39m should set isExpanded to true[32m 12[2mms[22m[39m
+       [32m✓[39m should reset pan coordinates[32m 6[2mms[22m[39m
+       [32m✓[39m should add "show" class to overlay[32m 7[2mms[22m[39m
+       [32m✓[39m should not expand if already expanded[32m 5[2mms[22m[39m
+       [32m✓[39m should call renderExpanded when expanded[32m 5[2mms[22m[39m
+       [32m✓[39m should set isExpanded to false[32m 15[2mms[22m[39m
+       [32m✓[39m should remove "show" class from overlay[32m 12[2mms[22m[39m
+       [32m✓[39m should work when already retracted[32m 12[2mms[22m[39m
+       [32m✓[39m should set canvas dimensions to square[32m 8[2mms[22m[39m
+[31m       [31m×[31m should call renderZoneMap with expanded parameters[39m[32m 17[2mms[22m[39m
+[31m       [31m×[31m should pass pan offsets to renderZoneMap[39m[32m 13[2mms[22m[39m
+       [32m✓[39m should enable dragging on pointerdown[32m 8[2mms[22m[39m
+       [32m✓[39m should update pan coordinates on pointermove[32m 7[2mms[22m[39m
+       [32m✓[39m should mark as dragMoved when pointer moves significantly[32m 4[2mms[22m[39m
+       [32m✓[39m should disable dragging on pointerup[32m 19[2mms[22m[39m
+       [32m✓[39m should disable dragging on pointerleave[32m 29[2mms[22m[39m
+       [32m✓[39m should calculate zone coordinates from click position[32m 13[2mms[22m[39m
+       [32m✓[39m should handle clicks when expandedCanvas is null[32m 9[2mms[22m[39m
+       [32m✓[39m should initialize with empty highlights[32m 11[2mms[22m[39m
+       [32m✓[39m should allow setting highlights[32m 17[2mms[22m[39m
+       [32m✓[39m should support multiple highlight shapes[32m 31[2mms[22m[39m
+       [32m✓[39m should handle missing canvas elements gracefully[32m 8[2mms[22m[39m
+       [32m✓[39m should handle rapid expand/retract cycles[32m 7[2mms[22m[39m
+       [32m✓[39m should handle pan coordinates beyond reasonable bounds[32m 4[2mms[22m[39m
+       [32m✓[39m should stop propagation on expanded canvas pointerdown[32m 6[2mms[22m[39m
+       [32m✓[39m should stop propagation on expanded canvas pointerup[32m 20[2mms[22m[39m
+       [32m✓[39m should work through full expand/pan/retract cycle[32m 16[2mms[22m[39m
+ [31m❯[39m tests/InteractionManager.test.ts [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 30[2mms[22m[39m
+[31m     [31m×[31m does not perform immediate melee attack when tapping diagonally adjacent enemy[39m[32m 22[2mms[22m[39m
+[31m     [31m×[31m performs immediate melee attack when tapping cardinally adjacent enemy[39m[32m 4[2mms[22m[39m
+ [31m❯[39m tests/BarterWindow.test.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 83[2mms[22m[39m
+[31m     [31m×[31m axelotl_axe trade consumes discoveries and grants axe ability[39m[32m 56[2mms[22m[39m
+ [32m✓[39m tests/MessageLog.test.ts [2m([22m[2m19 tests[22m[2m)[22m[33m 416[2mms[22m[39m
+ [32m✓[39m tests/TurnManager.test.ts [2m([22m[2m39 tests[22m[2m)[22m[32m 151[2mms[22m[39m
+[90mstdout[2m | tests/BoardLoader.test.ts[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Registration[2m > [22m[2mshould register a board for a specific zone
 [22m[39mRegistered canon board "museum" for zone (0,0) dimension 1
 
-[90mstdout[2m | tests/BoardLoader.test.js[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Registration[2m > [22m[2mshould support both canon and custom board types
+[90mstdout[2m | tests/BoardLoader.test.ts[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Registration[2m > [22m[2mshould support both canon and custom board types
 [22m[39mRegistered canon board "museum" for zone (0,0) dimension 1
 Registered custom board "my_zone" for zone (5,5) dimension 0
 
-[90mstdout[2m | tests/BoardLoader.test.js[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Registration[2m > [22m[2mshould create unique keys for different dimensions
+[90mstdout[2m | tests/BoardLoader.test.ts[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Registration[2m > [22m[2mshould create unique keys for different dimensions
 [22m[39mRegistered canon board "surface" for zone (0,0) dimension 0
 Registered canon board "interior" for zone (0,0) dimension 1
 Registered canon board "underground" for zone (0,0) dimension 2
 
- [32m✓[39m tests/CombatActionManager.test.js [2m([22m[2m7 tests[22m[2m)[22m[32m 17[2mms[22m[39m
-[90mstdout[2m | tests/BoardLoader.test.js[2m > [22m[2mBoardLoader[2m > [22m[2mCache Management[2m > [22m[2mshould clear cache
+[90mstderr[2m | tests/BoardLoader.test.ts[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Validation[2m > [22m[2mshould reject board without size
+[22m[39mBoard missing valid size array [width, height]
+
+[90mstderr[2m | tests/BoardLoader.test.ts[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Validation[2m > [22m[2mshould reject board with invalid size format
+[22m[39mBoard missing valid size array [width, height]
+
+[90mstderr[2m | tests/BoardLoader.test.ts[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Validation[2m > [22m[2mshould reject board with mismatched terrain length
+[22m[39mBoard terrain length 50 doesn't match size 10x10 (expected 100)
+
+[90mstderr[2m | tests/BoardLoader.test.ts[2m > [22m[2mBoardLoader[2m > [22m[2mBoard Validation[2m > [22m[2mshould reject board without features
+[22m[39mBoard missing features object
+
+[90mstderr[2m | tests/BoardLoader.test.ts[2m > [22m[2mBoardLoader[2m > [22m[2mFeature Conversion[2m > [22m[2mshould return null for unknown features
+[22m[39mUnknown feature type: unknown_feature
+
+[90mstdout[2m | tests/BoardLoader.test.ts[2m > [22m[2mBoardLoader[2m > [22m[2mCache Management[2m > [22m[2mshould clear cache
 [22m[39mBoard cache cleared
 
- [32m✓[39m tests/BoardLoader.test.js [2m([22m[2m26 tests[22m[2m)[22m[32m 33[2mms[22m[39m
- [32m✓[39m tests/BarterWindow.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 24[2mms[22m[39m
- [32m✓[39m tests/DirectionUtils.test.js [2m([22m[2m20 tests[22m[2m)[22m[32m 21[2mms[22m[39m
- [32m✓[39m tests/LineOfSightUtils.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 12[2mms[22m[39m
- [32m✓[39m tests/SafeServiceCall.test.js [2m([22m[2m31 tests[22m[2m)[22m[32m 21[2mms[22m[39m
- [32m✓[39m tests/Player.test.js [2m([22m[2m10 tests[22m[2m)[22m[32m 26[2mms[22m[39m
- [32m✓[39m tests/ZoneKeyUtils.test.js [2m([22m[2m22 tests[22m[2m)[22m[32m 22[2mms[22m[39m
- [32m✓[39m tests/EventValidator.test.js [2m([22m[2m21 tests[22m[2m)[22m[32m 20[2mms[22m[39m
- [32m✓[39m tests/EnemyAttackRange.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 17[2mms[22m[39m
- [32m✓[39m tests/Lizord.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 19[2mms[22m[39m
- [32m✓[39m tests/MiniMapHighlights.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
- [32m✓[39m tests/zoneSpawnManager.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
- [32m✓[39m tests/FogRenderer.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
- [32m✓[39m tests/dialogue-progression.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 13[2mms[22m[39m
- [32m✓[39m tests/InteractionManager.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 13[2mms[22m[39m
- [32m✓[39m tests/constants.test.js [2m([22m[2m8 tests[22m[2m)[22m[32m 6[2mms[22m[39m
- [32m✓[39m tests/AnimationRenderer.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 20[2mms[22m[39m
- [32m✓[39m tests/dialogue-state-simple.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 6[2mms[22m[39m
- [32m✓[39m tests/CustomBoardZoneKeyFix.test.js [2m([22m[2m7 tests[22m[2m)[22m[32m 9[2mms[22m[39m
- [32m✓[39m tests/ZoneStateManager.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32m✓[39m tests/ItemUtils.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
- [32m✓[39m tests/UI.dom.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 2[2mms[22m[39m
- [32m✓[39m tests/UI.styles.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m tests/BoardLoader.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 82[2mms[22m[39m
+ [32m✓[39m tests/EventSystem.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 158[2mms[22m[39m
+ [32m✓[39m tests/ItemManager.test.ts [2m([22m[2m42 tests[22m[2m)[22m[32m 112[2mms[22m[39m
+[90mstdout[2m | tests/RecordsOverlay.test.ts[2m > [22m[2mshowRecordsOverlay reads values from localStorage and populates DOM
+[22m[39m[RecordsPanelManager] showRecordsOverlay called
+[RecordsPanelManager] Overlay classList after adding show: stats-panel-overlay show
+[RecordsPanelManager] Overlay display style: block
 
-[2m Test Files [22m [1m[31m16 failed[39m[22m[2m | [22m[1m[32m39 passed[39m[22m[90m (55)[39m
-[2m      Tests [22m [1m[31m16 failed[39m[22m[2m | [22m[1m[32m527 passed[39m[22m[90m (543)[39m
-[2m     Errors [22m [1m[31m1 error[39m[22m
-[2m   Start at [22m 16:53:16
-[2m   Duration [22m 11.39s[2m (transform 3.70s, setup 7.25s, collect 6.31s, tests 2.18s, environment 42.08s, prepare 1.83s)[22m
+ [32m✓[39m tests/RecordsOverlay.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 69[2mms[22m[39m
+ [32m✓[39m tests/GridIterator.test.ts [2m([22m[2m35 tests[22m[2m)[22m[32m 65[2mms[22m[39m
+ [32m✓[39m tests/Position.test.ts [2m([22m[2m99 tests[22m[2m)[22m[32m 90[2mms[22m[39m
+ [32m✓[39m tests/CombatActionManager.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+ [32m✓[39m tests/SafeServiceCall.test.ts [2m([22m[2m31 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32m✓[39m tests/TileStrategyPattern.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m tests/EventValidator.test.ts [2m([22m[2m21 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m tests/dialogue-state-simple.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tests/FischersWand.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 54[2mms[22m[39m
+ [32m✓[39m tests/ZoneKeyUtils.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+ [32m✓[39m tests/LineOfSightUtils.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m tests/Lizord.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m tests/zoneSpawnManager.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m tests/DirectionUtils.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32m✓[39m tests/ItemUtils.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/dialogue-progression.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/EnemyAttackRange.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 58[2mms[22m[39m
+ [32m✓[39m tests/constants.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m tests/CustomBoardZoneKeyFix.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/ZoneStateManager.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/UI.dom.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/UI.styles.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 8[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 5 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/InventoryUI.test.ts[2m [ tests/InventoryUI.test.ts ][22m
+[31m[1mError[22m: Failed to resolve import "../src/ui/InventoryUI" from "tests/InventoryUI.test.ts". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/virgi/OneDrive/Desktop/Apps/Chress/tests/InventoryUI.test.ts[39m:1:28
+[33m  1  |  import { InventoryUI } from "../src/ui/InventoryUI";
+     |                               ^
+  2  |  import { InventoryService } from "@managers/inventory/InventoryService";
+  3  |  import { ItemEffectStrategy } from "@managers/inventory/ItemEffectStrategy";[39m
+[90m [2m❯[22m TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42528:41[22m[39m
+[90m [2m❯[22m TransformPluginContext.error node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42525:16[22m[39m
+[90m [2m❯[22m normalizeUrl node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40504:23[22m[39m
+[90m [2m❯[22m node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40623:37[22m[39m
+[90m [2m❯[22m TransformPluginContext.transform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40550:7[22m[39m
+[90m [2m❯[22m EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42323:18[22m[39m
+[90m [2m❯[22m loadAndTransform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m35739:27[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/messageManager.test.ts[2m [ tests/messageManager.test.ts ][22m
+[31m[1mError[22m: Failed to resolve import "../src/ui/MessageManager" from "tests/messageManager.test.ts". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/virgi/OneDrive/Desktop/Apps/Chress/tests/messageManager.test.ts[39m:1:31
+[33m  1  |  import { MessageManager } from "../src/ui/MessageManager";
+     |                                  ^
+  2  |  import { getVoiceSettingsForName } from "../src/ui/VoiceSettings";
+  3  |  const makeFakeAnimationScheduler = () => ({[39m
+[90m [2m❯[22m TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42528:41[22m[39m
+[90m [2m❯[22m TransformPluginContext.error node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42525:16[22m[39m
+[90m [2m❯[22m normalizeUrl node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40504:23[22m[39m
+[90m [2m❯[22m node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40623:37[22m[39m
+[90m [2m❯[22m TransformPluginContext.transform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40550:7[22m[39m
+[90m [2m❯[22m EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42323:18[22m[39m
+[90m [2m❯[22m loadAndTransform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m35739:27[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/Player.test.ts[2m [ tests/Player.test.ts ][22m
+[31m[1mError[22m: Failed to resolve import "../src/entities/Player" from "tests/Player.test.ts". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/virgi/OneDrive/Desktop/Apps/Chress/tests/Player.test.ts[39m:1:23
+[33m  1  |  import { Player } from "../src/entities/Player";
+     |                          ^
+  2  |  import { TILE_TYPES, GRID_SIZE, ZONE_CONSTANTS } from "@core/constants/index";
+  3  |  describe("Player", () => {[39m
+[90m [2m❯[22m TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42528:41[22m[39m
+[90m [2m❯[22m TransformPluginContext.error node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42525:16[22m[39m
+[90m [2m❯[22m normalizeUrl node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40504:23[22m[39m
+[90m [2m❯[22m node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40623:37[22m[39m
+[90m [2m❯[22m TransformPluginContext.transform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40550:7[22m[39m
+[90m [2m❯[22m EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42323:18[22m[39m
+[90m [2m❯[22m loadAndTransform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m35739:27[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/PlayerStatsUI.test.ts[2m [ tests/PlayerStatsUI.test.ts ][22m
+[31m[1mError[22m: Failed to resolve import "../src/ui/PlayerStatsUI" from "tests/PlayerStatsUI.test.ts". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/virgi/OneDrive/Desktop/Apps/Chress/tests/PlayerStatsUI.test.ts[39m:1:30
+[33m  1  |  import { PlayerStatsUI } from "../src/ui/PlayerStatsUI";
+     |                                 ^
+  2  |  import { eventBus } from "@core/EventBus";
+  3  |  import { EventTypes } from "@core/EventTypes";[39m
+[90m [2m❯[22m TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42528:41[22m[39m
+[90m [2m❯[22m TransformPluginContext.error node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42525:16[22m[39m
+[90m [2m❯[22m normalizeUrl node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40504:23[22m[39m
+[90m [2m❯[22m node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40623:37[22m[39m
+[90m [2m❯[22m TransformPluginContext.transform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40550:7[22m[39m
+[90m [2m❯[22m EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42323:18[22m[39m
+[90m [2m❯[22m loadAndTransform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m35739:27[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/UIManager.test.ts[2m [ tests/UIManager.test.ts ][22m
+[31m[1mError[22m: Failed to resolve import "../src/ui/UIManager" from "tests/UIManager.test.ts". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/virgi/OneDrive/Desktop/Apps/Chress/tests/UIManager.test.ts[39m:1:26
+[33m  1  |  import { UIManager } from "../src/ui/UIManager";
+     |                             ^
+  2  |  import { eventBus } from "@core/EventBus";
+  3  |  import { EventTypes } from "@core/EventTypes";[39m
+[90m [2m❯[22m TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42528:41[22m[39m
+[90m [2m❯[22m TransformPluginContext.error node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42525:16[22m[39m
+[90m [2m❯[22m normalizeUrl node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40504:23[22m[39m
+[90m [2m❯[22m node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40623:37[22m[39m
+[90m [2m❯[22m TransformPluginContext.transform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m40550:7[22m[39m
+[90m [2m❯[22m EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m42323:18[22m[39m
+[90m [2m❯[22m loadAndTransform node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:[2m35739:27[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/17]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 12 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/AnimationRenderer.test.ts[2m > [22mAnimationRenderer - splode[2m > [22mdrawSplodeAnimation draws a 3x3 splode image centered on bomb
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'getSplodeAnimations')[39m
+[36m [2m❯[22m AnimationRenderer.drawSplodeAnimation src/renderers/AnimationRenderer.ts:[2m36:57[22m[39m
+    [90m 34| [39m
+    [90m 35| [39m    [34mdrawSplodeAnimation[39m()[33m:[39m [35mvoid[39m {
+    [90m 36| [39m        const splodeAnimations = this.game.playerFacade.getSplodeAnima…
+    [90m   | [39m                                                        [31m^[39m
+    [90m 37| [39m        splodeAnimations[33m.[39m[34mforEach[39m(anim [33m=>[39m {
+    [90m 38| [39m            [35mif[39m (anim[33m.[39mframe [33m>[39m [34m0[39m) {
+[90m [2m❯[22m tests/AnimationRenderer.test.ts:[2m32:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/BarterWindow.test.ts[2m > [22mBarterWindow discovery trades[2m > [22maxelotl_axe trade consumes discoveries and grants axe ability
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/BarterWindow.test.ts:[2m105:41[22m[39m
+    [90m103| [39m
+    [90m104| [39m    // After trade: player should have axe and spentDiscoveries increm…
+    [90m105| [39m    [34mexpect[39m(player[33m.[39mabilities[33m.[39m[34mhas[39m([32m'axe'[39m))[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                        [31m^[39m
+    [90m106| [39m    [34mexpect[39m(player[33m.[39m[34mgetSpentDiscoveries[39m())[33m.[39m[34mtoBe[39m(required)[33m;[39m
+    [90m107| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/FogRenderer.test.ts[2m > [22mFogRenderer[2m > [22mcreates a pattern for numeric underground dimension
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'getCurrentZone')[39m
+[36m [2m❯[22m FogRenderer.updateAndDrawFog src/renderers/FogRenderer.ts:[2m52:52[22m[39m
+    [90m 50| [39m
+    [90m 51| [39m    [34mupdateAndDrawFog[39m()[33m:[39m [35mvoid[39m {
+    [90m 52| [39m        [35mconst[39m currentZone [33m=[39m [35mthis[39m[33m.[39mgame[33m.[39mplayerFacade[33m.[39m[34mgetCurrentZone[39m()[33m;[39m
+    [90m   | [39m                                                   [31m^[39m
+    [90m 53| [39m
+    [90m 54| [39m        // Coerce dimension to number to tolerate loaded/serialized st…
+[90m [2m❯[22m tests/FogRenderer.test.ts:[2m68:8[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/FogRenderer.test.ts[2m > [22mFogRenderer[2m > [22mcreates a pattern for stringified underground dimension
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'getCurrentZone')[39m
+[36m [2m❯[22m FogRenderer.updateAndDrawFog src/renderers/FogRenderer.ts:[2m52:52[22m[39m
+    [90m 50| [39m
+    [90m 51| [39m    [34mupdateAndDrawFog[39m()[33m:[39m [35mvoid[39m {
+    [90m 52| [39m        [35mconst[39m currentZone [33m=[39m [35mthis[39m[33m.[39mgame[33m.[39mplayerFacade[33m.[39m[34mgetCurrentZone[39m()[33m;[39m
+    [90m   | [39m                                                   [31m^[39m
+    [90m 53| [39m
+    [90m 54| [39m        // Coerce dimension to number to tolerate loaded/serialized st…
+[90m [2m❯[22m tests/FogRenderer.test.ts:[2m77:8[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/FogRenderer.test.ts[2m > [22mFogRenderer[2m > [22mpreserves/recreates pattern across zone changes
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'getCurrentZone')[39m
+[36m [2m❯[22m FogRenderer.updateAndDrawFog src/renderers/FogRenderer.ts:[2m52:52[22m[39m
+    [90m 50| [39m
+    [90m 51| [39m    [34mupdateAndDrawFog[39m()[33m:[39m [35mvoid[39m {
+    [90m 52| [39m        [35mconst[39m currentZone [33m=[39m [35mthis[39m[33m.[39mgame[33m.[39mplayerFacade[33m.[39m[34mgetCurrentZone[39m()[33m;[39m
+    [90m   | [39m                                                   [31m^[39m
+    [90m 53| [39m
+    [90m 54| [39m        // Coerce dimension to number to tolerate loaded/serialized st…
+[90m [2m❯[22m tests/FogRenderer.test.ts:[2m86:8[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/InteractionManager.test.ts[2m > [22mInteractionManager melee tap adjacency[2m > [22mdoes not perform immediate melee attack when tapping diagonally adjacent enemy
+[31m[1mTypeError[22m: this.game.playerFacade?.getPositionObject is not a function[39m
+[36m [2m❯[22m InteractionManager.handleTap src/managers/InteractionManager.ts:[2m285:51[22m[39m
+    [90m283| [39m        }
+    [90m284| [39m
+    [90m285| [39m        [35mconst[39m playerPos [33m=[39m [35mthis[39m[33m.[39mgame[33m.[39mplayerFacade[33m?.[39m[34mgetPositionObject[39m()[33m;[39m
+    [90m   | [39m                                                  [31m^[39m
+    [90m286| [39m        [35mif[39m ([33m![39mplayerPos) [35mreturn[39m [35mfalse[39m[33m;[39m
+    [90m287| [39m
+[90m [2m❯[22m tests/InteractionManager.test.ts:[2m82:24[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/InteractionManager.test.ts[2m > [22mInteractionManager melee tap adjacency[2m > [22mperforms immediate melee attack when tapping cardinally adjacent enemy
+[31m[1mTypeError[22m: this.game.playerFacade?.getPositionObject is not a function[39m
+[36m [2m❯[22m InteractionManager.handleTap src/managers/InteractionManager.ts:[2m285:51[22m[39m
+    [90m283| [39m        }
+    [90m284| [39m
+    [90m285| [39m        [35mconst[39m playerPos [33m=[39m [35mthis[39m[33m.[39mgame[33m.[39mplayerFacade[33m?.[39m[34mgetPositionObject[39m()[33m;[39m
+    [90m   | [39m                                                  [31m^[39m
+    [90m286| [39m        [35mif[39m ([33m![39mplayerPos) [35mreturn[39m [35mfalse[39m[33m;[39m
+    [90m287| [39m
+[90m [2m❯[22m tests/InteractionManager.test.ts:[2m92:24[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/MiniMap.test.ts[2m > [22mMiniMap[2m > [22mrenderExpanded()[2m > [22mshould call renderZoneMap with expanded parameters
+[31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ ObjectContaining{…} ][90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2m❯[22m tests/MiniMap.test.ts:[2m196:37[22m[39m
+    [90m194| [39m      miniMap[33m.[39m[34mrenderExpanded[39m()[33m;[39m
+    [90m195| [39m
+    [90m196| [39m      [34mexpect[39m(miniMap[33m.[39mrenderZoneMap)[33m.[39m[34mtoHaveBeenCalledWith[39m(
+    [90m   | [39m                                    [31m^[39m
+    [90m197| [39m        expect[33m.[39m[34mobjectContaining[39m({
+    [90m198| [39m          ctx[33m:[39m miniMap[33m.[39mexpandedCtx[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/MiniMap.test.ts[2m > [22mMiniMap[2m > [22mrenderExpanded()[2m > [22mshould pass pan offsets to renderZoneMap
+[31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ ObjectContaining{…} ][90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2m❯[22m tests/MiniMap.test.ts:[2m211:37[22m[39m
+    [90m209| [39m      miniMap[33m.[39m[34mrenderExpanded[39m()[33m;[39m
+    [90m210| [39m
+    [90m211| [39m      [34mexpect[39m(miniMap[33m.[39mrenderZoneMap)[33m.[39m[34mtoHaveBeenCalledWith[39m(
+    [90m   | [39m                                    [31m^[39m
+    [90m212| [39m        expect[33m.[39m[34mobjectContaining[39m({
+    [90m213| [39m          offsetX[33m:[39m [34m2[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/MiniMapHighlights.test.ts[2m > [22mMiniMap highlights cycling[2m > [22mcycles through shapes in expected order and then clears
+[31m[1mAssertionError[22m: expected undefined to be 'circle' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"circle"
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/MiniMapHighlights.test.ts:[2m37:37[22m[39m
+    [90m 35| [39m    [90m// First click -> circle[39m
+    [90m 36| [39m    miniMap[33m.[39m[34mhandleExpandedClick[39m(centerClick)[33m;[39m
+    [90m 37| [39m    [34mexpect[39m(miniMap[33m.[39mhighlights[key])[33m.[39m[34mtoBe[39m([32m'circle'[39m)[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m 38| [39m
+    [90m 39| [39m    [90m// Second click -> triangle[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/MiniMapHighlights.test.ts[2m > [22mMiniMap highlights cycling[2m > [22mrenders are triggered after cycling
+[31m[1mAssertionError[22m: expected "vi.fn()" to be called at least once[39m
+[36m [2m❯[22m tests/MiniMapHighlights.test.ts:[2m70:36[22m[39m
+    [90m 68| [39m
+    [90m 69| [39m    // Expect both expanded and small minimap render methods to be cal…
+    [90m 70| [39m    [34mexpect[39m(miniMap[33m.[39mrenderExpanded)[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m   | [39m                                   [31m^[39m
+    [90m 71| [39m    [34mexpect[39m(miniMap[33m.[39mrenderZoneMap)[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m 72| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/UIEventCoordinator.test.ts[2m > [22mUIEventCoordinator[2m > [22mDialog Events[2m > [22mUI_DIALOG_SHOW with invalid type logs error
+[31m[1mAssertionError[22m: expected "warn" to be called with arguments: [ StringContaining{…} ][90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2m❯[22m tests/UIEventCoordinator.test.ts:[2m91:36[22m[39m
+    [90m 89| [39m            })[33m;[39m
+    [90m 90| [39m
+    [90m 91| [39m            [34mexpect[39m(consoleWarnSpy)[33m.[39m[34mtoHaveBeenCalledWith[39m(
+    [90m   | [39m                                   [31m^[39m
+    [90m 92| [39m                expect.stringContaining('Unknown dialog type: invalid_…
+    [90m 93| [39m            )[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/17]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m12 failed[39m[22m[2m | [22m[1m[32m27 passed[39m[22m[90m (39)[39m
+[2m      Tests [22m [1m[31m12 failed[39m[22m[2m | [22m[1m[32m515 passed[39m[22m[90m (527)[39m
+[2m   Start at [22m 11:01:06
+[2m   Duration [22m 15.17s[2m (transform 10.15s, setup 1.14s, collect 17.46s, tests 2.50s, environment 52.40s, prepare 2.25s)[22m
 

@@ -1,0 +1,1473 @@
+src/core/AnimationScheduler.ts(30,20): error TS7006: Parameter 'sequenceId' implicitly has an 'any' type.
+src/core/AnimationScheduler.ts(42,22): error TS7006: Parameter 'sequenceId' implicitly has an 'any' type.
+src/core/AnimationScheduler.ts(90,10): error TS7006: Parameter 'ms' implicitly has an 'any' type.
+src/core/AnimationScheduler.ts(100,10): error TS7006: Parameter 'callback' implicitly has an 'any' type.
+src/core/AnimationScheduler.ts(110,16): error TS7006: Parameter 'callbacks' implicitly has an 'any' type.
+src/core/AnimationScheduler.ts(138,10): error TS7006: Parameter 'condition' implicitly has an 'any' type.
+src/core/AnimationScheduler.ts(138,21): error TS7006: Parameter 'loopBlock' implicitly has an 'any' type.
+src/core/AnimationScheduler.ts(183,23): error TS7006: Parameter 'stepIndex' implicitly has an 'any' type.
+src/core/AnimationScheduler.ts(227,26): error TS7006: Parameter 'subStep' implicitly has an 'any' type.
+src/core/AnimationScheduler.ts(243,11): error TS7006: Parameter 'ms' implicitly has an 'any' type.
+src/core/context/GameContextCore.ts(275,42): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/core/DataContracts.ts(254,21): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'AnimationData'.
+  No index signature with a parameter of type 'string' was found on type 'AnimationData'.
+src/core/EventValidator.ts(107,16): error TS7006: Parameter 'enabled' implicitly has an 'any' type.
+src/core/EventValidator.ts(116,19): error TS7006: Parameter 'strict' implicitly has an 'any' type.
+src/core/EventValidator.ts(289,44): error TS7006: Parameter 'eventBus' implicitly has an 'any' type.
+src/core/EventValidator.ts(292,30): error TS7006: Parameter 'eventType' implicitly has an 'any' type.
+src/core/EventValidator.ts(292,41): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/core/game.ts(38,9): error TS2531: Object is possibly 'null'.
+src/core/handlers/BaseZoneHandler.ts(68,19): error TS7006: Parameter 'zoneConnections' implicitly has an 'any' type.
+src/core/handlers/BaseZoneHandler.ts(130,31): error TS7006: Parameter 'baseProbabilities' implicitly has an 'any' type.
+src/core/handlers/BaseZoneHandler.ts(139,26): error TS7006: Parameter 'probability' implicitly has an 'any' type.
+src/core/handlers/BaseZoneHandler.ts(192,33): error TS18048: 'npc.placement' is possibly 'undefined'.
+src/core/handlers/InteriorHandler.ts(5,17): error TS7006: Parameter 'zoneGen' implicitly has an 'any' type.
+src/core/handlers/InteriorHandler.ts(5,26): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/core/handlers/InteriorHandler.ts(5,33): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/core/handlers/InteriorHandler.ts(5,40): error TS7006: Parameter 'foodAssets' implicitly has an 'any' type.
+src/core/handlers/InteriorHandler.ts(56,38): error TS7006: Parameter 'zoneGen' implicitly has an 'any' type.
+src/core/handlers/InteriorHandler.ts(56,47): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/core/handlers/InteriorHandler.ts(56,54): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/core/handlers/InteriorHandler.ts(56,61): error TS7006: Parameter 'foodAssets' implicitly has an 'any' type.
+src/core/handlers/SurfaceHandler.ts(10,17): error TS7006: Parameter 'zoneGen' implicitly has an 'any' type.
+src/core/handlers/SurfaceHandler.ts(10,26): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/core/handlers/SurfaceHandler.ts(10,33): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/core/handlers/SurfaceHandler.ts(10,40): error TS7006: Parameter 'zoneConnections' implicitly has an 'any' type.
+src/core/handlers/SurfaceHandler.ts(10,57): error TS7006: Parameter 'foodAssets' implicitly has an 'any' type.
+src/core/handlers/SurfaceHandler.ts(118,31): error TS7006: Parameter 'zoneGen' implicitly has an 'any' type.
+src/core/handlers/SurfaceHandler.ts(118,40): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/core/handlers/SurfaceHandler.ts(118,47): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/core/handlers/SurfaceHandler.ts(118,54): error TS7006: Parameter 'zoneConnections' implicitly has an 'any' type.
+src/core/handlers/SurfaceHandler.ts(118,71): error TS7006: Parameter 'foodAssets' implicitly has an 'any' type.
+src/core/handlers/UndergroundHandler.ts(92,82): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'null | undefined'.
+  Type 'number' is not assignable to type 'null | undefined'.
+src/core/handlers/UndergroundHandler.ts(93,53): error TS18048: 'y' is possibly 'undefined'.
+src/core/logger.ts(57,11): error TS2783: 'message' is specified more than once, so this usage will be overwritten.
+src/core/logger.ts(59,11): error TS2783: 'name' is specified more than once, so this usage will be overwritten.
+src/core/NPCLoader.ts(95,21): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(97,21): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(100,13): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(101,13): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(102,13): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(105,13): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/NPCLoader.ts(110,13): error TS18048: 'registryConfig.placement' is possibly 'undefined'.
+src/core/Position.ts(332,7): error TS2322: Type 'unknown' is not assignable to type 'T | undefined'.
+src/core/regionNotes.ts(1,32): error TS7006: Parameter 'zoneKey' implicitly has an 'any' type.
+src/core/regionNotes.ts(1,41): error TS7006: Parameter 'structureGenerator' implicitly has an 'any' type.
+src/core/regionNotes.ts(1,61): error TS7006: Parameter 'currentZoneX' implicitly has an 'any' type.
+src/core/regionNotes.ts(1,75): error TS7006: Parameter 'currentZoneY' implicitly has an 'any' type.
+src/core/SaveDeserializer.ts(29,9): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/core/SaveSerializer.ts(19,52): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/core/SaveSerializer.ts(21,62): error TS2345: Argument of type 'Player | null' is not assignable to parameter of type 'Player'.
+  Type 'null' is not assignable to type 'Player'.
+src/core/SaveSerializer.ts(27,13): error TS2322: Type '[string, unknown][]' is not assignable to type '[string, { grid: Grid; enemies: SavedEnemyData[]; discovered: boolean; }][]'.
+  Type '[string, unknown]' is not assignable to type '[string, { grid: Grid; enemies: SavedEnemyData[]; discovered: boolean; }]'.
+    Type at position 1 in source is not compatible with type at position 1 in target.
+      Type 'unknown' is not assignable to type '{ grid: Grid; enemies: SavedEnemyData[]; discovered: boolean; }'.
+src/core/ServiceContainer.ts(115,82): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'null | undefined'.
+src/core/ServiceContainer.ts(152,50): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'GameContext'.
+  Type 'IGame' is missing the following properties from type 'GameContext': managers, combat, inventory, interaction, and 4 more.
+src/core/ServiceContainer.ts(211,68): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'Game'.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+src/core/sound/MusicController.ts(37,20): error TS7006: Parameter 'filePath' implicitly has an 'any' type.
+src/core/sound/MusicController.ts(121,30): error TS7006: Parameter 'filePath' implicitly has an 'any' type.
+src/core/sound/MusicController.ts(228,21): error TS7006: Parameter 'enabled' implicitly has an 'any' type.
+src/core/sound/MusicController.ts(252,133): error TS2531: Object is possibly 'null'.
+src/core/sound/SoundLifecycleManager.ts(60,9): error TS2322: Type 'boolean | null' is not assignable to type 'boolean'.
+  Type 'null' is not assignable to type 'boolean'.
+src/core/sound/SoundLifecycleManager.ts(108,13): error TS2322: Type 'Promise<unknown>' is not assignable to type 'Promise<void>'.
+  Type 'unknown' is not assignable to type 'void'.
+src/core/SoundManager.ts(67,14): error TS7006: Parameter 'name' implicitly has an 'any' type.
+src/core/SoundManager.ts(67,20): error TS7006: Parameter 'filePath' implicitly has an 'any' type.
+src/core/SoundManager.ts(74,15): error TS7006: Parameter 'soundName' implicitly has an 'any' type.
+src/core/SoundManager.ts(91,20): error TS7006: Parameter 'filePath' implicitly has an 'any' type.
+src/core/SoundManager.ts(103,30): error TS7006: Parameter 'filePath' implicitly has an 'any' type.
+src/core/SoundManager.ts(109,19): error TS7006: Parameter 'enabled' implicitly has an 'any' type.
+src/core/SoundManager.ts(113,21): error TS7006: Parameter 'enabled' implicitly has an 'any' type.
+src/core/SoundManager.ts(131,25): error TS7006: Parameter 'soundName' implicitly has an 'any' type.
+src/core/TileRegistry.ts(162,53): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/core/TurnManager.ts(75,37): error TS2339: Property 'gestureDetector' does not exist on type 'InputManager'.
+src/core/TurnManager.ts(76,36): error TS2339: Property 'gestureDetector' does not exist on type 'InputManager'.
+src/core/TurnManager.ts(94,33): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(63,16): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(63,19): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(67,18): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(67,25): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(67,32): error TS7006: Parameter 'dimension' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(67,43): error TS7006: Parameter 'existingZones' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(67,58): error TS7006: Parameter 'zoneConnections' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(67,75): error TS7006: Parameter 'foodAssets' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(67,87): error TS7006: Parameter 'exitSide' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(149,20): error TS7006: Parameter 'zoneKey' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(149,29): error TS7006: Parameter 'structureGenerator' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(153,19): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(153,26): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(153,33): error TS7006: Parameter 'zoneConnections' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(153,50): error TS7006: Parameter 'featureGenerator' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(153,68): error TS7006: Parameter 'zoneLevel' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(157,21): error TS7006: Parameter 'exitX' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(157,28): error TS7006: Parameter 'exitY' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(161,23): error TS7006: Parameter 'startX' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(161,31): error TS7006: Parameter 'startY' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(170,22): error TS7006: Parameter 'requiredNeighbors' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(189,29): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/core/ZoneGenerator.ts(189,36): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/core/zoneSpawnManager.ts(6,28): error TS7006: Parameter 'zoneGen' implicitly has an 'any' type.
+src/core/zoneSpawnManager.ts(6,37): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/core/zoneSpawnManager.ts(6,40): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/core/zoneSpawnManager.ts(9,49): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/core/zoneSpawnManager.ts(14,34): error TS7006: Parameter 'zoneGen' implicitly has an 'any' type.
+src/core/zoneSpawnManager.ts(14,43): error TS7006: Parameter 'requiredNeighbors' implicitly has an 'any' type.
+src/core/zoneSpawnManager.ts(39,38): error TS7006: Parameter 'zoneGen' implicitly has an 'any' type.
+src/core/ZoneStateRestorer.ts(16,29): error TS7006: Parameter 'game' implicitly has an 'any' type.
+src/core/ZoneStateRestorer.ts(16,35): error TS7006: Parameter 'zoneStateData' implicitly has an 'any' type.
+src/enemy/BaseEnemy.ts(195,39): error TS2345: Argument of type 'number' is not assignable to parameter of type '0 | 10 | 12 | 6 | 7 | 28 | 9 | 11 | 24 | 27 | 29 | 49'.
+src/enemy/EnemyAttack.ts(80,13): error TS2345: Argument of type 'Grid' is not assignable to parameter of type 'GridCompat'.
+  Type 'Tile[]' is not assignable to type 'TileCompat[]'.
+    Type 'Tile' is not assignable to type 'TileCompat'.
+      Type 'undefined' is not assignable to type 'TileCompat'.
+src/enemy/EnemyAttack.ts(163,13): error TS2345: Argument of type 'Grid' is not assignable to parameter of type 'GridCompat'.
+  Type 'Tile[]' is not assignable to type 'TileCompat[]'.
+    Type 'Tile' is not assignable to type 'TileCompat'.
+      Type 'undefined' is not assignable to type 'TileCompat'.
+src/enemy/EnemyAttackHelper.ts(21,35): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(37,26): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(37,33): error TS7006: Parameter 'playerX' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(37,42): error TS7006: Parameter 'playerY' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(53,39): error TS7006: Parameter 'dx' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(53,43): error TS7006: Parameter 'dy' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(53,47): error TS7006: Parameter 'playerX' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(53,56): error TS7006: Parameter 'playerY' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(68,31): error TS7006: Parameter 'knockbackX' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(68,43): error TS7006: Parameter 'knockbackY' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(68,55): error TS7006: Parameter 'source' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(86,34): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(86,41): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(86,49): error TS7006: Parameter 'playerX' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(86,58): error TS7006: Parameter 'playerY' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(86,67): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(86,73): error TS7006: Parameter 'source' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(133,39): error TS7006: Parameter 'attackDx' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(133,49): error TS7006: Parameter 'attackDy' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(133,59): error TS7006: Parameter 'playerX' implicitly has an 'any' type.
+src/enemy/EnemyAttackHelper.ts(133,68): error TS7006: Parameter 'playerY' implicitly has an 'any' type.
+src/enemy/EnemyChargeBehaviors.ts(8,33): error TS6137: Cannot import type declaration files. Consider importing 'core' instead of '@types/core'.
+src/enemy/EnemyLineOfSight.ts(6,33): error TS6137: Cannot import type declaration files. Consider importing 'core' instead of '@types/core'.
+src/enemy/EnemyMovement.ts(17,21): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/EnemyMovement.ts(17,29): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/enemy/EnemyMovement.ts(17,35): error TS7006: Parameter 'enemies' implicitly has an 'any' type.
+src/enemy/EnemyMovement.ts(17,44): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/enemy/EnemySpecialActions.ts(23,80): error TS2345: Argument of type 'Grid' is not assignable to parameter of type 'GridCompat'.
+  Type 'Tile[]' is not assignable to type 'TileCompat[]'.
+    Type 'Tile' is not assignable to type 'TileCompat'.
+      Type 'undefined' is not assignable to type 'TileCompat'.
+src/enemy/EnemySpecialActions.ts(24,108): error TS2345: Argument of type 'Grid' is not assignable to parameter of type 'GridCompat'.
+  Type 'Tile[]' is not assignable to type 'TileCompat[]'.
+    Type 'Tile' is not assignable to type 'TileCompat'.
+      Type 'undefined' is not assignable to type 'TileCompat'.
+src/enemy/EnemySpecialActions.ts(76,82): error TS2345: Argument of type 'Grid' is not assignable to parameter of type 'GridCompat'.
+  Type 'Tile[]' is not assignable to type 'TileCompat[]'.
+    Type 'Tile' is not assignable to type 'TileCompat'.
+      Type 'undefined' is not assignable to type 'TileCompat'.
+src/enemy/EnemySpecialActions.ts(162,101): error TS2345: Argument of type 'Grid' is not assignable to parameter of type 'GridCompat'.
+  Type 'Tile[]' is not assignable to type 'TileCompat[]'.
+    Type 'Tile' is not assignable to type 'TileCompat'.
+      Type 'undefined' is not assignable to type 'TileCompat'.
+src/enemy/MoveCalculators/factory.ts(10,26): error TS7006: Parameter 'enemyType' implicitly has an 'any' type.
+src/enemy/MoveCalculators/interaction.ts(37,90): error TS2345: Argument of type 'Game | null' is not assignable to parameter of type 'Game'.
+  Type 'null' is not assignable to type 'Game'.
+src/enemy/MoveCalculators/lazerd.ts(20,19): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lazerd.ts(20,26): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lazerd.ts(20,34): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lazerd.ts(20,45): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lazerd.ts(20,51): error TS7006: Parameter 'enemies' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardeaux.ts(19,19): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardeaux.ts(19,26): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardeaux.ts(19,34): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardeaux.ts(19,45): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardeaux.ts(19,51): error TS7006: Parameter 'enemies' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(17,19): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(17,26): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(17,34): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(17,45): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(17,51): error TS7006: Parameter 'enemies' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(26,27): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(26,34): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(26,42): error TS7006: Parameter 'playerX' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(26,51): error TS7006: Parameter 'playerY' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(26,60): error TS7006: Parameter 'isSimulation' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardo.ts(26,74): error TS7006: Parameter 'game' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(18,19): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(18,26): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(18,34): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(18,45): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(18,51): error TS7006: Parameter 'enemies' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(28,28): error TS2339: Property 'playerJustAttacked' does not exist on type 'never'.
+src/enemy/MoveCalculators/lizardy.ts(49,67): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(55,71): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(71,27): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(71,34): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(71,42): error TS7006: Parameter 'attackX' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(71,51): error TS7006: Parameter 'attackY' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(71,60): error TS7006: Parameter 'isSimulation' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(78,23): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(78,30): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/MoveCalculators/lizardy.ts(78,38): error TS7006: Parameter 'isSimulation' implicitly has an 'any' type.
+src/enemy/MoveCalculators/zard.ts(20,19): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/MoveCalculators/zard.ts(20,26): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/MoveCalculators/zard.ts(20,34): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/enemy/MoveCalculators/zard.ts(20,45): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/enemy/MoveCalculators/zard.ts(20,51): error TS7006: Parameter 'enemies' implicitly has an 'any' type.
+src/enemy/MoveCalculators/zard.ts(39,19): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/enemy/MoveCalculators/zard.ts(63,27): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/enemy/MoveCalculators/zard.ts(63,34): error TS7006: Parameter 'player' implicitly has an 'any' type.
+src/enemy/MoveCalculators/zard.ts(63,42): error TS7006: Parameter 'isSimulation' implicitly has an 'any' type.
+src/enemy/MoveCalculators/zard.ts(63,56): error TS7006: Parameter 'game' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(38,27): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(38,30): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(38,33): error TS7006: Parameter 'enemies' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(38,42): error TS7006: Parameter 'self' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(84,33): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(84,36): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(84,39): error TS7006: Parameter 'px' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(84,43): error TS7006: Parameter 'py' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(84,47): error TS7006: Parameter 'enemies' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(84,56): error TS7006: Parameter 'self' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(158,21): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(158,24): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(158,27): error TS7006: Parameter 'px' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(158,31): error TS7006: Parameter 'py' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(158,35): error TS7006: Parameter 'enemies' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(158,44): error TS7006: Parameter 'self' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(232,23): error TS7006: Parameter 'self' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(232,29): error TS7006: Parameter 'playerX' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(232,38): error TS7006: Parameter 'playerY' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(232,47): error TS7006: Parameter 'proposedX' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(232,58): error TS7006: Parameter 'proposedY' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(232,69): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(232,75): error TS7006: Parameter 'enemies' implicitly has an 'any' type.
+src/enemy/TacticalAI.ts(252,30): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/entities/Enemy.ts(40,5): error TS2416: Property 'serialize' in type 'Enemy' is not assignable to the same property in base type 'BaseEnemy'.
+  Type '() => SerializedEnemy' is not assignable to type '() => Record<string, unknown>'.
+    Type 'SerializedEnemy' is not assignable to type 'Record<string, unknown>'.
+      Index signature for type 'string' is missing in type 'SerializedEnemy'.
+src/facades/CombatFacade.ts(18,17): error TS7006: Parameter 'combatActionManager' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(18,38): error TS7006: Parameter 'bombManager' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(24,30): error TS7006: Parameter 'gridCoords' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(24,42): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(28,28): error TS7006: Parameter 'gridCoords' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(28,40): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(32,20): error TS7006: Parameter 'gridCoords' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(32,32): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(36,28): error TS7006: Parameter 'gridCoords' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(36,40): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(41,25): error TS7006: Parameter 'gridCoords' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(45,26): error TS7006: Parameter 'gridCoords' implicitly has an 'any' type.
+src/facades/CombatFacade.ts(45,38): error TS7006: Parameter 'playerPos' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(68,12): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(68,15): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(81,13): error TS7006: Parameter 'predicate' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(90,10): error TS7006: Parameter 'predicate' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(99,14): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(110,16): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(110,19): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(119,9): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(143,12): error TS7006: Parameter 'enemy' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(188,16): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(202,17): error TS7006: Parameter 'predicate' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(233,16): error TS7006: Parameter 'newEnemies' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(252,12): error TS7006: Parameter 'predicate' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(265,13): error TS7006: Parameter 'callback' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(274,9): error TS7006: Parameter 'callback' implicitly has an 'any' type.
+src/facades/EnemyCollection.ts(315,33): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(20,17): error TS7006: Parameter 'npcManager' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(20,29): error TS7006: Parameter 'environmentManager' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(20,49): error TS7006: Parameter 'inputManager' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(27,23): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(31,23): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(35,22): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(39,21): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(43,22): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(47,23): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(51,22): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(55,25): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(59,23): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(63,23): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(68,19): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(72,21): error TS7006: Parameter 'coords' implicitly has an 'any' type.
+src/facades/InteractionFacade.ts(77,20): error TS7006: Parameter 'event' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(69,17): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(69,20): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(81,21): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(81,24): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(84,16): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(84,19): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(84,22): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(87,10): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(87,13): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(87,16): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(87,22): error TS7006: Parameter 'onZoneTransition' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(90,25): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(100,20): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(100,23): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(106,22): error TS7006: Parameter 'dimension' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(112,25): error TS7006: Parameter 'depth' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(118,17): error TS7006: Parameter 'portType' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(121,21): error TS7006: Parameter 'zoneUpdate' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(124,21): error TS7006: Parameter 'zoneKey' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(133,20): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(133,23): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(146,20): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(149,25): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(152,21): error TS7006: Parameter 'predicate' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(164,24): error TS7006: Parameter 'items' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(171,16): error TS7006: Parameter 'ability' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(174,16): error TS7006: Parameter 'ability' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(177,19): error TS7006: Parameter 'ability' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(202,16): error TS7006: Parameter 'amount' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(205,19): error TS7006: Parameter 'amount' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(208,19): error TS7006: Parameter 'amount' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(214,15): error TS7006: Parameter 'points' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(220,25): error TS7006: Parameter 'count' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(223,16): error TS7006: Parameter 'statName' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(223,26): error TS7006: Parameter 'value' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(230,15): error TS7006: Parameter 'dx' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(230,19): error TS7006: Parameter 'dy' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(239,26): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(239,29): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(242,25): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(242,28): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(245,15): error TS7006: Parameter 'action' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(251,25): error TS7006: Parameter 'count' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(261,24): error TS7006: Parameter 'target' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(311,23): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(311,26): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(311,29): error TS7006: Parameter 'frames' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(314,20): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/facades/PlayerFacade.ts(320,16): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/facades/PlayerInventoryFacade.ts(74,20): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/facades/PlayerInventoryFacade.ts(101,25): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/facades/PlayerInventoryFacade.ts(125,21): error TS7006: Parameter 'predicate' implicitly has an 'any' type.
+src/facades/PlayerInventoryFacade.ts(163,24): error TS7006: Parameter 'items' implicitly has an 'any' type.
+src/facades/PlayerInventoryFacade.ts(180,16): error TS7006: Parameter 'ability' implicitly has an 'any' type.
+src/facades/PlayerInventoryFacade.ts(188,16): error TS7006: Parameter 'ability' implicitly has an 'any' type.
+src/facades/PlayerInventoryFacade.ts(212,19): error TS7006: Parameter 'ability' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(29,21): error TS7006: Parameter 'zoneLevel' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(45,20): error TS7006: Parameter 'zoneLevel' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(45,31): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(45,38): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(47,25): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ 1: number; 2: number; 3: number; 4: number; }'.
+src/generators/EnemyGenerator.ts(80,27): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(80,30): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(90,34): error TS7006: Parameter 'zoneLevel' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(90,45): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(90,52): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(90,59): error TS7006: Parameter 'gridManager' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(98,26): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(98,29): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(98,32): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/EnemyGenerator.ts(98,39): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/FeatureGenerator.ts(277,40): error TS2339: Property 'findTiles' does not exist on type 'GridManager'.
+src/generators/FeatureGenerator.ts(277,51): error TS7006: Parameter 'tile' implicitly has an 'any' type.
+src/generators/FeatureGenerator.ts(279,26): error TS7031: Binding element 'x' implicitly has an 'any' type.
+src/generators/FeatureGenerator.ts(279,29): error TS7031: Binding element 'y' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(11,27): error TS7006: Parameter 'min' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(11,32): error TS7006: Parameter 'max' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(48,32): error TS7006: Parameter 'xOrPos' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(48,40): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(59,31): error TS7006: Parameter 'tile' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(59,37): error TS7006: Parameter 'allowedTiles' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(74,36): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(74,42): error TS7006: Parameter 'xOrPos' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(74,50): error TS7006: Parameter 'yOrTileType' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(74,63): error TS7006: Parameter 'tileType' implicitly has an 'any' type.
+src/generators/GeneratorUtils.ts(107,36): error TS7006: Parameter 'grid' implicitly has an 'any' type.
+src/generators/ItemGenerator.ts(91,33): error TS18048: 'itemConfig.spawnWeight' is possibly 'undefined'.
+src/generators/ItemGenerator.ts(108,41): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/generators/ItemGenerator.ts(108,44): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/generators/ItemGenerator.ts(111,51): error TS2345: Argument of type '((x: any, y: any) => void) | null' is not assignable to parameter of type 'null | undefined'.
+  Type '(x: any, y: any) => void' is not assignable to type 'null | undefined'.
+src/generators/ItemGenerator.ts(121,24): error TS7006: Parameter 'itemData' implicitly has an 'any' type.
+src/generators/ItemGenerator.ts(130,17): error TS2349: This expression is not callable.
+  Type 'never' has no call signatures.
+src/generators/ItemGenerator.ts(164,23): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/generators/ItemGenerator.ts(164,26): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(34,50): error TS7006: Parameter 'tile' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(38,26): error TS7031: Binding element 'x' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(38,29): error TS7031: Binding element 'y' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(43,26): error TS7031: Binding element 'x' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(43,29): error TS7031: Binding element 'y' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(76,21): error TS7006: Parameter 'exitX' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(76,28): error TS7006: Parameter 'exitY' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(156,23): error TS7006: Parameter 'startX' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(156,31): error TS7006: Parameter 'startY' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(217,30): error TS7006: Parameter 'startX' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(217,38): error TS7006: Parameter 'startY' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(217,46): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(217,53): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(224,36): error TS7006: Parameter 'exitX' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(224,43): error TS7006: Parameter 'exitY' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(224,50): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/PathGenerator.ts(224,57): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(16,14): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(16,21): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(63,21): error TS7006: Parameter 'width' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(63,28): error TS7006: Parameter 'height' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(63,36): error TS7006: Parameter 'tileType' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(63,46): error TS7006: Parameter 'onPlacedCallback' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(97,13): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(97,20): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(103,17): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(103,24): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(110,14): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(110,21): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(161,16): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/StructureGenerator.ts(161,23): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/ZoneStateManager.ts(23,25): error TS7006: Parameter 'zoneX' implicitly has an 'any' type.
+src/generators/ZoneStateManager.ts(23,32): error TS7006: Parameter 'zoneY' implicitly has an 'any' type.
+src/generators/ZoneStateManager.ts(36,21): error TS7006: Parameter 'str' implicitly has an 'any' type.
+src/loaders/CustomZoneLoader.ts(23,20): error TS7006: Parameter 'zoneName' implicitly has an 'any' type.
+src/loaders/CustomZoneLoader.ts(63,22): error TS7006: Parameter 'zoneData' implicitly has an 'any' type.
+src/loaders/CustomZoneLoader.ts(103,25): error TS7006: Parameter 'zoneData' implicitly has an 'any' type.
+src/loaders/CustomZoneLoader.ts(140,26): error TS7006: Parameter 'zoneName' implicitly has an 'any' type.
+src/loaders/CustomZoneLoader.ts(168,22): error TS7006: Parameter 'zoneName' implicitly has an 'any' type.
+src/managers/InteractionManager.ts(109,83): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/managers/InteractionManager.ts(127,81): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/managers/InteractionManager.ts(145,73): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/renderers/AnimationRenderer.ts(31,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/AnimationRenderer.ts(32,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/AnimationRenderer.ts(36,34): error TS2532: Object is possibly 'undefined'.
+src/renderers/AnimationRenderer.ts(65,28): error TS2531: Object is possibly 'null'.
+src/renderers/AnimationRenderer.ts(111,28): error TS2531: Object is possibly 'null'.
+src/renderers/AnimationRenderer.ts(139,28): error TS2531: Object is possibly 'null'.
+src/renderers/AnimationRenderer.ts(182,28): error TS2531: Object is possibly 'null'.
+src/renderers/FogRenderer.ts(47,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/FogRenderer.ts(48,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/FogRenderer.ts(52,29): error TS2532: Object is possibly 'undefined'.
+src/renderers/FogRenderer.ts(58,45): error TS2532: Object is possibly 'undefined'.
+src/renderers/NPCRenderer.ts(29,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/NPCRenderer.ts(30,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/NPCRenderer.ts(42,30): error TS2531: Object is possibly 'null'.
+src/renderers/RendererUtils.ts(164,106): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
+src/renderers/RendererUtils.ts(165,28): error TS7015: Element implicitly has an 'any' type because index expression is not of type 'number'.
+src/renderers/strategies/SimpleOverlayRenderStrategy.ts(57,13): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/renderers/TextureManager.ts(56,59): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'any[][] | GridManager'.
+src/renderers/UIRenderer.ts(19,9): error TS2322: Type 'CanvasRenderingContext2D | null' is not assignable to type 'CanvasRenderingContext2D'.
+  Type 'null' is not assignable to type 'CanvasRenderingContext2D'.
+src/renderers/UIRenderer.ts(20,9): error TS2322: Type 'TextureManager | null' is not assignable to type 'TextureManager'.
+  Type 'null' is not assignable to type 'TextureManager'.
+src/renderers/UIRenderer.ts(34,27): error TS2531: Object is possibly 'null'.
+src/repositories/ZoneRepository.ts(24,9): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(24,12): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(24,15): error TS7006: Parameter 'dimension' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(34,14): error TS7006: Parameter 'key' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(46,9): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(46,12): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(46,15): error TS7006: Parameter 'dimension' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(56,14): error TS7006: Parameter 'key' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(68,9): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(68,12): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(68,15): error TS7006: Parameter 'dimension' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(68,26): error TS7006: Parameter 'zoneData' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(78,14): error TS7006: Parameter 'key' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(78,19): error TS7006: Parameter 'zoneData' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(90,12): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(90,15): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(90,18): error TS7006: Parameter 'dimension' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(100,17): error TS7006: Parameter 'key' implicitly has an 'any' type.
+src/repositories/ZoneRepository.ts(131,13): error TS7006: Parameter 'entries' implicitly has an 'any' type.
+src/services/CompressionService.ts(26,42): error TS7006: Parameter 'string' implicitly has an 'any' type.
+src/services/CompressionService.ts(37,59): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/services/CompressionService.ts(320,25): error TS2454: Variable 'c' is used before being assigned.
+src/services/CompressionService.ts(321,13): error TS2454: Variable 'c' is used before being assigned.
+src/services/CompressionService.ts(322,19): error TS2454: Variable 'c' is used before being assigned.
+src/state/core/StateDebugger.ts(358,3): error TS7023: 'renderSliceTree' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+src/state/core/StateDebugger.ts(358,19): error TS7006: Parameter 'name' implicitly has an 'any' type.
+src/state/core/StateDebugger.ts(358,25): error TS7006: Parameter 'slice' implicitly has an 'any' type.
+src/state/core/StateDebugger.ts(408,11): error TS7022: 'children' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+src/state/core/StateDebugger.ts(408,31): error TS7024: Function implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+src/state/core/StateDebugger.ts(434,3): error TS7023: 'makeJSONFriendly' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+src/state/core/StateDebugger.ts(434,20): error TS7006: Parameter 'obj' implicitly has an 'any' type.
+src/state/core/StateDebugger.ts(438,44): error TS7024: Function implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+src/state/core/StateDebugger.ts(443,9): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/state/core/StateDebugger.ts(570,15): error TS7006: Parameter 'value' implicitly has an 'any' type.
+src/state/core/StateDebugger.ts(586,19): error TS7006: Parameter 'timestamp' implicitly has an 'any' type.
+src/state/core/StateDebugger.ts(595,14): error TS7006: Parameter 'text' implicitly has an 'any' type.
+src/state/core/StateEventBridge.ts(19,24): error TS7006: Parameter 'path' implicitly has an 'any' type.
+src/state/core/StateEventBridge.ts(19,30): error TS7006: Parameter 'value' implicitly has an 'any' type.
+src/state/core/StateEventBridge.ts(45,19): error TS7006: Parameter 'updates' implicitly has an 'any' type.
+src/state/core/StateEventBridge.ts(56,18): error TS7006: Parameter 'sliceType' implicitly has an 'any' type.
+src/state/core/StatePersistence.ts(274,11): error TS2322: Type '{ key: string; zone: any; isSpecial: boolean | undefined; isCurrent: any; timestamp: any; }[]' is not assignable to type 'ZoneMetadata[]'.
+  Type '{ key: string; zone: any; isSpecial: boolean | undefined; isCurrent: any; timestamp: any; }' is not assignable to type 'ZoneMetadata'.
+    Types of property 'isSpecial' are incompatible.
+      Type 'boolean | undefined' is not assignable to type 'boolean'.
+        Type 'undefined' is not assignable to type 'boolean'.
+src/state/core/StateStore.ts(152,25): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ persistent: { player: { position: { x: number; y: number; lastX: number; lastY: number; }; currentZone: { x: number; y: number; dimension: string; depth: number; }; visitedZones: Set<unknown>; inventory: never[]; ... 6 more ...; interactOnReach: null; }; ... 5 more ...; currentRegion: string; }; session: { ...; };...'.
+  No index signature with a parameter of type 'string' was found on type '{ persistent: { player: { position: { x: number; y: number; lastX: number; lastY: number; }; currentZone: { x: number; y: number; dimension: string; depth: number; }; visitedZones: Set<unknown>; inventory: never[]; ... 6 more ...; interactOnReach: null; }; ... 5 more ...; currentRegion: string; }; session: { ...; };...'.
+src/state/examples/IntegrationExample.ts(52,34): error TS7006: Parameter 'targetX' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(52,43): error TS7006: Parameter 'targetY' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(82,38): error TS7006: Parameter 'newX' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(82,44): error TS7006: Parameter 'newY' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(120,36): error TS7006: Parameter 'enemyX' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(120,44): error TS7006: Parameter 'enemyY' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(128,40): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(141,44): error TS7006: Parameter '_' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(141,47): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(163,34): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(186,31): error TS7006: Parameter 'itemIndex' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(220,36): error TS7006: Parameter 'settings' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(243,5): error TS7034: Variable 'autosaveTimeout' implicitly has type 'any' in some locations where its type cannot be determined.
+src/state/examples/IntegrationExample.ts(244,5): error TS7034: Variable 'autosaveInterval' implicitly has type 'any' in some locations where its type cannot be determined.
+src/state/examples/IntegrationExample.ts(260,16): error TS7005: Variable 'autosaveTimeout' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(273,16): error TS7005: Variable 'autosaveTimeout' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(274,17): error TS7005: Variable 'autosaveInterval' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(374,23): error TS7006: Parameter 'x' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(374,26): error TS7006: Parameter 'y' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(374,29): error TS7006: Parameter 'dimension' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(374,40): error TS7006: Parameter 'depth' implicitly has an 'any' type.
+src/state/examples/IntegrationExample.ts(380,9): error TS7034: Variable 'enemies' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/state/examples/IntegrationExample.ts(391,5): error TS7005: Variable 'enemies' implicitly has an 'any[]' type.
+src/ui/OverlayMessageHandler.ts(171,9): error TS2531: Object is possibly 'null'.
+src/ui/PlayerStatsUI.ts(44,24): error TS2532: Object is possibly 'undefined'.
+src/ui/PlayerStatsUI.ts(45,24): error TS2532: Object is possibly 'undefined'.
+src/ui/PlayerStatsUI.ts(60,24): error TS2532: Object is possibly 'undefined'.
+src/ui/PlayerStatsUI.ts(78,37): error TS2532: Object is possibly 'undefined'.
+src/ui/PlayerStatsUI.ts(84,40): error TS2532: Object is possibly 'undefined'.
+src/ui/RadialInventoryUI.ts(270,79): error TS2532: Object is possibly 'undefined'.
+src/ui/RadialInventoryUI.ts(270,113): error TS2532: Object is possibly 'undefined'.
+src/ui/RadialInventoryUI.ts(283,79): error TS2532: Object is possibly 'undefined'.
+src/ui/RadialInventoryUI.ts(283,113): error TS2532: Object is possibly 'undefined'.
+src/ui/textbox.ts(90,17): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/ui/textbox.ts(93,25): error TS18048: 'characterData.interaction.trades' is possibly 'undefined'.
+src/ui/textbox.ts(316,27): error TS18048: 'characterData.interaction.dialogueTree' is possibly 'undefined'.
+src/ui/textbox.ts(317,30): error TS18048: 'characterData.interaction.dialogueTree' is possibly 'undefined'.
+src/utils/LazyLoader.ts(17,32): error TS7006: Parameter 'importFn' implicitly has an 'any' type.
+src/utils/LazyLoader.ts(17,42): error TS7006: Parameter 'cacheKey' implicitly has an 'any' type.
+src/utils/LazyLoader.ts(37,31): error TS7006: Parameter 'importFn' implicitly has an 'any' type.
+src/utils/LazyLoader.ts(37,41): error TS7006: Parameter 'cacheKey' implicitly has an 'any' type.
+src/utils/LazyLoader.ts(58,32): error TS7006: Parameter 'cacheKey' implicitly has an 'any' type.
+src/utils/LineOfSightUtils.ts(6,33): error TS6137: Cannot import type declaration files. Consider importing 'core' instead of '@types/core'.
+src/utils/MethodChecker.ts(250,7): error TS2322: Type '(target: Record<string, unknown>, prop: string | symbol) => unknown' is not assignable to type '(target: T, p: string | symbol, receiver: any) => any'.
+  Types of parameters 'target' and 'target' are incompatible.
+    Type 'T' is not assignable to type 'Record<string, unknown>'.
+      Type 'object' is not assignable to type 'Record<string, unknown>'.
+        Index signature for type 'string' is missing in type '{}'.
+src/utils/pwa-register.ts(27,25): error TS7006: Parameter 'path' implicitly has an 'any' type.
+src/utils/TypeChecks.ts(268,36): error TS2339: Property 'FISCHERS_WAND' does not exist on type '{ readonly FLOOR: 0; readonly WALL: 1; readonly GRASS: 2; readonly EXIT: 3; readonly ROCK: 4; readonly HOUSE: 5; readonly WATER: 6; readonly FOOD: 7; readonly ENEMY: 8; readonly LIZARDY: 127; readonly LIZARDO: 128; ... 118 more ...; readonly SHOVEL_STATUE: 55; }'.
+src/utils/TypeChecks.ts(297,20): error TS2536: Type 'K' cannot be used to index type '{ type: number; uses?: number | undefined; message?: string | undefined; foodType?: string | undefined; name?: string | undefined; icon?: string | undefined; npcType?: string | undefined; ... 4 more ...; justPlaced?: boolean | undefined; }'.
+tests/AnimationRenderer.test.ts(5,7): error TS7034: Variable 'mockGame' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/AnimationRenderer.test.ts(6,7): error TS7034: Variable 'ctx' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/AnimationRenderer.test.ts(29,5): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/AnimationRenderer.test.ts(31,44): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/AnimationRenderer.test.ts(35,12): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/AnimationRenderer.test.ts(36,12): error TS7005: Variable 'ctx' implicitly has an 'any' type.
+tests/AnimationRenderer.test.ts(42,12): error TS7005: Variable 'ctx' implicitly has an 'any' type.
+tests/BarterWindow.test.ts(1,30): error TS2307: Cannot find module '../ui/BarterWindow' or its corresponding type declarations.
+tests/BarterWindow.test.ts(2,24): error TS2307: Cannot find module '../entities/Player' or its corresponding type declarations.
+tests/BarterWindow.test.ts(3,25): error TS2307: Cannot find module '../ui/textbox' or its corresponding type declarations.
+tests/BarterWindow.test.ts(4,28): error TS2307: Cannot find module '../core/NPCLoader' or its corresponding type declarations.
+tests/BarterWindow.test.ts(63,7): error TS7034: Variable 'player' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/BarterWindow.test.ts(64,7): error TS7034: Variable 'barter' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/BarterWindow.test.ts(96,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/BarterWindow.test.ts(97,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/BarterWindow.test.ts(98,30): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/BarterWindow.test.ts(98,62): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/BarterWindow.test.ts(102,5): error TS7005: Variable 'barter' implicitly has an 'any' type.
+tests/BarterWindow.test.ts(105,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/BarterWindow.test.ts(106,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(5,9): error TS7034: Variable 'boardLoader' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/BoardLoader.test.ts(13,13): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(14,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(18,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(22,13): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(23,13): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(24,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(25,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(29,13): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(30,13): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(31,13): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(32,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(33,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(34,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(45,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(53,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(62,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(71,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(79,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(95,28): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(110,28): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(126,28): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(141,28): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(152,28): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(163,30): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(178,30): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(200,30): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(209,30): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(220,26): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(223,31): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(230,26): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(236,26): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(251,26): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(258,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(259,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(260,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(261,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(265,26): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(270,26): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(277,13): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(278,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(280,13): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/BoardLoader.test.ts(281,20): error TS7005: Variable 'boardLoader' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(5,7): error TS7034: Variable 'game' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/CombatActionManager.test.ts(6,7): error TS7034: Variable 'cam' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/CombatActionManager.test.ts(9,27): error TS2554: Expected 1-3 arguments, but got 0.
+tests/CombatActionManager.test.ts(26,7): error TS2353: Object literal may only specify known properties, and 'pendingCharge' does not exist in type 'Game'.
+tests/CombatActionManager.test.ts(48,43): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(52,33): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(52,51): error TS7006: Parameter 'e' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(62,17): error TS7005: Variable 'cam' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(69,5): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(70,17): error TS7005: Variable 'cam' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(77,17): error TS7005: Variable 'cam' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(83,17): error TS7005: Variable 'cam' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(88,17): error TS7005: Variable 'cam' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(94,5): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(95,17): error TS7005: Variable 'cam' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(102,48): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(103,5): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(104,5): error TS7005: Variable 'cam' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(105,12): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/CombatActionManager.test.ts(106,12): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/dialogue-progression.test.ts(6,25): error TS2307: Cannot find module '../ui/textbox' or its corresponding type declarations.
+tests/dialogue-progression.test.ts(26,9): error TS7034: Variable 'mockGame' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/dialogue-progression.test.ts(27,9): error TS7034: Variable 'getNPCCharacterDataSpy' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/dialogue-progression.test.ts(34,30): error TS2345: Argument of type '{ name: string; display: { portrait: string; }; audio: { voicePitch: number; }; interaction: { type: string; cycleMode: string; dialogueTree: { id: string; text: string; }[]; }; }' is not assignable to parameter of type 'NPCData'.
+  Type '{ name: string; display: { portrait: string; }; audio: { voicePitch: number; }; interaction: { type: string; cycleMode: string; dialogueTree: { id: string; text: string; }[]; }; }' is missing the following properties from type 'NPCData': id, type
+tests/dialogue-progression.test.ts(39,9): error TS7005: Variable 'getNPCCharacterDataSpy' implicitly has an 'any' type.
+tests/dialogue-progression.test.ts(43,61): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/dialogue-progression.test.ts(51,61): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/dialogue-progression.test.ts(61,61): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/dialogue-progression.test.ts(68,60): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/dialogue-progression.test.ts(82,61): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/dialogue-progression.test.ts(88,64): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/DirectionUtils.test.ts(119,38): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+tests/EnemyAttackRange.test.ts(10,45): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+tests/EnemyAttackRange.test.ts(60,20): error TS7006: Parameter 'x' implicitly has an 'any' type.
+tests/EnemyAttackRange.test.ts(60,23): error TS7006: Parameter 'y' implicitly has an 'any' type.
+tests/EnemyAttackRange.test.ts(60,26): error TS7006: Parameter 'g' implicitly has an 'any' type.
+tests/EventValidator.test.ts(5,9): error TS7034: Variable 'validator' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/EventValidator.test.ts(13,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(18,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(28,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(33,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(43,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(49,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(59,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(63,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(68,39): error TS7006: Parameter 'err' implicitly has an 'any' type.
+tests/EventValidator.test.ts(72,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(77,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(86,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(91,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(102,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(110,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(118,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(126,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(131,39): error TS7006: Parameter 'err' implicitly has an 'any' type.
+tests/EventValidator.test.ts(137,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(141,33): error TS7006: Parameter 'val' implicitly has an 'any' type.
+tests/EventValidator.test.ts(150,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(158,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(162,33): error TS7006: Parameter 'val' implicitly has an 'any' type.
+tests/EventValidator.test.ts(171,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(176,39): error TS7006: Parameter 'err' implicitly has an 'any' type.
+tests/EventValidator.test.ts(182,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(191,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(202,33): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(209,35): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(218,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(228,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(242,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(246,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(248,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(256,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(260,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(261,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(263,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(271,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(282,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(288,28): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(299,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(303,32): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(306,37): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(311,13): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(315,33): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/EventValidator.test.ts(320,35): error TS7005: Variable 'validator' implicitly has an 'any' type.
+tests/FischersWand.test.ts(264,25): error TS2339: Property 'uses' does not exist on type '{ type: "fischers_cube"; }'.
+tests/FogRenderer.test.ts(4,7): error TS7034: Variable 'originalCreateElement' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/FogRenderer.test.ts(5,7): error TS7034: Variable 'game' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/FogRenderer.test.ts(6,7): error TS7034: Variable 'mockCtx' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/FogRenderer.test.ts(7,7): error TS7034: Variable 'fakeImage' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/FogRenderer.test.ts(33,31): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(37,11): error TS2339: Property 'getContext' does not exist on type '{ width: number; height: number; }'.
+tests/FogRenderer.test.ts(44,14): error TS7005: Variable 'originalCreateElement' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(56,47): error TS7005: Variable 'fakeImage' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(63,30): error TS7005: Variable 'originalCreateElement' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(67,32): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(71,12): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(75,5): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(76,32): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(80,12): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(84,32): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(91,5): error TS7005: Variable 'game' implicitly has an 'any' type.
+tests/FogRenderer.test.ts(97,12): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/GridIterator.test.ts(323,28): error TS7006: Parameter 'tile' implicitly has an 'any' type.
+tests/helpers/mocks.ts(95,24): error TS2554: Expected 1-3 arguments, but got 0.
+tests/helpers/mocks.ts(214,46): error TS7006: Parameter 'callback' implicitly has an 'any' type.
+tests/InteractionManager.test.ts(4,7): error TS7034: Variable 'mockGame' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/InteractionManager.test.ts(5,7): error TS7034: Variable 'mockPlayer' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/InteractionManager.test.ts(6,7): error TS7034: Variable 'im' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/InteractionManager.test.ts(76,33): error TS2345: Argument of type '{ player: { getPosition: Mock<Procedure>; getPositionObject: Mock<Procedure>; startAttackAnimation: Mock<Procedure>; startBump: Mock<...>; ... 4 more ...; y: number; }; ... 12 more ...; combatManager: { ...; }; }' is not assignable to parameter of type 'IGame'.
+  Type '{ player: { getPosition: Mock<Procedure>; getPositionObject: Mock<Procedure>; startAttackAnimation: Mock<Procedure>; startBump: Mock<...>; ... 4 more ...; y: number; }; ... 12 more ...; combatManager: { ...; }; }' is missing the following properties from type 'IGame': world, ui, audio, zoneGenState, and 76 more.
+tests/InteractionManager.test.ts(78,8): error TS2341: Property 'interactionHandlers' is private and only accessible within class 'InteractionManager'.
+tests/InteractionManager.test.ts(82,21): error TS7005: Variable 'im' implicitly has an 'any' type.
+tests/InteractionManager.test.ts(85,12): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/InteractionManager.test.ts(86,12): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/InteractionManager.test.ts(92,21): error TS7005: Variable 'im' implicitly has an 'any' type.
+tests/InteractionManager.test.ts(94,12): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/InteractionManager.test.ts(95,12): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/ItemManager.test.ts(49,7): error TS2322: Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is not assignable to type 'Player | null | undefined'.
+  Type 'Partial<Player> & { getHealth?: Mock<Procedure | Constructable> | undefined; }' is missing the following properties from type 'Player': _position, _lastPosition
+tests/ItemManager.test.ts(51,7): error TS2740: Type '{ getTile: Mock<(x: number, y: number) => Tile>; setTile: Mock<(x: number, y: number, tile: Tile) => void>; }' is missing the following properties from type 'GridManager': coreOps, queryOps, iterationOps, grid, and 34 more.
+tests/ItemManager.test.ts(54,35): error TS2345: Argument of type 'IGame' is not assignable to parameter of type 'Game'.
+  Type 'IGame' is missing the following properties from type 'Game': managers, combat, inventory, interaction, and 4 more.
+tests/Lizord.test.ts(5,7): error TS7034: Variable 'mockPlayer' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/Lizord.test.ts(6,7): error TS7034: Variable 'mockEnemy' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/Lizord.test.ts(7,7): error TS7034: Variable 'grid' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/Lizord.test.ts(30,29): error TS7006: Parameter 'x' implicitly has an 'any' type.
+tests/Lizord.test.ts(30,32): error TS7006: Parameter 'y' implicitly has an 'any' type.
+tests/Lizord.test.ts(30,35): error TS7006: Parameter 'g' implicitly has an 'any' type.
+tests/Lizord.test.ts(36,29): error TS2554: Expected 1-3 arguments, but got 0.
+tests/Lizord.test.ts(43,5): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(44,5): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(49,45): error TS7005: Variable 'mockEnemy' implicitly has an 'any' type.
+tests/Lizord.test.ts(49,56): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(49,73): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(49,90): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(49,106): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Lizord.test.ts(49,113): error TS7005: Variable 'mockEnemy' implicitly has an 'any' type.
+tests/Lizord.test.ts(49,132): error TS2345: Argument of type '{ initialEnemyTilesThisTurn: Set<unknown>; occupiedTilesThisTurn: Set<unknown>; playerJustAttacked: boolean; }' is not assignable to parameter of type 'null | undefined'.
+tests/Lizord.test.ts(53,12): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(60,5): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(61,5): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(63,45): error TS7005: Variable 'mockEnemy' implicitly has an 'any' type.
+tests/Lizord.test.ts(63,56): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(63,73): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(63,90): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/Lizord.test.ts(63,106): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Lizord.test.ts(63,113): error TS7005: Variable 'mockEnemy' implicitly has an 'any' type.
+tests/Lizord.test.ts(63,132): error TS2345: Argument of type '{ playerJustAttacked: boolean; }' is not assignable to parameter of type 'null | undefined'.
+tests/MessageLog.test.ts(1,28): error TS2307: Cannot find module '../ui/MessageLog' or its corresponding type declarations.
+tests/MessageLog.test.ts(5,7): error TS7034: Variable 'messageLog' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MessageLog.test.ts(6,7): error TS7034: Variable 'mockGame' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MessageLog.test.ts(7,7): error TS7034: Variable 'messageLogOverlay' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MessageLog.test.ts(8,7): error TS7034: Variable 'messageLogContent' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MessageLog.test.ts(9,7): error TS7034: Variable 'closeButton' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MessageLog.test.ts(10,7): error TS7034: Variable 'openButton' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MessageLog.test.ts(50,14): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(50,49): error TS7005: Variable 'messageLogOverlay' implicitly has an 'any' type.
+tests/MessageLog.test.ts(51,14): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(51,49): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/MessageLog.test.ts(52,14): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(52,53): error TS7005: Variable 'closeButton' implicitly has an 'any' type.
+tests/MessageLog.test.ts(57,14): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(63,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(65,26): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/MessageLog.test.ts(73,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(75,14): error TS7005: Variable 'messageLogOverlay' implicitly has an 'any' type.
+tests/MessageLog.test.ts(79,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/MessageLog.test.ts(81,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(83,14): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/MessageLog.test.ts(87,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(89,25): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/MessageLog.test.ts(95,7): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/MessageLog.test.ts(97,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(99,26): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/MessageLog.test.ts(104,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/MessageLog.test.ts(106,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(108,25): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/MessageLog.test.ts(116,7): error TS7005: Variable 'messageLogOverlay' implicitly has an 'any' type.
+tests/MessageLog.test.ts(118,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(120,14): error TS7005: Variable 'messageLogOverlay' implicitly has an 'any' type.
+tests/MessageLog.test.ts(124,20): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(130,7): error TS7005: Variable 'messageLogOverlay' implicitly has an 'any' type.
+tests/MessageLog.test.ts(132,7): error TS7005: Variable 'closeButton' implicitly has an 'any' type.
+tests/MessageLog.test.ts(134,14): error TS7005: Variable 'messageLogOverlay' implicitly has an 'any' type.
+tests/MessageLog.test.ts(135,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/MessageLog.test.ts(139,32): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(141,7): error TS7005: Variable 'openButton' implicitly has an 'any' type.
+tests/MessageLog.test.ts(147,32): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(151,7): error TS7005: Variable 'openButton' implicitly has an 'any' type.
+tests/MessageLog.test.ts(160,7): error TS7005: Variable 'closeButton' implicitly has an 'any' type.
+tests/MessageLog.test.ts(162,35): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/MessageLog.test.ts(166,7): error TS7005: Variable 'openButton' implicitly has an 'any' type.
+tests/MessageLog.test.ts(168,35): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/MessageLog.test.ts(172,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/MessageLog.test.ts(174,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(176,26): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/MessageLog.test.ts(181,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/MessageLog.test.ts(187,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(189,26): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/MessageLog.test.ts(197,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(198,14): error TS7005: Variable 'messageLogOverlay' implicitly has an 'any' type.
+tests/MessageLog.test.ts(201,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(202,14): error TS7005: Variable 'messageLogOverlay' implicitly has an 'any' type.
+tests/MessageLog.test.ts(205,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(206,14): error TS7005: Variable 'messageLogOverlay' implicitly has an 'any' type.
+tests/MessageLog.test.ts(210,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(211,24): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/MessageLog.test.ts(215,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/MessageLog.test.ts(217,7): error TS7005: Variable 'messageLog' implicitly has an 'any' type.
+tests/MessageLog.test.ts(218,20): error TS7005: Variable 'messageLogContent' implicitly has an 'any' type.
+tests/messageManager.test.ts(16,7): error TS7034: Variable 'originalRAF' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/messageManager.test.ts(17,7): error TS7034: Variable 'originalCancelRAF' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/messageManager.test.ts(57,36): error TS7005: Variable 'originalRAF' implicitly has an 'any' type.
+tests/messageManager.test.ts(58,35): error TS7005: Variable 'originalCancelRAF' implicitly has an 'any' type.
+tests/MiniMap.test.ts(1,25): error TS2307: Cannot find module '../ui/MiniMap' or its corresponding type declarations.
+tests/MiniMap.test.ts(5,7): error TS7034: Variable 'miniMap' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MiniMap.test.ts(6,7): error TS7034: Variable 'mockGame' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MiniMap.test.ts(8,7): error TS7034: Variable 'smallCanvas' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MiniMap.test.ts(9,7): error TS7034: Variable 'expandedCanvas' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MiniMap.test.ts(10,7): error TS7034: Variable 'overlay' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MiniMap.test.ts(41,5): error TS18047: 'expandedCanvas' is possibly 'null'.
+tests/MiniMap.test.ts(41,20): error TS2339: Property 'getContext' does not exist on type 'HTMLElement'.
+tests/MiniMap.test.ts(62,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(62,33): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/MiniMap.test.ts(66,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(70,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(71,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(75,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(79,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(80,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(86,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(88,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(88,43): error TS7005: Variable 'expandedCanvas' implicitly has an 'any' type.
+tests/MiniMap.test.ts(89,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(93,44): error TS7005: Variable 'smallCanvas' implicitly has an 'any' type.
+tests/MiniMap.test.ts(95,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(103,21): error TS18048: 'pointerUpCall' is possibly 'undefined'.
+tests/MiniMap.test.ts(109,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(113,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(115,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(119,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(120,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(122,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(124,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(125,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(129,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(131,14): error TS7005: Variable 'overlay' implicitly has an 'any' type.
+tests/MiniMap.test.ts(135,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(136,32): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(138,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(140,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(144,34): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(146,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(154,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(158,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(159,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(161,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(163,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(167,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(168,14): error TS7005: Variable 'overlay' implicitly has an 'any' type.
+tests/MiniMap.test.ts(170,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(172,14): error TS7005: Variable 'overlay' implicitly has an 'any' type.
+tests/MiniMap.test.ts(176,20): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(182,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(186,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(188,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(188,49): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(192,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(194,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(196,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(198,16): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(205,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(206,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(207,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(209,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(211,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(222,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(223,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(227,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(228,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(229,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(232,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(233,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(234,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(235,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(237,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(242,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(243,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(244,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(245,27): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(246,27): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(251,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(251,24): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(252,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(252,24): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(253,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(254,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(257,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(258,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(262,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(263,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(264,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(265,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(269,27): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(270,27): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(273,9): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(276,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(280,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(283,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(285,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(289,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(292,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(294,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(300,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(301,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(312,16): error TS7005: Variable 'expandedCanvas' implicitly has an 'any' type.
+tests/MiniMap.test.ts(320,9): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(325,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(334,9): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(341,26): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(345,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(347,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(351,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(352,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(353,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(355,26): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(361,7): error TS7005: Variable 'smallCanvas' implicitly has an 'any' type.
+tests/MiniMap.test.ts(362,7): error TS7005: Variable 'expandedCanvas' implicitly has an 'any' type.
+tests/MiniMap.test.ts(366,33): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/MiniMap.test.ts(372,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(374,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(375,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(376,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(377,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(379,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(383,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(384,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(385,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(388,9): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(394,9): error TS7034: Variable 'addEventListenerSpy' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MiniMap.test.ts(398,38): error TS7005: Variable 'expandedCanvas' implicitly has an 'any' type.
+tests/MiniMap.test.ts(399,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(411,25): error TS7005: Variable 'addEventListenerSpy' implicitly has an 'any' type.
+tests/MiniMap.test.ts(412,50): error TS7006: Parameter 'call' implicitly has an 'any' type.
+tests/MiniMap.test.ts(429,25): error TS7005: Variable 'addEventListenerSpy' implicitly has an 'any' type.
+tests/MiniMap.test.ts(430,48): error TS7006: Parameter 'call' implicitly has an 'any' type.
+tests/MiniMap.test.ts(441,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(444,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(445,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(448,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(449,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(450,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(453,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(454,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(457,7): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(458,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMap.test.ts(459,14): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(1,25): error TS2307: Cannot find module '../ui/MiniMap' or its corresponding type declarations.
+tests/MiniMapHighlights.test.ts(4,7): error TS7034: Variable 'miniMap' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/MiniMapHighlights.test.ts(36,5): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(37,12): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(40,5): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(41,12): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(44,5): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(45,12): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(48,5): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(49,12): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(52,5): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(53,12): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(56,5): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(57,12): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(60,5): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(61,12): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(67,5): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(70,12): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/MiniMapHighlights.test.ts(71,12): error TS7005: Variable 'miniMap' implicitly has an 'any' type.
+tests/Player.test.ts(5,7): error TS7034: Variable 'player' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/Player.test.ts(6,7): error TS7034: Variable 'grid' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/Player.test.ts(22,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(23,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(24,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(24,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(25,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(26,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(27,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(28,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(29,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(33,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(33,36): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(34,5): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(35,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(35,36): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(36,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(36,37): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(40,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(40,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(42,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(42,37): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(44,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(45,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(49,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(49,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(50,5): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(50,10): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(50,20): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(51,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(51,31): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(53,5): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(53,10): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(53,20): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(55,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(55,38): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(55,45): error TS7006: Parameter 'nx' implicitly has an 'any' type.
+tests/Player.test.ts(55,49): error TS7006: Parameter 'ny' implicitly has an 'any' type.
+tests/Player.test.ts(55,53): error TS7006: Parameter 'side' implicitly has an 'any' type.
+tests/Player.test.ts(61,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(61,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(62,20): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(63,17): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(66,22): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(66,44): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(70,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(71,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(72,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(76,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(76,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(78,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(80,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(80,37): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(82,67): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(82,81): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(86,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(86,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(87,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(89,5): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(90,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(90,37): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(94,12): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(96,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(100,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(100,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(101,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(102,5): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(103,26): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(104,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(104,37): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(106,12): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(106,47): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(107,12): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(111,5): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(111,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(113,5): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/Player.test.ts(114,19): error TS7005: Variable 'player' implicitly has an 'any' type.
+tests/Player.test.ts(114,37): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(7,7): error TS7034: Variable 'playerStatsUI' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/PlayerStatsUI.test.ts(8,7): error TS7034: Variable 'mockGame' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/PlayerStatsUI.test.ts(9,7): error TS7034: Variable 'mockPlayer' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/PlayerStatsUI.test.ts(53,39): error TS2345: Argument of type '{ player: any; grid: any; enemies: never[]; npcs: never[]; canvas: { getBoundingClientRect: Mock<Procedure>; }; pendingCharge: null; bombPlacementMode: boolean; bombPlacementPositions: never[]; ... 21 more ...; incrementBombActions: Mock<...>; }' is not assignable to parameter of type 'IGame'.
+  Type '{ player: any; grid: any; enemies: never[]; npcs: never[]; canvas: { getBoundingClientRect: Mock<Procedure>; }; pendingCharge: null; bombPlacementMode: boolean; bombPlacementPositions: never[]; ... 21 more ...; incrementBombActions: Mock<...>; }' is missing the following properties from type 'IGame': world, ui, audio, zoneGenState, and 63 more.
+tests/PlayerStatsUI.test.ts(63,34): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(72,34): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(85,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(93,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(101,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(108,9): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(115,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(116,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(118,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(128,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(130,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(137,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(139,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(146,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(148,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(155,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(157,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(166,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(168,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(177,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(179,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(187,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(189,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(196,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(198,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(205,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(207,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(214,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(216,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(220,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(223,9): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(233,9): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(238,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(240,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(249,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(250,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(251,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(254,9): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(259,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(260,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(262,7): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(274,34): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(282,34): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/PlayerStatsUI.test.ts(290,34): error TS7005: Variable 'playerStatsUI' implicitly has an 'any' type.
+tests/Position.test.ts(372,32): error TS7006: Parameter 'p' implicitly has an 'any' type.
+tests/Position.test.ts(495,19): error TS7034: Variable 'grid' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/Position.test.ts(497,25): error TS7005: Variable 'grid' implicitly has an 'any[]' type.
+tests/Position.test.ts(498,20): error TS7005: Variable 'grid' implicitly has an 'any[]' type.
+tests/Position.test.ts(510,32): error TS7006: Parameter 'tile' implicitly has an 'any' type.
+tests/Position.test.ts(516,32): error TS7006: Parameter 'tile' implicitly has an 'any' type.
+tests/RecordsOverlay.test.ts(1,30): error TS2307: Cannot find module '../ui/PanelManager' or its corresponding type declarations.
+tests/RecordsOverlay.test.ts(27,12): error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
+tests/RecordsOverlay.test.ts(40,40): error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
+tests/RecordsOverlay.test.ts(49,12): error TS18047: 'rz' is possibly 'null'.
+tests/RecordsOverlay.test.ts(50,12): error TS18047: 'rp' is possibly 'null'.
+tests/RecordsOverlay.test.ts(51,12): error TS18047: 'rc' is possibly 'null'.
+tests/SafeServiceCall.test.ts(226,31): error TS2339: Property 'gameStateManager' does not exist on type '{}'.
+tests/test-enemy-collection.ts(31,40): error TS2345: Argument of type 'any[]' is not assignable to parameter of type 'never[]'.
+  Type 'any' is not assignable to type 'never'.
+tests/test-enemy-collection.ts(72,38): error TS7006: Parameter 'e' implicitly has an 'any' type.
+tests/test-enemy-collection.ts(75,36): error TS7006: Parameter 'e' implicitly has an 'any' type.
+tests/test-enemy-collection.ts(78,33): error TS7006: Parameter 'e' implicitly has an 'any' type.
+tests/test-enemy-collection.ts(180,32): error TS7006: Parameter 'e' implicitly has an 'any' type.
+tests/test-enemy-collection.ts(191,28): error TS7006: Parameter 'e' implicitly has an 'any' type.
+tests/test-grid-manager.ts(45,16): error TS18049: 'clonedTile' is possibly 'null' or 'undefined'.
+tests/test-grid-manager.ts(45,27): error TS2339: Property 'type' does not exist on type 'number | TileObject'.
+  Property 'type' does not exist on type 'number'.
+tests/test-grid-manager.ts(46,16): error TS18049: 'clonedTile' is possibly 'null' or 'undefined'.
+tests/test-grid-manager.ts(46,27): error TS2339: Property 'portKind' does not exist on type 'number | TileObject'.
+  Property 'portKind' does not exist on type 'number'.
+tests/test-grid-manager.ts(56,16): error TS18048: 'upNeighbor' is possibly 'undefined'.
+tests/test-grid-manager.ts(71,16): error TS2367: This comparison appears to be unintentional because the types 'void' and 'boolean' have no overlap.
+tests/test-npc-distance.ts(10,29): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(16,42): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(22,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(28,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(34,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(40,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-npc-distance.ts(52,38): error TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type 'Position'.
+  Type '{ x: number; y: number; }' is missing the following properties from type 'Position': equals, isZero, chebyshevDistance, manhattanDistance, and 28 more.
+tests/test-player-facade.ts(16,1): error TS2740: Type '{ health: number; hunger: number; thirst: number; musicEnabled: true; }' is missing the following properties from type 'PlayerStats': player, points, spentDiscoveries, dead, and 21 more.
+tests/test-player-facade.ts(90,48): error TS7006: Parameter 'item' implicitly has an 'any' type.
+tests/test-transient-game-state.ts(180,16): error TS2367: This comparison appears to be unintentional because the types 'false' and 'true' have no overlap.
+tests/TileStrategyPattern.test.ts(5,9): error TS7034: Variable 'renderer' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/TileStrategyPattern.test.ts(6,9): error TS7034: Variable 'mockCtx' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/TileStrategyPattern.test.ts(7,9): error TS7034: Variable 'grid' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/TileStrategyPattern.test.ts(36,66): error TS2345: Argument of type '{ findCisternPosition: Mock<() => null>; findShackPosition: Mock<() => null>; findHousePosition: Mock<() => null>; }' is not assignable to parameter of type 'MultiTileHandler'.
+  Type '{ findCisternPosition: Mock<() => null>; findShackPosition: Mock<() => null>; findHousePosition: Mock<() => null>; }' is missing the following properties from type 'MultiTileHandler': findWellPosition, findDeadTreePosition
+tests/TileStrategyPattern.test.ts(41,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(46,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(47,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(48,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(49,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(52,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(53,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(54,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(55,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(58,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(59,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(60,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(61,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(62,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(65,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(66,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(67,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(68,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(69,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(72,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(73,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(78,13): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(78,33): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(78,66): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(84,13): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(84,33): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(84,65): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(90,13): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(90,33): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(90,66): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(96,13): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(96,33): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(96,66): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(103,13): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(103,33): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(103,60): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(108,9): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(108,29): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(108,62): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(109,16): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(110,16): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(114,9): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(115,9): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(116,9): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(116,29): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(116,61): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(119,13): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(119,33): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(119,65): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(126,13): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(126,33): error TS7005: Variable 'mockCtx' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(126,61): error TS7005: Variable 'grid' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(131,33): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(132,33): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(137,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(138,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(139,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TileStrategyPattern.test.ts(140,16): error TS7005: Variable 'renderer' implicitly has an 'any' type.
+tests/TurnManager.test.ts(5,7): error TS7034: Variable 'turnManager' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/TurnManager.test.ts(6,7): error TS7034: Variable 'mockGame' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/TurnManager.test.ts(7,7): error TS7034: Variable 'mockEnemyCollection' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/TurnManager.test.ts(8,7): error TS7034: Variable 'mockAnimationScheduler' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/TurnManager.test.ts(9,7): error TS7034: Variable 'mockTransientState' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/TurnManager.test.ts(10,7): error TS7034: Variable 'mockCombatManager' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/TurnManager.test.ts(11,7): error TS7034: Variable 'mockInteractionManager' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/TurnManager.test.ts(15,11): error TS7034: Variable 'enemies' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/TurnManager.test.ts(18,36): error TS7005: Variable 'enemies' implicitly has an 'any[]' type.
+tests/TurnManager.test.ts(19,31): error TS7005: Variable 'enemies' implicitly has an 'any[]' type.
+tests/TurnManager.test.ts(20,34): error TS7005: Variable 'enemies' implicitly has an 'any[]' type.
+tests/TurnManager.test.ts(21,17): error TS7005: Variable 'enemies' implicitly has an 'any[]' type.
+tests/TurnManager.test.ts(68,7): error TS2353: Object literal may only specify known properties, and 'playerJustAttacked' does not exist in type 'GameContext'.
+tests/TurnManager.test.ts(76,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(80,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(84,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(88,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(94,28): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(95,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(100,7): error TS7005: Variable 'mockTransientState' implicitly has an 'any' type.
+tests/TurnManager.test.ts(101,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(102,14): error TS7005: Variable 'mockTransientState' implicitly has an 'any' type.
+tests/TurnManager.test.ts(106,7): error TS7005: Variable 'mockTransientState' implicitly has an 'any' type.
+tests/TurnManager.test.ts(107,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(108,14): error TS7005: Variable 'mockTransientState' implicitly has an 'any' type.
+tests/TurnManager.test.ts(112,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(118,7): error TS7005: Variable 'mockTransientState' implicitly has an 'any' type.
+tests/TurnManager.test.ts(119,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(120,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(125,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(126,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(138,7): error TS7005: Variable 'mockAnimationScheduler' implicitly has an 'any' type.
+tests/TurnManager.test.ts(140,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(143,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(147,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(148,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(149,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(150,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(154,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(155,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(156,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(162,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(163,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(165,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(175,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(176,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(178,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(186,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(187,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(188,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(190,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(193,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(199,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(200,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(201,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(203,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(210,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(211,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(213,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(215,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(219,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(220,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(221,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(223,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(224,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(225,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(231,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(233,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(235,14): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(239,28): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(240,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(247,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(248,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(249,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(250,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(254,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(255,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(256,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(257,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(261,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(262,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(263,14): error TS7005: Variable 'mockCombatManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(267,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(268,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(269,14): error TS7005: Variable 'mockInteractionManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(273,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(274,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(275,20): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(279,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(280,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(281,20): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(285,7): error TS7005: Variable 'mockCombatManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(286,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(287,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(288,14): error TS7005: Variable 'mockAnimationScheduler' implicitly has an 'any' type.
+tests/TurnManager.test.ts(294,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(295,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(296,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(298,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(300,14): error TS7005: Variable 'mockAnimationScheduler' implicitly has an 'any' type.
+tests/TurnManager.test.ts(306,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(307,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(308,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(310,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(313,14): error TS7005: Variable 'mockAnimationScheduler' implicitly has an 'any' type.
+tests/TurnManager.test.ts(319,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(320,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(321,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(323,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(325,28): error TS7005: Variable 'mockAnimationScheduler' implicitly has an 'any' type.
+tests/TurnManager.test.ts(333,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(334,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(336,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(338,14): error TS7005: Variable 'mockCombatManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(346,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(347,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(348,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(350,28): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(351,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(361,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(364,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(365,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(368,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(371,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(372,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(375,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(378,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(386,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(387,20): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(388,14): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(399,9): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(401,7): error TS7005: Variable 'mockEnemyCollection' implicitly has an 'any' type.
+tests/TurnManager.test.ts(403,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(406,14): error TS7005: Variable 'mockAnimationScheduler' implicitly has an 'any' type.
+tests/TurnManager.test.ts(412,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(413,20): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(417,7): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(420,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(421,20): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(425,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(426,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(428,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/TurnManager.test.ts(432,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(433,7): error TS7005: Variable 'turnManager' implicitly has an 'any' type.
+tests/TurnManager.test.ts(435,14): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(1,36): error TS2307: Cannot find module '../ui/UIEventCoordinator' or its corresponding type declarations.
+tests/UIEventCoordinator.test.ts(7,9): error TS7034: Variable 'mockGame' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/UIEventCoordinator.test.ts(8,9): error TS7034: Variable 'mockMessageManager' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/UIEventCoordinator.test.ts(9,9): error TS7034: Variable 'mockPanelManager' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/UIEventCoordinator.test.ts(55,20): error TS7005: Variable 'mockPanelManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(66,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(81,20): error TS7005: Variable 'mockPanelManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(85,62): error TS2554: Expected 1 arguments, but got 0.
+tests/UIEventCoordinator.test.ts(103,20): error TS7005: Variable 'mockPanelManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(111,20): error TS7005: Variable 'mockPanelManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(119,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(136,20): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(137,20): error TS7005: Variable 'mockGame' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(138,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(153,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(173,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(187,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(199,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(212,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(216,64): error TS2554: Expected 1 arguments, but got 0.
+tests/UIEventCoordinator.test.ts(225,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(236,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(248,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(257,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(279,20): error TS7005: Variable 'mockPanelManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(280,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(281,20): error TS7005: Variable 'mockPanelManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(294,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIEventCoordinator.test.ts(301,20): error TS7005: Variable 'mockMessageManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(7,7): error TS7034: Variable 'uiManager' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/UIManager.test.ts(9,7): error TS7034: Variable 'mockPlayer' implicitly has type 'any' in some locations where its type cannot be determined.
+tests/UIManager.test.ts(75,14): error TS2339: Property 'mapCtx' does not exist on type '{ player: any; grid: any; enemies: never[]; npcs: never[]; canvas: { getBoundingClientRect: Mock<Procedure>; }; pendingCharge: null; bombPlacementMode: boolean; bombPlacementPositions: never[]; ... 21 more ...; incrementBombActions: Mock<...>; }'.
+tests/UIManager.test.ts(78,14): error TS2339: Property 'specialZones' does not exist on type '{ player: any; grid: any; enemies: never[]; npcs: never[]; canvas: { getBoundingClientRect: Mock<Procedure>; }; pendingCharge: null; bombPlacementMode: boolean; bombPlacementPositions: never[]; ... 21 more ...; incrementBombActions: Mock<...>; }'.
+tests/UIManager.test.ts(81,14): error TS2551: Property 'textureManager' does not exist on type '{ player: any; grid: any; enemies: never[]; npcs: never[]; canvas: { getBoundingClientRect: Mock<Procedure>; }; pendingCharge: null; bombPlacementMode: boolean; bombPlacementPositions: never[]; ... 21 more ...; incrementBombActions: Mock<...>; }'. Did you mean 'turnManager'?
+tests/UIManager.test.ts(89,31): error TS2345: Argument of type '{ player: any; grid: any; enemies: never[]; npcs: never[]; canvas: { getBoundingClientRect: Mock<Procedure>; }; pendingCharge: null; bombPlacementMode: boolean; bombPlacementPositions: never[]; ... 21 more ...; incrementBombActions: Mock<...>; }' is not assignable to parameter of type 'IGame'.
+  Type '{ player: any; grid: any; enemies: never[]; npcs: never[]; canvas: { getBoundingClientRect: Mock<Procedure>; }; pendingCharge: null; bombPlacementMode: boolean; bombPlacementPositions: never[]; ... 21 more ...; incrementBombActions: Mock<...>; }' is missing the following properties from type 'IGame': world, ui, audio, zoneGenState, and 63 more.
+tests/UIManager.test.ts(100,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(101,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(102,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(103,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(104,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(164,38): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(193,32): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(195,7): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(201,32): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(203,7): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(209,34): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(219,34): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(221,7): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(227,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/UIManager.test.ts(229,7): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(236,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/UIManager.test.ts(237,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/UIManager.test.ts(238,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/UIManager.test.ts(239,7): error TS7005: Variable 'mockPlayer' implicitly has an 'any' type.
+tests/UIManager.test.ts(241,7): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(250,34): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(260,42): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(261,38): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(277,21): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(281,11): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(281,39): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(282,33): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(284,9): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(293,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(294,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(298,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(299,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(303,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(304,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(308,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(309,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(313,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/UIManager.test.ts(314,14): error TS7005: Variable 'uiManager' implicitly has an 'any' type.
+tests/ZoneKeyUtils.test.ts(71,39): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+tests/ZoneKeyUtils.test.ts(97,35): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+tests/zoneSpawnManager.test.ts(10,3): error TS2322: Type '1' is not assignable to type '0'.
+tests/zoneSpawnManager.test.ts(18,3): error TS2322: Type '1' is not assignable to type '0'.
+tests/zoneSpawnManager.test.ts(22,15): error TS18047: 'pos' is possibly 'null'.
+tests/zoneSpawnManager.test.ts(22,22): error TS18047: 'pos' is possibly 'null'.
+tests/ZoneStateManager.test.ts(1,34): error TS2307: Cannot find module '../generators/ZoneStateManager' or its corresponding type declarations.
+tools/asset-scanner.ts(464,21): error TS7006: Parameter 'item' implicitly has an 'any' type.
+tools/zone-editor-assets.ts(5,59): error TS2307: Cannot find module 'virtual:asset-manifest' or its corresponding type declarations.

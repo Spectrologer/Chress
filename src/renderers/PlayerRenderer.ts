@@ -66,8 +66,8 @@ export class PlayerRenderer {
 
     constructor(game: IGame) {
         this.game = game;
-        this.ctx = game.ctx;
-        this.textureManager = game.textureManager;
+        this.ctx = game.ctx!;
+        this.textureManager = game.textureManager!;
     }
 
     // Use TypeChecks utility instead of local implementation
@@ -90,22 +90,32 @@ export class PlayerRenderer {
     }
 
     private drawPlayerSprite(): void {
-        const pos = this.game.player.getPosition();
+        const pos = this.game.playerFacade?.getPosition();
         const player = this.game.player;
-        const anim = player.animations;
+        if (!pos || !player || !this.game.playerFacade?.hasAnimations()) return;
+
         let spriteKey = 'default'; // Default idle sprite
-        if (this.game.player.animations.attackAnimation > 0) {
+        if (this.game.playerFacade.getAttackAnimation() > 0) {
             spriteKey = 'whack';
-        } else if (this.game.player.animations.actionAnimation > 0) {
+        } else if (this.game.playerFacade.getActionAnimation() > 0) {
             spriteKey = 'whack';
-        } else if (this.game.player.isDead()) {
+        } else if (this.game.playerFacade.isDead()) {
             spriteKey = 'dead';
         }
-        const playerImage = this.game.textureManager.getImage(spriteKey);
+        const playerImage = this.game.textureManager?.getImage(spriteKey);
+        if (!playerImage) return;
+
+        // Get animation offsets
+        const bumpOffsetX = this.game.playerFacade.getBumpOffsetX();
+        const bumpOffsetY = this.game.playerFacade.getBumpOffsetY();
+        const liftOffsetY = this.game.playerFacade.getLiftOffsetY();
+        const backflipLiftOffsetY = this.game.playerFacade.getBackflipLiftOffsetY();
+
         // Compute pixel position. If a lift animation is active we interpolate from last position -> current position
         let pixelXBase: number, pixelYBase: number;
-        if (anim.liftFrames > 0 && typeof player.lastX !== 'undefined' && typeof player.lastY !== 'undefined') {
-            const remaining = anim.liftFrames; // remaining frames
+        const liftFrames = player.animations?.liftFrames ?? 0;
+        if (liftFrames > 0 && typeof player.lastX !== 'undefined' && typeof player.lastY !== 'undefined') {
+            const remaining = liftFrames; // remaining frames
             const totalFrames = ANIMATION_CONSTANTS.LIFT_FRAMES || 15;
             const progress = 1 - (remaining / totalFrames); // progress 0..1
             // Use lastX/lastY to interpolate smooth movement between tiles
@@ -113,21 +123,25 @@ export class PlayerRenderer {
             const startY = player.lastY;
             const endX = player.x;
             const endY = player.y;
-            pixelXBase = (startX + (endX - startX) * progress) * TILE_SIZE + anim.bumpOffsetX;
-            pixelYBase = (startY + (endY - startY) * progress) * TILE_SIZE + anim.bumpOffsetY + anim.liftOffsetY + (anim.backflipLiftOffsetY || 0);
+            pixelXBase = (startX + (endX - startX) * progress) * TILE_SIZE + bumpOffsetX;
+            pixelYBase = (startY + (endY - startY) * progress) * TILE_SIZE + bumpOffsetY + liftOffsetY + backflipLiftOffsetY;
         } else {
-            pixelXBase = pos.x * TILE_SIZE + anim.bumpOffsetX;
-            pixelYBase = pos.y * TILE_SIZE + anim.bumpOffsetY + anim.liftOffsetY + (anim.backflipLiftOffsetY || 0);
+            pixelXBase = pos.x * TILE_SIZE + bumpOffsetX;
+            pixelYBase = pos.y * TILE_SIZE + bumpOffsetY + liftOffsetY + backflipLiftOffsetY;
         }
+
+        // Get animation state
+        const backflipAngle = this.game.playerFacade.getBackflipAngle();
+        const damageAnimation = player.animations?.damageAnimation ?? 0;
 
         // If a backflip rotation is active, draw rotated around sprite center
         if (playerImage && playerImage.complete) {
             this.ctx.save();
 
             // Apply damage flash effect if taking damage
-            if (anim.damageAnimation > 0) {
+            if (damageAnimation > 0) {
                 // Flash red for first half, then fade
-                if (anim.damageAnimation > DAMAGE_FLASH_CONSTANTS.DAMAGE_ANIMATION_THRESHOLD) {
+                if (damageAnimation > DAMAGE_FLASH_CONSTANTS.DAMAGE_ANIMATION_THRESHOLD) {
                     // Strong red flash with glow (first half)
                     this.ctx.filter = `brightness(${DAMAGE_FLASH_CONSTANTS.DAMAGE_BRIGHTNESS_STRONG}) saturate(${DAMAGE_FLASH_CONSTANTS.DAMAGE_SATURATION_STRONG}) hue-rotate(${DAMAGE_FLASH_CONSTANTS.DAMAGE_HUE_ROTATION}) drop-shadow(0 0 ${DAMAGE_FLASH_CONSTANTS.DAMAGE_SHADOW_BLUR_LARGE} red) drop-shadow(0 0 ${DAMAGE_FLASH_CONSTANTS.DAMAGE_SHADOW_BLUR_MEDIUM} red)`;
                 } else {
@@ -136,11 +150,11 @@ export class PlayerRenderer {
                 }
             }
 
-            if (anim.backflipAngle && anim.backflipAngle !== 0) {
+            if (backflipAngle && backflipAngle !== 0) {
                 const cx = pixelXBase + TILE_SIZE / 2;
                 const cy = pixelYBase + TILE_SIZE / 2;
                 this.ctx.translate(cx, cy);
-                this.ctx.rotate(anim.backflipAngle);
+                this.ctx.rotate(backflipAngle);
                 this.ctx.drawImage(playerImage, -TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
             } else {
                 this.ctx.drawImage(playerImage, pixelXBase, pixelYBase, TILE_SIZE, TILE_SIZE);
@@ -151,12 +165,12 @@ export class PlayerRenderer {
             this.ctx.restore();
         } else {
             this.ctx.fillStyle = '#ff4444';
-            if (anim.backflipAngle && anim.backflipAngle !== 0) {
+            if (backflipAngle && backflipAngle !== 0) {
                 this.ctx.save();
                 const cx = pixelXBase + TILE_SIZE / 2;
                 const cy = pixelYBase + TILE_SIZE / 2;
                 this.ctx.translate(cx, cy);
-                this.ctx.rotate(anim.backflipAngle);
+                this.ctx.rotate(backflipAngle);
                 this.ctx.fillRect(-TILE_SIZE / 2 + 2, -TILE_SIZE / 2 + 2, TILE_SIZE - 4, TILE_SIZE - 4);
                 this.ctx.restore();
             } else {
@@ -164,7 +178,7 @@ export class PlayerRenderer {
             }
         }
         // Draw bow shot animation if present on player.animations
-        const bowAnim = player.animations.bowShot;
+        const bowAnim = player?.animations?.bowShot;
         if (bowAnim && bowAnim.frames > 0) {
             const bowImage = this.textureManager.getImage('bow');
             const progress = 1 - (bowAnim.frames / bowAnim.totalFrames);
@@ -202,7 +216,7 @@ export class PlayerRenderer {
         }
 
         // Draw pickup hover (icon floating above player's head)
-        const pickup = player.animations.pickupHover;
+        const pickup = player?.animations?.pickupHover;
         if (pickup && pickup.imageKey) {
             const img = this.textureManager.getImage(pickup.imageKey);
             // Compute progress 0..1 where 0 is start, 1 is end
@@ -273,12 +287,14 @@ export class PlayerRenderer {
         // Draw visual indicator if player is on an exit tile
         if (!this.game.grid) return; // Grid not yet loaded
 
-        const playerGridX = this.game.player.x;
-        const playerGridY = this.game.player.y;
+        const playerGridX = this.game.playerFacade?.getX();
+        const playerGridY = this.game.playerFacade?.getY();
+        if (playerGridX === undefined || playerGridY === undefined) return;
+
         const tileUnderPlayer = this.game.grid[playerGridY]?.[playerGridX];
 
         if (tileUnderPlayer === TILE_TYPES.EXIT || tileUnderPlayer === TILE_TYPES.PORT || (this.isTileObject(tileUnderPlayer) && tileUnderPlayer.type === TILE_TYPES.PORT)) {
-            const arrowImage = this.game.textureManager.getImage('ui/arrow');
+            const arrowImage = this.game.textureManager?.getImage('ui/arrow');
             if (arrowImage && arrowImage.complete) {
                 this.ctx.save();
                 const pixelX = playerGridX * TILE_SIZE;
@@ -299,10 +315,10 @@ export class PlayerRenderer {
                     else if (tileUnderPlayer.portKind === 'stairup') rotationAngle = 0; // point up to indicate ascend
                     else if (tileUnderPlayer.portKind === 'cistern') {
                         // For cisterns, arrow points down to enter, and up to exit
-                        rotationAngle = this.game.player.currentZone.dimension === 0 ? Math.PI : 0;
+                        rotationAngle = this.game.playerFacade?.getCurrentZone()?.dimension === 0 ? Math.PI : 0;
                     } else if (tileUnderPlayer.portKind === 'interior') {
                         // For interior doors, arrow points up to enter, and down to exit
-                        rotationAngle = this.game.player.currentZone.dimension === 0 ? 0 : Math.PI;
+                        rotationAngle = this.game.playerFacade?.getCurrentZone()?.dimension === 0 ? 0 : Math.PI;
                     }
                 } else if (tileUnderPlayer === TILE_TYPES.PORT) {
                     const isCistern = MultiTileHandler.findCisternPosition(playerGridX, playerGridY, this.game.gridManager as any);
@@ -310,10 +326,10 @@ export class PlayerRenderer {
 
                     if (isCistern || isHole) {
                         // For underground entrances (cisterns, holes), arrow points down to enter, and up to exit.
-                        rotationAngle = this.game.player.currentZone.dimension === 0 ? Math.PI : 0;
+                        rotationAngle = this.game.playerFacade?.getCurrentZone()?.dimension === 0 ? Math.PI : 0;
                     } else {
                         // For interior structures (house, shack), arrow points up to enter, and down to exit.
-                        rotationAngle = this.game.player.currentZone.dimension === 0 ? 0 : Math.PI;
+                        rotationAngle = this.game.playerFacade?.getCurrentZone()?.dimension === 0 ? 0 : Math.PI;
                     }
 
                 } else { // It's an EXIT tile
@@ -329,7 +345,7 @@ export class PlayerRenderer {
                 }
 
                 // Force interior indicator arrows to point down (interior dimension = 1)
-                if (this.game.player.currentZone.dimension === 1) {
+                if (this.game.playerFacade?.getCurrentZone()?.dimension === 1) {
                     rotationAngle = Math.PI;
                 }
 
@@ -348,10 +364,11 @@ export class PlayerRenderer {
     }
 
     private drawPlayerSmokeAnimation(): void {
-        this.game.player.animations.smokeAnimations.forEach(anim => {
+        const smokeAnimations = this.game.playerFacade?.getSmokeAnimations() ?? [];
+        smokeAnimations.forEach(anim => {
             if (anim.frame > 0) {
                 const frameNumber = Math.floor((18 - anim.frame) / 3) + 1; // Map 18 frames to 6 smoke frames
-                const smokeImage = this.game.textureManager.getImage(`smoke_frame_${frameNumber}`);
+                const smokeImage = this.game.textureManager?.getImage(`smoke_frame_${frameNumber}`);
                 if (smokeImage && smokeImage.complete) {
                     this.ctx.drawImage(
                         smokeImage,

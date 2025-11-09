@@ -35,6 +35,45 @@ export interface InteractTarget {
 }
 
 /**
+ * Smoke animation interface
+ */
+export interface SmokeAnimation {
+    x: number;
+    y: number;
+    frame: number;
+}
+
+/**
+ * Explosion animation interface
+ */
+export interface SplodeAnimation {
+    x: number;
+    y: number;
+    frame: number;
+    totalFrames: number;
+}
+
+/**
+ * Pickup hover animation interface
+ */
+export interface PickupHover {
+    imageKey: string;
+    frames: number;
+    totalFrames: number;
+    type: string;
+    foodType?: string;
+}
+
+/**
+ * Bow shot animation interface
+ */
+export interface BowShot {
+    frames: number;
+    totalFrames: number;
+    power: number;
+}
+
+/**
  * PlayerStatsFacade - Stats, animations, and interaction management for player
  *
  * Handles:
@@ -266,6 +305,157 @@ export class PlayerStatsFacade {
     }
 
     // ========================================
+    // ANIMATION STATE QUERIES (Read-only)
+    // ========================================
+
+    /**
+     * Get attack animation counter
+     * @returns Frame counter for attack animation (0 = not animating)
+     */
+    getAttackAnimation(): number {
+        return this.player.animations?.attackAnimation ?? 0;
+    }
+
+    /**
+     * Get action animation counter
+     * @returns Frame counter for action animation (0 = not animating)
+     */
+    getActionAnimation(): number {
+        return this.player.animations?.actionAnimation ?? 0;
+    }
+
+    /**
+     * Get bump offset X
+     * @returns Horizontal offset for bump animation
+     */
+    getBumpOffsetX(): number {
+        return this.player.animations?.bumpOffsetX ?? 0;
+    }
+
+    /**
+     * Get bump offset Y
+     * @returns Vertical offset for bump animation
+     */
+    getBumpOffsetY(): number {
+        return this.player.animations?.bumpOffsetY ?? 0;
+    }
+
+    /**
+     * Get backflip angle
+     * @returns Current backflip rotation angle in radians
+     */
+    getBackflipAngle(): number {
+        return this.player.animations?.backflipAngle ?? 0;
+    }
+
+    /**
+     * Get backflip lift offset Y
+     * @returns Vertical lift offset during backflip
+     */
+    getBackflipLiftOffsetY(): number {
+        return this.player.animations?.backflipLiftOffsetY ?? 0;
+    }
+
+    /**
+     * Get lift offset Y
+     * @returns Vertical offset for lift animation
+     */
+    getLiftOffsetY(): number {
+        return this.player.animations?.liftOffsetY ?? 0;
+    }
+
+    /**
+     * Get active smoke animations
+     * @returns Array of smoke animation objects (read-only copy)
+     */
+    getSmokeAnimations(): SmokeAnimation[] {
+        return this.player.animations?.smokeAnimations ? [...this.player.animations.smokeAnimations] : [];
+    }
+
+    /**
+     * Get active explosion animations
+     * @returns Array of explosion animation objects (read-only copy)
+     */
+    getSplodeAnimations(): SplodeAnimation[] {
+        return this.player.animations?.splodeAnimations ? [...this.player.animations.splodeAnimations] : [];
+    }
+
+    /**
+     * Get pickup hover animation state
+     * @returns Current pickup hover animation data or null
+     */
+    getPickupHover(): PickupHover | null {
+        return this.player.animations?.pickupHover ?? null;
+    }
+
+    // ========================================
+    // ANIMATION MUTATIONS (for managers)
+    // ========================================
+
+    /**
+     * Add a smoke animation at the specified position
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param frames Number of frames for the animation
+     */
+    addSmokeAnimation(x: number, y: number, frames: number): void {
+        if (!this.player.animations?.smokeAnimations) {
+            return;
+        }
+        this.player.animations.smokeAnimations.push({ x, y, frame: frames });
+    }
+
+    /**
+     * Set pickup hover animation
+     * @param data Pickup hover animation data
+     */
+    setPickupHover(data: PickupHover): void {
+        if (!this.player.animations) {
+            return;
+        }
+        this.player.animations.pickupHover = data;
+    }
+
+    /**
+     * Clear pickup hover animation
+     */
+    clearPickupHover(): void {
+        if (!this.player.animations) {
+            return;
+        }
+        this.player.animations.pickupHover = null;
+    }
+
+    /**
+     * Set bow shot animation
+     * @param data Bow shot animation data
+     */
+    setBowShot(data: BowShot): void {
+        if (!this.player.animations) {
+            return;
+        }
+        this.player.animations.bowShot = data;
+    }
+
+    /**
+     * Clear bow shot animation
+     */
+    clearBowShot(): void {
+        if (!this.player.animations) {
+            return;
+        }
+        this.player.animations.bowShot = null;
+    }
+
+    /**
+     * Check if animations object exists
+     * @returns True if player has animations object
+     */
+    hasAnimations(): boolean {
+        return !!this.player.animations;
+    }
+
+    // ========================================
     // INTERACTION STATE
     // ========================================
 
@@ -292,6 +482,17 @@ export class PlayerStatsFacade {
         } else {
             this.player.interactOnReach = null;
         }
+    }
+
+    // ========================================
+    // PLAYER STATE QUERIES
+    // ========================================
+
+    /**
+     * Check if player is dead
+     */
+    isDead(): boolean {
+        return this.player.isDead?.() ?? (this.player.stats?.health ?? 0) <= 0;
     }
 
     // ========================================

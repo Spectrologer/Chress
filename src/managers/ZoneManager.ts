@@ -104,6 +104,10 @@ export class ZoneManager {
         const playerFacade = this.game.playerFacade;
         const gridManager = this.game.gridManager;
 
+        if (!playerFacade) {
+            throw new Error('ZoneManager: playerFacade is not initialized');
+        }
+
         // Check if we're leaving a custom board zone (dimension 3)
         const currentZone = playerFacade.getCurrentZone();
         const CUSTOM_BOARD_DIMENSION = 3;
@@ -112,7 +116,7 @@ export class ZoneManager {
             // Exiting custom board - return to stored zone
             const returnZone = (this.game as any).customBoardReturnZone;
             if (returnZone) {
-                console.log(`[CustomBoard] Exiting custom board, returning to zone (${returnZone.x}, ${returnZone.y}) dimension ${returnZone.dimension}`);
+                logger.log(`[CustomBoard] Exiting custom board, returning to zone (${returnZone.x}, ${returnZone.y}) dimension ${returnZone.dimension}`);
                 playerFacade.setCurrentZone(returnZone.x, returnZone.y);
                 playerFacade.setZoneDimension(returnZone.dimension);
                 this.game.generateZone();
@@ -145,12 +149,12 @@ export class ZoneManager {
 
         // Step 6: Clear blocking tiles at spawn position
         const playerPos = playerFacade.getPosition();
-        if (gridManager.isTileType(playerPos.x, playerPos.y, TILE_TYPES.SHRUBBERY)) {
+        if (gridManager && gridManager.isTileType(playerPos.x, playerPos.y, TILE_TYPES.SHRUBBERY)) {
             gridManager.setTile(playerPos.x, playerPos.y, TILE_TYPES.EXIT);
         }
 
         // Step 7: Validate player position
-        this.game.player.ensureValidPosition(this.game.grid);
+        playerFacade.ensureValidPosition(this.game.grid);
 
         // Sync lastX/lastY to prevent visual interpolation glitches
         playerFacade.setLastPosition(playerPos.x, playerPos.y);

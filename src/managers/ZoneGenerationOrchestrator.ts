@@ -67,16 +67,23 @@ export class ZoneGenerationOrchestrator {
      * Manages the full zone lifecycle from generation to entity initialization.
      */
     public generateZone(): void {
-        const currentZone = (this.game.player as any).getCurrentZone() as ZoneInfo;
-        const depth = currentZone.depth || ((this.game.player as any).undergroundDepth || 1);
+        if (!this.game.player || !this.game.playerFacade) {
+            logger.warn('[ZoneGenerationOrchestrator] Cannot generate zone: player is null');
+            return;
+        }
+
+        const currentZone = this.game.playerFacade.getCurrentZone();
+        const depth = currentZone.depth || (this.game.playerFacade.getUndergroundDepth() || 1);
         const zoneKey = createZoneKey(currentZone.x, currentZone.y, currentZone.dimension, depth);
 
         // Generate chunk connections for current area
-        (this.game as any).connectionManager.generateChunkConnections(currentZone.x, currentZone.y);
+        if (this.game.connectionManager) {
+            this.game.connectionManager.generateChunkConnections(currentZone.x, currentZone.y);
+        }
 
         // Check if we already have this zone loaded from saved state
         let zoneData: ZoneData;
-        const isPortTransition = (this.game as any).lastExitSide === 'port';
+        const isPortTransition = this.game.lastExitSide === 'port';
 
         if (this.game.zoneRepository.hasByKey(zoneKey)) {
             zoneData = this.game.zoneRepository.getByKey(zoneKey) as ZoneData;
@@ -97,26 +104,24 @@ export class ZoneGenerationOrchestrator {
      * Generate a new zone
      */
     private _generateNewZone(currentZone: ZoneInfo, zoneKey: string): ZoneData {
-        const zoneGenerator = (this.game as any).zoneGenerator;
-        const zones = (this.game as any).zones;
-        const connectionManager = (this.game as any).connectionManager;
-        const availableFoodAssets = (this.game as any).availableFoodAssets;
-        const lastExitSide = (this.game as any).lastExitSide;
+        if (!this.game.zoneGenerator) {
+            throw new Error('Zone generator not initialized');
+        }
 
-        const zoneData = zoneGenerator.generateZone(
+        const zoneData = this.game.zoneGenerator.generateZone(
             currentZone.x,
             currentZone.y,
             currentZone.dimension,
-            zones,
-            connectionManager.zoneConnections,
-            availableFoodAssets,
-            lastExitSide
+            this.game.world.zones,
+            this.game.connectionManager?.zoneConnections || new Map(),
+            this.game.availableFoodAssets || [],
+            this.game.lastExitSide || null
         );
 
         // Defensive: ensure minimal zoneData structure
         if (!zoneData) {
             return {
-                grid: this.game.grid || Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)),
+                grid: this.game.grid || Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(TILE_TYPES.FLOOR)) as Grid,
                 enemies: [],
                 playerSpawn: null
             };
@@ -157,43 +162,62 @@ export class ZoneGenerationOrchestrator {
         this.game.grid = zoneData.grid;
 
         // Restore terrain textures, overlay textures, rotations, and overlay rotations to zone generator
-        const zoneGenerator = (this.game as any).zoneGenerator;
-        if (zoneGenerator) {
-            zoneGenerator.terrainTextures = zoneData.terrainTextures || {};
-            zoneGenerator.overlayTextures = zoneData.overlayTextures || {};
-            zoneGenerator.rotations = zoneData.rotations || {};
-            zoneGenerator.overlayRotations = zoneData.overlayRotations || {};
+        if (this.game.zoneGenerator) {
+            this.game.zoneGenerator.terrainTextures = zoneData.terrainTextures || {};
+            this.game.zoneGenerator.overlayTextures = zoneData.overlayTextures || {};
+            this.game.zoneGenerator.rotations = zoneData.rotations || {};
+            this.game.zoneGenerator.overlayRotations = zoneData.overlayRotations || {};
         }
 
         // Initialize gridManager
-        if (!(this.game as any).gridManager) {
-            (this.game as any).gridManager = (this.game as any)._services.get('gridManager');
-        } else {
+        if (!this.game.gridManager && this.game._services) {
+            const gridManager = this.game._services.get('gridManager');
+            if (gridManager && 'setGrid' in gridManager) {
+                this.game.gridManager = gridManager;
+            }
+        }
+        if (this.game.gridManager) {
             this.game.gridManager.setGrid(zoneData.grid);
         }
 
         // Always recreate enemyCollection to ensure it wraps the current array reference
-        if ((this.game as any)._services) {
-            (this.game as any)._services._instances.delete('enemyCollection');
+        if (this.game._services) {
+            // Force refresh of enemy collection by accessing internal instances
+            const services = this.game._services;
+            if (services && '_instances' in services) {
+                const instances = (services as { _instances?: Map<string, unknown> })._instances;
+                if (instances && typeof instances.delete === 'function') {
+                    instances.delete('enemyCollection');
+                }
+            }
+            this.game.enemyCollection = this.game._services.get('enemyCollection');
         }
-        (this.game as any).enemyCollection = (this.game as any)._services.get('enemyCollection');
 
         // Initialize NPC system
-        if (!(this.game as any).npcManager) {
-            (this.game as any).npcManager = (this.game as any)._services.get('npcManager');
+        if (!this.game.npcManager && this.game._services) {
+            this.game.npcManager = this.game._services.get('npcManager');
         }
-        if (!(this.game as any).npcRenderer) {
-            (this.game as any).npcRenderer = (this.game as any)._services.get('npcRenderer');
+        if (!this.game.npcRenderer && this.game._services) {
+            const npcRenderer = this.game._services.get('npcRenderer');
+            if (npcRenderer && 'render' in npcRenderer) {
+                this.game.npcRenderer = npcRenderer;
+            }
         }
-        (this.game as any).npcManager.initializeFromGrid();
+        if (this.game.npcManager) {
+            this.game.npcManager.initializeFromGrid();
+        }
     }
 
     /**
      * Handle new game spawn positioning
      */
     private _handleNewGameSpawn(zoneData: ZoneData): void {
-        const lastExitSide = (this.game as any).lastExitSide;
-        const currentZone = (this.game.player as any).getCurrentZone() as ZoneInfo;
+        if (!this.game.player || !this.game.playerFacade) {
+            return;
+        }
+
+        const lastExitSide = this.game.lastExitSide;
+        const currentZone = this.game.playerFacade.getCurrentZone();
         const CUSTOM_BOARD_DIMENSION = 3;
 
         // Use playerSpawn if:
@@ -201,8 +225,8 @@ export class ZoneGenerationOrchestrator {
         // 2. We're entering a custom board (dimension 3)
         const shouldUsePlayerSpawn = (!lastExitSide || currentZone.dimension === CUSTOM_BOARD_DIMENSION) && zoneData.playerSpawn;
 
-        if (shouldUsePlayerSpawn) {
-            (this.game as any)._newGameSpawnPosition = { ...zoneData.playerSpawn };
+        if (shouldUsePlayerSpawn && zoneData.playerSpawn) {
+            this.game._newGameSpawnPosition = { ...zoneData.playerSpawn };
 
             let offScreenX = zoneData.playerSpawn.x;
             let offScreenY = zoneData.playerSpawn.y;
@@ -226,8 +250,12 @@ export class ZoneGenerationOrchestrator {
      */
     private _patchEmergenceTiles(): void {
         const gridManager = this.game.gridManager;
+        if (!gridManager) {
+            return;
+        }
+
         const transientState = this.game.transientGameState;
-        const lastExitSide = (this.game as any).lastExitSide;
+        const lastExitSide = this.game.lastExitSide;
 
         try {
             const portData = transientState.getPortTransitionData() as PortTransitionData | undefined;
@@ -249,21 +277,27 @@ export class ZoneGenerationOrchestrator {
                         }
                     } else if (from === 'cistern') {
                         const belowTile = gridManager.getTile(px, py + 1);
-                        if (belowTile !== undefined && belowTile !== TILE_TYPES.CISTERN) {
+                        if (belowTile !== undefined && belowTile !== TILE_TYPES.CISTERN && this.game.grid) {
                             this.transitionCoordinator.validateAndSetTile(this.game.grid, px, py + 1, TILE_TYPES.CISTERN);
                         }
                     } else if (from === 'hole' || from === 'pitfall') {
                         const isPrimitivePitfall = isPitfall(existing) || existing === TILE_TYPES.HOLE;
                         if (isPrimitivePitfall) {
                             gridManager.setTile(px, py, { type: TILE_TYPES.PORT, portKind: 'stairup' });
-                            try { logger.debug && logger.debug(`Placed stairup at surface (${px},${py}) from ${from}`); } catch (e) {}
+                            try { logger.debug && logger.debug(`Placed stairup at surface (${px},${py}) from ${from}`); } catch (e) {
+                                logger.warn('[ZoneGenerationOrchestrator] Logger debug failed:', e);
+                            }
                         } else {
-                            try { logger.debug && logger.debug(`Did not place stairup at (${px},${py}) - existing tile prevents conversion.`); } catch (e) {}
+                            try { logger.debug && logger.debug(`Did not place stairup at (${px},${py}) - existing tile prevents conversion.`); } catch (e) {
+                                logger.warn('[ZoneGenerationOrchestrator] Logger debug failed:', e);
+                            }
                         }
                     }
                 }
             }
-        } catch (e) { /* non-fatal */ }
+        } catch (e) {
+            logger.warn('[ZoneGenerationOrchestrator] Port transition patch error (non-fatal):', e);
+        }
     }
 
     /**
@@ -271,10 +305,14 @@ export class ZoneGenerationOrchestrator {
      */
     private _filterDefeatedEnemies(zoneData: ZoneData): void {
         const enemyCollection = this.game.enemyCollection;
-        const EnemyClass = (this.game as any).Enemy;
-        const defeatedEnemies = (this.game as any).defeatedEnemies;
+        if (!enemyCollection || !this.game.Enemy) {
+            return;
+        }
 
-        const allEnemies = (zoneData.enemies || []).map((e: Enemy) => new EnemyClass(e));
+        const EnemyClass = this.game.Enemy;
+        const defeatedEnemies = this.game.defeatedEnemies;
+
+        const allEnemies = (zoneData.enemies || []).map((e: EnemyData) => new EnemyClass(e));
         const livingEnemies = allEnemies.filter((enemy: Enemy) => {
             if (!enemy.id) return true; // Include enemies without id
             const defeatedKey = `${enemy.id}`;
@@ -287,8 +325,11 @@ export class ZoneGenerationOrchestrator {
      * Ensure zoneGenerator.grid points to the game grid
      */
     private _syncZoneGeneratorGrid(): void {
-        const zoneGenerator = (this.game as any).zoneGenerator;
-        zoneGenerator.grid = this.game.grid;
+        if (!this.game.grid || !this.game.zoneGenerator) {
+            return;
+        }
+
+        this.game.zoneGenerator.grid = this.game.grid;
     }
 
     /**
@@ -303,8 +344,7 @@ export class ZoneGenerationOrchestrator {
             // This zone uses a board but is missing terrain textures - regenerate them
             const boardData = boardLoader.getBoardSync(currentZone.x, currentZone.y, currentZone.dimension);
             if (boardData) {
-                const availableFoodAssets = (this.game as any).availableFoodAssets;
-                const result = boardLoader.convertBoardToGrid(boardData, availableFoodAssets);
+                const result = boardLoader.convertBoardToGrid(boardData, this.game.availableFoodAssets || []);
                 // Merge the terrain textures, overlays, rotations, and overlay rotations into the existing zone data
                 zoneData.terrainTextures = result.terrainTextures;
                 zoneData.overlayTextures = result.overlayTextures;
@@ -316,7 +356,7 @@ export class ZoneGenerationOrchestrator {
                 }
                 // Save the repaired zone data
                 this.game.zoneRepository.setByKey(zoneKey, zoneData);
-                console.log(`[ZoneRepair] Fixed missing terrain textures for zone ${zoneKey}`);
+                logger.log(`[ZoneRepair] Fixed missing terrain textures for zone ${zoneKey}`);
             }
         }
 

@@ -80,6 +80,11 @@
         "id": "msg_10",
         "text": "Legend holds there was once a game called 'Chess', with no items or combos.",
         "buttonText": "Barbaric."
+      },
+        {
+        "id": "msg_11",
+        "text": "Cubes are banned in the museum.",
+        "buttonText": "Hmmm."
       }
     ]
   },

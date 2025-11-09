@@ -1,9 +1,31 @@
-import { BaseMoveCalculator } from './base';
+import { BaseMoveCalculator, type Enemy, type Player, type Position, type Grid, type Game } from './base';
 import { EnemySpecialActions } from '@enemy/EnemySpecialActions';
 import { DistanceUtils, AttackBehaviors, ChargeMoveHelpers } from './BaseAttackBehaviors';
 
+/**
+ * Zard Move Calculator
+ *
+ * CHESS PIECE: BISHOP
+ * - Moves diagonally only
+ * - Can move any distance along diagonal lines
+ * - Attacks diagonally adjacent squares
+ * - Can charge at player from distance (Chress enhancement)
+ * - Uses tactical defensive positioning when threatened
+ *
+ * Movement: Unlimited diagonal movement
+ * Attack: Diagonal adjacent + diagonal charge attacks
+ * Special: Smoke trail effects during multi-tile moves
+ */
 export class ZardMoveCalculator extends BaseMoveCalculator {
-    calculateMove(enemy, player, playerPos, grid, enemies, isSimulation = false, game = null) {
+    calculateMove(
+        enemy: Enemy,
+        player: Player,
+        playerPos: Position,
+        grid: Grid,
+        enemies: Enemy[],
+        isSimulation: boolean = false,
+        game: Game | null = null
+    ): Position | null {
         const { x: playerX, y: playerY } = playerPos;
 
         // Check for diagonal attack opportunity
@@ -46,7 +68,12 @@ export class ZardMoveCalculator extends BaseMoveCalculator {
         return super.calculateMove(enemy, player, playerPos, grid, enemies, isSimulation, game);
     }
 
-    performDiagonalAttack(enemy, player, isSimulation, game) {
+    performDiagonalAttack(
+        enemy: Enemy,
+        player: Player,
+        isSimulation: boolean,
+        game: Game | null
+    ): null {
         AttackBehaviors.performDiagonalAttack(
             enemy, player, player.x, player.y, isSimulation, game,
             this.performAttack.bind(this)

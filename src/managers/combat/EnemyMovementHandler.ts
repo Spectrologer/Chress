@@ -27,6 +27,7 @@ export class EnemyMovementHandler {
      */
     public handleSingleEnemyMovement(enemy: Enemy): void {
         const enemyCollection = this.game.enemyCollection;
+        if (!enemyCollection) return;
 
         // Ensure we are not trying to move a dead or non-existent enemy
         if (!enemy || enemy.health <= 0 || !enemyCollection.includes(enemy)) {
@@ -85,7 +86,7 @@ export class EnemyMovementHandler {
         }
 
         // Remove from current zone
-        this.game.enemyCollection.removeById(enemy.id, false);
+        this.game.enemyCollection?.removeById(enemy.id, false);
 
         // Add to underground zone
         const currentZone = (this.game.player as any).getCurrentZone();
@@ -106,6 +107,8 @@ export class EnemyMovementHandler {
      */
     private _isMovementValid(enemy: Enemy, move: Position): boolean {
         const enemyCollection = this.game.enemyCollection;
+        if (!enemyCollection) return false;
+
         const key = `${move.x},${move.y}`;
 
         // Check if tile is currently occupied by another enemy

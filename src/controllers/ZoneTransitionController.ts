@@ -32,6 +32,14 @@ export class ZoneTransitionController {
      */
     transitionToZone(newZoneX: number, newZoneY: number, exitSide: string, exitX: number, exitY: number): void {
         try {
+            if (!this.game.zoneManager) {
+                errorHandler.handle(new Error('ZoneManager not initialized'), ErrorSeverity.CRITICAL, {
+                    component: 'ZoneTransitionController',
+                    action: 'transition to zone'
+                });
+                return;
+            }
+
             // Delegate to ZoneManager for the actual transition
             this.game.zoneManager.transitionToZone(newZoneX, newZoneY, exitSide, exitX, exitY);
         } catch (error) {
@@ -51,6 +59,14 @@ export class ZoneTransitionController {
      */
     handlePortTransition(): void {
         try {
+            if (!this.game.zoneTransitionManager) {
+                errorHandler.handle(new Error('ZoneTransitionManager not initialized'), ErrorSeverity.CRITICAL, {
+                    component: 'ZoneTransitionController',
+                    action: 'handle port transition'
+                });
+                return;
+            }
+
             this.game.zoneTransitionManager.handlePortTransition();
         } catch (error) {
             errorHandler.handle(error, ErrorSeverity.CRITICAL, {
@@ -68,6 +84,14 @@ export class ZoneTransitionController {
      */
     handlePitfallTransition(x: number, y: number): void {
         try {
+            if (!this.game.zoneTransitionManager) {
+                errorHandler.handle(new Error('ZoneTransitionManager not initialized'), ErrorSeverity.CRITICAL, {
+                    component: 'ZoneTransitionController',
+                    action: 'handle pitfall transition'
+                });
+                return;
+            }
+
             this.game.zoneTransitionManager.handlePitfallTransition(x, y);
         } catch (error) {
             errorHandler.handle(error, ErrorSeverity.CRITICAL, {
@@ -86,6 +110,14 @@ export class ZoneTransitionController {
      */
     checkForZoneTransitionGesture(tapCoords: GridCoords, playerPos: GridCoords): boolean {
         try {
+            if (!this.game.zoneTransitionManager) {
+                errorHandler.handle(new Error('ZoneTransitionManager not initialized'), ErrorSeverity.ERROR, {
+                    component: 'ZoneTransitionController',
+                    action: 'check zone transition gesture'
+                });
+                return false;
+            }
+
             const tapPos = new Position(tapCoords.x, tapCoords.y);
             const playerPosition = new Position(playerPos.x, playerPos.y);
             return this.game.zoneTransitionManager.checkForZoneTransitionGesture(tapPos, playerPosition);
@@ -106,6 +138,14 @@ export class ZoneTransitionController {
      */
     isTransitionEligible(gridCoords: GridCoords, playerPos: GridCoords): boolean {
         try {
+            if (!this.game.zoneTransitionManager) {
+                errorHandler.handle(new Error('ZoneTransitionManager not initialized'), ErrorSeverity.ERROR, {
+                    component: 'ZoneTransitionController',
+                    action: 'check transition eligibility'
+                });
+                return false;
+            }
+
             const gridPosition = new Position(gridCoords.x, gridCoords.y);
             const playerPosition = new Position(playerPos.x, playerPos.y);
             return this.game.zoneTransitionManager.isTransitionEligible(gridPosition, playerPosition);
@@ -123,6 +163,14 @@ export class ZoneTransitionController {
      */
     generateZone(): void {
         try {
+            if (!this.game.zoneManager) {
+                errorHandler.handle(new Error('ZoneManager not initialized'), ErrorSeverity.CRITICAL, {
+                    component: 'ZoneTransitionController',
+                    action: 'generate zone'
+                });
+                return;
+            }
+
             this.game.zoneManager.generateZone();
         } catch (error) {
             errorHandler.handle(error, ErrorSeverity.CRITICAL, {
@@ -138,6 +186,14 @@ export class ZoneTransitionController {
      */
     saveCurrentZoneState(): void {
         try {
+            if (!this.game.zoneManager) {
+                errorHandler.handle(new Error('ZoneManager not initialized'), ErrorSeverity.ERROR, {
+                    component: 'ZoneTransitionController',
+                    action: 'save zone state'
+                });
+                return;
+            }
+
             this.game.zoneManager.saveCurrentZoneState();
         } catch (error) {
             errorHandler.handle(error, ErrorSeverity.ERROR, {
@@ -154,6 +210,14 @@ export class ZoneTransitionController {
      */
     spawnTreasuresOnGrid(treasures: Treasure[]): void {
         try {
+            if (!this.game.zoneManager) {
+                errorHandler.handle(new Error('ZoneManager not initialized'), ErrorSeverity.ERROR, {
+                    component: 'ZoneTransitionController',
+                    action: 'spawn treasures on grid'
+                });
+                return;
+            }
+
             this.game.zoneManager.spawnTreasuresOnGrid(treasures);
         } catch (error) {
             errorHandler.handle(error, ErrorSeverity.ERROR, {

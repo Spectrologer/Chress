@@ -1,4 +1,5 @@
 import type { EventType, EventDataMap } from './EventTypes';
+import { logger } from './logger';
 
 /**
  * EventBus - A centralized publish-subscribe event system for decoupling managers
@@ -41,9 +42,9 @@ export class EventBus {
 
     this.listeners.get(eventName)!.push(callback);
 
-    // if (this.debug) {
-    //   console.log(`[EventBus] Subscribed to '${eventName}'`);
-    // }
+    if (this.debug) {
+      logger.debug(`[EventBus] Subscribed to '${eventName}'`);
+    }
 
     // Return unsubscribe function
     return () => this.off(eventName, callback);
@@ -67,9 +68,9 @@ export class EventBus {
 
     this.onceListeners.get(eventName)!.push(callback);
 
-    // if (this.debug) {
-    //   console.log(`[EventBus] Subscribed once to '${eventName}'`);
-    // }
+    if (this.debug) {
+      logger.debug(`[EventBus] Subscribed once to '${eventName}'`);
+    }
 
     // Return unsubscribe function
     return () => {
@@ -95,9 +96,9 @@ export class EventBus {
       if (index > -1) {
         listeners.splice(index, 1);
 
-        // if (this.debug) {
-        //   console.log(`[EventBus] Unsubscribed from '${eventName}'`);
-        // }
+        if (this.debug) {
+          logger.debug(`[EventBus] Unsubscribed from '${eventName}'`);
+        }
       }
     }
   }
@@ -113,9 +114,9 @@ export class EventBus {
   ): void;
   emit(eventName: string, data?: unknown): void;
   emit(eventName: string, data?: unknown): void {
-    // if (this.debug) {
-    //   console.log(`[EventBus] Emitting '${eventName}'`, data);
-    // }
+    if (this.debug) {
+      logger.debug(`[EventBus] Emitting '${eventName}'`, data);
+    }
 
     // Call regular listeners
     const listeners = this.listeners.get(eventName);
@@ -124,7 +125,7 @@ export class EventBus {
         try {
           callback(data);
         } catch (error) {
-          console.error(`[EventBus] Error in listener for '${eventName}':`, error);
+          logger.error(`[EventBus] Error in listener for '${eventName}':`, error);
         }
       });
     }
@@ -140,7 +141,7 @@ export class EventBus {
         try {
           callback(data);
         } catch (error) {
-          console.error(`[EventBus] Error in once listener for '${eventName}':`, error);
+          logger.error(`[EventBus] Error in once listener for '${eventName}':`, error);
         }
       });
     }
@@ -155,16 +156,16 @@ export class EventBus {
       this.listeners.delete(eventName);
       this.onceListeners.delete(eventName);
 
-      // if (this.debug) {
-      //   console.log(`[EventBus] Cleared all listeners for '${eventName}'`);
-      // }
+      if (this.debug) {
+        logger.debug(`[EventBus] Cleared all listeners for '${eventName}'`);
+      }
     } else {
       this.listeners.clear();
       this.onceListeners.clear();
 
-      // if (this.debug) {
-      //   console.log(`[EventBus] Cleared all listeners`);
-      // }
+      if (this.debug) {
+        logger.debug(`[EventBus] Cleared all listeners`);
+      }
     }
   }
 
@@ -196,8 +197,8 @@ export const eventBus = new EventBus();
 if (typeof window !== 'undefined' && window.location?.hostname === 'localhost') {
   import('./EventValidator').then(({ wrapEventBusWithValidation }) => {
     wrapEventBusWithValidation(eventBus);
-    // console.log('[EventBus] Event validation enabled (development mode)');
+    logger.debug('[EventBus] Event validation enabled (development mode)');
   }).catch(err => {
-    console.warn('[EventBus] Could not load event validation:', err);
+    logger.warn('[EventBus] Could not load event validation:', err);
   });
 }

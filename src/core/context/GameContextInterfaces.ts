@@ -51,7 +51,7 @@ import type { TerrainInteractionManager } from '@managers/TerrainInteractionMana
 import type { ItemRepository } from '@managers/inventory/ItemRepository';
 import type { InventoryInteractionHandler } from '@managers/inventory/InventoryInteractionHandler';
 import type { InventoryItem } from '@managers/inventory/ItemMetadata';
-import type { SoundManager as ISoundManager, SignData } from '../../types/game.js';
+import type { SoundManager as ISoundManager } from '../../types/game.js';
 
 export interface Item {
     name?: string;
@@ -78,7 +78,7 @@ export interface IGame {
     zoneGenState: ZoneGenerationState;
     storageAdapter: StorageAdapter;
     transientGameState?: TransientGameState;
-    displayingMessageForSign?: SignData;
+    displayingMessageForSign?: any;
     radialInventorySnapshot?: InventoryItem[];
     playerFacade?: PlayerFacade;
     _entranceAnimationInProgress?: boolean;

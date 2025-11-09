@@ -53,7 +53,9 @@ export class MessageLog {
             this.eventManager.add(messageLogButton, 'pointerdown', (e: PointerEvent) => {
                 try {
                     e.preventDefault();
-                } catch (err) {}
+                } catch (err) {
+                    logger.warn('[MessageLog] Failed to prevent default on pointerdown:', err);
+                }
                 this.show();
             });
         }

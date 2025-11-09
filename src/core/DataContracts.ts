@@ -46,6 +46,9 @@ interface AnimationData {
   startPos?: Position;
   midPos?: Position;
   endPos?: Position;
+  offsetX?: number;
+  offsetY?: number;
+  frames?: number;
 }
 
 interface PointAnimation {

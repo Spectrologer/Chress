@@ -127,9 +127,14 @@ export class ZoneTransitionManager {
      * Manages dimension changes between surface, underground, and interior zones.
      */
     public handlePortTransition(): void {
-        const gridManager: GridManager = this.game.gridManager;
+        const gridManager = this.game.gridManager;
         const playerFacade = this.game.playerFacade;
         const transientState = this.game.transientGameState;
+
+        if (!gridManager || !playerFacade || !transientState) {
+            return;
+        }
+
         const playerPos: Position = playerFacade.getPosition();
         const currentDim: number = playerFacade.getZoneDimension();
 
@@ -236,8 +241,8 @@ export class ZoneTransitionManager {
                             DIMENSION_CONSTANTS.UNDERGROUND,
                             currentDepth
                         );
-                        const zoneRepository: ZoneRepository = this.game.zoneRepository;
-                        const undergroundZoneData: ZoneData | undefined = zoneRepository.getByKey(undergroundZoneKey);
+                        const zoneRepository = this.game.zoneRepository;
+                        const undergroundZoneData: ZoneData | undefined = zoneRepository?.getByKey(undergroundZoneKey);
 
                         if (undergroundZoneData?.returnToInterior) {
                             // Return to interior dimension
@@ -300,18 +305,23 @@ export class ZoneTransitionManager {
      * Transitions player to underground dimension and marks the surface tile.
      */
     public handlePitfallTransition(x: number, y: number): void {
-        const gridManager: GridManager = this.game.gridManager;
+        const gridManager = this.game.gridManager;
+        const transientState = this.game.transientGameState;
+        const playerFacade = this.game.playerFacade;
+
+        if (!gridManager || !transientState || !playerFacade) {
+            return;
+        }
+
         if (gridManager.isWithinBounds(x, y)) {
             gridManager.setTile(x, y, TILE_TYPES.PITFALL);
         }
 
         // Set data for the transition
-        const transientState = this.game.transientGameState;
         transientState.setPortTransitionData({ from: 'pitfall', x, y });
 
         // Transition to the underground dimension
         // Use PlayerFacade to atomically update zone state
-        const playerFacade = this.game.playerFacade;
         playerFacade.updateZoneState({
             dimension: 2, // Underground
             portType: 'underground',
@@ -334,7 +344,11 @@ export class ZoneTransitionManager {
     public isTransitionEligible(gridCoords: Position, playerPos: Position): boolean {
         // Check if tapped tile is an exit and player is already on it - trigger zone transition
         if (gridCoords.x === playerPos.x && gridCoords.y === playerPos.y) {
-            const gridManager: GridManager = this.game.gridManager;
+            const gridManager = this.game.gridManager;
+            if (!gridManager) {
+                return false;
+            }
+
             const tileUnderPlayer: Tile | undefined = gridManager.getTile(playerPos.x, playerPos.y);
 
             if (tileUnderPlayer === TILE_TYPES.EXIT) {

@@ -7,7 +7,7 @@ import { logger } from '@core/logger';
  * with the zone editor tool.
  */
 export class CustomZoneLoader {
-    private loadedZones: Map<string, any>;
+    private loadedZones: Map<string, unknown>;
     private zonePath: string;
 
     constructor() {
@@ -20,7 +20,7 @@ export class CustomZoneLoader {
      * @param {string} zoneName - The name of the zone file (without .json extension)
      * @returns {Promise<Object|null>} The parsed zone data or null if loading fails
      */
-    async loadZone(zoneName) {
+    async loadZone(zoneName: string): Promise<unknown> {
         // Check cache first
         if (this.loadedZones.has(zoneName)) {
             logger.debug(`[CustomZoneLoader] Loading ${zoneName} from cache`);
@@ -60,34 +60,34 @@ export class CustomZoneLoader {
      * @param {Object} zoneData - The zone data to validate
      * @returns {boolean} True if valid
      */
-    validateZoneData(zoneData) {
+    validateZoneData(zoneData: unknown): boolean {
         if (!zoneData || typeof zoneData !== 'object') {
             logger.error('[CustomZoneLoader] Zone data is not an object');
             return false;
         }
 
-        if (!zoneData.name || typeof zoneData.name !== 'string') {
+        if (!(zoneData as any).name || typeof (zoneData as any).name !== 'string') {
             logger.error('[CustomZoneLoader] Zone missing valid name');
             return false;
         }
 
-        if (!Array.isArray(zoneData.size) || zoneData.size.length !== 2) {
+        if (!Array.isArray((zoneData as any).size) || (zoneData as any).size.length !== 2) {
             logger.error('[CustomZoneLoader] Zone missing valid size array');
             return false;
         }
 
-        if (!Array.isArray(zoneData.terrain)) {
+        if (!Array.isArray((zoneData as any).terrain)) {
             logger.error('[CustomZoneLoader] Zone missing terrain array');
             return false;
         }
 
-        const expectedCells = zoneData.size[0] * zoneData.size[1];
-        if (zoneData.terrain.length !== expectedCells) {
-            logger.error(`[CustomZoneLoader] Terrain array length mismatch. Expected ${expectedCells}, got ${zoneData.terrain.length}`);
+        const expectedCells = (zoneData as any).size[0] * (zoneData as any).size[1];
+        if ((zoneData as any).terrain.length !== expectedCells) {
+            logger.error(`[CustomZoneLoader] Terrain array length mismatch. Expected ${expectedCells}, got ${(zoneData as any).terrain.length}`);
             return false;
         }
 
-        if (!zoneData.features || typeof zoneData.features !== 'object') {
+        if (!(zoneData as any).features || typeof (zoneData as any).features !== 'object') {
             logger.error('[CustomZoneLoader] Zone missing features object');
             return false;
         }
@@ -100,7 +100,7 @@ export class CustomZoneLoader {
      * @param {Object} zoneData - The custom zone data
      * @returns {Object} Formatted zone data for game use
      */
-    convertToGameFormat(zoneData) {
+    convertToGameFormat(zoneData: any): unknown {
         const [width, height] = zoneData.size;
         const grid = [];
 
@@ -137,7 +137,7 @@ export class CustomZoneLoader {
      * @param {string} zoneName - The name of the zone to load
      * @returns {Promise<Object|null>} Converted zone data or null
      */
-    async loadAndConvert(zoneName) {
+    async loadAndConvert(zoneName: string): Promise<unknown> {
         const zoneData = await this.loadZone(zoneName);
         if (!zoneData) return null;
 
@@ -165,7 +165,7 @@ export class CustomZoneLoader {
      * @param {string} zoneName - The name of the zone to reload
      * @returns {Promise<Object|null>} The reloaded zone data
      */
-    async reloadZone(zoneName) {
+    async reloadZone(zoneName: string): Promise<unknown> {
         this.loadedZones.delete(zoneName);
         return await this.loadZone(zoneName);
     }

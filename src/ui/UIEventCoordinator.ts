@@ -133,7 +133,7 @@ export class UIEventCoordinator {
         switch (type) {
             case 'barter':
                 if (!npc) {
-                    console.error('[UIEventCoordinator] Barter dialog requires npc property');
+                    logger.error('[UIEventCoordinator] Barter dialog requires npc property');
                     return;
                 }
                 this.panelManager.showBarterWindow(npc);
@@ -141,7 +141,7 @@ export class UIEventCoordinator {
 
             case 'sign':
             if (!message) {
-            console.error('[UIEventCoordinator]textbox dialog requires message property');
+            logger.error('[UIEventCoordinator]textbox dialog requires message property');
             return;
             }
             this.messageManager.showSignMessage(message, portrait || null, name || null, buttonText || null, category, portraitBackground);
@@ -157,7 +157,7 @@ export class UIEventCoordinator {
                 break;
 
             default:
-                console.warn(`[UIEventCoordinator] Unknown dialog type: ${type}`);
+                logger.warn(`[UIEventCoordinator] Unknown dialog type: ${type}`);
         }
     }
 
@@ -182,7 +182,7 @@ export class UIEventCoordinator {
                 break;
 
             default:
-                console.warn(`[UIEventCoordinator] Unknown dialog type to hide: ${type}`);
+                logger.warn(`[UIEventCoordinator] Unknown dialog type to hide: ${type}`);
         }
     }
 
@@ -259,7 +259,7 @@ export class UIEventCoordinator {
 
         // Could add analytics here
         if (priority === 'error') {
-            console.error(`[Game Message] ${messageText}`, { category, timestamp });
+            logger.error(`[Game Message] ${messageText}`, { category, timestamp });
         }
     }
 

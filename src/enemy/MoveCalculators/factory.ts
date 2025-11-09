@@ -7,7 +7,7 @@ import { LizordMoveCalculator } from './lizord';
 import { BaseMoveCalculator } from './base';
 
 export class EnemyMoveCalculatorFactory {
-    static getCalculator(enemyType) {
+    static getCalculator(enemyType: string): BaseMoveCalculator {
         switch (enemyType) {
             case 'lizardy': return new LizardyMoveCalculator();
             case 'zard': return new ZardMoveCalculator();

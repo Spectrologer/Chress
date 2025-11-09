@@ -1,4 +1,5 @@
 import type { SoundManager } from '../types/game.js';
+import { logger } from '@core/logger';
 
 /**
  * GameAudio
@@ -35,7 +36,7 @@ export class GameAudio {
             try {
                 await this.soundManager.resumeAudioContext();
             } catch (e) {
-                console.error('Error resuming audio context:', e);
+                logger.error('Error resuming audio context:', e);
             }
         }
     }

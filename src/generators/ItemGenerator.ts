@@ -7,7 +7,7 @@ import { ContentRegistry } from '@core/ContentRegistry';
 import { logger } from '@core/logger';
 
 export class ItemGenerator {
-    private gridManager: any;
+    private gridManager: unknown;
     private foodAssets: string[];
     private zoneX: number;
     private zoneY: number;
@@ -16,7 +16,7 @@ export class ItemGenerator {
     private zoneLevel: number;
     private depthMultiplier: number;
 
-    constructor(gridManager: any, foodAssets: string[], zoneX: number, zoneY: number, dimension: number, depth: number) {
+    constructor(gridManager: unknown, foodAssets: string[], zoneX: number, zoneY: number, dimension: number, depth: number) {
         this.gridManager = gridManager;
         this.foodAssets = foodAssets;
         this.zoneX = zoneX;
@@ -101,11 +101,11 @@ export class ItemGenerator {
 
                 // Log special NPCs and pitfalls
                 const loggableItems = ['squig', 'penne', 'nib', 'mark', 'rune', 'pitfall'];
-                let onPlacedCallback = null;
+                let onPlacedCallback: ((x: number, y: number) => void) | null = null;
 
                 if (loggableItems.includes(itemConfig.id)) {
                     const displayName = itemConfig.id.charAt(0).toUpperCase() + itemConfig.id.slice(1);
-                    onPlacedCallback = (x, y) => logger.log(`${displayName} spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
+                    onPlacedCallback = (x: number, y: number) => logger.log(`${displayName} spawned at zone (${this.zoneX}, ${this.zoneY}) at (${x}, ${y})`);
                 }
 
                 this._placeItemRandomly(tileData, onPlacedCallback);
@@ -118,14 +118,14 @@ export class ItemGenerator {
         }
     }
 
-    _placeItemRandomly(itemData, onPlacedCallback = null) {
+    _placeItemRandomly(itemData: unknown, onPlacedCallback: ((x: number, y: number) => void) | null = null): boolean {
         const pos = findValidPlacement({
             maxAttempts: 50,
-            validate: (x, y) => this.gridManager.getTile(x, y) === TILE_TYPES.FLOOR
+            validate: (x: number, y: number) => (this.gridManager as any).getTile(x, y) === TILE_TYPES.FLOOR
         });
         if (pos) {
             const { x, y } = pos;
-            this.gridManager.setTile(x, y, itemData);
+            (this.gridManager as any).setTile(x, y, itemData);
             if (onPlacedCallback) {
                 onPlacedCallback(x, y);
             }
@@ -161,8 +161,8 @@ export class ItemGenerator {
         }
     }
 
-    clearPathToCenter(x, y) {
-        const pathGenerator = new PathGenerator(this.gridManager);
+    clearPathToCenter(x: number, y: number): void {
+        const pathGenerator = new PathGenerator(this.gridManager as any);
         pathGenerator.clearPathToCenterForItem(x, y, this.zoneX, this.zoneY);
     }
 }

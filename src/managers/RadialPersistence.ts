@@ -27,7 +27,9 @@ export function saveRadialInventory(game: IGame): void {
         }));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(serial));
     } catch (e) {
-        try { console.warn('[RadialPersistence] save failed', e); } catch (er) {}
+        try { logger.warn('[RadialPersistence] save failed', e); } catch (er) {
+            // Can't even log - silently fail
+        }
     }
 }
 
@@ -47,12 +49,16 @@ export function loadRadialInventory(game: IGame): void {
             image: i.image
         }));
     } catch (e) {
-        try { console.warn('[RadialPersistence] load failed', e); } catch (er) {}
+        try { logger.warn('[RadialPersistence] load failed', e); } catch (er) {
+            // Can't even log - silently fail
+        }
     }
 }
 
 export function clearRadialInventory(): void {
     try {
         localStorage.removeItem(STORAGE_KEY);
-    } catch (e) {}
+    } catch (e) {
+        logger.warn('[RadialPersistence] clear failed:', e);
+    }
 }

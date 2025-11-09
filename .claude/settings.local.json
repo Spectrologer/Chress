@@ -23,7 +23,16 @@
       "Bash(npm run dev:*)",
       "Bash(npx vite build:*)",
       "Bash(taskkill:*)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "Bash(find:*)",
+      "Bash(tree:*)",
+      "Bash(tsc_strict_errors.txt)",
+      "Bash(cut:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(for file in src/controllers/InputCoordinator.ts src/core/ServiceContainer.ts src/core/GameStateManager.ts src/core/ZoneGenerator.ts)",
+      "Bash(done)",
+      "Bash(tee:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

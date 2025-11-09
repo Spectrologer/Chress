@@ -41,21 +41,21 @@ export class SoundManager {
         this.lifecycleManager.setupFocusListeners();
     }
 
-    setupEventListeners() {
+    setupEventListeners(): void {
         this._unsubscribers.push(
-            eventBus.on(EventTypes.MUSIC_CHANGE, (data) => {
+            eventBus.on(EventTypes.MUSIC_CHANGE, (data: any) => {
                 this.setMusicForZone({ dimension: data.dimension });
             })
         );
 
         this._unsubscribers.push(
-            eventBus.on(EventTypes.ZONE_CHANGED, (data) => {
+            eventBus.on(EventTypes.ZONE_CHANGED, (data: any) => {
                 this.setMusicForZone({ dimension: data.dimension });
             })
         );
     }
 
-    async loadSounds() {
+    async loadSounds(): Promise<void> {
         try {
             this.addSound('point', 'sfx/noises/point.wav');
             this.addSound('slash', 'sfx/noises/slash.wav');
@@ -64,21 +64,21 @@ export class SoundManager {
         }
     }
 
-    addSound(name, filePath) {
+    addSound(name: string, filePath: string): void {
         const audio = new Audio();
         audio.src = filePath;
         audio.volume = VOLUME_CONSTANTS.DEFAULT_SFX_VOLUME;
         this.sounds[name] = audio;
     }
 
-    playSound(soundName) {
+    playSound(soundName: string): void {
         if (this.sfxEnabled === false) return;
 
         const audio = this.sounds[soundName];
         if (audio) {
             const newAudio = audio.cloneNode() as HTMLAudioElement;
             newAudio.volume = Math.min(VOLUME_CONSTANTS.MAX_VOLUME, audio.volume || VOLUME_CONSTANTS.DEFAULT_SFX_VOLUME);
-            newAudio.play().catch(error => {
+            newAudio.play().catch((error: unknown) => {
                 // Could not play sound
             });
         } else {
@@ -88,47 +88,47 @@ export class SoundManager {
 
     // ========== Music Control ==========
 
-    playBackground(filePath, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME) {
+    playBackground(filePath: string, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME): void {
         this.musicController.playBackground(filePath, volume);
     }
 
-    stopBackground() {
+    stopBackground(): void {
         this.musicController.stopBackground();
     }
 
-    setMusicForZone({ dimension = 0 } = {}) {
+    setMusicForZone({ dimension = 0 }: { dimension?: number } = {}): void {
         this.musicController.setMusicForZone({ dimension });
     }
 
-    playBackgroundContinuous(filePath, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, crossfadeMs = VOLUME_CONSTANTS.DEFAULT_CROSSFADE_DURATION) {
+    playBackgroundContinuous(filePath: string, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, crossfadeMs = VOLUME_CONSTANTS.DEFAULT_CROSSFADE_DURATION): void {
         this.musicController.playBackgroundContinuous(filePath, volume, crossfadeMs);
     }
 
     // ========== Settings ==========
 
-    setSfxEnabled(enabled) {
+    setSfxEnabled(enabled: boolean): void {
         this.sfxEnabled = !!enabled;
     }
 
-    setMusicEnabled(enabled) {
+    setMusicEnabled(enabled: boolean): void {
         this.musicController.setMusicEnabled(enabled);
     }
 
-    get musicEnabled() {
+    get musicEnabled(): boolean {
         return this.musicController.getMusicEnabled();
     }
 
-    set musicEnabled(value) {
+    set musicEnabled(value: boolean) {
         this.musicController.setMusicEnabled(value);
     }
 
     // ========== Lifecycle ==========
 
-    resumeAudioContext() {
+    resumeAudioContext(): Promise<void> {
         return this.lifecycleManager.resumeAudioContext();
     }
 
-    playProceduralSound(soundName) {
+    playProceduralSound(soundName: string): void {
         this.proceduralGenerator.playProceduralSound(soundName);
     }
 

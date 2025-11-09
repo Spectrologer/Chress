@@ -1,7 +1,8 @@
 import { TILE_TYPES } from '@core/constants/index';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
-import { isNote, isFood, isWater, isAxe, isHammer, isBishopSpear, isHorseIcon, isBomb, isHeart, isBow, isShovel } from '@utils/TypeChecks';
+import { isNote, isFood, isWater, isAxe, isHammer, isBishopSpear, isHorseIcon, isBomb, isHeart, isBow, isShovel, isFischersCube, isBookOfTimeTravel } from '@utils/TypeChecks';
+import { logger } from '@core/logger';
 import type { IGame } from '@core/context';
 import type { InventoryItem } from './ItemMetadata';
 import { Position } from '@core/Position';
@@ -21,17 +22,22 @@ export class ItemPickupManager {
     }
 
     checkItemPickup(): boolean {
-        const p = Position.from(this.game.player.getPosition());
-        const tile: any = this.game.gridManager.getTile(p.x, p.y);
+        const playerPos = this.game.playerFacade?.getPosition();
+        if (!playerPos) return false;
+
+        const p = Position.from(playerPos);
+        const tile: any = this.game.gridManager?.getTile(p.x, p.y);
 
 
-        const inv: InventoryItem[] = this.game.player.inventory;
+        const inv = this.game.player?.inventory;
+        if (!inv) return false;
+
         const ui = this.game.uiManager;
         const pick = (item: InventoryItem): boolean => {
             if (!this.game.inventoryService) {
-                console.error('[ItemPickupManager] inventoryService not found! Falling back to direct push');
+                logger.error('[ItemPickupManager] inventoryService not found! Falling back to direct push');
                 inv.push(item);
-                this.game.gridManager.setTile(p.x, p.y, TILE_TYPES.FLOOR);
+                this.game.gridManager?.setTile(p.x, p.y, TILE_TYPES.FLOOR);
                 eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
                 return true;
             }
@@ -39,37 +45,37 @@ export class ItemPickupManager {
             // Use the inventory service to properly handle stacking
             const success = this.game.inventoryService.pickupItem(item, 'pickup');
             if (success) {
-                this.game.gridManager.setTile(p.x, p.y, TILE_TYPES.FLOOR);
+                this.game.gridManager?.setTile(p.x, p.y, TILE_TYPES.FLOOR);
             }
             return success;
         };
 
         if (isNote(tile)) {
             const success = pick({ type: 'note' } as InventoryItem);
-            if (success) ui.addMessageToLog('Found an ancient map note.');
+            if (success) ui?.addMessageToLog('Found an ancient map note.');
             return success;
         }
 
         if (isFood(tile)) {
             const foodTile = tile as TileWithMeta;
             const success = pick({ type: 'food', foodType: foodTile.foodType } as InventoryItem);
-            if (success) ui.addMessageToLog('Found some food.');
+            if (success) ui?.addMessageToLog('Found some food.');
             return success;
         }
         else if (isWater(tile)) {
             return pick({ type: 'water' } as InventoryItem);
         }
         else if (isAxe(tile)) {
-            this.game.player.abilities.add('axe');
-            this.game.gridManager.setTile(p.x, p.y, TILE_TYPES.FLOOR);
-            ui.addMessageToLog('Gained axe ability! Can now chop grass and shrubbery.');
+            this.game.playerFacade?.addAbility('axe');
+            this.game.gridManager?.setTile(p.x, p.y, TILE_TYPES.FLOOR);
+            ui?.addMessageToLog('Gained axe ability! Can now chop grass and shrubbery.');
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             return true;
         }
         else if (isHammer(tile)) {
-            this.game.player.abilities.add('hammer');
-            this.game.gridManager.setTile(p.x, p.y, TILE_TYPES.FLOOR);
-            ui.addMessageToLog('Gained hammer ability! Can now smash rocks.');
+            this.game.playerFacade?.addAbility('hammer');
+            this.game.gridManager?.setTile(p.x, p.y, TILE_TYPES.FLOOR);
+            ui?.addMessageToLog('Gained hammer ability! Can now smash rocks.');
             eventBus.emit(EventTypes.UI_UPDATE_STATS, {});
             return true;
         }
@@ -92,8 +98,16 @@ export class ItemPickupManager {
             return pick({ type: 'bow', uses: bowTile.uses || 3 } as InventoryItem);
         }
         else if (isShovel(tile)) {
-            // Handle shovel pickup if needed
-            return pick({ type: 'shovel' } as InventoryItem);
+            const shovelTile = tile as TileWithMeta;
+            return pick({ type: 'shovel', uses: shovelTile.uses || 3 } as InventoryItem);
+        }
+        else if (isFischersCube(tile)) {
+            const cubeTile = tile as TileWithMeta;
+            return pick({ type: 'fischers_cube', uses: cubeTile.uses || 1 } as InventoryItem);
+        }
+        else if (isBookOfTimeTravel(tile)) {
+            const bookTile = tile as TileWithMeta;
+            return pick({ type: 'book_of_time_travel', uses: bookTile.uses || 3 } as InventoryItem);
         }
 
         return false; // No item picked up

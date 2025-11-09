@@ -5,16 +5,17 @@ import { EnemyLineOfSight } from './EnemyLineOfSight';
 import { EnemySpecialActions } from './EnemySpecialActions';
 import { EnemyMoveCalculatorFactory } from './MoveCalculators';
 import { TacticalAI } from './TacticalAI';
+import type { Enemy, Player, Position, Grid, Game } from './MoveCalculators/base';
 
 export const EnemyMovementMixin = {
     // Initialize tactical AI system
-    initMovementSystem() {
+    initMovementSystem(this: any): void {
         if (!this.tacticalAI) {
             this.tacticalAI = new TacticalAI();
         }
     },
 
-    planMoveTowards(player, grid, enemies, playerPos, isSimulation = false, game = null) {
+    planMoveTowards(this: any, player: Player, grid: Grid, enemies: Enemy[], playerPos: Position, isSimulation = false, game: Game | null = null): Position {
         // Ensure tactical AI is initialized
         this.initMovementSystem();
 

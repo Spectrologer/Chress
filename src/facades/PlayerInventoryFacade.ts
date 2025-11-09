@@ -2,6 +2,7 @@
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { logger } from '@core/logger';
+import type { InventoryItem } from '@types/game';
 
 /**
  * @typedef {Object} InventoryItem
@@ -71,7 +72,7 @@ export class PlayerInventoryFacade {
      * @param {InventoryItem} item - Item to add
      * @returns {boolean} True if added successfully
      */
-    addToInventory(item) {
+    addToInventory(item: InventoryItem): boolean {
         if (!item) {
             logger.warn('PlayerInventoryFacade: Cannot add null/undefined item to inventory');
             return false;
@@ -98,7 +99,7 @@ export class PlayerInventoryFacade {
      * @param {number} index - Index to remove
      * @returns {InventoryItem|null} Removed item or null
      */
-    removeFromInventory(index) {
+    removeFromInventory(index: number): InventoryItem | null {
         if (!this.player.inventory || index < 0 || index >= this.player.inventory.length) {
             logger.warn(`PlayerInventoryFacade: Invalid inventory index ${index}`);
             return null;
@@ -122,7 +123,7 @@ export class PlayerInventoryFacade {
      * @param {InventoryPredicate} predicate - Function(item) => boolean
      * @returns {InventoryItem|undefined} Found item
      */
-    findInInventory(predicate) {
+    findInInventory(predicate: (item: InventoryItem) => boolean): InventoryItem | undefined {
         return this.player.inventory?.find(predicate);
     }
 
@@ -160,7 +161,7 @@ export class PlayerInventoryFacade {
      * Set radial inventory
      * @param {InventoryItem[]} items - Items for radial inventory
      */
-    setRadialInventory(items) {
+    setRadialInventory(items: InventoryItem[]): void {
         this.player.radialInventory = items;
 
         eventBus.emit(EventTypes.RADIAL_INVENTORY_CHANGED, {
@@ -177,7 +178,7 @@ export class PlayerInventoryFacade {
      * @param {string} ability - Ability name
      * @returns {boolean}
      */
-    hasAbility(ability) {
+    hasAbility(ability: string): boolean {
         return this.player.abilities?.has(ability) ?? false;
     }
 
@@ -185,7 +186,7 @@ export class PlayerInventoryFacade {
      * Add ability with event emission
      * @param {string} ability - Ability name
      */
-    addAbility(ability) {
+    addAbility(ability: string): void {
         if (!this.player.abilities) {
             this.player.abilities = new Set();
         }
@@ -209,7 +210,7 @@ export class PlayerInventoryFacade {
      * Remove ability
      * @param {string} ability - Ability name
      */
-    removeAbility(ability) {
+    removeAbility(ability: string): void {
         if (!this.player.abilities?.has(ability)) {
             return;
         }

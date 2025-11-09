@@ -7,12 +7,12 @@ import { boardLoader } from '@core/BoardLoader';
 class SurfaceHandler extends BaseZoneHandler {
     private zoneConnections: Record<string, unknown>;
 
-    constructor(zoneGen, zoneX, zoneY, zoneConnections, foodAssets) {
+    constructor(zoneGen: any, zoneX: number, zoneY: number, zoneConnections: Record<string, unknown>, foodAssets: string[]) {
         super(zoneGen, zoneX, zoneY, foodAssets, 0, 0);
         this.zoneConnections = zoneConnections;
     }
 
-    generate() {
+    generate(): any {
         this.zoneGen.addRegionNotes(`${this.zoneX},${this.zoneY}`, this.structureGenerator);
 
         if (this.isHomeZone) {
@@ -32,15 +32,15 @@ class SurfaceHandler extends BaseZoneHandler {
         return this.buildResult();
     }
 
-    handleHomeZone() {
+    handleHomeZone(): void {
         this.structureGenerator.addHouse(this.zoneX, this.zoneY);
     }
 
-    handleFrontierSign() {
+    handleFrontierSign(): void {
         // Signs are being phased out - no longer spawning frontier warning sign
     }
 
-    handleNonHomeZone() {
+    handleNonHomeZone(): void {
         this.incrementZoneCounter();
         this.addRandomFeatures();
 
@@ -52,7 +52,7 @@ class SurfaceHandler extends BaseZoneHandler {
         this.handleGossipNPCSpawning();
     }
 
-    handleLevelSpecificStructures() {
+    handleLevelSpecificStructures(): void {
         // Level 4: Well
         if (this.zoneLevel === 4 && !this.game.zoneGenState.hasSpawned('well')) {
             this.structureGenerator.addWell(this.zoneX, this.zoneY);
@@ -88,13 +88,13 @@ class SurfaceHandler extends BaseZoneHandler {
         }
     }
 
-    handleRandomCistern() {
+    handleRandomCistern(): void {
         if (Math.random() < SPAWN_PROBABILITIES.CISTERN) {
             this.structureGenerator.addCistern(this.zoneX, this.zoneY, false);
         }
     }
 
-    handleEnemySpawning() {
+    handleEnemySpawning(): void {
         const baseProbabilities = {
             1: SPAWN_PROBABILITIES.SURFACE_ENEMY.HOME,
             2: SPAWN_PROBABILITIES.SURFACE_ENEMY.WOODS,
@@ -105,17 +105,17 @@ class SurfaceHandler extends BaseZoneHandler {
         this.spawnEnemyIfProbable(enemyProbability);
     }
 
-    registerGougesBoard() {
+    registerGougesBoard(): void {
         // Register the gouges board for this shack's interior
         boardLoader.registerBoard(this.zoneX, this.zoneY, 1, 'gouges', 'canon');
         // Load it immediately so it's available when the player enters
-        boardLoader.loadBoard(this.zoneX, this.zoneY, 1).catch(err => {
+        boardLoader.loadBoard(this.zoneX, this.zoneY, 1).catch((err: unknown) => {
             logger.error(`Failed to load gouges board for zone (${this.zoneX},${this.zoneY}):`, err);
         });
     }
 }
 
-export function handleSurface(zoneGen, zoneX, zoneY, zoneConnections, foodAssets) {
+export function handleSurface(zoneGen: any, zoneX: number, zoneY: number, zoneConnections: Record<string, unknown>, foodAssets: string[]): any {
     const handler = new SurfaceHandler(zoneGen, zoneX, zoneY, zoneConnections, foodAssets);
     return handler.generate();
 }

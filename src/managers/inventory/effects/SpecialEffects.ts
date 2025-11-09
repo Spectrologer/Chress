@@ -24,6 +24,10 @@ export class ShovelEffect extends BaseItemEffect {
             return { consumed: false, success: true };
         }
 
+        if (!game.player || !game.grid) {
+            return { consumed: false, success: false };
+        }
+
         // Validate target position
         const playerPos = game.player.getPosition();
         const dx = Math.abs(targetX - playerPos.x);
@@ -34,7 +38,7 @@ export class ShovelEffect extends BaseItemEffect {
             return { consumed: false, success: false };
         }
 
-        if (game.grid[targetY][targetX] !== TILE_TYPES.FLOOR) {
+        if (game.grid[targetY]?.[targetX] !== TILE_TYPES.FLOOR) {
             this._showMessage(game, "You can only dig on an empty floor tile.", null, false, false);
             return { consumed: false, success: false };
         }
@@ -59,6 +63,10 @@ export class ShovelEffect extends BaseItemEffect {
 
 export class NoteEffect extends BaseItemEffect {
     apply(game: Game, item: InventoryItem, context: ItemEffectContext = {}): ItemEffectResult {
+        if (!game.player) {
+            return { consumed: false, success: false };
+        }
+
         // Use map note to reveal distant location
         const currentZone = game.player.getCurrentZone();
         this._useMapNote(game, currentZone.x, currentZone.y);
@@ -73,7 +81,7 @@ export class NoteEffect extends BaseItemEffect {
         if (game.uiManager && game.uiManager.messageManager &&
             typeof game.uiManager.messageManager.addNoteToStack === 'function') {
             game.uiManager.messageManager.addNoteToStack(noteMessageText, 'assets/items/misc/note.png', 2000);
-        } else {
+        } else if (game.animationScheduler) {
             (game as any).displayingMessageForSign = { message: noteMessageText };
             (game as any).showSignMessage(noteMessageText, 'assets/items/misc/note.png');
             game.animationScheduler.createSequence()
@@ -90,6 +98,8 @@ export class NoteEffect extends BaseItemEffect {
     }
 
     private _useMapNote(game: Game, zoneX: number, zoneY: number): void {
+        if (!game.player) return;
+
         const currentZone = game.player.getCurrentZone();
         const visited = game.player.getVisitedZones();
 
@@ -135,7 +145,7 @@ export class NoteEffect extends BaseItemEffect {
         }
 
         (game as any).specialZones?.set(zoneKey, treasures);
-        game.player.markZoneVisited(selected.x, selected.y, targetDimension);
+        game.player?.markZoneVisited(selected.x, selected.y, targetDimension);
 
         // Play sound for underground treasure
         if (isUnderground && game.audioManager) {
@@ -191,6 +201,10 @@ export class BookOfTimeTravelEffect extends BaseItemEffect {
 
 export class FischersCubeEffect extends BaseItemEffect {
     apply(game: Game, item: InventoryItem, context: ItemEffectContext = {}): ItemEffectResult {
+        if (!game.player || !game.grid) {
+            return { consumed: false, success: false };
+        }
+
         // Show visual feedback
         eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
             text: 'Fischer\'s Cube swirls the zone...<br>Everything shifts!',
@@ -241,11 +255,11 @@ export class FischersCubeEffect extends BaseItemEffect {
 
         // Collect all other movable tiles from the grid
         for (let y = 0; y < game.grid.length; y++) {
-            for (let x = 0; x < game.grid[y].length; x++) {
-                const tile = game.grid[y][x];
+            for (let x = 0; x < (game.grid[y]?.length || 0); x++) {
+                const tile = game.grid[y]?.[x];
 
                 // Skip immovable tiles and positions already accounted for (player/enemies/NPCs)
-                if (IMMOVABLE_TILES.includes(tile as number)) {
+                if (tile !== null && tile !== undefined && typeof tile === 'number' && (IMMOVABLE_TILES as readonly number[]).includes(tile)) {
                     continue;
                 }
 
@@ -273,8 +287,8 @@ export class FischersCubeEffect extends BaseItemEffect {
 
         // Clear old positions on grid (everything except walls/exits/grass)
         entities.forEach(entity => {
-            if (!entity.isPlayer && !entity.isEnemy && !entity.isNPC) {
-                game.grid[entity.y][entity.x] = TILE_TYPES.FLOOR;
+            if (!entity.isPlayer && !entity.isEnemy && !entity.isNPC && game.grid) {
+                game.grid![entity.y][entity.x] = TILE_TYPES.FLOOR;
             }
         });
 
@@ -282,10 +296,10 @@ export class FischersCubeEffect extends BaseItemEffect {
         entities.forEach((entity, index) => {
             const newPos = positions[index];
 
-            if (entity.isPlayer) {
+            if (entity.isPlayer && game.player) {
                 // Move player
-                game.player.x = newPos.x;
-                game.player.y = newPos.y;
+                game.player!.x = newPos.x;
+                game.player!.y = newPos.y;
             } else if (entity.isEnemy) {
                 // Find the enemy and update its position
                 const enemy = game.enemies?.find((e: any) => e.x === entity.x && e.y === entity.y);
@@ -302,7 +316,7 @@ export class FischersCubeEffect extends BaseItemEffect {
                 }
             } else {
                 // Place tile at new position
-                game.grid[newPos.y][newPos.x] = entity.tileType;
+                game.grid![newPos.y][newPos.x] = entity.tileType;
             }
         });
 
@@ -317,6 +331,9 @@ export class FischersCubeEffect extends BaseItemEffect {
 
 export class TeleportBranchEffect extends BaseItemEffect {
     apply(game: Game, item: InventoryItem, context: ItemEffectContext = {}): ItemEffectResult {
+        if (!game.player) {
+            return { consumed: false, success: false };
+        }
         const teleportBranchItem = item as TeleportBranchItem;
         const currentZone = game.player.getCurrentZone();
 
@@ -341,10 +358,10 @@ export class TeleportBranchEffect extends BaseItemEffect {
             });
 
             // Set the player's dimension before transitioning
-            game.player.setCurrentZone(targetX, targetY, targetDimension);
+            game.player!.setCurrentZone(targetX, targetY, targetDimension);
 
             // Teleport to the origin zone
-            game.transitionToZone(targetX, targetY, 'teleport', game.player.x, game.player.y);
+            game.transitionToZone?.(targetX, targetY, 'teleport', game.player!.x, game.player!.y);
 
             // Remove this return cube from inventory after use
             return { consumed: true, quantity: 1, success: true };
@@ -424,8 +441,8 @@ export class TeleportBranchEffect extends BaseItemEffect {
 
         // Update the origin cube tile to remember this destination
         // This makes the two cubes form a permanent pair
-        if (context.cubeGridCoords && game.gridManager) {
-            const cubeGridCoords = context.cubeGridCoords as { x: number; y: number };
+        if ((context as any).cubeGridCoords && game.gridManager) {
+            const cubeGridCoords = (context as any).cubeGridCoords as { x: number; y: number };
             const cubeTile = game.gridManager.getTile(cubeGridCoords.x, cubeGridCoords.y);
             if (cubeTile && typeof cubeTile === 'object') {
                 // Store the destination as this cube's origin zone
@@ -438,10 +455,10 @@ export class TeleportBranchEffect extends BaseItemEffect {
         }
 
         // Set the player's dimension to surface before transitioning
-        game.player.setCurrentZone(target.x, target.y, targetDimension);
+        game.player!.setCurrentZone(target.x, target.y, targetDimension);
 
         // Teleport to the target zone
-        game.transitionToZone(target.x, target.y, 'teleport', game.player.x, game.player.y);
+        game.transitionToZone?.(target.x, target.y, 'teleport', game.player!.x, game.player!.y);
 
         // Don't consume the cube - it stays in the original location
         // The player should be able to find it again if they return

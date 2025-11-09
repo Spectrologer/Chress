@@ -13,6 +13,8 @@ import { boardLoader } from './BoardLoader';
 import { createZoneKey } from '@utils/ZoneKeyUtils';
 import type { GameContext } from './context/GameContextCore';
 import type { PlayerStats } from '@entities/PlayerStats';
+import type { Grid, SavedPlayerData as SharedSavedPlayerData, SavedPlayerStats as SharedSavedPlayerStats, SaveGameData as SharedSaveGameData } from './SharedTypes';
+import type { Coordinates } from './PositionTypes';
 
 const GAME_STATE_KEY = 'chress_game_state';
 const SAVE_VERSION = 2; // bump if save format changes
@@ -20,15 +22,106 @@ const SAVE_VERSION = 2; // bump if save format changes
 export interface SavePayload {
     version: number;
     lastSaved: number;
-    state: SerializedGameState;
+    state: SharedSaveGameData | SerializedGameState; // Support both new and legacy formats
 }
 
 export interface SerializedGameState {
-    player: any;
-    playerStats: any;
-    zoneGeneration?: any;
-    zoneStateManager?: any;
-    [key: string]: any;
+    player: SharedSavedPlayerData;
+    playerStats: SharedSavedPlayerStats;
+    zones?: Array<[string, ZoneData]>;
+    grid?: Grid;
+    enemies?: EnemyData[];
+    defeatedEnemies?: string[];
+    specialZones?: Array<[string, unknown]>;
+    messageLog?: string[];
+    currentRegion?: string;
+    zoneGeneration?: ZoneGenerationData;
+    zoneStateManager?: LegacyZoneStateData;
+}
+
+export interface ZoneData {
+    grid: Grid;
+    enemies: EnemyData[];
+    discovered: boolean;
+    terrainTextures?: Record<string, string>;
+    overlayTextures?: Record<string, string>;
+    rotations?: Record<string, number>;
+    overlayRotations?: Record<string, number>;
+    playerSpawn?: Coordinates;
+}
+
+export interface EnemyData {
+    x: number;
+    y: number;
+    enemyType: string;
+    health: number;
+    id: string;
+}
+
+export interface ZoneGenerationData {
+    zoneCounter: number;
+    enemyCounter: number;
+    spawnFlags: Record<string, boolean>;
+    firstWildsZonePlaced: boolean;
+    spawnLocations: Record<string, { x: number; y: number } | null>;
+}
+
+export interface LegacyZoneStateData {
+    [key: string]: unknown;
+}
+
+interface BoardLoaderData {
+    size: [number, number];
+    terrain: string[];
+    features: Record<string, string>;
+    overlays?: Record<string, string>;
+    rotations?: Record<string, number>;
+    overlayRotations?: Record<string, number>;
+    signMessages?: Record<string, string>;
+    metadata?: {
+        dimension?: number;
+        playerSpawn?: { x: number; y: number };
+    };
+}
+
+interface BoardLoaderResult {
+    grid: Grid;
+    terrainTextures: Record<string, string>;
+    overlayTextures: Record<string, string>;
+    rotations: Record<string, number>;
+    overlayRotations: Record<string, number>;
+    playerSpawn?: Coordinates;
+    enemies?: EnemyData[];
+}
+
+export interface ZoneWithCoordinates {
+    x: number;
+    y: number;
+    dimension: number;
+    depth?: number;
+}
+
+/**
+ * Extended GameContext interface with runtime properties
+ * These properties are dynamically added and may not be in the core GameContext type
+ */
+interface GameContextExtended {
+    zoneRepository: ZoneRepository;
+    messageLog: string[];
+    dialogueState: Map<string, unknown>;
+    justEnteredZone: boolean;
+    lastExitSide: string | null;
+    _newGameSpawnPosition: Coordinates | null;
+    _entranceAnimationInProgress: boolean;
+    lastSignMessage: string | null;
+    displayingMessageForSign: unknown | null;
+}
+
+/**
+ * Extended Player interface with spentDiscoveries property
+ */
+interface PlayerExtended {
+    spentDiscoveries: number;
 }
 
 interface ConfigSettings {
@@ -54,9 +147,11 @@ export class GameStateManager {
     }
 
     initializeState(): void {
+        const gameExt = this.game as unknown as GameContextExtended;
+
         // Zone management
-        (this.game as any).zoneRepository = new ZoneRepository(); // Centralized zone caching
-        this.game.zones = (this.game as any).zoneRepository.getMap(); // Backward compatibility - provides direct Map access (deprecated)
+        gameExt.zoneRepository = new ZoneRepository(); // Centralized zone caching
+        (this.game as any).zones = gameExt.zoneRepository.getMap(); // Backward compatibility - provides direct Map access (deprecated)
         this.game.grid = null; // Current zone grid
         // IMPORTANT: Clear array in place to preserve EnemyCollection reference
         if (this.game.enemies) {
@@ -69,23 +164,26 @@ export class GameStateManager {
         this.game.currentRegion = null; // Tracks current region name to avoid repeated notifications
 
         // Enemy wait mechanism for zone entry
-        (this.game as any).justEnteredZone = false; // Flag to skip enemy movements on zone entry
+        gameExt.justEnteredZone = false; // Flag to skip enemy movements on zone entry
 
         // Message Log system
-        (this.game as any).messageLog = [];
+        gameExt.messageLog = [];
 
         // Special zones marked by notes (zoneKey: "x,y" -> items array)
         this.game.specialZones = new Map();
 
         // NPC dialogue state tracking (maps npcType -> dialogue data with currentMessageIndex)
-        (this.game as any).dialogueState = new Map();
+        gameExt.dialogueState = new Map();
 
         // Zone transition tracking (used to determine if player is entering from an exit or starting new game)
-        (this.game as any).lastExitSide = null; // null for new games, set during zone transitions
-        (this.game as any)._newGameSpawnPosition = null; // Stores exit tile position for entrance animation
+        gameExt.lastExitSide = null; // null for new games, set during zone transitions
+        gameExt._newGameSpawnPosition = null; // Stores exit tile position for entrance animation
     }
 
     resetGame(): void {
+        const gameExt = this.game as unknown as GameContextExtended;
+        const playerExt = this.game.player as unknown as PlayerExtended;
+
         // Preserve config settings
         const prevConfig: ConfigSettings = {
             musicEnabled: this.game.player!.stats && typeof this.game.player!.stats.musicEnabled !== 'undefined' ? this.game.player!.stats.musicEnabled : true,
@@ -96,14 +194,14 @@ export class GameStateManager {
         this.clearSavedState();
 
         // Reset all game state
-        (this.game as any).zoneRepository.clear();
+        gameExt.zoneRepository.clear();
         this.game.connectionManager!.clear();
         this.game.zoneGenState.reset(); // Reset zone generation state (replaces ZoneStateManager.resetSessionData())
         TextBox.spawnedMessages.clear(); // Reset spawned message tracking
         this.game.specialZones.clear(); // Reset special zones
-        (this.game as any).messageLog = []; // Reset message log
-        if ((this.game as any).dialogueState) {
-            (this.game as any).dialogueState.clear(); // Reset NPC dialogue progression
+        gameExt.messageLog = []; // Reset message log
+        if (gameExt.dialogueState) {
+            gameExt.dialogueState.clear(); // Reset NPC dialogue progression
         }
         this.game.player!.reset();
         // IMPORTANT: Clear the array instead of reassigning to preserve EnemyCollection reference
@@ -114,25 +212,25 @@ export class GameStateManager {
         }
         this.game.defeatedEnemies = new Set();
         this.game.currentRegion = null; // Reset region tracking
-        (this.game as any).lastSignMessage = null; // Reset textbox message tracking
-        (this.game as any).displayingMessageForSign = null; // Reset textbox message display tracking
+        gameExt.lastSignMessage = null; // Reset textbox message tracking
+        gameExt.displayingMessageForSign = null; // Reset textbox message display tracking
         this.game.animationManager!.clearAll(); // Reset all animations
-        (this.game.player as any).spentDiscoveries = 0; // Reset spent discoveries
-        (this.game as any).lastExitSide = null; // Reset for new game entrance animation
-        (this.game as any)._newGameSpawnPosition = null; // Reset entrance animation spawn position
+        playerExt.spentDiscoveries = 0; // Reset spent discoveries
+        gameExt.lastExitSide = null; // Reset for new game entrance animation
+        gameExt._newGameSpawnPosition = null; // Reset entrance animation spawn position
 
         // Generate starting zone
         this.game.zoneManager!.generateZone();
 
         // Only set tile if player is within grid bounds (for new games, player may be off-screen)
-        const playerY: number = this.game.player!.y;
-        const playerX: number = this.game.player!.x;
+        const playerY: number = this.game.playerFacade.getY();
+        const playerX: number = this.game.playerFacade.getX();
         if (isWithinGrid(playerX, playerY)) {
             this.game.grid![playerY][playerX] = TILE_TYPES.FLOOR;
         }
 
         // Set initial region
-        const initialZone: any = this.game.player!.getCurrentZone();
+        const initialZone: ZoneWithCoordinates = this.game.playerFacade.getCurrentZone() as ZoneWithCoordinates;
         this.game.currentRegion = this.game.uiManager!.generateRegionName(initialZone.x, initialZone.y);
 
         // Restore config settings
@@ -142,10 +240,10 @@ export class GameStateManager {
 
         // Trigger entrance animation for new game BEFORE emitting events
         // This ensures input is blocked before any event handlers could process clicks
-        const shouldTriggerEntrance: boolean = !!(this.game.gameInitializer && (this.game as any)._newGameSpawnPosition);
+        const shouldTriggerEntrance: boolean = !!(this.game.gameInitializer && gameExt._newGameSpawnPosition);
         if (shouldTriggerEntrance) {
             // Pre-emptively block input to prevent race conditions with queued mouse events
-            (this.game as any)._entranceAnimationInProgress = true;
+            gameExt._entranceAnimationInProgress = true;
         }
 
         // Emit game reset event instead of calling UI methods directly
@@ -162,8 +260,9 @@ export class GameStateManager {
         // Ensure background music matches the new starting zone so any previous
         // underground track doesn't continue playing after a respawn/reset.
         try {
-            const dimension: number = this.game.player!.currentZone && typeof this.game.player!.currentZone.dimension === 'number'
-                ? this.game.player!.currentZone.dimension
+            const currentZone = this.game.playerFacade.getCurrentZone() as ZoneWithCoordinates | null;
+            const dimension: number = currentZone && typeof currentZone.dimension === 'number'
+                ? currentZone.dimension
                 : 0;
             // Emit music change event instead of calling soundManager directly
             eventBus.emit(EventTypes.MUSIC_CHANGE, { dimension });
@@ -248,10 +347,10 @@ export class GameStateManager {
         }
 
         try {
-            const gameState: SerializedGameState = SaveSerializer.serializeGameState(this.game);
+            const gameState: SharedSaveGameData = SaveSerializer.serializeGameState(this.game);
 
             // Add zone generation state to save
-            gameState.zoneGeneration = this.game.zoneGenState.serialize();
+            (gameState as any).zoneGeneration = this.game.zoneGenState.serialize();
 
             // add metadata
             const payload: SavePayload = {
@@ -298,8 +397,11 @@ export class GameStateManager {
             if (!payload) return false;
 
             // Support older saves that stored state directly (back-compat)
-            const gameState: SerializedGameState = payload && payload.state ? payload.state : payload as any;
-            const version: number = payload && payload.version ? payload.version : 1;
+            // Older saves might not have the wrapper structure
+            const gameState: SharedSaveGameData | SerializedGameState = payload && 'state' in payload && payload.state
+                ? payload.state
+                : payload as unknown as SerializedGameState;
+            const version: number = payload && 'version' in payload && payload.version ? payload.version : 1;
             // If version too new, avoid attempting to load incompatible structure
             if (version > SAVE_VERSION) {
                 logger.warn('Saved game version is newer than supported. Skipping load.');
@@ -307,13 +409,13 @@ export class GameStateManager {
             }
 
             // Restore player state
-            SaveDeserializer.deserializePlayer(this.game, gameState.player);
+            SaveDeserializer.deserializePlayer(this.game, gameState.player as any);
 
             // Restore persisted player settings (music/sfx)
-            SaveDeserializer.deserializePlayerStats(this.game, gameState.playerStats);
+            SaveDeserializer.deserializePlayerStats(this.game, gameState.playerStats as any);
 
             // Restore game state with validation for grid data
-            SaveDeserializer.deserializeGameState(this.game, gameState);
+            SaveDeserializer.deserializeGameState(this.game, gameState as any);
 
             // Repair board-based zones that are missing terrain textures (from old saves)
             this._repairBoardZones();
@@ -322,11 +424,11 @@ export class GameStateManager {
             this._restoreCurrentZoneTextures();
 
             // Restore zone generation state (new centralized system)
-            if (gameState.zoneGeneration) {
-                this.game.zoneGenState.deserialize(gameState.zoneGeneration);
-            } else {
+            if ('zoneGeneration' in gameState && gameState.zoneGeneration) {
+                this.game.zoneGenState.deserialize(gameState.zoneGeneration as any);
+            } else if ('zoneStateManager' in gameState && gameState.zoneStateManager) {
                 // Backward compatibility: migrate from old ZoneStateManager format
-                ZoneStateRestorer.restoreZoneState(this.game, gameState.zoneStateManager);
+                ZoneStateRestorer.restoreZoneState(this.game as any, gameState.zoneStateManager as any);
             }
 
             return true;
@@ -380,8 +482,10 @@ export class GameStateManager {
      * This fixes saves created before the InteriorHandler fix.
      */
     private _repairBoardZones(): void {
+        const gameExt = this.game as unknown as GameContextExtended;
+
         // Get all zones from the repository
-        const allZones: IterableIterator<[string, any]> = (this.game as any).zoneRepository.entries();
+        const allZones: Array<[string, ZoneData]> = gameExt.zoneRepository.entries();
 
         for (const [zoneKey, zoneData] of allZones) {
             // Parse the zone key to get coordinates
@@ -395,9 +499,9 @@ export class GameStateManager {
 
             if (hasBoard && (!zoneData.terrainTextures || Object.keys(zoneData.terrainTextures).length === 0)) {
                 // This zone uses a board but is missing terrain textures - regenerate them
-                const boardData: any = boardLoader.getBoardSync(x, y, dimension);
+                const boardData: BoardLoaderData | null = boardLoader.getBoardSync(x, y, dimension) as BoardLoaderData | null;
                 if (boardData) {
-                    const result: any = boardLoader.convertBoardToGrid(boardData, this.game.availableFoodAssets);
+                    const result: BoardLoaderResult = boardLoader.convertBoardToGrid(boardData, this.game.availableFoodAssets) as BoardLoaderResult;
                     // Merge the terrain textures, overlays, rotations, and overlay rotations into the existing zone data
                     zoneData.terrainTextures = result.terrainTextures;
                     zoneData.overlayTextures = result.overlayTextures;
@@ -408,7 +512,7 @@ export class GameStateManager {
                         zoneData.playerSpawn = result.playerSpawn;
                     }
                     // Update the zone in the repository
-                    (this.game as any).zoneRepository.setByKey(zoneKey, zoneData);
+                    gameExt.zoneRepository.setByKey(zoneKey, zoneData);
                 }
             }
         }
@@ -421,18 +525,21 @@ export class GameStateManager {
     private _restoreCurrentZoneTextures(): void {
         if (!this.game.zoneGenerator || !this.game.player) return;
 
+        const gameExt = this.game as unknown as GameContextExtended;
+        const playerExt = this.game.player as unknown as PlayerExtended & { undergroundDepth?: number };
+
         // Get the current zone key based on player's currentZone object
-        const currentZone: any = this.game.player.currentZone;
+        const currentZone: ZoneWithCoordinates | null = this.game.playerFacade.getCurrentZone() as ZoneWithCoordinates | null;
         if (!currentZone) return;
 
         const zoneX: number = currentZone.x;
         const zoneY: number = currentZone.y;
         const dimension: number = currentZone.dimension || 0;
-        const depth: number = currentZone.depth || ((this.game.player as any).undergroundDepth || 1);
+        const depth: number = currentZone.depth || (playerExt.undergroundDepth || 1);
         const zoneKey: string = createZoneKey(zoneX, zoneY, dimension, depth);
 
         // Get the current zone data from repository
-        const zoneData: any = (this.game as any).zoneRepository.getByKey(zoneKey);
+        const zoneData: ZoneData | undefined = gameExt.zoneRepository.getByKey(zoneKey);
         if (zoneData) {
             // Apply the zone's texture and rotation data to zoneGenerator
             this.game.zoneGenerator.terrainTextures = zoneData.terrainTextures || {};

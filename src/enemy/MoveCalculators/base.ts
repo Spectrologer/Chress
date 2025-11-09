@@ -23,7 +23,7 @@ import { GRID_SIZE, TILE_TYPES, ANIMATION_CONSTANTS } from '@core/constants/inde
 import { EnemyPathfinding } from '@enemy/EnemyPathfinding';
 import { EnemySpecialActions } from '@enemy/EnemySpecialActions';
 import { logger } from '@core/logger';
-import type { GridCompat } from '@/types/core';
+import type { Grid as GridCompat } from '@core/SharedTypes';
 
 export type Grid = GridCompat;
 
@@ -145,13 +145,13 @@ export class BaseMoveCalculator {
         const followLeader = isLargeGroup && enemy !== leader;
 
         // Followers target leader, leader targets player
-        const targetX = followLeader ? leader.x : playerX;
-        const targetY = followLeader ? leader.y : playerY;
+        const targetX = followLeader ? leader!.x : playerX;
+        const targetY = followLeader ? leader!.y : playerY;
 
         // Layer 2: Pathfinding (BFS to target)
         const path = EnemyPathfinding.findPath(
             enemy.x, enemy.y, targetX, targetY, grid, enemy.enemyType,
-            (x, y, g) => enemy.isWalkable(x, y, g)
+            (x, y, g) => enemy.isWalkable(x, y, g as Grid)
         );
 
         if (path && path.length > 1) {
@@ -180,7 +180,7 @@ export class BaseMoveCalculator {
             next = applyTacticalAdjustments(this.tacticalAI, enemy, next, playerX, playerY, grid, enemies);
 
             // Layer 5: Defensive overrides (retreat if threatened)
-            next = applyDefensiveMoves(this.tacticalAI, enemy, player, next, playerX, playerY, grid, enemies, isSimulation, /** @type {any} */ (game), logger);
+            next = applyDefensiveMoves(this.tacticalAI, enemy, player, next, playerX, playerY, grid, enemies, isSimulation, /** @type {any} */ (game), logger as unknown as Console);
 
             // Visual Effects: Add smoke trail for multi-tile moves
             if (!isSimulation && (Math.abs(next.x - enemy.x) + Math.abs(next.y - enemy.y) > 1)) {
@@ -297,7 +297,7 @@ export class BaseMoveCalculator {
 
         // Animate enemy bump (charging into player position)
         if (typeof enemy.lastX !== 'undefined' && typeof enemy.lastY !== 'undefined') {
-            enemy.startBump(playerX - enemy.lastX, playerY - enemy.lastY);
+            enemy.startBump?.(playerX - enemy.lastX, playerY - enemy.lastY);
         }
     }
 
@@ -321,11 +321,11 @@ export class BaseMoveCalculator {
 
         player.takeDamage(enemy.attack);
         player.startBump(enemy.x - playerX, enemy.y - playerY);
-        enemy.startBump(playerX - enemy.x, playerY - enemy.y);
+        enemy.startBump?.(playerX - enemy.x, playerY - enemy.y);
         enemy.justAttacked = true;
         enemy.attackAnimation = 15;
         if (/** @type {any} */ (window).soundManager) /** @type {any} */ (window).soundManager.playSound('attack');
-        if (player.isDead()) {
+        if (player.isDead?.()) {
             // handle death if necessary
         }
     }
@@ -334,7 +334,7 @@ export class BaseMoveCalculator {
      * Find any valid adjacent move as a fallback when pathfinding fails
      */
     findAnyValidAdjacentMove(enemy: Enemy, grid: Grid, enemies: Enemy[]): Position | null {
-        const directions = EnemyPathfinding.getMovementDirections(enemy.enemyType || enemy.type);
+        const directions = EnemyPathfinding.getMovementDirections(enemy.enemyType || enemy.type || '');
         for (const dir of directions) {
             const newX = enemy.x + dir.x;
             const newY = enemy.y + dir.y;

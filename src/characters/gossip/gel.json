@@ -3,7 +3,7 @@
   "name": "Gel",
   "type": "dialogue",
   "metadata": {
-    "description": "A viscous character with a fluid personality. It's seen things it will never forget.",
+    "description": "A viscous character. It's seen things it will never forget.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -29,18 +29,23 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*stares with thousand-yard gaze* I've seen things. Terrible things. Can't unsee them. Can't unknow.",
+        "text": "*thousand-yard stare* Can't unsee them... Can't get it out of my head.",
         "buttonText": "You okay?"
       },
       {
         "id": "msg_1",
-        "text": "Sometimes I just... shift. Flow into dark corners. Remember what I've witnessed. It never leaves.",
-        "buttonText": "Yikes."
+        "text": "Sometimes I just... shift into dark corners. The stuff I've seen. It never leaves.",
+        "buttonText": "..."
       },
       {
         "id": "msg_2",
-        "text": "They say time heals all wounds. They're wrong. I'm viscous. I hold onto EVERYTHING.",
-        "buttonText": "Damn."
+        "text": "The harder I try to ignore it, the more it haunts me.",
+        "buttonText": "That's how it works man."
+      },
+      {
+        "id": "msg_3",
+        "text": "There are things... I'll never gel with",
+        "buttonText": "Oh come on."
       }
     ]
   },

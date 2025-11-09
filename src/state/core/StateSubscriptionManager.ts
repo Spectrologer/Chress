@@ -5,6 +5,8 @@
  * Each listener subscribes to a top-level slice (persistent, session, transient, ui, meta).
  */
 
+import { logger } from '@core/logger';
+
 export type StateListener = (sliceState: any, path?: string | null) => void;
 
 export class StateSubscriptionManager {
@@ -49,7 +51,7 @@ export class StateSubscriptionManager {
         try {
           callback(sliceState, path);
         } catch (error) {
-          console.error(`Error in state listener for ${slice}:`, error);
+          logger.error(`Error in state listener for ${slice}:`, error);
         }
       });
     }

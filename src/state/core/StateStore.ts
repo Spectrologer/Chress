@@ -19,6 +19,7 @@
 
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
+import { logger } from '@core/logger';
 import { createInitialState } from './StateDefinitions';
 import { StateSliceManager, deepClone } from './StateSliceManager';
 import { StateSubscriptionManager } from './StateSubscriptionManager';
@@ -271,14 +272,13 @@ export class StateStore {
      * Debug: Print current state structure
      */
     debugPrint(): void {
-        console.group('🏪 State Store Debug');
-        console.log('Persistent State:', this.state.persistent);
-        console.log('Session State:', this.state.session);
-        console.log('Transient State:', this.state.transient);
-        console.log('UI State:', this.state.ui);
-        console.log('Meta:', this.state.meta);
-        console.log('Recent Mutations:', this.getMutations(5));
-        console.groupEnd();
+        logger.log('🏪 State Store Debug');
+        logger.log('Persistent State:', this.state.persistent);
+        logger.log('Session State:', this.state.session);
+        logger.log('Transient State:', this.state.transient);
+        logger.log('UI State:', this.state.ui);
+        logger.log('Meta:', this.state.meta);
+        logger.log('Recent Mutations:', this.getMutations(5));
     }
 
     /**

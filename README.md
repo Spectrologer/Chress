@@ -28,23 +28,27 @@ Visit `http://localhost:3000` to play!
 
 ## ✨ Features
 
-- **Turn-based Combat** - Strategic chess-inspired movement
-- **Procedural Generation** - Infinite unique zones to explore
-- **NPC Trading System** - Barter with various characters
-- **Inventory Management** - Collect items, equipment, and consumables
-- **Progressive Web App** - Install and play offline
-- **Optimized Performance** - Code splitting and lazy loading
+- **Turn-based Combat** - Strategic chess-inspired movement with tactical AI
+- **Procedural Generation** - Infinite unique zones to explore with custom board support
+- **Rich NPC System** - 73+ characters including traders, gossip NPCs, and interactive statues
+- **Inventory Management** - 6-slot inventory + radial quick-access system
+- **Progressive Web App** - Install and play offline with auto-updates
+- **Optimized Performance** - Code splitting, lazy loading, and intelligent caching
+- **Character Editor** - Built-in tool for creating and editing NPCs
+- **Zone Editor** - Custom zone creation with visual tools
 
 ## 🚀 Recent Updates
 
 ### TypeScript Migration & Architecture Refactoring (v1.1.0)
-- ✅ **Complete TypeScript Migration** - 298 TS files, 0 JS files remaining
+- ✅ **Complete TypeScript Migration** - 302 TS files (55,800+ lines), 0 JS files remaining
 - ✅ **GameContext Refactoring** - Eliminated god object anti-pattern
   - Created ManagerRegistry for type-safe service access
   - Introduced domain facades (combat, inventory, zones, etc.)
   - Separated concerns with TurnState object
 - ✅ **Enhanced Type Safety** - Migration from loose JavaScript to strict TypeScript
 - ✅ **Improved Architecture** - Better separation of concerns and testability
+- ✅ **Character System** - 73 JSON character definitions with dedicated editor
+- ✅ **Modular Organization** - Refactored grid operations, combat systems, and constants
 
 ### Build System & PWA (v1.0.0)
 - ✅ **Vite Build System** - Modern bundler with HMR and optimization
@@ -114,36 +118,48 @@ The game uses a turn-based system where:
 ```
 chress/
 ├── assets/              # Public assets (images, UI, fonts)
-│   ├── characters/
-│   ├── environment/
-│   ├── items/
-│   └── ui/
+│   ├── characters/     # Character sprites and portraits
+│   ├── environment/    # Floors, walls, doodads, effects
+│   ├── items/          # Equipment, consumables, misc items
+│   └── ui/             # UI elements and icons
 ├── boards/              # Custom zone definitions
 ├── docs/                # Documentation
 ├── src/
-│   ├── core/           # Core game logic
-│   ├── managers/       # Game systems (inventory, combat, zones)
+│   ├── characters/     # 73 JSON character definitions (NPCs, gossip, statues)
+│   ├── core/           # Core game logic and constants
+│   ├── managers/       # Game systems (inventory, combat, zones, grid)
+│   ├── facades/        # Domain-specific API facades
 │   ├── renderers/      # Rendering systems
-│   ├── ui/             # UI components
-│   ├── enemy/          # Enemy AI
-│   ├── utils/          # Utilities (lazy loading, type checking)
-│   └── state/          # State management
-├── tools/              # Development tools (asset viewer)
-└── tests/              # Test suites
+│   ├── ui/             # UI components (30+ components)
+│   ├── enemy/          # Enemy AI and movement
+│   ├── generators/     # Procedural generation
+│   ├── controllers/    # Input handling
+│   ├── utils/          # Utilities and helpers
+│   ├── repositories/   # Data access layer
+│   └── services/       # Business services
+├── tools/              # Development tools (asset viewer, character editor, zone editor)
+└── tests/              # Test suites (576+ passing tests)
 ```
 
-## 🎨 Asset Organization
+## 🎨 Content Creation Tools
 
-Assets are organized by category:
-- `characters/` - Player, NPCs, enemies
-- `environment/` - Floors, walls, doodads, effects
-- `items/` - Equipment, consumables, misc items
-- `ui/` - UI elements, icons
-
-Use the **Asset Viewer** to browse all assets:
+### Asset Viewer
+Browse all game assets visually:
 ```bash
 npm run asset-viewer
 ```
+
+### Character Editor
+Create and edit NPCs with the built-in character editor:
+- Open `tools/character-editor.html` in browser
+- Edit character dialogue, trades, and properties
+- 73+ existing characters: main NPCs, gossip characters, and statues
+
+### Zone Editor
+Design custom zones and boards:
+- Visual tile placement
+- Custom board definitions in `boards/`
+- Special zones with unique layouts
 
 ## 🧪 Testing
 

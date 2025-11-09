@@ -55,7 +55,7 @@ export async function registerItems(): Promise<void> {
             if (item.foodType) {
                 // Extract just the filename to match TextureLoader's food asset registration
                 // e.g., 'items/consumables/aguamelin.png' -> 'aguamelin'
-                return item.foodType.split('/').pop().replace('.png', '');
+                return item.foodType.split('/').pop()?.replace('.png', '') ?? 'food';
             }
             return 'food';
         }
@@ -289,7 +289,7 @@ export async function registerItems(): Promise<void> {
         tileType: TILE_TYPES.SQUIG,
         stackable: false,
         radial: false,
-        effect: null,
+        effect: undefined,
         spawnWeight: SPAWN_PROBABILITIES.SPECIAL_ITEMS.SQUIG,
         spawnRules: {
             dimension: 0 // Surface only
@@ -302,7 +302,7 @@ export async function registerItems(): Promise<void> {
         tileType: TILE_TYPES.PENNE,
         stackable: false,
         radial: false,
-        effect: null,
+        effect: undefined,
         spawnWeight: SPAWN_PROBABILITIES.SPECIAL_ITEMS.PENNE,
         spawnRules: {
             dimension: 0 // Surface only
@@ -315,7 +315,7 @@ export async function registerItems(): Promise<void> {
         tileType: TILE_TYPES.NIB,
         stackable: false,
         radial: false,
-        effect: null,
+        effect: undefined,
         spawnWeight: SPAWN_PROBABILITIES.SPECIAL_ITEMS.NIB,
         spawnRules: {
             dimension: 2 // Underground only
@@ -328,7 +328,7 @@ export async function registerItems(): Promise<void> {
         tileType: TILE_TYPES.MARK,
         stackable: false,
         radial: false,
-        effect: null,
+        effect: undefined,
         spawnWeight: SPAWN_PROBABILITIES.SPECIAL_ITEMS.MARK,
         spawnRules: {
             dimension: 0 // Surface only
@@ -341,7 +341,7 @@ export async function registerItems(): Promise<void> {
         tileType: TILE_TYPES.RUNE,
         stackable: false,
         radial: false,
-        effect: null,
+        effect: undefined,
         spawnWeight: SPAWN_PROBABILITIES.SPECIAL_ITEMS.RUNE,
         spawnRules: {
             dimension: 2 // Underground only
@@ -354,7 +354,7 @@ export async function registerItems(): Promise<void> {
         tileType: TILE_TYPES.AXELOTL,
         stackable: false,
         radial: false,
-        effect: null,
+        effect: undefined,
         spawnWeight: 0, // Special spawn in zone 0,0 underground depth 1
         getTooltip: () => 'Axe-O-Lotl - Special merchant',
         getImageKey: () => 'axelotl'
@@ -364,7 +364,7 @@ export async function registerItems(): Promise<void> {
         tileType: TILE_TYPES.GOUGE,
         stackable: false,
         radial: false,
-        effect: null,
+        effect: undefined,
         spawnWeight: 0, // Special spawn conditions
         getTooltip: () => 'Gouge - Hammer merchant',
         getImageKey: () => 'gouge'
@@ -376,7 +376,7 @@ export async function registerItems(): Promise<void> {
         tileType: TILE_TYPES.PITFALL,
         stackable: false,
         radial: false,
-        effect: null,
+        effect: undefined,
         spawnWeight: SPAWN_PROBABILITIES.SPECIAL_ITEMS.PITFALL,
         spawnRules: {
             minLevel: 2,
