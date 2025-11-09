@@ -289,8 +289,8 @@ export class KeyboardHandler {
      * Spawn a random radial item on a floor tile (debug feature)
      */
     private spawnRandomRadialItemOnFloor(): void {
-        // Get random radial item type (exclude cube - only placed manually in museum)
-        const radialTypes = ItemMetadata.RADIAL_TYPES.filter(type => type !== 'cube');
+        // Get random radial item type (exclude teleport_branch - only placed manually in museum)
+        const radialTypes = ItemMetadata.RADIAL_TYPES.filter(type => type !== 'teleport_branch');
         const randomType = radialTypes[Math.floor(Math.random() * radialTypes.length)];
 
         // Determine tile type and data
@@ -298,8 +298,8 @@ export class KeyboardHandler {
 
         if (randomType === 'bow' || randomType === 'bishop_spear' || randomType === 'horse_icon' || randomType === 'book_of_time_travel') {
             tileData = { type: this.getTileTypeForItem(randomType), uses: randomType === 'book_of_time_travel' ? 3 : 3 };
-        } else if (randomType === 'fischers_wand') {
-            tileData = { type: TILE_TYPES.FISCHERS_WAND, uses: 1 };
+        } else if (randomType === 'fischers_cube') {
+            tileData = { type: TILE_TYPES.FISCHERS_CUBE, uses: 1 };
         } else if (randomType === 'shovel') {
             tileData = { type: TILE_TYPES.SHOVEL, uses: 3 };
         } else if (randomType === 'bomb') {

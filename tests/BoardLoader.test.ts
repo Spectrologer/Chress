@@ -192,7 +192,8 @@ describe('BoardLoader', () => {
                 TILE_TYPES.HORSE_ICON,
                 TILE_TYPES.BOW,
                 TILE_TYPES.SHOVEL,
-                TILE_TYPES.BOOK_OF_TIME_TRAVEL
+                TILE_TYPES.BOOK_OF_TIME_TRAVEL,
+                TILE_TYPES.FISCHERS_CUBE
             ]);
 
             for (let i = 0; i < 50; i++) {
@@ -241,7 +242,8 @@ describe('BoardLoader', () => {
                 TILE_TYPES.HORSE_ICON,
                 TILE_TYPES.BOW,
                 TILE_TYPES.SHOVEL,
-                TILE_TYPES.BOOK_OF_TIME_TRAVEL
+                TILE_TYPES.BOOK_OF_TIME_TRAVEL,
+                TILE_TYPES.FISCHERS_CUBE
             ]).toContain(type);
         });
 
@@ -261,7 +263,7 @@ describe('BoardLoader', () => {
 
         test('should handle hyphenated feature names', () => {
             const tile = boardLoader.convertFeatureToTile('bishop-spear', []);
-            expect(tile).toBe(TILE_TYPES.BISHOP_SPEAR);
+            expect(tile).toEqual({ type: TILE_TYPES.BISHOP_SPEAR, uses: 3 });
         });
 
         test('should return null for unknown features', () => {

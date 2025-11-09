@@ -174,14 +174,29 @@ export class InputCoordinator {
     }
 
     private _handlePointerDown(e: PointerEvent): void {
+        // Completely block all pointer input during enemy turns or entrance animation
+        // Early return prevents any gesture tracking from starting
+        if (!this.game.isPlayerTurn || this.stateManager.isEntranceAnimationActive()) {
+            return;
+        }
         return (this.gestureDetector as unknown as { _onPointerDown: (e: PointerEvent) => void })._onPointerDown(e);
     }
 
     private _handlePointerMove(e: PointerEvent): void {
+        // Allow pointer move for visual feedback, but it won't trigger actions
         return (this.gestureDetector as unknown as { _onPointerMove: (e: PointerEvent) => void })._onPointerMove(e);
     }
 
     private _handlePointerUp(e: PointerEvent): PointerResult | undefined {
+        // Completely block all pointer input during enemy turns or entrance animation
+        // This prevents tap timeouts from being set and prevents gesture completion
+        if (!this.game.isPlayerTurn || this.stateManager.isEntranceAnimationActive()) {
+            // Clear any pending tap timeouts to prevent queued actions
+            this.gestureDetector.clearTapTimeout();
+            // Clear active pointer tracking to reset gesture state
+            (this.gestureDetector as any).activePointers?.clear();
+            return;
+        }
         const result = (this.gestureDetector as unknown as { _onPointerUp: (e: PointerEvent) => PointerResult | undefined })._onPointerUp(e);
         this._handlePointerRelease(result);
         return result;
@@ -202,11 +217,13 @@ export class InputCoordinator {
     handleTap(screenX: number, screenY: number): void {
         // Block input during entrance animation
         if (this.stateManager.isEntranceAnimationActive()) {
+            this.gestureDetector.clearTapTimeout();
             return;
         }
 
         // Block input during enemy turns
         if (!this.game.isPlayerTurn) {
+            this.gestureDetector.clearTapTimeout();
             return;
         }
 
@@ -320,6 +337,14 @@ export class InputCoordinator {
 
         // Wait for double tap before executing movement
         this.gestureDetector.setTapTimeout(() => {
+            // CRITICAL: Re-check that it's still player turn before executing
+            // This prevents queued actions from executing during enemy turns
+            // (player could have moved and enemy turns could have started during the 250ms delay)
+            if (!this.game.isPlayerTurn || this.stateManager.isEntranceAnimationActive()) {
+                // Clear the timeout reference to prevent any further execution
+                this.gestureDetector.clearTapTimeout();
+                return;
+            }
             this.executeMovementOrInteraction(gridCoords);
         }, 250); // DOUBLE_TAP_DELAY
     }
@@ -478,6 +503,12 @@ export class InputCoordinator {
      */
     private _processAccumulatedTurns(): void {
         if (this.accumulatedTurns > 0) {
+            // Skip processing turns during entrance animation
+            if (this.stateManager.isEntranceAnimationActive()) {
+                this.accumulatedTurns = 0;
+                return;
+            }
+
             // Process exactly the number of turns that accumulated
             for (let i = 0; i < this.accumulatedTurns; i++) {
                 this.game.turnManager?.handleTurnCompletion();
@@ -547,6 +578,11 @@ export class InputCoordinator {
     // ========================================
 
     executeMovementOrInteraction(gridCoords: GridCoords): void {
+        // Block execution if not player turn (safety check for delayed/queued calls)
+        if (!this.game.isPlayerTurn || this.stateManager.isEntranceAnimationActive()) {
+            return;
+        }
+
         const playerPos = this.game.player.getPositionObject();
         const clickedPos = Position.from(gridCoords);
         const handled = this.game.interactionManager.handleTap(gridCoords);

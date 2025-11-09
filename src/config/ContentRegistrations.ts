@@ -13,6 +13,7 @@
 import { ContentRegistry } from '@core/ContentRegistry';
 import { boardLoader } from '@core/BoardLoader';
 import { loadAllNPCs, loadAllStatues } from '@core/NPCLoader';
+import { ItemEffectStrategy } from '@managers/inventory/ItemEffectStrategy';
 
 // Import registration modules
 import { registerItems } from './registrations/ItemRegistrations';
@@ -24,7 +25,10 @@ import { registerBoards } from './registrations/BoardRegistrations';
  * Call this once during game initialization
  */
 export async function registerAllContent(): Promise<void> {
-    registerItems();
+    // Initialize item effect classes first to avoid circular dependencies
+    await ItemEffectStrategy.initialize();
+
+    await registerItems();
     await loadAllNPCs(ContentRegistry); // Load NPCs from JSON files, passing ContentRegistry as dependency
     await loadAllStatues(); // Load statue data from JSON files
     registerEnemies();

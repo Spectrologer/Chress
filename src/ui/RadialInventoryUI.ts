@@ -294,8 +294,8 @@ export class RadialInventoryUI {
             case 'bishop_spear': return 'assets/items/equipment/spear.png';
             case 'book_of_time_travel': return 'assets/items/misc/book.png';
             case 'shovel': return 'assets/items/equipment/shovel.png';
-            case 'fischers_wand': return 'assets/environment/doodads/cube.png';
-            case 'cube': return 'assets/items/misc/branch.png';
+            case 'fischers_cube': return 'assets/environment/doodads/cube.png';
+            case 'teleport_branch': return 'assets/items/misc/branch.png';
             default: return item.image || 'assets/items/unknown.png';
         }
     }

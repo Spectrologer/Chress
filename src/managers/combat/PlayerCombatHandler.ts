@@ -31,6 +31,12 @@ export class PlayerCombatHandler {
      * Handle player attack on an enemy
      */
     public handlePlayerAttack(enemy: Enemy, playerPos: Position): AttackResult {
+        // CRITICAL SAFETY CHECK: Prevent ANY player attacks during enemy turns
+        // This is a final defensive layer to absolutely prevent input spam
+        if (!this.game.isPlayerTurn && !(this.game as any)._entranceAnimationInProgress) {
+            return { defeated: false, consecutiveKills: 0 };
+        }
+
         // Emit player attack animation event
         eventBus.emit(EventTypes.ANIMATION_ATTACK, {
             x: playerPos.x,

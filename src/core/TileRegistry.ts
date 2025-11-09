@@ -93,7 +93,7 @@ export class TileRegistry {
         TILE_TYPES.PITFALL,
         TILE_TYPES.PORT,
         TILE_TYPES.SHOVEL,
-        TILE_TYPES.FISCHERS_WAND
+        TILE_TYPES.FISCHERS_CUBE
     ];
 
     /**
@@ -101,7 +101,8 @@ export class TileRegistry {
      */
     static readonly SPECIAL_INTERACTIVE_TYPES: number[] = [
         TILE_TYPES.SIGN,
-        TILE_TYPES.TABLE
+        TILE_TYPES.TABLE,
+        TILE_TYPES.SIGN_METAL_ALT
     ];
 
     // ========================================
@@ -153,7 +154,7 @@ export class TileRegistry {
         const tileType = getTileType(tile);
 
         // Signs are explicitly not walkable
-        if (tileType === TILE_TYPES.SIGN) {
+        if (tileType === TILE_TYPES.SIGN || tileType === TILE_TYPES.SIGN_METAL_ALT) {
             return false;
         }
 

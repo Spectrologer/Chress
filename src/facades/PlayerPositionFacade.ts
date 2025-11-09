@@ -145,8 +145,8 @@ export class PlayerPositionFacade {
      * Set zone dimension with validation
      */
     setZoneDimension(dimension: number): void {
-        if (![0, 1, 2].includes(dimension)) {
-            logger.warn(`PlayerPositionFacade: Invalid dimension ${dimension}, must be 0, 1, or 2`);
+        if (![0, 1, 2, 3].includes(dimension)) {
+            logger.warn(`PlayerPositionFacade: Invalid dimension ${dimension}, must be 0, 1, 2, or 3`);
             return;
         }
         if (!this.player.currentZone) {

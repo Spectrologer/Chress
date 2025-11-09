@@ -1,5 +1,6 @@
 import { InventoryUI } from '../ui/InventoryUI';
 import { InventoryService } from '@managers/inventory/InventoryService';
+import { ItemEffectStrategy } from '@managers/inventory/ItemEffectStrategy';
 
 function makeMockGame() {
   const mockGame = {
@@ -17,7 +18,10 @@ function makeMockGame() {
 }
 
 describe('InventoryUI integration', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    // Initialize item effects before tests
+    await ItemEffectStrategy.initialize();
+
     // Minimal DOM for inventory
     document.body.innerHTML = `
       <div class="player-inventory">

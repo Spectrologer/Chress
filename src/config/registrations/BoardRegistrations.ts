@@ -22,4 +22,7 @@ export function registerBoards(): void {
     // Example for custom boards:
     // boardLoader.registerBoard(5, 5, 0, 'special_surface_zone', 'custom');
     // boardLoader.registerBoard(2, 3, 2, 'underground_cavern', 'custom');
+
+    // Classico - Test board for player spawn feature
+    boardLoader.registerBoard(1, 0, 0, 'classico', 'custom');
 }

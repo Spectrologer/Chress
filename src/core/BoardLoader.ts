@@ -25,6 +25,9 @@ interface BoardResult {
     overlayTextures?: Record<string, string>;
     rotations: Record<string, number>;
     overlayRotations: Record<string, number>;
+    metadata?: {
+        playerSpawn?: { x: number; y: number };
+    };
 }
 
 /**
@@ -208,7 +211,7 @@ export class BoardLoader {
         ];
 
         const obstacleFolderItems = ['rock', 'shrubbery'];
-        const blockingDoodads = ['cube', 'hole', 'pitfall'];
+        const blockingDoodads = ['teleport_branch', 'hole', 'pitfall'];
         const nonWalkableFloors = ['aqua'];
 
         return wallFolderItems.includes(terrain) ||
@@ -228,6 +231,7 @@ export class BoardLoader {
         const rotations: Record<string, number> = {};
         const overlayRotations: Record<string, number> = {};
         const signMessages = boardData.signMessages || {};
+        const enemies: EnemyData[] = [];
 
         // Initialize grid from terrain data
         for (let y = 0; y < height; y++) {
@@ -302,13 +306,27 @@ export class BoardLoader {
         }
 
         // Place features on the grid
+        let enemyIdCounter = 0;
         for (const [posKey, featureType] of Object.entries(boardData.features)) {
             const [x, y] = posKey.split(',').map(Number);
 
             if (x >= 0 && x < width && y >= 0 && y < height && grid[y]) {
-                const tile = this.convertFeatureToTile(featureType, foodAssets, signMessages, posKey);
-                if (tile !== null) {
-                    grid[y][x] = tile;
+                // Check if this feature is an enemy type
+                const enemyType = this.getEnemyType(featureType);
+                if (enemyType) {
+                    // Add to enemies array instead of grid
+                    enemies.push({
+                        x: x,
+                        y: y,
+                        enemyType: enemyType,
+                        id: `custom_board_${enemyIdCounter++}`
+                    });
+                } else {
+                    // Non-enemy feature, place on grid
+                    const tile = this.convertFeatureToTile(featureType, foodAssets, signMessages, posKey);
+                    if (tile !== null) {
+                        grid[y][x] = tile;
+                    }
                 }
             }
         }
@@ -348,12 +366,33 @@ export class BoardLoader {
         return {
             grid: grid,
             playerSpawn: playerSpawn,
-            enemies: [],
+            enemies: enemies,
             terrainTextures: terrainTextures,
             overlayTextures: overlayTextures,
             rotations: rotations,
-            overlayRotations: overlayRotations
+            overlayRotations: overlayRotations,
+            metadata: {
+                playerSpawn: boardData.metadata?.playerSpawn ? playerSpawn : undefined
+            }
         };
+    }
+
+    /**
+     * Check if a feature type is an enemy and return the enemy type string
+     */
+    private getEnemyType(featureType: string): string | null {
+        const enemyTypes = [
+            'lizardy', 'lizardo', 'lizardeaux', 'zard', 'lizord', 'lazerd',
+            'black_lizardy', 'black_lizardo', 'black_lizardeaux',
+            'black_zard', 'black_lizord', 'black_lazerd'
+        ];
+
+        const lowerFeature = featureType.toLowerCase();
+        if (enemyTypes.includes(lowerFeature)) {
+            return lowerFeature;
+        }
+
+        return null;
     }
 
     /**
@@ -402,13 +441,29 @@ export class BoardLoader {
         const tileTypeName = featureType.toUpperCase();
 
         if (tileTypeName in TILE_TYPES) {
-            return (TILE_TYPES as Record<string, number>)[tileTypeName];
+            const tileType = (TILE_TYPES as Record<string, number>)[tileTypeName];
+            // Add uses property for items that need it
+            if (tileType === TILE_TYPES.BISHOP_SPEAR || tileType === TILE_TYPES.HORSE_ICON ||
+                tileType === TILE_TYPES.BOW || tileType === TILE_TYPES.SHOVEL ||
+                tileType === TILE_TYPES.BOOK_OF_TIME_TRAVEL || tileType === TILE_TYPES.FISCHERS_CUBE ||
+                tileType === TILE_TYPES.TELEPORT_BRANCH) {
+                return { type: tileType, uses: 3 };
+            }
+            return tileType;
         }
 
         // Try with underscores converted
         const normalizedName = featureType.replace(/-/g, '_').toUpperCase();
         if (normalizedName in TILE_TYPES) {
-            return (TILE_TYPES as Record<string, number>)[normalizedName];
+            const tileType = (TILE_TYPES as Record<string, number>)[normalizedName];
+            // Add uses property for items that need it
+            if (tileType === TILE_TYPES.BISHOP_SPEAR || tileType === TILE_TYPES.HORSE_ICON ||
+                tileType === TILE_TYPES.BOW || tileType === TILE_TYPES.SHOVEL ||
+                tileType === TILE_TYPES.BOOK_OF_TIME_TRAVEL || tileType === TILE_TYPES.FISCHERS_CUBE ||
+                tileType === TILE_TYPES.TELEPORT_BRANCH) {
+                return { type: tileType, uses: 3 };
+            }
+            return tileType;
         }
 
         logger.warn(`Unknown feature type: ${featureType}`);
@@ -427,6 +482,7 @@ export class BoardLoader {
             { type: TILE_TYPES.HORSE_ICON, uses: 3 },
             { type: TILE_TYPES.BOW, uses: 3 },
             { type: TILE_TYPES.BOOK_OF_TIME_TRAVEL, uses: 3 },
+            { type: TILE_TYPES.FISCHERS_CUBE, uses: 1 },
             TILE_TYPES.NOTE,
         ];
 
@@ -451,6 +507,7 @@ export class BoardLoader {
             { type: TILE_TYPES.BOW, uses: 3 },
             { type: TILE_TYPES.SHOVEL, uses: 3 },
             { type: TILE_TYPES.BOOK_OF_TIME_TRAVEL, uses: 3 },
+            { type: TILE_TYPES.FISCHERS_CUBE, uses: 1 },
         ];
 
         return radialItems[Math.floor(Math.random() * radialItems.length)];

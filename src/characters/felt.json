@@ -3,7 +3,7 @@
   "name": "Felt",
   "type": "dialogue",
   "metadata": {
-    "description": "A dialogue NPC who admires Crayn and shares humorous observations. Found in the home interior.",
+    "description": "A dialogue NPC who admires Crayn and shares humorous observations. Hates lies. Found in the home interior.",
     "created": "2025-10-27T00:00:00.000Z",
     "version": "1.0.0",
     "category": "tutorial"
@@ -58,7 +58,7 @@
       },
       {
         "id": "msg_6",
-        "text": "Stop saying it's a 'teleport stick or whatever'. I literally see you walk out the door every time after you touch it.",
+        "text": "Quit saying it's a 'teleport stick' or whatever. I literally see you walk out the door every time after you touch it.",
         "buttonText": "Okay..."
       }
     ]

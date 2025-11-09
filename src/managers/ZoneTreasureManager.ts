@@ -35,13 +35,13 @@ export class ZoneTreasureManager {
         if (this.game.partnerCubes.has(zoneKey)) {
             const cubeData = this.game.partnerCubes.get(zoneKey)!;
 
-            // Create a return cube with origin zone data
+            // Create a return teleport branch with origin zone data
             const returnCube = {
-                type: TILE_TYPES.CUBE,
+                type: TILE_TYPES.TELEPORT_BRANCH,
                 originZone: cubeData.originZone
             };
 
-            // Spawn the return cube on the grid
+            // Spawn the return teleport branch on the grid
             this.spawnTreasuresOnGrid([returnCube]);
 
             // Remove from partner cubes map after spawning
@@ -49,7 +49,7 @@ export class ZoneTreasureManager {
 
             // Add message to log
             eventBus.emit(EventTypes.UI_MESSAGE_LOG, {
-                text: 'A glowing cube materializes nearby!',
+                text: 'A glowing branch materializes nearby!',
                 category: 'treasure',
                 priority: 'info',
                 timestamp: Date.now()

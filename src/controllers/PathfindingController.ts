@@ -152,6 +152,13 @@ export class PathfindingController {
      * Execute a path by simulating key presses
      */
     executePath(path: string[]): void {
+        // Block non-synthetic path execution during enemy turns
+        // (Synthetic paths from entrance animation are allowed via _synthetic flag in handleKeyPress)
+        const isEntranceActive = (this.game as any)._entranceAnimationInProgress;
+        if (!this.game.isPlayerTurn && !isEntranceActive) {
+            return;
+        }
+
         if (this.isExecutingPath) {
             this.cancelPathExecution();
         }
@@ -195,7 +202,14 @@ export class PathfindingController {
         for (let i = 0; i < path.length; i++) {
             const stepKey = path[i];
             seq.then(() => {
+                // CRITICAL: Check if path was cancelled or if it's no longer player turn
+                // This prevents path steps from executing during enemy turns
                 if (this.cancelPath) return;
+                if (!this.game.isPlayerTurn && !(this.game as any)._entranceAnimationInProgress) {
+                    // Cancel the entire path if turn changed mid-execution
+                    this.cancelPathExecution();
+                    return;
+                }
                 const ev = { key: stepKey, preventDefault: () => {}, _synthetic: true };
                 this._triggerKeyPress(ev);
             }).wait(INPUT_CONSTANTS.LEGACY_PATH_DELAY);

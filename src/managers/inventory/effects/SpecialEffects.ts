@@ -5,11 +5,11 @@ import { logger } from '@core/logger';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { isAdjacent } from '@core/utils/DirectionUtils';
-import type { InventoryItem, ShovelItem, NoteItem, BookOfTimeTravelItem, FischersWandItem, CubeItem } from '../ItemMetadata';
+import type { InventoryItem, ShovelItem, NoteItem, BookOfTimeTravelItem, FischersCubeItem, TeleportBranchItem } from '../ItemMetadata';
 import { DIMENSION_CONSTANTS } from '@core/constants/gameplay';
 
 /**
- * Special effects - Shovel, Note, Book of Time Travel, Cube
+ * Special effects - Shovel, Note, Book of Time Travel, Fischer's Cube, Teleport Branch
  */
 
 export class ShovelEffect extends BaseItemEffect {
@@ -189,7 +189,7 @@ export class BookOfTimeTravelEffect extends BaseItemEffect {
     }
 }
 
-export class FischersWandEffect extends BaseItemEffect {
+export class FischersCubeEffect extends BaseItemEffect {
     apply(game: Game, item: InventoryItem, context: ItemEffectContext = {}): ItemEffectResult {
         // Show visual feedback
         eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
@@ -315,18 +315,18 @@ export class FischersWandEffect extends BaseItemEffect {
     }
 }
 
-export class CubeEffect extends BaseItemEffect {
+export class TeleportBranchEffect extends BaseItemEffect {
     apply(game: Game, item: InventoryItem, context: ItemEffectContext = {}): ItemEffectResult {
-        const cubeItem = item as CubeItem;
+        const teleportBranchItem = item as TeleportBranchItem;
         const currentZone = game.player.getCurrentZone();
 
         // Check if this cube has a permanent linkage first
         const currentZoneKey = `${currentZone.x},${currentZone.y}:${currentZone.dimension}`;
         const linkedDestination = game.cubeLinkages.get(currentZoneKey) || null;
 
-        // If this cube has a partner (either from item data or from linkage map), teleport to the partner's location
-        if (cubeItem.originZone || linkedDestination) {
-            const destination = linkedDestination || cubeItem.originZone!;
+        // If this teleport branch has a partner (either from item data or from linkage map), teleport to the partner's location
+        if (teleportBranchItem.originZone || linkedDestination) {
+            const destination = linkedDestination || teleportBranchItem.originZone!;
             const targetX = destination.x;
             const targetY = destination.y;
             const targetDimension = destination.dimension || DIMENSION_CONSTANTS.SURFACE;

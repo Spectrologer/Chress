@@ -653,7 +653,7 @@
             'walls/clubwall6': '../assets/environment/walls/clubwall6.png',
             'walls/cobble': '../assets/environment/walls/cobble.png',
             'walls/coralwall': '../assets/environment/walls/coralwall.png',
-            'doodads/cube': '../assets/environment/doodads/cube.png',
+            'doodads/fischers_cube': '../assets/environment/doodads/cube.png',
             'walls/deco': '../assets/environment/walls/deco.png',
             'walls/fortwall': '../assets/environment/walls/fortwall.png',
             'walls/heartstone': '../assets/environment/walls/heartstone.png',
@@ -674,13 +674,26 @@
             'pitfall': '../assets/environment/doodads/pitfall.png',
 
             // STRUCTURE
+            'anemone': '../assets/environment/doodads/anemone.png',
+            'big_tree': '../assets/environment/doodads/big_tree.png',
+            'blue_shroom': '../assets/environment/doodads/blue_shroom.png',
+            'cactus': '../assets/environment/doodads/cactus.png',
+            'cactus2': '../assets/environment/doodads/cactus2.png',
             'cistern': '../assets/environment/doodads/cistern.png',
-            'cube': '../assets/environment/doodads/cube.png',
+            'teleport_branch': '../assets/items/misc/branch.png',
             'deadtree': '../assets/environment/doodads/deadtree.png',
+            'green_shroom': '../assets/environment/doodads/green_shroom.png',
             'house': '../assets/environment/doodads/club.png',
             'shack': '../assets/environment/doodads/shack.png',
             'sign': '../assets/environment/doodads/sign.png',
+            'sign_blank': '../assets/environment/doodads/sign-blank.png',
+            'sign_eaten': '../assets/environment/doodads/sign-eaten.png',
+            'sign_gold': '../assets/environment/doodads/sign-gold.png',
+            'sign_metal': '../assets/environment/doodads/sign-metal.png',
+            'sign_metal_alt': '../assets/environment/doodads/sign-metal-alt.png',
+            'small_evergreen': '../assets/environment/doodads/small_evergreen.png',
             'table': '../assets/environment/doodads/table.png',
+            'urchin': '../assets/environment/doodads/urchin.png',
             'well': '../assets/environment/doodads/well.png',
 
             // PORT (exits with directional arrows)
@@ -688,6 +701,7 @@
             'exit_left': '../assets/ui/arrow.png',
             'exit_right': '../assets/ui/arrow.png',
             'exit_up': '../assets/ui/arrow.png',
+            'player_spawn': '../assets/ui/pawn_small.png',
             'port_cistern': '../assets/environment/doodads/cistern.png',
             'port_interior': '⬇',
             'port_stairdown': '../assets/environment/doodads/stairdown.png',
@@ -699,6 +713,7 @@
             'bomb': '../assets/items/misc/bomb.png',
             'book_of_time_travel': '../assets/items/misc/book.png',
             'bow': '../assets/items/equipment/bow.png',
+            'fischers_cube': '../assets/environment/doodads/cube.png',
             'food': '../assets/items/consumables/meat.png',
             'hammer': '../assets/items/equipment/hammer.png',
             'heart': '../assets/items/misc/heart.png',
@@ -717,6 +732,13 @@
             'lizardy': '../assets/characters/enemies/lizardy.png',
             'lizord': '../assets/characters/enemies/lizord.png',
             'zard': '../assets/characters/enemies/zard.png',
+            // Grayscale enemy variants
+            'black_lazerd': '../assets/characters/enemies/lazerd.png',
+            'black_lizardeaux': '../assets/characters/enemies/lizardeaux.png',
+            'black_lizardo': '../assets/characters/enemies/lizardo.png',
+            'black_lizardy': '../assets/characters/enemies/lizardy.png',
+            'black_lizord': '../assets/characters/enemies/lizord.png',
+            'black_zard': '../assets/characters/enemies/zard.png',
 
             // NPC - Merchants
             'axelotl': '../assets/characters/npcs/merchant/axolotl.png',
@@ -841,23 +863,27 @@
                 null
             ],
             STRUCTURE: [
-                'cistern', 'cube', 'deadtree', 'house', 'shack', 'sign', 'table', 'well',
+                'anemone', 'big_tree', 'blue_shroom', 'cactus', 'cactus2', 'cistern', 'teleport_branch', 'deadtree', 'green_shroom',
+                'house', 'shack', 'sign', 'sign_blank', 'sign_eaten', 'sign_gold', 'sign_metal', 'sign_metal_alt',
+                'small_evergreen', 'table', 'urchin', 'well',
                 // Obstacles
                 'obstacles/rock', 'obstacles/shrubbery', 'hole', 'pitfall',
                 null
             ],
             PORT: [
                 'exit_down', 'exit_left', 'exit_right', 'exit_up',
+                'player_spawn',
                 'port_cistern', 'port_interior', 'port_stairdown', 'port_stairup',
                 null
             ],
             ITEM: [
-                'axe', 'bishop_spear', 'bomb', 'book_of_time_travel', 'bow', 'food', 'hammer',
+                'axe', 'bishop_spear', 'bomb', 'book_of_time_travel', 'bow', 'fischers_wand', 'food', 'hammer',
                 'heart', 'horse_icon', 'note', 'random_item', 'random_radial_item', 'random_food_water', 'shovel', 'water_item',
                 null
             ],
             ENEMY: [
                 'lazerd', 'lizardeaux', 'lizardo', 'lizardy', 'lizord', 'zard',
+                'black_lazerd', 'black_lizardeaux', 'black_lizardo', 'black_lizardy', 'black_lizord', 'black_zard',
                 null
             ],
             NPC: [
@@ -1125,8 +1151,8 @@
                     img.style.objectFit = 'contain';
                     img.style.imageRendering = 'pixelated';
 
-                    // Apply gray filter for statues
-                    if (value.endsWith('_statue')) {
+                    // Apply gray filter for statues and black enemies
+                    if (value.endsWith('_statue') || value.startsWith('black_')) {
                         img.style.filter = 'grayscale(100%) brightness(0.7)';
                     }
 
@@ -1241,8 +1267,8 @@
                         img.style.objectFit = 'contain';
                         img.style.imageRendering = 'pixelated';
 
-                        // Apply gray filter for statues
-                        if (value.endsWith('_statue')) {
+                        // Apply gray filter for statues and black enemies
+                        if (value.endsWith('_statue') || value.startsWith('black_')) {
                             img.style.filter = 'grayscale(100%) brightness(0.7)';
                         }
 
@@ -1349,6 +1375,7 @@
             const features = {};
             const rotations = {};
             const overlayRotations = {};
+            let playerSpawn = null;
 
             for (let index = 0; index < GRID_SIZE * GRID_SIZE; index++) {
                 const row = Math.floor(index / GRID_SIZE);
@@ -1365,8 +1392,11 @@
                     overlays[`${col},${row}`] = overlayValue;
                 }
 
-                // Add feature if present
-                if (featureValue) {
+                // Check if this is a player spawn marker
+                if (featureValue === 'player_spawn') {
+                    playerSpawn = { x: col, y: row };
+                } else if (featureValue) {
+                    // Add feature if present (and not player_spawn)
                     features[`${col},${row}`] = featureValue;
                 }
 
@@ -1395,6 +1425,7 @@
                     dimension: dimension,
                     level: level,
                     rarity: rarity,
+                    playerSpawn: playerSpawn || undefined,
                     created: new Date().toISOString()
                 }
             };
@@ -1433,8 +1464,8 @@
             // Obstacle items -> add 'obstacles/' prefix
             const obstacleItems = ['rock', 'shrubbery'];
 
-            // Doodad items (cube, hole, pitfall, etc.) - no prefix needed
-            const doodadItems = ['cube', 'hole', 'pitfall'];
+            // Doodad items (teleport_branch, hole, pitfall, etc.) - no prefix needed
+            const doodadItems = ['teleport_branch', 'hole', 'pitfall'];
 
             // Floor items -> add 'floors/' prefix
             const floorItems = [
@@ -1527,6 +1558,13 @@
                         const index = row * GRID_SIZE + col;
                         featureRotationLayer[index] = rotation;
                     });
+
+                    // Load player spawn from metadata
+                    if (zoneData.metadata && zoneData.metadata.playerSpawn) {
+                        const { x, y } = zoneData.metadata.playerSpawn;
+                        const index = y * GRID_SIZE + x;
+                        featureLayer[index] = 'player_spawn';
+                    }
 
                     updateGrid();
                     alert('Zone imported successfully!');

@@ -22,7 +22,7 @@ interface SpecialItemsProbabilities {
     BOW: number;
     SHOVEL: number;
     PITFALL: number;
-    FISCHERS_WAND: number;
+    FISCHERS_CUBE: number;
 }
 
 interface InteriorProbabilities {
@@ -111,7 +111,7 @@ export const SPAWN_PROBABILITIES = {
         BOW: 0.04, // Activated item, levels 1-4
         SHOVEL: 0.04, // Activated item, levels 1-4
         PITFALL: 0.03, // Surface, levels 2-4
-        FISCHERS_WAND: 0.015 // Activated item, levels 1-4 (very powerful)
+        FISCHERS_CUBE: 0.015 // Activated item, levels 1-4 (very powerful)
     } as SpecialItemsProbabilities,
 
     // Interior/Shack spawning

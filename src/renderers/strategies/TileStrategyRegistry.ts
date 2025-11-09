@@ -159,6 +159,26 @@ export class TileStrategyRegistry {
             this.images, this.tileSize, 'sign', TILE_TYPES.SIGN, 'S',
             { scale: 1.0, fallbackFontSize: 24 }
         ));
+        this.register(TILE_TYPES.SIGN_BLANK, new SimpleItemRenderStrategy(
+            this.images, this.tileSize, 'sign-blank', TILE_TYPES.SIGN_BLANK, 'SB',
+            { scale: 1.0, fallbackFontSize: 20 }
+        ));
+        this.register(TILE_TYPES.SIGN_EATEN, new SimpleItemRenderStrategy(
+            this.images, this.tileSize, 'sign-eaten', TILE_TYPES.SIGN_EATEN, 'SE',
+            { scale: 1.0, fallbackFontSize: 20 }
+        ));
+        this.register(TILE_TYPES.SIGN_GOLD, new SimpleItemRenderStrategy(
+            this.images, this.tileSize, 'sign-gold', TILE_TYPES.SIGN_GOLD, 'SG',
+            { scale: 1.0, fallbackFontSize: 20 }
+        ));
+        this.register(TILE_TYPES.SIGN_METAL, new SimpleItemRenderStrategy(
+            this.images, this.tileSize, 'sign-metal', TILE_TYPES.SIGN_METAL, 'SM',
+            { scale: 1.0, fallbackFontSize: 20 }
+        ));
+        this.register(TILE_TYPES.SIGN_METAL_ALT, new SimpleItemRenderStrategy(
+            this.images, this.tileSize, 'sign-metal-alt', TILE_TYPES.SIGN_METAL_ALT, 'SA',
+            { scale: 1.0, fallbackFontSize: 20 }
+        ));
         this.register(TILE_TYPES.BOOK_OF_TIME_TRAVEL, new SimpleItemRenderStrategy(
             this.images, this.tileSize, 'book', TILE_TYPES.BOOK_OF_TIME_TRAVEL, '📖',
             { scaleToFit: true, scale: 0.7 }
@@ -170,19 +190,45 @@ export class TileStrategyRegistry {
         this.register(TILE_TYPES.SHOVEL, new SimpleItemRenderStrategy(
             this.images, this.tileSize, 'shovel', TILE_TYPES.SHOVEL, '⛏️', { scale: 1.0 }
         ));
-        this.register(TILE_TYPES.FISCHERS_WAND, new SimpleItemRenderStrategy(
-            this.images, this.tileSize, 'doodads/cube', TILE_TYPES.FISCHERS_WAND, '🧊', { scale: 0.75 }
+        this.register(TILE_TYPES.FISCHERS_CUBE, new SimpleItemRenderStrategy(
+            this.images, this.tileSize, 'doodads/cube', TILE_TYPES.FISCHERS_CUBE, '🧊', { scale: 0.75 }
+        ));
+        this.register(TILE_TYPES.TELEPORT_BRANCH, new SimpleItemRenderStrategy(
+            this.images, this.tileSize, 'branch', TILE_TYPES.TELEPORT_BRANCH, '🌿', { scale: 0.85 }
         ));
 
         // Special tiles
         this.register(TILE_TYPES.TABLE, new SimpleOverlayRenderStrategy(
             this.images, this.tileSize, 'doodads/table', TILE_TYPES.TABLE, null, null
         ));
-        this.register(TILE_TYPES.CUBE, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'branch', TILE_TYPES.CUBE, null, null
-        ));
         this.register(TILE_TYPES.CISTERN, new CisternRenderStrategy(this.images, this.tileSize, this.structureRenderer));
         this.register(TILE_TYPES.PITFALL, new PitfallRenderStrategy(this.images, this.tileSize, this.structureRenderer));
+
+        // New doodads
+        this.register(TILE_TYPES.ANEMONE, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'doodads/anemone', TILE_TYPES.ANEMONE, null, null
+        ));
+        this.register(TILE_TYPES.BIG_TREE, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'doodads/big_tree', TILE_TYPES.BIG_TREE, null, null
+        ));
+        this.register(TILE_TYPES.BLUE_SHROOM, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'doodads/blue_shroom', TILE_TYPES.BLUE_SHROOM, null, null
+        ));
+        this.register(TILE_TYPES.CACTUS, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'doodads/cactus', TILE_TYPES.CACTUS, null, null
+        ));
+        this.register(TILE_TYPES.CACTUS2, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'doodads/cactus2', TILE_TYPES.CACTUS2, null, null
+        ));
+        this.register(TILE_TYPES.GREEN_SHROOM, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'doodads/green_shroom', TILE_TYPES.GREEN_SHROOM, null, null
+        ));
+        this.register(TILE_TYPES.SMALL_EVERGREEN, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'doodads/small_evergreen', TILE_TYPES.SMALL_EVERGREEN, null, null
+        ));
+        this.register(TILE_TYPES.URCHIN, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'doodads/urchin', TILE_TYPES.URCHIN, null, null
+        ));
     }
 
     /**

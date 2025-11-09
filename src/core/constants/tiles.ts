@@ -14,6 +14,20 @@ export const TILE_TYPES = {
     WATER: 6,
     FOOD: 7,
     ENEMY: 8,
+    // Individual enemy types
+    LIZARDY: 127,
+    LIZARDO: 128,
+    LIZARDEAUX: 129,
+    ZARD: 130,
+    LIZORD: 131,
+    LAZERD: 132,
+    // Black enemy variants (grayscale)
+    BLACK_LIZARDY: 133,
+    BLACK_LIZARDO: 134,
+    BLACK_LIZARDEAUX: 135,
+    BLACK_ZARD: 136,
+    BLACK_LIZORD: 137,
+    BLACK_LAZERD: 138,
     AXE: 9,
     HAMMER: 10,
     NOTE: 11,
@@ -51,8 +65,8 @@ export const TILE_TYPES = {
     PITFALL: 49,
     TABLE: 56,
     HOLE: 57, // Hole tile type
-    FISCHERS_WAND: 108, // Fischer's Cube - Shuffles enemies and obstacles
-    CUBE: 110, // Teleportation Branch
+    FISCHERS_CUBE: 108, // Fischer's Cube - Shuffles enemies and obstacles
+    TELEPORT_BRANCH: 110, // Teleportation Branch
     // New NPCs
     ASTER: 58,
     BLOT: 59,
@@ -108,6 +122,21 @@ export const TILE_TYPES = {
     // Additional gossip NPCs
     DRAGON: 109,
     SNAK: 113,
+    // New doodads from static/assets/environment/doodads
+    ANEMONE: 114,
+    BIG_TREE: 115,
+    BLUE_SHROOM: 116,
+    CACTUS: 117,
+    CACTUS2: 118,
+    GREEN_SHROOM: 119,
+    SMALL_EVERGREEN: 120,
+    URCHIN: 121,
+    // Sign variants
+    SIGN_BLANK: 122,
+    SIGN_EATEN: 123,
+    SIGN_GOLD: 124,
+    SIGN_METAL: 125,
+    SIGN_METAL_ALT: 126,
     // Item statue tile types (stone statues of activated items)
     BOMB_STATUE: 50,
     SPEAR_STATUE: 51,
@@ -158,6 +187,8 @@ export const TILE_COLORS: Record<number, string> = {
     [TILE_TYPES.GOUGE]: '#8A2BE2', // Blueviolet for Gouge
     [TILE_TYPES.PITFALL]: '#ffcb8d', // Same as floor, should be mostly invisible
     [TILE_TYPES.TABLE]: '#A0522D', // Sienna for table fallback
+    [TILE_TYPES.FISCHERS_CUBE]: '#87CEEB', // Sky blue for Fischer's Cube
+    [TILE_TYPES.TELEPORT_BRANCH]: '#8B4513', // Brown for teleport branch
     // New NPC colors
     [TILE_TYPES.ASTER]: '#9370DB', // Medium purple for Aster
     [TILE_TYPES.BLOT]: '#2F4F4F', // Dark slate gray for Blot
@@ -209,7 +240,36 @@ export const TILE_COLORS: Record<number, string> = {
     [TILE_TYPES.SHADE]: '#2F4F4F', // Dark slate gray for Shade
     [TILE_TYPES.SKRIB]: '#4B0082', // Indigo for Skrib
     [TILE_TYPES.STICK]: '#8B4513', // Saddle brown for Stick
-    [TILE_TYPES.WASH]: '#87CEEB' // Sky blue for Wash
+    [TILE_TYPES.WASH]: '#87CEEB', // Sky blue for Wash
+    // New doodad colors
+    [TILE_TYPES.ANEMONE]: '#FF1493', // Deep pink for Anemone
+    [TILE_TYPES.BIG_TREE]: '#228B22', // Forest green for Big Tree
+    [TILE_TYPES.BLUE_SHROOM]: '#4169E1', // Royal blue for Blue Shroom
+    [TILE_TYPES.CACTUS]: '#32CD32', // Lime green for Cactus
+    [TILE_TYPES.CACTUS2]: '#9ACD32', // Yellow green for Cactus2
+    [TILE_TYPES.GREEN_SHROOM]: '#00FF00', // Green for Green Shroom
+    [TILE_TYPES.SMALL_EVERGREEN]: '#006400', // Dark green for Small Evergreen
+    [TILE_TYPES.URCHIN]: '#8B008B', // Dark magenta for Urchin
+    // Sign variant colors
+    [TILE_TYPES.SIGN_BLANK]: '#D2691E', // Chocolate for Blank Sign
+    [TILE_TYPES.SIGN_EATEN]: '#8B4513', // Saddle brown for Eaten Sign
+    [TILE_TYPES.SIGN_GOLD]: '#FFD700', // Gold for Gold Sign
+    [TILE_TYPES.SIGN_METAL]: '#C0C0C0', // Silver for Metal Sign
+    [TILE_TYPES.SIGN_METAL_ALT]: '#A9A9A9', // Dark gray for Metal Alt Sign
+    // Individual enemy type colors
+    [TILE_TYPES.LIZARDY]: '#90EE90', // Light green for Lizardy
+    [TILE_TYPES.LIZARDO]: '#7CFC00', // Lawn green for Lizardo
+    [TILE_TYPES.LIZARDEAUX]: '#32CD32', // Lime green for Lizardeaux
+    [TILE_TYPES.ZARD]: '#00FF00', // Green for Zard
+    [TILE_TYPES.LIZORD]: '#228B22', // Forest green for Lizord
+    [TILE_TYPES.LAZERD]: '#006400', // Dark green for Lazerd
+    // Black enemy variants
+    [TILE_TYPES.BLACK_LIZARDY]: '#4B4B4B', // Dark gray for Black Lizardy
+    [TILE_TYPES.BLACK_LIZARDO]: '#3C3C3C', // Darker gray for Black Lizardo
+    [TILE_TYPES.BLACK_LIZARDEAUX]: '#2D2D2D', // Even darker for Black Lizardeaux
+    [TILE_TYPES.BLACK_ZARD]: '#1E1E1E', // Very dark for Black Zard
+    [TILE_TYPES.BLACK_LIZORD]: '#0F0F0F', // Almost black for Black Lizord
+    [TILE_TYPES.BLACK_LAZERD]: '#000000' // Black for Black Lazerd
 };
 
 // Direction constants for exits and movements

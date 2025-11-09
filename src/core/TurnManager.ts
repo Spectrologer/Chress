@@ -33,7 +33,18 @@ export class TurnManager {
      * Manages pitfall tracking
      */
     handleTurnCompletion(): boolean {
-        this.startEnemyTurns();
+        // CRITICAL: Prevent multiple calls to startEnemyTurns
+        // If it's already the enemy's turn, don't start enemy turns again
+        if (!this.game.isPlayerTurn) {
+            return false;
+        }
+
+        // Skip enemy turns during entrance animation
+        const isEntranceActive = (this.game as any)._entranceAnimationInProgress;
+        if (!isEntranceActive) {
+            this.startEnemyTurns();
+        }
+
         const transientState = (this.game as any).transientGameState;
         if (transientState.isInPitfallZone()) {
             transientState.incrementPitfallTurnsSurvived();
@@ -55,7 +66,16 @@ export class TurnManager {
 
         const enemyCollection = this.game.enemyCollection as EnemyCollection;
 
+        // CRITICAL: Set isPlayerTurn to false FIRST before any other operations
+        // This prevents race conditions where input could be processed during the transition
         this.game.isPlayerTurn = false;
+
+        // Immediately cancel any pending tap timeouts to prevent delayed input from executing
+        // This must happen immediately after setting isPlayerTurn to false
+        if (this.game.inputManager?.gestureDetector) {
+            this.game.inputManager.gestureDetector.clearTapTimeout();
+        }
+
         this.occupiedTilesThisTurn.clear();
         this.initialEnemyTilesThisTurn = enemyCollection.getPositionsSet();
 
@@ -95,8 +115,10 @@ export class TurnManager {
      */
     processTurnQueue(): void {
         if (this.turnQueue.length === 0) {
-            this.game.isPlayerTurn = true;
+            // IMPORTANT: Do NOT set isPlayerTurn here - it must be set AFTER animations complete
+            // to prevent input spam from skipping enemy turns
             (this.game as any).playerJustAttacked = false;
+
             // After all enemy moves, run collision and pickup checks
             let playerWasAttacked = false;
             if (this.game.combatManager && typeof this.game.combatManager.checkCollisions === 'function') {
@@ -107,13 +129,19 @@ export class TurnManager {
             if (this.game.interactionManager && typeof this.game.interactionManager.checkItemPickup === 'function') {
                 this.game.interactionManager.checkItemPickup();
             }
-            // Add a pause if player was attacked for dramatic effect
-            if (playerWasAttacked) {
-                // Use animation scheduler to actually pause the game
-                this.game.animationScheduler!.createSequence()
-                    .wait(500)
-                    .start();
-            }
+
+            // Schedule the player turn to be re-enabled AFTER all animations complete
+            // CRITICAL: Don't re-enable immediately - wait for collision animations
+            const pauseTime = playerWasAttacked ? 500 : 100; // Minimum 100ms buffer
+
+            this.game.animationScheduler!.createSequence()
+                .wait(pauseTime)
+                .then(() => {
+                    // Only NOW is it safe to re-enable player input
+                    this.game.isPlayerTurn = true;
+                })
+                .start();
+
             return;
         }
 
@@ -122,7 +150,8 @@ export class TurnManager {
         const isStillValid = enemy && !enemy.isDead() && enemyCollection.includes(enemy);
 
         // Frozen enemies process faster since they don't actually move
-        const waitTime = (isStillValid && enemy.isFrozen) ? 50 : 400;
+        // Increased wait time to make enemy movements more visible and prevent input spam
+        const waitTime = (isStillValid && enemy.isFrozen) ? 100 : 600;
 
         this.game.animationScheduler!.createSequence()
             .then(() => {

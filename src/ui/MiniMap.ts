@@ -392,6 +392,29 @@ export class MiniMap {
             return; // Skip drawing the regular zone grid
         }
 
+        // Special case for Custom Boards (dimension 3): show a knight icon (name displays in map-info)
+        if (currentZone.dimension === 3) {
+            const knightImage = this.game.textureManager.getImage('ui/knight_black');
+
+            if (knightImage && knightImage.complete) {
+                // Draw the knight icon in the center of the map canvas
+                const prevSmoothing = ctx.imageSmoothingEnabled;
+                const prevQuality = (ctx as any).imageSmoothingQuality;
+                ctx.imageSmoothingEnabled = false;
+                if (typeof (ctx as any).imageSmoothingQuality !== 'undefined') (ctx as any).imageSmoothingQuality = 'low';
+
+                const iconSize = mapSize * 0.7; // Same size as museum pawn
+                const iconX = (mapSize - iconSize) / 2;
+                const iconY = (mapSize - iconSize) / 2;
+                ctx.drawImage(knightImage, iconX, iconY, iconSize, iconSize);
+
+                // Restore previous smoothing settings
+                ctx.imageSmoothingEnabled = prevSmoothing;
+                if (typeof prevQuality !== 'undefined' && typeof (ctx as any).imageSmoothingQuality !== 'undefined') (ctx as any).imageSmoothingQuality = prevQuality;
+            }
+            return; // Skip drawing the regular zone grid
+        }
+
 
 
         for (let dy = -range; dy <= range; dy++) {

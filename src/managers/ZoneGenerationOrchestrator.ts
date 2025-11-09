@@ -193,7 +193,15 @@ export class ZoneGenerationOrchestrator {
      */
     private _handleNewGameSpawn(zoneData: ZoneData): void {
         const lastExitSide = (this.game as any).lastExitSide;
-        if (!lastExitSide && zoneData.playerSpawn) {
+        const currentZone = (this.game.player as any).getCurrentZone() as ZoneInfo;
+        const CUSTOM_BOARD_DIMENSION = 3;
+
+        // Use playerSpawn if:
+        // 1. This is a new game (no lastExitSide), OR
+        // 2. We're entering a custom board (dimension 3)
+        const shouldUsePlayerSpawn = (!lastExitSide || currentZone.dimension === CUSTOM_BOARD_DIMENSION) && zoneData.playerSpawn;
+
+        if (shouldUsePlayerSpawn) {
             (this.game as any)._newGameSpawnPosition = { ...zoneData.playerSpawn };
 
             let offScreenX = zoneData.playerSpawn.x;

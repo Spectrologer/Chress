@@ -15,20 +15,26 @@ import type {
     BookOfTimeTravelItem,
     BowItem,
     ShovelItem,
-    FischersWandItem,
-    CubeItem
+    FischersCubeItem,
+    TeleportBranchItem
 } from '@managers/inventory/ItemMetadata';
-
-// Import item effects
-import { FoodEffect, WaterEffect, HeartEffect } from '@managers/inventory/effects/ConsumableEffects';
-import { AxeEffect, HammerEffect } from '@managers/inventory/effects/ToolEffects';
-import { BombEffect, BowEffect, BishopSpearEffect, HorseIconEffect } from '@managers/inventory/effects/WeaponEffects';
-import { ShovelEffect, NoteEffect, BookOfTimeTravelEffect, FischersWandEffect, CubeEffect } from '@managers/inventory/effects/SpecialEffects';
 
 /**
  * Register all items with the ContentRegistry
  */
-export function registerItems(): void {
+export async function registerItems(): Promise<void> {
+    // Lazy import item effects to avoid circular dependency issues in production builds
+    const [
+        { FoodEffect, WaterEffect, HeartEffect },
+        { AxeEffect, HammerEffect },
+        { BombEffect, BowEffect, BishopSpearEffect, HorseIconEffect },
+        { ShovelEffect, NoteEffect, BookOfTimeTravelEffect, FischersCubeEffect, TeleportBranchEffect }
+    ] = await Promise.all([
+        import('@managers/inventory/effects/ConsumableEffects'),
+        import('@managers/inventory/effects/ToolEffects'),
+        import('@managers/inventory/effects/WeaponEffects'),
+        import('@managers/inventory/effects/SpecialEffects')
+    ]);
     // ==================== CONSUMABLES ====================
 
     ContentRegistry.registerItem('food', {
@@ -240,19 +246,19 @@ export function registerItems(): void {
         }
     });
 
-    ContentRegistry.registerItem('fischers_wand', {
-        tileType: TILE_TYPES.FISCHERS_WAND,
+    ContentRegistry.registerItem('fischers_cube', {
+        tileType: TILE_TYPES.FISCHERS_CUBE,
         stackable: true,
         radial: true,
-        effect: new FischersWandEffect(),
-        spawnWeight: SPAWN_PROBABILITIES.SPECIAL_ITEMS.FISCHERS_WAND,
+        effect: new FischersCubeEffect(),
+        spawnWeight: SPAWN_PROBABILITIES.SPECIAL_ITEMS.FISCHERS_CUBE,
         spawnRules: {
             minLevel: 1,
             maxLevel: 4,
             dimension: 'any',
             isActivated: true
         },
-        getTooltip: (item: FischersWandItem) => {
+        getTooltip: (item: FischersCubeItem) => {
             const disabledText = item.disabled ? ' (DISABLED)' : '';
             return `Fischer's Cube${disabledText} - Shuffles all enemies and obstacles in the zone. Has ${item.uses} charges.`;
         },
@@ -262,13 +268,13 @@ export function registerItems(): void {
         }
     });
 
-    ContentRegistry.registerItem('cube', {
-        tileType: TILE_TYPES.CUBE,
+    ContentRegistry.registerItem('teleport_branch', {
+        tileType: TILE_TYPES.TELEPORT_BRANCH,
         stackable: false,
         radial: true,
-        effect: new CubeEffect(),
+        effect: new TeleportBranchEffect(),
         spawnWeight: 0, // Not naturally spawned (placed manually in museum)
-        getTooltip: (item: CubeItem) => {
+        getTooltip: (item: TeleportBranchItem) => {
             if (item.originZone) {
                 return `Return Branch - Teleports back to zone (${item.originZone.x}, ${item.originZone.y})`;
             }

@@ -15,7 +15,15 @@
       "Bash(dir /s /b srccharactersstatues*.json 2)",
       "Bash(dir:*)",
       "Bash(echo:*)",
-      "Bash(\"src\\managers\\inventory\\effects\\SpecialEffects.ts\")"
+      "Bash(\"src\\managers\\inventory\\effects\\SpecialEffects.ts\")",
+      "Bash(git checkout:*)",
+      "Bash(tasklist:*)",
+      "Bash(if exist dist rmdir /s /q dist)",
+      "Bash(npm run preview:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx vite build:*)",
+      "Bash(taskkill:*)",
+      "Bash(netstat:*)"
     ],
     "deny": [],
     "ask": []

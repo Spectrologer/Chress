@@ -281,10 +281,12 @@ export class GameContext extends GameContextCommands implements IGame {
         // Update centralized animation manager
         this.animationManager!.updateAnimations();
 
-        // Only process next turn if it's the player's turn
-        if (!this.turnState.isPlayerTurn && this.turnState.isTurnQueueEmpty()) {
-            this.turnState.startPlayerTurn();
-        }
+        // REMOVED: TurnManager now handles re-enabling player turn after animations complete
+        // This was causing isPlayerTurn to be set immediately when queue empties,
+        // skipping the animation wait time in TurnManager.processTurnQueue()
+        // if (!this.turnState.isPlayerTurn && this.turnState.isTurnQueueEmpty()) {
+        //     this.turnState.startPlayerTurn();
+        // }
 
         // Remove enemies whose death animation has finished
         this.enemies.forEach(enemy => {

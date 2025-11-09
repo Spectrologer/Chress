@@ -151,7 +151,8 @@
     "1,5": "bow_statue",
     "3,5": "table",
     "4,5": "table",
-    "5,5": "cube",
+    "5,5": "teleport_branch",
+    "6,5": "sign_metal_alt",
     "8,5": "shovel_statue",
     "1,6": "bomb_statue",
     "8,6": "book_statue",
@@ -194,6 +195,6 @@
     "dimension": 1,
     "level": "home",
     "rarity": 5,
-    "created": "2025-11-08T19:30:45.858Z"
+    "created": "2025-11-08T23:50:27.553Z"
   }
 }

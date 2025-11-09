@@ -168,6 +168,14 @@ export default defineConfig({
           src: 'src/characters/statues/*.json',
           dest: 'characters/statues'
         },
+        {
+          src: 'static/boards/canon/*.json',
+          dest: 'boards/canon'
+        },
+        {
+          src: 'static/boards/custom/*.json',
+          dest: 'boards/custom'
+        },
       ],
       // Watch for changes in development
       watch: {

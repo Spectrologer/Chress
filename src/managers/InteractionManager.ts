@@ -3,7 +3,7 @@ import audioManager from '@utils/AudioManager';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { Position } from '@core/Position';
-import { CubeEffect } from '@managers/inventory/effects/SpecialEffects';
+import { TeleportBranchEffect } from '@managers/inventory/effects/SpecialEffects';
 import type { IGame, ICoordinates } from '@core/context';
 import type { TileObject } from '@core/SharedTypes';
 import type { InputManager } from './InputManager';
@@ -98,6 +98,7 @@ export class InteractionManager {
             // Single generic NPC handler - handles both hardcoded NPCs and dynamic NPCs from ContentRegistry
             // This replaces 10+ individual NPC handler calls (interactWithPenne, interactWithSquig, etc.)
             (gridCoords, playerPos) => this.handleNPCInteraction(gridCoords),
+            (gridCoords, playerPos) => this.environmentManager.handleCustomBoardSignTap(Position.from(gridCoords)),
             (gridCoords, playerPos) => this.environmentManager.handleSignTap(Position.from(gridCoords)),
             (gridCoords, playerPos) => this.environmentManager.handleStatueTap(Position.from(gridCoords)),
             (gridCoords, playerPos) => this.environmentManager.handleCubeTap(Position.from(gridCoords)),
@@ -226,8 +227,8 @@ export class InteractionManager {
             if (pending && pending.gridCoords) {
                 const cubePos = Position.from(pending.gridCoords);
                 if (clickedPos.equals(cubePos)) {
-                    // Confirmed - execute the cube effect
-                    const effect = new CubeEffect();
+                    // Confirmed - execute the teleport branch effect
+                    const effect = new TeleportBranchEffect();
                     effect.apply(this.game as any, pending.cubeItem, {});
                     (transientState as any).clearPendingCubeActivation?.();
                     eventBus.emit(EventTypes.UI_HIDE_MESSAGE, {});

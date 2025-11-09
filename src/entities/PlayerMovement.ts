@@ -17,6 +17,13 @@ export class PlayerMovement {
     }
 
     move(newX: number, newY: number, grid: Grid, onZoneTransition?: (x: number, y: number, side: string) => void): boolean {
+        // CRITICAL SAFETY CHECK: Prevent ANY player movement during enemy turns
+        // This is a final defensive layer to absolutely prevent input spam from causing movement
+        const game = (window as any).gameInstance;
+        if (game && !game.isPlayerTurn && !(game as any)._entranceAnimationInProgress) {
+            return false;
+        }
+
         const newPos = new Position(newX, newY);
 
         // Check if the new position is off-grid while player is on an exit tile

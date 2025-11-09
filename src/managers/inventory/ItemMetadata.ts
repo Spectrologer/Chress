@@ -67,15 +67,15 @@ export interface ShovelItem extends BaseItem {
     uses: number;
 }
 
-export interface FischersWandItem extends BaseItem {
-    type: 'fischers_wand';
+export interface FischersCubeItem extends BaseItem {
+    type: 'fischers_cube';
     uses: number;
 }
 
-export interface CubeItem extends BaseItem {
-    type: 'cube';
-    partnerId?: string; // ID of the partner cube (if exists)
-    originZone?: { x: number; y: number; dimension: number }; // Where this cube teleports to
+export interface TeleportBranchItem extends BaseItem {
+    type: 'teleport_branch';
+    partnerId?: string; // ID of the partner teleport branch (if exists)
+    originZone?: { x: number; y: number; dimension: number }; // Where this teleport branch teleports to
 }
 
 export type InventoryItem =
@@ -91,8 +91,8 @@ export type InventoryItem =
     | BookOfTimeTravelItem
     | BowItem
     | ShovelItem
-    | FischersWandItem
-    | CubeItem
+    | FischersCubeItem
+    | TeleportBranchItem
     | BaseItem; // Fallback for generic items
 
 export type ItemType = InventoryItem['type'];
@@ -121,7 +121,7 @@ export class ItemMetadata {
         'book_of_time_travel',
         'bow',
         'shovel',
-        'fischers_wand'
+        'fischers_cube'
     ];
 
     // Items that go into radial quick-action inventory instead of main inventory
@@ -131,8 +131,8 @@ export class ItemMetadata {
         'bow',
         'bishop_spear',
         'book_of_time_travel',
-        'fischers_wand',
-        'cube'
+        'fischers_cube',
+        'teleport_branch'
     ];
 
     // Tile type to item type mapping for pickup
@@ -142,8 +142,8 @@ export class ItemMetadata {
         [TILE_TYPES.HORSE_ICON]: 'horse_icon',
         [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: 'book_of_time_travel',
         [TILE_TYPES.SHOVEL]: 'shovel',
-        [TILE_TYPES.FISCHERS_WAND]: 'fischers_wand',
-        [TILE_TYPES.CUBE]: 'cube'
+        [TILE_TYPES.FISCHERS_CUBE]: 'fischers_cube',
+        [TILE_TYPES.TELEPORT_BRANCH]: 'teleport_branch'
     };
 
     /**
@@ -206,13 +206,13 @@ export class ItemMetadata {
             case 'shovel':
                 return `Shovel - Digs a hole in an adjacent empty tile. Has ${item.uses} uses.`;
 
-            case 'fischers_wand':
+            case 'fischers_cube':
                 return `Fischer's Cube${disabledText} - Shuffles all enemies and obstacles in the zone. Has ${item.uses} charges.`;
 
-            case 'cube': {
-                const cubeItem = item as CubeItem;
-                if (cubeItem.originZone) {
-                    return `Return Branch - Teleports back to zone (${cubeItem.originZone.x}, ${cubeItem.originZone.y})`;
+            case 'teleport_branch': {
+                const teleportBranchItem = item as TeleportBranchItem;
+                if (teleportBranchItem.originZone) {
+                    return `Return Branch - Teleports back to zone (${teleportBranchItem.originZone.x}, ${teleportBranchItem.originZone.y})`;
                 }
                 return 'Teleportation Branch - Teleports you 10 zones away and creates a return branch';
             }
@@ -246,8 +246,8 @@ export class ItemMetadata {
             'book_of_time_travel': 'book',
             'bow': 'bow',
             'shovel': 'shovel',
-            'fischers_wand': 'doodads/cube',
-            'cube': 'branch',
+            'fischers_cube': 'doodads/cube',
+            'teleport_branch': 'branch',
             'food': 'food', // Handled above
             'hammer': 'hammer'
         };
@@ -314,13 +314,13 @@ export class ItemMetadata {
             delete itemWithUses.quantity;
         }
 
-        // Initialize uses for items that need them (shovel, bow, bishop_spear, horse_icon, fischers_wand)
+        // Initialize uses for items that need them (shovel, bow, bishop_spear, horse_icon, fischers_cube)
         const itemsWithUses: Record<string, number> = {
             'shovel': 3,
             'bow': 3,
             'bishop_spear': 3,
             'horse_icon': 3,
-            'fischers_wand': 1
+            'fischers_cube': 1
         };
         if (item.type && item.type in itemsWithUses) {
             const itemWithUsesProp = item as Record<string, unknown>;

@@ -74,14 +74,40 @@ export class TextureLoader {
                     imageKey = 'rock';
                 } else if (assetPath === 'environment/doodads/sign.png') {
                     imageKey = 'sign';
+                } else if (assetPath === 'environment/doodads/sign-blank.png') {
+                    imageKey = 'sign-blank';
+                } else if (assetPath === 'environment/doodads/sign-eaten.png') {
+                    imageKey = 'sign-eaten';
+                } else if (assetPath === 'environment/doodads/sign-gold.png') {
+                    imageKey = 'sign-gold';
+                } else if (assetPath === 'environment/doodads/sign-metal.png') {
+                    imageKey = 'sign-metal';
+                } else if (assetPath === 'environment/doodads/sign-metal-alt.png') {
+                    imageKey = 'sign-metal-alt';
                 } else if (assetPath === 'environment/obstacles/shrubbery.png') {
                     imageKey = 'shrubbery';
                 } else if (assetPath === 'environment/walls/bush.png') {
                     imageKey = 'bush';
+                } else if (assetPath === 'environment/doodads/anemone.png') {
+                    imageKey = 'doodads/anemone';
+                } else if (assetPath === 'environment/doodads/big_tree.png') {
+                    imageKey = 'doodads/big_tree';
+                } else if (assetPath === 'environment/doodads/blue_shroom.png') {
+                    imageKey = 'doodads/blue_shroom';
+                } else if (assetPath === 'environment/doodads/cactus.png') {
+                    imageKey = 'doodads/cactus';
+                } else if (assetPath === 'environment/doodads/cactus2.png') {
+                    imageKey = 'doodads/cactus2';
                 } else if (assetPath === 'environment/doodads/club.png') {
                     imageKey = 'doodads/club';
                 } else if (assetPath === 'environment/doodads/cube.png') {
                     imageKey = 'doodads/cube';
+                } else if (assetPath === 'environment/doodads/green_shroom.png') {
+                    imageKey = 'doodads/green_shroom';
+                } else if (assetPath === 'environment/doodads/small_evergreen.png') {
+                    imageKey = 'doodads/small_evergreen';
+                } else if (assetPath === 'environment/doodads/urchin.png') {
+                    imageKey = 'doodads/urchin';
                 } else if (assetPath === 'items/misc/branch.png') {
                     imageKey = 'branch';
                 } else if (assetPath === 'environment/doodads/well.png') {

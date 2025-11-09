@@ -1,11 +1,11 @@
-import { FischersWandEffect } from '@managers/inventory/effects/SpecialEffects';
+import { FischersCubeEffect } from '@managers/inventory/effects/SpecialEffects';
 import { TILE_TYPES } from '@core/constants/index';
 import { ItemMetadata } from '@managers/inventory/ItemMetadata';
 import type { Game } from '@managers/inventory/effects/BaseItemEffect';
-import type { FischersWandItem } from '@managers/inventory/ItemMetadata';
+import type { FischersCubeItem } from '@managers/inventory/ItemMetadata';
 
-describe('FischersWandEffect', () => {
-    let effect: FischersWandEffect;
+describe('FischersCubeEffect', () => {
+    let effect: FischersCubeEffect;
     let mockGame: Partial<Game>;
     let mockPlayer: any;
     let mockGrid: number[][];
@@ -13,7 +13,7 @@ describe('FischersWandEffect', () => {
     let mockNPCs: any[];
 
     beforeEach(() => {
-        effect = new FischersWandEffect();
+        effect = new FischersCubeEffect();
 
         // Create a simple 10x10 grid for testing
         mockGrid = Array(10).fill(null).map(() => Array(10).fill(TILE_TYPES.FLOOR));
@@ -22,7 +22,7 @@ describe('FischersWandEffect', () => {
         mockGrid[0][0] = TILE_TYPES.WALL;
         mockGrid[0][1] = TILE_TYPES.WALL;
 
-        // Add some rocks
+        // Add some rocks (avoid overlap with enemies)
         mockGrid[2][2] = TILE_TYPES.ROCK;
         mockGrid[3][3] = TILE_TYPES.ROCK;
 
@@ -37,11 +37,11 @@ describe('FischersWandEffect', () => {
             getPosition: vi.fn(() => ({ x: 5, y: 5 }))
         };
 
-        // Create mock enemies
+        // Create mock enemies (different positions from rocks)
         mockEnemies = [
             { x: 1, y: 1, type: 'enemy' },
-            { x: 2, y: 2, type: 'enemy' },
-            { x: 3, y: 3, type: 'enemy' }
+            { x: 6, y: 7, type: 'enemy' },
+            { x: 7, y: 8, type: 'enemy' }
         ];
 
         // Create mock NPCs
@@ -60,15 +60,15 @@ describe('FischersWandEffect', () => {
     });
 
     describe('Constructor', () => {
-        test('should create FischersWandEffect instance', () => {
+        test('should create FischersCubeEffect instance', () => {
             expect(effect).toBeDefined();
-            expect(effect).toBeInstanceOf(FischersWandEffect);
+            expect(effect).toBeInstanceOf(FischersCubeEffect);
         });
     });
 
     describe('apply()', () => {
         test('should shuffle entity positions', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
             // Store original positions
             const originalPlayerPos = { x: mockPlayer.x, y: mockPlayer.y };
@@ -95,7 +95,7 @@ describe('FischersWandEffect', () => {
         });
 
         test('should not move walls or exits', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
             // Add exit to grid
             mockGrid[9][9] = TILE_TYPES.EXIT;
@@ -109,7 +109,7 @@ describe('FischersWandEffect', () => {
         });
 
         test('should preserve entity count', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
             const originalEnemyCount = mockEnemies.length;
             const originalNPCCount = mockNPCs.length;
@@ -122,7 +122,7 @@ describe('FischersWandEffect', () => {
         });
 
         test('should call startEnemyTurns after shuffle', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
             effect.apply(mockGame as Game, item, {});
 
@@ -130,7 +130,7 @@ describe('FischersWandEffect', () => {
         });
 
         test('should handle empty zone gracefully', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
             // Create empty game state (only player)
             mockGame.enemies = [];
@@ -146,7 +146,7 @@ describe('FischersWandEffect', () => {
         });
 
         test('should shuffle rocks and shrubbery', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
             // Count original rocks and shrubbery (from beforeEach: rocks at 2,2 and 3,3)
             const originalRockPositions: Array<{x: number, y: number}> = [];
@@ -186,7 +186,7 @@ describe('FischersWandEffect', () => {
         });
 
         test('should handle game without startEnemyTurns method', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
             // Remove startEnemyTurns method
             delete mockGame.startEnemyTurns;
@@ -198,7 +198,7 @@ describe('FischersWandEffect', () => {
         });
 
         test('should handle game with multiple NPC arrays', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
             // Add merchants and tutorial NPCs
             (mockGame as any).merchants = [{ x: 7, y: 7, type: 'merchant' }];
@@ -220,57 +220,52 @@ describe('FischersWandEffect', () => {
         });
 
         test('should shuffle items on the ground', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
-            // Add various items to grid
-            mockGrid[4][4] = TILE_TYPES.FOOD;
-            mockGrid[5][5] = TILE_TYPES.BOMB;
-            mockGrid[6][6] = TILE_TYPES.HEART;
+            // Clear pre-existing items from beforeEach
+            mockGrid[4][4] = TILE_TYPES.FLOOR;
+            mockGrid[5][5] = TILE_TYPES.FLOOR;
 
-            // Count items before
+            // Add test items to clean positions
+            mockGrid[1][5] = TILE_TYPES.FOOD;
+            mockGrid[2][5] = TILE_TYPES.BOMB;
+            mockGrid[3][5] = TILE_TYPES.HEART;
+
+            const result = effect.apply(mockGame as Game, item, {});
+
+            expect(result.success).toBe(true);
+            expect(result.consumed).toBe(true);
+
+            // Count each item type after shuffle
             let foodCount = 0;
             let bombCount = 0;
             let heartCount = 0;
 
             for (let y = 0; y < mockGrid.length; y++) {
                 for (let x = 0; x < mockGrid[y].length; x++) {
-                    if (mockGrid[y][x] === TILE_TYPES.FOOD) foodCount++;
-                    if (mockGrid[y][x] === TILE_TYPES.BOMB) bombCount++;
-                    if (mockGrid[y][x] === TILE_TYPES.HEART) heartCount++;
+                    const tile = mockGrid[y][x];
+                    if (tile === TILE_TYPES.FOOD) foodCount++;
+                    if (tile === TILE_TYPES.BOMB) bombCount++;
+                    if (tile === TILE_TYPES.HEART) heartCount++;
                 }
             }
 
-            effect.apply(mockGame as Game, item, {});
-
-            // Count items after
-            let foodCountAfter = 0;
-            let bombCountAfter = 0;
-            let heartCountAfter = 0;
-
-            for (let y = 0; y < mockGrid.length; y++) {
-                for (let x = 0; x < mockGrid[y].length; x++) {
-                    if (mockGrid[y][x] === TILE_TYPES.FOOD) foodCountAfter++;
-                    if (mockGrid[y][x] === TILE_TYPES.BOMB) bombCountAfter++;
-                    if (mockGrid[y][x] === TILE_TYPES.HEART) heartCountAfter++;
-                }
-            }
-
-            // Same item counts should exist
-            expect(foodCountAfter).toBe(foodCount);
-            expect(bombCountAfter).toBe(bombCount);
-            expect(heartCountAfter).toBe(heartCount);
+            // Verify all items still exist after shuffle
+            expect(foodCount).toBe(1);
+            expect(bombCount).toBe(1);
+            expect(heartCount).toBe(1);
         });
     });
 
     describe('Integration with ItemMetadata', () => {
         test('should have correct default uses', () => {
-            const item = ItemMetadata.normalizeItem({ type: 'fischers_wand' });
+            const item = ItemMetadata.normalizeItem({ type: 'fischers_cube' });
 
             expect(item.uses).toBe(1);
         });
 
         test('should have correct tooltip', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
             const tooltip = ItemMetadata.getTooltipText(item);
 
@@ -280,7 +275,7 @@ describe('FischersWandEffect', () => {
         });
 
         test('should have correct image key', () => {
-            const item: FischersWandItem = { type: 'fischers_wand', uses: 1 };
+            const item: FischersCubeItem = { type: 'fischers_cube', uses: 1 };
 
             const imageKey = ItemMetadata.getImageKey(item);
 
@@ -288,11 +283,11 @@ describe('FischersWandEffect', () => {
         });
 
         test('should be stackable', () => {
-            expect(ItemMetadata.isStackable('fischers_wand')).toBe(true);
+            expect(ItemMetadata.isStackable('fischers_cube')).toBe(true);
         });
 
         test('should be radial type', () => {
-            expect(ItemMetadata.isRadialType('fischers_wand')).toBe(true);
+            expect(ItemMetadata.isRadialType('fischers_cube')).toBe(true);
         });
     });
 });

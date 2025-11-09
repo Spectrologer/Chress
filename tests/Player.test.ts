@@ -11,6 +11,7 @@ describe('Player', () => {
     // Provide minimal global window stubs used by Player.move
     global.window = global.window || {};
     global.window.gameInstance = global.window.gameInstance || {};
+    global.window.gameInstance.isPlayerTurn = true;
     global.window.gameInstance.startEnemyTurns = vi.fn();
     global.window.gameInstance.explodeBomb = vi.fn();
     global.window.soundManager = global.window.soundManager || { playSound: vi.fn() };

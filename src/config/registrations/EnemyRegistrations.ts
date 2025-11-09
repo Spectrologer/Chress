@@ -98,4 +98,95 @@ export function registerEnemies(): void {
             damage: 2
         }
     });
+
+    // Black enemy variants (harder versions with grayscale rendering)
+    ContentRegistry.registerEnemy('black_lizardy', {
+        weight: 2,
+        spawnRules: {
+            level1: 0,
+            level2: 0,
+            level3: 0,
+            level4: 0
+        },
+        behaviorType: 'basic',
+        stats: {
+            health: 2,
+            damage: 2
+        }
+    });
+
+    ContentRegistry.registerEnemy('black_lizardo', {
+        weight: 3,
+        spawnRules: {
+            level1: 0,
+            level2: 0,
+            level3: 0,
+            level4: 0
+        },
+        behaviorType: 'basic',
+        stats: {
+            health: 3,
+            damage: 2
+        }
+    });
+
+    ContentRegistry.registerEnemy('black_lizardeaux', {
+        weight: 4,
+        spawnRules: {
+            level1: 0,
+            level2: 0,
+            level3: 0,
+            level4: 0
+        },
+        behaviorType: 'advanced',
+        stats: {
+            health: 4,
+            damage: 2
+        }
+    });
+
+    ContentRegistry.registerEnemy('black_lizord', {
+        weight: 4,
+        spawnRules: {
+            level1: 0,
+            level2: 0,
+            level3: 0,
+            level4: 0
+        },
+        behaviorType: 'tactical',
+        stats: {
+            health: 4,
+            damage: 3
+        }
+    });
+
+    ContentRegistry.registerEnemy('black_lazerd', {
+        weight: 6,
+        spawnRules: {
+            level1: 0,
+            level2: 0,
+            level3: 0,
+            level4: 0
+        },
+        behaviorType: 'elite',
+        stats: {
+            health: 6,
+            damage: 3
+        }
+    });
+
+    ContentRegistry.registerEnemy('black_zard', {
+        weight: 4,
+        spawnRules: {
+            level1: 0,
+            level2: 0,
+            level3: 0,
+            level4: 0
+        },
+        behaviorType: 'charger',
+        stats: {
+            health: 4,
+            damage: 3
+        }
+    });
 }

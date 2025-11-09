@@ -104,6 +104,26 @@ export class ZoneManager {
         const playerFacade = this.game.playerFacade;
         const gridManager = this.game.gridManager;
 
+        // Check if we're leaving a custom board zone (dimension 3)
+        const currentZone = playerFacade.getCurrentZone();
+        const CUSTOM_BOARD_DIMENSION = 3;
+
+        if (currentZone.dimension === CUSTOM_BOARD_DIMENSION) {
+            // Exiting custom board - return to stored zone
+            const returnZone = (this.game as any).customBoardReturnZone;
+            if (returnZone) {
+                console.log(`[CustomBoard] Exiting custom board, returning to zone (${returnZone.x}, ${returnZone.y}) dimension ${returnZone.dimension}`);
+                playerFacade.setCurrentZone(returnZone.x, returnZone.y);
+                playerFacade.setZoneDimension(returnZone.dimension);
+                this.game.generateZone();
+
+                // Clear the return zone and custom board name
+                delete (this.game as any).customBoardReturnZone;
+                delete (this.game as any).customBoardName;
+                return;
+            }
+        }
+
         // Step 1: Initialize transition state
         this.transitionCoordinator.initializeTransitionState(exitSide);
 
