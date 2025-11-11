@@ -44,15 +44,7 @@ function enterMode(game: GameContext, mode: GameMode): void {
             // Reset chess mode state
             game.gameMode.chess.selectedUnit = null;
             game.selectedUnit = null;
-
-            // Store return zone when entering chess mode
-            const currentZone = game.playerFacade.getCurrentZone();
-            game.gameMode.chess.returnZone = {
-                x: currentZone.x,
-                y: currentZone.y,
-                dimension: currentZone.dimension
-            };
-            logger.debug('[Chess Mode] Initialized. Return zone stored:', game.gameMode.chess.returnZone);
+            logger.debug('[Chess Mode] Initialized');
             break;
 
         case GameMode.NORMAL:

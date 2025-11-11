@@ -5,6 +5,7 @@ export * from './ai';
 export * from './animation';
 export * from './assets';
 export * from './audio';
+export * from './colors';
 export * from './gameplay';
 export * from './physics';
 export * from './player';

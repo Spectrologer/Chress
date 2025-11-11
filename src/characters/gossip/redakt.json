@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/redakt.png",
     "portrait": "characters/npcs/portraits/redaktface.png",
     "tileType": "REDAKT",
-    "portraitBackground": "#8B0000"
+    "portraitBackground": "#ffffeb"
   },
   "placement": {
     "zone": null,

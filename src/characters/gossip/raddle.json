@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/raddle.png",
     "portrait": "characters/npcs/portraits/raddleface.png",
     "tileType": "RADDLE",
-    "portraitBackground": "#CD5C5C"
+    "portraitBackground": "#3d6e70"
   },
   "placement": {
     "zone": null,

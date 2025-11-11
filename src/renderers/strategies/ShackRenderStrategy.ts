@@ -15,7 +15,7 @@ export class ShackRenderStrategy extends MultiTileRenderStrategy {
             tileType: TILE_TYPES.SHACK,
             positionFinderMethod: 'findShackPosition',
             fallbackChar: 'S',
-            fallbackColor: TILE_COLORS[TILE_TYPES.SHACK] || '#654321'
+            fallbackColor: TILE_COLORS[TILE_TYPES.SHACK] || '#57294b'
         });
     }
 }

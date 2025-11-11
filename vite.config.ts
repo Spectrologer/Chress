@@ -190,7 +190,7 @@ export default defineConfig({
         name: 'Chress: Chess 2 - The Sequel to Chess',
         short_name: 'Chress',
         description: 'A browser-based RPG game with turn-based combat, zone exploration, and procedural generation',
-        theme_color: '#3d2845',
+        theme_color: '#3e2347',
         background_color: '#2d1b3d',
         display: 'standalone',
         orientation: 'any',

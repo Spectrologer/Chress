@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/fork.png",
     "portrait": "characters/npcs/portraits/forkface.png",
     "tileType": "FORK",
-    "portraitBackground": "#C0C0C0"
+    "portraitBackground": "#3e2347"
   },
   "placement": {
     "zone": null,

@@ -214,8 +214,8 @@ export class EnvironmentalInteractionManager {
         // Create dialog container
         const dialog = document.createElement('div');
         dialog.style.cssText = `
-            background-color: #2c1810;
-            border: 3px solid #8B4513;
+            background-color: #272736;
+            border: 3px solid #964253;
             border-radius: 10px;
             padding: 20px;
             max-width: 500px;
@@ -229,7 +229,7 @@ export class EnvironmentalInteractionManager {
         const title = document.createElement('h2');
         title.textContent = 'Select Custom Board';
         title.style.cssText = `
-            color: #FFD700;
+            color: #f2a65e;
             text-align: center;
             margin: 0 0 20px 0;
             font-size: 1.5em;
@@ -264,7 +264,7 @@ export class EnvironmentalInteractionManager {
         const separator = document.createElement('hr');
         separator.style.cssText = `
             border: none;
-            border-top: 2px solid #654321;
+            border-top: 2px solid #57294b;
             margin: 15px 0;
         `;
         dialog.appendChild(separator);
@@ -274,8 +274,8 @@ export class EnvironmentalInteractionManager {
             this.closeBoardSelectionDialog(overlay);
             this.openFileExplorer();
         });
-        customFileButton.style.backgroundColor = '#4A5D23';
-        customFileButton.style.borderColor = '#2F3A14';
+        customFileButton.style.backgroundColor = '#43434F';
+        customFileButton.style.borderColor = '#272736';
         boardList.appendChild(customFileButton);
 
         // Cancel button
@@ -326,17 +326,17 @@ export class EnvironmentalInteractionManager {
             padding: 15px;
             font-size: 1.2em;
             cursor: pointer;
-            background-color: #8B4513;
+            background-color: #964253;
             color: white;
-            border: 2px solid #654321;
+            border: 2px solid #57294b;
             border-radius: 5px;
             transition: background-color 0.2s;
         `;
         button.addEventListener('mouseover', () => {
-            button.style.backgroundColor = '#A0522D';
+            button.style.backgroundColor = '#964253';
         });
         button.addEventListener('mouseout', () => {
-            button.style.backgroundColor = '#8B4513';
+            button.style.backgroundColor = '#964253';
         });
         button.addEventListener('click', onClick);
         return button;

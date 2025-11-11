@@ -13,7 +13,7 @@
   "display": {
   "sprite": "characters/npcs/merchant/gouge.png",
   "portrait": "characters/npcs/portraits/gougeface.png",
-    "portraitBackground": "#A0522D",
+    "portraitBackground": "#ba6156",
     "tileType": "GOUGE"
   },
   "placement": {

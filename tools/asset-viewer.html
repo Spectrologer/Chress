@@ -28,8 +28,8 @@
 
         body {
             font-family: 'Courier New', monospace;
-            background: linear-gradient(180deg, #2d1b3d 0%, #3d2845 40%, #4a2d52 100%);
-            color: #f4e8f0;
+            background: linear-gradient(180deg, #2d1b3d 0%, #3e2347 40%, #4a2d52 100%);
+            color: #ffffeb;
             padding: 20px;
             min-height: 100vh;
             position: relative;
@@ -103,9 +103,9 @@
 
         .search-controls input[type="text"] {
             padding: 5px 10px;
-            background: linear-gradient(135deg, #5a3a52 0%, #6a4a62 100%);
-            border: 1px solid #8a6a82;
-            color: #f4e8f0;
+            background: linear-gradient(135deg, #5e315b 0%, #606070 100%);
+            border: 1px solid #7e7e8f;
+            color: #ffffeb;
             border-radius: 4px;
             width: 250px;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -113,15 +113,15 @@
 
         .search-controls input[type="text"]:focus {
             outline: none;
-            border-color: #b8a0b0;
+            border-color: #c2c2d1;
             box-shadow: 0 0 10px rgba(212, 165, 192, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .search-controls button {
             padding: 5px 15px;
-            background: linear-gradient(135deg, #7a5a72 0%, #8a6a82 100%);
-            border: 1px solid #b8a0b0;
-            color: #f4e8f0;
+            background: linear-gradient(135deg, #606070 0%, #7e7e8f 100%);
+            border: 1px solid #c2c2d1;
+            color: #ffffeb;
             border-radius: 4px;
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -129,7 +129,7 @@
         }
 
         .search-controls button:hover {
-            background: linear-gradient(135deg, #8a6a82 0%, #9a7a92 100%);
+            background: linear-gradient(135deg, #7e7e8f 0%, #9a7a92 100%);
             box-shadow: 0 4px 8px rgba(212, 165, 192, 0.3);
             transform: translateY(-1px);
         }
@@ -151,12 +151,12 @@
 
         .tab-button {
             padding: 12px 20px 10px 20px;
-            background: linear-gradient(180deg, #b8a0b0 0%, #a08898 100%);
+            background: linear-gradient(180deg, #c2c2d1 0%, #a08898 100%);
             color: #3a2535;
             border: none;
-            border-top: 2px solid #d4b8c8;
-            border-left: 1px solid #d4b8c8;
-            border-right: 1px solid #8a6a82;
+            border-top: 2px solid #c2c2d1;
+            border-left: 1px solid #c2c2d1;
+            border-right: 1px solid #7e7e8f;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
@@ -217,7 +217,7 @@
         .tab-content.active {
             display: block;
             background: linear-gradient(135deg, #e8d8e0 0%, #d4c0c8 100%);
-            border: 2px solid #d4b8c8;
+            border: 2px solid #c2c2d1;
             border-top: none;
             padding: 20px;
             border-radius: 0 8px 8px 8px;
@@ -229,7 +229,7 @@
         }
 
         .tab-content h2 {
-            color: #5a3a52;
+            color: #5e315b;
             margin-bottom: 20px;
             text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
             font-size: 24px;
@@ -244,7 +244,7 @@
         }
 
         .asset-card {
-            background: linear-gradient(135deg, #c8b0c0 0%, #b8a0b0 100%);
+            background: linear-gradient(135deg, #c8b0c0 0%, #c2c2d1 100%);
             border: 1px solid #a08898;
             border-radius: 6px;
             padding: 15px;
@@ -271,7 +271,7 @@
         .asset-type {
             font-size: 12px;
             font-weight: 600;
-            color: #5a3a52;
+            color: #5e315b;
             margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -308,7 +308,7 @@
         .sprite-info {
             font-size: 12px;
             font-weight: 600;
-            color: #5a3a52;
+            color: #5e315b;
             margin-top: 5px;
             text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
         }
@@ -316,7 +316,7 @@
         .sprite-path {
             font-size: 11px;
             font-weight: 500;
-            color: #7a5a72;
+            color: #606070;
             margin-top: 5px;
             word-break: break-all;
         }
@@ -337,7 +337,7 @@
         .search-results {
             margin-bottom: 20px;
             padding: 10px;
-            background: linear-gradient(135deg, #c8b0c0 0%, #b8a0b0 100%);
+            background: linear-gradient(135deg, #c8b0c0 0%, #c2c2d1 100%);
             border: 1px solid #a08898;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -353,7 +353,7 @@
 
         .clear-search {
             float: right;
-            color: #7a5a72;
+            color: #606070;
             cursor: pointer;
             text-decoration: underline;
             transition: all 0.2s;
@@ -387,7 +387,7 @@
 
         .frame-label {
             font-size: 10px;
-            color: #7a5a72;
+            color: #606070;
             margin-top: 5px;
         }
 
@@ -400,25 +400,25 @@
         }
 
         input[type="range"]::-webkit-slider-track {
-            background: linear-gradient(180deg, #8a6a82 0%, #7a5a72 100%);
+            background: linear-gradient(180deg, #7e7e8f 0%, #606070 100%);
             border-radius: 4px;
             height: 8px;
-            border: 1px solid #6a4a62;
+            border: 1px solid #606070;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         input[type="range"]::-moz-range-track {
-            background: linear-gradient(180deg, #8a6a82 0%, #7a5a72 100%);
+            background: linear-gradient(180deg, #7e7e8f 0%, #606070 100%);
             border-radius: 4px;
             height: 8px;
-            border: 1px solid #6a4a62;
+            border: 1px solid #606070;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            background: linear-gradient(135deg, #d4b8c8 0%, #c8a0b8 100%);
+            background: linear-gradient(135deg, #c2c2d1 0%, #c8a0b8 100%);
             width: 20px;
             height: 20px;
             border-radius: 3px;
@@ -428,7 +428,7 @@
         }
 
         input[type="range"]::-moz-range-thumb {
-            background: linear-gradient(135deg, #d4b8c8 0%, #c8a0b8 100%);
+            background: linear-gradient(135deg, #c2c2d1 0%, #c8a0b8 100%);
             width: 20px;
             height: 20px;
             border-radius: 3px;
@@ -437,11 +437,11 @@
         }
 
         input[type="range"]::-webkit-slider-thumb:hover {
-            background: linear-gradient(135deg, #e8d8e0 0%, #d4b8c8 100%);
+            background: linear-gradient(135deg, #e8d8e0 0%, #c2c2d1 100%);
         }
 
         input[type="range"]::-moz-range-thumb:hover {
-            background: linear-gradient(135deg, #e8d8e0 0%, #d4b8c8 100%);
+            background: linear-gradient(135deg, #e8d8e0 0%, #c2c2d1 100%);
         }
 
         .scale-controls label,

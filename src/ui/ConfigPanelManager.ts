@@ -126,7 +126,7 @@ export class ConfigPanelManager {
             returnItem.id = 'return-to-museum-item';
             returnItem.className = 'config-item config-button-item';
             returnItem.innerHTML = `
-                <button id="return-to-museum-button" class="config-action-button" style="width: 100%; padding: 10px; font-size: 1em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">
+                <button id="return-to-museum-button" class="config-action-button" style="width: 100%; padding: 10px; font-size: 1em; cursor: pointer; background-color: #964253; color: white; border: 2px solid #57294b; border-radius: 5px;">
                     Return to Museum
                 </button>
             `;

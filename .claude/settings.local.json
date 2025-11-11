@@ -40,7 +40,13 @@
       "Bash(git stash show:*)",
       "Bash(/tmp/input.ts)",
       "Bash(/tmp/ui.ts)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(node scripts/audit-colors.js:*)",
+      "Bash(node scripts/replace-colors.cjs:*)",
+      "Bash(node scripts/audit-colors.cjs:*)",
+      "Bash(node scripts/replace-colors-uppercase.cjs:*)",
+      "Bash(node scripts/audit-colors-full.cjs:*)",
+      "Bash(node scripts/replace-colors-all.cjs:*)"
     ],
     "deny": [],
     "ask": []

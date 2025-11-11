@@ -43,9 +43,9 @@ export class StructureTileRenderer {
         }
 
         // Draw a pedestal
-        ctx.fillStyle = '#a0a0a0'; // Light grey for pedestal
+        ctx.fillStyle = '#7e7e8f'; // Light grey for pedestal
         ctx.fillRect(pixelX + 8, pixelY + TILE_SIZE - 16, TILE_SIZE - 16, 12);
-        ctx.fillStyle = '#808080'; // Darker grey for shadow
+        ctx.fillStyle = '#7e7e8f'; // Darker grey for shadow
         ctx.fillRect(pixelX + 8, pixelY + TILE_SIZE - 8, TILE_SIZE - 16, 4);
 
         const enemySpriteMap: Record<string, string> = {
@@ -78,13 +78,13 @@ export class StructureTileRenderer {
                     // Rotate the bow statue 90 degrees counter-clockwise
                     statueOptions.rotate = -Math.PI / 2; // -90 degrees
                 }
-                renderOverlay(ctx, this.images, spriteKey, pixelX, pixelY, TILE_SIZE, TILE_COLORS[tileType] || '#888888', '?', { font: '20px Arial', fillStyle: '#FFFFFF' }, statueOptions);
+                renderOverlay(ctx, this.images, spriteKey, pixelX, pixelY, TILE_SIZE, TILE_COLORS[tileType] || '#7e7e8f', '?', { font: '20px Arial', fillStyle: '#ffffeb' }, statueOptions);
             } else {
                 // Enemy statues use full-tile draw with a vertical offset and should be rendered as stone (grayscale)
-                renderOverlay(ctx, this.images, spriteKey, pixelX, pixelY - 10, TILE_SIZE, TILE_COLORS[tileType] || '#888888', '?', { font: '20px Arial', fillStyle: '#FFFFFF' }, { fullTile: true, filter: 'grayscale(100%) brightness(0.85)' });
+                renderOverlay(ctx, this.images, spriteKey, pixelX, pixelY - 10, TILE_SIZE, TILE_COLORS[tileType] || '#7e7e8f', '?', { font: '20px Arial', fillStyle: '#ffffeb' }, { fullTile: true, filter: 'grayscale(100%) brightness(0.85)' });
             }
         } else {
-            RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_COLORS[tileType] || '#888888', '?');
+            RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_COLORS[tileType] || '#7e7e8f', '?');
         }
     }
 
@@ -235,7 +235,7 @@ export class StructureTileRenderer {
         }
 
         // Try to draw the enemy image if loaded, otherwise use fallback
-        renderOverlay(ctx, this.images, enemyKey, pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.ENEMY], '🦎', { font: '32px Arial', fillStyle: '#FF1493' }, { fullTile: true });
+        renderOverlay(ctx, this.images, enemyKey, pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.ENEMY], '🦎', { font: '32px Arial', fillStyle: '#BD4882' }, { fullTile: true });
     }
 
     renderPenneTile(
@@ -252,7 +252,7 @@ export class StructureTileRenderer {
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the Penne image if loaded, otherwise use fallback
-        renderOverlay(ctx, this.images, 'penne', pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.PENNE], '🍝', { font: '32px Arial', fillStyle: '#FFD700' }, { fullTile: true });
+        renderOverlay(ctx, this.images, 'penne', pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.PENNE], '🍝', { font: '32px Arial', fillStyle: '#f2a65e' }, { fullTile: true });
     }
 
     renderSquigTile(
@@ -404,7 +404,7 @@ export class StructureTileRenderer {
         }
 
         // Fallback color rendering with distinctive marking
-        RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.SHACK] || '#654321', 'S');
+        RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.SHACK] || '#57294b', 'S');
     }
 
     renderCisternTile(
@@ -464,7 +464,7 @@ export class StructureTileRenderer {
             ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
             ctx.fillRect(destX, destY, destW, destH);
             // Debug for gh-pages - show cistern location with 'C'
-            ctx.fillStyle = '#FFFFFF';
+            ctx.fillStyle = '#ffffeb';
             ctx.font = 'bold 24px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -518,7 +518,7 @@ export class StructureTileRenderer {
             ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
             ctx.fillRect(destX, destY, destW, destH);
             // Debug for gh-pages - show cistern top with small 'C'
-            ctx.fillStyle = '#FFFFFF';
+            ctx.fillStyle = '#ffffeb';
             ctx.font = 'bold 18px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -539,7 +539,7 @@ export class StructureTileRenderer {
         // First draw the base tile
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        renderOverlay(ctx, this.images, 'axolotl', pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.AXELOTL] || '#FF69B4', 'AXL', { font: '20px Arial', fillStyle: '#000000' }, { fullTile: true });
+        renderOverlay(ctx, this.images, 'axolotl', pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.AXELOTL] || '#FF6B97', 'AXL', { font: '20px Arial', fillStyle: '#272736' }, { fullTile: true });
     }
 
     renderGougeTile(
@@ -555,7 +555,7 @@ export class StructureTileRenderer {
         // First draw the base tile
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        renderOverlay(ctx, this.images, 'gouge', pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.GOUGE] || '#8A2BE2', 'GOU', { font: '20px Arial', fillStyle: '#FFFFFF' }, { fullTile: true });
+        renderOverlay(ctx, this.images, 'gouge', pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.GOUGE] || '#4B5BAB', 'GOU', { font: '20px Arial', fillStyle: '#ffffeb' }, { fullTile: true });
     }
 
     renderPitfallTile(

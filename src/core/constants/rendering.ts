@@ -40,8 +40,8 @@ export const COLOR_CONSTANTS = {
     INNER_STROKE_ALPHA: 0.95, // Alpha for light inner stroke
 
     // UI colors
-    HIGHLIGHT_COLOR: '#ffff00', // Yellow color for highlights
-    GOLD_COLOR: '#ffd700' // Gold color for points/rewards
+    HIGHLIGHT_COLOR: '#cfff70', // Yellow color for highlights
+    GOLD_COLOR: '#f2a65e' // Gold color for points/rewards
 };
 
 export const TEXTURE_CONSTANTS = {

@@ -130,7 +130,7 @@ export class SimpleItemRenderStrategy extends TileRenderStrategy {
         ctx.fillRect(pixelX + padding, pixelY + padding, TILE_SIZE - padding * 2, TILE_SIZE - padding * 2);
 
         if (this.fallbackEmoji) {
-            ctx.fillStyle = '#000000';
+            ctx.fillStyle = '#272736';
             ctx.font = `${this.options.fallbackFontSize}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';

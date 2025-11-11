@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/silver.png",
     "portrait": "characters/npcs/portraits/silverface.png",
     "tileType": "SILVER",
-    "portraitBackground": "#C0C0C0"
+    "portraitBackground": "#272736"
   },
   "placement": {
     "zone": null,

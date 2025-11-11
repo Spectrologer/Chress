@@ -30,7 +30,7 @@ export class EnemyTileRenderer extends BaseStructureRenderer {
         }
 
         // Draw the enemy
-        renderOverlay(ctx, this.images, enemyKey, pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.ENEMY], '🦎', { font: '32px Arial', fillStyle: '#FF1493' }, { fullTile: true });
+        renderOverlay(ctx, this.images, enemyKey, pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.ENEMY], '🦎', { font: '32px Arial', fillStyle: '#BD4882' }, { fullTile: true });
     }
 }
 

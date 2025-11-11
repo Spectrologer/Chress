@@ -11,7 +11,7 @@
   "display": {
   "sprite": "characters/npcs/gossip/quill.png",
   "portrait": "characters/npcs/portraits/quillface.png",
-  "portraitBackground": "#FFD700",
+  "portraitBackground": "#ffffeb",
     "tileType": "QUILL"
   },
   "placement": {

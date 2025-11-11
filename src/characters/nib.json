@@ -11,7 +11,7 @@
   "display": {
   "sprite": "characters/npcs/merchant/nib.png",
   "portrait": "characters/npcs/portraits/nibface.png",
-  "portraitBackground": "#FFD700",
+  "portraitBackground": "#272736",
     "tileType": "NIB"
   },
   "placement": {

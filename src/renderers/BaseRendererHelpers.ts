@@ -18,9 +18,9 @@ export function renderOverlay(
     pixelX: number,
     pixelY: number,
     tileSize: number,
-    fallbackColor = '#888888',
+    fallbackColor = '#7e7e8f',
     fallbackText = '?',
-    textStyle: TextStyle = { font: '20px Arial', fillStyle: '#FFFFFF' },
+    textStyle: TextStyle = { font: '20px Arial', fillStyle: '#ffffeb' },
     options: RenderOverlayOptions = {}
 ): boolean {
     const {
@@ -91,7 +91,7 @@ export function renderOverlay(
     }
 
     if (fallbackText) {
-        ctx.fillStyle = textStyle.fillStyle || '#FFFFFF';
+        ctx.fillStyle = textStyle.fillStyle || '#ffffeb';
         ctx.font = textStyle.font || '20px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';

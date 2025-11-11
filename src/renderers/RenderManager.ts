@@ -475,7 +475,7 @@ export class RenderManager {
                 }
             } catch (error) {
                 // Fallback rendering
-                this.ctx.fillStyle = '#ffcb8d';
+                this.ctx.fillStyle = '#ffe478';
                 this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         });

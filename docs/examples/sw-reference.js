@@ -231,8 +231,8 @@ function createOfflineResponse() {
             <style>
                 body {
                     font-family: 'Courier New', monospace;
-                    background: linear-gradient(180deg, #2d1b3d 0%, #3d2845 40%, #4a2d52 100%);
-                    color: #f4e8f0;
+                    background: linear-gradient(180deg, #2d1b3d 0%, #3e2347 40%, #4a2d52 100%);
+                    color: #ffffeb;
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -250,14 +250,14 @@ function createOfflineResponse() {
                 button {
                     margin-top: 20px;
                     padding: 12px 24px;
-                    background: #7a5a72;
-                    color: #f4e8f0;
+                    background: #606070;
+                    color: #ffffeb;
                     border: none;
                     border-radius: 6px;
                     cursor: pointer;
                     font-size: 16px;
                 }
-                button:hover { background: #8a6a82; }
+                button:hover { background: #7e7e8f; }
             </style>
         </head>
         <body>

@@ -77,7 +77,7 @@ export class NPCRenderer {
                 let pixelYBase = npc.y * TILE_SIZE + npc.bumpOffsetY;
                 pixelXBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelXBase));
                 pixelYBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelYBase));
-                this.ctx.fillStyle = '#FFD700'; // Gold color for NPCs
+                this.ctx.fillStyle = '#f2a65e'; // Gold color for NPCs
                 this.ctx.fillRect(
                     pixelXBase + 2,
                     pixelYBase + 2,

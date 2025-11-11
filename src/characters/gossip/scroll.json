@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/scroll.png",
     "portrait": "characters/npcs/portraits/scrollface.png",
     "tileType": "SCROLL",
-    "portraitBackground": "#F5DEB3"
+    "portraitBackground": "#7e7e8f"
   },
   "placement": {
     "zone": null,

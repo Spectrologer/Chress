@@ -82,15 +82,15 @@ function showUpdateNotification(): void {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: linear-gradient(135deg, #5a3a52 0%, #6a4a62 100%);
-      color: #f4e8f0;
+      background: linear-gradient(135deg, #5e315b 0%, #606070 100%);
+      color: #ffffeb;
       padding: 16px 24px;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
       z-index: 10000;
       max-width: 350px;
       font-family: 'Courier New', monospace;
-      border: 2px solid #8a6a82;
+      border: 2px solid #7e7e8f;
     ">
       <h3 style="margin: 0 0 8px 0; font-size: 16px;">Update Available</h3>
       <p style="margin: 0 0 12px 0; font-size: 14px;">A new version of Chress is available!</p>
@@ -98,9 +98,9 @@ function showUpdateNotification(): void {
         <button id="pwa-update-button" style="
           flex: 1;
           padding: 8px 16px;
-          background: linear-gradient(135deg, #7a5a72 0%, #8a6a82 100%);
-          color: #f4e8f0;
-          border: 1px solid #b8a0b0;
+          background: linear-gradient(135deg, #606070 0%, #7e7e8f 100%);
+          color: #ffffeb;
+          border: 1px solid #c2c2d1;
           border-radius: 4px;
           cursor: pointer;
           font-size: 14px;
@@ -109,8 +109,8 @@ function showUpdateNotification(): void {
         <button id="pwa-dismiss-button" style="
           padding: 8px 16px;
           background: transparent;
-          color: #f4e8f0;
-          border: 1px solid #8a6a82;
+          color: #ffffeb;
+          border: 1px solid #7e7e8f;
           border-radius: 4px;
           cursor: pointer;
           font-size: 14px;
@@ -200,8 +200,8 @@ function showInstallBanner(deferredPrompt: BeforeInstallPromptEvent): void {
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: linear-gradient(135deg, #5a3a52 0%, #6a4a62 100%);
-      color: #f4e8f0;
+      background: linear-gradient(135deg, #5e315b 0%, #606070 100%);
+      color: #ffffeb;
       padding: 12px 20px;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -210,14 +210,14 @@ function showInstallBanner(deferredPrompt: BeforeInstallPromptEvent): void {
       align-items: center;
       gap: 16px;
       font-family: 'Courier New', monospace;
-      border: 2px solid #8a6a82;
+      border: 2px solid #7e7e8f;
     ">
       <span style="font-size: 14px;">Install Chress for offline play!</span>
       <button id="pwa-install-button" style="
         padding: 6px 16px;
-        background: linear-gradient(135deg, #7a5a72 0%, #8a6a82 100%);
-        color: #f4e8f0;
-        border: 1px solid #b8a0b0;
+        background: linear-gradient(135deg, #606070 0%, #7e7e8f 100%);
+        color: #ffffeb;
+        border: 1px solid #c2c2d1;
         border-radius: 4px;
         cursor: pointer;
         font-size: 13px;
@@ -226,7 +226,7 @@ function showInstallBanner(deferredPrompt: BeforeInstallPromptEvent): void {
       <button id="pwa-install-dismiss" style="
         padding: 6px 12px;
         background: transparent;
-        color: #f4e8f0;
+        color: #ffffeb;
         border: none;
         cursor: pointer;
         font-size: 18px;
@@ -315,7 +315,7 @@ function showConnectionStatus(status: 'online' | 'offline'): void {
     left: 50%;
     transform: translateX(-50%);
     padding: 12px 24px;
-    background: ${status === 'online' ? '#4CAF50' : '#f44336'};
+    background: ${status === 'online' ? '#3CA370' : '#eb564b'};
     color: white;
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);

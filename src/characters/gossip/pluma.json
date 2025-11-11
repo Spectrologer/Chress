@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/pluma.png",
     "portrait": "characters/npcs/portraits/plumaface.png",
     "tileType": "PLUMA",
-    "portraitBackground": "#FAEBD7"
+    "portraitBackground": "#cfff70"
   },
   "placement": {
     "zone": null,

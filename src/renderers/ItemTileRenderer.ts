@@ -408,7 +408,7 @@ export class ItemTileRenderer {
         ctx.fillRect(pixelX + padding, pixelY + padding, TILE_SIZE - padding * 2, TILE_SIZE - padding * 2);
 
         if (emoji) {
-            ctx.fillStyle = '#000000'; // Fallback text color
+            ctx.fillStyle = '#272736'; // Fallback text color
             ctx.font = `${fontSize}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';

@@ -30,7 +30,7 @@ export class WaterRenderStrategy extends TileRenderStrategy {
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.WATER];
             ctx.fillRect(pixelX + padding, pixelY + padding, TILE_SIZE - padding * 2, TILE_SIZE - padding * 2);
 
-            ctx.fillStyle = '#87CEEB';
+            ctx.fillStyle = '#66FFE3';
             ctx.font = '32px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';

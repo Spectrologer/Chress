@@ -11,7 +11,7 @@
   "display": {
     "sprite": "characters/npcs/tutorial/forge.png",
     "portrait": "characters/npcs/portraits/forgeface.png",
-    "portraitBackground": "#F4A460",
+    "portraitBackground": "#ff6b97",
   "tileType": "FORGE"
   },
   "placement": {

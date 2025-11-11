@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/nub.png",
     "portrait": "characters/npcs/portraits/nubface.png",
     "tileType": "NUB",
-    "portraitBackground": "#696969"
+    "portraitBackground": "#43434f"
   },
   "placement": {
     "zone": null,

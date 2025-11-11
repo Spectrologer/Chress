@@ -366,7 +366,7 @@ export class MiniMap {
         const centerY = mapSize / 2;
 
         // Clear the map with a parchment-like background
-        ctx.fillStyle = '#E6D3A3';  // Warm parchment tone
+        ctx.fillStyle = '#FFB5B5';  // Warm parchment tone
         ctx.fillRect(0, 0, mapSize, mapSize);
 
         // Calculate visible range around current zone
@@ -404,7 +404,7 @@ export class MiniMap {
                     }
             } else {
                 // Fallback text if image isn't loaded
-                ctx.fillStyle = '#2F1B14';
+                ctx.fillStyle = '#272736';
                 ctx.font = 'bold 14px serif';
                 ctx.fillText("Museum", mapSize / 2, mapSize / 2);
             }
@@ -452,7 +452,7 @@ export class MiniMap {
                 const mapY = centerY + dy * zoneSize - zoneSize / 2;
 
                 // Determine zone color with parchment-friendly palette
-                let color = '#C8B99C'; // Unexplored - darker parchment tone
+                let color = '#C2C2D1'; // Unexplored - darker parchment tone
 
                 // When viewing a different underground depth, treat as unexplored
                 // (hasVisitedZone doesn't support querying arbitrary depths)
@@ -460,22 +460,22 @@ export class MiniMap {
 
                 if (!isViewingDifferentDepth && this.game.playerFacade?.hasVisitedZone(zoneX, zoneY, viewDimension)) {
                     if (viewDimension === 2) {
-                        color = '#4B0082'; // Indigo for visited underground
+                        color = '#5A265E'; // Indigo for visited underground
                     } else {
                         // Color code by zone level for the overworld
                         const zoneLevel = ZoneStateManager.getZoneLevel(zoneX, zoneY);
                         switch (zoneLevel) {
                             case 1: // Home
-                                color = '#B8860B'; // Darker gold
+                                color = '#BA6156'; // Darker gold
                                 break;
                             case 2: // Woods
-                                color = '#556B2F'; // Dark Olive Green
+                                color = '#43434F'; // Dark Olive Green
                                 break;
                             case 3: // Wilds
-                                color = '#8B4513'; // Saddle Brown
+                                color = '#964253'; // Saddle Brown
                                 break;
                             case 4: // Frontier
-                                color = '#D2691E'; // Chocolate/Orange-Brown
+                                color = '#EB564B'; // Chocolate/Orange-Brown
                                 break;
                         }
                     }
@@ -487,7 +487,7 @@ export class MiniMap {
                     : (viewDimension === currentZone.dimension); // Other dimensions: check dimension matches
 
                 if (isCurrentZone && isViewingCurrentLevel) {
-                    color = '#CD853F'; // Current - warm brown/gold
+                    color = '#E36956'; // Current - warm brown/gold
                 }
 
                 // Draw zone square
@@ -495,13 +495,13 @@ export class MiniMap {
                 ctx.fillRect(mapX, mapY, zoneSize - 2, zoneSize - 2);
 
                 // Draw border with aged ink color
-                ctx.strokeStyle = '#8B4513';  // Saddle brown for ink effect
+                ctx.strokeStyle = '#964253';  // Saddle brown for ink effect
                 ctx.lineWidth = 1;
                 ctx.strokeRect(mapX, mapY, zoneSize - 2, zoneSize - 2);
 
                 // Draw marked tile indicator (X) - feature disabled until implemented
                 // if (this.game.player.isTileMarked && this.game.player.isTileMarked(zoneX, zoneY)) {
-                //     ctx.fillStyle = '#8B0000'; // Dark red for the mark
+                //     ctx.fillStyle = '#57294B'; // Dark red for the mark
                 //     ctx.font = `bold ${zoneSize * 0.9}px serif`;
                 //     ctx.textAlign = 'center';
                 //     ctx.textBaseline = 'middle';
@@ -511,7 +511,7 @@ export class MiniMap {
                 // Draw star icon for special zones (from map notes)
                 const zoneKey = `${zoneX},${zoneY}`;
                 if (this.game.specialZones.has(zoneKey)) {
-                    ctx.fillStyle = '#000000'; // Black color for the star
+                    ctx.fillStyle = '#272736'; // Black color for the star
                     ctx.font = `bold ${zoneSize * 0.9}px serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
@@ -520,7 +520,7 @@ export class MiniMap {
 
                 // Draw club icon for the home zone (0,0) in the overworld
                 if (zoneX === 0 && zoneY === 0 && viewDimension === 0) {
-                    ctx.fillStyle = '#2F1B14'; // Dark brown for the symbol
+                    ctx.fillStyle = '#272736'; // Dark brown for the symbol
                     ctx.font = `bold ${zoneSize * 0.8}px serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
@@ -530,7 +530,7 @@ export class MiniMap {
 
                 // Draw player icon (king symbol) for the current zone (only when viewing current dimension/depth)
                 if (isCurrentZone && isViewingCurrentLevel) {
-                    ctx.fillStyle = '#2F1B14'; // Dark brown for the symbol
+                    ctx.fillStyle = '#272736'; // Dark brown for the symbol
                     // Make the font size relative to the zone tile size for good scaling
                     ctx.font = `bold ${zoneSize * 0.8}px serif`;
                     ctx.textAlign = 'center';
@@ -547,12 +547,12 @@ export class MiniMap {
                     const glyphs: Record<string, string> = { circle: '●', triangle: '▲', star: '★', diamond: '◆', heart: '♥', club: '♣' };
                     const colorMap: Record<string, string> = {
                         // darker/muted, higher contrast against light gray/parchment
-                        circle: '#8B0000',   // deep red
-                        triangle: '#B45309', // dark orange/brown
-                        star: '#B87333',     // bronze/gold-brown
-                        diamond: '#5B21B6',  // deep purple
-                        heart: '#9D174D',    // deep magenta
-                        club: '#0F766E'      // dark teal
+                        circle: '#57294B',   // deep red
+                        triangle: '#BA6156', // dark orange/brown
+                        star: '#BA6156',     // bronze/gold-brown
+                        diamond: '#4B5BAB',  // deep purple
+                        heart: '#B0305C',    // deep magenta
+                        club: '#3D6E70'      // dark teal
                     };
                     const glyph = glyphs[shape] || null;
                     if (glyph) {
@@ -566,7 +566,7 @@ export class MiniMap {
                         ctx.strokeStyle = 'rgba(0,0,0,0.65)';
                         ctx.strokeText(glyph, mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
                         // Fill with the shape color
-                        ctx.fillStyle = colorMap[shape] || '#111111';
+                        ctx.fillStyle = colorMap[shape] || '#272736';
                         ctx.fillText(glyph, mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
                         ctx.restore();
                     }

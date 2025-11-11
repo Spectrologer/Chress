@@ -204,6 +204,6 @@ export class ShackRenderer extends BaseStructureRenderer {
         }
 
         // Fallback color rendering
-        RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_TYPES.SHACK || '#654321', 'S');
+        RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_TYPES.SHACK || '#57294b', 'S');
     }
 }

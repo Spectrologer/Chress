@@ -11,7 +11,7 @@
   "display": {
   "sprite": "characters/npcs/gossip/brush.png",
   "portrait": "characters/npcs/portraits/brushface.png",
-  "portraitBackground": "#9370DB",
+  "portraitBackground": "#66ffe3",
     "tileType": "BRUSH"
   },
   "placement": {

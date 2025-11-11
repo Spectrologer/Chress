@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/slick.png",
     "portrait": "characters/npcs/portraits/slickface.png",
     "tileType": "SLICK",
-    "portraitBackground": "#20B2AA"
+    "portraitBackground": "#4da6ff"
   },
   "placement": {
     "zone": null,

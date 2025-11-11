@@ -11,7 +11,7 @@
   "display": {
   "sprite": "characters/npcs/merchant/rune.png",
   "portrait": "characters/npcs/portraits/runeface.png",
-  "portraitBackground": "#696969",
+  "portraitBackground": "#80366b",
     "tileType": "RUNE"
   },
   "placement": {

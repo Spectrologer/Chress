@@ -164,7 +164,7 @@ export class PlayerRenderer {
             this.ctx.globalAlpha = 1.0;
             this.ctx.restore();
         } else {
-            this.ctx.fillStyle = '#ff4444';
+            this.ctx.fillStyle = '#eb564b';
             if (backflipAngle && backflipAngle !== 0) {
                 this.ctx.save();
                 const cx = pixelXBase + TILE_SIZE / 2;
@@ -205,7 +205,7 @@ export class PlayerRenderer {
                 this.ctx.drawImage(bowImage, -bw / 2 * pulse, -bh / 2 * pulse, bw * pulse, bh * pulse);
             } else {
                 // Fallback: draw a rotated rectangle to represent the bow
-                this.ctx.fillStyle = '#8B4513';
+                this.ctx.fillStyle = '#964253';
                 this.ctx.fillRect(-TILE_SIZE * SCALE_CONSTANTS.BOW_DRAW_WIDTH, -TILE_SIZE * SCALE_CONSTANTS.BOW_DRAW_HEIGHT_TOP, TILE_SIZE * SCALE_CONSTANTS.BOW_DRAW_WIDTH_BOTTOM, TILE_SIZE * SCALE_CONSTANTS.BOW_DRAW_HEIGHT_BOTTOM);
             }
             this.ctx.restore();

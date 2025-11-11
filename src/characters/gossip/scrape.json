@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/scrape.png",
     "portrait": "characters/npcs/portraits/scrapeface.png",
     "tileType": "SCRAPE",
-    "portraitBackground": "#A0522D"
+    "portraitBackground": "#272736"
   },
   "placement": {
     "zone": null,

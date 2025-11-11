@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/micron.png",
     "portrait": "characters/npcs/portraits/micronface.png",
     "tileType": "MICRON",
-    "portraitBackground": "#000000"
+    "portraitBackground": "#c2c2d1"
   },
   "placement": {
     "zone": null,

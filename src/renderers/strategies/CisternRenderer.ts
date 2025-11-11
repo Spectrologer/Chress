@@ -68,7 +68,7 @@ export class CisternRenderer extends BaseStructureRenderer {
             const destY = pixelY;
             ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
             ctx.fillRect(destX, destY, destW, destH);
-            ctx.fillStyle = '#FFFFFF';
+            ctx.fillStyle = '#ffffeb';
             ctx.font = 'bold 24px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -120,7 +120,7 @@ export class CisternRenderer extends BaseStructureRenderer {
 
             ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
             ctx.fillRect(destX, destY, destW, destH);
-            ctx.fillStyle = '#FFFFFF';
+            ctx.fillStyle = '#ffffeb';
             ctx.font = 'bold 18px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';

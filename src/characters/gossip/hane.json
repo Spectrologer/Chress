@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/hane.png",
     "portrait": "characters/npcs/portraits/haneface.png",
     "tileType": "HANE",
-    "portraitBackground": "#FFE4E1"
+    "portraitBackground": "#272736"
   },
   "placement": {
     "zone": null,

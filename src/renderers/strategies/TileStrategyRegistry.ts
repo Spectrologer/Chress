@@ -90,11 +90,11 @@ export class TileStrategyRegistry {
 
         // Enemies and NPCs
         this.register(TILE_TYPES.ENEMY, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'lizardy', TILE_TYPES.ENEMY, '🦎', { font: '32px Arial', fillStyle: '#FF1493' }
+            this.images, this.tileSize, 'lizardy', TILE_TYPES.ENEMY, '🦎', { font: '32px Arial', fillStyle: '#BD4882' }
         ));
         // Merchant NPCs (in merchant/ subdirectory)
         this.register(TILE_TYPES.PENNE, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'merchant/penne', TILE_TYPES.PENNE, '🍝', { font: '32px Arial', fillStyle: '#FFD700' }
+            this.images, this.tileSize, 'merchant/penne', TILE_TYPES.PENNE, '🍝', { font: '32px Arial', fillStyle: '#f2a65e' }
         ));
         this.register(TILE_TYPES.SQUIG, new SimpleOverlayRenderStrategy(
             this.images, this.tileSize, 'merchant/squig', TILE_TYPES.SQUIG, '🐸', null
@@ -109,10 +109,10 @@ export class TileStrategyRegistry {
             this.images, this.tileSize, 'merchant/mark', TILE_TYPES.MARK, '🗺️', null
         ));
         this.register(TILE_TYPES.AXELOTL, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'merchant/axolotl', TILE_TYPES.AXELOTL, 'AXL', { font: '20px Arial', fillStyle: '#000000' }
+            this.images, this.tileSize, 'merchant/axolotl', TILE_TYPES.AXELOTL, 'AXL', { font: '20px Arial', fillStyle: '#272736' }
         ));
         this.register(TILE_TYPES.GOUGE, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'merchant/gouge', TILE_TYPES.GOUGE, 'GOU', { font: '20px Arial', fillStyle: '#FFFFFF' }
+            this.images, this.tileSize, 'merchant/gouge', TILE_TYPES.GOUGE, 'GOU', { font: '20px Arial', fillStyle: '#ffffeb' }
         ));
 
         // Tutorial NPCs (in tutorial/ subdirectory)
@@ -258,7 +258,7 @@ export class TileStrategyRegistry {
 
                 this.register(tileType, new SimpleOverlayRenderStrategy(
                     this.images, this.tileSize, spriteKey, tileType, fallbackText,
-                    { font: '12px Arial', fillStyle: '#FFFFFF' }
+                    { font: '12px Arial', fillStyle: '#ffffeb' }
                 ));
             }
         });

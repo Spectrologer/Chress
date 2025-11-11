@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/stick.png",
     "portrait": "characters/npcs/portraits/stickface.png",
     "tileType": "STICK",
-    "portraitBackground": "#8B4513"
+    "portraitBackground": "#80366b"
   },
   "placement": {
     "zone": null,

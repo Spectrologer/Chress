@@ -101,10 +101,10 @@ export class StateDebugger {
           width: 600px;
           max-height: 80vh;
           background: rgba(0, 0, 0, 0.95);
-          color: #00ff00;
+          color: #3ca370;
           font-family: 'Courier New', monospace;
           font-size: 12px;
-          border: 2px solid #00ff00;
+          border: 2px solid #3ca370;
           border-radius: 4px;
           overflow: hidden;
           z-index: 10000;
@@ -113,12 +113,12 @@ export class StateDebugger {
         }
 
         #state-debugger-header {
-          background: #003300;
+          background: #272736;
           padding: 10px;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          border-bottom: 1px solid #00ff00;
+          border-bottom: 1px solid #3ca370;
         }
 
         #state-debugger-title {
@@ -127,7 +127,7 @@ export class StateDebugger {
         }
 
         #state-debugger-close {
-          background: #ff0000;
+          background: #eb564b;
           color: white;
           border: none;
           padding: 4px 8px;
@@ -139,21 +139,21 @@ export class StateDebugger {
           display: flex;
           gap: 5px;
           padding: 5px;
-          background: #001100;
-          border-bottom: 1px solid #00ff00;
+          background: #272736;
+          border-bottom: 1px solid #3ca370;
         }
 
         .debugger-tab {
           padding: 5px 10px;
-          background: #003300;
-          border: 1px solid #00ff00;
-          color: #00ff00;
+          background: #272736;
+          border: 1px solid #3ca370;
+          color: #3ca370;
           cursor: pointer;
           border-radius: 2px;
         }
 
         .debugger-tab.active {
-          background: #00ff00;
+          background: #3ca370;
           color: black;
           font-weight: bold;
         }
@@ -169,16 +169,16 @@ export class StateDebugger {
         }
 
         .state-key {
-          color: #ffff00;
+          color: #cfff70;
           font-weight: bold;
         }
 
         .state-value {
-          color: #00ffff;
+          color: #66ffe3;
         }
 
         .state-type {
-          color: #ff00ff;
+          color: #ff6b97;
           font-style: italic;
         }
 
@@ -189,43 +189,43 @@ export class StateDebugger {
         .mutation-entry {
           margin: 10px 0;
           padding: 10px;
-          background: #001100;
-          border-left: 3px solid #ffff00;
+          background: #272736;
+          border-left: 3px solid #cfff70;
         }
 
         .mutation-path {
-          color: #ffff00;
+          color: #cfff70;
           font-weight: bold;
         }
 
         .mutation-old {
-          color: #ff6666;
+          color: #e36956;
         }
 
         .mutation-new {
-          color: #66ff66;
+          color: #8fde5d;
         }
 
         .stat-row {
           display: flex;
           justify-content: space-between;
           padding: 5px 0;
-          border-bottom: 1px dotted #003300;
+          border-bottom: 1px dotted #272736;
         }
 
         .stat-label {
-          color: #ffff00;
+          color: #cfff70;
         }
 
         .stat-value {
-          color: #00ffff;
+          color: #66ffe3;
           font-weight: bold;
         }
 
         #state-debugger-actions {
           padding: 10px;
-          background: #001100;
-          border-top: 1px solid #00ff00;
+          background: #272736;
+          border-top: 1px solid #3ca370;
           display: flex;
           gap: 5px;
           flex-wrap: wrap;
@@ -233,16 +233,16 @@ export class StateDebugger {
 
         .debugger-btn {
           padding: 5px 10px;
-          background: #003300;
-          border: 1px solid #00ff00;
-          color: #00ff00;
+          background: #272736;
+          border: 1px solid #3ca370;
+          color: #3ca370;
           cursor: pointer;
           border-radius: 2px;
           font-size: 11px;
         }
 
         .debugger-btn:hover {
-          background: #005500;
+          background: #272736;
         }
       </style>
 
@@ -481,7 +481,7 @@ export class StateDebugger {
 
     return `
       <div>
-        <h3 style="color: #ffff00; margin-top: 0;">State Statistics</h3>
+        <h3 style="color: #cfff70; margin-top: 0;">State Statistics</h3>
 
         <div class="stat-row">
           <span class="stat-label">History Size:</span>
@@ -498,7 +498,7 @@ export class StateDebugger {
           <span class="stat-value">${stats.listenerCount}</span>
         </div>
 
-        <h3 style="color: #ffff00; margin-top: 20px;">Slice Statistics</h3>
+        <h3 style="color: #cfff70; margin-top: 20px;">Slice Statistics</h3>
 
         <div class="stat-row">
           <span class="stat-label">Persistent Nodes:</span>
@@ -520,7 +520,7 @@ export class StateDebugger {
           <span class="stat-value">${stats.ui.count}</span>
         </div>
 
-        <h3 style="color: #ffff00; margin-top: 20px;">Game State</h3>
+        <h3 style="color: #cfff70; margin-top: 20px;">Game State</h3>
 
         <div class="stat-row">
           <span class="stat-label">Zones Cached:</span>

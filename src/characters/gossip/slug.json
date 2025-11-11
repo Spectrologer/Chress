@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/slug.png",
     "portrait": "characters/npcs/portraits/slugface.png",
     "tileType": "SLUG",
-    "portraitBackground": "#556B2F"
+    "portraitBackground": "#5e315b"
   },
   "placement": {
     "zone": null,

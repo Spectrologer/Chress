@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/highlight.png",
     "portrait": "characters/npcs/portraits/highlightface.png",
     "tileType": "HIGHLIGHT",
-    "portraitBackground": "#FFFF00"
+    "portraitBackground": "#272736"
   },
   "placement": {
     "zone": null,

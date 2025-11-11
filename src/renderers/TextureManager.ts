@@ -58,7 +58,7 @@ export class TextureManager {
             // Fallback rendering if renderer is not initialized
             logger.warn('[TextureManager] Renderer not initialized, using fallback rendering');
             const tileTypeNum = typeof tileType === 'number' ? tileType : (typeof tileType === 'object' && tileType !== null ? (tileType as any).type : TILE_TYPES.FLOOR);
-            const tileColor = TILE_COLORS[tileTypeNum] || TILE_COLORS[TILE_TYPES.FLOOR] || '#ffcb8d';
+            const tileColor = TILE_COLORS[tileTypeNum] || TILE_COLORS[TILE_TYPES.FLOOR] || '#ffe478';
             ctx.fillStyle = tileColor;
             ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }

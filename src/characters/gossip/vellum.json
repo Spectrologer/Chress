@@ -11,7 +11,7 @@
   "display": {
   "sprite": "characters/npcs/gossip/vellum.png",
   "portrait": "characters/npcs/portraits/vellumface.png",
-  "portraitBackground": "#87CEEB",
+  "portraitBackground": "#323e4f",
     "tileType": "VELLUM"
   },
   "placement": {

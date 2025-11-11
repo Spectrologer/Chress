@@ -187,7 +187,7 @@ export class AnimationRenderer {
 
             this.ctx.save();
             this.ctx.globalAlpha = alpha;
-            this.ctx.fillStyle = '#ffffff';
+            this.ctx.fillStyle = '#ffffeb';
             this.ctx.font = 'bold 28px "Press Start 2P", cursive';
             this.ctx.textAlign = 'center';
             this.ctx.strokeStyle = 'black';

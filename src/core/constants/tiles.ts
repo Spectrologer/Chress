@@ -151,125 +151,125 @@ export type TileType = typeof TILE_TYPES[keyof typeof TILE_TYPES];
 
 // Colors for different tile types (fallback when images don't load)
 export const TILE_COLORS: Record<number, string> = {
-    [TILE_TYPES.FLOOR]: '#ffcb8d',
-    [TILE_TYPES.WALL]: '#8B4513',
-    [TILE_TYPES.GRASS]: '#228B22',
-    [TILE_TYPES.EXIT]: '#ffcb8d',  // Same as floor - opening is indicator enough
-    [TILE_TYPES.ROCK]: '#666666',
-    [TILE_TYPES.HOUSE]: '#D2691E',  // Brown/orange for house
-    [TILE_TYPES.WATER]: '#4169E1',  // Blue for water
-    [TILE_TYPES.FOOD]: '#FF6347',    // Red/orange for food
-    [TILE_TYPES.ENEMY]: '#32CD32',   // Lime green for enemy
-    [TILE_TYPES.NOTE]: '#FFFF00',    // Yellow for note
-    [TILE_TYPES.HAMMER]: '#8B4513',  // Brown for hammer
-    [TILE_TYPES.BISHOP_SPEAR]: '#8B4513',   // Brown for bishop spear
-    [TILE_TYPES.HORSE_ICON]: '#8B4513', // Brown for horse icon
-    [TILE_TYPES.SHRUBBERY]: '#228B22', // Green for shrubbery
-    [TILE_TYPES.WELL]: '#D2691E',   // Brown/orange for well
-    [TILE_TYPES.DEADTREE]: '#8B4513',   // Brown for deadtree
-    [TILE_TYPES.PENNE]: '#8A2BE2',    // Blueviolet for Penne
-    [TILE_TYPES.SQUIG]: '#8A2BE2',   // Blueviolet for squig
-    [TILE_TYPES.NIB]: '#8A2BE2',     // Blueviolet for nib
-    [TILE_TYPES.RUNE]: '#8A2BE2',    // Blueviolet for rune
-    [TILE_TYPES.BOMB]: '#FF0000',  // Red for bomb
-    [TILE_TYPES.HEART]: '#FF69B4', // Hot pink for heart
-    [TILE_TYPES.SIGN]: '#8B4513', // Saddle brown for sign
-    [TILE_TYPES.PORT]: '#ffcb8d', // Same as floor, transparent
-    [TILE_TYPES.CRAYN]: '#8A2BE2', // Blueviolet for Crayn
-    [TILE_TYPES.FELT]: '#8A2BE2', // Blueviolet for Felt
-    [TILE_TYPES.FORGE]: '#8A2BE2', // Blueviolet for Forge
-    [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: '#D2691E', // Chocolate color for book
-    [TILE_TYPES.BOW]: '#8B4513', // Brown for bow
-    [TILE_TYPES.MARK]: '#FFD700', // Gold for Mark
-    [TILE_TYPES.CISTERN]: '#708090', // Slate gray for cistern
-    [TILE_TYPES.SHACK]: '#8B4513', // Brown for shack
-    [TILE_TYPES.SHOVEL]: '#8B4513', // Brown for shovel
-    [TILE_TYPES.GOUGE]: '#8A2BE2', // Blueviolet for Gouge
-    [TILE_TYPES.PITFALL]: '#ffcb8d', // Same as floor, should be mostly invisible
-    [TILE_TYPES.TABLE]: '#A0522D', // Sienna for table fallback
-    [TILE_TYPES.FISCHERS_CUBE]: '#87CEEB', // Sky blue for Fischer's Cube
-    [TILE_TYPES.TELEPORT_BRANCH]: '#8B4513', // Brown for teleport branch
+    [TILE_TYPES.FLOOR]: '#ffe478',
+    [TILE_TYPES.WALL]: '#964253',
+    [TILE_TYPES.GRASS]: '#3CA370',
+    [TILE_TYPES.EXIT]: '#ffe478',  // Same as floor - opening is indicator enough
+    [TILE_TYPES.ROCK]: '#606070',
+    [TILE_TYPES.HOUSE]: '#EB564B',  // Brown/orange for house
+    [TILE_TYPES.WATER]: '#4B5BAB',  // Blue for water
+    [TILE_TYPES.FOOD]: '#EB564B',    // Red/orange for food
+    [TILE_TYPES.ENEMY]: '#3CA370',   // Lime green for enemy
+    [TILE_TYPES.NOTE]: '#cfff70',    // Yellow for note
+    [TILE_TYPES.HAMMER]: '#964253',  // Brown for hammer
+    [TILE_TYPES.BISHOP_SPEAR]: '#964253',   // Brown for bishop spear
+    [TILE_TYPES.HORSE_ICON]: '#964253', // Brown for horse icon
+    [TILE_TYPES.SHRUBBERY]: '#3CA370', // Green for shrubbery
+    [TILE_TYPES.WELL]: '#EB564B',   // Brown/orange for well
+    [TILE_TYPES.DEADTREE]: '#964253',   // Brown for deadtree
+    [TILE_TYPES.PENNE]: '#4B5BAB',    // Blueviolet for Penne
+    [TILE_TYPES.SQUIG]: '#4B5BAB',   // Blueviolet for squig
+    [TILE_TYPES.NIB]: '#4B5BAB',     // Blueviolet for nib
+    [TILE_TYPES.RUNE]: '#4B5BAB',    // Blueviolet for rune
+    [TILE_TYPES.BOMB]: '#eb564b',  // Red for bomb
+    [TILE_TYPES.HEART]: '#FF6B97', // Hot pink for heart
+    [TILE_TYPES.SIGN]: '#964253', // Saddle brown for sign
+    [TILE_TYPES.PORT]: '#ffe478', // Same as floor, transparent
+    [TILE_TYPES.CRAYN]: '#4B5BAB', // Blueviolet for Crayn
+    [TILE_TYPES.FELT]: '#4B5BAB', // Blueviolet for Felt
+    [TILE_TYPES.FORGE]: '#4B5BAB', // Blueviolet for Forge
+    [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: '#EB564B', // Chocolate color for book
+    [TILE_TYPES.BOW]: '#964253', // Brown for bow
+    [TILE_TYPES.MARK]: '#f2a65e', // Gold for Mark
+    [TILE_TYPES.CISTERN]: '#7e7e8f', // Slate gray for cistern
+    [TILE_TYPES.SHACK]: '#964253', // Brown for shack
+    [TILE_TYPES.SHOVEL]: '#964253', // Brown for shovel
+    [TILE_TYPES.GOUGE]: '#4B5BAB', // Blueviolet for Gouge
+    [TILE_TYPES.PITFALL]: '#ffe478', // Same as floor, should be mostly invisible
+    [TILE_TYPES.TABLE]: '#964253', // Sienna for table fallback
+    [TILE_TYPES.FISCHERS_CUBE]: '#66FFE3', // Sky blue for Fischer's Cube
+    [TILE_TYPES.TELEPORT_BRANCH]: '#964253', // Brown for teleport branch
     // New NPC colors
-    [TILE_TYPES.ASTER]: '#9370DB', // Medium purple for Aster
-    [TILE_TYPES.BLOT]: '#2F4F4F', // Dark slate gray for Blot
-    [TILE_TYPES.BLOTTER]: '#D3D3D3', // Light gray for Blotter
-    [TILE_TYPES.BRUSH]: '#FF6347', // Tomato for Brush
-    [TILE_TYPES.BURIN]: '#A9A9A9', // Dark gray for Burin
-    [TILE_TYPES.CALAMUS]: '#8FBC8F', // Dark sea green for Calamus
-    [TILE_TYPES.CAP]: '#4682B4', // Steel blue for Cap
-    [TILE_TYPES.CINNABAR]: '#DC143C', // Crimson for Cinnabar
-    [TILE_TYPES.CROCK]: '#8B4513', // Saddle brown for Crock
-    [TILE_TYPES.FILUM]: '#F0E68C', // Khaki for Filum
-    [TILE_TYPES.FORK]: '#C0C0C0', // Silver for Fork
-    [TILE_TYPES.GEL]: '#7FFFD4', // Aquamarine for Gel
-    [TILE_TYPES.GOUACHE]: '#FF69B4', // Hot pink for Gouache
-    [TILE_TYPES.HANE]: '#FFE4E1', // Misty rose for Hane
-    [TILE_TYPES.KRAFT]: '#D2691E', // Chocolate for Kraft
-    [TILE_TYPES.MERKI]: '#BA55D3', // Medium orchid for Merki
-    [TILE_TYPES.MICRON]: '#000000', // Black for Micron
-    [TILE_TYPES.PENNI]: '#4169E1', // Royal blue for Penni
-    [TILE_TYPES.PLUMA]: '#FAEBD7', // Antique white for Pluma
-    [TILE_TYPES.PLUME]: '#DDA0DD', // Plum for Plume
-    [TILE_TYPES.QUILL]: '#F5DEB3', // Wheat for Quill
-    [TILE_TYPES.RADDLE]: '#CD5C5C', // Indian red for Raddle
-    [TILE_TYPES.SCRITCH]: '#696969', // Dim gray for Scritch
-    [TILE_TYPES.SILVER]: '#C0C0C0', // Silver for Silver
-    [TILE_TYPES.SINE]: '#00CED1', // Dark turquoise for Sine
-    [TILE_TYPES.SLATE]: '#708090', // Slate gray for Slate
-    [TILE_TYPES.SLICK]: '#20B2AA', // Light sea green for Slick
-    [TILE_TYPES.SLUG]: '#556B2F', // Dark olive green for Slug
-    [TILE_TYPES.STYLET]: '#B8860B', // Dark goldenrod for Stylet
-    [TILE_TYPES.VELLUM]: '#FFFAF0', // Floral white for Vellum
+    [TILE_TYPES.ASTER]: '#7E7E8F', // Medium purple for Aster
+    [TILE_TYPES.BLOT]: '#323E4F', // Dark slate gray for Blot
+    [TILE_TYPES.BLOTTER]: '#C2C2D1', // Light gray for Blotter
+    [TILE_TYPES.BRUSH]: '#EB564B', // Tomato for Brush
+    [TILE_TYPES.BURIN]: '#C2C2D1', // Dark gray for Burin
+    [TILE_TYPES.CALAMUS]: '#8FDE5D', // Dark sea green for Calamus
+    [TILE_TYPES.CAP]: '#4B5BAB', // Steel blue for Cap
+    [TILE_TYPES.CINNABAR]: '#B0305C', // Crimson for Cinnabar
+    [TILE_TYPES.CROCK]: '#964253', // Saddle brown for Crock
+    [TILE_TYPES.FILUM]: '#FFE478', // Khaki for Filum
+    [TILE_TYPES.FORK]: '#C2C2D1', // Silver for Fork
+    [TILE_TYPES.GEL]: '#66FFE3', // Aquamarine for Gel
+    [TILE_TYPES.GOUACHE]: '#FF6B97', // Hot pink for Gouache
+    [TILE_TYPES.HANE]: '#FFFFEB', // Misty rose for Hane
+    [TILE_TYPES.KRAFT]: '#EB564B', // Chocolate for Kraft
+    [TILE_TYPES.MERKI]: '#BD4882', // Medium orchid for Merki
+    [TILE_TYPES.MICRON]: '#272736', // Black for Micron
+    [TILE_TYPES.PENNI]: '#4B5BAB', // Royal blue for Penni
+    [TILE_TYPES.PLUMA]: '#FFFFEB', // Antique white for Pluma
+    [TILE_TYPES.PLUME]: '#C2C2D1', // Plum for Plume
+    [TILE_TYPES.QUILL]: '#FFB5B5', // Wheat for Quill
+    [TILE_TYPES.RADDLE]: '#BA6156', // Indian red for Raddle
+    [TILE_TYPES.SCRITCH]: '#606070', // Dim gray for Scritch
+    [TILE_TYPES.SILVER]: '#C2C2D1', // Silver for Silver
+    [TILE_TYPES.SINE]: '#4DA6FF', // Dark turquoise for Sine
+    [TILE_TYPES.SLATE]: '#7e7e8f', // Slate gray for Slate
+    [TILE_TYPES.SLICK]: '#3CA370', // Light sea green for Slick
+    [TILE_TYPES.SLUG]: '#43434F', // Dark olive green for Slug
+    [TILE_TYPES.STYLET]: '#BA6156', // Dark goldenrod for Stylet
+    [TILE_TYPES.VELLUM]: '#FFFFEB', // Floral white for Vellum
     // New gossip NPC colors
-    [TILE_TYPES.BIT]: '#FFB6C1', // Light pink for Bit
-    [TILE_TYPES.BLOCK]: '#A9A9A9', // Dark gray for Block
-    [TILE_TYPES.CALLI]: '#DA70D6', // Orchid for Calli
-    [TILE_TYPES.CAPYBARA]: '#D2B48C', // Tan for Capybara
-    [TILE_TYPES.FLEX]: '#4682B4', // Steel blue for Flex
-    [TILE_TYPES.GELINKA]: '#E0FFFF', // Light cyan for Gelinka
-    [TILE_TYPES.GOMA]: '#FFE4B5', // Moccasin for Goma
-    [TILE_TYPES.HIGHLIGHT]: '#FFFF00', // Yellow for Highlight
-    [TILE_TYPES.HOJA]: '#98FB98', // Pale green for Hoja
-    [TILE_TYPES.MIDORI]: '#00FF00', // Lime for Midori
-    [TILE_TYPES.NUB]: '#D2691E', // Chocolate for Nub
-    [TILE_TYPES.POLLY]: '#F0E68C', // Khaki for Polly
-    [TILE_TYPES.PULP]: '#DEB887', // Burlywood for Pulp
-    [TILE_TYPES.REDAKT]: '#DC143C', // Crimson for Redakt
-    [TILE_TYPES.SCRAPE]: '#A0522D', // Sienna for Scrape
-    [TILE_TYPES.SCROLL]: '#F5DEB3', // Wheat for Scroll
-    [TILE_TYPES.SHADE]: '#2F4F4F', // Dark slate gray for Shade
-    [TILE_TYPES.SKRIB]: '#4B0082', // Indigo for Skrib
-    [TILE_TYPES.STICK]: '#8B4513', // Saddle brown for Stick
-    [TILE_TYPES.WASH]: '#87CEEB', // Sky blue for Wash
+    [TILE_TYPES.BIT]: '#FFB5B5', // Light pink for Bit
+    [TILE_TYPES.BLOCK]: '#C2C2D1', // Dark gray for Block
+    [TILE_TYPES.CALLI]: '#FF6B97', // Orchid for Calli
+    [TILE_TYPES.CAPYBARA]: '#FFB570', // Tan for Capybara
+    [TILE_TYPES.FLEX]: '#4B5BAB', // Steel blue for Flex
+    [TILE_TYPES.GELINKA]: '#FFFFEB', // Light cyan for Gelinka
+    [TILE_TYPES.GOMA]: '#FFB5B5', // Moccasin for Goma
+    [TILE_TYPES.HIGHLIGHT]: '#cfff70', // Yellow for Highlight
+    [TILE_TYPES.HOJA]: '#8FDE5D', // Pale green for Hoja
+    [TILE_TYPES.MIDORI]: '#3ca370', // Lime for Midori
+    [TILE_TYPES.NUB]: '#EB564B', // Chocolate for Nub
+    [TILE_TYPES.POLLY]: '#FFE478', // Khaki for Polly
+    [TILE_TYPES.PULP]: '#FFB570', // Burlywood for Pulp
+    [TILE_TYPES.REDAKT]: '#B0305C', // Crimson for Redakt
+    [TILE_TYPES.SCRAPE]: '#964253', // Sienna for Scrape
+    [TILE_TYPES.SCROLL]: '#FFB5B5', // Wheat for Scroll
+    [TILE_TYPES.SHADE]: '#323E4F', // Dark slate gray for Shade
+    [TILE_TYPES.SKRIB]: '#5A265E', // Indigo for Skrib
+    [TILE_TYPES.STICK]: '#964253', // Saddle brown for Stick
+    [TILE_TYPES.WASH]: '#66FFE3', // Sky blue for Wash
     // New doodad colors
-    [TILE_TYPES.ANEMONE]: '#FF1493', // Deep pink for Anemone
-    [TILE_TYPES.BIG_TREE]: '#228B22', // Forest green for Big Tree
-    [TILE_TYPES.BLUE_SHROOM]: '#4169E1', // Royal blue for Blue Shroom
-    [TILE_TYPES.CACTUS]: '#32CD32', // Lime green for Cactus
-    [TILE_TYPES.CACTUS2]: '#9ACD32', // Yellow green for Cactus2
-    [TILE_TYPES.GREEN_SHROOM]: '#00FF00', // Green for Green Shroom
-    [TILE_TYPES.SMALL_EVERGREEN]: '#006400', // Dark green for Small Evergreen
-    [TILE_TYPES.URCHIN]: '#8B008B', // Dark magenta for Urchin
+    [TILE_TYPES.ANEMONE]: '#BD4882', // Deep pink for Anemone
+    [TILE_TYPES.BIG_TREE]: '#3CA370', // Forest green for Big Tree
+    [TILE_TYPES.BLUE_SHROOM]: '#4B5BAB', // Royal blue for Blue Shroom
+    [TILE_TYPES.CACTUS]: '#3CA370', // Lime green for Cactus
+    [TILE_TYPES.CACTUS2]: '#8FDE5D', // Yellow green for Cactus2
+    [TILE_TYPES.GREEN_SHROOM]: '#3ca370', // Green for Green Shroom
+    [TILE_TYPES.SMALL_EVERGREEN]: '#272736', // Dark green for Small Evergreen
+    [TILE_TYPES.URCHIN]: '#80366B', // Dark magenta for Urchin
     // Sign variant colors
-    [TILE_TYPES.SIGN_BLANK]: '#D2691E', // Chocolate for Blank Sign
-    [TILE_TYPES.SIGN_EATEN]: '#8B4513', // Saddle brown for Eaten Sign
-    [TILE_TYPES.SIGN_GOLD]: '#FFD700', // Gold for Gold Sign
-    [TILE_TYPES.SIGN_METAL]: '#C0C0C0', // Silver for Metal Sign
-    [TILE_TYPES.SIGN_METAL_ALT]: '#A9A9A9', // Dark gray for Metal Alt Sign
+    [TILE_TYPES.SIGN_BLANK]: '#EB564B', // Chocolate for Blank Sign
+    [TILE_TYPES.SIGN_EATEN]: '#964253', // Saddle brown for Eaten Sign
+    [TILE_TYPES.SIGN_GOLD]: '#f2a65e', // Gold for Gold Sign
+    [TILE_TYPES.SIGN_METAL]: '#C2C2D1', // Silver for Metal Sign
+    [TILE_TYPES.SIGN_METAL_ALT]: '#C2C2D1', // Dark gray for Metal Alt Sign
     // Individual enemy type colors
-    [TILE_TYPES.LIZARDY]: '#90EE90', // Light green for Lizardy
-    [TILE_TYPES.LIZARDO]: '#7CFC00', // Lawn green for Lizardo
-    [TILE_TYPES.LIZARDEAUX]: '#32CD32', // Lime green for Lizardeaux
-    [TILE_TYPES.ZARD]: '#00FF00', // Green for Zard
-    [TILE_TYPES.LIZORD]: '#228B22', // Forest green for Lizord
-    [TILE_TYPES.LAZERD]: '#006400', // Dark green for Lazerd
+    [TILE_TYPES.LIZARDY]: '#8FDE5D', // Light green for Lizardy
+    [TILE_TYPES.LIZARDO]: '#8FDE5D', // Lawn green for Lizardo
+    [TILE_TYPES.LIZARDEAUX]: '#3CA370', // Lime green for Lizardeaux
+    [TILE_TYPES.ZARD]: '#3ca370', // Green for Zard
+    [TILE_TYPES.LIZORD]: '#3CA370', // Forest green for Lizord
+    [TILE_TYPES.LAZERD]: '#272736', // Dark green for Lazerd
     // Black enemy variants
-    [TILE_TYPES.BLACK_LIZARDY]: '#4B4B4B', // Dark gray for Black Lizardy
-    [TILE_TYPES.BLACK_LIZARDO]: '#3C3C3C', // Darker gray for Black Lizardo
-    [TILE_TYPES.BLACK_LIZARDEAUX]: '#2D2D2D', // Even darker for Black Lizardeaux
-    [TILE_TYPES.BLACK_ZARD]: '#1E1E1E', // Very dark for Black Zard
-    [TILE_TYPES.BLACK_LIZORD]: '#0F0F0F', // Almost black for Black Lizord
-    [TILE_TYPES.BLACK_LAZERD]: '#000000' // Black for Black Lazerd
+    [TILE_TYPES.BLACK_LIZARDY]: '#43434F', // Dark gray for Black Lizardy
+    [TILE_TYPES.BLACK_LIZARDO]: '#43434F', // Darker gray for Black Lizardo
+    [TILE_TYPES.BLACK_LIZARDEAUX]: '#272736', // Even darker for Black Lizardeaux
+    [TILE_TYPES.BLACK_ZARD]: '#272736', // Very dark for Black Zard
+    [TILE_TYPES.BLACK_LIZORD]: '#272736', // Almost black for Black Lizord
+    [TILE_TYPES.BLACK_LAZERD]: '#272736' // Black for Black Lazerd
 };
 
 // Direction constants for exits and movements

@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/filum.png",
     "portrait": "characters/npcs/portraits/filumface.png",
     "tileType": "FILUM",
-    "portraitBackground": "#F0E68C"
+    "portraitBackground": "#c2c2d1"
   },
   "placement": {
     "zone": null,

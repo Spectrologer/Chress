@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/cap.png",
     "portrait": "characters/npcs/portraits/capface.png",
     "tileType": "CAP",
-    "portraitBackground": "#000080"
+    "portraitBackground": "#66ffe3"
   },
   "placement": {
     "zone": null,

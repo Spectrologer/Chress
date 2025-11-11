@@ -11,7 +11,7 @@
   "display": {
   "sprite": "characters/npcs/merchant/axolotl.png",
   "portrait": "characters/npcs/portraits/axolotlface.png",
-  "portraitBackground": "#8B4513",
+  "portraitBackground": "#272736",
     "tileType": "AXELOTL"
   },
   "placement": {

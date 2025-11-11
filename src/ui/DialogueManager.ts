@@ -118,7 +118,7 @@ export class DialogueManager {
         <div class="dialogue-text" style="text-align: left; font-size: 1.35em; line-height: 1.45; padding: 10px 15px; flex-grow: 1; overflow: auto; max-height: 100%;">${text}</div>
         </div>
         <div id="dialogue-button-container" style="text-align: center; margin-top: 15px; flex-shrink: 0; opacity: 0; pointer-events: none;">
-        <button class="dialogue-close-button" style="padding: 10px 20px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
+        <button class="dialogue-close-button" style="padding: 10px 20px; font-size: 1.2em; cursor: pointer; background-color: #964253; color: white; border: 2px solid #57294b; border-radius: 5px;">${btnText}</button>
         </div>
         </div>`;
         } else if (imgPath) {
@@ -138,14 +138,14 @@ export class DialogueManager {
                 <img src="${imgPath}" style="${imgStyle}">
                 <div class="dialogue-text" style="text-align:center;">${text}</div>
                 <div id="dialogue-button-container" style="text-align: center; margin-top: 20px;">
-                    <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
+                    <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #964253; color: white; border: 2px solid #57294b; border-radius: 5px;">${btnText}</button>
                 </div>`;
         } else {
             //textbox without image
             this.messageOverlay.innerHTML = /*html*/`
                 <div class="dialogue-text" style="text-align:center;">${text}</div>
                 <div id="dialogue-button-container" style="text-align: center; margin-top: 20px;">
-                    <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">${btnText}</button>
+                    <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #964253; color: white; border: 2px solid #57294b; border-radius: 5px;">${btnText}</button>
                 </div>`;
         }
 

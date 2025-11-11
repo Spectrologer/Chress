@@ -32,9 +32,9 @@ export class NPCRenderer extends BaseStructureRenderer {
             pixelX,
             pixelY,
             TILE_SIZE,
-            TILE_COLORS[tileType] || '#FFD700',
+            TILE_COLORS[tileType] || '#f2a65e',
             fallbackEmoji,
-            { font: '32px Arial', fillStyle: '#FFD700' },
+            { font: '32px Arial', fillStyle: '#f2a65e' },
             { fullTile: true }
         );
     }

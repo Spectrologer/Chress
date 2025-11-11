@@ -76,7 +76,7 @@ export class WallTileRenderer {
             if (RendererUtils.isImageLoaded(this.images, 'cobble')) {
                 ctx.drawImage(this.images.cobble, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
-                ctx.fillStyle = '#696969'; // Dark gray fallback
+                ctx.fillStyle = '#606070'; // Dark gray fallback
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
             return;
@@ -87,13 +87,13 @@ export class WallTileRenderer {
             if (RendererUtils.isImageLoaded(this.images, 'desert')) {
                 ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
-                ctx.fillStyle = '#DEB887';
+                ctx.fillStyle = '#FFB570';
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
             if (RendererUtils.isImageLoaded(this.images, 'succulent')) {
                 ctx.drawImage(this.images.succulent, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
-                ctx.fillStyle = '#228B22'; // Green for succulent fallback
+                ctx.fillStyle = '#3CA370'; // Green for succulent fallback
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
             return;
@@ -111,7 +111,7 @@ export class WallTileRenderer {
             if (RendererUtils.isImageLoaded(this.images, 'blocklily')) {
                 ctx.drawImage(this.images.blocklily, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
-                ctx.fillStyle = '#228B22'; // Green fallback
+                ctx.fillStyle = '#3CA370'; // Green fallback
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
             return;
@@ -129,7 +129,7 @@ export class WallTileRenderer {
             if (RendererUtils.isImageLoaded(this.images, 'stump')) {
                 ctx.drawImage(this.images.stump, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
-                ctx.fillStyle = '#8B4513'; // Brown fallback
+                ctx.fillStyle = '#964253'; // Brown fallback
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
             return;
@@ -215,7 +215,7 @@ export class WallTileRenderer {
         if (RendererUtils.isImageLoaded(this.images, 'clubwall')) {
             ctx.drawImage(this.images.clubwall, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
-            ctx.fillStyle = '#8B4513'; // Brown fallback
+            ctx.fillStyle = '#964253'; // Brown fallback
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
     }

@@ -14,8 +14,8 @@
 }
 #expandedMapOverlay.show { display: flex; }
 .expanded-map-container {
-    background: #fffbe9;
-    border: 4px solid #e2cfa2;
+    background: #ffffeb;
+    border: 4px solid #ffb5b5;
     border-radius: 18px;
     box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), 0 0 0 8px rgba(255,255,255,0.12) inset;
     padding: 18px;
@@ -32,7 +32,7 @@
     max-width: 700px;
     min-width: 240px;
     height: auto;
-    background: #e6d3a3;
+    background: #ffb5b5;
     border-radius: 10px;
     box-shadow: 0 2px 12px rgba(139, 69, 19, 0.18);
     cursor: grab;
@@ -46,8 +46,8 @@
     right: 24px;
     width: 36px;
     height: 36px;
-    background: #fffbe9;
-    border: 2px solid #8B4513;
+    background: #ffffeb;
+    border: 2px solid #964253;
     border-radius: 8px;
     padding: 4px;
     cursor: pointer;
@@ -59,7 +59,7 @@
 }
 
 .map-zlevel-btn:hover {
-    background: #f5f1d9;
+    background: #ffffeb;
     transform: scale(1.05);
     box-shadow: 0 3px 8px rgba(139, 69, 19, 0.4);
 }
@@ -93,13 +93,13 @@
     top: 24px;
     left: 24px;
     background: rgba(255, 251, 233, 0.95);
-    border: 2px solid #8B4513;
+    border: 2px solid #964253;
     border-radius: 8px;
     padding: 8px 16px;
     font-family: "Press Start 2P", cursive;
     font-size: 18px;
     font-weight: bold;
-    color: #2F1B14;
+    color: #272736;
     box-shadow: 0 2px 6px rgba(139, 69, 19, 0.3);
     pointer-events: none;
 }
@@ -129,10 +129,10 @@
 .start-overlay-box {
     /* Make the inner box fill the overlay area so it matches other overlays */
     position: relative; /* Needed for ::before pseudo-element */
-    background: linear-gradient(135deg, #F5E8E0, #EDD8CF, #E8D5D5);
+    background: linear-gradient(135deg, #FFFFEB, #FFB5B5, #FFB5B5);
     padding: clamp(8px, 2vh, 16px) clamp(10px, 2.5vw, 20px); /* scaled down padding to fit content */
     border-radius: 0; /* Remove rounded corners for frayed look */
-    box-shadow: 0 4px 24px rgba(139, 69, 90, 0.2), 0 1.5px 0 #D4A8B8;
+    box-shadow: 0 4px 24px rgba(139, 69, 90, 0.2), 0 1.5px 0 #FFB5B5;
     display: flex;
     flex-direction: column;
     align-items: center; /* horizontally center content */
@@ -142,7 +142,7 @@
     width: 100%;
     height: 100%;
     box-sizing: border-box; /* include borders/padding in size */
-    border: 3px solid #D4A8B8; /* Sonoran mauve border */
+    border: 3px solid #FFB5B5; /* Sonoran mauve border */
     overflow: hidden; /* prevent scrolling, scale content to fit */
 }
 
@@ -226,8 +226,8 @@
 
 body {
     font-family: 'Courier New', monospace;
-    background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #CD853F 100%);
-    color: #2F1B14;
+    background: linear-gradient(135deg, #964253 0%, #EB564B 50%, #E36956 100%);
+    color: #272736;
     position: relative;
     min-height: 100vh;
     height: 100vh;
@@ -320,9 +320,9 @@ body {
 /* Character Card Deluxe Parchment Theme */
 
 .modern-player-card {
-    background: #fffbe9;
+    background: #ffffeb;
     border-radius: 0px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 0 #e2cfa2;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 0 #ffb5b5;
     padding: 12px 8px;
     max-width: 380px;
     margin: 0 auto;
@@ -330,7 +330,7 @@ body {
     flex-direction: column;
     gap: clamp(8px, 1.5vw, 14px);
     position: relative;
-    border: 2px solid #e2cfa2;
+    border: 2px solid #ffb5b5;
 }
 
 /* Frayed parchment edges for the modern player card */
@@ -368,9 +368,9 @@ body {
 .start-button-native {
     font-family: 'Cinzel', serif;
     font-weight: 600;
-    color: #3A2418;
-    background: linear-gradient(135deg, #CD853F, #B8860B);
-    border: 2px solid #8B4513;
+    color: #272736;
+    background: linear-gradient(135deg, #E36956, #BA6156);
+    border: 2px solid #964253;
     padding: clamp(5px, 1.2vh, 8px) clamp(7px, 1.8vw, 12px);
     border-radius: 3px;
     box-shadow: 0 3px 8px rgba(139, 69, 19, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -433,62 +433,62 @@ body {
 
 /* Button color variations - Refined desert sunset palette */
 .start-btn-new {
-    background: linear-gradient(135deg, #E8B4A0, #D69B85);
-    border-color: #B07860;
+    background: linear-gradient(135deg, #EB564B, #BA6156);
+    border-color: #BA6156;
     box-shadow: 0 4px 12px rgba(176, 120, 96, 0.35);
 }
 .start-btn-new:hover:not(:disabled) {
-    background: linear-gradient(135deg, #ECC0AE, #DCA793);
+    background: linear-gradient(135deg, #FFB5B5, #E36956);
     box-shadow: 0 6px 16px rgba(176, 120, 96, 0.5);
 }
 
 .start-btn-continue {
-    background: linear-gradient(135deg, #B8A6C8, #9E8CB8);
-    border-color: #7D6A8F;
+    background: linear-gradient(135deg, #C2C2D1, #80366B);
+    border-color: #80366B;
     box-shadow: 0 4px 12px rgba(125, 106, 143, 0.35);
 }
 .start-btn-continue:hover:not(:disabled) {
-    background: linear-gradient(135deg, #C6B4D6, #AC9AC6);
+    background: linear-gradient(135deg, #C2C2D1, #BD4882);
     box-shadow: 0 6px 16px rgba(125, 106, 143, 0.5);
 }
 
 .start-btn-records {
-    background: linear-gradient(135deg, #E8C88C, #D4B478);
-    border-color: #B8985E;
+    background: linear-gradient(135deg, #FFE478, #F2A65E);
+    border-color: #BA6156;
     box-shadow: 0 4px 12px rgba(184, 152, 94, 0.35);
 }
 .start-btn-records:hover:not(:disabled) {
-    background: linear-gradient(135deg, #F0D49A, #DCC086);
+    background: linear-gradient(135deg, #FFE478, #F2A65E);
     box-shadow: 0 6px 16px rgba(184, 152, 94, 0.5);
 }
 
 .start-btn-config {
-    background: linear-gradient(135deg, #A8BCB8, #8FA8A4);
-    border-color: #6E8A86;
+    background: linear-gradient(135deg, #7E7E8F, #7E7E8F);
+    border-color: #606070;
     box-shadow: 0 4px 12px rgba(110, 138, 134, 0.35);
 }
 .start-btn-config:hover:not(:disabled) {
-    background: linear-gradient(135deg, #B6CAC6, #9DB6B2);
+    background: linear-gradient(135deg, #C2C2D1, #7E7E8F);
     box-shadow: 0 6px 16px rgba(110, 138, 134, 0.5);
 }
 
 .start-btn-editor {
-    background: linear-gradient(135deg, #9A8A7A, #867666);
-    border-color: #6A5A4A;
+    background: linear-gradient(135deg, #7E7E8F, #7E7E8F);
+    border-color: #57294B;
     box-shadow: 0 4px 12px rgba(106, 90, 74, 0.35);
 }
 .start-btn-editor:hover:not(:disabled) {
-    background: linear-gradient(135deg, #A89888, #948474);
+    background: linear-gradient(135deg, #C2C2D1, #7E7E8F);
     box-shadow: 0 6px 16px rgba(106, 90, 74, 0.5);
 }
 
 .start-btn-character {
-    background: linear-gradient(135deg, #A68A9E, #92768A);
-    border-color: #725E70;
+    background: linear-gradient(135deg, #80366B, #80366B);
+    border-color: #73275C;
     box-shadow: 0 4px 12px rgba(114, 94, 112, 0.35);
 }
 .start-btn-character:hover:not(:disabled) {
-    background: linear-gradient(135deg, #B498AC, #A08498);
+    background: linear-gradient(135deg, #BD4882, #80366B);
     box-shadow: 0 6px 16px rgba(114, 94, 112, 0.5);
 }
 
@@ -573,7 +573,7 @@ body {
     /* Responsive large title: min 18px, preferred 5.5vw, max 34px */
     font-size: clamp(18px, 5.5vw, 34px);
     font-weight: 800;
-    color: #6B4858;
+    color: #57294B;
     text-align: center;
     line-height: 1.05;
     margin: 0 0 clamp(4px, 1vh, 8px) 0;
@@ -643,7 +643,7 @@ body {
     font-size: clamp(14px, 3.2vw, 20px);
     font-weight: 700;
     opacity: 0.95;
-    color: #8B6B7A;
+    color: #7E7E8F;
     position: relative;
     z-index: 1;
 }
@@ -652,14 +652,14 @@ body {
 #overlayMusicToggleWrap input[type="checkbox"] {
     width: 16px;
     height: 16px;
-    accent-color: #4a8a59;
+    accent-color: #3ca370;
 }
 
 .menu-button {
     width: 30px;
     height: 30px;
     background-color: rgba(245, 222, 179, 0.7);
-    border: 1px solid #B8860B;
+    border: 1px solid #BA6156;
     border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -677,7 +677,7 @@ body {
 }
 
 #toggle-attack-range-button.active {
-    background-color: #a56a43;
+    background-color: #ba6156;
     border-color: #fff;
 }
 .player-header {
@@ -716,7 +716,7 @@ body {
     width: 80%;
     height: 80%;
     object-fit: contain;
-    background-color: #000000;
+    background-color: #272736;
 }
 
 .player-info {
@@ -729,15 +729,15 @@ body {
     font-family: 'MedievalSharp', serif;
     font-size: 1.8em;
     font-weight: 700;
-    color: #7a5c2e;
+    color: #964253;
     line-height: 1.2;
     text-align: center;
     padding-right: 8px;
-    border-right: 2px solid #e2cfa2;
+    border-right: 2px solid #ffb5b5;
 }
 .player-level {
     font-size: 1em;
-    color: #b89b5e;
+    color: #ba6156;
     font-family: 'Courier New', monospace;
 }
 .player-health {
@@ -769,7 +769,7 @@ body {
     /* background: rgba(0,0,0,0.05); */
     /* padding: 4px 8px; */
     /* border-radius: 6px; */
-    /* border: 1px solid #e2cfa2; */
+    /* border: 1px solid #ffb5b5; */
 }
 .points-icon {
     width: 32px;
@@ -780,7 +780,7 @@ body {
     font-family: 'Courier New', monospace;
     font-size: 1.4em;
     font-weight: bold;
-    color: #7a5c2e;
+    color: #964253;
     min-width: 2ch; /* Reserve space for at least 2 characters */
     text-align: left;
 }
@@ -820,7 +820,7 @@ body {
     flex-shrink: 0; /* Prevent the label from shrinking */
     text-align: left;
     font-weight: bold;
-    color: #7a5c2e;
+    color: #964253;
     font-size: 1.5em; /* Increased font size */
     font-variant: small-caps;
     padding-bottom: 2px; /* Nudge text slightly higher */
@@ -828,9 +828,9 @@ body {
 .bar-track {
     flex: 1;
     height: 16px;
-    background: #e6d3a3;
+    background: #ffb5b5;
     border-radius: 2px;
-    border: 1px solid #e2cfa2;
+    border: 1px solid #ffb5b5;
     overflow: hidden;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
 }
@@ -841,11 +841,11 @@ body {
     transition: width 0.3s ease-in-out;
 }
 #hunger-progress {
-    background-color: #d84315;
+    background-color: #eb564b;
     background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px);
 }
 #thirst-progress {
-    background-color: #1976d2;
+    background-color: #4b5bab;
     background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px);
 }
 .player-details {
@@ -882,7 +882,7 @@ body {
     font-family: 'MedievalSharp', serif;
     font-size: 1.1em;
     font-weight: bold;
-    color: #7a5c2e;
+    color: #964253;
     white-space: nowrap; /* Prevent text from wrapping */
 }
 
@@ -896,8 +896,8 @@ body {
 .inventory-slot {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: #f5e6c0 url('/assets/ui/cell.png') no-repeat center / contain;
-    border: 1px solid #e2cfa2;
+    background: #ffe478 url('/assets/ui/cell.png') no-repeat center / contain;
+    border: 1px solid #ffb5b5;
     border-radius: 6px;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
@@ -926,14 +926,14 @@ body {
     .player-map canvas {
         width: 30px;
         height: 30px;
-        border: 1px solid #e2cfa2;
-        background: #f5e6c0;
+        border: 1px solid #ffb5b5;
+        background: #ffe478;
     }
 
 .map-info {
     font-size: 1.5em;
     text-align: center;
-    color: #7a5c2e;
+    color: #964253;
     font-family: 'Courier New', monospace;
     margin-top: 12px;
 }
@@ -950,7 +950,7 @@ body {
 .character-hearts {
     font-size: 2em;
     letter-spacing: -5px;
-    color: #C0392B; /* A richer red */
+    color: #B0305C; /* A richer red */
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
@@ -958,9 +958,9 @@ body {
     font-family: 'MedievalSharp', serif;
     font-weight: 900; /* Bolder */
     font-size: 24px;
-    color: #3A2418; /* Darker, richer brown */
+    color: #272736; /* Darker, richer brown */
     text-shadow:
-        1px 1px 0px #D2B48C, /* Highlight */
+        1px 1px 0px #FFB570, /* Highlight */
         2px 2px 3px rgba(0, 0, 0, 0.6); /* Deeper shadow */
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -970,7 +970,7 @@ body {
     font-family: 'Courier New', monospace;
     font-size: 1.1em;
     font-weight: bold;
-    color: #4A3228;
+    color: #43434F;
     background: rgba(139, 69, 19, 0.1);
     padding: 2px 8px;
     border-radius: 4px;
@@ -1042,11 +1042,11 @@ body {
 .stats-menu h4, .inventory-menu h4 {
     margin: 0 0 5px 0;
     font-size: 1.5em;
-    color: #3A2418;
+    color: #272736;
     text-align: center;
     font-weight: 900;
     font-family: 'Cinzel', serif;
-    text-shadow: 1px 1px 1px #D2B48C;
+    text-shadow: 1px 1px 1px #FFB570;
 }
 
 .stats-grid {
@@ -1064,7 +1064,7 @@ body {
     border-radius: 6px;
     padding: 0;
     font-size: 3em;
-    color: #3A2418;
+    color: #272736;
     text-align: center;
     font-weight: bold;
     display: flex;
@@ -1082,7 +1082,7 @@ body {
             rgba(139, 69, 19, 0.2) 10px,
             rgba(139, 69, 19, 0.3) 10px,
             rgba(139, 69, 19, 0.3) 20px);
-    border: 2px solid #8B4513;
+    border: 2px solid #964253;
     border-radius: 6px;
     min-height: 140px;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
@@ -1121,22 +1121,22 @@ body {
 
 .uses-indicator.enabled {
     background: rgba(255,255,255,0.5);
-    color: #111111;
+    color: #272736;
 }
 
 .uses-indicator.disabled {
     background: rgba(255,255,255,0.35);
-    color: #555555;
+    color: #43434F;
 }
 
 .inventory-tooltip {
     position: absolute;
-    background: #fffbe9;
-    border: 2px solid #e2cfa2;
+    background: #ffffeb;
+    border: 2px solid #ffb5b5;
     border-radius: 6px;
     padding: 8px 12px;
     font-size: 0.9em;
-    color: #7a5c2e;
+    color: #964253;
     text-align: center;
     white-space: nowrap;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -1253,7 +1253,7 @@ body {
 }
 
 .stat-label {
-    color: #3A2418;
+    color: #272736;
     width: 24px;
     text-align: center;
     font-size: 1.5em;
@@ -1265,7 +1265,7 @@ body {
     flex: 0.5;
     height: 10px; /* slightly reduced bar height */
     background: rgba(0, 0, 0, 0.3); /* Darker background for contrast */
-    border: 1px solid #61382B;
+    border: 1px solid #57294B;
     border-radius: 8px;
     overflow: hidden;
     position: relative;
@@ -1292,11 +1292,11 @@ body {
 }
 
 .health-fill {
-    background-image: repeating-linear-gradient(-45deg, #D32F2F, #D32F2F 5px, #FF5252 5px, #FF5252 10px);
+    background-image: repeating-linear-gradient(-45deg, #EB564B, #EB564B 5px, #EB564B 5px, #EB564B 10px);
 }
 
 .mana-fill {
-    background-image: repeating-linear-gradient(-45deg, #1976D2, #1976D2 5px, #448AFF 5px, #448AFF 10px);
+    background-image: repeating-linear-gradient(-45deg, #4B5BAB, #4B5BAB 5px, #4B5BAB 5px, #4B5BAB 10px);
 }
 
 h1 {
@@ -1304,13 +1304,13 @@ h1 {
     font-size: 4.5em;
     font-weight: 900;
     margin: 0 0 30px 0;
-    color: #F4E4BC;
+    color: #FFE478;
     text-shadow: 
         4px 4px 8px rgba(139, 69, 19, 0.9), 
         0 0 20px rgba(255, 140, 0, 0.6),
         0 0 40px rgba(255, 140, 0, 0.3),
-        2px 2px 0px #8B4513,
-        -2px -2px 0px #CD853F;
+        2px 2px 0px #964253,
+        -2px -2px 0px #E36956;
     font-weight: bold;
     text-align: center;
     letter-spacing: 4px;
@@ -1342,7 +1342,7 @@ h1 {
         radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 30%),
         radial-gradient(circle at 80% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 25%),
         radial-gradient(circle at 40% 60%, rgba(160, 82, 45, 0.08) 0%, transparent 20%),
-        linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
+        linear-gradient(135deg, #FFB5B5 0%, #FFB570 30%, #FFB570 70%, #BA6156 100%);
     border: none;
     border-radius: 0;
     padding: 15px;
@@ -1423,7 +1423,7 @@ h1 {
 }
 
 #zoneMap {
-    border: 2px solid #8B4513;
+    border: 2px solid #964253;
     background: 
         /* Aged parchment texture */
         radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 15%),
@@ -1431,17 +1431,17 @@ h1 {
         radial-gradient(circle at 60% 80%, rgba(205, 133, 63, 0.1) 0%, transparent 18%),
         radial-gradient(circle at 30% 70%, rgba(139, 69, 19, 0.08) 0%, transparent 10%),
         /* Main parchment gradient */
-        linear-gradient(135deg, #F5DEB3 0%, #F0E68C 25%, #DEB887 50%, #D2B48C 75%, #C19A6B 100%);
+        linear-gradient(135deg, #FFB5B5 0%, #FFE478 25%, #FFB570 50%, #FFB570 75%, #BA6156 100%);
     display: block;
     width: 160px;
     height: 160px;
     position: relative;
     box-shadow:
         /* Multiple border effect */
-        0 0 0 1px #A0522D,
-        0 0 0 3px #D2691E,
-        0 0 0 5px #CD853F,
-        0 0 0 6px #8B4513,
+        0 0 0 1px #964253,
+        0 0 0 3px #EB564B,
+        0 0 0 5px #E36956,
+        0 0 0 6px #964253,
         /* Inner aging shadow */
         inset 0 0 30px rgba(139, 69, 19, 0.2),
         inset 0 0 50px rgba(160, 82, 45, 0.1),
@@ -1464,7 +1464,7 @@ h1 {
 .minimap-info p {
     margin: 4px 0;
     font-size: 1.2em;
-    color: #000000;
+    color: #272736;
     font-weight: bold;
     text-shadow: none;
     text-transform: uppercase;
@@ -1473,9 +1473,9 @@ h1 {
 }
 
 #gameCanvas {
-    border: 3px solid #B8860B;
+    border: 3px solid #BA6156;
     border-radius: 8px;
-    background-color: #F5DEB3;
+    background-color: #FFB5B5;
     display: block;
     margin: 0 auto;
     width: 100%;
@@ -1755,13 +1755,13 @@ h1 {
 .message-box {
     margin: 10px 0;
     padding: 10px 15px;
-    background: #fffbe9;
-    border: 2px solid #e2cfa2;
+    background: #ffffeb;
+    border: 2px solid #ffb5b5;
     border-radius: 8px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.12);
     font-family: 'Cinzel', serif;
     font-size: 1.2em;
-    color: #7a5c2e;
+    color: #964253;
     text-align: center;
     justify-content: center;
     display: flex;
@@ -1786,11 +1786,11 @@ h1 {
     height: 100%;
     z-index: 100; /* Above other content in the player card */
     padding: 16px;
-    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
-    border: 3px solid #B8860B;
+    background: linear-gradient(135deg, #FFB5B5 0%, #FFB570 30%, #FFB570 70%, #BA6156 100%);
+    border: 3px solid #BA6156;
     box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
     font-family: 'Cinzel', serif;
-    color: #3A2418;
+    color: #272736;
     text-align: center;    
     opacity: 0;
     display: block; /* Ensure it's displayed */
@@ -1902,7 +1902,7 @@ h1 {
 .barter-npc-message.dialogue-text,
 .barter-npc-message {
     font-family: 'Cinzel', serif;
-    color: #3A2418;
+    color: #272736;
     font-size: 1.35em;
     line-height: 1.45;
     font-weight: 700;
@@ -1970,13 +1970,13 @@ h1 {
 
 .note-card {
     pointer-events: auto; /* Allow clicks if needed */
-    background: #fffdf6;
-    border: 2px solid #d1b089;
+    background: #ffffeb;
+    border: 2px solid #ffb570;
     padding: 10px 12px;
     border-radius: 8px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.16);
     font-family: 'Cinzel', serif;
-    color: #4a2f1a;
+    color: #272736;
     display: flex;
     gap: 10px;
     align-items: center;
@@ -2019,8 +2019,8 @@ h1 {
     z-index: 1100;
     margin: 0;
     padding: 12px 20px;
-    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
-    border: 3px solid #B8860B;
+    background: linear-gradient(135deg, #FFB5B5 0%, #FFB570 30%, #FFB570 70%, #BA6156 100%);
+    border: 3px solid #BA6156;
     border-radius: 8px;
     box-shadow:
         0 8px 32px rgba(139, 69, 19, 0.4),
@@ -2029,7 +2029,7 @@ h1 {
     font-family: 'Cinzel', serif;
     font-size: 1.4em;
     font-weight: 700;
-    color: #3A2418;
+    color: #272736;
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -2068,8 +2068,8 @@ h1 {
 }
 
 .game-over-box {
-    background: #fffbe9;
-    border: 3px solid #e2cfa2;
+    background: #ffffeb;
+    border: 3px solid #ffb5b5;
     border-radius: 12px;
     padding: 30px;
     text-align: center;
@@ -2081,14 +2081,14 @@ h1 {
 }
 
 .game-over-box h1 {
-    color: #7a5c2e;
+    color: #964253;
     font-size: 2.5em;
     margin-bottom: 20px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .game-over-box p {
-    color: #5a4223;
+    color: #57294b;
     font-size: 1.2em;
     margin-bottom: 30px;
 }
@@ -2098,9 +2098,9 @@ h1 {
     display: inline-flex;
     align-items: center;
     gap: 15px; /* slightly increased gap with larger size */
-    background: linear-gradient(135deg, #CD853F, #B8860B);
-    border: 2px solid #8B4513;
-    color: #3A2418;
+    background: linear-gradient(135deg, #E36956, #BA6156);
+    border: 2px solid #964253;
+    color: #272736;
     padding: 15px 27px; /* ~1.5x larger */
     font-family: 'Cinzel', serif;
     font-size: 1.575em; /* ~1.5x of 1.05em */
@@ -2122,7 +2122,7 @@ h1 {
 
 .restart-button:hover {
     transform: translateY(-2px) scale(1.02);
-    background: linear-gradient(135deg, #B8860B, #CD853F);
+    background: linear-gradient(135deg, #BA6156, #E36956);
     box-shadow: 0 10px 26px rgba(139, 69, 19, 0.45);
 }
 
@@ -2152,8 +2152,8 @@ h1 {
     height: 95%;
     max-width: 1200px;
     max-height: 900px;
-    background: #fffbe9;
-    border: 3px solid #e2cfa2;
+    background: #ffffeb;
+    border: 3px solid #ffb5b5;
     border-radius: 8px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     display: flex;
@@ -2167,7 +2167,7 @@ h1 {
     right: 10px;
     background: #D4A5A5;
     border: 2px solid #A06B6B;
-    color: #3A2418;
+    color: #272736;
     font-size: 24px;
     width: 36px;
     height: 36px;
@@ -2210,7 +2210,7 @@ h1 {
     gap: 8px;
     background: linear-gradient(135deg, #D4A5A5, #C48B8B);
     border: 2px solid #A06B6B;
-    color: #3A2418;
+    color: #272736;
     padding: 10px 20px;
     font-family: 'Cinzel', serif;
     font-size: 1em;
@@ -2237,7 +2237,7 @@ h1 {
     background: linear-gradient(135deg, #C4A8C4, #A88BA8);
     border: 2px solid #856B85;
     border-radius: 8px;
-    color: #3A2418;
+    color: #272736;
     cursor: pointer;
     font-family: 'Cinzel', serif;
     font-size: 1em;
@@ -2278,14 +2278,14 @@ h1 {
     margin-bottom: 6px; /* Space below button */
     background: rgba(245, 222, 179, 0.8); /* Semi-transparent parchment */
     backdrop-filter: blur(2px);
-    border: 1px solid #B8860B;
+    border: 1px solid #BA6156;
     border-radius: 6px;
     box-shadow: 0 2px 6px rgba(139, 69, 19, 0.4);
     padding: 6px 12px; /* Increased padding */
     font-family: 'Cinzel', serif;
     font-size: 1.3em; /* Increased font size */
     font-weight: bold;
-    color: #8B4513;
+    color: #964253;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     z-index: 5;
@@ -2305,7 +2305,7 @@ h1 {
     background:
         radial-gradient(circle at 20% 20%, rgba(160, 82, 45, 0.2) 0%, transparent 30%),
         radial-gradient(circle at 80% 80%, rgba(160, 82, 45, 0.15) 0%, transparent 25%),
-        linear-gradient(135deg, #CD853F 0%, #B8860B 30%, #A0522D 70%, #8B4513 100%);
+        linear-gradient(135deg, #E36956 0%, #BA6156 30%, #964253 70%, #964253 100%);
     transform: translateY(-1px);
     box-shadow:
         0 4px 12px rgba(139, 69, 19, 0.5),
@@ -2332,7 +2332,7 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
+    background: linear-gradient(135deg, #FFB5B5 0%, #FFB570 30%, #FFB570 70%, #BA6156 100%);
     display: none; /* Hidden by default */
     align-items: center;
     justify-content: center;
@@ -2342,7 +2342,7 @@ h1 {
     /* Disable fade for message log overlay */
     transition: none;
     box-shadow: 0 8px 32px rgba(139, 69, 19, 0.4), inset 0 0 20px rgba(139, 69, 19, 0.1);
-    border: 3px solid #B8860B;
+    border: 3px solid #BA6156;
 }
 
 .message-log-overlay.show {
@@ -2351,8 +2351,8 @@ h1 {
 }
 
 .message-log-box {
-    background: #fffbe9;
-    border: 3px solid #e2cfa2;
+    background: #ffffeb;
+    border: 3px solid #ffb5b5;
     border-radius: 12px;
     padding: 12px;
     text-align: center;
@@ -2371,7 +2371,7 @@ h1 {
 }
 
 .message-log-box h2 {
-    color: #7a5c2e;
+    color: #964253;
     font-size: 2em;
     margin-bottom: 15px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
@@ -2386,7 +2386,7 @@ h1 {
     height: 34px;
     border-radius: 50%;
     background: rgba(184, 139, 74, 0.95);
-    color: #fffbe9;
+    color: #ffffeb;
     font-size: 20px;
     line-height: 34px;
     border: none;
@@ -2405,17 +2405,17 @@ h1 {
     flex: 1 1 auto;
     overflow-y: auto;
     text-align: left;
-    color: #5a4223;
+    color: #57294b;
     font-size: 1.3em;
     padding: 8px;
-    background: #f5e6c0;
+    background: #ffe478;
     border-radius: 6px;
     margin-bottom: 20px;
 }
 
 .message-log-content p {
     margin-bottom: 10px;
-    border-bottom: 1px solid #e2cfa2;
+    border-bottom: 1px solid #ffb5b5;
     padding-bottom: 10px;
 }
 
@@ -2457,8 +2457,8 @@ h1 {
 }
 
 .barter-window {
-    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
-    border: 3px solid #e2cfa2;
+    background: linear-gradient(135deg, #FFB5B5 0%, #FFB570 30%, #FFB570 70%, #BA6156 100%);
+    border: 3px solid #ffb5b5;
     border-radius: 0;
     padding: 20px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.12);
@@ -2507,7 +2507,7 @@ h1 {
 }
 
 .barter-window h2 {
-    color: #7a5c2e;
+    color: #964253;
     font-size: 2.2em;
     font-weight: 900;
     margin: 0;
@@ -2575,7 +2575,7 @@ h1 {
 }
 
 .barter-window p {
-    color: #3A2418;
+    color: #272736;
     font-size: 1.4em;
     margin: 5px 0 0 0;
     flex-grow: 1;
@@ -2624,7 +2624,7 @@ h1 {
     font-family: 'Courier New', monospace;
     text-align: left;
     line-height: 1.4;
-    color: #5a4223;
+    color: #57294b;
 }
 
 .barter-exchange {
@@ -2645,7 +2645,7 @@ h1 {
     font-family: 'Cinzel', serif;
     font-weight: 700;
     font-size: 1.2em;
-    color: #7a5c2e;
+    color: #964253;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -2660,7 +2660,7 @@ h1 {
 .barter-item-label {
     font-size: 1em;
     font-weight: bold;
-    color: #5a4223;
+    color: #57294b;
     text-align: center;
     font-family: 'Courier New', monospace;
     word-wrap: break-word;
@@ -2669,16 +2669,16 @@ h1 {
 
 .barter-exchange-arrow {
     font-size: 2.4em; /* slightly reduced arrow size to balance smaller icons */
-    color: #7a5c2e;
+    color: #964253;
     font-weight: 900;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     padding-bottom: 6px; /* Align with images */
 }
 
 .barter-window button {
-    background: linear-gradient(135deg, #CD853F, #B8860B);
-    border: 2px solid #8B4513;
-    color: #3A2418;
+    background: linear-gradient(135deg, #E36956, #BA6156);
+    border: 2px solid #964253;
+    color: #272736;
     padding: 12px 24px;
     font-family: 'Cinzel', serif;
     font-size: 1.1em;
@@ -2692,16 +2692,16 @@ h1 {
 }
 
 .barter-window button:hover:not(:disabled) {
-    background: linear-gradient(135deg, #B8860B, #CD853F);
+    background: linear-gradient(135deg, #BA6156, #E36956);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5);
 }
 
 .barter-window button.text-button {
     background-image: none !important;
-    background: linear-gradient(135deg, #CD853F, #B8860B) !important;
-    border: 2px solid #8B4513 !important;
-    color: #3A2418 !important;
+    background: linear-gradient(135deg, #E36956, #BA6156) !important;
+    border: 2px solid #964253 !important;
+    color: #272736 !important;
     padding: 12px 24px !important;
     width: auto !important;
     height: auto !important;
@@ -2709,7 +2709,7 @@ h1 {
 }
 
 .barter-window button.text-button:hover:not(:disabled) {
-    background: linear-gradient(135deg, #B8860B, #CD853F) !important;
+    background: linear-gradient(135deg, #BA6156, #E36956) !important;
     transform: translateY(-2px) !important;
     box-shadow: 0 6px 16px rgba(139, 69, 19, 0.5) !important;
 }
@@ -2783,12 +2783,12 @@ h1 {
 
 
 .stats-panel {
-    background: linear-gradient(135deg, #F5E8E0, #EDD8CF, #E8D5D5);
-    border: 3px solid #D4A8B8; /* Sonoran mauve border */
+    background: linear-gradient(135deg, #FFFFEB, #FFB5B5, #FFB5B5);
+    border: 3px solid #FFB5B5; /* Sonoran mauve border */
     border-radius: 0;
     /* Use minimal padding so the panel occupies as much space as possible */
     padding: 15px;
-    box-shadow: 0 4px 24px rgba(139, 69, 90, 0.2), 0 1.5px 0 #D4A8B8;
+    box-shadow: 0 4px 24px rgba(139, 69, 90, 0.2), 0 1.5px 0 #FFB5B5;
     font-family: 'Cinzel', serif;
     width: 100%;
     height: 100%;
@@ -2889,7 +2889,7 @@ h1 {
     top: 10px;
     background: linear-gradient(135deg, #E8D5C3, #D4C4AA);
     border: 2px solid #C9AB76;
-    color: #5a4223;
+    color: #57294b;
     padding: 6px 12px;
     font-weight: 600;
     font-family: 'Cinzel', serif;
@@ -2915,7 +2915,7 @@ h1 {
     top: 8px;
     background: linear-gradient(135deg, #E8D5C3, #D4C4AA);
     border: 2px solid #C9AB76;
-    color: #5a4223;
+    color: #57294b;
     padding: 6px 12px;
     font-weight: 600;
     font-family: 'Cinzel', serif;
@@ -2941,7 +2941,7 @@ h1 {
     /* Muted parchment tones to match app theme */
     background: linear-gradient(135deg, #EFE6D1, #E4D3AF);
     border: 2px solid #C9AB76;
-    color: #5a4223;
+    color: #57294b;
     padding: 6px 8px; /* reduce interior padding so icon appears larger */
     font-weight: 700;
     border-radius: 10px;
@@ -2995,7 +2995,7 @@ h1 {
     justify-content: space-between;
     padding: 12px 16px;
     font-size: 1.2em;
-    color: #5a4223;
+    color: #57294b;
     gap: 16px;
     width: 100%;
     box-sizing: border-box;
@@ -3006,7 +3006,7 @@ h1 {
 
 .config-item .stat-label {
     font-weight: bold;
-    color: #7a5c2e;
+    color: #964253;
     font-size: 1.1em;
     flex: 1;
     text-align: left;
@@ -3017,7 +3017,7 @@ h1 {
 }
 
 .stats-panel h2 {
-    color: #7a5c2e;
+    color: #964253;
     font-size: 1.6em;
     font-weight: 900;
     margin: 0;
@@ -3065,13 +3065,13 @@ h1 {
     justify-content: flex-start;
     align-items: center;
     font-size: 1.5em;
-    color: #5a4223;
+    color: #57294b;
     gap: 8px; /* Add a small gap between label and value */
 }
 
 .stats-list .stat-label {
     font-weight: bold;
-    color: #7a5c2e;
+    color: #964253;
     /* Allow label wrapping if space is tight on mobile */
     white-space: normal;
 }
@@ -3117,8 +3117,8 @@ h1 {
     right: 0;
     bottom: 0;
     /* Sonoran reddish color when OFF - terracotta/rust */
-    background: linear-gradient(135deg, #C1554D, #A84032);
-    border: 2px solid #8B3429;
+    background: linear-gradient(135deg, #ba6156, #964253);
+    border: 2px solid #57294b;
     transition: 0.3s;
     border-radius: 6px;
     z-index: 1;
@@ -3136,18 +3136,18 @@ h1 {
     top: 50%;
     transform: translateY(-50%);
     /* Parchment colored knob */
-    background: linear-gradient(135deg, #F5DEB3, #DEB887);
+    background: linear-gradient(135deg, #FFB5B5, #FFB570);
     transition: 0.3s ease;
     border-radius: 4px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    border: 1px solid #C19A6B;
+    border: 1px solid #BA6156;
     z-index: 3;
 }
 
 input:checked + .toggle-slider {
     /* Turquoise when ON */
-    background: linear-gradient(135deg, #48D1CC, #40C4BF);
-    border-color: #30A09B;
+    background: linear-gradient(135deg, #66ffe3, #4da6ff);
+    border-color: #3ca370;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 2px 8px rgba(72, 209, 204, 0.4);
 }
 
@@ -3164,7 +3164,7 @@ input:checked + .toggle-slider::before {
     top: 50%;
     transform: translateY(-50%);
     font-size: 14px;
-    color: #F5DEB3;
+    color: #FFB5B5;
     font-weight: 900;
     letter-spacing: 0.8px;
     opacity: 1;
@@ -3181,7 +3181,7 @@ input:checked + .toggle-slider::after {
     content: "ON";
     left: 10px;
     right: auto;
-    color: #FFFFFF;
+    color: #FFFFEB;
     font-size: 14px;
     font-weight: 900;
     text-shadow:
@@ -3191,7 +3191,7 @@ input:checked + .toggle-slider::after {
 }
 
 .stats-panel p {
-    color: #3A2418;
+    color: #272736;
     font-size: 1.4em;
     margin: 5px 0 0 0;
     flex-grow: 1;
@@ -3223,8 +3223,8 @@ input:checked + .toggle-slider::after {
 }
 
 .statue-window {
-    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 30%, #D2B48C 70%, #C19A6B 100%);
-    border: 3px solid #e2cfa2;
+    background: linear-gradient(135deg, #FFB5B5 0%, #FFB570 30%, #FFB570 70%, #BA6156 100%);
+    border: 3px solid #ffb5b5;
     border-radius: 0;
     padding: 20px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.12);
@@ -3256,7 +3256,7 @@ input:checked + .toggle-slider::after {
 }
 
 .statue-window h2 {
-    color: #7a5c2e;
+    color: #964253;
     font-size: 2.2em;
     font-weight: 900;
     margin: 0;
@@ -3305,7 +3305,7 @@ input:checked + .toggle-slider::after {
 }
 
 .statue-window p {
-    color: #3A2418;
+    color: #272736;
     font-size: 1.4em;
     margin: 5px 0 0 0;
     flex-grow: 1;
@@ -3320,9 +3320,9 @@ input:checked + .toggle-slider::after {
 }
 
 .statue-window button {
-    background: linear-gradient(135deg, #CD853F, #B8860B);
-    border: 2px solid #8B4513;
-    color: #3A2418;
+    background: linear-gradient(135deg, #E36956, #BA6156);
+    border: 2px solid #964253;
+    color: #272736;
     padding: 12px 24px;
     font-family: 'Cinzel', serif;
     font-size: 1.1em;
@@ -3398,19 +3398,19 @@ margin: 0 auto 10px auto;
 
 /* NPC Portrait Matte Colors */
 /* Tutorial NPCs - Warm, educational colors */
-.npc-category-tutorial .barter-portrait.matte-1 { background-color: #FFE4B5; } /* Moccasin */
+.npc-category-tutorial .barter-portrait.matte-1 { background-color: #FFB5B5; } /* Moccasin */
 .npc-category-tutorial .barter-portrait.matte-2 { background-color: #FFDAB9; } /* Peach Puff */
-.npc-category-tutorial .barter-portrait.matte-3 { background-color: #F0E68C; } /* Khaki */
-.npc-category-tutorial .barter-portrait.matte-4 { background-color: #DDA0DD; } /* Plum */
+.npc-category-tutorial .barter-portrait.matte-3 { background-color: #FFE478; } /* Khaki */
+.npc-category-tutorial .barter-portrait.matte-4 { background-color: #C2C2D1; } /* Plum */
 
 /* Merchant NPCs - Cool, business-like colors */
-.npc-category-merchant .barter-portrait.matte-1 { background-color: #98FB98; } /* Pale Green */
-.npc-category-merchant .barter-portrait.matte-2 { background-color: #87CEEB; } /* Sky Blue */
-.npc-category-merchant .barter-portrait.matte-3 { background-color: #DDA0DD; } /* Plum */
-.npc-category-merchant .barter-portrait.matte-4 { background-color: #F0E68C; } /* Khaki */
+.npc-category-merchant .barter-portrait.matte-1 { background-color: #8FDE5D; } /* Pale Green */
+.npc-category-merchant .barter-portrait.matte-2 { background-color: #66FFE3; } /* Sky Blue */
+.npc-category-merchant .barter-portrait.matte-3 { background-color: #C2C2D1; } /* Plum */
+.npc-category-merchant .barter-portrait.matte-4 { background-color: #FFE478; } /* Khaki */
 
 /* Gossip NPCs - Vibrant, social colors */
-.npc-category-gossip .barter-portrait.matte-1 { background-color: #FFB6C1; } /* Light Pink */
+.npc-category-gossip .barter-portrait.matte-1 { background-color: #FFB5B5; } /* Light Pink */
 .npc-category-gossip .barter-portrait.matte-2 { background-color: #FFA07A; } /* Light Salmon */
 
 /* Custom matte for portraits with inline background-color */
@@ -3418,8 +3418,8 @@ margin: 0 auto 10px auto;
   /* Background color is set inline via style attribute - this rule serves as a CSS hook */
   display: block;
 }
-.npc-category-gossip .barter-portrait.matte-3 { background-color: #98FB98; } /* Pale Green */
-.npc-category-gossip .barter-portrait.matte-4 { background-color: #87CEEB; } /* Sky Blue */
+.npc-category-gossip .barter-portrait.matte-3 { background-color: #8FDE5D; } /* Pale Green */
+.npc-category-gossip .barter-portrait.matte-4 { background-color: #66FFE3; } /* Sky Blue */
 
 /* Button styling for NPC-style messages */
 .consent-buttons {
@@ -3429,9 +3429,9 @@ margin: 0 auto 10px auto;
 }
 
 .consent-button {
-    background: linear-gradient(135deg, #CD853F, #B8860B);
-    border: 2px solid #8B4513;
-    color: #3A2418;
+    background: linear-gradient(135deg, #E36956, #BA6156);
+    border: 2px solid #964253;
+    color: #272736;
     padding: 6px 12px;
     font-family: 'Cinzel', serif;
     font-size: 0.7em;
@@ -3446,7 +3446,7 @@ margin: 0 auto 10px auto;
 }
 
 .consent-button:hover {
-    background: linear-gradient(135deg, #B8860B, #CD853F);
+    background: linear-gradient(135deg, #BA6156, #E36956);
     transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(139, 69, 19, 0.4);
 }

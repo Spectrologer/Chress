@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/calamus.png",
     "portrait": "characters/npcs/portraits/calamusface.png",
     "tileType": "CALAMUS",
-    "portraitBackground": "#228B22"
+    "portraitBackground": "#c2c2d1"
   },
   "placement": {
     "zone": null,

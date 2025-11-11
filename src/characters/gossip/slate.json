@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/slate.png",
     "portrait": "characters/npcs/portraits/slateface.png",
     "tileType": "SLATE",
-    "portraitBackground": "#708090"
+    "portraitBackground": "#272736"
   },
   "placement": {
     "zone": null,

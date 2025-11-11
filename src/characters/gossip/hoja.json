@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/hoja.png",
     "portrait": "characters/npcs/portraits/hojaface.png",
     "tileType": "HOJA",
-    "portraitBackground": "#90EE90"
+    "portraitBackground": "#8fde5d"
   },
   "placement": {
     "zone": null,

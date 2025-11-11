@@ -178,7 +178,7 @@ export class EnemyRenderer {
                 let pixelYBase = enemy.y * TILE_SIZE + enemy.bumpOffsetY;
                 pixelXBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelXBase));
                 pixelYBase = Math.max(-TILE_SIZE / 2, Math.min(CANVAS_SIZE - TILE_SIZE / 2, pixelYBase));
-                this.ctx.fillStyle = '#32CD32';
+                this.ctx.fillStyle = '#3CA370';
                 this.ctx.fillRect(
                     pixelXBase + 2,
                     pixelYBase + 2,
@@ -193,7 +193,7 @@ export class EnemyRenderer {
                 let pixelY = enemy.y * TILE_SIZE + enemy.bumpOffsetY;
 
                 this.ctx.save();
-                this.ctx.strokeStyle = '#FFD700'; // Gold color
+                this.ctx.strokeStyle = '#f2a65e'; // Gold color
                 this.ctx.lineWidth = 3;
                 this.ctx.strokeRect(
                     pixelX + 2,
@@ -246,12 +246,12 @@ export class EnemyRenderer {
                     this.ctx.textBaseline = 'bottom';
 
                     // Draw black outline
-                    this.ctx.strokeStyle = '#000000';
+                    this.ctx.strokeStyle = '#272736';
                     this.ctx.lineWidth = STROKE_CONSTANTS.ENEMY_OUTLINE_STROKE;
                     this.ctx.strokeText(turnNumber.toString(), pixelX + TILE_SIZE / 2, pixelY - 4);
 
                     // Draw white fill
-                    this.ctx.fillStyle = '#FFFFFF';
+                    this.ctx.fillStyle = '#ffffeb';
                     this.ctx.fillText(turnNumber.toString(), pixelX + TILE_SIZE / 2, pixelY - 4);
 
                     this.ctx.restore();

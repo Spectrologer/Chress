@@ -11,7 +11,7 @@
   "display": {
   "sprite": "characters/npcs/gossip/bit.png",
   "portrait": "characters/npcs/portraits/bitface.png",
-  "portraitBackground": "#2F4F4F",
+  "portraitBackground": "#43434f",
     "tileType": "BIT"
   },
   "placement": {

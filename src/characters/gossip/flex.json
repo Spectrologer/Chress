@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/flex.png",
     "portrait": "characters/npcs/portraits/flexface.png",
     "tileType": "FLEX",
-    "portraitBackground": "#FF6347"
+    "portraitBackground": "#66ffe3"
   },
   "placement": {
     "zone": null,

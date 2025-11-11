@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/scritch.png",
     "portrait": "characters/npcs/portraits/scritchface.png",
     "tileType": "SCRITCH",
-    "portraitBackground": "#696969"
+    "portraitBackground": "#322947"
   },
   "placement": {
     "zone": null,

@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/polly.png",
     "portrait": "characters/npcs/portraits/pollyface.png",
     "tileType": "POLLY",
-    "portraitBackground": "#FF1493"
+    "portraitBackground": "#73275c"
   },
   "placement": {
     "zone": null,

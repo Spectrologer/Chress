@@ -26,9 +26,9 @@ export class StatueRenderStrategy extends TileRenderStrategy {
         }
 
         // Draw a pedestal
-        ctx.fillStyle = '#a0a0a0'; // Light grey for pedestal
+        ctx.fillStyle = '#7e7e8f'; // Light grey for pedestal
         ctx.fillRect(pixelX + 8, pixelY + TILE_SIZE - 16, TILE_SIZE - 16, 12);
-        ctx.fillStyle = '#808080'; // Darker grey for shadow
+        ctx.fillStyle = '#7e7e8f'; // Darker grey for shadow
         ctx.fillRect(pixelX + 8, pixelY + TILE_SIZE - 8, TILE_SIZE - 16, 4);
 
         const enemySpriteMap: Record<number, string> = {
@@ -61,13 +61,13 @@ export class StatueRenderStrategy extends TileRenderStrategy {
                     // Rotate the bow statue 90 degrees counter-clockwise
                     statueOptions.rotate = -Math.PI / 2; // -90 degrees
                 }
-                renderOverlay(ctx, this.images, spriteKey, pixelX, pixelY, TILE_SIZE, TILE_COLORS[tileType] || '#888888', '?', { font: '20px Arial', fillStyle: '#FFFFFF' }, statueOptions);
+                renderOverlay(ctx, this.images, spriteKey, pixelX, pixelY, TILE_SIZE, TILE_COLORS[tileType] || '#7e7e8f', '?', { font: '20px Arial', fillStyle: '#ffffeb' }, statueOptions);
             } else {
                 // Enemy statues use full-tile draw with a vertical offset and should be rendered as stone (grayscale)
-                renderOverlay(ctx, this.images, spriteKey, pixelX, pixelY - 10, TILE_SIZE, TILE_COLORS[tileType] || '#888888', '?', { font: '20px Arial', fillStyle: '#FFFFFF' }, { fullTile: true, filter: 'grayscale(100%) brightness(0.85)' });
+                renderOverlay(ctx, this.images, spriteKey, pixelX, pixelY - 10, TILE_SIZE, TILE_COLORS[tileType] || '#7e7e8f', '?', { font: '20px Arial', fillStyle: '#ffffeb' }, { fullTile: true, filter: 'grayscale(100%) brightness(0.85)' });
             }
         } else {
-            RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_COLORS[tileType] || '#888888', '?');
+            RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_COLORS[tileType] || '#7e7e8f', '?');
         }
     }
 }

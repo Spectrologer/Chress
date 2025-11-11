@@ -11,7 +11,7 @@
   "display": {
   "sprite": "characters/npcs/gossip/blot.png",
   "portrait": "characters/npcs/portraits/blotface.png",
-  "portraitBackground": "#2F2F2F",
+  "portraitBackground": "#272736",
     "tileType": "BLOT"
   },
   "placement": {

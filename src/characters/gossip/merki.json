@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/merki.png",
     "portrait": "characters/npcs/portraits/merkiface.png",
     "tileType": "MERKI",
-    "portraitBackground": "#BA55D3"
+    "portraitBackground": "#322947"
   },
   "placement": {
     "zone": null,

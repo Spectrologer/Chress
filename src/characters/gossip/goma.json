@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/goma.png",
     "portrait": "characters/npcs/portraits/gomaface.png",
     "tileType": "GOMA",
-    "portraitBackground": "#FF4500"
+    "portraitBackground": "#422445"
   },
   "placement": {
     "zone": null,

@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/kraft.png",
     "portrait": "characters/npcs/portraits/kraftface.png",
     "tileType": "KRAFT",
-    "portraitBackground": "#D2691E"
+    "portraitBackground": "#66ffe3"
   },
   "placement": {
     "zone": null,

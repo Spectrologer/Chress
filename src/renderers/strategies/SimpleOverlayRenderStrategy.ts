@@ -25,7 +25,7 @@ export class SimpleOverlayRenderStrategy extends TileRenderStrategy {
         this.spriteKey = spriteKey;
         this.tileTypeConstant = tileTypeConstant;
         this.fallbackEmoji = fallbackEmoji;
-        this.fallbackTextOptions = fallbackTextOptions || { font: '32px Arial', fillStyle: '#FF1493' };
+        this.fallbackTextOptions = fallbackTextOptions || { font: '32px Arial', fillStyle: '#BD4882' };
     }
 
     render(

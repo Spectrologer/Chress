@@ -11,7 +11,7 @@ import { ItemRepository } from '@managers/inventory/ItemRepository';
 import type { Position } from '@core/Position';
 import type { GameContext } from '@core/context';
 import { logger } from '@core/logger';
-import { exitChessModeAndReturn, isInChessMode } from '@core/GameModeManager';
+import { exitChessModeAndReturn, isInChessMode, resetToNormalMode } from '@core/GameModeManager';
 
 interface KeyPressResult {
     type: 'cancel_path' | 'movement';
@@ -154,7 +154,7 @@ export class KeyboardHandler {
         if (lowerKey === 'n' && isInChessMode(this.game)) {
             console.log('[Debug] Testing chess victory dialogue');
             this.game.uiManager?.messageManager?.dialogueManager?.showDialogue(
-                'Victory! You have captured the enemy king. Would you like to restart the match or return to the museum?',
+                'Victory! You have captured the enemy king.',
                 null,
                 null,
                 'Return to Museum',
@@ -162,7 +162,25 @@ export class KeyboardHandler {
                 undefined,
                 () => {
                     console.log('[Debug] Return button clicked');
-                    exitChessModeAndReturn(this.game);
+
+                    // Use the custom board return zone system
+                    const returnZone = (this.game as any).customBoardReturnZone;
+                    if (returnZone && this.game.transitionToZone && this.game.playerFacade) {
+                        logger.info(`[Chess] Returning to zone (${returnZone.x}, ${returnZone.y}) dimension ${returnZone.dimension}`);
+
+                        // Exit chess mode
+                        resetToNormalMode(this.game);
+
+                        // Set dimension BEFORE calling transitionToZone
+                        this.game.playerFacade.setZoneDimension(returnZone.dimension);
+
+                        // Clear the return zone and custom board name
+                        delete (this.game as any).customBoardReturnZone;
+                        delete (this.game as any).customBoardName;
+
+                        // Transition to the stored zone (handles player spawning)
+                        this.game.transitionToZone(returnZone.x, returnZone.y, 'teleport', 5, 5);
+                    }
                 }
             );
             return null;
@@ -238,9 +256,6 @@ export class KeyboardHandler {
             case 'p':
                 this.generatePitfallOnFloorTile();
                 return null;
-            case 'm':
-                this.teleportToChessBoard();
-                return null;
             case 'escape':
                 this.game.resetGame();
                 return null;
@@ -312,12 +327,9 @@ export class KeyboardHandler {
      * Teleport to the chess board (zone 2,0,0) and enable chess mode
      */
     private teleportToChessBoard(): void {
-        // Enable chess mode using typed system
-        this.game.gameMode.currentMode = 'chess' as import('@core/GameMode').GameMode;
-        this.game.gameMode.chess.selectedUnit = null;
-
-        // Legacy flag for backward compatibility
-        this.game.chessMode = true;
+        // Enable chess mode using GameModeManager (stores return zone BEFORE we change location)
+        const { setGameMode, GameMode } = require('@core/GameModeManager');
+        setGameMode(this.game, GameMode.CHESS);
 
         // Set player zone to chess board location
         this.game.player.currentZone = { x: 2, y: 0, dimension: 0, depth: 0 };

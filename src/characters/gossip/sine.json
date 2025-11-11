@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/sine.png",
     "portrait": "characters/npcs/portraits/sineface.png",
     "tileType": "SINE",
-    "portraitBackground": "#00CED1"
+    "portraitBackground": "#3ca370"
   },
   "placement": {
     "zone": null,

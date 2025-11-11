@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/burin.png",
     "portrait": "characters/npcs/portraits/burinface.png",
     "tileType": "BURIN",
-    "portraitBackground": "#A0522D"
+    "portraitBackground": "#3d6e70"
   },
   "placement": {
     "zone": null,

@@ -9,7 +9,8 @@ import { TILE_TYPES } from '@core/constants/index';
 import { createZoneKey } from '@utils/ZoneKeyUtils';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
-import { isInChessMode, exitChessModeAndReturn } from '@core/GameModeManager';
+import { isInChessMode, exitChessModeAndReturn, resetToNormalMode } from '@core/GameModeManager';
+import { logger } from '@core/logger';
 import { Position } from '@core/Position';
 import type { Game } from '@core/game';
 import type { Enemy } from '@entities/Enemy';
@@ -89,17 +90,33 @@ export class EnemyMovementHandler {
                 if (targetUnit.enemyType === 'lizardo') {
                     console.log('[Chess] Enemy wins! Player king captured.');
 
-                    // Show defeat dialogue with options to restart or return
+                    // Show defeat dialogue
                     this.game.uiManager?.messageManager?.dialogueManager?.showDialogue(
-                        'Defeat! The enemy has captured your king. Would you like to restart the match or return to the museum?',
+                        'Defeat! The enemy has captured your king.',
                         null,
                         null,
                         'Return to Museum',
                         'unknown',
                         undefined,
                         () => {
-                            // Return to the location where the board was loaded
-                            exitChessModeAndReturn(this.game);
+                            // Use the custom board return zone system
+                            const returnZone = (this.game as any).customBoardReturnZone;
+                            if (returnZone && this.game.transitionToZone && this.game.playerFacade) {
+                                logger.info(`[Chess] Returning to zone (${returnZone.x}, ${returnZone.y}) dimension ${returnZone.dimension}`);
+
+                                // Exit chess mode
+                                resetToNormalMode(this.game);
+
+                                // Set dimension BEFORE calling transitionToZone
+                                this.game.playerFacade.setZoneDimension(returnZone.dimension);
+
+                                // Clear the return zone and custom board name
+                                delete (this.game as any).customBoardReturnZone;
+                                delete (this.game as any).customBoardName;
+
+                                // Transition to the stored zone (handles player spawning)
+                                this.game.transitionToZone(returnZone.x, returnZone.y, 'teleport', 5, 5);
+                            }
                         }
                     );
                 }

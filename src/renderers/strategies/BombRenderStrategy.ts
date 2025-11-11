@@ -60,7 +60,7 @@ export class BombRenderStrategy extends TileRenderStrategy {
         ctx.fillRect(pixelX + padding, pixelY + padding, TILE_SIZE - padding * 2, TILE_SIZE - padding * 2);
 
         if (emoji) {
-            ctx.fillStyle = '#000000';
+            ctx.fillStyle = '#272736';
             ctx.font = '32px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';

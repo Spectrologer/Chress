@@ -11,7 +11,7 @@
   "display": {
   "sprite": "characters/npcs/gossip/midori.png",
   "portrait": "characters/npcs/portraits/midoriface.png",
-  "portraitBackground": "#228B22",
+  "portraitBackground": "#323e4f",
     "tileType": "MIDORI"
   },
   "placement": {

@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/wash.png",
     "portrait": "characters/npcs/portraits/washface.png",
     "tileType": "WASH",
-    "portraitBackground": "#87CEEB"
+    "portraitBackground": "#4da6ff"
   },
   "placement": {
     "zone": null,

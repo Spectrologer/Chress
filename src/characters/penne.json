@@ -11,7 +11,7 @@
   "display": {
   "sprite": "characters/npcs/merchant/penne.png",
   "portrait": "characters/npcs/portraits/penneface.png",
-  "portraitBackground": "#98FB98",
+  "portraitBackground": "#5a265e",
     "tileType": "PENNE"
   },
   "placement": {

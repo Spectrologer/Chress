@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/penni.png",
     "portrait": "characters/npcs/portraits/penniface.png",
     "tileType": "PENNI",
-    "portraitBackground": "#4169E1"
+    "portraitBackground": "#4b5bab"
   },
   "placement": {
     "zone": null,

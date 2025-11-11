@@ -124,7 +124,7 @@ export class OverlayMessageHandler {
             html += `<img src="${imageSrc}" style="${imgStyle}">`;
         }
         html += `<div class="dialogue-text">${displayText}</div>`;
-        html += `<button id="confirmButton" class="confirm-button" style="margin-top: 15px; padding: 10px 20px; font-size: 18px; cursor: pointer; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">${buttonText}</button>`;
+        html += `<button id="confirmButton" class="confirm-button" style="margin-top: 15px; padding: 10px 20px; font-size: 18px; cursor: pointer; background-color: #3CA370; color: white; border: none; border-radius: 5px;">${buttonText}</button>`;
 
         this.messageOverlay.innerHTML = html;
 

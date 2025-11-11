@@ -12,7 +12,7 @@
     "sprite": "characters/npcs/gossip/crock.png",
     "portrait": "characters/npcs/portraits/crockface.png",
     "tileType": "CROCK",
-    "portraitBackground": "#8B4513"
+    "portraitBackground": "#4da6ff"
   },
   "placement": {
     "zone": null,
