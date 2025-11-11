@@ -283,6 +283,15 @@ body {
     }
 }
 
+@keyframes backgroundSlide {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 32px 32px;
+    }
+}
+
 .pulsating {
     animation: pulsate 0.8s infinite;
 }
@@ -394,6 +403,7 @@ body {
     white-space: normal;
     word-wrap: break-word;
     text-align: center;
+    opacity: 0.85;
 }
 .start-button-native::before {
     content: '';
@@ -410,13 +420,14 @@ body {
             rgba(0,0,0,0.15) 180deg 270deg,
             rgba(255,255,255,0.05) 270deg 360deg
         );
-    background-size: 12px 12px;
+    background-size: 32px 32px;
     background-position: 0 0;
     pointer-events: none;
     opacity: 0.7;
     mix-blend-mode: overlay;
     z-index: -1;
     image-rendering: pixelated;
+    animation: backgroundSlide 8s linear infinite;
 }
 .start-button-native::after {
     content: '';
@@ -593,6 +604,14 @@ body {
         0 3px 8px rgba(0, 0, 0, 0.6);
 }
 
+/* Make editor buttons smallest */
+.start-btn-editor {
+    font-size: clamp(0.5rem, 1.5vw, 0.65rem) !important;
+    padding: clamp(5px, 1.5vh, 8px) clamp(8px, 2.4vw, 12px) !important;
+    min-height: clamp(30px, 6vh, 40px) !important;
+    letter-spacing: clamp(0.1px, 0.08vw, 0.3px) !important;
+}
+
 .start-btn-character {
     background: linear-gradient(135deg, #8c3f5d, #5e315b);
     border-color: #272736;
@@ -676,8 +695,8 @@ body {
 
 /* Tools buttons (Editor buttons) are smaller */
 .start-menu-tools .start-overlay-action {
-    padding: clamp(2px, 0.6vh, 4px) clamp(3px, 0.8vw, 5px) !important;
-    font-size: clamp(0.85rem, 2.8vw, 1.1rem) !important;
+    padding: clamp(2px, 0.5vh, 3px) clamp(3px, 0.7vw, 4px) !important;
+    font-size: clamp(0.65rem, 2.4vw, 0.85rem) !important;
     font-weight: 800;
     line-height: 1.1 !important;
 }
