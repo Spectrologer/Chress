@@ -54,13 +54,18 @@
         startOverlay.insertBefore(tilesContainer, overlayBox);
         console.log('Shimmer tiles created:', tiles.length);
 
-        // Animate tiles - each tile switches between two colors in a wave
+        // Animate tiles - each tile lights up and fades as the wave passes over it
         let offset = 0;
-        const waveSpeed = 0.08; // Speed of wave propagation
+        const waveSpeed = 0.15; // Speed of wave propagation
+        const waveWidth = 3; // Width of the bright wave zone
 
-        // Define two alternating colors
-        const color1 = 'rgba(142, 63, 93, 0.5)';   // Purple
-        const color2 = 'rgba(186, 97, 86, 0.5)';   // Pink
+        // Base colors for tiles (checkerboard pattern)
+        const baseColor1 = 'rgba(142, 63, 93, 0.3)';   // Purple (dim)
+        const baseColor2 = 'rgba(186, 97, 86, 0.3)';   // Pink (dim)
+
+        // Bright colors when lit up
+        const brightColor1 = 'rgba(142, 63, 93, 0.95)';  // Purple (bright)
+        const brightColor2 = 'rgba(186, 97, 86, 0.95)';  // Pink (bright)
 
         function animateWave() {
             offset += waveSpeed;
@@ -72,15 +77,34 @@
                 // Calculate position in wave (diagonal wave pattern)
                 const position = col + row * 0.5;
 
-                // Determine which color this tile should be based on wave position
-                // Use sine wave to create smooth alternating pattern
-                const waveValue = Math.sin((position - offset) * 0.5);
+                // Determine base color based on checkerboard pattern
+                const isColor1 = (col + row) % 2 === 0;
+                const baseColor = isColor1 ? baseColor1 : baseColor2;
+                const brightColor = isColor1 ? brightColor1 : brightColor2;
 
-                // Switch between color1 and color2 based on wave value
-                tile.style.backgroundColor = waveValue > 0 ? color1 : color2;
+                // Calculate distance from wave center
+                const distanceFromWave = Math.abs((position - offset) % 50);
+
+                // Create a sharp brightness peak as wave passes
+                // Using a narrow exponential decay for the shimmer effect
+                const shimmerIntensity = Math.max(0, 1 - Math.pow(distanceFromWave / waveWidth, 2));
+
+                // Interpolate between base and bright color based on shimmer intensity
+                if (shimmerIntensity > 0.01) {
+                    const r1 = isColor1 ? 142 : 186;
+                    const g1 = isColor1 ? 63 : 97;
+                    const b1 = isColor1 ? 93 : 86;
+                    const baseOpacity = 0.3;
+                    const brightOpacity = 0.95;
+
+                    const opacity = baseOpacity + (brightOpacity - baseOpacity) * shimmerIntensity;
+                    tile.style.backgroundColor = `rgba(${r1}, ${g1}, ${b1}, ${opacity})`;
+                } else {
+                    tile.style.backgroundColor = baseColor;
+                }
             });
 
-            requestAnimationFrame(animateWave);
+            animationFrameId = requestAnimationFrame(animateWave);
         }
 
         animateWave();
