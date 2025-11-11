@@ -1,0 +1,54 @@
+{
+  "id": "cartouche",
+  "name": "Cartouche",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A balloon snake who's scared of sharp objects.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/cartouche.png",
+    "portrait": "characters/npcs/portraits/cartoucheface.png",
+    "tileType": "CARTOUCHE",
+    "portraitBackground": "#473b78"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*squeaks nervously* Please don't come closer with that! Is that... is that a PIN? Stay back!",
+        "buttonText": "It's okay."
+      },
+      {
+        "id": "msg_1",
+        "text": "*deflating slightly* I saw a needle earlier and I've been hiding ever since. So pointy. So dangerous!",
+        "buttonText": "I understand."
+      },
+      {
+        "id": "msg_2",
+        "text": "Why does everything have to be so SHARP around here? Rocks, thorns, TEETH. It's terrifying! *whimpers*",
+        "buttonText": "Poor thing."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

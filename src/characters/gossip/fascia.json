@@ -1,0 +1,54 @@
+{
+  "id": "fascia",
+  "name": "Fascia",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A flatworm looking for a place to stay.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/fascia.png",
+    "portrait": "characters/npcs/portraits/fasciaface.png",
+    "tileType": "FASCIA",
+    "portraitBackground": "#57294b"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*undulates softly* Excuse me... do you know of any good rocks? Dark, damp ones? I need a home.",
+        "buttonText": "Not really."
+      },
+      {
+        "id": "msg_1",
+        "text": "*slides along* Been traveling for days. Every rock is taken. Every crevice occupied. So tired...",
+        "buttonText": "Sorry."
+      },
+      {
+        "id": "msg_2",
+        "text": "*flattens against ground* Just need a nice flat surface to rest on. Is that too much to ask? *sighs*",
+        "buttonText": "Good luck."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

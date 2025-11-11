@@ -1,0 +1,54 @@
+{
+  "id": "dinkus",
+  "name": "Dinkus",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A baby beholder who thinks your his mom.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/dinkus.png",
+    "portrait": "characters/npcs/portraits/dinkusface.png",
+    "tileType": "DINKUS",
+    "portraitBackground": "#66ffe3"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*all eyes widen* MAMA! You came back! I knew you would! All my eyes have been watching for you!",
+        "buttonText": "I'm not your mom."
+      },
+      {
+        "id": "msg_1",
+        "text": "*floats happily* Mama, I learned a new trick! Watch! *shoots tiny ray* See? Did I do good, mama?",
+        "buttonText": "Very good."
+      },
+      {
+        "id": "msg_2",
+        "text": "*blinks all eyes in sequence* When are we going home, mama? I'm getting sleepy. All ten of my eyes!",
+        "buttonText": "Soon, buddy."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

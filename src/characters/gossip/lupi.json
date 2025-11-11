@@ -1,0 +1,54 @@
+{
+  "id": "lupi",
+  "name": "Lupi",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A latte who's trying not to spill the beans.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/lupi.png",
+    "portrait": "characters/npcs/portraits/lupiface.png",
+    "tileType": "LUPI",
+    "portraitBackground": "#ffe478"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*nervously steaming* Okay so I heard something but I'm NOT supposed to spill the beans! Get it? Beans?",
+        "buttonText": "Nice one."
+      },
+      {
+        "id": "msg_1",
+        "text": "*swirling anxiously* It's REALLY hot gossip though. Like, espresso-level hot. But I can't tell you!",
+        "buttonText": "I understand."
+      },
+      {
+        "id": "msg_2",
+        "text": "Okay fine! Between you and me... *whispers* ...wait, no! I almost spilled! That was close!",
+        "buttonText": "Almost."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

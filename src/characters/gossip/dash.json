@@ -1,0 +1,54 @@
+{
+  "id": "dash",
+  "name": "Dash",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A green two legged horse whos incredibly clumsy.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/dash.png",
+    "portrait": "characters/npcs/portraits/dashface.png",
+    "tileType": "DASH",
+    "portraitBackground": "#4da6ff"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*trips* Oof! Sorry about that. Two legs is... harder than it looks. *wobbles* Hi there!",
+        "buttonText": "You okay?"
+      },
+      {
+        "id": "msg_1",
+        "text": "I was gonna run somewhere but I forgot where and also I fell down. Twice. *struggles to stand*",
+        "buttonText": "Take your time."
+      },
+      {
+        "id": "msg_2",
+        "text": "*stumbles* They call me Dash but honestly I'm more of a... *crashes into wall* ...crash. Ow.",
+        "buttonText": "Careful!"
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

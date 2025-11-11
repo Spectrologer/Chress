@@ -1,0 +1,54 @@
+{
+  "id": "coursier",
+  "name": "Coursier",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A french pickup truck who wishes you would learn to speak french.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/coursier.png",
+    "portrait": "characters/npcs/portraits/coursierface.png",
+    "tileType": "COURSIER",
+    "portraitBackground": "#73275c"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Bonjour! Everyone should learn la belle langue française!",
+        "buttonText": "Sorry, no."
+      },
+      {
+        "id": "msg_1",
+        "text": "*beep beep* I am a COURSIER! C'est différent!",
+        "buttonText": "My bad."
+      },
+      {
+        "id": "msg_2",
+        "text": "Sacré bleu! You still do not speak French? Mon dieu! This is une tragédie!",
+        "buttonText": "Oui oui."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

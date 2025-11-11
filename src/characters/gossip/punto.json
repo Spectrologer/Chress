@@ -1,0 +1,54 @@
+{
+  "id": "punto",
+  "name": "Punto",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A debonaire needle and thread ready to sweep you off your feet.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/punto.png",
+    "portrait": "characters/npcs/portraits/puntoface.png",
+    "tileType": "PUNTO",
+    "portraitBackground": "#272736"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*spins thread elegantly* Ah, bon jour mon ami! Punto at your service. May I sew you are looking magnifique today?",
+        "buttonText": "Thank you."
+      },
+      {
+        "id": "msg_1",
+        "text": "They say I am quite the sharp dresser, no? *twirls* I keep everything... in stitches! *winks*",
+        "buttonText": "Smooth."
+      },
+      {
+        "id": "msg_2",
+        "text": "Come closer, let me weave you a tale of romance and thread. I promise not to string you along!",
+        "buttonText": "Charming."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

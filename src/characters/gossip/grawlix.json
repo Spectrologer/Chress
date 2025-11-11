@@ -1,0 +1,54 @@
+{
+  "id": "grawlix",
+  "name": "Grawlix",
+  "type": "dialogue",
+  "metadata": {
+    "description": "Talks in swears. Painful to listen to.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/grawlix.png",
+    "portrait": "characters/npcs/portraits/grawlixface.png",
+    "tileType": "GRAWLIX",
+    "portraitBackground": "#322947"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "@#$%! Can you believe the @#$%ing weather today? It's so @#$%ed up!",
+        "buttonText": "Language!"
+      },
+      {
+        "id": "msg_1",
+        "text": "What the @#$% do you want? I'm busy being @#$%ing angry over here!",
+        "buttonText": "Yikes."
+      },
+      {
+        "id": "msg_2",
+        "text": "Life's a @#$%ing journey, you know? Full of @#$% and more @#$%. Beautiful!",
+        "buttonText": "Okay then."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

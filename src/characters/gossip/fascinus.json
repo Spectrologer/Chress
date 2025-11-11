@@ -1,0 +1,54 @@
+{
+  "id": "fascinus",
+  "name": "Fascinus",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A winged nose with ribald humor.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/fascinus.png",
+    "portrait": "characters/npcs/portraits/fascinusface.png",
+    "tileType": "FASCINUS",
+    "portraitBackground": "#272736"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Nose much about what's going on around here? *snort*?",
+        "buttonText": "Ha ha."
+      },
+      {
+        "id": "msg_1",
+        "text": "I'd tell you a joke about paper, but it's tearable!",
+        "buttonText": "Groan."
+      },
+      {
+        "id": "msg_2",
+        "text": "Why did the nose cross the road?",
+        "buttonText": "Please stop."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "bullet",
+  "name": "Bullet",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A salt shaker commando. An assault shaker",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/bullet.png",
+    "portrait": "characters/npcs/portraits/bulletface.png",
+    "tileType": "BULLET",
+    "portraitBackground": "#ba6156"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Listen up soldier! *rattles* This operation needs more SEASONING! Deploy the sodium! GO GO GO!",
+        "buttonText": "Sir yes sir!"
+      },
+      {
+        "id": "msg_1",
+        "text": "I'm a salt shaker commando! An assault shaker if you will! *shakes aggressively* TACTICAL FLAVOR INCOMING!",
+        "buttonText": "Impressive."
+      },
+      {
+        "id": "msg_2",
+        "text": "The pepper shakers think they're so tough. But when things get hot, who do they call? THE SALT SQUAD!",
+        "buttonText": "Hooah!"
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "fude",
+  "name": "Fude",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A wiggly sea anemone squid with a curious personality.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/fude.png",
+    "portrait": "characters/npcs/portraits/fudeface.png",
+    "tileType": "FUDE",
+    "portraitBackground": "#4b5bab"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*tentacles wiggling* Ooh! What's that? Is it shiny? Can I touch it? What does it taste like?",
+        "buttonText": "Curious one."
+      },
+      {
+        "id": "msg_1",
+        "text": "*floats closer* Did you know that if you swim upside down, the world looks completely different? I tried it!",
+        "buttonText": "Interesting."
+      },
+      {
+        "id": "msg_2",
+        "text": "I wonder what's beyond the reef... Have you been there? What's it like? Is it scary? Exciting? Both?",
+        "buttonText": "Maybe both."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

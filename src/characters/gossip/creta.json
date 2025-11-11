@@ -1,0 +1,54 @@
+{
+  "id": "creta",
+  "name": "Creta",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A geothermic tube worm obsessed with the LA Lakers.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/creta.png",
+    "portrait": "characters/npcs/portraits/cretaface.png",
+    "tileType": "CRETA",
+    "portraitBackground": "#7e7e8f"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Did you catch the Lakers game last night?! LeBron with that DUNK! *waves tube body excitedly*",
+        "buttonText": "Can't say I did."
+      },
+      {
+        "id": "msg_1",
+        "text": "Living at the bottom of the ocean is great, but the cable reception is TERRIBLE. Go Lakers!",
+        "buttonText": "Makes sense."
+      },
+      {
+        "id": "msg_2",
+        "text": "Purple and gold, baby! Even down here by the thermal vents, we bleed Lakers! SHOWTIME!",
+        "buttonText": "Alright."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

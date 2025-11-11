@@ -1,0 +1,54 @@
+{
+  "id": "spectrum",
+  "name": "Spectrum",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A rainbow frog suspicious about the quality of the local water.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/spectrum.png",
+    "portrait": "characters/npcs/portraits/spectrumface.png",
+    "tileType": "SPECTRUM",
+    "portraitBackground": "#3ca370"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "You been drinking the water around here? *ribbit* Tastes funny. Chemical-funny. Not ha-ha funny.",
+        "buttonText": "Hmm."
+      },
+      {
+        "id": "msg_1",
+        "text": "I wasn't always rainbow-colored, you know. Used to be regular green. Then I drank the water...",
+        "buttonText": "Oh no."
+      },
+      {
+        "id": "msg_2",
+        "text": "*ribbit* The well's been acting strange. Glowing at night. I'm staying away from it. You should too.",
+        "buttonText": "Thanks."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

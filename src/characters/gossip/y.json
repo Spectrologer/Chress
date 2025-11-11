@@ -1,0 +1,54 @@
+{
+  "id": "y",
+  "name": "Y",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A smug NPC shaped like the letter Y who thinks accentuating 'Y' in words is a great pun. Contrarian, smart aleck.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/y.png",
+    "portrait": "characters/npcs/portraits/yface.png",
+    "tileType": "Y",
+    "portraitBackground": "#4b5bab"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Oh, you're talking to me? WhY would you do that? Get it? WhY?",
+        "buttonText": "Very clever."
+      },
+      {
+        "id": "msg_1",
+        "text": "People ask me 'why' all the time - because I'm simpl-eYe the best! *smirk*",
+        "buttonText": "Sure."
+      },
+      {
+        "id": "msg_2",
+        "text": "You disagree with me? That's fine. I'm used to people being wrong. It's prett-Y common actuallY.",
+        "buttonText": "Whatever."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

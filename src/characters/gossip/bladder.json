@@ -1,0 +1,54 @@
+{
+  "id": "bladder",
+  "name": "Bladder",
+  "type": "dialogue",
+  "metadata": {
+    "description": "An anatomical beating heart who knows they're the symbol of love.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/bladder.png",
+    "portrait": "characters/npcs/portraits/bladderface.png",
+    "tileType": "BLADDER",
+    "portraitBackground": "#ffe478"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "*thump thump* I'm literally the symbol of LOVE. Me. This heart. Right here. Beating.",
+        "buttonText": "Sure."
+      },
+      {
+        "id": "msg_1",
+        "text": "Everyone draws hearts, but they're drawing ME. I'm an icon. A biological icon.",
+        "buttonText": "If you say so."
+      },
+      {
+        "id": "msg_2",
+        "text": "*thump thump* Valentine's Day? That's MY day. Every card, every chocolate box. All me.",
+        "buttonText": "Congrats."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

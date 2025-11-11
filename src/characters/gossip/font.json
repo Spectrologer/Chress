@@ -1,0 +1,54 @@
+{
+  "id": "font",
+  "name": "Font",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A talking toe on a foot who's up to no good.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/font.png",
+    "portrait": "characters/npcs/portraits/fontface.png",
+    "tileType": "FONT",
+    "portraitBackground": "#ffb570"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Psst! Hey you! Yeah, you with the face! Wanna hear what the big toe's been up to?",
+        "buttonText": "Sure?"
+      },
+      {
+        "id": "msg_1",
+        "text": "Being the pinky toe ain't easy, but someone's gotta keep tabs on everyone else!",
+        "buttonText": "Right."
+      },
+      {
+        "id": "msg_2",
+        "text": "You didn't hear this from me, but the heel's planning something. Something BIG.",
+        "buttonText": "Noted."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

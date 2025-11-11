@@ -1,0 +1,54 @@
+{
+  "id": "spitze",
+  "name": "Spitze",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A prickly sea urchin with a sharp tongue.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/spitze.png",
+    "portrait": "characters/npcs/portraits/spitzeface.png",
+    "tileType": "SPITZE",
+    "portraitBackground": "#b0305c"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "Oh, YOU again. Watch where you're stepping. Some of us have SPINES, you know.",
+        "buttonText": "Sorry."
+      },
+      {
+        "id": "msg_1",
+        "text": "*bristles* Don't get too close. I'm not responsible for what happens if you touch my quills.",
+        "buttonText": "Noted."
+      },
+      {
+        "id": "msg_2",
+        "text": "Everyone thinks they can just waltz up to a sea urchin. Well, I'M the point of this conversation!",
+        "buttonText": "Ha."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}

@@ -143,7 +143,28 @@ export const TILE_TYPES = {
     BOW_STATUE: 52,
     HORSE_STATUE: 53,
     BOOK_STATUE: 54,
-    SHOVEL_STATUE: 55
+    SHOVEL_STATUE: 55,
+    // New gossip NPCs (added 2025-11-11)
+    FUDE: 140,
+    SPITZE: 141,
+    LUPI: 142,
+    DINKUS: 143,
+    CARTOUCHE: 144,
+    CRETA: 145,
+    KAJI: 146,
+    DASH: 147,
+    EM: 148,
+    FASCIA: 149,
+    BULLET: 150,
+    COURSIER: 151,
+    PUNTO: 152,
+    Y: 153,
+    SPECTRUM: 154,
+    PALIMPSEST: 155,
+    BLADDER: 156,
+    FASCINUS: 157,
+    FONT: 158,
+    GRAWLIX: 159
 } as const;
 
 // Type for tile type values
@@ -269,7 +290,28 @@ export const TILE_COLORS: Record<number, string> = {
     [TILE_TYPES.BLACK_LIZARDEAUX]: '#272736', // Even darker for Black Lizardeaux
     [TILE_TYPES.BLACK_ZARD]: '#272736', // Very dark for Black Zard
     [TILE_TYPES.BLACK_LIZORD]: '#272736', // Almost black for Black Lizord
-    [TILE_TYPES.BLACK_LAZERD]: '#272736' // Black for Black Lazerd
+    [TILE_TYPES.BLACK_LAZERD]: '#272736', // Black for Black Lazerd
+    // New gossip NPC colors (added 2025-11-11)
+    [TILE_TYPES.FUDE]: '#4b5bab', // Fude
+    [TILE_TYPES.SPITZE]: '#b0305c', // Spitze
+    [TILE_TYPES.LUPI]: '#ffe478', // Lupi
+    [TILE_TYPES.DINKUS]: '#66ffe3', // Dinkus
+    [TILE_TYPES.CARTOUCHE]: '#473b78', // Cartouche
+    [TILE_TYPES.CRETA]: '#7e7e8f', // Creta
+    [TILE_TYPES.KAJI]: '#ffb570', // Kaji
+    [TILE_TYPES.DASH]: '#4da6ff', // Dash
+    [TILE_TYPES.EM]: '#ffb5b5', // Em
+    [TILE_TYPES.FASCIA]: '#57294b', // Fascia
+    [TILE_TYPES.BULLET]: '#ba6156', // Bullet
+    [TILE_TYPES.COURSIER]: '#73275c', // Coursier
+    [TILE_TYPES.PUNTO]: '#272736', // Punto
+    [TILE_TYPES.Y]: '#4b5bab', // Y
+    [TILE_TYPES.SPECTRUM]: '#3ca370', // Spectrum
+    [TILE_TYPES.PALIMPSEST]: '#4da6ff', // Palimpsest
+    [TILE_TYPES.BLADDER]: '#ffe478', // Bladder
+    [TILE_TYPES.FASCINUS]: '#272736', // Fascinus
+    [TILE_TYPES.FONT]: '#ffb570', // Font
+    [TILE_TYPES.GRAWLIX]: '#322947' // Grawlix
 };
 
 // Direction constants for exits and movements

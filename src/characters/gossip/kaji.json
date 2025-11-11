@@ -1,0 +1,54 @@
+{
+  "id": "kaji",
+  "name": "Kaji",
+  "type": "dialogue",
+  "metadata": {
+    "description": "A cuckoo bird made out of limes who's off his rocker.",
+    "created": "2025-11-11T00:00:00.000Z",
+    "version": "1.0.0",
+    "category": "gossip"
+  },
+  "display": {
+    "sprite": "characters/npcs/gossip/kaji.png",
+    "portrait": "characters/npcs/portraits/kajiface.png",
+    "tileType": "KAJI",
+    "portraitBackground": "#ffb570"
+  },
+  "placement": {
+    "zone": null,
+    "x": null,
+    "y": null,
+    "dimension": 0,
+    "spawnLogic": "procedural",
+    "spawnWeight": 0.005,
+    "level": 1
+  },
+  "interaction": {
+    "type": "dialogue",
+    "cycleMode": "sequential",
+    "dialogueTree": [
+      {
+        "id": "msg_0",
+        "text": "CUCKOO! CUCKOO! The limes are RIPE! The limes are TAKING OVER! *flaps wildly*",
+        "buttonText": "Calm down."
+      },
+      {
+        "id": "msg_1",
+        "text": "*pecks at air* Time is a flat circle made of CITRUS! I've seen the FUTURE and it's SOUR! CUCKOO!",
+        "buttonText": "Okay then."
+      },
+      {
+        "id": "msg_2",
+        "text": "The clock strikes LIME O'CLOCK! *spins around* Every hour is lime hour when you're made of LIMES!",
+        "buttonText": "Sure buddy."
+      }
+    ]
+  },
+  "behavior": {
+    "movementType": "stationary",
+    "walkable": false
+  },
+  "audio": {
+    "voicePitch": 104
+  }
+}
