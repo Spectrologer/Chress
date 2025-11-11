@@ -2,6 +2,99 @@
 // Exposes `animateOverlayCurl` on window for backward-compatible invocation.
 
 (function () {
+    // Create shimmer tile grid for start overlay
+    let animationFrameId: number | null = null;
+
+    function createShimmerTileGrid() {
+        const startOverlay = document.getElementById('startOverlay');
+        if (!startOverlay) {
+            // Retry after a short delay if overlay doesn't exist yet
+            setTimeout(createShimmerTileGrid, 100);
+            return;
+        }
+
+        // Check if tiles already exist
+        let tilesContainer = startOverlay.querySelector('.shimmer-tiles-container') as HTMLElement;
+        if (tilesContainer) return;
+
+        // Get the overlay box to determine size
+        const overlayBox = startOverlay.querySelector('.start-overlay-box') as HTMLElement;
+        if (!overlayBox) {
+            setTimeout(createShimmerTileGrid, 100);
+            return;
+        }
+
+        // Create tiles container
+        tilesContainer = document.createElement('div');
+        tilesContainer.className = 'shimmer-tiles-container';
+
+        const tileSize = 40; // 40px tiles
+        // Use window size for reliable dimensions
+        const cols = Math.ceil(window.innerWidth / tileSize) + 2;
+        const rows = Math.ceil(window.innerHeight / tileSize) + 2;
+
+        console.log('Creating shimmer grid:', cols, 'x', rows, 'tiles');
+
+        // Create tiles
+        const tiles: HTMLElement[] = [];
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                const tile = document.createElement('div');
+                tile.className = 'shimmer-tile';
+                tile.style.left = `${col * tileSize}px`;
+                tile.style.top = `${row * tileSize}px`;
+                tile.dataset.col = col.toString();
+                tile.dataset.row = row.toString();
+                tilesContainer.appendChild(tile);
+                tiles.push(tile);
+            }
+        }
+
+        // Insert tiles container before the overlay box
+        startOverlay.insertBefore(tilesContainer, overlayBox);
+        console.log('Shimmer tiles created:', tiles.length);
+
+        // Animate tiles - each tile switches between two colors in a wave
+        let offset = 0;
+        const waveSpeed = 0.08; // Speed of wave propagation
+
+        // Define two alternating colors
+        const color1 = 'rgba(142, 63, 93, 0.5)';   // Purple
+        const color2 = 'rgba(186, 97, 86, 0.5)';   // Pink
+
+        function animateWave() {
+            offset += waveSpeed;
+
+            tiles.forEach((tile) => {
+                const col = parseInt(tile.dataset.col || '0');
+                const row = parseInt(tile.dataset.row || '0');
+
+                // Calculate position in wave (diagonal wave pattern)
+                const position = col + row * 0.5;
+
+                // Determine which color this tile should be based on wave position
+                // Use sine wave to create smooth alternating pattern
+                const waveValue = Math.sin((position - offset) * 0.5);
+
+                // Switch between color1 and color2 based on wave value
+                tile.style.backgroundColor = waveValue > 0 ? color1 : color2;
+            });
+
+            requestAnimationFrame(animateWave);
+        }
+
+        animateWave();
+    }
+
+    // Initialize shimmer tiles when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(createShimmerTileGrid, 100);
+        });
+    } else {
+        setTimeout(createShimmerTileGrid, 100);
+    }
+
     function animateOverlayCurl(overlayElement: HTMLElement | null): Promise<void> {
         return new Promise((resolve) => {
             if (!overlayElement) return resolve();
@@ -12,7 +105,7 @@
 
                 // Force reflow and use requestAnimationFrame to avoid class-add-induced jumps
                 // (ensures the browser has applied any inline display changes before animating)
-                 
+
                 overlayElement.getBoundingClientRect();
                 requestAnimationFrame(() => requestAnimationFrame(() => {
                     // Add the furling class (slower, softer curl)

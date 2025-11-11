@@ -368,6 +368,27 @@ See [ADDING_CONTENT.md](docs/ADDING_CONTENT.md) for detailed guides on:
 
 ### Design Bible & Visual Style
 
+---
+**🎨 AI NOTE: PEAR36 COLOR PALETTE RESTRICTION**
+
+**CRITICAL:** This project uses **ONLY** the **Pear36 color palette** by pinetreepizza (36 colors).
+
+When implementing any features, UI elements, styling, or visual effects:
+- ✅ **USE ONLY** colors from the Pear36 palette (see full list below)
+- ❌ **DO NOT** introduce any hex colors outside this palette
+- ✅ **VERIFY** all color values against the official Pear36 palette
+- 📖 **REFERENCE**: https://lospec.com/palette-list/pear36
+
+**Complete Pear36 Palette (36 colors):**
+- **Purples/Magentas**: `#5e315b`, `#8c3f5d`, `#ba6156`
+- **Warm Tones**: `#f2a65e`, `#ffe478`, `#cfff70`
+- **Greens**: `#8fde5d`, `#3ca370`, `#3d6e70`
+- **Blues**: `#323e4f`, `#322947`, `#473b78`, `#4b5bab`, `#4da6ff`, `#66ffe3`
+- **Neutrals**: `#ffffeb`, `#c2c2d1`, `#7e7e8f`, `#606070`, `#43434f`, `#272736`
+- **Additional accent colors** (refer to Lospec reference for complete list)
+
+---
+
 **Color Palette - Muted Sonoran Desert Pastels**:
 - **Primary Colors**:
   - Dusty Rose/Coral: `#D4A5A5`, `#C48B8B`

@@ -46,7 +46,9 @@
       "Bash(node scripts/audit-colors.cjs:*)",
       "Bash(node scripts/replace-colors-uppercase.cjs:*)",
       "Bash(node scripts/audit-colors-full.cjs:*)",
-      "Bash(node scripts/replace-colors-all.cjs:*)"
+      "Bash(node scripts/replace-colors-all.cjs:*)",
+      "Bash(node:*)",
+      "Bash(del find-empty.js find-truly-empty.js)"
     ],
     "deny": [],
     "ask": []
