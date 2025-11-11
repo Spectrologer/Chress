@@ -804,6 +804,9 @@ body {
     align-items: center;
     gap: 16px;
     padding: 24px;
+    background: rgba(15, 15, 20, 0.85);
+    border-radius: 12px;
+    border: 2px solid #1a1a24;
 }
 
 .loading-spinner {
@@ -1599,7 +1602,7 @@ h1 {
 #gameCanvas {
     border: 4px solid #8c3f5d;
     border-radius: 10px;
-    background-color: #FFB5B5;
+    background: #FFB5B5 url('/static/assets/ui/y.webp') center/cover no-repeat;
     display: block;
     margin: 0 auto;
     width: 100%;
@@ -1614,6 +1617,39 @@ h1 {
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    transition: opacity 0.8s ease-out;
+}
+
+/* Loading placeholder overlay for game canvas */
+.game-loading-placeholder {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.8s ease-out;
+}
+
+.game-loading-placeholder.fade-out {
+    opacity: 0;
+}
+
+.game-loading-text {
+    font-size: clamp(16px, 4vw, 24px);
+    color: #ffffeb;
+    font-weight: 700;
+    text-shadow:
+        2px 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 8px rgba(94, 49, 91, 0.6);
+    letter-spacing: 0.5px;
+    padding: 12px 24px;
+    background: rgba(15, 15, 20, 0.75);
+    border-radius: 8px;
+    border: 2px solid #8c3f5d;
+    width: 80%;
+    max-width: 350px;
 }
 
 /* Responsive (mobile-first) rules applied globally so desktop uses the same layout as mobile */

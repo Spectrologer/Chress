@@ -43,6 +43,25 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (loadingIndicator) loadingIndicator.style.display = 'none';
     if (startMenuGrid) startMenuGrid.style.display = '';
 
+    // Fade out the game loading placeholder
+    const gameLoadingPlaceholder = document.getElementById('gameLoadingPlaceholder');
+    const gameCanvas = document.getElementById('gameCanvas');
+    if (gameLoadingPlaceholder) {
+        gameLoadingPlaceholder.classList.add('fade-out');
+        // Remove the placeholder after fade animation completes
+        setTimeout(() => {
+            if (gameLoadingPlaceholder.parentNode) {
+                gameLoadingPlaceholder.parentNode.removeChild(gameLoadingPlaceholder);
+            }
+        }, 800);
+    }
+    // Also fade out the canvas background image
+    if (gameCanvas) {
+        setTimeout(() => {
+            gameCanvas.style.background = '#FFB5B5';
+        }, 800);
+    }
+
     // Debug: Q spawns aguamelin
     window.addEventListener('keydown', (e) => {
         if (e.key === 'q' || e.key === 'Q') {
