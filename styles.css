@@ -11,9 +11,10 @@
  * PURPLES/MAGENTAS: #5e315b, #8c3f5d, #ba6156
  * WARM TONES: #f2a65e, #ffe478, #cfff70
  * GREENS: #8fde5d, #3ca370, #3d6e70
- * BLUES: #323e4f, #322947, #473b78, #4b5bab, #4da6ff, #66ffe3
- * NEUTRALS: #ffffeb, #c2c2d1, #7e7e8f, #606070, #43434f, #272736
- * ACCENT REDS/PINKS: (additional colors in palette)
+ * BLUES: #323e4f, #473b78, #4b5bab, #4da6ff
+ * NEUTRALS: #ffffeb, #c2c2d1, #7e7e8f, #606070, #272736
+ * GRAYS: #050505, #0f0f14, #1a1a24, #2b2b2b, #414141, #5c5c5c, #8b8b8b, #b0b0b0, #d4d4d4
+ * ACCENT REDS/PINKS: #ffb5b5, #ff6b97, #9f4f69, #7a3045, #5c1f39, #3f0d2b, #2b0719, #1a0410
  *
  * Reference: https://lospec.com/palette-list/pear36
  *
@@ -457,7 +458,7 @@ body {
     opacity: 1;
     cursor: default;
     filter: grayscale(0.6) brightness(0.7);
-    background: linear-gradient(135deg, #606070, #43434f) !important;
+    background: linear-gradient(135deg, #606070, #323e4f) !important;
     border-color: #272736 !important;
     box-shadow:
         0 0 0 2px rgba(255, 255, 255, 0.05) inset,
@@ -1070,9 +1071,13 @@ body {
 .inventory-slot {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: #ffe478 url('/assets/ui/cell.png') no-repeat center / contain;
-    border: 1px solid #ba6156;
-    border-radius: 6px;
+    background: linear-gradient(135deg, #ffe478, #f2a65e) url('/assets/ui/cell.png') no-repeat center / contain;
+    border: 3px solid #8c3f5d;
+    border-radius: 8px;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 3px 0 #5e315b,
+        0 4px 10px rgba(94, 49, 91, 0.3);
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
@@ -1080,6 +1085,27 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+}
+
+.inventory-slot:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+        0 4px 0 #5e315b,
+        0 6px 14px rgba(94, 49, 91, 0.4),
+        0 0 12px rgba(255, 228, 120, 0.3);
+    filter: brightness(1.1);
+}
+
+.inventory-slot:active {
+    transform: translateY(1px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 1px 0 #5e315b,
+        0 2px 6px rgba(94, 49, 91, 0.3);
 }
 
 .player-map-area {
@@ -1144,7 +1170,7 @@ body {
     font-family: 'Courier New', monospace;
     font-size: 1.1em;
     font-weight: bold;
-    color: #43434f;
+    color: #323e4f;
     background: rgba(94, 49, 91, 0.1);
     padding: 2px 8px;
     border-radius: 4px;
@@ -1300,7 +1326,7 @@ body {
 
 .uses-indicator.disabled {
     background: rgba(255,255,255,0.35);
-    color: #43434f;
+    color: #323e4f;
 }
 
 .inventory-tooltip {
@@ -1541,16 +1567,17 @@ h1 {
 /* Removed papyrus texture effect - using clean pear36 palette */
 
 #zoneMap {
-    border: 2px solid #8c3f5d;
+    border: 3px solid #8c3f5d;
     background: linear-gradient(135deg, #ffffeb 0%, #ffe478 50%, #f2a65e 100%);
     display: block;
-    width: 160px;
-    height: 160px;
+    width: clamp(140px, 30vw, 160px);
+    height: clamp(140px, 30vw, 160px);
     position: relative;
+    border-radius: 8px;
     box-shadow:
-        0 0 0 1px #8c3f5d,
-        0 0 0 3px #ba6156,
-        0 4px 12px rgba(94, 49, 91, 0.3);
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 3px 0 #5e315b,
+        0 5px 16px rgba(94, 49, 91, 0.4);
 }
 
 .minimap-info {
@@ -1570,16 +1597,19 @@ h1 {
 }
 
 #gameCanvas {
-    border: 3px solid #BA6156;
-    border-radius: 8px;
+    border: 4px solid #8c3f5d;
+    border-radius: 10px;
     background-color: #FFB5B5;
     display: block;
     margin: 0 auto;
     width: 100%;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 4px 0 #5e315b,
+        0 6px 20px rgba(94, 49, 91, 0.4);
     max-width: 400px; /* constrain canvas to board size */
     height: auto;
     max-height: 70vh;
-    box-shadow: 0 4px 15px rgba(94, 49, 91, 0.3);
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
@@ -1850,23 +1880,29 @@ h1 {
 
 /* Message Box */
 .message-box {
-    margin: 10px 0;
-    padding: 10px 15px;
-    background: #ffffeb;
-    border: 2px solid #ffb5b5;
-    border-radius: 8px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    margin: clamp(8px, 1.5vh, 12px) 0;
+    padding: clamp(10px, 2vh, 15px) clamp(15px, 3vw, 20px);
+    background: linear-gradient(135deg, #ffffeb, #ffb5b5);
+    border: 3px solid #8c3f5d;
+    border-radius: 12px;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+        0 4px 0 #5e315b,
+        0 6px 18px rgba(94, 49, 91, 0.4);
     font-family: 'Cinzel', serif;
-    font-size: 1.2em;
-    color: #8c3f5d;
+    font-size: clamp(0.9em, 2.5vw, 1.2em);
+    font-weight: 700;
+    color: #272736;
     text-align: center;
+    text-transform: uppercase;
+    letter-spacing: clamp(0.5px, 0.1vw, 1px);
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
     justify-content: center;
     display: flex;
     align-items: center;
     max-width: 600px;
     width: 90%;
     opacity: 0;
-    /* Show/hide instantly for menu/message boxes (no fade) */
     transition: none;
     position: relative;
 }
@@ -1881,24 +1917,27 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 100; /* Above other content in the player card */
-    padding: 16px;
+    z-index: 100;
+    padding: clamp(12px, 2.5vh, 18px);
     background: linear-gradient(135deg, #FFB5B5 0%, #f2a65e 30%, #f2a65e 70%, #BA6156 100%);
-    border: 3px solid #BA6156;
-    box-shadow: 0 8px 32px rgba(94, 49, 91, 0.4), inset 0 0 20px rgba(94, 49, 91, 0.1);
+    border: 4px solid #8c3f5d;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 6px 0 #5e315b,
+        0 8px 32px rgba(94, 49, 91, 0.5);
     font-family: 'Cinzel', serif;
     color: #272736;
-    text-align: center;    
+    text-align: center;
     opacity: 0;
-    display: block; /* Ensure it's displayed */
-    line-height: 1.45;
+    display: block;
+    line-height: 1.5;
     font-weight: 700;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    font-size: 1.35em;
-    pointer-events: none; /* Hidden by default */
-    /* Disable overlay fade so menus appear/disappear instantly */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    font-size: clamp(1em, 2.8vw, 1.35em);
+    pointer-events: none;
     transition: none;
     filter: sepia(20%) saturate(1.2) contrast(1.1);
+    border-radius: 8px;
 }
 
 .message-overlay::before, #messageOverlay::before {
@@ -1953,10 +1992,18 @@ h1 {
 
 /* Improve scrollbar visibility on desktop browsers */
 #messageOverlay::-webkit-scrollbar, .barter-window::-webkit-scrollbar, .message-log-box::-webkit-scrollbar {
-    width: 10px;
+    width: 12px;
 }
 #messageOverlay::-webkit-scrollbar-thumb, .barter-window::-webkit-scrollbar-thumb, .message-log-box::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.15);
+    background: linear-gradient(135deg, #8c3f5d, #5e315b);
+    border: 2px solid #272736;
+    border-radius: 6px;
+}
+#messageOverlay::-webkit-scrollbar-thumb:hover, .barter-window::-webkit-scrollbar-thumb:hover, .message-log-box::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #ba6156, #8c3f5d);
+}
+#messageOverlay::-webkit-scrollbar-track, .barter-window::-webkit-scrollbar-track, .message-log-box::-webkit-scrollbar-track {
+    background: #ffffeb;
     border-radius: 6px;
 }
 
@@ -2000,11 +2047,12 @@ h1 {
 .barter-npc-message {
     font-family: 'Cinzel', serif;
     color: #272736;
-    font-size: 1.35em;
-    line-height: 1.45;
+    font-size: clamp(1em, 2.8vw, 1.35em);
+    line-height: 1.5;
     font-weight: 700;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
     text-align: center;
+    letter-spacing: clamp(0.2px, 0.05vw, 0.5px);
 }
 
 /* Slightly reduce dialogue text on small screens for better fit */
@@ -2068,7 +2116,7 @@ h1 {
 .note-card {
     pointer-events: auto; /* Allow clicks if needed */
     background: #ffffeb;
-    border: 2px solid #ffb570;
+    border: 2px solid #f2a65e;
     padding: 10px 12px;
     border-radius: 8px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.16);
@@ -2115,22 +2163,23 @@ h1 {
     transform: translateY(-10px);
     z-index: 1100;
     margin: 0;
-    padding: 12px 20px;
+    padding: clamp(10px, 2vh, 14px) clamp(16px, 3.5vw, 24px);
     background: linear-gradient(135deg, #FFB5B5 0%, #f2a65e 30%, #f2a65e 70%, #BA6156 100%);
-    border: 3px solid #BA6156;
-    border-radius: 8px;
+    border: 4px solid #8c3f5d;
+    border-radius: 10px;
     box-shadow:
-        0 8px 32px rgba(94, 49, 91, 0.4),
-        inset 0 0 20px rgba(94, 49, 91, 0.1),
-        0 0 40px rgba(255, 140, 0, 0.3);
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 6px 0 #5e315b,
+        0 8px 32px rgba(94, 49, 91, 0.5),
+        0 0 40px rgba(242, 166, 94, 0.4);
     font-family: 'Cinzel', serif;
-    font-size: 1.4em;
+    font-size: clamp(1.1em, 2.8vw, 1.4em);
     font-weight: 700;
     color: #272736;
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: clamp(1px, 0.15vw, 2px);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
     opacity: 0;
     pointer-events: none;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -2139,8 +2188,8 @@ h1 {
         saturate(1.3)
         contrast(1.2)
         brightness(1.1);
-    min-width: 150px;
-    max-width: 300px;
+    min-width: clamp(140px, 25vw, 180px);
+    max-width: clamp(280px, 50vw, 320px);
 }
 
 .region-notification-overlay.show {
@@ -2185,7 +2234,7 @@ h1 {
 }
 
 .game-over-box p {
-    color: #57294b;
+    color: #5e315b;
     font-size: 1.2em;
     margin-bottom: 30px;
 }
@@ -2194,33 +2243,50 @@ h1 {
 .restart-button {
     display: inline-flex;
     align-items: center;
-    gap: 15px; /* slightly increased gap with larger size */
-    background: linear-gradient(135deg, #ba6156, #BA6156);
-    border: 2px solid #8c3f5d;
-    color: #272736;
-    padding: 15px 27px; /* ~1.5x larger */
+    gap: clamp(12px, 2.5vw, 15px);
+    background: linear-gradient(135deg, #ba6156, #8c3f5d);
+    border: 3px solid #272736;
+    color: #ffffeb;
+    padding: clamp(13px, 2.5vh, 17px) clamp(24px, 4.5vw, 30px);
     font-family: 'Cinzel', serif;
-    font-size: 1.575em; /* ~1.5x of 1.05em */
+    font-size: clamp(1.3em, 3vw, 1.575em);
     font-weight: 700;
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    transition: all 0.15s ease;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 8px 20px rgba(94, 49, 91, 0.32);
-    line-height: 1; /* keep icon and text vertically tight */
+    letter-spacing: clamp(0.5px, 0.1vw, 1px);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 4px 0 #1a1a24,
+        0 6px 20px rgba(94, 49, 91, 0.4);
+    line-height: 1;
 }
 
 /* Specific styling when the restart button appears inside the game-over box */
 .game-over-box .restart-button {
-    padding: 21px 33px; /* ~1.5x of previous game-over padding */
-    font-size: 1.725em; /* ~1.5x of 1.15em */
+    padding: clamp(18px, 3.5vh, 24px) clamp(28px, 5.5vw, 36px);
+    font-size: clamp(1.4em, 3.2vw, 1.725em);
 }
 
 .restart-button:hover {
-    transform: translateY(-2px) scale(1.02);
-    background: linear-gradient(135deg, #BA6156, #ba6156);
-    box-shadow: 0 10px 26px rgba(94, 49, 91, 0.45);
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, #f2a65e, #ba6156);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+        0 5px 0 #1a1a24,
+        0 7px 24px rgba(94, 49, 91, 0.5),
+        0 0 20px rgba(186, 97, 86, 0.3);
+    filter: brightness(1.15);
+}
+
+.restart-button:active {
+    transform: translateY(1px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 2px 0 #1a1a24,
+        0 3px 12px rgba(94, 49, 91, 0.4);
 }
 
 /* Keyboard-focus visible state for accessibility */
@@ -2249,10 +2315,13 @@ h1 {
     height: 95%;
     max-width: 1200px;
     max-height: 900px;
-    background: #ffffeb;
-    border: 3px solid #ffb5b5;
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, #FFFFEB, #FFB5B5);
+    border: 4px solid #8c3f5d;
+    border-radius: 12px;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 8px 0 #5e315b,
+        0 12px 48px rgba(94, 49, 91, 0.6);
     display: flex;
     flex-direction: column;
     pointer-events: auto;
@@ -2262,12 +2331,12 @@ h1 {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: #ba6156;
-    border: 2px solid #8c3f5d;
-    color: #272736;
-    font-size: 24px;
-    width: 36px;
-    height: 36px;
+    background: linear-gradient(135deg, #ba6156, #8c3f5d);
+    border: 3px solid #272736;
+    color: #ffffeb;
+    font-size: clamp(20px, 4vw, 24px);
+    width: clamp(34px, 6vw, 40px);
+    height: clamp(34px, 6vw, 40px);
     border-radius: 50%;
     cursor: pointer;
     z-index: 10;
@@ -2275,14 +2344,31 @@ h1 {
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    transition: all 0.15s ease;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 3px 0 #1a1a24,
+        0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
 .zone-editor-close:hover {
-    background: #ba6156;
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #f2a65e, #ba6156);
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+        0 4px 0 #1a1a24,
+        0 6px 14px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(186, 97, 86, 0.4);
+    filter: brightness(1.15);
+}
+
+.zone-editor-close:active {
+    transform: translateY(1px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 1px 0 #1a1a24,
+        0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .zone-editor-frame {
@@ -2358,7 +2444,7 @@ h1 {
 /* New styles for stats panel footer and divider */
 .stats-divider {
     border: none;
-    border-top: 2px solid #ffe478a8;
+    border-top: 2px solid rgba(255, 228, 120, 0.66);
     margin: 12px 0;
 }
 
@@ -2500,7 +2586,7 @@ h1 {
     flex: 1 1 auto;
     overflow-y: auto;
     text-align: left;
-    color: #57294b;
+    color: #5e315b;
     font-size: 1.3em;
     padding: 8px;
     background: #ffe478;
@@ -2553,19 +2639,23 @@ h1 {
 
 .barter-window {
     background: linear-gradient(135deg, #FFB5B5 0%, #f2a65e 30%, #f2a65e 70%, #BA6156 100%);
-    border: 3px solid #ffb5b5;
-    border-radius: 0;
-    padding: 20px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    border: 4px solid #8c3f5d;
+    border-radius: 12px;
+    padding: clamp(16px, 3vh, 24px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 6px 0 #5e315b,
+        0 8px 32px rgba(94, 49, 91, 0.5);
     font-family: 'Cinzel', serif;
     width: 100%;
-    height: 100%; /* Fill the overlay */
+    height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    overflow: auto; /* Allow inner scrolling on small screens to avoid clipping */
-    justify-content: space-between; /* Distribute space */
-    box-sizing: border-box; /* Ensure padding is included in height/width */
+    gap: clamp(12px, 2.5vh, 18px);
+    overflow: auto;
+    justify-content: space-between;
+    box-sizing: border-box;
+    filter: sepia(20%) saturate(1.2) contrast(1.1);
 }
 
 /* Prevent mobile browsers from applying native text-size adjustments inside the barter UI
@@ -2719,7 +2809,7 @@ h1 {
     font-family: 'Courier New', monospace;
     text-align: left;
     line-height: 1.4;
-    color: #57294b;
+    color: #5e315b;
 }
 
 .barter-exchange {
@@ -2755,7 +2845,7 @@ h1 {
 .barter-item-label {
     font-size: 1em;
     font-weight: bold;
-    color: #57294b;
+    color: #5e315b;
     text-align: center;
     font-family: 'Courier New', monospace;
     word-wrap: break-word;
@@ -2771,42 +2861,67 @@ h1 {
 }
 
 .barter-window button {
-    background: linear-gradient(135deg, #ba6156, #BA6156);
-    border: 2px solid #8c3f5d;
-    color: #272736;
-    padding: 12px 24px;
+    background: linear-gradient(135deg, #ba6156, #8c3f5d);
+    border: 3px solid #272736;
+    color: #ffffeb;
+    padding: clamp(10px, 2vh, 14px) clamp(20px, 4vw, 28px);
     font-family: 'Cinzel', serif;
-    font-size: 1.1em;
+    font-size: clamp(0.95em, 2.2vw, 1.1em);
     font-weight: 700;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.15s ease;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 12px rgba(94, 49, 91, 0.3);
+    letter-spacing: clamp(0.5px, 0.1vw, 1px);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 3px 0 #1a1a24,
+        0 5px 12px rgba(94, 49, 91, 0.4);
 }
 
 .barter-window button:hover:not(:disabled) {
-    background: linear-gradient(135deg, #BA6156, #ba6156);
+    background: linear-gradient(135deg, #f2a65e, #ba6156);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(94, 49, 91, 0.5);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+        0 4px 0 #1a1a24,
+        0 6px 16px rgba(94, 49, 91, 0.5),
+        0 0 15px rgba(186, 97, 86, 0.3);
+    filter: brightness(1.15);
+}
+
+.barter-window button:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 1px 0 #1a1a24,
+        0 2px 6px rgba(94, 49, 91, 0.4);
 }
 
 .barter-window button.text-button {
     background-image: none !important;
-    background: linear-gradient(135deg, #ba6156, #BA6156) !important;
-    border: 2px solid #8c3f5d !important;
-    color: #272736 !important;
-    padding: 12px 24px !important;
+    background: linear-gradient(135deg, #ba6156, #8c3f5d) !important;
+    border: 3px solid #272736 !important;
+    color: #ffffeb !important;
+    padding: clamp(10px, 2vh, 14px) clamp(20px, 4vw, 28px) !important;
     width: auto !important;
     height: auto !important;
-    box-shadow: 0 4px 12px rgba(94, 49, 91, 0.3) !important;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 3px 0 #1a1a24,
+        0 5px 12px rgba(94, 49, 91, 0.4) !important;
 }
 
 .barter-window button.text-button:hover:not(:disabled) {
-    background: linear-gradient(135deg, #BA6156, #ba6156) !important;
+    background: linear-gradient(135deg, #f2a65e, #ba6156) !important;
     transform: translateY(-2px) !important;
-    box-shadow: 0 6px 16px rgba(94, 49, 91, 0.5) !important;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+        0 4px 0 #1a1a24,
+        0 6px 16px rgba(94, 49, 91, 0.5),
+        0 0 15px rgba(186, 97, 86, 0.3) !important;
+    filter: brightness(1.15) !important;
 }
 
 /* Stats Panel Overlay */
@@ -2970,7 +3085,7 @@ h1 {
     align-items: center;
     gap: 6px;
     margin-bottom: 8px;
-    border-bottom: 2px solid #ffe478a8;
+    border-bottom: 2px solid rgba(255, 228, 120, 0.66);
     padding-bottom: 8px;
     z-index: 1; /* Above pseudo-elements */
 }
@@ -2980,24 +3095,43 @@ h1 {
     position: absolute;
     left: 12px;
     top: 10px;
-    background: linear-gradient(135deg, #ffffeb, #ffe478);
-    border: 2px solid #f2a65e;
-    color: #57294b;
-    padding: 6px 12px;
-    font-weight: 600;
+    background: linear-gradient(135deg, #7e7e8f, #606070);
+    border: 3px solid #272736;
+    color: #ffffeb;
+    padding: clamp(6px, 1.2vh, 8px) clamp(12px, 2.5vw, 16px);
+    font-weight: 700;
     font-family: 'Cinzel', serif;
-    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: clamp(0.3px, 0.06vw, 0.6px);
+    border-radius: 6px;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
-    z-index: 30; /* above header content */
-    font-size: 0.9em;
-    transition: all 0.2s ease;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 3px 0 #1a1a24,
+        0 5px 12px rgba(0, 0, 0, 0.4);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    z-index: 30;
+    font-size: clamp(0.75em, 1.8vw, 0.9em);
+    transition: all 0.15s ease;
 }
 
 .stats-config-button:hover {
-    transform: translateX(2px);
-    background: linear-gradient(135deg, #ffffeb, #ffe478);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #c2c2d1, #7e7e8f);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+        0 4px 0 #1a1a24,
+        0 6px 16px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(126, 126, 143, 0.3);
+    filter: brightness(1.15);
+}
+
+.stats-config-button:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 1px 0 #1a1a24,
+        0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 /* Back button inside the config overlay (top-left). Small, consistent with other
@@ -3006,24 +3140,43 @@ h1 {
     position: absolute;
     left: 10px;
     top: 8px;
-    background: linear-gradient(135deg, #ffffeb, #ffe478);
-    border: 2px solid #f2a65e;
-    color: #57294b;
-    padding: 6px 12px;
-    font-weight: 600;
+    background: linear-gradient(135deg, #f2a65e, #ba6156);
+    border: 3px solid #272736;
+    color: #ffffeb;
+    padding: clamp(6px, 1.2vh, 8px) clamp(12px, 2.5vw, 16px);
+    font-weight: 700;
     font-family: 'Cinzel', serif;
-    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: clamp(0.3px, 0.06vw, 0.6px);
+    border-radius: 6px;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
-    z-index: 60; /* above panel content */
-    font-size: 0.9em;
-    transition: all 0.2s ease;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 3px 0 #1a1a24,
+        0 5px 12px rgba(0, 0, 0, 0.4);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    z-index: 60;
+    font-size: clamp(0.75em, 1.8vw, 0.9em);
+    transition: all 0.15s ease;
 }
 
 .config-back-button:hover {
-    transform: translateX(-2px);
-    background: linear-gradient(135deg, #ffffeb, #ffe478);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #ffe478, #f2a65e);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+        0 4px 0 #1a1a24,
+        0 6px 16px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(242, 166, 94, 0.3);
+    filter: brightness(1.15);
+}
+
+.config-back-button:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 1px 0 #1a1a24,
+        0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 /* Records (trophy) button positioned in the top-right of stats header */
@@ -3031,18 +3184,41 @@ h1 {
     position: absolute;
     right: 12px;
     top: 10px;
-    /* Muted parchment tones to match app theme */
-    background: linear-gradient(135deg, #ffffeb, #ffe478);
-    border: 2px solid #f2a65e;
-    color: #57294b;
-    padding: 6px 8px; /* reduce interior padding so icon appears larger */
+    background: linear-gradient(135deg, #f2a65e, #ba6156);
+    border: 3px solid #272736;
+    color: #ffffeb;
+    padding: clamp(6px, 1.2vh, 8px) clamp(8px, 1.8vw, 10px);
     font-weight: 700;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 3px 0 #1a1a24,
+        0 5px 12px rgba(0, 0, 0, 0.4);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     z-index: 30;
-    font-size: 1.6em; /* base scaling for icon */
-    line-height: 1; /* keep compact */
+    font-size: clamp(1.3em, 3vw, 1.6em);
+    line-height: 1;
+    transition: all 0.15s ease;
+}
+
+.stats-records-button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #ffe478, #f2a65e);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+        0 4px 0 #1a1a24,
+        0 6px 16px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(242, 166, 94, 0.3);
+    filter: brightness(1.15);
+}
+
+.stats-records-button:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 1px 0 #1a1a24,
+        0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .stats-records-button svg {
@@ -3088,7 +3264,7 @@ h1 {
     justify-content: space-between;
     padding: 12px 16px;
     font-size: 1.2em;
-    color: #57294b;
+    color: #5e315b;
     gap: 16px;
     width: 100%;
     box-sizing: border-box;
@@ -3158,7 +3334,7 @@ h1 {
     justify-content: flex-start;
     align-items: center;
     font-size: 1.5em;
-    color: #57294b;
+    color: #5e315b;
     gap: 8px; /* Add a small gap between label and value */
 }
 
@@ -3211,7 +3387,7 @@ h1 {
     bottom: 0;
     /* Sonoran reddish color when OFF - terracotta/rust */
     background: linear-gradient(135deg, #ba6156, #8c3f5d);
-    border: 2px solid #57294b;
+    border: 2px solid #5e315b;
     transition: 0.3s;
     border-radius: 6px;
     z-index: 1;
@@ -3239,7 +3415,7 @@ h1 {
 
 input:checked + .toggle-slider {
     /* Turquoise when ON */
-    background: linear-gradient(135deg, #66ffe3, #4da6ff);
+    background: linear-gradient(135deg, #4da6ff, #4da6ff);
     border-color: #3ca370;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 2px 8px rgba(72, 209, 204, 0.4);
 }
@@ -3498,7 +3674,7 @@ margin: 0 auto 10px auto;
 
 /* Merchant NPCs - Cool, business-like colors */
 .npc-category-merchant .barter-portrait.matte-1 { background-color: #8FDE5D; } /* Pale Green */
-.npc-category-merchant .barter-portrait.matte-2 { background-color: #66FFE3; } /* Sky Blue */
+.npc-category-merchant .barter-portrait.matte-2 { background-color: #4da6ff; } /* Sky Blue */
 .npc-category-merchant .barter-portrait.matte-3 { background-color: #C2C2D1; } /* Plum */
 .npc-category-merchant .barter-portrait.matte-4 { background-color: #FFE478; } /* Khaki */
 
@@ -3512,7 +3688,7 @@ margin: 0 auto 10px auto;
   display: block;
 }
 .npc-category-gossip .barter-portrait.matte-3 { background-color: #8FDE5D; } /* Pale Green */
-.npc-category-gossip .barter-portrait.matte-4 { background-color: #66FFE3; } /* Sky Blue */
+.npc-category-gossip .barter-portrait.matte-4 { background-color: #4da6ff; } /* Sky Blue */
 
 /* Button styling for NPC-style messages */
 .consent-buttons {
