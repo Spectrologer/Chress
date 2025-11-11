@@ -12,19 +12,36 @@ import { logger } from '@core/logger';
 
 // Initialize game when the page loads
 window.addEventListener('DOMContentLoaded', async () => {
-    // Initialize PWA features (service worker, install prompt)
+    // Show the overlay immediately (already visible in HTML)
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const loadingText = document.querySelector('.loading-text') as HTMLElement;
+    const startMenuGrid = document.getElementById('startMenuGrid');
+
+    // Helper to update loading text
+    const updateLoadingText = (text: string) => {
+        if (loadingText) loadingText.textContent = text;
+    };
+
+    // Initialize PWA features (service worker, install prompt) - non-blocking
     initializePWA().catch(err => logger.warn('[PWA] Initialization failed:', err));
 
-    // Preload critical modules in background
+    // Preload critical modules in background - non-blocking
     preloadCriticalModules();
 
     // Register all game content before creating the game (including preloading boards)
+    updateLoadingText('Loading game content...');
     await registerAllContent();
 
+    updateLoadingText('Initializing game...');
     const game = new Game();
 
     // Initialize storage adapter (IndexedDB with compression + localStorage fallback)
+    updateLoadingText('Loading save data...');
     await game.storageAdapter.init();
+
+    // Hide loading indicator and show menu
+    if (loadingIndicator) loadingIndicator.style.display = 'none';
+    if (startMenuGrid) startMenuGrid.style.display = '';
 
     // Debug: Q spawns aguamelin
     window.addEventListener('keydown', (e) => {

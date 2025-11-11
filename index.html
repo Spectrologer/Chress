@@ -244,12 +244,16 @@
                             </div>
                         </div>
                                 <!-- Start overlay: sits over the player card so the board remains visible as a preview behind it -->
-                                <div id="startOverlay" class="start-overlay" aria-hidden="true">
+                                <div id="startOverlay" class="start-overlay" aria-hidden="false">
                                     <div class="start-overlay-box">
                                         <div class="start-overlay-title">
                                             CHÉSSE
                                         </div>
-                                        <div class="start-menu-grid">
+                                        <div id="loadingIndicator" class="loading-indicator">
+                                            <div class="loading-spinner"></div>
+                                            <div class="loading-text">Loading...</div>
+                                        </div>
+                                        <div id="startMenuGrid" class="start-menu-grid" style="display: none;">
                                             <button id="startButton" class="start-button-native start-overlay-action start-btn-new start-btn-large">New Game</button>
                                             <button id="continueButton" class="start-button-native start-overlay-action start-btn-continue start-btn-large">Continue</button>
                                             <button id="configButton" class="start-button-native start-overlay-action start-btn-config">Config</button>

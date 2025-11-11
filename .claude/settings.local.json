@@ -48,7 +48,9 @@
       "Bash(node scripts/audit-colors-full.cjs:*)",
       "Bash(node scripts/replace-colors-all.cjs:*)",
       "Bash(node:*)",
-      "Bash(del find-empty.js find-truly-empty.js)"
+      "Bash(del find-empty.js find-truly-empty.js)",
+      "Bash(timeout /t 3 /nobreak)",
+      "Bash(move:*)"
     ],
     "deny": [],
     "ask": []

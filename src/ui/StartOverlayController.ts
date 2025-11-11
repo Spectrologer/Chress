@@ -20,6 +20,7 @@ export class StartOverlayController {
 
     /**
      * Shows the start overlay with appropriate button states.
+     * The overlay is already visible from HTML, this just configures it.
      */
     async showStartOverlay(
         configureContinueBtn: (overlay: HTMLElement, hasSaved: boolean) => void,
@@ -29,8 +30,10 @@ export class StartOverlayController {
             const overlay = document.getElementById('startOverlay');
             if (!overlay) return;
 
-            // Hide overlay initially to avoid visual jumps during setup
-            overlay.style.visibility = 'hidden';
+            // Overlay is already visible, just ensure it's shown
+            overlay.style.display = 'flex';
+            overlay.style.visibility = 'visible';
+            overlay.setAttribute('aria-hidden', 'false');
 
             // Configure continue button based on saved game state
             const hasSaved = await this.hasSavedGame();
@@ -46,11 +49,6 @@ export class StartOverlayController {
             if (hasSaved) {
                 this.prioritizeContinueButton(overlay);
             }
-
-            // Show the overlay
-            overlay.style.display = 'flex';
-            overlay.style.visibility = 'visible';
-            overlay.setAttribute('aria-hidden', 'false');
         } catch (error) {
             logger.error('Error showing start overlay:', error);
         }
