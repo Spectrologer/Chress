@@ -3,6 +3,7 @@ import type { Enemy } from '@entities/Enemy';
 import type { EnemyCollection } from '@facades/EnemyCollection';
 import { isInChessMode } from './GameModeManager';
 import { TILE_TYPES } from './constants/index';
+import { ChessAI } from '../ai/ChessAI';
 
 /**
  * TurnManager
@@ -15,11 +16,16 @@ import { TILE_TYPES } from './constants/index';
  */
 export class TurnManager {
     private game: GameContext;
+    private chessAI: ChessAI | null = null;
 
     turnQueue: Enemy[];
     occupiedTilesThisTurn: Set<string>;
     initialEnemyTilesThisTurn: Set<string>;
     wasPlayerOnExitLastTurn: boolean;
+
+    // Chess AI difficulty: 1 (easy), 2 (medium), 3 (hard), 4 (very hard)
+    // Higher depth = stronger but slower
+    chessAIDepth: number = 3;
 
     constructor(game: GameContext) {
         this.game = game;
@@ -109,82 +115,54 @@ export class TurnManager {
 
         // Chess mode: Only one enemy moves per turn
         if (isInChessMode(this.game)) {
-            this.turnQueue = this._selectChessEnemyToMove(enemyCollection);
-            console.log('[Chess] Selected enemy to move:', this.turnQueue[0]?.enemyType);
+            // Initialize ChessAI if not already created
+            if (!this.chessAI) {
+                this.chessAI = new ChessAI(this.game);
+            }
+
+            // Select enemy to move asynchronously (won't block UI)
+            this._selectChessEnemyToMoveAsync(enemyCollection);
         } else {
             // Normal mode: All enemies move
             this.turnQueue = enemyCollection.getAll();
+            this.processTurnQueue();
         }
-
-        this.processTurnQueue();
     }
 
     /**
-     * Select one enemy unit to move in chess mode
-     * Prioritizes units that can attack, then randomly selects from units that can move
+     * Select one enemy unit to move in chess mode (async to avoid blocking UI)
+     * Uses minimax AI to think ahead and choose the best move
      */
-    private _selectChessEnemyToMove(enemyCollection: EnemyCollection): Enemy[] {
+    private async _selectChessEnemyToMoveAsync(enemyCollection: EnemyCollection): Promise<void> {
         const allEnemies = enemyCollection.getAll();
         const enemyTeamUnits = allEnemies.filter(e => e.team === 'enemy');
 
         console.log('[Chess] Enemy team has', enemyTeamUnits.length, 'units');
 
         if (enemyTeamUnits.length === 0) {
-            return [];
+            this.turnQueue = [];
+            this.processTurnQueue();
+            return;
         }
 
-        // Get valid moves for each enemy unit using the same logic as InputCoordinator
-        const unitsWithMoves: Array<{ enemy: Enemy; moves: Array<{ x: number; y: number }> }> = [];
+        // Run AI calculation asynchronously (won't block UI)
+        const bestMove = await this.chessAI!.selectBestMove(this.chessAIDepth);
 
-        for (const enemy of enemyTeamUnits) {
-            const validMoves = this._getValidMovesForChessUnit(enemy);
-            console.log('[Chess]', enemy.enemyType, 'at', enemy.x, enemy.y, 'has', validMoves.length, 'valid moves');
-            if (validMoves.length > 0) {
-                unitsWithMoves.push({ enemy, moves: validMoves });
-            }
+        if (!bestMove) {
+            console.log('[Chess] No valid moves found - stalemate!');
+            this.turnQueue = [];
+            this.processTurnQueue();
+            return;
         }
 
-        if (unitsWithMoves.length === 0) {
-            console.log('[Chess] No enemy units can move - stalemate!');
-            return [];
-        }
-
-        console.log('[Chess]', unitsWithMoves.length, 'units have valid moves');
-
-        // Prioritize units that can attack player units
-        const unitsWithAttacks = unitsWithMoves.map(({ enemy, moves }) => {
-            const attackMoves = moves.filter(move => {
-                const unitAtTarget = enemyCollection.findAt(move.x, move.y, true);
-                return unitAtTarget && unitAtTarget.team === 'player';
-            });
-            if (attackMoves.length > 0) {
-                console.log('[Chess]', enemy.enemyType, 'can attack at:', attackMoves);
-            }
-            return { enemy, moves, attackMoves };
-        }).filter(({ attackMoves }) => attackMoves.length > 0);
-
-        console.log('[Chess]', unitsWithAttacks.length, 'units can attack player units');
-
-        let selected: { enemy: Enemy; moves: Array<{ x: number; y: number }> };
-        let selectedMove: { x: number; y: number };
-
-        if (unitsWithAttacks.length > 0) {
-            // If we have units that can attack, select one and choose an attack move
-            const attackUnit = unitsWithAttacks[Math.floor(Math.random() * unitsWithAttacks.length)];
-            selected = { enemy: attackUnit.enemy, moves: attackUnit.moves };
-            // IMPORTANT: Select from attack moves only, not all moves
-            selectedMove = attackUnit.attackMoves[Math.floor(Math.random() * attackUnit.attackMoves.length)];
-        } else {
-            // Otherwise, select a unit that can move and choose any valid move
-            const movingUnit = unitsWithMoves[Math.floor(Math.random() * unitsWithMoves.length)];
-            selected = movingUnit;
-            selectedMove = selected.moves[Math.floor(Math.random() * selected.moves.length)];
-        }
+        console.log('[Chess] AI selected:', bestMove.enemy.enemyType, 'to move to', bestMove.move);
 
         // Store the target move for the combat manager to use
-        selected.enemy._chessTargetMove = selectedMove;
+        bestMove.enemy._chessTargetMove = bestMove.move;
 
-        return [selected.enemy];
+        this.turnQueue = [bestMove.enemy];
+        console.log('[Chess] Selected enemy to move:', this.turnQueue[0]?.enemyType);
+        this.processTurnQueue();
     }
 
     /**

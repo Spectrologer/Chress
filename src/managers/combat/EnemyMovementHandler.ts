@@ -9,7 +9,7 @@ import { TILE_TYPES } from '@core/constants/index';
 import { createZoneKey } from '@utils/ZoneKeyUtils';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
-import { isInChessMode } from '@core/GameModeManager';
+import { isInChessMode, exitChessModeAndReturn } from '@core/GameModeManager';
 import { Position } from '@core/Position';
 import type { Game } from '@core/game';
 import type { Enemy } from '@entities/Enemy';
@@ -47,8 +47,40 @@ export class EnemyMovementHandler {
             move = Position.from(targetMove);
             console.log('[Chess] Enemy moving from', enemy.x, enemy.y, 'to', move.x, move.y);
 
-            // Check if there's a player unit to capture
+            // Check if there's a unit at the target
             const targetUnit = enemyCollection.findAt(move.x, move.y, true) as Enemy | null;
+
+            // Check for castling: King moving to a rook's position
+            const baseType = enemy.enemyType.replace('black_', '');
+            if (baseType === 'lizardo' && targetUnit && targetUnit.team === enemy.team) {
+                const rookBaseType = targetUnit.enemyType.replace('black_', '');
+                if (rookBaseType === 'lizardeaux') {
+                    // This is castling!
+                    const kingX = enemy.x;
+                    const rookX = targetUnit.x;
+
+                    // Move king 2 squares toward rook
+                    if (rookX > kingX) {
+                        // Kingside castling
+                        enemy.x = kingX + 2;
+                        targetUnit.x = kingX + 1;
+                    } else {
+                        // Queenside castling
+                        enemy.x = kingX - 2;
+                        targetUnit.x = kingX - 1;
+                    }
+
+                    // Mark both pieces as having moved
+                    enemy.hasMovedEver = true;
+                    targetUnit.hasMovedEver = true;
+
+                    // Clean up the chess move marker
+                    delete enemy._chessTargetMove;
+                    return; // Skip normal movement
+                }
+            }
+
+            // Check if there's a player unit to capture
             if (targetUnit && targetUnit.team === 'player') {
                 console.log('[Chess] Enemy capturing player unit:', targetUnit.enemyType);
                 enemyCollection.remove(targetUnit);
@@ -56,7 +88,20 @@ export class EnemyMovementHandler {
                 // Check for checkmate (player king captured)
                 if (targetUnit.enemyType === 'lizardo') {
                     console.log('[Chess] Enemy wins! Player king captured.');
-                    // TODO: Show defeat message and return to normal mode
+
+                    // Show defeat dialogue with options to restart or return
+                    this.game.uiManager?.messageManager?.dialogueManager?.showDialogue(
+                        'Defeat! The enemy has captured your king. Would you like to restart the match or return to the museum?',
+                        null,
+                        null,
+                        'Return to Museum',
+                        'unknown',
+                        undefined,
+                        () => {
+                            // Return to the location where the board was loaded
+                            exitChessModeAndReturn(this.game);
+                        }
+                    );
                 }
             }
 
@@ -166,6 +211,11 @@ export class EnemyMovementHandler {
         enemy.x = move.x;
         enemy.y = move.y;
         enemy.liftFrames = 15; // Start lift animation
+
+        // Mark piece as having moved (for castling)
+        if (isInChessMode(this.game)) {
+            enemy.hasMovedEver = true;
+        }
     }
 
     /**

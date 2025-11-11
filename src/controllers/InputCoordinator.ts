@@ -12,7 +12,7 @@ import { TileRegistry } from '@core/TileRegistry';
 import { getTileType, isTileObject } from '@utils/TileUtils';
 import { Position } from '@core/Position';
 import { ContentRegistry } from '@core/ContentRegistry';
-import { isInChessMode } from '@core/GameModeManager';
+import { isInChessMode, exitChessModeAndReturn } from '@core/GameModeManager';
 import type { GameContext } from '@core/context';
 import type { InventoryService } from '@managers/inventory/InventoryService';
 import type { TileObject } from '@core/SharedTypes';
@@ -738,6 +738,24 @@ export class InputCoordinator {
         const selectedUnit = this.game.selectedUnit;
         const targetEnemy = this.game.enemyCollection?.findAt(targetX, targetY, true) as Enemy | null;
 
+        // Check if this is a castling move
+        const baseType = selectedUnit.enemyType.replace('black_', '');
+        if (baseType === 'lizardo' && targetEnemy && targetEnemy.team === selectedUnit.team) {
+            // Castling: King is moving to a rook's position
+            const rookBaseType = targetEnemy.enemyType.replace('black_', '');
+            if (rookBaseType === 'lizardeaux') {
+                this._executeCastling(selectedUnit, targetEnemy);
+
+                // Deselect the unit
+                this.game.selectedUnit = null;
+                this.game.gameMode.chess.selectedUnit = null;
+
+                // Start turn completion
+                this.game.turnManager?.handleTurnCompletion();
+                return;
+            }
+        }
+
         // If there's an enemy at the target, it will be captured
         if (targetEnemy) {
             // Remove the captured enemy
@@ -746,7 +764,20 @@ export class InputCoordinator {
             // Check for checkmate (king captured)
             if (targetEnemy.enemyType === 'black_lizardo') {
                 console.log('[Chess] Player wins! Enemy king captured.');
-                // TODO: Show victory message and return to normal mode
+
+                // Show victory dialogue with options to restart or return
+                this.game.uiManager?.messageManager?.dialogueManager?.showDialogue(
+                    'Victory! You have captured the enemy king. Would you like to restart the match or return to the museum?',
+                    null,
+                    null,
+                    'Return to Museum',
+                    'unknown',
+                    undefined,
+                    () => {
+                        // Return to the location where the board was loaded
+                        exitChessModeAndReturn(this.game);
+                    }
+                );
             }
         }
 
@@ -754,11 +785,14 @@ export class InputCoordinator {
         selectedUnit.x = targetX;
         selectedUnit.y = targetY;
 
+        // Mark piece as having moved
+        selectedUnit.hasMovedEver = true;
+
         // Deselect the unit
         this.game.selectedUnit = null;
         this.game.gameMode.chess.selectedUnit = null;
 
-        // End the player's turn (enemy turn will start)
+        // Start turn completion (AI now runs asynchronously without blocking)
         this.game.turnManager?.handleTurnCompletion();
     }
 
@@ -782,6 +816,8 @@ export class InputCoordinator {
                     [0, -1], [0, 1], [-1, 0], [1, 0],  // Cardinal
                     [-1, -1], [-1, 1], [1, -1], [1, 1]  // Diagonal
                 ], 1, unit.team);
+                // Add castling moves
+                this._addCastlingMoves(validMoves, unit);
                 break;
 
             case 'lizardeaux': // Rook - straight lines
@@ -965,6 +1001,94 @@ export class InputCoordinator {
                 validMoves.push({ x: captureX, y: captureY });
             }
         }
+    }
+
+    /**
+     * Add castling moves for the king
+     */
+    private _addCastlingMoves(
+        validMoves: Array<{ x: number; y: number }>,
+        king: Enemy
+    ): void {
+        // Can't castle if king has moved
+        if (king.hasMovedEver) {
+            return;
+        }
+
+        const { x: kingX, y: kingY } = king;
+        const grid = this.game.grid;
+
+        // Find all rooks on the same team that haven't moved
+        const allUnits = this.game.enemyCollection?.getAll() || [];
+        const rooks = allUnits.filter(unit => {
+            const baseType = unit.enemyType.replace('black_', '');
+            return baseType === 'lizardeaux' &&
+                   unit.team === king.team &&
+                   !unit.hasMovedEver &&
+                   unit.y === kingY; // Same row
+        });
+
+        for (const rook of rooks) {
+            const rookX = rook.x;
+
+            // Check if path between king and rook is clear
+            const minX = Math.min(kingX, rookX);
+            const maxX = Math.max(kingX, rookX);
+            let pathClear = true;
+
+            // Check all squares between king and rook (exclusive)
+            for (let x = minX + 1; x < maxX; x++) {
+                // Check for walls
+                if (grid[kingY][x] === TILE_TYPES.WALL) {
+                    pathClear = false;
+                    break;
+                }
+
+                // Check for units
+                const unitAtPos = this.game.enemyCollection?.findAt(x, kingY, true);
+                if (unitAtPos) {
+                    pathClear = false;
+                    break;
+                }
+            }
+
+            if (!pathClear) {
+                continue;
+            }
+
+            // Check if king is in check (would need to implement check detection)
+            // For now, we'll skip this check and implement a basic version
+
+            // Check if king would pass through attacked square
+            // For now, we'll skip this check and implement a basic version
+
+            // Add the rook's position as a valid "move" for castling
+            validMoves.push({ x: rookX, y: kingY });
+        }
+    }
+
+    /**
+     * Execute castling move: move king 2 squares toward rook, move rook to opposite side
+     */
+    private _executeCastling(king: Enemy, rook: Enemy): void {
+        const kingX = king.x;
+        const rookX = rook.x;
+        const y = king.y;
+
+        // Determine direction: kingside (right) or queenside (left)
+        if (rookX > kingX) {
+            // Kingside castling: king moves 2 right, rook moves to king's right
+            king.x = kingX + 2;
+            rook.x = kingX + 1;
+        } else {
+            // Queenside castling: king moves 2 left, rook moves to king's right
+            king.x = kingX - 2;
+            rook.x = kingX - 1;
+        }
+
+        // Mark both pieces as having moved
+        king.hasMovedEver = true;
+        rook.hasMovedEver = true;
     }
 
     // ========================================

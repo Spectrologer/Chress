@@ -37,6 +37,13 @@ export interface ChessModeConfig {
 
     /** AI delay in milliseconds */
     aiDelayMs: number;
+
+    /** Return zone info for exiting chess mode */
+    returnZone?: {
+        x: number;
+        y: number;
+        dimension: number;
+    };
 }
 
 /**

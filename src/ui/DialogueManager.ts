@@ -14,6 +14,7 @@ export class DialogueManager {
     private typewriterController: TypewriterController;
     private messageOverlay: HTMLElement | null;
     private eventManager: EventListenerManager;
+    private onCloseCallback: (() => void) | null = null;
 
     constructor(game: IGame, typewriterController: TypewriterController) {
         this.game = game;
@@ -25,8 +26,11 @@ export class DialogueManager {
     /**
     * Showtextbox or NPC dialogue message
     */
-    showDialogue(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null, category = 'unknown', portraitBackground?: string): void {
+    showDialogue(text: string, imageSrc: string | null, name: string | null = null, buttonText: string | null = null, category = 'unknown', portraitBackground?: string, onClose?: () => void): void {
         if (!this.messageOverlay) return;
+
+        // Store the callback
+        this.onCloseCallback = onClose || null;
 
         // Clear any overlay timeouts to prevent auto-hiding
         this._clearTimeouts();
@@ -165,6 +169,12 @@ export class DialogueManager {
             if (closeButton) {
                 this.eventManager.add(closeButton, 'click', () => {
                     TextBox.hideMessageForSign(this.game);
+
+                    // Invoke callback after closing dialogue
+                    if (this.onCloseCallback) {
+                        this.onCloseCallback();
+                        this.onCloseCallback = null;
+                    }
                 });
             }
         } catch (e) {

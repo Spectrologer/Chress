@@ -21,6 +21,7 @@ export interface SerializedEnemy {
     lastX: number;
     lastY: number;
     team?: 'player' | 'enemy';
+    hasMovedEver?: boolean;
 }
 
 export class Enemy extends BaseEnemy {
@@ -32,6 +33,9 @@ export class Enemy extends BaseEnemy {
 
     // Chess mode: Target move selected by TurnManager
     _chessTargetMove?: { x: number; y: number };
+
+    // Chess mode: Track if piece has ever moved (for castling)
+    hasMovedEver?: boolean;
 
     constructor(data: EnemyData) {
         super(data);
@@ -52,7 +56,8 @@ export class Enemy extends BaseEnemy {
             attack: this.attack,
             lastX: this.lastX,
             lastY: this.lastY,
-            team: this.team
+            team: this.team,
+            hasMovedEver: this.hasMovedEver
         };
     }
 }

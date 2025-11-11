@@ -11,6 +11,7 @@ import { ItemRepository } from '@managers/inventory/ItemRepository';
 import type { Position } from '@core/Position';
 import type { GameContext } from '@core/context';
 import { logger } from '@core/logger';
+import { exitChessModeAndReturn, isInChessMode } from '@core/GameModeManager';
 
 interface KeyPressResult {
     type: 'cancel_path' | 'movement';
@@ -148,6 +149,24 @@ export class KeyboardHandler {
         const movementKeys = ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'];
 
         // Hotkeys - removed console commands, add specific hotkeys as needed
+
+        // Debug - Test chess victory dialogue (n key)
+        if (lowerKey === 'n' && isInChessMode(this.game)) {
+            console.log('[Debug] Testing chess victory dialogue');
+            this.game.uiManager?.messageManager?.dialogueManager?.showDialogue(
+                'Victory! You have captured the enemy king. Would you like to restart the match or return to the museum?',
+                null,
+                null,
+                'Return to Museum',
+                'unknown',
+                undefined,
+                () => {
+                    console.log('[Debug] Return button clicked');
+                    exitChessModeAndReturn(this.game);
+                }
+            );
+            return null;
+        }
 
         // Debug
         if (event.key === '9') {

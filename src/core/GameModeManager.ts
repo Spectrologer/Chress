@@ -44,7 +44,15 @@ function enterMode(game: GameContext, mode: GameMode): void {
             // Reset chess mode state
             game.gameMode.chess.selectedUnit = null;
             game.selectedUnit = null;
-            logger.debug('[Chess Mode] Initialized');
+
+            // Store return zone when entering chess mode
+            const currentZone = game.playerFacade.getCurrentZone();
+            game.gameMode.chess.returnZone = {
+                x: currentZone.x,
+                y: currentZone.y,
+                dimension: currentZone.dimension
+            };
+            logger.debug('[Chess Mode] Initialized. Return zone stored:', game.gameMode.chess.returnZone);
             break;
 
         case GameMode.NORMAL:
@@ -96,4 +104,32 @@ export function getChessConfig(game: GameContext) {
  */
 export function resetToNormalMode(game: GameContext): void {
     setGameMode(game, GameMode.NORMAL);
+}
+
+/**
+ * Exit chess mode and return to the zone where it was entered from
+ */
+export function exitChessModeAndReturn(game: GameContext): void {
+    const returnZone = game.gameMode.chess.returnZone;
+
+    if (!returnZone) {
+        logger.warn('[Chess Mode] No return zone stored, defaulting to normal mode reset');
+        resetToNormalMode(game);
+        return;
+    }
+
+    logger.info(`[Chess Mode] Exiting and returning to zone (${returnZone.x}, ${returnZone.y}) dimension ${returnZone.dimension}`);
+
+    // Switch back to normal mode
+    setGameMode(game, GameMode.NORMAL);
+
+    // Return to the stored zone
+    game.playerFacade.setCurrentZone(returnZone.x, returnZone.y);
+    game.playerFacade.setZoneDimension(returnZone.dimension);
+
+    // Clear the return zone
+    game.gameMode.chess.returnZone = undefined;
+
+    // Regenerate the zone
+    game.generateZone();
 }

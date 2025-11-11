@@ -6,6 +6,8 @@ interface GameInstance {
     player: any;
     soundManager?: any;
     gameStateManager?: any;
+    playerFacade?: any;
+    generateZone?: () => void;
 }
 
 /**
@@ -62,6 +64,9 @@ export class ConfigPanelManager {
             this._attachConfigHandlers();
             this.configHandlersAttached = true;
         }
+
+        // Always setup the return to museum handler since the button is dynamically added
+        this._setupReturnToMuseumHandler();
     }
 
     /**
@@ -92,6 +97,41 @@ export class ConfigPanelManager {
 
         if (music) music.checked = this.game.player.stats.musicEnabled !== false;
         if (sfx) sfx.checked = this.game.player.stats.sfxEnabled !== false;
+
+        // Add return to museum button if on a custom board
+        this._updateReturnToMuseumButton();
+    }
+
+    /**
+     * Adds or removes the "Return to Museum" button based on whether we're on a custom board
+     */
+    private _updateReturnToMuseumButton(): void {
+        const CUSTOM_BOARD_DIMENSION = 3;
+        const currentZone = this.game.playerFacade?.getCurrentZone?.();
+        const isOnCustomBoard = currentZone?.dimension === CUSTOM_BOARD_DIMENSION;
+        const hasReturnZone = !!(this.game as any).customBoardReturnZone;
+
+        const configList = this.configOverlay?.querySelector('.config-list');
+        if (!configList) return;
+
+        // Remove existing button if present
+        const existingButton = configList.querySelector('#return-to-museum-item');
+        if (existingButton) {
+            existingButton.remove();
+        }
+
+        // Add button only if on custom board and there's a return zone
+        if (isOnCustomBoard && hasReturnZone) {
+            const returnItem = document.createElement('div');
+            returnItem.id = 'return-to-museum-item';
+            returnItem.className = 'config-item config-button-item';
+            returnItem.innerHTML = `
+                <button id="return-to-museum-button" class="config-action-button" style="width: 100%; padding: 10px; font-size: 1em; cursor: pointer; background-color: #8B4513; color: white; border: 2px solid #654321; border-radius: 5px;">
+                    Return to Museum
+                </button>
+            `;
+            configList.appendChild(returnItem);
+        }
     }
 
     /**
@@ -130,6 +170,43 @@ export class ConfigPanelManager {
                 // Check if opened from start menu - if so, don't call hideConfigOverlay
                 // as the OverlayManager handles closing it directly
                 if (!this.configOverlay?.dataset.openedFromStart) {
+                    this.hideConfigOverlay();
+                }
+            });
+        }
+
+        // Setup return to museum button handler (if present)
+        this._setupReturnToMuseumHandler();
+    }
+
+    /**
+     * Sets up the "Return to Museum" button handler
+     */
+    private _setupReturnToMuseumHandler(): void {
+        const returnBtn = this.configOverlay?.querySelector<HTMLButtonElement>('#return-to-museum-button');
+        if (returnBtn) {
+            this.eventManager.add(returnBtn, 'click', (e: MouseEvent) => {
+                e?.preventDefault?.();
+                e?.stopPropagation?.();
+
+                // Return to the stored zone
+                const returnZone = (this.game as any).customBoardReturnZone;
+                if (returnZone && this.game.playerFacade) {
+                    logger.info(`[CustomBoard] Returning to zone (${returnZone.x}, ${returnZone.y}) dimension ${returnZone.dimension}`);
+
+                    this.game.playerFacade.setCurrentZone(returnZone.x, returnZone.y);
+                    this.game.playerFacade.setZoneDimension(returnZone.dimension);
+
+                    // Clear the return zone and custom board name
+                    delete (this.game as any).customBoardReturnZone;
+                    delete (this.game as any).customBoardName;
+
+                    // Regenerate the zone
+                    if (this.game.generateZone) {
+                        this.game.generateZone();
+                    }
+
+                    // Close the config overlay
                     this.hideConfigOverlay();
                 }
             });
