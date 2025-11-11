@@ -1,6 +1,8 @@
 import type { GameContext } from './context/GameContextCore';
 import type { Enemy } from '@entities/Enemy';
 import type { EnemyCollection } from '@facades/EnemyCollection';
+import { isInChessMode } from './GameModeManager';
+import { TILE_TYPES } from './constants/index';
 
 /**
  * TurnManager
@@ -105,8 +107,124 @@ export class TurnManager {
         // Update the tracking variable for next turn
         this.wasPlayerOnExitLastTurn = playerOnExit;
 
-        this.turnQueue = enemyCollection.getAll();
+        // Chess mode: Only one enemy moves per turn
+        if (isInChessMode(this.game)) {
+            this.turnQueue = this._selectChessEnemyToMove(enemyCollection);
+            console.log('[Chess] Selected enemy to move:', this.turnQueue[0]?.enemyType);
+        } else {
+            // Normal mode: All enemies move
+            this.turnQueue = enemyCollection.getAll();
+        }
+
         this.processTurnQueue();
+    }
+
+    /**
+     * Select one enemy unit to move in chess mode
+     * Prioritizes units that can attack, then randomly selects from units that can move
+     */
+    private _selectChessEnemyToMove(enemyCollection: EnemyCollection): Enemy[] {
+        const allEnemies = enemyCollection.getAll();
+        const enemyTeamUnits = allEnemies.filter(e => e.team === 'enemy');
+
+        console.log('[Chess] Enemy team has', enemyTeamUnits.length, 'units');
+
+        if (enemyTeamUnits.length === 0) {
+            return [];
+        }
+
+        // Get valid moves for each enemy unit using the same logic as InputCoordinator
+        const unitsWithMoves: Array<{ enemy: Enemy; moves: Array<{ x: number; y: number }> }> = [];
+
+        for (const enemy of enemyTeamUnits) {
+            const validMoves = this._getValidMovesForChessUnit(enemy);
+            console.log('[Chess]', enemy.enemyType, 'at', enemy.x, enemy.y, 'has', validMoves.length, 'valid moves');
+            if (validMoves.length > 0) {
+                unitsWithMoves.push({ enemy, moves: validMoves });
+            }
+        }
+
+        if (unitsWithMoves.length === 0) {
+            console.log('[Chess] No enemy units can move - stalemate!');
+            return [];
+        }
+
+        console.log('[Chess]', unitsWithMoves.length, 'units have valid moves');
+
+        // Prioritize units that can attack player units
+        const unitsWithAttacks = unitsWithMoves.filter(({ enemy, moves }) => {
+            const attackMoves = moves.filter(move => {
+                const unitAtTarget = enemyCollection.findAt(move.x, move.y, true);
+                return unitAtTarget && unitAtTarget.team === 'player';
+            });
+            if (attackMoves.length > 0) {
+                console.log('[Chess]', enemy.enemyType, 'can attack at:', attackMoves);
+            }
+            return attackMoves.length > 0;
+        });
+
+        console.log('[Chess]', unitsWithAttacks.length, 'units can attack player units');
+
+        const candidateUnits = unitsWithAttacks.length > 0 ? unitsWithAttacks : unitsWithMoves;
+
+        // Randomly select one unit
+        const selected = candidateUnits[Math.floor(Math.random() * candidateUnits.length)];
+
+        // Randomly select one of its valid moves
+        const selectedMove = selected.moves[Math.floor(Math.random() * selected.moves.length)];
+
+        // Store the target move for the combat manager to use
+        (selected.enemy as any)._chessTargetMove = selectedMove;
+
+        return [selected.enemy];
+    }
+
+    /**
+     * Get valid moves for a chess unit (simplified version of InputCoordinator logic)
+     */
+    private _getValidMovesForChessUnit(unit: Enemy): Array<{ x: number; y: number }> {
+        const validMoves: Array<{ x: number; y: number }> = [];
+        const { x, y } = unit;
+        const grid = this.game.grid;
+
+        // Get the base enemy type (remove 'black_' prefix if present)
+        const baseType = unit.enemyType.replace('black_', '');
+
+        // Simplified movement - just return adjacent squares for now
+        // The full logic can be imported from InputCoordinator if needed
+        const directions = [
+            [0, -1], [0, 1], [-1, 0], [1, 0],  // Cardinal
+            [-1, -1], [-1, 1], [1, -1], [1, 1]  // Diagonal
+        ];
+
+        for (const [dx, dy] of directions) {
+            const newX = x + dx;
+            const newY = y + dy;
+
+            // Check bounds
+            if (newX < 0 || newX >= grid[0].length || newY < 0 || newY >= grid.length) {
+                continue;
+            }
+
+            // Check for walls - WALL is tile type 1
+            const tileValue = grid[newY][newX];
+            const isWall = tileValue === TILE_TYPES.WALL ||
+                          (typeof tileValue === 'object' && tileValue !== null && tileValue.type === TILE_TYPES.WALL);
+            if (isWall) {
+                console.log('[Chess] Wall at', newX, newY, '- skipping');
+                continue;
+            }
+
+            const enemyCollection = this.game.enemyCollection as EnemyCollection;
+            const unitAtPos = enemyCollection.findAt(newX, newY, true) as Enemy | null;
+
+            // Can move to empty squares or capture enemy units
+            if (!unitAtPos || unitAtPos.team !== unit.team) {
+                validMoves.push({ x: newX, y: newY });
+            }
+        }
+
+        return validMoves;
     }
 
     /**

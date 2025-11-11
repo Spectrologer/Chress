@@ -9,8 +9,9 @@ import { TILE_TYPES } from '@core/constants/index';
 import { createZoneKey } from '@utils/ZoneKeyUtils';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
+import { isInChessMode } from '@core/GameModeManager';
+import { Position } from '@core/Position';
 import type { Game } from '@core/game';
-import type { Position } from '@core/Position';
 import type { Enemy } from '@entities/Enemy';
 
 export class EnemyMovementHandler {
@@ -38,7 +39,34 @@ export class EnemyMovementHandler {
         const playerPos = (this.game.player as any).getPosition() as Position;
         const allEnemies = enemyCollection.getAll() as Enemy[];
 
-        const move = enemy.planMoveTowards(this.game.player, this.game.grid, allEnemies, playerPos, false, this.game);
+        let move: Position | null;
+
+        // Chess mode: Use pre-selected move from TurnManager
+        if (isInChessMode(this.game) && (enemy as any)._chessTargetMove) {
+            const targetMove = (enemy as any)._chessTargetMove;
+            move = Position.from(targetMove);
+            console.log('[Chess] Enemy moving from', enemy.x, enemy.y, 'to', move.x, move.y);
+
+            // Check if there's a player unit to capture
+            const targetUnit = enemyCollection.findAt(move.x, move.y, true) as Enemy | null;
+            if (targetUnit && targetUnit.team === 'player') {
+                console.log('[Chess] Enemy capturing player unit:', targetUnit.enemyType);
+                enemyCollection.remove(targetUnit);
+
+                // Check for checkmate (player king captured)
+                if (targetUnit.enemyType === 'lizardo') {
+                    console.log('[Chess] Enemy wins! Player king captured.');
+                    // TODO: Show defeat message and return to normal mode
+                }
+            }
+
+            // Clean up the chess move marker
+            delete (enemy as any)._chessTargetMove;
+        } else {
+            // Normal mode: Use standard pathfinding
+            move = enemy.planMoveTowards(this.game.player, this.game.grid, allEnemies, playerPos, false, this.game);
+        }
+
         if (!move) return;
 
         // Check if enemy is moving onto a pitfall trap

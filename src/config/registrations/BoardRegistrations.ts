@@ -25,4 +25,7 @@ export function registerBoards(): void {
 
     // Classico - Test board for player spawn feature
     boardLoader.registerBoard(1, 0, 0, 'classico', 'custom');
+
+    // Chess - Custom chess mode board with lizard units
+    boardLoader.registerBoard(2, 0, 0, 'chess', 'custom');
 }

@@ -190,6 +190,76 @@ export class RenderManager {
         }
     }
 
+    /**
+     * Draw valid move indicators for the selected unit in chess mode
+     */
+    private _drawValidMoves(): void {
+        if (!this.game.selectedUnit || !this.game.grid) return;
+
+        const unit = this.game.selectedUnit;
+        const moves = this._getValidMovesForSelectedUnit();
+
+        this.ctx.save();
+        for (const move of moves) {
+            const px = move.x * TILE_SIZE;
+            const py = move.y * TILE_SIZE;
+
+            // Semi-transparent green overlay for valid moves
+            this.ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+            this.ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+
+            // Border
+            this.ctx.strokeStyle = 'rgba(0, 200, 0, 0.8)';
+            this.ctx.lineWidth = 2;
+            this.ctx.strokeRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+        }
+        this.ctx.restore();
+    }
+
+    /**
+     * Get valid moves for the selected unit (calls InputCoordinator's method)
+     */
+    private _getValidMovesForSelectedUnit(): Array<{ x: number; y: number }> {
+        if (!this.game.selectedUnit || !this.game.inputManager) return [];
+
+        // Delegate to InputCoordinator which has the full movement logic
+        const coordinator = (this.game.inputManager as any).controller?.coordinator;
+        if (coordinator && coordinator._getValidMovesForUnit) {
+            return coordinator._getValidMovesForUnit(this.game.selectedUnit);
+        }
+
+        // Fallback: just show adjacent tiles
+        const unit = this.game.selectedUnit;
+        const moves: Array<{ x: number; y: number }> = [];
+        const { x, y } = unit;
+
+        moves.push({ x: x + 1, y });
+        moves.push({ x: x - 1, y });
+        moves.push({ x, y: y + 1 });
+        moves.push({ x, y: y - 1 });
+        moves.push({ x: x + 1, y: y + 1 });
+        moves.push({ x: x + 1, y: y - 1 });
+        moves.push({ x: x - 1, y: y + 1 });
+        moves.push({ x: x - 1, y: y - 1 });
+
+        return moves.filter(move => {
+            if (!this.game.grid || move.y < 0 || move.y >= this.game.grid.length) return false;
+            if (move.x < 0 || move.x >= this.game.grid[0].length) return false;
+
+            const tile = this.game.grid[move.y][move.x];
+            const tileType = typeof tile === 'object' && tile !== null && 'type' in tile
+                ? (tile as any).type
+                : tile;
+
+            if (tileType === TILE_TYPES.WALL) return false;
+
+            const occupyingEnemy = this.game.enemyCollection?.findAt(move.x, move.y, true);
+            if (occupyingEnemy && occupyingEnemy.team === unit.team) return false;
+
+            return true;
+        });
+    }
+
     // Draw an enemy's attack range as semi-transparent fills on tiles the enemy could
     // attempt to attack/charge to. This uses simplified rules mirroring the movement
     // calculators so it's cheap and deterministic for UI display only.
@@ -305,6 +375,11 @@ export class RenderManager {
         // Draw grid
         this.drawGrid();
 
+        // Draw chess mode valid moves
+        if (this.game.chessMode && this.game.selectedUnit) {
+            this._drawValidMoves();
+        }
+
         // Draw transient tap feedback if active
         this._drawTapFeedback();
 
@@ -320,8 +395,10 @@ export class RenderManager {
             gameWithNPC.npcRenderer.drawNPCs();
         }
 
-        // Draw player (sprite, smoke, exit indicators)
-        this.playerRenderer.drawPlayer();
+        // Draw player (sprite, smoke, exit indicators) - hide in chess mode
+        if (!this.game.chessMode) {
+            this.playerRenderer.drawPlayer();
+        }
 
         // Draw bomb placement indicator if active
         this.uiRenderer.drawBombPlacementIndicator();

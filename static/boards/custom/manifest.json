@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "generated": "2025-11-11T04:42:03.162Z",
+  "boards": [
+    {
+      "name": "chess",
+      "displayName": "Classic Chess.",
+      "gameMode": "CHESS",
+      "size": [
+        10,
+        10
+      ],
+      "created": "2025-11-11T04:39:00.368Z"
+    },
+    {
+      "name": "classico",
+      "displayName": "custom_zone_1",
+      "gameMode": "CHRESS",
+      "size": [
+        10,
+        10
+      ],
+      "created": "2025-11-09T00:54:28.695Z"
+    }
+  ]
+}

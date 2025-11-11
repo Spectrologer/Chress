@@ -21,6 +21,7 @@ import { GridManager } from '@managers/GridManager';
 interface ZoneGeneratorGame {
     player?: { x: number; y: number; currentZone?: { depth?: number }; undergroundDepth?: number; [key: string]: unknown };
     zoneGenState?: { initializeItemLocations: () => void; [key: string]: unknown };
+    chessMode?: boolean;
     [key: string]: unknown;
 }
 
@@ -82,7 +83,7 @@ export class ZoneGenerator {
             // logger.log(`Loading custom board for zone (${zoneX},${zoneY}) dimension ${dimension}`);
             const boardData = boardLoader.getBoardSync(zoneX, zoneY, dimension);
             if (boardData) {
-                const result = boardLoader.convertBoardToGrid(boardData, this.foodAssets);
+                const result = boardLoader.convertBoardToGrid(boardData, this.foodAssets, this.game.chessMode || false);
 
                 // Store terrain textures, overlay textures, rotations, and overlay rotations in the zone generator
                 this.terrainTextures = result.terrainTextures || {};

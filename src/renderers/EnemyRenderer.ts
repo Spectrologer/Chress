@@ -25,16 +25,22 @@ export class EnemyRenderer {
 
         for (let i = 0; i < enemies.length; i++) {
             const enemy = enemies[i];
+
+            // Strip 'black_' prefix to get base enemy type for sprite selection
+            const baseEnemyType = enemy.enemyType.startsWith('black_')
+                ? enemy.enemyType.substring(6)
+                : enemy.enemyType;
+
             let enemyKey: string;
-            if (enemy.enemyType === 'lizardo') {
+            if (baseEnemyType === 'lizardo') {
                 enemyKey = 'lizardo';
-            } else if (enemy.enemyType === 'lizardeaux') {
+            } else if (baseEnemyType === 'lizardeaux') {
                 enemyKey = 'lizardeaux';
-            } else if (enemy.enemyType === 'zard') {
+            } else if (baseEnemyType === 'zard') {
                 enemyKey = 'zard';
-            } else if (enemy.enemyType === 'lizord') {
+            } else if (baseEnemyType === 'lizord') {
                 enemyKey = 'lizord';
-            } else if (enemy.enemyType === 'lazerd') {
+            } else if (baseEnemyType === 'lazerd') {
                 enemyKey = 'lazerd';
             } else {
                 enemyKey = 'lizardy';
@@ -82,7 +88,7 @@ export class EnemyRenderer {
                 // For lazerd, draw it directly without scaling to avoid blurriness,
                 // and lizord, draw them directly without scaling to avoid blurriness,
                 // unless they are doing a special animation (attack/move) or frozen.
-                const isPixelPerfectEnemy = enemy.enemyType === 'lazerd' || enemy.enemyType === 'lizord';
+                const isPixelPerfectEnemy = baseEnemyType === 'lazerd' || baseEnemyType === 'lizord';
                 const usePixelPerfect = isPixelPerfectEnemy && scale === 1 && !flash && enemy.liftFrames === 0 && !enemy.showFrozenVisual;
                 if (usePixelPerfect) {
                     this.ctx.drawImage(
@@ -129,10 +135,13 @@ export class EnemyRenderer {
                 } else if (enemy.showFrozenVisual) {
                     this.ctx.filter = `grayscale(1) brightness(${RENDERING_CONSTANTS.FROZEN_BRIGHTNESS})`;
                     this.ctx.globalAlpha = RENDERING_CONSTANTS.FROZEN_ALPHA;
+                } else if (enemy.enemyType.startsWith('black_')) {
+                    // Apply grayscale filter for black_ enemies
+                    this.ctx.filter = 'grayscale(1)';
                 }
 
                 // For 'lizardy', handle horizontal flipping with animation centered in the tile.
-                if (enemy.enemyType === 'lizardy') {
+                if (baseEnemyType === 'lizardy') {
                     let flipScale = enemy.movementDirection; // 1 for south, -1 for north
 
                     if (enemy.flipAnimation && enemy.flipAnimation > 0) {
@@ -178,8 +187,25 @@ export class EnemyRenderer {
                 );
             }
 
-            // Draw turn order number if enemy is alive
-            if (enemy.health > 0 && this.game.turnManager) {
+            // Draw selection highlight in chess mode
+            if (this.game.chessMode && this.game.selectedUnit === enemy && enemy.health > 0) {
+                let pixelX = enemy.x * TILE_SIZE + enemy.bumpOffsetX;
+                let pixelY = enemy.y * TILE_SIZE + enemy.bumpOffsetY;
+
+                this.ctx.save();
+                this.ctx.strokeStyle = '#FFD700'; // Gold color
+                this.ctx.lineWidth = 3;
+                this.ctx.strokeRect(
+                    pixelX + 2,
+                    pixelY + 2,
+                    TILE_SIZE - 4,
+                    TILE_SIZE - 4
+                );
+                this.ctx.restore();
+            }
+
+            // Draw turn order number if enemy is alive (hidden in chess mode)
+            if (enemy.health > 0 && this.game.turnManager && !this.game.chessMode) {
                 // During enemy turns, show position in turnQueue
                 // During player turn, show position based on all enemies (upcoming order)
                 let turnNumber: number | null = null;

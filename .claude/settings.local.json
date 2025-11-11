@@ -32,7 +32,15 @@
       "Bash(for file in src/controllers/InputCoordinator.ts src/core/ServiceContainer.ts src/core/GameStateManager.ts src/core/ZoneGenerator.ts)",
       "Bash(done)",
       "Bash(tee:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(node scripts/generate-board-manifest.js:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(timeout /t 10 /nobreak)",
+      "Bash(git stash show:*)",
+      "Bash(/tmp/input.ts)",
+      "Bash(/tmp/ui.ts)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

@@ -103,6 +103,15 @@ export interface IGame {
     shovelMode: boolean;
     activeShovel: Item | null;
 
+    // Game mode system
+    gameMode: import('@core/GameMode').GameModeConfig;
+
+    // Legacy chess mode flags (deprecated - use gameMode instead)
+    /** @deprecated Use gameMode.currentMode === GameMode.CHESS */
+    chessMode: boolean;
+    /** @deprecated Use gameMode.chess.selectedUnit */
+    selectedUnit: Enemy | null;
+
     // Assets
     availableFoodAssets: string[];
 

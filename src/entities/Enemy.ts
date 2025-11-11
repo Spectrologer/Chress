@@ -8,6 +8,7 @@ export interface EnemyData {
     enemyType?: string;
     id?: string;
     health?: number;
+    team?: 'player' | 'enemy';
 }
 
 export interface SerializedEnemy {
@@ -19,6 +20,7 @@ export interface SerializedEnemy {
     attack: number;
     lastX: number;
     lastY: number;
+    team?: 'player' | 'enemy';
 }
 
 export class Enemy extends BaseEnemy {
@@ -46,7 +48,8 @@ export class Enemy extends BaseEnemy {
             health: this.health,
             attack: this.attack,
             lastX: this.lastX,
-            lastY: this.lastY
+            lastY: this.lastY,
+            team: this.team
         };
     }
 }

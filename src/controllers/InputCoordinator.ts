@@ -12,10 +12,11 @@ import { TileRegistry } from '@core/TileRegistry';
 import { getTileType, isTileObject } from '@utils/TileUtils';
 import { Position } from '@core/Position';
 import { ContentRegistry } from '@core/ContentRegistry';
-import { logger } from '@core/logger';
+import { isInChessMode } from '@core/GameModeManager';
 import type { GameContext } from '@core/context';
 import type { InventoryService } from '@managers/inventory/InventoryService';
 import type { TileObject } from '@core/SharedTypes';
+import type { Enemy } from '@entities/Enemy';
 
 interface GridCoords {
     x: number;
@@ -259,7 +260,7 @@ export class InputCoordinator {
             this.game?.renderManager?.showTapFeedback?.(gridCoords.x, gridCoords.y);
         } else {
             // If on enemy and adjacent (will trigger immediate attack), clear feedback
-            const playerPos = this.game.playerFacade.getPosition();
+            const playerPos = this.game.player.getPosition();
             const dx = Math.abs(gridCoords.x - playerPos.x);
             const dy = Math.abs(gridCoords.y - playerPos.y);
             const isAdjacent = (dx + dy === 1); // Cardinal adjacency only
@@ -290,7 +291,13 @@ export class InputCoordinator {
     }
 
     private _handleGameplayTap(gridCoords: GridCoords, clickedTileType: number | undefined, isDoubleTap: boolean): void {
-        const playerPos = this.game.playerFacade.getPositionObject();
+        // Chess Mode: Handle unit selection and movement
+        if (isInChessMode(this.game)) {
+            this._handleChessModeClick(gridCoords);
+            return;
+        }
+
+        const playerPos = this.game.player.getPositionObject();
         const clickedPos = Position.from(gridCoords);
 
         // Cancel path if different tile clicked
@@ -304,12 +311,12 @@ export class InputCoordinator {
             const currentTileType = getTileType(currentTile);
             const portKind = isTileObject(currentTile) ? (currentTile as TileObject).portKind : null;
 
-            logger.debug('[InputCoordinator] Single tap on player tile:', {
-                currentTileType,
-                portKind,
-                isExit: currentTileType === TILE_TYPES.EXIT,
-                isPort: currentTileType === TILE_TYPES.PORT
-            });
+            // console.log('[InputCoordinator] Single tap on player tile:', {
+            //     currentTileType,
+            //     portKind,
+            //     isExit: currentTileType === TILE_TYPES.EXIT,
+            //     isPort: currentTileType === TILE_TYPES.PORT
+            // });
 
             // Handle EXIT/PORT tiles immediately on single tap
             if (currentTileType === TILE_TYPES.EXIT) {
@@ -321,7 +328,7 @@ export class InputCoordinator {
             }
 
             // Otherwise emit event for radial menu
-            logger.debug('[InputCoordinator] Emitting INPUT_PLAYER_TILE_TAP event');
+            // console.log('[InputCoordinator] Emitting INPUT_PLAYER_TILE_TAP event');
             eventBus.emit(EventTypes.INPUT_PLAYER_TILE_TAP, {
                 gridCoords,
                 tileType: currentTileType,
@@ -415,21 +422,21 @@ export class InputCoordinator {
      * @param gridCoords - Target coordinates
      */
     private _forcePathToInteractive(gridCoords: GridCoords): void {
-        const playerPos = this.game.playerFacade.getPositionObject();
+        const playerPos = this.game.player.getPositionObject();
         const clickedPos = Position.from(gridCoords);
 
         // Find nearest walkable adjacent tile to the target
         const adjacentTile = this.pathfindingController.findNearestWalkableAdjacent(clickedPos.x, clickedPos.y);
         if (adjacentTile) {
             const path = this.findPath(playerPos.x, playerPos.y, adjacentTile.x, adjacentTile.y);
-            if (path && path.length > 0) {
+            if (path?.length > 0) {
                 this.executePath(path);
             }
         }
     }
 
     private _handleDoubleTap(gridCoords: GridCoords, clickedTileType: number | undefined): void {
-        const playerPos = this.game.playerFacade.getPositionObject();
+        const playerPos = this.game.player.getPositionObject();
         const clickedPos = Position.from(gridCoords);
 
         // Handle exits and ports (existing behavior)
@@ -456,7 +463,7 @@ export class InputCoordinator {
                 this.game.interactionManager?.triggerInteractAt(gridCoords);
             } else {
                 // Not adjacent - path to NPC directly (bypassing enemy check)
-                this.game.playerFacade.setInteractOnReach(gridCoords.x, gridCoords.y);
+                this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
                 this._forcePathToInteractive(gridCoords);
             }
             return;
@@ -469,7 +476,7 @@ export class InputCoordinator {
                 this.game.interactionManager?.triggerInteractAt(gridCoords);
             } else {
                 // Not adjacent - path to statue directly (bypassing enemy check)
-                this.game.playerFacade.setInteractOnReach(gridCoords.x, gridCoords.y);
+                this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
                 this._forcePathToInteractive(gridCoords);
             }
             return;
@@ -483,14 +490,14 @@ export class InputCoordinator {
                 this.game.interactionManager?.triggerInteractAt(gridCoords);
             } else {
                 // Not adjacent - path to object directly (bypassing enemy check)
-                this.game.playerFacade.setInteractOnReach(gridCoords.x, gridCoords.y);
+                this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
                 this._forcePathToInteractive(gridCoords);
             }
             return;
         }
 
         // Default behavior - interact on reach for other interactive objects
-        this.game.playerFacade.setInteractOnReach(gridCoords.x, gridCoords.y);
+        this.game.player.setInteractOnReach(gridCoords.x, gridCoords.y);
         this.executeMovementOrInteraction(gridCoords);
     }
 
@@ -547,8 +554,6 @@ export class InputCoordinator {
         if (result.type === 'movement') {
             const { newX, newY, currentPos } = result;
 
-            if (!currentPos) return;
-
             // Combat or movement - use enemyCollection to properly filter living enemies
             const enemyAtTarget = this.game.enemyCollection?.findAt(newX!, newY!, true);
 
@@ -557,7 +562,7 @@ export class InputCoordinator {
                 this.game.combatManager?.handlePlayerAttack(enemyAtTarget, currentPos);
             } else {
                 this.game.incrementBombActions();
-                this.game.playerFacade.move(newX!, newY!, this.game.gridManager as any, (zoneX: number, zoneY: number, exitSide: string) => {
+                this.game.player.move(newX!, newY!, this.game.gridManager as any, (zoneX: number, zoneY: number, exitSide: string) => {
                     this.game.transitionToZone(zoneX, zoneY, exitSide, currentPos.x, currentPos.y);
                 });
             }
@@ -586,11 +591,9 @@ export class InputCoordinator {
             return;
         }
 
-        if (!this.game.player) return;
-
-        const playerPos = this.game.playerFacade.getPositionObject();
+        const playerPos = this.game.player.getPositionObject();
         const clickedPos = Position.from(gridCoords);
-        const handled = this.game.interactionManager?.handleTap(gridCoords) || false;
+        const handled = this.game.interactionManager.handleTap(gridCoords);
 
         if (!handled) {
             // Disable autopathing entirely when enemies are present
@@ -608,7 +611,7 @@ export class InputCoordinator {
                 // Calculate step position using Position
                 const stepPos = playerPos.move(stepKey);
 
-                if (this.game.playerFacade.isWalkable(stepPos.x, stepPos.y, this.game.grid, playerPos.x, playerPos.y)) {
+                if (this.game.player.isWalkable(stepPos.x, stepPos.y, this.game.grid, playerPos.x, playerPos.y)) {
                     this.executePath([stepKey]);
                 }
                 return;
@@ -621,13 +624,13 @@ export class InputCoordinator {
                 const adjacentTile = this.pathfindingController.findNearestWalkableAdjacent(clickedPos.x, clickedPos.y);
                 if (adjacentTile) {
                     const path = this.findPath(playerPos.x, playerPos.y, adjacentTile.x, adjacentTile.y);
-                    if (path && path.length > 0) {
+                    if (path?.length > 0) {
                         this.executePath(path);
                     }
                 }
             } else {
                 const path = this.findPath(playerPos.x, playerPos.y, clickedPos.x, clickedPos.y);
-                if (path && path.length > 0) {
+                if (path?.length > 0) {
                     this.executePath(path);
                 }
             }
@@ -666,6 +669,302 @@ export class InputCoordinator {
     handleExitTap(x: number, y: number): void {
         this.performExitTap(x, y);
         return;  // For test compatibility
+    }
+
+    // ========================================
+    // CHESS MODE
+    // ========================================
+
+    /**
+     * Handle clicking in chess mode - select units or move selected unit
+     */
+    private _handleChessModeClick(gridCoords: GridCoords): void {
+        const { x, y } = gridCoords;
+        const clickedEnemy = this.game.enemyCollection?.findAt(x, y, true) as Enemy | null;
+
+        console.log('[Chess] Click at', x, y, 'clicked unit:', clickedEnemy?.enemyType, 'team:', clickedEnemy?.team, 'selectedUnit:', this.game.selectedUnit?.enemyType);
+
+        // If we have a unit selected
+        if (this.game.selectedUnit) {
+            // Clicking on the same unit - deselect
+            if (clickedEnemy === this.game.selectedUnit) {
+                console.log('[Chess] Deselecting unit');
+                this.game.selectedUnit = null;
+                this.game.gameMode.chess.selectedUnit = null;
+                return;
+            }
+
+            // Check if clicked position is a valid move
+            const validMoves = this._getValidMovesForUnit(this.game.selectedUnit);
+            console.log('[Chess] Valid moves for', this.game.selectedUnit.enemyType, ':', validMoves);
+            const isValidMove = validMoves.some(move => move.x === x && move.y === y);
+
+            if (isValidMove) {
+                console.log('[Chess] Moving unit to', x, y);
+                // Move the selected unit to the clicked position
+                this._moveSelectedUnit(x, y);
+            } else {
+                console.log('[Chess] Not a valid move');
+                // Not a valid move - try to select the clicked unit instead (if friendly)
+                if (clickedEnemy && clickedEnemy.team === 'player') {
+                    console.log('[Chess] Selecting different unit:', clickedEnemy.enemyType);
+                    this.game.selectedUnit = clickedEnemy;
+                    this.game.gameMode.chess.selectedUnit = clickedEnemy;
+                } else {
+                    // Clicked on empty space or enemy - deselect
+                    console.log('[Chess] Deselecting (clicked empty or enemy)');
+                    this.game.selectedUnit = null;
+                    this.game.gameMode.chess.selectedUnit = null;
+                }
+            }
+        } else {
+            // No unit selected - try to select a friendly unit
+            if (clickedEnemy && clickedEnemy.team === 'player') {
+                console.log('[Chess] Selecting unit:', clickedEnemy.enemyType);
+                this.game.selectedUnit = clickedEnemy;
+                this.game.gameMode.chess.selectedUnit = clickedEnemy;
+            } else {
+                console.log('[Chess] No friendly unit at this position');
+            }
+        }
+    }
+
+    /**
+     * Move the selected unit to the target position
+     */
+    private _moveSelectedUnit(targetX: number, targetY: number): void {
+        if (!this.game.selectedUnit) return;
+
+        const selectedUnit = this.game.selectedUnit;
+        const targetEnemy = this.game.enemyCollection?.findAt(targetX, targetY, true) as Enemy | null;
+
+        // If there's an enemy at the target, it will be captured
+        if (targetEnemy) {
+            // Remove the captured enemy
+            this.game.enemyCollection?.remove(targetEnemy);
+
+            // Check for checkmate (king captured)
+            if (targetEnemy.enemyType === 'black_lizardo') {
+                console.log('[Chess] Player wins! Enemy king captured.');
+                // TODO: Show victory message and return to normal mode
+            }
+        }
+
+        // Move the selected unit
+        selectedUnit.x = targetX;
+        selectedUnit.y = targetY;
+
+        // Deselect the unit
+        this.game.selectedUnit = null;
+        this.game.gameMode.chess.selectedUnit = null;
+
+        // End the player's turn (enemy turn will start)
+        this.game.turnManager?.handleTurnCompletion();
+    }
+
+    /**
+     * Get all valid moves for a unit based on its movement pattern
+     */
+    _getValidMovesForUnit(unit: Enemy | null): Array<{ x: number; y: number }> {
+        if (!unit) return [];
+
+        const validMoves: Array<{ x: number; y: number }> = [];
+        const { x, y } = unit;
+        const grid = this.game.grid;
+
+        // Get the base enemy type (remove 'black_' prefix if present)
+        const baseType = unit.enemyType.replace('black_', '');
+        console.log('[Chess] Getting valid moves for', unit.enemyType, '(base:', baseType, ') at', x, y, 'team:', unit.team);
+
+        switch (baseType) {
+            case 'lizardo': // King - 1 square in any direction
+                this._addMovesInDirections(validMoves, x, y, [
+                    [0, -1], [0, 1], [-1, 0], [1, 0],  // Cardinal
+                    [-1, -1], [-1, 1], [1, -1], [1, 1]  // Diagonal
+                ], 1, unit.team);
+                break;
+
+            case 'lizardeaux': // Rook - straight lines
+                this._addMovesInDirections(validMoves, x, y, [
+                    [0, -1], [0, 1], [-1, 0], [1, 0]  // Cardinal only
+                ], 99, unit.team);
+                break;
+
+            case 'zard': // Bishop - diagonals
+                this._addMovesInDirections(validMoves, x, y, [
+                    [-1, -1], [-1, 1], [1, -1], [1, 1]  // Diagonal only
+                ], 99, unit.team);
+                break;
+
+            case 'lazerd': // Queen - any direction
+                this._addMovesInDirections(validMoves, x, y, [
+                    [0, -1], [0, 1], [-1, 0], [1, 0],  // Cardinal
+                    [-1, -1], [-1, 1], [1, -1], [1, 1]  // Diagonal
+                ], 99, unit.team);
+                break;
+
+            case 'lizord': // Knight - L-shaped
+                this._addKnightMoves(validMoves, x, y, unit.team);
+                break;
+
+            case 'lizardy': // Pawn
+                this._addPawnMoves(validMoves, x, y, unit.team);
+                break;
+        }
+
+        return validMoves;
+    }
+
+    /**
+     * Add moves in specified directions up to maxDistance
+     */
+    private _addMovesInDirections(
+        validMoves: Array<{ x: number; y: number }>,
+        startX: number,
+        startY: number,
+        directions: Array<[number, number]>,
+        maxDistance: number,
+        team: 'player' | 'enemy'
+    ): void {
+        const grid = this.game.grid;
+
+        for (const [dx, dy] of directions) {
+            for (let dist = 1; dist <= maxDistance; dist++) {
+                const newX = startX + dx * dist;
+                const newY = startY + dy * dist;
+
+                // Check bounds
+                if (newX < 0 || newX >= grid[0].length || newY < 0 || newY >= grid.length) {
+                    break;
+                }
+
+                // Check for walls
+                if (grid[newY][newX] === TILE_TYPES.WALL) {
+                    break;
+                }
+
+                // Check for friendly/enemy units
+                const unitAtPos = this.game.enemyCollection?.findAt(newX, newY, true) as Enemy | null;
+                if (unitAtPos) {
+                    // Can capture enemy units
+                    if (unitAtPos.team !== team) {
+                        validMoves.push({ x: newX, y: newY });
+                    }
+                    // Stop - can't move through units
+                    break;
+                }
+
+                // Empty square - valid move
+                validMoves.push({ x: newX, y: newY });
+            }
+        }
+    }
+
+    /**
+     * Add knight (L-shaped) moves
+     */
+    private _addKnightMoves(
+        validMoves: Array<{ x: number; y: number }>,
+        startX: number,
+        startY: number,
+        team: 'player' | 'enemy'
+    ): void {
+        const grid = this.game.grid;
+        const knightMoves = [
+            [2, 1], [2, -1], [-2, 1], [-2, -1],
+            [1, 2], [1, -2], [-1, 2], [-1, -2]
+        ];
+
+        for (const [dx, dy] of knightMoves) {
+            const newX = startX + dx;
+            const newY = startY + dy;
+
+            // Check bounds
+            if (newX < 0 || newX >= grid[0].length || newY < 0 || newY >= grid.length) {
+                continue;
+            }
+
+            // Check for walls
+            if (grid[newY][newX] === TILE_TYPES.WALL) {
+                continue;
+            }
+
+            // Check for units
+            const unitAtPos = this.game.enemyCollection?.findAt(newX, newY, true) as Enemy | null;
+            if (unitAtPos) {
+                // Can only move to enemy positions (capture)
+                if (unitAtPos.team !== team) {
+                    validMoves.push({ x: newX, y: newY });
+                }
+            } else {
+                // Empty square - valid move
+                validMoves.push({ x: newX, y: newY });
+            }
+        }
+    }
+
+    /**
+     * Add pawn moves (forward movement, diagonal captures)
+     */
+    private _addPawnMoves(
+        validMoves: Array<{ x: number; y: number }>,
+        startX: number,
+        startY: number,
+        team: 'player' | 'enemy'
+    ): void {
+        const grid = this.game.grid;
+        // Player pawns move up (negative Y), enemy pawns move down (positive Y)
+        const direction = team === 'player' ? -1 : 1;
+
+        // Check if pawn is on starting row (row 7 for player, row 2 for enemy in a 10x10 grid)
+        const startingRow = team === 'player' ? 7 : 2;
+        const isOnStartingRow = startY === startingRow;
+        console.log('[Chess] Pawn at', startX, startY, 'team:', team, 'direction:', direction, 'startRow:', isOnStartingRow);
+
+        // Forward move (1 square)
+        const forwardY = startY + direction;
+        if (forwardY >= 0 && forwardY < grid.length) {
+            if (grid[forwardY][startX] !== TILE_TYPES.WALL) {
+                const unitAtPos = this.game.enemyCollection?.findAt(startX, forwardY, true);
+                if (!unitAtPos) {
+                    // Can only move forward if empty
+                    validMoves.push({ x: startX, y: forwardY });
+
+                    // Two-square forward move on first move
+                    if (isOnStartingRow) {
+                        const forwardY2 = startY + direction * 2;
+                        if (forwardY2 >= 0 && forwardY2 < grid.length) {
+                            if (grid[forwardY2][startX] !== TILE_TYPES.WALL) {
+                                const unitAtPos2 = this.game.enemyCollection?.findAt(startX, forwardY2, true);
+                                if (!unitAtPos2) {
+                                    validMoves.push({ x: startX, y: forwardY2 });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Diagonal captures
+        const captureMoves = [
+            [startX - 1, forwardY],  // Left diagonal
+            [startX + 1, forwardY]   // Right diagonal
+        ];
+
+        for (const [captureX, captureY] of captureMoves) {
+            if (captureX < 0 || captureX >= grid[0].length || captureY < 0 || captureY >= grid.length) {
+                continue;
+            }
+
+            const unitAtPos = this.game.enemyCollection?.findAt(captureX, captureY, true) as Enemy | null;
+            console.log('[Chess] Checking diagonal capture at', captureX, captureY, 'unit:', unitAtPos?.enemyType, 'team:', unitAtPos?.team);
+            // Can only capture diagonally if there's an enemy
+            if (unitAtPos && unitAtPos.team !== team) {
+                console.log('[Chess] Adding diagonal capture move to', captureX, captureY);
+                validMoves.push({ x: captureX, y: captureY });
+            }
+        }
     }
 
     // ========================================

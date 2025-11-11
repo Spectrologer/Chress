@@ -6,6 +6,7 @@ export interface EnemyData extends Coordinates {
     enemyType?: string;
     id?: string;
     health?: number;
+    team?: 'player' | 'enemy';
 }
 
 export interface SmokeAnimation extends Coordinates {
@@ -37,6 +38,7 @@ export class BaseEnemy {
     public isFrozen: boolean;
     public showFrozenVisual: boolean;
     public scale?: number;
+    public team: 'player' | 'enemy';
 
     constructor(data: EnemyData) {
         this._position = new Position(data.x, data.y);
@@ -74,6 +76,17 @@ export class BaseEnemy {
         this.smokeAnimations = [];
         this.isFrozen = false;
         this.showFrozenVisual = false;
+
+        // Determine team based on enemy type prefix
+        // In chess mode: green lizards (no prefix) are player team, black_ prefixed are enemy team
+        if (data.team !== undefined) {
+            this.team = data.team;
+        } else if (this.enemyType.startsWith('black_')) {
+            this.team = 'enemy';
+        } else {
+            // Default: all enemies are enemy team unless explicitly set
+            this.team = 'enemy';
+        }
 
         if (this.enemyType === 'lizardy') {
             this.scale = PHYSICS_CONSTANTS.LIZARDY_SCALE;

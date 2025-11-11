@@ -219,6 +219,9 @@ export class KeyboardHandler {
             case 'p':
                 this.generatePitfallOnFloorTile();
                 return null;
+            case 'm':
+                this.teleportToChessBoard();
+                return null;
             case 'escape':
                 this.game.resetGame();
                 return null;
@@ -284,6 +287,37 @@ export class KeyboardHandler {
             this.game.gridManager?.setTile(pos.x, pos.y, TILE_TYPES.PITFALL);
             this.game.render?.();
         }
+    }
+
+    /**
+     * Teleport to the chess board (zone 2,0,0) and enable chess mode
+     */
+    private teleportToChessBoard(): void {
+        // Enable chess mode using typed system
+        this.game.gameMode.currentMode = 'chess' as import('@core/GameMode').GameMode;
+        this.game.gameMode.chess.selectedUnit = null;
+
+        // Legacy flag for backward compatibility
+        this.game.chessMode = true;
+
+        // Set player zone to chess board location
+        this.game.player.currentZone = { x: 2, y: 0, dimension: 0, depth: 0 };
+
+        // Clear current zone state
+        this.game.grid = null;
+        this.game.enemyCollection?.clear();
+
+        // Generate the chess zone
+        this.game.generateZone();
+
+        // Hide player sprite in chess mode (move to corner off-screen)
+        this.game.player.x = 1;
+        this.game.player.y = 1;
+
+        // Render the new zone
+        this.game.render?.();
+
+        logger.info('[Chess Mode] Teleported to chess board - chess mode enabled');
     }
 
     /**

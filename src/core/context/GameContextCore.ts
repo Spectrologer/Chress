@@ -252,6 +252,21 @@ export class GameContext extends GameContextCommands implements IGame {
         this.shovelMode = false;
         this.activeShovel = null;
 
+        // Game mode system
+        this.gameMode = {
+            currentMode: 'normal' as import('@core/GameMode').GameMode,
+            chess: {
+                selectedUnit: null,
+                turnBased: true,
+                showMoveIndicators: true,
+                aiDelayMs: 500
+            }
+        };
+
+        // Legacy chess mode (kept for backward compatibility)
+        this.chessMode = false;
+        this.selectedUnit = null;
+
         // Assets
         this.availableFoodAssets = [];
 

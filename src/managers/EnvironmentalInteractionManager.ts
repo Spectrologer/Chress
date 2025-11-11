@@ -7,48 +7,13 @@ import { EventTypes } from '@core/EventTypes';
 import { isTileObjectOfType, TileTypeChecker, getTileType } from '@utils/TypeChecks';
 import { TeleportBranchEffect } from '@managers/inventory/effects/SpecialEffects';
 import { boardLoader } from '@core/BoardLoader';
-import { logger } from '@core/logger';
 import type { Game } from '@core/game';
 import type { Position } from '@core/Position';
 
 interface TextBoxTile {
-    type: string | number;
+    type: string;
     message: string;
-    name?: string;
-    icon?: string;
-}
-
-interface CubeTile {
-    type: number;
-    originZone?: {
-        x: number;
-        y: number;
-        dimension?: number;
-    };
-}
-
-interface BoardData {
-    size: { width: number; height: number };
-    terrain: unknown;
-    features: unknown;
-}
-
-interface EnemyData {
-    x: number;
-    y: number;
-    enemyType: string;
-    health: number;
-    attack?: number;
-    id?: string;
-}
-
-interface ItemEffectContext {
-    cubeGridCoords: Position;
-}
-
-// Type guard for cube tiles
-function isCubeTile(tile: unknown): tile is CubeTile {
-    return typeof tile === 'object' && tile !== null && 'type' in tile;
+    [key: string]: any;
 }
 
 export class EnvironmentalInteractionManager {
@@ -65,7 +30,7 @@ export class EnvironmentalInteractionManager {
         const signTile = tile as unknown as TextBoxTile;
 
         // Check if player is adjacent to this sign
-        const playerPos = this.game.playerFacade.getPosition();
+        const playerPos = (this.game.player as any).getPosition() as Position;
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);
 
@@ -78,7 +43,7 @@ export class EnvironmentalInteractionManager {
             const showingNewMessage = !isAlreadyDisplayed;
 
             // Lettextbox class handle the toggle logic
-            TextBox.handleClick(signTile, this.game, true);
+            TextBox.handleClick(signTile, this.game as any, true);
 
             // Add to log only when first showing the message
             const lastMessage = transientState.getLastSignMessage();
@@ -104,11 +69,11 @@ export class EnvironmentalInteractionManager {
         const tileType = TileTypeChecker.getTileType(tile);
 
         // Use centralized TileRegistry for statue mapping
-        const statueNpcType = TileRegistry.getStatueNPCType(tileType ?? 0);
+        const statueNpcType = TileRegistry.getStatueNPCType(tileType);
 
         if (statueNpcType) {
             // Check if player is adjacent to the statue
-            const playerPos = this.game.playerFacade.getPosition();
+            const playerPos = (this.game.player as any).getPosition() as Position;
             const dx = Math.abs(gridCoords.x - playerPos.x);
             const dy = Math.abs(gridCoords.y - playerPos.y);
 
@@ -130,22 +95,21 @@ export class EnvironmentalInteractionManager {
 
         // Check if this is a cube tile (FISCHERS_CUBE or TELEPORT_BRANCH)
         const tileType = getTileType(tile);
-        if (!isTileObjectOfType(tile, TILE_TYPES.FISCHERS_CUBE) &&
-            tileType !== TILE_TYPES.FISCHERS_CUBE &&
+        if (!isTileObjectOfType(tile, TILE_TYPES.CUBE) &&
+            tileType !== TILE_TYPES.CUBE &&
             tileType !== TILE_TYPES.TELEPORT_BRANCH) {
             return false;
         }
 
         // Check if player is adjacent to the cube
-        const playerPos = this.game.playerFacade.getPosition();
+        const playerPos = (this.game.player as any).getPosition() as Position;
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);
 
         if (isAdjacent(dx, dy)) {
             // Create cube item from the tile
-            const cubeTile = isCubeTile(tile) ? tile : null;
-            const cubeItem = isTileObjectOfType(tile, TILE_TYPES.FISCHERS_CUBE) && cubeTile?.originZone
-                ? { type: 'cube' as const, originZone: cubeTile.originZone }
+            const cubeItem = isTileObjectOfType(tile, TILE_TYPES.CUBE) && (tile as any).originZone
+                ? { type: 'cube' as const, originZone: (tile as any).originZone }
                 : { type: 'cube' as const };
 
             // Show confirmation prompt with button
@@ -161,8 +125,7 @@ export class EnvironmentalInteractionManager {
                     () => {
                         // Execute teleport branch effect, passing the grid coordinates
                         const effect = new TeleportBranchEffect();
-                        const context: ItemEffectContext = { cubeGridCoords: gridCoords };
-                        effect.apply(this.game, cubeItem, context);
+                        effect.apply(this.game as any, cubeItem, { cubeGridCoords: gridCoords });
                     },
                     'assets/items/misc/branch.png',
                     false
@@ -186,7 +149,7 @@ export class EnvironmentalInteractionManager {
         }
 
         // Check if player is adjacent to the sign
-        const playerPos = this.game.playerFacade.getPosition();
+        const playerPos = (this.game.player as any).getPosition() as Position;
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);
 
@@ -215,7 +178,7 @@ export class EnvironmentalInteractionManager {
             // In a real implementation, you might fetch this from a manifest file
             return ['classico', 'lizardo_grove'];
         } catch (error) {
-            logger.error('Error fetching custom boards:', error);
+            console.error('Error fetching custom boards:', error);
             return [];
         }
     }
@@ -408,7 +371,7 @@ export class EnvironmentalInteractionManager {
                     // Load the board
                     await this.loadCustomBoardFromData(boardData, file.name.replace('.json', ''));
                 } catch (error) {
-                    logger.error('Error loading custom board file:', error);
+                    console.error('Error loading custom board file:', error);
                     eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
                         text: 'Invalid board file. Please select a valid JSON board file.',
                         isPersistent: false,
@@ -455,7 +418,7 @@ export class EnvironmentalInteractionManager {
             // Load the board
             await this.loadCustomBoardFromData(boardData, boardName);
         } catch (error) {
-            logger.error('Error loading custom board from file:', error);
+            console.error('Error loading custom board from file:', error);
             eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
                 text: `Failed to load ${boardName}. File may not exist.`,
                 isPersistent: false,
@@ -465,14 +428,14 @@ export class EnvironmentalInteractionManager {
         }
     }
 
-    private async loadCustomBoardFromData(boardData: BoardData, boardName: string): Promise<void> {
+    private async loadCustomBoardFromData(boardData: any, boardName: string): Promise<void> {
         try {
-            logger.log(`[CustomBoard] Starting to load custom board: ${boardName}`);
-            logger.log(`[CustomBoard] Board data:`, boardData);
+            console.log(`[CustomBoard] Starting to load custom board: ${boardName}`);
+            console.log(`[CustomBoard] Board data:`, boardData);
 
             // Convert board to grid format
-            const boardResult = boardLoader.convertBoardToGrid(boardData, this.game.availableFoodAssets || []);
-            logger.log(`[CustomBoard] Converted board result:`, boardResult);
+            const boardResult = boardLoader.convertBoardToGrid(boardData, this.game.foodAssets || []);
+            console.log(`[CustomBoard] Converted board result:`, boardResult);
 
             // Use dimension 3 for custom boards (isolated from surface=0, interior=1, underground=2)
             // Zone coordinates don't matter since we're in a unique dimension
@@ -482,35 +445,18 @@ export class EnvironmentalInteractionManager {
 
             // Store current zone to enable returning and custom board name for display
             const currentZone = this.game.playerFacade.getCurrentZone();
-
-            // Store custom board metadata on game object
-            if (!this.game.customBoardReturnZone) {
-                Object.defineProperty(this.game, 'customBoardReturnZone', {
-                    writable: true,
-                    configurable: true,
-                    value: undefined
-                });
-            }
-            if (!this.game.customBoardName) {
-                Object.defineProperty(this.game, 'customBoardName', {
-                    writable: true,
-                    configurable: true,
-                    value: undefined
-                });
-            }
-
-            this.game.customBoardReturnZone = {
+            (this.game as any).customBoardReturnZone = {
                 x: currentZone.x,
                 y: currentZone.y,
                 dimension: currentZone.dimension
             };
-            this.game.customBoardName = boardName;
+            (this.game as any).customBoardName = boardName;
 
-            logger.log(`[CustomBoard] Stored return zone: (${currentZone.x}, ${currentZone.y}) dimension ${currentZone.dimension}`);
+            console.log(`[CustomBoard] Stored return zone: (${currentZone.x}, ${currentZone.y}) dimension ${currentZone.dimension}`);
 
             // Prepare zone data with enemies as proper Enemy instances
-            const EnemyClass = this.game.Enemy;
-            const enemyInstances = (boardResult.enemies || []).map((enemyData: EnemyData) => new EnemyClass(enemyData));
+            const EnemyClass = (this.game as any).Enemy;
+            const enemyInstances = (boardResult.enemies || []).map((enemyData: any) => new EnemyClass(enemyData));
 
             const zoneData = {
                 grid: boardResult.grid,
@@ -523,10 +469,11 @@ export class EnvironmentalInteractionManager {
             };
 
             // Cache this custom board zone using the correct key format
-            if (this.game.zoneRepository) {
+            const zoneRepository = (this.game as any).zoneRepository;
+            if (zoneRepository) {
                 const zoneKey = `${CUSTOM_BOARD_ZONE_X},${CUSTOM_BOARD_ZONE_Y}:${CUSTOM_BOARD_DIMENSION}`;
-                this.game.zoneRepository.setByKey(zoneKey, zoneData);
-                logger.log(`[CustomBoard] Cached zone data at key: ${zoneKey}`);
+                zoneRepository.setByKey(zoneKey, zoneData);
+                console.log(`[CustomBoard] Cached zone data at key: ${zoneKey}`);
             }
 
             // Update player's zone coordinates to the custom board zone
@@ -536,7 +483,7 @@ export class EnvironmentalInteractionManager {
             // Generate/load the zone (this will use the cached data)
             this.game.generateZone();
 
-            logger.log(`[CustomBoard] Successfully transitioned to custom board: ${boardName}`);
+            console.log(`[CustomBoard] Successfully transitioned to custom board: ${boardName}`);
 
             // Show success message with return instruction
             eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
@@ -546,7 +493,7 @@ export class EnvironmentalInteractionManager {
                 useTypewriter: true
             });
         } catch (error) {
-            logger.error('[CustomBoard] Error loading custom board:', error);
+            console.error('[CustomBoard] Error loading custom board:', error);
             eventBus.emit(EventTypes.UI_SHOW_MESSAGE, {
                 text: `Failed to load ${boardName}`,
                 isPersistent: false,
@@ -558,7 +505,7 @@ export class EnvironmentalInteractionManager {
 
     public forceInteractAt(gridCoords: Position): void {
         const gridManager = this.game.gridManager;
-        const playerPos = this.game.playerFacade.getPosition();
+        const playerPos = (this.game.player as any).getPosition() as Position;
         const dx = Math.abs(gridCoords.x - playerPos.x);
         const dy = Math.abs(gridCoords.y - playerPos.y);
         if (!isAdjacent(dx, dy)) return;
@@ -569,7 +516,7 @@ export class EnvironmentalInteractionManager {
         const tile = gridManager.getTile(gridCoords.x, gridCoords.y);
         if (isTileObjectOfType(tile, TILE_TYPES.SIGN)) {
             const signTile = tile as unknown as TextBoxTile;
-            TextBox.handleClick(signTile, this.game, true);
+            TextBox.handleClick(signTile, this.game as any, true);
             const displayingSign = transientState.getDisplayingSignMessage();
             const isAlreadyDisplayed = displayingSign && displayingSign.message === signTile.message;
             const showingNewMessage = !isAlreadyDisplayed;
@@ -587,13 +534,12 @@ export class EnvironmentalInteractionManager {
 
         // Check for cube - show confirmation prompt for teleportation (FISCHERS_CUBE or TELEPORT_BRANCH)
         const tileTy = getTileType(tile);
-        if (isTileObjectOfType(tile, TILE_TYPES.FISCHERS_CUBE) ||
-            tileTy === TILE_TYPES.FISCHERS_CUBE ||
+        if (isTileObjectOfType(tile, TILE_TYPES.CUBE) ||
+            tileTy === TILE_TYPES.CUBE ||
             tileTy === TILE_TYPES.TELEPORT_BRANCH) {
             // Create cube item from the tile
-            const cubeTile = isCubeTile(tile) ? tile : null;
-            const cubeItem = isTileObjectOfType(tile, TILE_TYPES.FISCHERS_CUBE) && cubeTile?.originZone
-                ? { type: 'cube' as const, originZone: cubeTile.originZone }
+            const cubeItem = isTileObjectOfType(tile, TILE_TYPES.CUBE) && (tile as any).originZone
+                ? { type: 'cube' as const, originZone: (tile as any).originZone }
                 : { type: 'cube' as const };
 
             // Show confirmation prompt with button
@@ -609,8 +555,7 @@ export class EnvironmentalInteractionManager {
                     () => {
                         // Execute teleport branch effect, passing the grid coordinates
                         const effect = new TeleportBranchEffect();
-                        const context: ItemEffectContext = { cubeGridCoords: gridCoords };
-                        effect.apply(this.game, cubeItem, context);
+                        effect.apply(this.game as any, cubeItem, { cubeGridCoords: gridCoords });
                     },
                     'assets/items/misc/branch.png',
                     false
@@ -621,7 +566,7 @@ export class EnvironmentalInteractionManager {
 
         // Check enemy statue using centralized TileRegistry
         const statueTile2 = gridManager.getTile(gridCoords.x, gridCoords.y);
-        const statueTileType = TileTypeChecker.getTileType(statueTile2) ?? 0;
+        const statueTileType = TileTypeChecker.getTileType(statueTile2);
         const statueNpcType = TileRegistry.getStatueNPCType(statueTileType);
 
         if (statueNpcType) {

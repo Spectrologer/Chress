@@ -30,6 +30,7 @@
     "asset-viewer": "vite --open=/asset-viewer.html",
     "assets:discover": "tsx tools/generate-editor-assets.ts",
     "boards:sync": "tsx scripts/sync-boards.js",
+    "boards:manifest": "node scripts/generate-board-manifest.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",

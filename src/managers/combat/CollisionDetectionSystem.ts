@@ -42,13 +42,22 @@ export class CollisionDetectionSystem {
         const enemyCollection = this.game.enemyCollection;
         if (!enemyCollection) return false;
 
+        // CRITICAL: Skip collision detection in chess mode - player is off-board and shouldn't interact with pieces
+        const isChessMode = this.game.gameMode?.currentMode === 'chess';
+        if (isChessMode) {
+            console.log('[Chess] Skipping collision detection - chess mode active');
+            return false;
+        }
+
         const playerPos = (this.game.player as any).getPosition() as Position;
+        console.log('[Chess] checkCollisions - player at', playerPos.x, playerPos.y);
         const toRemove: Enemy[] = [];
         let playerWasAttacked = false;
 
         enemyCollection.forEach((enemy: Enemy) => {
             const enemyIsDead = safeCall(enemy, 'isDead') ?? (enemy.health <= 0);
             if (enemyIsDead) {
+                console.log('[Chess] Removing dead enemy:', enemy.enemyType, 'at', enemy.x, enemy.y, 'health:', enemy.health);
                 this.defeatEnemy(enemy);
                 toRemove.push(enemy);
                 return;
@@ -58,6 +67,7 @@ export class CollisionDetectionSystem {
 
             // Check for player-enemy collision
             if (enemy.x === playerPos.x && enemy.y === playerPos.y && !enemy.justAttacked && enemy.enemyType !== 'lizardy') {
+                console.log('[Chess] COLLISION detected with', enemy.enemyType, 'at', enemy.x, enemy.y);
                 playerWasAttacked = true;
 
                 // Visual feedback on player

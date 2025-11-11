@@ -14,11 +14,12 @@ interface BoardData {
     metadata?: {
         dimension?: number;
         playerSpawn?: { x: number; y: number };
+        gameMode?: string;
     };
 }
 
 interface BoardResult {
-    grid: any[][];
+    grid: number[][];
     playerSpawn: { x: number; y: number };
     enemies: EnemyData[];
     terrainTextures: Record<string, string>;
@@ -27,6 +28,7 @@ interface BoardResult {
     overlayRotations: Record<string, number>;
     metadata?: {
         playerSpawn?: { x: number; y: number };
+        gameMode?: string;
     };
 }
 
@@ -305,6 +307,9 @@ export class BoardLoader {
             });
         }
 
+        // Check if this is a chess board
+        const isChessBoard = boardData.metadata?.gameMode?.toUpperCase() === 'CHESS';
+
         // Place features on the grid
         let enemyIdCounter = 0;
         for (const [posKey, featureType] of Object.entries(boardData.features)) {
@@ -314,18 +319,22 @@ export class BoardLoader {
                 // Check if this feature is an enemy type
                 const enemyType = this.getEnemyType(featureType);
                 if (enemyType) {
+                    // Determine team for chess boards
+                    const team = isChessBoard && !enemyType.startsWith('black_') ? 'player' : 'enemy';
+
                     // Add to enemies array instead of grid
                     enemies.push({
                         x: x,
                         y: y,
                         enemyType: enemyType,
-                        id: `custom_board_${enemyIdCounter++}`
-                    });
+                        id: `custom_board_${enemyIdCounter++}`,
+                        team: team
+                    } as any);
                 } else {
                     // Non-enemy feature, place on grid
                     const tile = this.convertFeatureToTile(featureType, foodAssets, signMessages, posKey);
-                    if (tile !== null && tile !== undefined) {
-                        grid[y]![x] = tile as any;
+                    if (tile !== null) {
+                        grid[y][x] = tile;
                     }
                 }
             }
@@ -372,7 +381,8 @@ export class BoardLoader {
             rotations: rotations,
             overlayRotations: overlayRotations,
             metadata: {
-                playerSpawn: boardData.metadata?.playerSpawn ? playerSpawn : undefined
+                playerSpawn: boardData.metadata?.playerSpawn ? playerSpawn : undefined,
+                gameMode: boardData.metadata?.gameMode
             }
         };
     }

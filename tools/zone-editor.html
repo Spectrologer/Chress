@@ -515,6 +515,16 @@
                 </div>
 
                 <div class="control-group">
+                    <label>Game Mode:</label>
+                    <select id="zoneGameMode">
+                        <option value="CHRESS">CHRESS (Default)</option>
+                        <option value="CHESS">CHESS (Turn-based)</option>
+                        <option value="PUZZLE">PUZZLE (Future)</option>
+                        <option value="TUTORIAL">TUTORIAL (Future)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
                     <label>Description (optional):</label>
                     <textarea id="zoneDescription" placeholder="Add notes..."></textarea>
                 </div>
@@ -1366,6 +1376,7 @@
             const description = document.getElementById('zoneDescription').value.trim();
             const tags = document.getElementById('zoneTags').value.split(',').map(t => t.trim()).filter(t => t);
             const dimension = parseInt(document.getElementById('zoneDimension').value);
+            const gameMode = document.getElementById('zoneGameMode').value;
             const level = document.getElementById('zoneLevel').value; // String: home, woods, wilds, frontier
             const rarity = parseInt(document.getElementById('zoneRarity').value);
 
@@ -1423,6 +1434,7 @@
                     description: description || undefined,
                     tags: tags.length > 0 ? tags : undefined,
                     dimension: dimension,
+                    gameMode: gameMode,
                     level: level,
                     rarity: rarity,
                     playerSpawn: playerSpawn || undefined,
@@ -1505,6 +1517,7 @@
                     document.getElementById('zoneDescription').value = zoneData.metadata?.description || '';
                     document.getElementById('zoneTags').value = zoneData.metadata?.tags?.join(', ') || '';
                     document.getElementById('zoneDimension').value = zoneData.metadata?.dimension || 0;
+                    document.getElementById('zoneGameMode').value = zoneData.metadata?.gameMode || 'CHRESS';
                     document.getElementById('zoneLevel').value = zoneData.metadata?.level || 'home';
                     document.getElementById('zoneRarity').value = zoneData.metadata?.rarity || 5;
 
