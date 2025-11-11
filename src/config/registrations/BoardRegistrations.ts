@@ -23,8 +23,8 @@ export function registerBoards(): void {
     // boardLoader.registerBoard(5, 5, 0, 'special_surface_zone', 'custom');
     // boardLoader.registerBoard(2, 3, 2, 'underground_cavern', 'custom');
 
-    // Classico - Test board for player spawn feature
-    boardLoader.registerBoard(1, 0, 0, 'classico', 'custom');
+    // Classiqueste - Test board for player spawn feature
+    boardLoader.registerBoard(1, 0, 0, 'classiqueste', 'custom');
 
     // Chess - Custom chess mode board with lizard units
     boardLoader.registerBoard(2, 0, 0, 'chess', 'custom');

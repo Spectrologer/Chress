@@ -91,7 +91,6 @@ export class ZoneGenerationOrchestrator {
 
         // CRITICAL: Check for chess mode FIRST and move player off-board BEFORE loading enemies
         if (zoneData.metadata?.gameMode?.toUpperCase() === 'CHESS') {
-            console.log('[Chess] Pre-emptively moving player off-board before loading enemies');
             this.game.player.x = -1;
             this.game.player.y = -1;
         }
@@ -215,7 +214,6 @@ export class ZoneGenerationOrchestrator {
                 // In chess mode, hide the player off the board to avoid occupying a square
                 this.game.player.x = -1;
                 this.game.player.y = -1;
-                console.log('[Chess] Player moved off-board to (-1, -1)');
             } else if (requestedMode === 'NORMAL' && this.game.gameMode.currentMode !== GameMode.NORMAL) {
                 logger.info(`[ZoneGeneration] Switching to NORMAL mode for this zone`);
                 setGameMode(this.game, GameMode.NORMAL);

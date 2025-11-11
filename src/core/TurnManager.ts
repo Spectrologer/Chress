@@ -152,7 +152,7 @@ export class TurnManager {
         console.log('[Chess]', unitsWithMoves.length, 'units have valid moves');
 
         // Prioritize units that can attack player units
-        const unitsWithAttacks = unitsWithMoves.filter(({ enemy, moves }) => {
+        const unitsWithAttacks = unitsWithMoves.map(({ enemy, moves }) => {
             const attackMoves = moves.filter(move => {
                 const unitAtTarget = enemyCollection.findAt(move.x, move.y, true);
                 return unitAtTarget && unitAtTarget.team === 'player';
@@ -160,21 +160,29 @@ export class TurnManager {
             if (attackMoves.length > 0) {
                 console.log('[Chess]', enemy.enemyType, 'can attack at:', attackMoves);
             }
-            return attackMoves.length > 0;
-        });
+            return { enemy, moves, attackMoves };
+        }).filter(({ attackMoves }) => attackMoves.length > 0);
 
         console.log('[Chess]', unitsWithAttacks.length, 'units can attack player units');
 
-        const candidateUnits = unitsWithAttacks.length > 0 ? unitsWithAttacks : unitsWithMoves;
+        let selected: { enemy: Enemy; moves: Array<{ x: number; y: number }> };
+        let selectedMove: { x: number; y: number };
 
-        // Randomly select one unit
-        const selected = candidateUnits[Math.floor(Math.random() * candidateUnits.length)];
-
-        // Randomly select one of its valid moves
-        const selectedMove = selected.moves[Math.floor(Math.random() * selected.moves.length)];
+        if (unitsWithAttacks.length > 0) {
+            // If we have units that can attack, select one and choose an attack move
+            const attackUnit = unitsWithAttacks[Math.floor(Math.random() * unitsWithAttacks.length)];
+            selected = { enemy: attackUnit.enemy, moves: attackUnit.moves };
+            // IMPORTANT: Select from attack moves only, not all moves
+            selectedMove = attackUnit.attackMoves[Math.floor(Math.random() * attackUnit.attackMoves.length)];
+        } else {
+            // Otherwise, select a unit that can move and choose any valid move
+            const movingUnit = unitsWithMoves[Math.floor(Math.random() * unitsWithMoves.length)];
+            selected = movingUnit;
+            selectedMove = selected.moves[Math.floor(Math.random() * selected.moves.length)];
+        }
 
         // Store the target move for the combat manager to use
-        (selected.enemy as any)._chessTargetMove = selectedMove;
+        selected.enemy._chessTargetMove = selectedMove;
 
         return [selected.enemy];
     }
@@ -186,42 +194,133 @@ export class TurnManager {
         const validMoves: Array<{ x: number; y: number }> = [];
         const { x, y } = unit;
         const grid = this.game.grid;
+        const enemyCollection = this.game.enemyCollection as EnemyCollection;
 
         // Get the base enemy type (remove 'black_' prefix if present)
         const baseType = unit.enemyType.replace('black_', '');
 
-        // Simplified movement - just return adjacent squares for now
-        // The full logic can be imported from InputCoordinator if needed
-        const directions = [
-            [0, -1], [0, 1], [-1, 0], [1, 0],  // Cardinal
-            [-1, -1], [-1, 1], [1, -1], [1, 1]  // Diagonal
-        ];
+        // Determine movement direction based on team
+        // Black pieces (enemy) move down (increasing y), white pieces (player) move up (decreasing y)
+        const forwardDir = unit.team === 'enemy' ? 1 : -1;
 
-        for (const [dx, dy] of directions) {
-            const newX = x + dx;
-            const newY = y + dy;
-
-            // Check bounds
-            if (newX < 0 || newX >= grid[0].length || newY < 0 || newY >= grid.length) {
-                continue;
+        // Helper function to check if a position is valid and not a wall
+        const isValidSquare = (px: number, py: number): boolean => {
+            if (px < 0 || px >= grid[0].length || py < 0 || py >= grid.length) {
+                return false;
             }
-
-            // Check for walls - WALL is tile type 1
-            const tileValue = grid[newY][newX];
+            const tileValue = grid[py][px];
             const isWall = tileValue === TILE_TYPES.WALL ||
                           (typeof tileValue === 'object' && tileValue !== null && tileValue.type === TILE_TYPES.WALL);
-            if (isWall) {
-                console.log('[Chess] Wall at', newX, newY, '- skipping');
-                continue;
+            return !isWall;
+        };
+
+        // Helper function to add move if valid
+        const addMoveIfValid = (px: number, py: number, canCapture: boolean = true, mustCapture: boolean = false): boolean => {
+            if (!isValidSquare(px, py)) {
+                return false;
             }
 
-            const enemyCollection = this.game.enemyCollection as EnemyCollection;
-            const unitAtPos = enemyCollection.findAt(newX, newY, true) as Enemy | null;
+            const unitAtPos = enemyCollection.findAt(px, py, true) as Enemy | null;
 
-            // Can move to empty squares or capture enemy units
-            if (!unitAtPos || unitAtPos.team !== unit.team) {
-                validMoves.push({ x: newX, y: newY });
+            if (mustCapture) {
+                // Must have an enemy unit to capture
+                if (unitAtPos && unitAtPos.team !== unit.team) {
+                    validMoves.push({ x: px, y: py });
+                    return true;
+                }
+                return false;
             }
+
+            if (!unitAtPos) {
+                // Empty square
+                if (!mustCapture) {
+                    validMoves.push({ x: px, y: py });
+                }
+                return true;
+            } else if (unitAtPos.team !== unit.team && canCapture) {
+                // Can capture enemy unit
+                validMoves.push({ x: px, y: py });
+                return true;
+            }
+
+            return false;
+        };
+
+        switch (baseType) {
+            case 'lizardy': // Pawn
+                // Move forward one square (no capture)
+                addMoveIfValid(x, y + forwardDir, false, false);
+
+                // Capture diagonally
+                addMoveIfValid(x - 1, y + forwardDir, true, true);
+                addMoveIfValid(x + 1, y + forwardDir, true, true);
+                break;
+
+            case 'lizord': // Knight
+                const knightMoves = [
+                    [2, 1], [2, -1], [-2, 1], [-2, -1],
+                    [1, 2], [1, -2], [-1, 2], [-1, -2]
+                ];
+                for (const [dx, dy] of knightMoves) {
+                    addMoveIfValid(x + dx, y + dy);
+                }
+                break;
+
+            case 'zard': // Bishop
+                // Diagonal movement
+                for (const [dx, dy] of [[-1, -1], [-1, 1], [1, -1], [1, 1]]) {
+                    for (let i = 1; i < 8; i++) {
+                        if (!addMoveIfValid(x + dx * i, y + dy * i)) {
+                            break;
+                        }
+                        // Stop if we captured a piece
+                        const unitAtPos = enemyCollection.findAt(x + dx * i, y + dy * i, true);
+                        if (unitAtPos) break;
+                    }
+                }
+                break;
+
+            case 'lizardeaux': // Rook
+                // Horizontal and vertical movement
+                for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
+                    for (let i = 1; i < 8; i++) {
+                        if (!addMoveIfValid(x + dx * i, y + dy * i)) {
+                            break;
+                        }
+                        // Stop if we captured a piece
+                        const unitAtPos = enemyCollection.findAt(x + dx * i, y + dy * i, true);
+                        if (unitAtPos) break;
+                    }
+                }
+                break;
+
+            case 'lazerd': // Queen
+                // All directions
+                for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0], [-1, -1], [-1, 1], [1, -1], [1, 1]]) {
+                    for (let i = 1; i < 8; i++) {
+                        if (!addMoveIfValid(x + dx * i, y + dy * i)) {
+                            break;
+                        }
+                        // Stop if we captured a piece
+                        const unitAtPos = enemyCollection.findAt(x + dx * i, y + dy * i, true);
+                        if (unitAtPos) break;
+                    }
+                }
+                break;
+
+            case 'lizardo': // King
+                // One square in any direction
+                for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0], [-1, -1], [-1, 1], [1, -1], [1, 1]]) {
+                    addMoveIfValid(x + dx, y + dy);
+                }
+                break;
+
+            default:
+                // Unknown piece type - use generic adjacent movement
+                for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0], [-1, -1], [-1, 1], [1, -1], [1, 1]]) {
+                    addMoveIfValid(x + dx, y + dy);
+                }
+                break;
         }
 
         return validMoves;

@@ -30,6 +30,9 @@ export class Enemy extends BaseEnemy {
     // Tactical AI property (initialized by movement mixin)
     tacticalAI?: any;
 
+    // Chess mode: Target move selected by TurnManager
+    _chessTargetMove?: { x: number; y: number };
+
     constructor(data: EnemyData) {
         super(data);
         Object.assign(this, EnemyMovementMixin);

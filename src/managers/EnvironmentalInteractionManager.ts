@@ -172,11 +172,19 @@ export class EnvironmentalInteractionManager {
     /**
      * Fetches the list of available custom boards from static/boards/custom
      */
-    private async getAvailableCustomBoards(): Promise<string[]> {
+    private async getAvailableCustomBoards(): Promise<Array<{ name: string; displayName: string; gameMode: string }>> {
         try {
-            // Hardcoded list of available boards
-            // In a real implementation, you might fetch this from a manifest file
-            return ['classico', 'lizardo_grove'];
+            const basePath = import.meta.env.BASE_URL || '/';
+            const manifestPath = `${basePath}boards/custom/manifest.json`;
+            const response = await fetch(manifestPath);
+
+            if (!response.ok) {
+                console.warn('Failed to fetch custom boards manifest, using fallback');
+                return [];
+            }
+
+            const manifest = await response.json();
+            return manifest.boards || [];
         } catch (error) {
             console.error('Error fetching custom boards:', error);
             return [];
@@ -186,7 +194,7 @@ export class EnvironmentalInteractionManager {
     /**
      * Creates a dialog showing available custom boards with a "Load Custom File" option
      */
-    private createBoardSelectionDialog(boards: string[]): void {
+    private createBoardSelectionDialog(boards: Array<{ name: string; displayName: string; gameMode: string }>): void {
         // Create overlay
         const overlay = document.createElement('div');
         overlay.id = 'custom-board-selector-overlay';
@@ -238,13 +246,14 @@ export class EnvironmentalInteractionManager {
         `;
 
         // Add available boards
-        boards.forEach(boardName => {
-            const button = this.createBoardButton(boardName, async () => {
+        boards.forEach(board => {
+            const displayText = `${board.name} (${board.gameMode})`;
+            const button = this.createBoardButton(displayText, async () => {
                 this.closeBoardSelectionDialog(overlay);
                 // Use import.meta.env.BASE_URL to respect Vite's base path configuration
                 const basePath = import.meta.env.BASE_URL || '/';
-                const boardPath = `${basePath}boards/custom/${boardName}.json`;
-                await this.loadCustomBoardFromFile(boardPath, boardName);
+                const boardPath = `${basePath}boards/custom/${board.name}.json`;
+                await this.loadCustomBoardFromFile(boardPath, board.name);
             });
             boardList.appendChild(button);
         });
@@ -465,7 +474,8 @@ export class EnvironmentalInteractionManager {
                 terrainTextures: boardResult.terrainTextures,
                 overlayTextures: boardResult.overlayTextures || {},
                 rotations: boardResult.rotations,
-                overlayRotations: boardResult.overlayRotations || {}
+                overlayRotations: boardResult.overlayRotations || {},
+                metadata: boardResult.metadata
             };
 
             // Cache this custom board zone using the correct key format

@@ -42,8 +42,8 @@ export class EnemyMovementHandler {
         let move: Position | null;
 
         // Chess mode: Use pre-selected move from TurnManager
-        if (isInChessMode(this.game) && (enemy as any)._chessTargetMove) {
-            const targetMove = (enemy as any)._chessTargetMove;
+        if (isInChessMode(this.game) && enemy._chessTargetMove) {
+            const targetMove = enemy._chessTargetMove;
             move = Position.from(targetMove);
             console.log('[Chess] Enemy moving from', enemy.x, enemy.y, 'to', move.x, move.y);
 
@@ -61,7 +61,7 @@ export class EnemyMovementHandler {
             }
 
             // Clean up the chess move marker
-            delete (enemy as any)._chessTargetMove;
+            delete enemy._chessTargetMove;
         } else {
             // Normal mode: Use standard pathfinding
             move = enemy.planMoveTowards(this.game.player, this.game.grid, allEnemies, playerPos, false, this.game);
