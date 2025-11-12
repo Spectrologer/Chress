@@ -88,9 +88,9 @@ class UndergroundHandler extends BaseZoneHandler {
 
         const { from, x, y } = portData;
         const handlers: Record<string, () => void> = {
-            cistern: () => {
-                this.structureGenerator.addCistern(this.zoneX, this.zoneY, true, x, y);
-                this.zoneGen.gridManager.setTile(x, y + 1, TILE_TYPES.CISTERN);
+            grate: () => {
+                // When entering underground from a grate, place stairs to return
+                this.placeStairPort(x!, y!, 'stairup', from);
             },
             hole: () => this.placeStairPort(x!, y!, 'stairup', from),
             pitfall: () => this.placeStairPort(x!, y!, 'stairup', from),
@@ -103,6 +103,14 @@ class UndergroundHandler extends BaseZoneHandler {
 
     placeStairPort(x: number, y: number, portKind: string, from: string): void {
         this.zoneGen.gridManager.setTile(x, y, { type: TILE_TYPES.PORT, portKind });
+
+        // When placing a stairup (from grate, hole, pitfall, or stairdown), set terrain texture to look like upstairs
+        // This makes the underground exit port appear as stairs leading up to the surface
+        if (portKind === 'stairup') {
+            const coord = `${x},${y}`;
+            this.zoneGen.terrainTextures[coord] = 'floors/graytile';
+        }
+
         try { logger?.debug?.(`undergroundHandler: placed ${portKind} at (${x},${y}) from ${from}`); } catch (e) {
             logger.warn('[UndergroundHandler] Logger debug failed (placeStairPort):', e);
         }

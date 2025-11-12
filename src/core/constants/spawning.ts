@@ -83,7 +83,7 @@ interface EnemyTypesProbabilities {
 
 export const SPAWN_PROBABILITIES = {
     // Feature spawning
-    CISTERN: 0.07, // Surface cistern spawn chance (7%)
+    Grate: 0.07, // Surface Grate spawn chance (7%)
     STAIRS_DOWN: 0.15, // Underground stairs spawn chance (15%)
     INTERCONNECTED_HOME: 0.95, // Interconnected home zone connections (95%)
 

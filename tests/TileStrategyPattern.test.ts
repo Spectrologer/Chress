@@ -28,7 +28,7 @@ describe('Tile Strategy Pattern', () => {
         const images = {};
         const textureDetector = {};
         const multiTileHandler = {
-            findCisternPosition: vi.fn(() => null),
+            findGratePosition: vi.fn(() => null),
             findShackPosition: vi.fn(() => null),
             findHousePosition: vi.fn(() => null)
         };
@@ -58,7 +58,7 @@ describe('Tile Strategy Pattern', () => {
         expect(renderer.strategyRegistry.hasStrategy(TILE_TYPES.HOUSE)).toBe(true);
         expect(renderer.strategyRegistry.hasStrategy(TILE_TYPES.SHACK)).toBe(true);
         expect(renderer.strategyRegistry.hasStrategy(TILE_TYPES.WELL)).toBe(true);
-        expect(renderer.strategyRegistry.hasStrategy(TILE_TYPES.CISTERN)).toBe(true);
+        expect(renderer.strategyRegistry.hasStrategy(TILE_TYPES.Grate)).toBe(true);
         expect(renderer.strategyRegistry.hasStrategy(TILE_TYPES.PITFALL)).toBe(true);
 
         // Items

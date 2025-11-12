@@ -70,8 +70,8 @@ Custom zones are JSON files with this structure:
 
 - Coordinate-based: `"x,y": "feature_name"`
 - Features overlay terrain
-- Values: wall, exit, shack, cistern, bomb, heart, etc.
-- **Special PORT format**: Use `port_stairup`, `port_stairdown`, `port_interior`, `port_cistern` for transition tiles
+- Values: wall, exit, shack, grate, bomb, heart, etc.
+- **Special PORT format**: Use `port_stairup`, `port_stairdown`, `port_interior`, `port_grate` for transition tiles
 - Can use any string value - unrecognized types are logged but ignored
 
 ## Extensibility
@@ -95,10 +95,10 @@ When these features get implemented in the game, they'll automatically work with
 ### Currently Implemented Features
 
 **Structures:**
-- wall, exit, house, shack, cistern, table, pitfall
+- wall, exit, house, shack, grate, table, pitfall
 
 **Ports (Transitions):**
-- port_stairup, port_stairdown, port_interior, port_cistern
+- port_stairup, port_stairdown, port_interior, port_grate
 
 **Decorations:**
 - shrubbery, deadtree, well, rock, sign

@@ -1,4 +1,4 @@
-import { TILE_TYPES } from './constants/index';
+import { TILE_TYPES, DIMENSION_CONSTANTS } from './constants/index';
 import { logger } from './logger';
 import type { Tile } from './SharedTypes';
 import type { EnemyData } from '@entities/Enemy';
@@ -19,7 +19,7 @@ interface BoardData {
 }
 
 interface BoardResult {
-    grid: number[][];
+    grid: Tile[][];
     playerSpawn: { x: number; y: number };
     enemies: EnemyData[];
     terrainTextures: Record<string, string>;
@@ -227,7 +227,7 @@ export class BoardLoader {
      */
     convertBoardToGrid(boardData: BoardData, foodAssets: string[] = []): BoardResult {
         const [width, height] = boardData.size;
-        const grid: number[][] = [];
+        const grid: Tile[][] = [];
         const terrainTextures: Record<string, string> = {};
         const overlayTextures: Record<string, string> = {};
         const rotations: Record<string, number> = {};
@@ -332,7 +332,16 @@ export class BoardLoader {
                     } as any);
                 } else {
                     // Non-enemy feature, place on grid
-                    const tile = this.convertFeatureToTile(featureType, foodAssets, signMessages, posKey);
+                    let tile = this.convertFeatureToTile(featureType, foodAssets, signMessages, posKey);
+
+                    // Special handling: port_grate features in underground zones should be converted to stairup
+                    // This makes the port under the grate appear as stairs leading up to the surface (like an UPSTAIR)
+                    if (featureType === 'port_grate' && boardData.metadata?.dimension === DIMENSION_CONSTANTS.UNDERGROUND) {
+                        // Convert grate to stairup for underground zones
+                        tile = { type: TILE_TYPES.PORT, portKind: 'stairup' };
+                        terrainTextures[posKey] = 'floors/graytile';
+                    }
+
                     if (tile !== null) {
                         grid[y][x] = tile;
                     }

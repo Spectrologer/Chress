@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "You look AMAZING today. Seriously, you're glowing. Has anyone told you that? They should.",
+        "text": "Wow, you look great, who does your hair? Really, love the cut.",
         "buttonText": "Thanks?"
       },
       {
         "id": "msg_1",
-        "text": "I would NEVER poison anyone. These spots? Fashion choice. Very trendy in the mushroom community.",
-        "buttonText": "Sure..."
+        "text": "Wow, those clothes are so unique! Where do you shop?",
+        "buttonText": "The store."
       },
       {
         "id": "msg_2",
-        "text": "Trust me, eating me would be totally fine. I'm basically a vitamin. A delicious, not-at-all-deadly vitamin.",
-        "buttonText": "No thanks."
+        "text": "I can't wear clothes, I'm a mushroom.",
+        "buttonText": "True."
       }
     ]
   },

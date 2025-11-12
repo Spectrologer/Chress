@@ -126,6 +126,13 @@ export class GameContext extends GameContextCommands implements IGame {
     shovelMode: boolean;
     activeShovel: Item | null;
 
+    // Game mode system
+    gameMode: import('@core/GameMode').GameModeConfig;
+
+    // Legacy chess mode flags (deprecated - use gameMode instead)
+    chessMode: boolean;
+    selectedUnit: Enemy | null;
+
     // Assets
     availableFoodAssets: string[];
 

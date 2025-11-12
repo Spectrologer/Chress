@@ -137,12 +137,12 @@ export class ItemGenerator {
     // Hammer is now an ability - no longer spawns as item
     // Keeping method for potential future use or console commands
 
-    addCisternItem(force = false) {
-        // Cistern generation disabled
+    addGrateItem(force = false) {
+        // Grate generation disabled
     }
 
     addAxelotlItem() {
-        // Try to place the axelotl near the cistern (around center area)
+        // Try to place the axelotl near the grate (around center area)
         const center = getGridCenter();
         const centerX = center.x;
         const centerY = center.y;

@@ -1,5 +1,5 @@
 /**
- * Cistern tile renderer - renders simple 1x1 grate tile
+ * Grate tile renderer - renders simple 1x1 grate tile
  */
 
 import { TILE_SIZE, TILE_TYPES, TILE_COLORS } from '@core/constants/index';
@@ -7,12 +7,12 @@ import { RendererUtils } from '../RendererUtils';
 import { BaseStructureRenderer } from './BaseStructureRenderer';
 import type { ImageCache, GridManager, BaseRenderer } from '../types';
 
-export class CisternRenderer extends BaseStructureRenderer {
+export class GrateRenderer extends BaseStructureRenderer {
     constructor(images: ImageCache, tileSize: number) {
         super(images, tileSize);
     }
 
-    renderCisternTile(
+    renderGrateTile(
         ctx: CanvasRenderingContext2D,
         x: number,
         y: number,
@@ -22,7 +22,7 @@ export class CisternRenderer extends BaseStructureRenderer {
         zoneLevel: number,
         baseRenderer: BaseRenderer
     ): void {
-        // Cistern is now a simple 1x1 grate tile
+        // Grate is now a simple 1x1 grate tile
         // First render dirt background
         this.renderBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer);
 
@@ -38,7 +38,7 @@ export class CisternRenderer extends BaseStructureRenderer {
             );
         } else {
             // Fallback color rendering
-            ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
+            ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.Grate].slice(4, -1)}, 0.7)`;
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             ctx.fillStyle = '#ffffeb';
             ctx.font = 'bold 24px Arial';
@@ -58,6 +58,6 @@ export class CisternRenderer extends BaseStructureRenderer {
         zoneLevel: number,
         baseRenderer: BaseRenderer
     ): void {
-        this.renderCisternTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer);
+        this.renderGrateTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer);
     }
 }

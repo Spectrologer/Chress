@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Did you catch the Lakers game last night?! LeBron with that DUNK! *waves tube body excitedly*",
-        "buttonText": "Can't say I did."
+        "text": "Do you like sports?",
+        "buttonText": "Maybe."
       },
       {
         "id": "msg_1",
-        "text": "Living at the bottom of the ocean is great, but the cable reception is TERRIBLE. Go Lakers!",
+        "text": "I'm always watching the BIG game!",
         "buttonText": "Makes sense."
       },
       {
         "id": "msg_2",
-        "text": "Purple and gold, baby! Even down here by the thermal vents, we bleed Lakers! SHOWTIME!",
+        "text": "I love the LA Lakers.",
         "buttonText": "Alright."
       }
     ]

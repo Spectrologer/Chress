@@ -272,6 +272,102 @@ describe('BoardLoader', () => {
         });
     });
 
+    describe('Grate to Stairup Conversion', () => {
+        test('should convert port_grate to stairup in underground zones', () => {
+            const boardData = {
+                size: [3, 3],
+                terrain: new Array(9).fill('floor'),
+                features: {
+                    '1,1': 'port_grate'
+                },
+                metadata: {
+                    dimension: 2 // Underground
+                }
+            };
+
+            const result = boardLoader.convertBoardToGrid(boardData, []);
+            const gratePortTile = result.grid[1][1];
+
+            // Should be a PORT tile with portKind 'stairup', not 'grate'
+            expect(gratePortTile).toBeDefined();
+            expect(typeof gratePortTile).toBe('object');
+            expect(gratePortTile.type).toBe(TILE_TYPES.PORT);
+            expect(gratePortTile.portKind).toBe('stairup');
+
+            // Should have graytile floor texture
+            expect(result.terrainTextures['1,1']).toBe('floors/graytile');
+        });
+
+        test('should NOT convert port_grate to stairup on surface', () => {
+            const boardData = {
+                size: [3, 3],
+                terrain: new Array(9).fill('floor'),
+                features: {
+                    '1,1': 'port_grate'
+                },
+                metadata: {
+                    dimension: 0 // Surface
+                }
+            };
+
+            const result = boardLoader.convertBoardToGrid(boardData, []);
+            const gratePortTile = result.grid[1][1];
+
+            // Should remain as a grate on surface
+            expect(gratePortTile).toBeDefined();
+            expect(typeof gratePortTile).toBe('object');
+            expect(gratePortTile.type).toBe(TILE_TYPES.PORT);
+            expect(gratePortTile.portKind).toBe('grate');
+
+            // Should NOT have graytile floor texture on surface (should be 'floor' from terrain)
+            expect(result.terrainTextures['1,1']).not.toBe('floors/graytile');
+        });
+
+        test('should convert port_grate without metadata dimension', () => {
+            const boardData = {
+                size: [3, 3],
+                terrain: new Array(9).fill('floor'),
+                features: {
+                    '1,1': 'port_grate'
+                }
+                // No metadata
+            };
+
+            const result = boardLoader.convertBoardToGrid(boardData, []);
+            const gratePortTile = result.grid[1][1];
+
+            // Without metadata, should remain as grate (default behavior)
+            expect(gratePortTile).toBeDefined();
+            expect(typeof gratePortTile).toBe('object');
+            expect(gratePortTile.type).toBe(TILE_TYPES.PORT);
+            expect(gratePortTile.portKind).toBe('grate');
+        });
+
+        test('should convert multiple port_grates in underground zone', () => {
+            const boardData = {
+                size: [3, 3],
+                terrain: new Array(9).fill('floor'),
+                features: {
+                    '0,0': 'port_grate',
+                    '2,2': 'port_grate'
+                },
+                metadata: {
+                    dimension: 2 // Underground
+                }
+            };
+
+            const result = boardLoader.convertBoardToGrid(boardData, []);
+
+            // Both should be converted to stairup
+            expect(result.grid[0][0].portKind).toBe('stairup');
+            expect(result.grid[2][2].portKind).toBe('stairup');
+
+            // Both should have graytile texture
+            expect(result.terrainTextures['0,0']).toBe('floors/graytile');
+            expect(result.terrainTextures['2,2']).toBe('floors/graytile');
+        });
+    });
+
     describe('Cache Management', () => {
         test('should clear cache', () => {
             boardLoader.boardCache.set('test', { data: 'test' });

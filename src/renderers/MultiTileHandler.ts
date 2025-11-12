@@ -1,6 +1,6 @@
 import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 import { isWithinGrid } from '@utils/GridUtils';
-import { isTileType, isPort, isCistern, isShack } from '@utils/TileUtils';
+import { isTileType, isPort, isGrate, isShack } from '@utils/TileUtils';
 import type { GridManager } from './types';
 
 interface StructurePosition {
@@ -25,7 +25,7 @@ export class MultiTileHandler {
                     }
                 }
 
-                // If doing a strict check (e.g., for cistern detection), ensure the target tile itself is a HOUSE or PORT.
+                // If doing a strict check (e.g., for Grate detection), ensure the target tile itself is a HOUSE or PORT.
                 if (isStrictCheck && isHouse) {
                     const targetTile = gridManager.getTile(targetX, targetY);
                     if (!(isTileType(targetTile, TILE_TYPES.HOUSE) || isTileType(targetTile, TILE_TYPES.PORT))) continue;

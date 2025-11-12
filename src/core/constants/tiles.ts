@@ -59,7 +59,7 @@ export const TILE_TYPES = {
     MARK: 43,
     SHACK: 44,
     SHOVEL: 48,
-    CISTERN: 45,
+    Grate: 45,
     AXELOTL: 46,
     GOUGE: 47,
     PITFALL: 49,
@@ -202,7 +202,7 @@ export const TILE_COLORS: Record<number, string> = {
     [TILE_TYPES.BOOK_OF_TIME_TRAVEL]: '#EB564B', // Chocolate color for book
     [TILE_TYPES.BOW]: '#964253', // Brown for bow
     [TILE_TYPES.MARK]: '#f2a65e', // Gold for Mark
-    [TILE_TYPES.CISTERN]: '#7e7e8f', // Slate gray for cistern
+    [TILE_TYPES.Grate]: '#7e7e8f', // Slate gray for Grate
     [TILE_TYPES.SHACK]: '#964253', // Brown for shack
     [TILE_TYPES.SHOVEL]: '#964253', // Brown for shovel
     [TILE_TYPES.GOUGE]: '#4B5BAB', // Blueviolet for Gouge

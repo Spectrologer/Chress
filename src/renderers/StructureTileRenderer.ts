@@ -8,7 +8,7 @@ interface MultiTileHandler {
     findWellPosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;
     findDeadTreePosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;
     findShackPosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;
-    findCisternPosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;
+    findGratePosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;
 }
 
 export class StructureTileRenderer {
@@ -407,7 +407,7 @@ export class StructureTileRenderer {
         RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.SHACK] || '#57294b', 'S');
     }
 
-    renderCisternTile(
+    renderGrateTile(
         ctx: CanvasRenderingContext2D,
         x: number,
         y: number,
@@ -417,7 +417,7 @@ export class StructureTileRenderer {
         zoneLevel: number,
         baseRenderer: BaseRenderer
     ): void {
-        // Cistern is now a simple 1x1 grate tile
+        // Grate is now a simple 1x1 tile
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
@@ -433,7 +433,7 @@ export class StructureTileRenderer {
             );
         } else {
             // Fallback color rendering
-            ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
+            ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.Grate].slice(4, -1)}, 0.7)`;
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             ctx.fillStyle = '#ffffeb';
             ctx.font = 'bold 24px Arial';

@@ -25,7 +25,7 @@ this.isHomeZone = zoneX === 0 && zoneY === 0;
 
 **Used in:**
 
-- StructureGenerator.js: Adds house, sign, cistern ONLY at (0,0)
+- StructureGenerator.js: Adds house, sign, Grate ONLY at (0,0)
 - SurfaceHandler.js: Skips random features for home zone
 - UndergroundHandler.js: Avoids stairs down at home zone
 - ConnectionManager.js: Randomizes exits at (0,0)
@@ -34,7 +34,7 @@ this.isHomeZone = zoneX === 0 && zoneY === 0;
 
 - House: (2-5, 3-5)
 - Sign: (2,5) with message
-- Cistern: (2, 3-4)
+- Grate: (2, 3-4)
 
 ### NPC Hardcoding
 
@@ -78,7 +78,7 @@ if (boardLoader.hasBoard(zoneX, zoneY, dimension)) {
 **Severity:** HIGH (intentional)
 
 - If board loaded, procedural code never runs
-- House/sign/cistern generation skipped for (0,0)
+- House/sign/Grate generation skipped for (0,0)
 - **This is CORRECT** - boards meant to replace generation
 - **Mitigation:** Working as designed
 
@@ -156,7 +156,7 @@ ZoneGenerator.js
   → generateZone(zoneX, zoneY, dimension)
     → If boardLoader.hasBoard(): return convertBoardToGrid() [EARLY RETURN]
     → Else: handleSurface/Interior/Underground()
-      → StructureGenerator.addHouse/addSign/addCistern()
+      → StructureGenerator.addHouse/addSign/addGrate()
 
 BaseZoneHandler.js
   → isHomeZone = (zoneX === 0 && zoneY === 0)
@@ -200,11 +200,11 @@ EnvironmentalInteractionManager.js
 - **Status:** REAL RISK
 - **Recommendation:** Add NPC spawn validation
 
-### Scenario 4: Cistern Expectation
+### Scenario 4: Grate Expectation
 
-- Procedural adds cistern at (2,3-4)
-- Custom board might not include cistern
-- No game code requires cistern
+- Procedural adds Grate at (2,3-4)
+- Custom board might not include Grate
+- No game code requires Grate
 - **Result:** No conflict
 - **Status:** Safe
 
@@ -274,7 +274,7 @@ EnvironmentalInteractionManager.js
 | Zone Level   | Level 1     | Inherits     | No        | Works OK       |
 | House        | (2-5,3-5)   | In JSON      | No        | Board wins     |
 | textbox      | (2,5)       | In JSON      | No        | Board wins     |
-| Cistern      | (2,3-4)     | In JSON      | No        | Board wins     |
+| Grate        | (2,3-4)     | In JSON      | No        | Board wins     |
 | NPCs         | Zone 0,0    | Separate     | MAYBE     | Add validation |
 | Enemies      | Level-based | Not in board | No        | N/A            |
 | Exits        | Randomized  | In JSON      | No        | Board wins     |

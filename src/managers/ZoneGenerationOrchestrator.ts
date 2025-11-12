@@ -5,7 +5,7 @@
  * Manages the full zone lifecycle from generation to entity initialization.
  */
 
-import { GRID_SIZE, TILE_TYPES } from '@core/constants/index';
+import { GRID_SIZE, TILE_TYPES, DIMENSION_CONSTANTS } from '@core/constants/index';
 import { logger } from '@core/logger';
 import { boardLoader } from '@core/BoardLoader';
 import { createZoneKey } from '@utils/ZoneKeyUtils';
@@ -271,6 +271,8 @@ export class ZoneGenerationOrchestrator {
         const gridManager = this.game.gridManager;
         const transientState = this.game.transientGameState;
         const lastExitSide = (this.game as any).lastExitSide;
+        const currentZone = (this.game.player as any).getCurrentZone() as ZoneInfo;
+        const currentDimension = currentZone.dimension;
 
         try {
             const portData = transientState.getPortTransitionData() as PortTransitionData | undefined;
@@ -290,11 +292,16 @@ export class ZoneGenerationOrchestrator {
                         if (!isTileObjectWithProperty(existing, TILE_TYPES.PORT, 'portKind', 'stairdown')) {
                             gridManager.setTile(px, py, { type: TILE_TYPES.PORT, portKind: 'stairdown' });
                         }
-                    } else if (from === 'cistern') {
-                        const belowTile = gridManager.getTile(px, py + 1);
-                        if (belowTile !== undefined && belowTile !== TILE_TYPES.CISTERN) {
-                            this.transitionCoordinator.validateAndSetTile(this.game.grid, px, py + 1, TILE_TYPES.CISTERN);
+                    } else if (from === 'grate') {
+                        // When returning to SURFACE from underground via grate, restore the grate
+                        // When entering UNDERGROUND via grate, it should be a stairup (handled by BoardLoader/UndergroundHandler)
+                        if (currentDimension === DIMENSION_CONSTANTS.SURFACE) {
+                            // On surface - ensure grate exists at emergence point
+                            if (!isTileObjectWithProperty(existing, TILE_TYPES.PORT, 'portKind', 'grate')) {
+                                gridManager.setTile(px, py, { type: TILE_TYPES.PORT, portKind: 'grate' });
+                            }
                         }
+                        // In underground (dimension === DIMENSION_CONSTANTS.UNDERGROUND), don't patch - let the stairup from BoardLoader/UndergroundHandler remain
                     } else if (from === 'hole' || from === 'pitfall') {
                         const isPrimitivePitfall = isPitfall(existing) || existing === TILE_TYPES.HOLE;
                         if (isPrimitivePitfall) {

@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Listen up soldier! *rattles* This operation needs more SEASONING! Deploy the sodium! GO GO GO!",
+        "text": "We're on the front line! It's time to cook!",
         "buttonText": "Sir yes sir!"
       },
       {
         "id": "msg_1",
-        "text": "I'm a salt shaker commando! An assault shaker if you will! *shakes aggressively* TACTICAL FLAVOR INCOMING!",
-        "buttonText": "Impressive."
+        "text": "I am a warrior!",
+        "buttonText": "A pillar."
       },
       {
         "id": "msg_2",
-        "text": "The pepper shakers think they're so tough. But when things get hot, who do they call? THE SALT SQUAD!",
-        "buttonText": "Hooah!"
+        "text": "FUBAR! FUBAR! GET US OUT OF HERE! I don't wanna die! I want to go home!",
+        "buttonText": "Woah!"
       }
     ]
   },

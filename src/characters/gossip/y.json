@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Oh, you're talking to me? WhY would you do that? Get it? WhY?",
+        "text": "Oh, you're talking to me? 'Y' would you do that?",
         "buttonText": "Very clever."
       },
       {
         "id": "msg_1",
-        "text": "People ask me 'why' all the time - because I'm simpl-eYe the best! *smirk*",
+        "text": "People ask 'Y' all the time - because I'm simpl-'Y' the best!",
         "buttonText": "Sure."
       },
       {
         "id": "msg_2",
-        "text": "You disagree with me? That's fine. I'm used to people being wrong. It's prett-Y common actuallY.",
+        "text": "'Y' is your score so low?",
         "buttonText": "Whatever."
       }
     ]

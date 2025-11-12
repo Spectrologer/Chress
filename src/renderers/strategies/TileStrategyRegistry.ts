@@ -200,8 +200,8 @@ export class TileStrategyRegistry {
         this.register(TILE_TYPES.TABLE, new SimpleOverlayRenderStrategy(
             this.images, this.tileSize, 'doodads/table', TILE_TYPES.TABLE, null, null
         ));
-        this.register(TILE_TYPES.CISTERN, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'doodads/grate', TILE_TYPES.CISTERN, 'C', { font: '24px Arial', fillStyle: '#ffffeb' }
+        this.register(TILE_TYPES.Grate, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'doodads/grate', TILE_TYPES.Grate, 'C', { font: '24px Arial', fillStyle: '#ffffeb' }
         ));
         this.register(TILE_TYPES.PITFALL, new PitfallRenderStrategy(this.images, this.tileSize, this.structureRenderer));
 

@@ -199,6 +199,13 @@ export interface IGame extends GameInstance {
     isInPitfallZone?: boolean;
     pitfallTurnsSurvived?: number;
     displayingMessageForSign?: TextBoxData;
+
+    // Game mode system
+    gameMode: any; // GameModeConfig from @core/GameMode
+
+    // Legacy chess mode flags (deprecated - use gameMode instead)
+    chessMode: boolean;
+    selectedUnit: any | null; // Enemy | null
 }
 
 // Coordinates interface - now just an alias for the core Coordinates type

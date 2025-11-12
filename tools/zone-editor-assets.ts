@@ -95,7 +95,7 @@ export function generateDefaultPalettes(): Record<string, (string | null)[]> {
 
   // Generate STRUCTURE palette
   palettes.STRUCTURE = [];
-  const structureNames = ['cistern', 'deadtree', 'museum', 'shack', 'sign', 'table', 'well'];
+  const structureNames = ['Grate', 'deadtree', 'museum', 'shack', 'sign', 'table', 'well'];
   structureNames.forEach(name => {
     if (ASSET_CATEGORIES.doodads.some((path: string) => path.includes(name))) {
       palettes.STRUCTURE.push(name);
@@ -106,7 +106,7 @@ export function generateDefaultPalettes(): Record<string, (string | null)[]> {
   // PORT palette (manual entries for special cases)
   palettes.PORT = [
     'exit_down', 'exit_left', 'exit_right', 'exit_up',
-    'port_cistern', 'port_interior', 'port_stairdown', 'port_stairup',
+    'port_Grate', 'port_interior', 'port_stairdown', 'port_stairup',
     null
   ];
 

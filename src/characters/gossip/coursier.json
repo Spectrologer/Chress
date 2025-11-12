@@ -29,7 +29,7 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Bonjour! Everyone should learn la belle langue française!",
+        "text": "Bonjour! Learn la belle langue française!",
         "buttonText": "Sorry, no."
       },
       {
@@ -39,7 +39,7 @@
       },
       {
         "id": "msg_2",
-        "text": "Sacré bleu! You still do not speak French? Mon dieu! This is une tragédie!",
+        "text": "Sacré bleu! Mon dieu! This is une tragédie!",
         "buttonText": "Oui oui."
       }
     ]

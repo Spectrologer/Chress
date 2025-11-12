@@ -49,7 +49,7 @@ export {
     isHorseIcon,
     isSign,
     isPort,
-    isCistern,
+    isGrate,
     isPitfall,
     isTable,
     isPenne,

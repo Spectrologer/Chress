@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*squeaks nervously* Please don't come closer with that! Is that... is that a PIN? Stay back!",
+        "text": "*You don't have anything sharp on you, do you?",
         "buttonText": "It's okay."
       },
       {
         "id": "msg_1",
-        "text": "*deflating slightly* I saw a needle earlier and I've been hiding ever since. So pointy. So dangerous!",
+        "text": "I'm always under pressure!",
         "buttonText": "I understand."
       },
       {
         "id": "msg_2",
-        "text": "Why does everything have to be so SHARP around here? Rocks, thorns, TEETH. It's terrifying! *whimpers*",
-        "buttonText": "Poor thing."
+        "text": "I think I'm actually losing pressure. Hey, can you do me a favor?*",
+        "buttonText": "Sorry."
       }
     ]
   },

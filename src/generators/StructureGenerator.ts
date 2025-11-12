@@ -54,11 +54,10 @@ export class StructureGenerator {
             }
         }
 
-        // Always add a cistern behind the house in the home zone (0,0)
+        // Always add a grate behind the house in the home zone (0,0)
         if (zoneX === 0 && zoneY === 0) {
-            // Place PORT tile two tiles above the textbox (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
-            this.gridManager.setTile(2, 3, TILE_TYPES.PORT);     // Top part (entrance) - two tiles above the sign
-            this.gridManager.setTile(2, 4, TILE_TYPES.CISTERN); // Bottom part
+            // Place a PORT with portKind 'grate' (renders as grate on surface)
+            this.gridManager.setTile(2, 3, { type: TILE_TYPES.PORT, portKind: 'grate' });
         }
     }
 
@@ -160,42 +159,59 @@ export class StructureGenerator {
         return false;
     }
 
-    addCistern(zoneX: number, zoneY: number, force: boolean = false, forcedX: number | null = null, forcedY: number | null = null): void {
+    addGrate(zoneX: number, zoneY: number, force: boolean = false): void {
+        // Place a 1x1 Grate (water source)
+        const placeableTiles = [TILE_TYPES.FLOOR, TILE_TYPES.GRASS, TILE_TYPES.ROCK, TILE_TYPES.SHRUBBERY];
+        const pos = findValidPlacement({
+            maxAttempts: 50,
+            minX: 1,
+            minY: 1,
+            maxX: GRID_SIZE - 2,
+            maxY: GRID_SIZE - 2,
+            validate: (x: number, y: number): boolean => {
+                const tile = this.gridManager.getTile(x, y);
+                return isAllowedTile(tile, placeableTiles);
+            }
+        });
+        if (pos) {
+            const { x, y } = pos;
+            this.gridManager.setTile(x, y, TILE_TYPES.Grate);
+        }
+    }
+
+    addGrate(zoneX: number, zoneY: number, force: boolean = false, forcedX: number | null = null, forcedY: number | null = null): void {
         // Handle forced placement for home zone
         if (zoneX === 0 && zoneY === 0 && force) {
-            // Always add the cistern behind the house in the home zone (0,0)
-            // Place PORT tile two tiles above the textbox (sign is at 2,5, so PORT at 2,3 and CISTERN at 2,4)
-            this.gridManager.setTile(2, 3, TILE_TYPES.PORT);     // Top part (entrance)
-            this.gridManager.setTile(2, 4, TILE_TYPES.CISTERN); // Bottom part
+            // Always add the grate behind the house in the home zone (0,0)
+            // Place a PORT with portKind 'grate' (renders as grate on surface)
+            this.gridManager.setTile(2, 3, { type: TILE_TYPES.PORT, portKind: 'grate' });
             return;
         }
 
-        // Handle forced placement at specific coordinates (e.g., from a hole)
+        // Handle forced placement at specific coordinates (e.g., from returning from underground)
         if (forcedX !== null && forcedY !== null) {
-            this.gridManager.setTile(forcedX, forcedY, TILE_TYPES.PORT);
-            // The cistern structure is a PORT on top of a CISTERN tile. But for a hole, it's just a PORT.
-            // The logic in ZoneTransitionManager handles this. We just need the PORT to exist.
+            // Place a PORT with portKind 'grate' (renders as grate on surface)
+            this.gridManager.setTile(forcedX, forcedY, { type: TILE_TYPES.PORT, portKind: 'grate' });
             return;
         }
 
-        // For random spawning, try to place a cistern in a valid location
+        // For random spawning, try to place a grate in a valid location
         const placeableTiles = [TILE_TYPES.FLOOR, TILE_TYPES.GRASS, TILE_TYPES.WATER];
         const pos = findValidPlacement({
             maxAttempts: 50,
             minX: 1,
             minY: 1,
-            maxX: GRID_SIZE - 3,
-            maxY: GRID_SIZE - 3,
+            maxX: GRID_SIZE - 2,
+            maxY: GRID_SIZE - 2,
             validate: (x: number, y: number): boolean => {
-                const topTile = this.gridManager.getTile(x, y);
-                const bottomTile = this.gridManager.getTile(x, y + 1);
-                return isAllowedTile(topTile, placeableTiles) && isAllowedTile(bottomTile, placeableTiles);
+                const tile = this.gridManager.getTile(x, y);
+                return isAllowedTile(tile, placeableTiles);
             }
         });
         if (pos) {
             const { x, y } = pos;
-            this.gridManager.setTile(x, y, TILE_TYPES.PORT);
-            this.gridManager.setTile(x, y + 1, TILE_TYPES.CISTERN);
+            // Place a PORT with portKind 'grate' (renders as grate on surface)
+            this.gridManager.setTile(x, y, { type: TILE_TYPES.PORT, portKind: 'grate' });
         }
     }
 

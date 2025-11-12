@@ -21,7 +21,7 @@ interface GameInstance {
 /**
  * SharedStructureSpawner - Centralized logic for spawning multi-tile structures
  *
- * Eliminates code duplication for structure spawning (shacks, cisterns, etc.)
+ * Eliminates code duplication for structure spawning (shacks, Grates, etc.)
  * across consoleCommands.js and SpawnCommands.js
  *
  * @example
@@ -29,8 +29,8 @@ interface GameInstance {
  * SharedStructureSpawner.spawnShack(game);
  *
  * @example
- * // Spawn a cistern
- * SharedStructureSpawner.spawnCistern(game);
+ * // Spawn a Grate
+ * SharedStructureSpawner.spawnGrate(game);
  */
 export class SharedStructureSpawner {
   /**
@@ -61,22 +61,21 @@ export class SharedStructureSpawner {
   }
 
   /**
-   * Spawn a 1x2 vertical cistern with entrance at top
+   * Spawn a 1x1 grate tile (PORT with portKind 'grate')
    * @param game - Game instance with gridManager and enemyCollection
-   * @returns True if cistern was spawned successfully
+   * @returns True if grate was spawned successfully
    */
-  static spawnCistern(game: GameInstance): boolean {
-    const pos = this.findCisternSpawnPosition(game);
+  static spawnGrate(game: GameInstance): boolean {
+    const pos = this.findGrateSpawnPosition(game);
     if (!pos) {
-      logger.log('No valid spawn position found for cistern');
+      logger.log('No valid spawn position found for grate');
       return false;
     }
 
-    // Place the 1x2 cistern
-    game.gridManager.setTile(pos.x, pos.y, TILE_TYPES.PORT);    // Top part (entrance)
-    game.gridManager.setTile(pos.x, pos.y + 1, TILE_TYPES.CISTERN); // Bottom part
+    // Place a PORT with portKind 'grate' (renders as grate on surface)
+    game.gridManager.setTile(pos.x, pos.y, { type: TILE_TYPES.PORT, portKind: 'grate' });
 
-    logger.log('Spawned cistern at', pos);
+    logger.log('Spawned grate at', pos);
     return true;
   }
 
@@ -111,17 +110,17 @@ export class SharedStructureSpawner {
   }
 
   /**
-   * Find a valid position for a 1x2 vertical cistern
+   * Find a valid position for a 1x1 grate
    * @param game - Game instance
    * @returns Position or undefined if no valid position found
    */
-  static findCisternSpawnPosition(game: GameInstance): Position | undefined {
+  static findGrateSpawnPosition(game: GameInstance): Position | undefined {
     const availablePositions: Position[] = [];
 
-    // Scan for available 1x2 vertical space
-    for (let y = 1; y < GRID_SIZE - 2; y++) { // y from 1 to GRID_SIZE - 3
-      for (let x = 1; x < GRID_SIZE - 1; x++) { // x from 1 to GRID_SIZE - 2
-        if (this.isValidCisternPosition(game, x, y)) {
+    // Scan for available 1x1 space
+    for (let y = 1; y < GRID_SIZE - 1; y++) {
+      for (let x = 1; x < GRID_SIZE - 1; x++) {
+        if (this.isValidGratePosition(game, x, y)) {
           availablePositions.push(Position.from({ x, y }));
         }
       }
@@ -182,23 +181,19 @@ export class SharedStructureSpawner {
   }
 
   /**
-   * Check if a 1x2 cistern can be placed at position
+   * Check if a 1x1 grate can be placed at position
    * @param game - Game instance
-   * @param x - Top X coordinate
-   * @param y - Top Y coordinate
-   * @returns True if cistern can be placed
+   * @param x - X coordinate
+   * @param y - Y coordinate
+   * @returns True if grate can be placed
    */
-  static isValidCisternPosition(game: GameInstance, x: number, y: number): boolean {
-    // Check 1x2 vertical area
-    for (let dy = 0; dy < 2; dy++) {
-      const tileX = x;
-      const tileY = y + dy;
-      if (!isWithinGrid(tileX, tileY)) {
-        return false;
-      }
-      if (game.gridManager.getTile(tileX, tileY) !== TILE_TYPES.FLOOR) {
-        return false;
-      }
+  static isValidGratePosition(game: GameInstance, x: number, y: number): boolean {
+    // Check 1x1 area
+    if (!isWithinGrid(x, y)) {
+      return false;
+    }
+    if (game.gridManager.getTile(x, y) !== TILE_TYPES.FLOOR) {
+      return false;
     }
     return true;
   }

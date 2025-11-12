@@ -5,6 +5,7 @@ import audioManager from '@utils/AudioManager';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 import { createZoneKey } from '@utils/ZoneKeyUtils';
+import { isTileObject } from '@utils/TypeChecks';
 import type { Game } from '@core/game';
 import type { InputManager } from './InputManager';
 import type { GridManager } from './GridManager';
@@ -123,7 +124,7 @@ export class ZoneTransitionManager {
     }
 
     /**
-     * Handles player transition through a PORT tile (cistern, hole, stairs, door).
+     * Handles player transition through a PORT tile (Grate, hole, stairs, door).
      * Manages dimension changes between surface, underground, and interior zones.
      */
     public handlePortTransition(): void {
@@ -158,18 +159,16 @@ export class ZoneTransitionManager {
 
         if (currentDim === DIMENSION_CONSTANTS.SURFACE) {
             // On the surface, determine where the PORT leads
-            // Check if there's a CISTERN tile below the player's position (cisterns are now 1x1 grate objects)
-            const tileBelow = gridManager.isWithinBounds(playerPos.x, playerPos.y + 1)
-                ? gridManager.getTile(playerPos.x, playerPos.y + 1)
-                : undefined;
-            const isCistern = tileBelow === TILE_TYPES.CISTERN;
+            // Check if the current tile is a grate (PORT with portKind 'grate')
+            const currentTile = gridManager.getTile(playerPos.x, playerPos.y);
+            const isGrate = isTileObject(currentTile) && currentTile.type === TILE_TYPES.PORT && currentTile.portKind === 'grate';
             const isHole: boolean = MultiTileHandler.isHole(playerPos.x, playerPos.y, gridManager as any);
 
-            if (isCistern) {
-                // Entering underground via cistern
+            if (isGrate) {
+                // Entering underground via grate
                 targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                 portType = 'underground';
-                transientState.setPortTransitionData({ from: 'cistern', x: playerPos.x, y: playerPos.y });
+                transientState.setPortTransitionData({ from: 'grate', x: playerPos.x, y: playerPos.y });
                 // Ensure player's underground depth is initialized to 1 (first underground level)
                 playerFacade.setUndergroundDepth(DIMENSION_CONSTANTS.DEFAULT_UNDERGROUND_DEPTH);
             } else if (isHole) {

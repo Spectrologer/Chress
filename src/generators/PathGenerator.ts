@@ -8,7 +8,7 @@
  * - Clear paths from exits inward to zone interior
  * - Clear paths from ports/special structures to zone center
  * - Ensure 3x3 clearance around entry points
- * - Preserve important structures (ports, cisterns, exits)
+ * - Preserve important structures (ports, grates, exits)
  *
  * Algorithm Strategy:
  * 1. Find all exits and ports in the zone
@@ -68,7 +68,7 @@ export class PathGenerator {
      *
      * Preservation Rules:
      * - Only clears walls, rocks, and shrubbery
-     * - Preserves ports, cisterns, exits, and other special tiles
+     * - Preserves ports, grates, exits, and other special tiles
      * - Avoids overwriting already-clear floor tiles
      *
      * @param exitX - X coordinate of the exit tile

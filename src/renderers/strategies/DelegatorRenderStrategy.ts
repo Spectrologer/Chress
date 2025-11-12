@@ -7,9 +7,9 @@ import type { BaseRenderer } from '@renderers/types.js';
  *
  * Example usage:
  * ```ts
- * export class CisternRenderStrategy extends DelegatorRenderStrategy<StructureTileRenderer> {
+ * export class GrateRenderStrategy extends DelegatorRenderStrategy<StructureTileRenderer> {
  *     constructor(images: ImageCache, tileSize: number, structureRenderer: StructureTileRenderer) {
- *         super(images, tileSize, structureRenderer, 'renderCisternTile');
+ *         super(images, tileSize, structureRenderer, 'renderGrateTile');
  *     }
  * }
  * ```

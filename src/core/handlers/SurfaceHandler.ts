@@ -45,7 +45,7 @@ class SurfaceHandler extends BaseZoneHandler {
         this.addRandomFeatures();
 
         this.handleLevelSpecificStructures();
-        this.handleRandomCistern();
+        this.handleRandomGrate();
         this.addLevelBasedFoodAndWater();
         this.handleEnemySpawning();
         this.addSpecialZoneItems();
@@ -88,9 +88,9 @@ class SurfaceHandler extends BaseZoneHandler {
         }
     }
 
-    handleRandomCistern(): void {
-        if (Math.random() < SPAWN_PROBABILITIES.CISTERN) {
-            this.structureGenerator.addCistern(this.zoneX, this.zoneY, false);
+    handleRandomGrate(): void {
+        if (Math.random() < SPAWN_PROBABILITIES.Grate) {
+            this.structureGenerator.addGrate(this.zoneX, this.zoneY, false);
         }
     }
 

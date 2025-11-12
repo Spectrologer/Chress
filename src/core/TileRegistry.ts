@@ -89,7 +89,7 @@ export class TileRegistry {
         TILE_TYPES.HEART,
         TILE_TYPES.BOOK_OF_TIME_TRAVEL,
         TILE_TYPES.BOW,
-        TILE_TYPES.CISTERN,
+        TILE_TYPES.Grate,
         TILE_TYPES.PITFALL,
         TILE_TYPES.PORT,
         TILE_TYPES.SHOVEL,

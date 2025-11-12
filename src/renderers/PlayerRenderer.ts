@@ -313,19 +313,19 @@ export class PlayerRenderer {
                 if (this.isTileObject(tileUnderPlayer) && tileUnderPlayer.type === TILE_TYPES.PORT && tileUnderPlayer.portKind) {
                     if (tileUnderPlayer.portKind === 'stairdown') rotationAngle = Math.PI; // point down to indicate descend
                     else if (tileUnderPlayer.portKind === 'stairup') rotationAngle = 0; // point up to indicate ascend
-                    else if (tileUnderPlayer.portKind === 'cistern') {
-                        // For cisterns, arrow points down to enter, and up to exit
+                    else if (tileUnderPlayer.portKind === 'grate') {
+                        // For grates, arrow points down to enter, and up to exit
                         rotationAngle = this.game.playerFacade?.getCurrentZone()?.dimension === 0 ? Math.PI : 0;
                     } else if (tileUnderPlayer.portKind === 'interior') {
                         // For interior doors, arrow points up to enter, and down to exit
                         rotationAngle = this.game.playerFacade?.getCurrentZone()?.dimension === 0 ? 0 : Math.PI;
                     }
                 } else if (tileUnderPlayer === TILE_TYPES.PORT) {
-                    const isCistern = MultiTileHandler.findCisternPosition(playerGridX, playerGridY, this.game.gridManager as any);
-                    const isHole = !isCistern && !MultiTileHandler.findShackPosition(playerGridX, playerGridY, this.game.gridManager as any) && !MultiTileHandler.findHousePosition(playerGridX, playerGridY, this.game.gridManager as any);
+                    const isGrate = MultiTileHandler.findGratePosition(playerGridX, playerGridY, this.game.gridManager as any);
+                    const isHole = !isGrate && !MultiTileHandler.findShackPosition(playerGridX, playerGridY, this.game.gridManager as any) && !MultiTileHandler.findHousePosition(playerGridX, playerGridY, this.game.gridManager as any);
 
-                    if (isCistern || isHole) {
-                        // For underground entrances (cisterns, holes), arrow points down to enter, and up to exit.
+                    if (isGrate || isHole) {
+                        // For underground entrances (grates, holes), arrow points down to enter, and up to exit.
                         rotationAngle = this.game.playerFacade?.getCurrentZone()?.dimension === 0 ? Math.PI : 0;
                     } else {
                         // For interior structures (house, shack), arrow points up to enter, and down to exit.

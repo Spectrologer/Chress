@@ -19,7 +19,7 @@ interface SpawnFlags {
     squig: boolean;
     shack: boolean;
     wildsShack: boolean;
-    cisternLevel1: boolean;
+    GrateLevel1: boolean;
     well: boolean;
     deadTree: boolean;
     axeWarningSign: boolean;
@@ -62,7 +62,7 @@ export class ZoneGenerationState {
             squig: false,
             shack: false,
             wildsShack: false,
-            cisternLevel1: false,
+            GrateLevel1: false,
             well: false,
             deadTree: false,
             axeWarningSign: false,
@@ -96,7 +96,7 @@ export class ZoneGenerationState {
             squig: false,
             shack: false,
             wildsShack: false,
-            cisternLevel1: false,
+            GrateLevel1: false,
             well: false,
             deadTree: false,
             axeWarningSign: false,

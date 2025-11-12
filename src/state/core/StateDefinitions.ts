@@ -43,7 +43,7 @@
  * @property {boolean} penneSpawned
  * @property {boolean} squigSpawned
  * @property {boolean} shackSpawned
- * @property {boolean} cisternSpawned
+ * @property {boolean} GrateSpawned
  * @property {boolean} wellSpawned
  * @property {boolean} deadTreeSpawned
  * @property {boolean} warningSignPlaced
@@ -232,7 +232,7 @@ export function createInitialState() {
           penneSpawned: false,
           squigSpawned: false,
           shackSpawned: false,
-          cisternSpawned: false,
+          GrateSpawned: false,
           wellSpawned: false,
           deadTreeSpawned: false,
           warningSignPlaced: false

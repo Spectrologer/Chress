@@ -50,12 +50,13 @@ const TILE_TYPE_CHECKERS: Record<string, string> = {
     isHeart: 'HEART',
     isNote: 'NOTE',
     isBookOfTimeTravel: 'BOOK_OF_TIME_TRAVEL',
+    isFischersCube: 'FISCHERS_CUBE',
     isHorseIcon: 'HORSE_ICON',
 
     // Interactive objects
     isSign: 'SIGN',
     isPort: 'PORT',
-    isCistern: 'CISTERN',
+    isGrate: 'Grate', // Note: Grate constant kept for backward compat, but renamed method to isGrate
     isPitfall: 'PITFALL',
     isTable: 'TABLE',
 

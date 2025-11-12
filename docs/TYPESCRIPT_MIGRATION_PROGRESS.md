@@ -297,7 +297,7 @@ export function findWeakestEnemy(enemies) {
   - State persistence and loading
   - Treasure spawning
   - Enemy filtering (defeated enemies)
-  - Port transition handling (stairdown/stairup/cistern/hole)
+  - Port transition handling (stairdown/stairup/Grate/hole)
   - Emergence tile patching
 - Total progress: 24 files migrated (~4% increase from batch 8)
 

@@ -54,7 +54,8 @@
       "Bash(test:*)",
       "Bash(xargs sed:*)",
       "Bash(npm install:*)",
-      "Bash(for f in static/atlases/*.json)"
+      "Bash(for f in static/atlases/*.json)",
+      "Bash(npx tsx:*)"
     ],
     "deny": [],
     "ask": []

@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*thump thump* I'm literally the symbol of LOVE. Me. This heart. Right here. Beating.",
-        "buttonText": "Sure."
+        "text": "I'm the symbol of LOVE.",
+        "buttonText": "True."
       },
       {
         "id": "msg_1",
-        "text": "Everyone draws hearts, but they're drawing ME. I'm an icon. A biological icon.",
-        "buttonText": "If you say so."
+        "text": "Everyone draws hearts, but I am misrepresented.",
+        "buttonText": "Correct."
       },
       {
         "id": "msg_2",
-        "text": "*thump thump* Valentine's Day? That's MY day. Every card, every chocolate box. All me.",
+        "text": "*For me, Valentine's day is every day.",
         "buttonText": "Congrats."
       }
     ]

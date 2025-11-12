@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*trips* Oof! Sorry about that. Two legs is... harder than it looks. *wobbles* Hi there!",
+        "text": "*It's hard to stay on balance!",
         "buttonText": "You okay?"
       },
       {
         "id": "msg_1",
-        "text": "I was gonna run somewhere but I forgot where and also I fell down. Twice. *struggles to stand*",
+        "text": "Uhhhhhh... Wuoooaaaaaah!!!*",
         "buttonText": "Take your time."
       },
       {
         "id": "msg_2",
-        "text": "*stumbles* They call me Dash but honestly I'm more of a... *crashes into wall* ...crash. Ow.",
+        "text": "*I've broken every bone in my body at least once.",
         "buttonText": "Careful!"
       }
     ]

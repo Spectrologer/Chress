@@ -12,7 +12,7 @@ interface MultiTileHandler {
     findWellPosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;
     findDeadTreePosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;
     findShackPosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;
-    findCisternPosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;
+    findGratePosition(x: number, y: number, grid: GridManager | any[][]): { startX: number; startY: number } | null;
 }
 
 export class BaseTileRenderer {

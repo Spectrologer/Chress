@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Hi! *waves* Oh my god I love your outfit! It's so cool!",
-        "buttonText": "Thanks."
+        "text": "Hi! I love your outfit, it's so cool! I'm Calli! I'm a spider!",
+        "buttonText": "Hi."
       },
       {
         "id": "msg_1",
-        "text": "I've been waiting for someone to talk to ALL DAY! Well, actually just five minutes but it felt like forever!",
+        "text": "Where are you from? I'm from the underground! I love dancing and singing!",
         "buttonText": "Energetic."
       },
       {
         "id": "msg_2",
-        "text": "We should totally hang out! Get it? HANG out? Because I'm a spider! *laughs at own joke*",
-        "buttonText": "Good one."
+        "text": "We should hang out! Add me on the web!",
+        "buttonText": "Good stuff."
       }
     ]
   },
