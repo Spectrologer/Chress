@@ -8,6 +8,7 @@ import { getTileType } from '@utils/TileUtils';
 import { TileRegistry } from '@core/TileRegistry';
 import { Position } from '@core/Position';
 import { logger } from '@core/logger';
+import type { PortKind } from '@core/SharedTypes';
 
 interface GridCoords {
     x: number;
@@ -22,7 +23,7 @@ interface InputTapEvent {
 interface InputPlayerTileTapEvent {
     gridCoords: GridCoords;
     tileType: number | object;
-    portKind?: string;
+    portKind?: PortKind | null;
 }
 
 interface Player {

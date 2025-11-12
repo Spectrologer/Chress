@@ -3,6 +3,7 @@
  */
 
 import type { Position } from '../Position';
+import type { PortKind } from '../SharedTypes';
 
 // Input Event Constants
 export const InputEvents = {
@@ -53,5 +54,5 @@ export interface InputTapEvent {
 export interface InputPlayerTileTapEvent {
   gridCoords: Position;
   tileType: number;
-  portKind: string | null;
+  portKind: PortKind | null;
 }

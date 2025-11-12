@@ -42,8 +42,8 @@ console.log('✓ findTilesOfType works');
 // Test 5: Clone tile
 gridManager.setTile(3, 3, { type: TILE_TYPES.PORT, portKind: 'stairup' });
 const clonedTile = gridManager.cloneTile(3, 3);
-console.assert(clonedTile.type === TILE_TYPES.PORT, 'cloned tile should have PORT type');
-console.assert(clonedTile.portKind === 'stairup', 'cloned tile should have portKind');
+console.assert(typeof clonedTile === 'object' && clonedTile !== null && clonedTile.type === TILE_TYPES.PORT, 'cloned tile should have PORT type');
+console.assert(typeof clonedTile === 'object' && clonedTile !== null && clonedTile.portKind === 'stairup', 'cloned tile should have portKind');
 console.assert(clonedTile !== gridManager.getTile(3, 3), 'cloned tile should be a different object');
 console.log('✓ cloneTile works');
 

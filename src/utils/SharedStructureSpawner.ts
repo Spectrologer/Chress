@@ -74,7 +74,8 @@ export class SharedStructureSpawner {
     }
 
     // Place a PORT with portKind 'grate' (renders as grate on surface)
-    game.gridManager.setTile(pos.x, pos.y, { type: TILE_TYPES.PORT, portKind: 'grate' });
+    const portKind: PortKind = 'grate';
+    game.gridManager.setTile(pos.x, pos.y, { type: TILE_TYPES.PORT, portKind });
 
     logger.log('Spawned grate at', pos);
     return true;
