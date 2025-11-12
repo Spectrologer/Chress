@@ -1,5 +1,6 @@
 import { TILE_TYPES } from './constants/index';
 import { getTileType } from '@utils/TileUtils';
+import { MultiTileHandler } from '@renderers/MultiTileHandler';
 
 /**
  * Centralized registry for tile properties and metadata.
@@ -154,12 +155,17 @@ export class TileRegistry {
     static isWalkable(tile: number | any, x?: number, y?: number, grid?: any): boolean {
         const tileType = getTileType(tile);
 
+        // Invalid tile type is not walkable
+        if (tileType === undefined) {
+            return false;
+        }
+
         // Signs are explicitly not walkable
         if (tileType === TILE_TYPES.SIGN || tileType === TILE_TYPES.SIGN_METAL_ALT) {
             return false;
         }
 
-        // Special handling for BIG_TREE: only upper 1 row is walkable
+        // Special handling for BIG_TREE: only upper 2 rows are walkable
         if (tileType === TILE_TYPES.BIG_TREE && x !== undefined && y !== undefined && grid !== undefined) {
             return TileRegistry.isBigTreeWalkable(x, y, grid);
         }
@@ -170,13 +176,10 @@ export class TileRegistry {
 
     /**
      * Check if a BIG_TREE tile at the given position is walkable.
-     * BIG_TREE is 2x3 tiles: only the upper 1 row is walkable (row 0 from top),
-     * the bottom 2 rows (rows 1-2) are not walkable.
+     * BIG_TREE is 2x3 tiles: the upper 2 rows (rows 0-1) are walkable,
+     * the bottom row (row 2) is not walkable.
      */
     static isBigTreeWalkable(x: number, y: number, grid: any): boolean {
-        // Import MultiTileHandler dynamically to avoid circular dependencies
-        const { MultiTileHandler } = require('@renderers/MultiTileHandler');
-
         const positionInfo = MultiTileHandler.findBigTreePosition(x, y, grid);
         if (!positionInfo) {
             return false; // Not part of a valid big tree structure
@@ -185,8 +188,8 @@ export class TileRegistry {
         // Calculate position within the 2x3 structure
         const partY = y - positionInfo.startY;
 
-        // Only the top row (0) is walkable, bottom 2 rows (1-2) are not
-        return partY === 0;
+        // Only the top 2 rows (0-1) are walkable, bottom row (2) is not
+        return partY < 2;
     }
 
     /**

@@ -1,14 +1,30 @@
 import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 import { isWithinGrid } from '@utils/GridUtils';
 import { isTileType, isPort, isGrate, isShack } from '@utils/TileUtils';
-import type { GridManager } from './types';
+import type { GridManager, Grid } from './types';
 
 interface StructurePosition {
     startX: number;
     startY: number;
 }
 
+type GridLike = GridManager | Grid;
+
 export class MultiTileHandler {
+    /**
+     * Helper to get a tile from either a GridManager or raw Grid
+     */
+    private static getTileFromGrid(grid: GridLike, x: number, y: number): any {
+        if (typeof (grid as GridManager).getTile === 'function') {
+            return (grid as GridManager).getTile(x, y);
+        }
+        // Raw Grid (2D array)
+        const rawGrid = grid as Grid;
+        if (rawGrid[y] && rawGrid[y][x] !== undefined) {
+            return rawGrid[y][x];
+        }
+        return null;
+    }
     static findHousePosition(targetX: number, targetY: number, gridManager: GridManager, isStrictCheck = false): StructurePosition | null {
         // Find the top-left corner of the 4x3 museum that contains this tile
         // Uses a lenient check that allows overlays/decorations on top of the structure
@@ -92,7 +108,7 @@ export class MultiTileHandler {
         return this._find2x2StructurePosition(targetX, targetY, gridManager, TILE_TYPES.DEADTREE);
     }
 
-    static findBigTreePosition(targetX: number, targetY: number, gridManager: GridManager): StructurePosition | null {
+    static findBigTreePosition(targetX: number, targetY: number, grid: GridLike): StructurePosition | null {
         // Find the top-left corner of the 2x3 big tree that contains this tile
         // Uses a lenient check that allows overlays/decorations on top of the structure
         for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
@@ -104,7 +120,7 @@ export class MultiTileHandler {
                 for (let y = startY; y < startY + 3; y++) { // 3 tiles high
                     for (let x = startX; x < startX + 2; x++) { // 2 tiles wide
                         totalTiles++;
-                        const tile = gridManager.getTile(x, y);
+                        const tile = this.getTileFromGrid(grid, x, y);
                         if (isTileType(tile, TILE_TYPES.BIG_TREE)) {
                             matchingTiles++;
                         }

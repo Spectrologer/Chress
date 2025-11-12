@@ -114,6 +114,12 @@
     "6,7": "big_tree",
     "7,7": "big_tree"
   },
+  "zLayers": {
+    "3,2": "above",
+    "4,2": "above",
+    "5,2": "above",
+    "6,2": "above"
+  },
   "features": {
     "4,0": "exit_up",
     "0,3": "exit_left",
