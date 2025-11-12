@@ -129,7 +129,7 @@
     "6,4": "house",
     "7,4": "small_evergreen",
     "3,5": "house",
-    "4,5": "house",
+    "4,5": "port_interior",
     "5,5": "house",
     "6,5": "house",
     "3,7": "sign_metal",
@@ -140,6 +140,6 @@
     "gameMode": "CHESSE",
     "level": "home",
     "rarity": 5,
-    "created": "2025-11-12T21:56:19.053Z"
+    "created": "2025-11-12T22:25:01.437Z"
   }
 }

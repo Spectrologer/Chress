@@ -2,10 +2,11 @@ import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 import { logger } from '@core/logger';
 import { isWithinGrid } from './GridUtils';
 import { Position } from '@core/Position';
+import type { Tile, PortKind } from '@core/SharedTypes';
 
 interface GridManager {
-  getTile(x: number, y: number): number;
-  setTile(x: number, y: number, value: number): void;
+  getTile(x: number, y: number): Tile;
+  setTile(x: number, y: number, value: Tile): void;
 }
 
 interface EnemyCollection {

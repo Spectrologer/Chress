@@ -15,6 +15,16 @@ export type { Enemy, EnemyData, InventoryItem, Coordinates, ZoneCoordinates };
  * Tile type definitions
  */
 export type TileValue = number;
+
+/**
+ * Valid portKind values for PORT tiles
+ * - 'interior': Port to/from building interiors
+ * - 'grate': Surface grate leading underground
+ * - 'stairdown': Stairs descending (e.g., in buildings)
+ * - 'stairup': Stairs ascending (e.g., from underground)
+ */
+export type PortKind = 'interior' | 'grate' | 'stairdown' | 'stairup';
+
 export type TileObject = {
     type: number;
     uses?: number;
@@ -26,7 +36,7 @@ export type TileObject = {
     enemyType?: string;
     direction?: string;
     discovered?: boolean;
-    portKind?: string;
+    portKind?: PortKind;
     actionsSincePlaced?: number;
     justPlaced?: boolean;
 };

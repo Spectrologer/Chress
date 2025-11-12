@@ -1,6 +1,6 @@
 import { TILE_TYPES, DIMENSION_CONSTANTS } from './constants/index';
 import { logger } from './logger';
-import type { Tile } from './SharedTypes';
+import type { Tile, PortKind } from './SharedTypes';
 import type { EnemyData } from '@entities/Enemy';
 
 interface BoardData {
@@ -437,7 +437,13 @@ export class BoardLoader {
 
         // Handle special port_* format
         if (featureType.startsWith('port_')) {
-            const portKind = featureType.substring(5);
+            const portKind = featureType.substring(5) as PortKind;
+            // Validate portKind is one of the allowed values
+            const validPortKinds: PortKind[] = ['interior', 'grate', 'stairdown', 'stairup'];
+            if (!validPortKinds.includes(portKind)) {
+                logger.warn(`Invalid portKind: ${portKind}. Expected one of: ${validPortKinds.join(', ')}`);
+                return null;
+            }
             return { type: TILE_TYPES.PORT, portKind: portKind };
         }
 

@@ -180,6 +180,16 @@ export class MultiTileHandler {
         return null;
     }
 
+    static findGratePosition(targetX: number, targetY: number, gridManager: GridManager): StructurePosition | null {
+        // Check if the tile at the target position is a grate
+        const tile = gridManager.getTile(targetX, targetY);
+        if (!isGrate(tile)) {
+            return null;
+        }
+        // Grates are single-tile structures, so return the position itself
+        return { startX: targetX, startY: targetY };
+    }
+
     static isHole(targetX: number, targetY: number, gridManager: GridManager): boolean {
         const tile = gridManager.getTile(targetX, targetY);
         if (!isPort(tile)) {

@@ -7,6 +7,7 @@ import { Position } from '@core/Position';
 import type { Coordinates, ZoneCoordinates } from '@core/PositionTypes';
 import type { Enemy } from '@entities/Enemy';
 import type { Player } from '@entities/Player';
+import type { PortKind } from '@core/SharedTypes';
 
 // Tile types (for backwards compatibility)
 // NOTE: For new code, use StrictTileObject from @types/StrictTypes
@@ -21,7 +22,7 @@ export interface TileObject {
     npcType?: string;
     direction?: string;
     discovered?: boolean;
-    portKind?: string;
+    portKind?: PortKind;
     // Legacy compatibility - avoid using this in new code
     actionsSincePlaced?: number;
     justPlaced?: boolean;
