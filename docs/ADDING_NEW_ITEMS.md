@@ -1,4 +1,4 @@
-# Adding New Items to Chress
+# Adding New Items to Chesse
 
 This guide documents the complete process for adding new items to the game, based on the implementation of Fischer's Cube.
 
@@ -12,7 +12,7 @@ This guide documents the complete process for adding new items to the game, base
 
 ## Overview
 
-Adding a new item to Chress requires updates across multiple systems:
+Adding a new item to Chesse requires updates across multiple systems:
 - **Constants**: Tile types, spawn probabilities, assets
 - **Types**: TypeScript interfaces for type safety
 - **Effects**: Item behavior implementation

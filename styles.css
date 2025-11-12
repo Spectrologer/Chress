@@ -325,6 +325,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 2px; /* Minimal gap */
+    background: black;
 }
 
 .header-area {
@@ -345,7 +346,7 @@ body {
 /* Character Card Deluxe Parchment Theme */
 
 .modern-player-card {
-    background: #ffffeb;
+    background: black;
     border-radius: 0px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 0 #ffb5b5;
     padding: 12px 8px;
@@ -355,7 +356,7 @@ body {
     flex-direction: column;
     gap: clamp(8px, 1.5vw, 14px);
     position: relative;
-    border: 2px solid #ffb5b5;
+    border: none;
 }
 
 
@@ -782,7 +783,7 @@ body {
 }
 
 .start-overlay-main {
-    font-size: clamp(28px, 7.5vw, 54px); /* Chress should be largest */
+    font-size: clamp(28px, 7.5vw, 54px); /* Chesse should be largest */
     font-weight: 900;
     letter-spacing: 0.5px;
     margin-bottom: 2px;
@@ -907,15 +908,15 @@ body {
     font-family: 'MedievalSharp', serif;
     font-size: 1.8em;
     font-weight: 700;
-    color: #ba6156;
+    color: #ffffeb;
     line-height: 1.2;
     text-align: center;
     padding-right: 8px;
-    border-right: 2px solid #ba6156;
+    border-right: 2px solid #ffffeb;
 }
 .player-level {
     font-size: 1em;
-    color: #ba6156;
+    color: #ffffeb;
     font-family: 'Courier New', monospace;
 }
 .player-health {
@@ -958,7 +959,7 @@ body {
     font-family: 'Courier New', monospace;
     font-size: 1.4em;
     font-weight: bold;
-    color: #ba6156;
+    color: #ffffeb;
     min-width: 2ch; /* Reserve space for at least 2 characters */
     text-align: left;
 }
@@ -998,7 +999,7 @@ body {
     flex-shrink: 0; /* Prevent the label from shrinking */
     text-align: left;
     font-weight: bold;
-    color: #ba6156;
+    color: #ffffeb;
     font-size: 1.5em; /* Increased font size */
     font-variant: small-caps;
     padding-bottom: 2px; /* Nudge text slightly higher */
@@ -1060,7 +1061,7 @@ body {
     font-family: 'MedievalSharp', serif;
     font-size: 1.1em;
     font-weight: bold;
-    color: #ba6156;
+    color: #ffffeb;
     white-space: nowrap; /* Prevent text from wrapping */
 }
 
@@ -1074,13 +1075,13 @@ body {
 .inventory-slot {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: linear-gradient(135deg, #ffe478, #f2a65e) url('/assets/ui/cell.png') no-repeat center / contain;
-    border: 3px solid #8c3f5d;
+    background: linear-gradient(135deg, #ffffeb, #ffe478);
+    border: 3px solid #f2a65e;
     border-radius: 8px;
     box-shadow:
-        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
-        0 3px 0 #5e315b,
-        0 4px 10px rgba(94, 49, 91, 0.3);
+        0 0 0 2px rgba(255, 255, 255, 0.5) inset,
+        0 3px 0 #cfff70,
+        0 4px 10px rgba(0, 0, 0, 0.5);
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
@@ -1091,24 +1092,25 @@ body {
     cursor: pointer;
     transition: all 0.15s ease;
     position: relative;
+    color: #fff;
 }
 
 .inventory-slot:hover {
     transform: translateY(-2px);
     box-shadow:
-        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
-        0 4px 0 #5e315b,
-        0 6px 14px rgba(94, 49, 91, 0.4),
-        0 0 12px rgba(255, 228, 120, 0.3);
-    filter: brightness(1.1);
+        0 0 0 2px rgba(255, 255, 255, 0.5) inset,
+        0 4px 0 #a67c52,
+        0 6px 14px rgba(0, 0, 0, 0.6),
+        0 0 12px rgba(255, 237, 153, 0.5);
+    filter: brightness(1.2);
 }
 
 .inventory-slot:active {
     transform: translateY(1px);
     box-shadow:
-        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
-        0 1px 0 #5e315b,
-        0 2px 6px rgba(94, 49, 91, 0.3);
+        0 0 0 2px rgba(255, 255, 255, 0.3) inset,
+        0 1px 0 #a67c52,
+        0 2px 6px rgba(0, 0, 0, 0.5);
 }
 
 .player-map-area {
@@ -1136,7 +1138,7 @@ body {
 .map-info {
     font-size: 1.5em;
     text-align: center;
-    color: #ba6156;
+    color: #ffffeb;
     font-family: 'Courier New', monospace;
     margin-top: 12px;
 }
@@ -1541,17 +1543,12 @@ h1 {
 
 
 .game-parchment {
-    background:
-        linear-gradient(135deg, #FFB5B5 0%, #f2a65e 30%, #f2a65e 70%, #BA6156 100%);
+    background: none;
     border: none;
     border-radius: 0;
-    padding: 15px;
+    padding: 0;
     position: relative;
-    filter: 
-        sepia(20%) 
-        saturate(1.2) 
-        contrast(1.1)
-        drop-shadow(4px 4px 8px rgba(94, 49, 91, 0.5));
+    filter: none;
 }
 
 /* Clean edges for game area - no frayed papyrus effect */
@@ -2495,38 +2492,43 @@ h1 {
 .message-log-button {
     position: static;
     margin-bottom: 6px; /* Space below button */
-    background: rgba(245, 222, 179, 0.8); /* Semi-transparent parchment */
-    backdrop-filter: blur(2px);
-    border: 1px solid #BA6156;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(94, 49, 91, 0.4);
-    padding: 6px 12px; /* Increased padding */
+    background: linear-gradient(135deg, #ffffeb 0%, #ffe478 100%);
+    border: 2px solid #ba6156;
+    border-radius: 8px;
+    box-shadow:
+        0 2px 8px rgba(94, 49, 91, 0.3),
+        0 1px 0 #ffb5b5,
+        inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    padding: 8px 16px;
     font-family: 'Cinzel', serif;
-    font-size: 1.3em; /* Increased font size */
-    font-weight: bold;
-    color: #8c3f5d;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #5e315b;
+    text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.6),
+        0 2px 3px rgba(94, 49, 91, 0.2);
     cursor: pointer;
     z-index: 5;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     text-transform: uppercase;
-    text-align: center; /* Ensure text is centered inside the button */
-    letter-spacing: 0.5px;
+    text-align: center;
+    letter-spacing: 1px;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     white-space: nowrap;
-    align-self: center; /* Center the button within its flex container */
+    align-self: center;
 }
 
 .message-log-button:hover, .message-log-button:active {
-    background:
-        linear-gradient(135deg, #ba6156 0%, #BA6156 30%, #8c3f5d 70%, #8c3f5d 100%);
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #ffe478 0%, #f2a65e 100%);
+    transform: translateY(-2px);
     box-shadow:
-        0 4px 12px rgba(94, 49, 91, 0.5),
-        inset 0 0 8px rgba(94, 49, 91, 0.2);
+        0 4px 12px rgba(94, 49, 91, 0.4),
+        0 2px 0 #ba6156,
+        inset 0 1px 3px rgba(255, 255, 255, 0.5);
+    color: #5e315b;
 }
 
 /* Mobile styling for message log button */
@@ -2549,7 +2551,7 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #FFB5B5 0%, #f2a65e 30%, #f2a65e 70%, #BA6156 100%);
+    background: linear-gradient(135deg, #ffffeb 0%, #ffb5b5 50%, #ffb5b5 100%);
     display: none; /* Hidden by default */
     align-items: center;
     justify-content: center;
@@ -2558,8 +2560,12 @@ h1 {
     padding: 0; /* remove overlay padding so inner box can occupy the full panel */
     /* Disable fade for message log overlay */
     transition: none;
-    box-shadow: 0 8px 32px rgba(94, 49, 91, 0.4), inset 0 0 20px rgba(94, 49, 91, 0.1);
-    border: 3px solid #BA6156;
+    box-shadow:
+        0 4px 24px rgba(139, 69, 90, 0.2),
+        0 1.5px 0 #ffb5b5,
+        inset 0 0 40px rgba(94, 49, 91, 0.05);
+    border: 3px solid #ffb5b5;
+    overflow: hidden;
 }
 
 .message-log-overlay.show {
@@ -2568,12 +2574,14 @@ h1 {
 }
 
 .message-log-box {
-    background: #ffffeb;
+    background: linear-gradient(135deg, #ffffeb, #ffb5b5, #ffb5b5);
     border: 3px solid #ffb5b5;
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 0;
+    padding: 15px;
     text-align: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow:
+        0 4px 24px rgba(139, 69, 90, 0.2),
+        0 1.5px 0 #ffb5b5;
     font-family: 'Cinzel', serif;
     /* Fill the overlay area so the message box occupies the same area as other overlays */
     box-sizing: border-box;
@@ -2585,55 +2593,84 @@ h1 {
     max-height: none;
     display: flex;
     flex-direction: column;
+    gap: 8px;
 }
 
 .message-log-box h2 {
-    color: #8c3f5d;
-    font-size: 2em;
-    margin-bottom: 15px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    color: #5e315b;
+    font-size: 2.2em;
+    font-weight: 900;
+    margin: 0 0 8px 0;
+    text-shadow:
+        0 2px 4px rgba(94, 49, 91, 0.2),
+        0 1px 0 rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.5px;
 }
 
 /* Small close button in the corner */
 .message-log-close {
     position: absolute;
-    right: 8px;
-    top: 8px;
-    width: 34px;
-    height: 34px;
+    right: 10px;
+    top: 10px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: rgba(184, 139, 74, 0.95);
+    background: linear-gradient(135deg, #ba6156 0%, #8c3f5d 100%);
     color: #ffffeb;
-    font-size: 20px;
-    line-height: 34px;
-    border: none;
+    font-size: 22px;
+    line-height: 1;
+    border: 2px solid #5e315b;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow:
+        0 3px 8px rgba(94, 49, 91, 0.4),
+        inset 0 1px 2px rgba(255, 255, 255, 0.2);
     z-index: 10;
+    transition: all 0.2s ease;
+    font-weight: bold;
 }
 
-.message-log-close:active { transform: translateY(1px); }
+.message-log-close:hover {
+    background: linear-gradient(135deg, #8c3f5d 0%, #5e315b 100%);
+    transform: scale(1.05);
+}
+
+.message-log-close:active {
+    transform: translateY(1px) scale(1);
+    box-shadow:
+        0 1px 4px rgba(94, 49, 91, 0.4),
+        inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
 
 .message-log-content {
     /* Grow to fill available box height and scroll when content is long */
     flex: 1 1 auto;
     overflow-y: auto;
     text-align: left;
-    color: #5e315b;
+    color: #272736;
     font-size: 1.3em;
-    padding: 8px;
-    background: #ffe478;
-    border-radius: 6px;
-    margin-bottom: 20px;
+    padding: 12px;
+    background: rgba(255, 255, 235, 0.8);
+    border: 2px solid rgba(186, 97, 86, 0.3);
+    border-radius: 8px;
+    box-shadow:
+        inset 0 2px 8px rgba(94, 49, 91, 0.1),
+        0 1px 0 rgba(255, 255, 255, 0.4);
+    margin: 0;
 }
 
 .message-log-content p {
-    margin-bottom: 10px;
-    border-bottom: 1px solid #ffb5b5;
-    padding-bottom: 10px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid rgba(186, 97, 86, 0.2);
+    padding-bottom: 12px;
+    line-height: 1.5;
+}
+
+.message-log-content p:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
 }
 
 /* Legacy close button styles removed; using compact corner close button (.message-log-close) */

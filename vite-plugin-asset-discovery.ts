@@ -205,7 +205,7 @@ export const FLORA_ASSETS = ${JSON.stringify(categorizedAssets.flora, null, 2)};
 export const DOODAD_ASSETS = ${JSON.stringify(categorizedAssets.doodads, null, 2)};
 
 /**
- * Get asset key from path (e.g., 'environment/walls/clubwall6.png' -> 'clubwall6')
+ * Get asset key from path (e.g., 'environment/walls/museumwall6.png' -> 'museumwall6')
  * @param {string} assetPath - The asset path
  * @returns {string} The asset key
  */
@@ -216,7 +216,7 @@ export function getAssetKey(assetPath) {
 }
 
 /**
- * Get asset key with category prefix (e.g., 'environment/walls/clubwall6.png' -> 'walls/clubwall6')
+ * Get asset key with category prefix (e.g., 'environment/walls/museumwall6.png' -> 'walls/museumwall6')
  * @param {string} assetPath - The asset path
  * @returns {string} The asset key with category
  */

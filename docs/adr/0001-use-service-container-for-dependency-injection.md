@@ -10,7 +10,7 @@ Accepted
 
 ## Context
 
-As the Chress codebase grew to include 30+ managers, renderers, and game systems, managing dependencies became increasingly complex. Key challenges included:
+As the Chesse codebase grew to include 30+ managers, renderers, and game systems, managing dependencies became increasingly complex. Key challenges included:
 
 - **Circular Dependencies**: Direct instantiation often led to circular dependency issues between managers
 - **Testing Difficulty**: Mocking dependencies required extensive setup and was error-prone

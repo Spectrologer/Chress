@@ -185,7 +185,7 @@ console.log('Storage stats:', stats);
 
 ```javascript
 // Before migration - check old save size
-const oldSave = localStorage.getItem('chress_game_state');
+const oldSave = localStorage.getItem('chesse_game_state');
 console.log('Old save size:', oldSave.length, 'characters');
 
 // After migration - check new save size

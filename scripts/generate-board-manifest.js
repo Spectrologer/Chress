@@ -26,7 +26,7 @@ try {
             return {
                 name: boardName,
                 displayName: boardData.metadata?.description || boardData.name || boardName,
-                gameMode: boardData.metadata?.gameMode || 'CHRESS',
+                gameMode: boardData.metadata?.gameMode || 'CHESSE',
                 size: boardData.size,
                 created: boardData.metadata?.created || null
             };

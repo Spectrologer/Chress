@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { npcDiscoveryPlugin } from './vite-plugin-npc-discovery.js';
 
-const baseUrl = process.env.NODE_ENV === 'production' ? '/Chress/' : '/';
+const baseUrl = process.env.NODE_ENV === 'production' ? '/Chesse/' : '/';
 
 export default defineConfig({
   // Base URL for GitHub Pages deployment
@@ -120,7 +120,7 @@ export default defineConfig({
     host: '0.0.0.0',
     open: true,
     // Important: Preview server should use the same base as production to test correctly
-    // This ensures assets load from the correct /Chress/ path during preview
+    // This ensures assets load from the correct /Chesse/ path during preview
   },
 
   // Module resolution
@@ -187,8 +187,8 @@ export default defineConfig({
       includeAssets: ['**/*'],
 
       manifest: {
-        name: 'Chress: Chess 2 - The Sequel to Chess',
-        short_name: 'Chress',
+        name: 'Chesse: Chess 2 - The Sequel to Chess',
+        short_name: 'Chesse',
         description: 'A browser-based RPG game with turn-based combat, zone exploration, and procedural generation',
         theme_color: '#3e2347',
         background_color: '#2d1b3d',

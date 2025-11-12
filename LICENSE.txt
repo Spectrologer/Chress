@@ -1,6 +1,6 @@
 Copyright (c) 2024 Spectrologer. All rights reserved.
 
-This software, "Chress" is provided under the following terms:
+This software, "Chesse" is provided under the following terms:
 
 1.  **Non-Commercial Use for Others:** You are free to use, modify, and distribute this software for personal, 
 educational, or other non-commercial purposes. This includes, but is not limited to, playing the game, learning from its code, 

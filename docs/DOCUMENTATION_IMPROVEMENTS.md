@@ -1,6 +1,6 @@
 # Documentation Improvement Recommendations
 
-This document outlines the current state of documentation in the Chress project and provides actionable recommendations for improvement.
+This document outlines the current state of documentation in the Chesse project and provides actionable recommendations for improvement.
 
 ## Current State Analysis
 

@@ -105,23 +105,23 @@ Open browser console and try:
 
 ```javascript
 // Access the store
-window.chressStore
+window.chesseStore
 
 // Print entire state
-window.chressStore.debugPrint()
+window.chesseStore.debugPrint()
 
 // Get specific state
-window.chressStore.get('persistent.player')
-window.chressStore.get('session.enemies')
+window.chesseStore.get('persistent.player')
+window.chesseStore.get('session.enemies')
 
 // View mutations
-window.chressStore.getMutations(10)
+window.chesseStore.getMutations(10)
 
 // Get statistics
-window.chressStore.getStats()
+window.chesseStore.getStats()
 
 // Toggle debugger
-window.chressDebugger.toggle()
+window.chesseDebugger.toggle()
 ```
 
 ## 5. Integration Example
@@ -266,8 +266,8 @@ Press Ctrl+Shift+D and check the state tree view.
 
 ### Need to debug?
 ```javascript
-window.chressStore.debugPrint()
-window.chressStore.getMutations(20)
+window.chesseStore.debugPrint()
+window.chesseStore.getMutations(20)
 ```
 
 ### Want to export save?

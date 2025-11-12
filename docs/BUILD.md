@@ -99,7 +99,7 @@ The build is pre-configured for GitHub Pages deployment:
    # Or manually commit and push the dist folder to gh-pages branch
    ```
 
-4. The base URL is automatically set to `/Chress/` for GitHub Pages
+4. The base URL is automatically set to `/Chesse/` for GitHub Pages
 
 ### Other Platforms
 
@@ -119,7 +119,7 @@ Key configuration options:
 
 ```javascript
 {
-  base: '/Chress/',           // Base URL for deployment
+  base: '/Chesse/',           // Base URL for deployment
   build: {
     target: 'esnext',         // Target modern browsers
     minify: 'terser',         // Use Terser for minification
@@ -193,7 +193,7 @@ Expected improvements with Vite:
 
 ## Progressive Web App (PWA)
 
-Chress is now a fully-featured PWA with offline support!
+Chesse is now a fully-featured PWA with offline support!
 
 ### PWA Features
 
@@ -233,7 +233,7 @@ Chress is now a fully-featured PWA with offline support!
 **Desktop (Chrome/Edge)**
 1. Visit the game URL
 2. Click install icon in address bar
-3. Or use "Install Chress" from menu
+3. Or use "Install Chesse" from menu
 
 **Mobile (iOS/Android)**
 1. Visit the game URL
@@ -310,4 +310,4 @@ Additional optimizations available:
 
 For issues or questions:
 - [Vite Documentation](https://vite.dev)
-- [Project Issues](https://github.com/Spectrologer/Chress/issues)
+- [Project Issues](https://github.com/Spectrologer/Chesse/issues)

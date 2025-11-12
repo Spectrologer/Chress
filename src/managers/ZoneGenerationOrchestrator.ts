@@ -217,9 +217,9 @@ export class ZoneGenerationOrchestrator {
             } else if (requestedMode === 'NORMAL' && this.game.gameMode.currentMode !== GameMode.NORMAL) {
                 logger.info(`[ZoneGeneration] Switching to NORMAL mode for this zone`);
                 setGameMode(this.game, GameMode.NORMAL);
-            } else if (requestedMode === 'CHRESS' && this.game.gameMode.currentMode !== GameMode.NORMAL) {
-                // CHRESS is the same as NORMAL mode
-                logger.info(`[ZoneGeneration] Switching to NORMAL (CHRESS) mode for this zone`);
+            } else if (requestedMode === 'CHESSE' && this.game.gameMode.currentMode !== GameMode.NORMAL) {
+                // CHESSE is the same as NORMAL mode
+                logger.info(`[ZoneGeneration] Switching to NORMAL (CHESSE) mode for this zone`);
                 setGameMode(this.game, GameMode.NORMAL);
             }
         }

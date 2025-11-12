@@ -42,8 +42,8 @@ console.assert(pos.x === 5 && pos.y === 10, 'Position updated');
 - [ ] Can see state tree
 - [ ] Can switch tabs (State Tree, JSON, Mutations, Statistics)
 - [ ] Can close debugger with X button
-- [ ] `window.chressStore` is accessible in console
-- [ ] `window.chressDebugger` is accessible in console
+- [ ] `window.chesseStore` is accessible in console
+- [ ] `window.chesseDebugger` is accessible in console
 
 ## ✅ Persistence
 
@@ -114,7 +114,7 @@ const oldSave = {
     grid: null
   }
 };
-localStorage.setItem('chress_game_state', JSON.stringify(oldSave));
+localStorage.setItem('chesse_game_state', JSON.stringify(oldSave));
 ```
 
 2. Load the old save:
@@ -178,10 +178,10 @@ console.assert(zones.size <= 100, 'Zones pruned');
 
 ### IndexedDB Test
 1. Open browser DevTools → Application → IndexedDB
-2. Look for database named "ChressDB"
+2. Look for database named "ChesseDB"
 3. Check object store "gameState"
 
-- [ ] IndexedDB database "ChressDB" exists
+- [ ] IndexedDB database "ChesseDB" exists
 - [ ] Object store "gameState" exists
 - [ ] Save data is stored in IndexedDB
 - [ ] Console shows "Saved to IndexedDB"
@@ -190,7 +190,7 @@ console.assert(zones.size <= 100, 'Zones pruned');
 1. Simulate IndexedDB failure:
 ```javascript
 // In browser console
-indexedDB.deleteDatabase('ChressDB');
+indexedDB.deleteDatabase('ChesseDB');
 
 // Then try to save
 await persistence.save();
@@ -199,7 +199,7 @@ await persistence.save();
 - [ ] Console shows warning about IndexedDB
 - [ ] Console shows "Saved to localStorage"
 - [ ] Save still succeeds
-- [ ] Data in localStorage under 'chress_game_state'
+- [ ] Data in localStorage under 'chesse_game_state'
 
 ## ✅ State Slices
 
@@ -411,19 +411,19 @@ Test console debugging:
 
 ```javascript
 // In browser console
-window.chressStore.debugPrint();
-window.chressStore.get('persistent.player');
-window.chressStore.getMutations(10);
-window.chressStore.getStats();
-window.chressDebugger.toggle();
+window.chesseStore.debugPrint();
+window.chesseStore.get('persistent.player');
+window.chesseStore.getMutations(10);
+window.chesseStore.getStats();
+window.chesseDebugger.toggle();
 ```
 
-- [ ] `window.chressStore` exists
+- [ ] `window.chesseStore` exists
 - [ ] `debugPrint()` works
 - [ ] `get()` returns state
 - [ ] `getMutations()` returns array
 - [ ] `getStats()` returns object
-- [ ] `window.chressDebugger` exists
+- [ ] `window.chesseDebugger` exists
 - [ ] `toggle()` opens/closes debugger
 
 ## ✅ Error Handling

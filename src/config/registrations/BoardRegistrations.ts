@@ -23,9 +23,12 @@ export function registerBoards(): void {
     // boardLoader.registerBoard(5, 5, 0, 'special_surface_zone', 'custom');
     // boardLoader.registerBoard(2, 3, 2, 'underground_cavern', 'custom');
 
+    // Custom boards in dimension 3 (isolated dimension, accessible only via board loader)
+    // These boards should not be accessible by normal walking
+
     // Classiqueste - Test board for player spawn feature
-    boardLoader.registerBoard(1, 0, 0, 'classiqueste', 'custom');
+    boardLoader.registerBoard(1, 0, 3, 'classiqueste', 'custom');
 
     // Chess - Custom chess mode board with lizard units
-    boardLoader.registerBoard(2, 0, 0, 'chess', 'custom');
+    boardLoader.registerBoard(2, 0, 3, 'chess', 'custom');
 }

@@ -31,7 +31,7 @@ The board will now appear in the "Select Custom Board" dialog in-game!
 
 ## Game Modes
 
-- `"CHRESS"` - Standard Chress gameplay (default)
+- `"CHESSE"` - Standard Chesse gameplay (default)
 - `"CHESS"` - Turn-based chess-like mode
 - `"PUZZLE"` - Puzzle challenges (future)
 - `"TUTORIAL"` - Tutorial mode (future)
@@ -39,7 +39,7 @@ The board will now appear in the "Select Custom Board" dialog in-game!
 ## Existing Boards
 
 - **chess.json** - Classic chess board with lizard pieces (CHESS mode)
-- **classico.json** - Test board for player spawn feature (CHRESS mode)
+- **classico.json** - Test board for player spawn feature (CHESSE mode)
 
 ## Manifest
 

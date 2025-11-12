@@ -24,13 +24,6 @@ export class PortRenderStrategy extends TileRenderStrategy {
         tileType?: any
     ): void {
         // PORT tiles are invisible overlays. Render the structure tile underneath them.
-        const cisternInfo = this.multiTileHandler.findCisternPosition(x, y, grid);
-        if (cisternInfo) {
-            // The PORT is the top part of the cistern.
-            this.renderCisternTop(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer);
-            return; // Return to avoid chessboard tinting on this tile
-        }
-
         const shackInfo = this.multiTileHandler.findShackPosition(x, y, grid);
         if (shackInfo) {
             this.renderShackTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer);
@@ -89,41 +82,6 @@ export class PortRenderStrategy extends TileRenderStrategy {
 
     // Helper methods - these should ideally delegate to the appropriate strategies
     // For now, keeping them here to avoid circular dependencies
-    private renderCisternTop(
-        ctx: CanvasRenderingContext2D,
-        x: number,
-        y: number,
-        pixelX: number,
-        pixelY: number,
-        grid: any[][] | any,
-        zoneLevel: number,
-        baseRenderer: BaseRenderer
-    ): void {
-        // First render dirt background so transparency works
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern')) {
-            const cisternImage = this.images['doodads/cistern'];
-            const partWidth = cisternImage.width; // 16
-            const partHeight = cisternImage.height / 2; // 9
-
-            // Pixel perfect scaling: 16x9 -> 64x36
-            // Position at the bottom of the tile
-            const destW = partWidth * 4; // 64
-            const destH = partHeight * 4; // 36
-            const destX = pixelX; // Left justified
-            const destY = pixelY + TILE_SIZE - destH; // Bottom of tile
-
-            ctx.drawImage(
-                cisternImage,
-                0, 0, // Source position (top part)
-                partWidth, partHeight, // Source size
-                destX, destY, // Destination position, aligned to top of tile
-                destW, destH // Destination size
-            );
-        }
-    }
-
     private renderShackTile(
         ctx: CanvasRenderingContext2D,
         x: number,

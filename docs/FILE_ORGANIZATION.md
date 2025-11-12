@@ -1,11 +1,11 @@
 # File Organization Guide
 
-This document explains the file organization structure of the Chress project.
+This document explains the file organization structure of the Chesse project.
 
 ## 📁 Directory Structure
 
 ```
-chress/
+chesse/
 ├── .claude/              # Claude Code configuration
 ├── .git/                 # Git repository data
 ├── assets/               # PUBLIC DIRECTORY - Game assets (copied to dist)

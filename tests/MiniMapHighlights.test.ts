@@ -53,9 +53,9 @@ describe('MiniMap highlights cycling', () => {
     miniMap.handleExpandedClick(centerClick);
     expect(miniMap.highlights[key]).toBe('heart');
 
-    // Sixth click -> club
+    // Sixth click -> museum
     miniMap.handleExpandedClick(centerClick);
-    expect(miniMap.highlights[key]).toBe('club');
+    expect(miniMap.highlights[key]).toBe('museum');
 
     // Seventh click -> removed (blank)
     miniMap.handleExpandedClick(centerClick);

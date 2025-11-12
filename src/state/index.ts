@@ -39,7 +39,7 @@ export { StateDebugger, stateDebugger } from './core/StateDebugger';
  * await persistence.load();
  *
  * // Debug (Ctrl+Shift+D or programmatically)
- * window.chressDebugger.toggle();
+ * window.chesseDebugger.toggle();
  * store.debugPrint();
  * ```
  */

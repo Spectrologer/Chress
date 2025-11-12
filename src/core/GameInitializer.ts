@@ -247,7 +247,7 @@ export class GameInitializer {
 
     /**
      * Triggers the cinematic entrance sequence for new games.
-     * Player hops from off-screen onto exit tile, then paths to club entrance.
+     * Player hops from off-screen onto exit tile, then paths to museum entrance.
      */
     triggerNewGameEntrance(): void {
         logger.debug(`[Entrance] triggerNewGameEntrance called`);
@@ -329,7 +329,7 @@ export class GameInitializer {
                         clubEntranceX = 4;
                         clubEntranceY = 6;
                     } else {
-                        logger.debug(`[Entrance] Club entrance target: (${clubEntranceX},${clubEntranceY})`);
+                        logger.debug(`[Entrance] Museum entrance target: (${clubEntranceX},${clubEntranceY})`);
                     }
 
                     // Stage 1: Path from off-screen to exit tile
@@ -364,8 +364,8 @@ export class GameInitializer {
                         unsubscribeHop();
                         logger.debug(`[Entrance] Stage 1 complete - hopped to exit tile`);
 
-                        // Stage 2: Path from exit tile to club entrance
-                        logger.debug(`[Entrance] Stage 2 - finding path from (${currentPos.x},${currentPos.y}) to club entrance (${clubEntranceX},${clubEntranceY})`);
+                        // Stage 2: Path from exit tile to museum entrance
+                        logger.debug(`[Entrance] Stage 2 - finding path from (${currentPos.x},${currentPos.y}) to museum entrance (${clubEntranceX},${clubEntranceY})`);
                         const pathToClub = this.game.inputManager?.findPath(
                             currentPos.x,
                             currentPos.y,
@@ -374,7 +374,7 @@ export class GameInitializer {
                         );
 
                         if (!pathToClub || pathToClub.length === 0) {
-                            logger.error(`[Entrance] Failed to find path to club entrance! pathToClub=${pathToClub}`);
+                            logger.error(`[Entrance] Failed to find path to museum entrance! pathToClub=${pathToClub}`);
                             clearTimeout(safetyTimeout);
                             enableInput();
                             return;
@@ -453,7 +453,7 @@ export class GameInitializer {
         // Cross-tab saves
         window.addEventListener('storage', (ev: StorageEvent) => {
             if (ev.key === null) return;
-            if (ev.key === 'chress_game_state') {
+            if (ev.key === 'chesse_game_state') {
                 safeCall(this.game.uiManager, 'addMessageToLog', 'Game state updated in another tab. Your session will keep running with current state.');
             }
         });

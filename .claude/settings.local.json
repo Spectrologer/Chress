@@ -4,7 +4,7 @@
       "Bash(npx tsc:*)",
       "Bash(npm test:*)",
       "Bash(node --check:*)",
-      "Bash(node -e \"console.log(localStorage.getItem(''''chress_game_state''''))\")",
+      "Bash(node -e \"console.log(localStorage.getItem(''''chesse_game_state''''))\")",
       "Bash(npm run build:*)",
       "Bash(cat:*)",
       "Bash(git mv:*)",
@@ -51,7 +51,8 @@
       "Bash(del find-empty.js find-truly-empty.js)",
       "Bash(timeout /t 3 /nobreak)",
       "Bash(move:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(xargs sed:*)"
     ],
     "deny": [],
     "ask": []

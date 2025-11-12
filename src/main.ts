@@ -10,6 +10,44 @@ import { initializePWA } from '@utils/pwa-register';
 import { preloadCriticalModules } from '@utils/LazyLoader';
 import { logger } from '@core/logger';
 
+/**
+ * Checks if a saved game exists in storage
+ */
+async function checkForSavedGame(game: Game): Promise<boolean> {
+    try {
+        // Check StorageAdapter (IndexedDB) first
+        if (game.storageAdapter) {
+            const hasInStorage = await game.storageAdapter.has('chesse_game_state');
+            if (hasInStorage) return true;
+        }
+
+        // Fallback to localStorage check
+        return !!(localStorage && localStorage.getItem && localStorage.getItem('chesse_game_state'));
+    } catch (e) {
+        logger.error('Error checking for saved game:', e);
+        return false;
+    }
+}
+
+/**
+ * Moves the continue button above the start button for returning players
+ */
+function prioritizeContinueButton(menuGrid: HTMLElement): void {
+    try {
+        const startBtn = menuGrid.querySelector<HTMLElement>('#startButton');
+        const continueBtn = menuGrid.querySelector<HTMLElement>('#continueButton');
+
+        if (continueBtn && startBtn) {
+            const parent = startBtn.parentNode;
+            if (parent && parent.contains(continueBtn) && parent.contains(startBtn)) {
+                parent.insertBefore(continueBtn, startBtn);
+            }
+        }
+    } catch (e) {
+        logger.error('Error prioritizing continue button:', e);
+    }
+}
+
 // Initialize game when the page loads
 window.addEventListener('DOMContentLoaded', async () => {
     // Show the overlay immediately (already visible in HTML)
@@ -38,6 +76,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Initialize storage adapter (IndexedDB with compression + localStorage fallback)
     updateLoadingText('Loading save data...');
     await game.storageAdapter.init();
+
+    // Check if saved game exists and reorder buttons BEFORE showing menu
+    const hasSavedGame = await checkForSavedGame(game);
+    if (hasSavedGame && startMenuGrid) {
+        prioritizeContinueButton(startMenuGrid);
+    }
 
     // Hide loading indicator and show menu
     if (loadingIndicator) loadingIndicator.style.display = 'none';

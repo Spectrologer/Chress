@@ -9,7 +9,7 @@ import { ChargeMoveHelpers } from './BaseAttackBehaviors';
  * - Most powerful piece in the game
  * - Combines Rook + Bishop movement (orthogonal + diagonal)
  * - Can move any distance in any direction
- * - Devastating charge attacks from any angle (Chress enhancement)
+ * - Devastating charge attacks from any angle (Chesse enhancement)
  * - Worth 9 points (highest enemy value)
  *
  * Movement: Unlimited movement in all 8 directions

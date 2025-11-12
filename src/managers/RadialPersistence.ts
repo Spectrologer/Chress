@@ -1,7 +1,7 @@
 // Simple localStorage-backed persistence for player's radial inventory
 import type { IGame } from '@core/context';
 
-const STORAGE_KEY = 'chress:radialInventory:v1';
+const STORAGE_KEY = 'chesse:radialInventory:v1';
 
 interface RadialItem {
     type: string;

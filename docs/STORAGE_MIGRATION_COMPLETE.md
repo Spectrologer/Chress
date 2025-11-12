@@ -2,7 +2,7 @@
 
 ## What Was Changed
 
-I've successfully migrated your Chress game from localStorage to a scalable storage solution with compression. Here's what was implemented:
+I've successfully migrated your Chesse game from localStorage to a scalable storage solution with compression. Here's what was implemented:
 
 ### Files Modified
 
@@ -117,11 +117,11 @@ console.log('Zone counter:', game.zoneGenState.getZoneCounter());
 
 ```javascript
 // Check old localStorage save (if you had one)
-const oldSave = localStorage.getItem('chress_game_state');
+const oldSave = localStorage.getItem('chesse_game_state');
 console.log('Old localStorage save:', oldSave ? oldSave.length + ' chars' : 'Not found');
 
 // Check new IndexedDB save
-const newSave = await game.storageAdapter.load('chress_game_state');
+const newSave = await game.storageAdapter.load('chesse_game_state');
 console.log('New save (decompressed):', JSON.stringify(newSave).length + ' chars');
 console.log('Compression working:', newSave !== null);
 ```

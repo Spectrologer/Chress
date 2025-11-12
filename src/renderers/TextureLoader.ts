@@ -54,8 +54,8 @@ export class TextureLoader {
                     imageKey = assetPath.replace('characters/player/', '').replace('.png', '');
                 } else if (assetPath.startsWith('environment/effects/')) {
                     imageKey = assetPath.replace('environment/effects/', '').replace('.png', '');
-                } else if (assetPath === 'environment/doodads/cistern.png') {
-                    imageKey = 'doodads/cistern';
+                } else if (assetPath === 'environment/doodads/grate.png') {
+                    imageKey = 'doodads/grate';
                 } else if (assetPath === 'environment/doodads/shack.png') {
                     imageKey = 'doodads/shack';
                 } else if (assetPath === 'environment/doodads/table.png') {
@@ -98,8 +98,8 @@ export class TextureLoader {
                     imageKey = 'doodads/cactus';
                 } else if (assetPath === 'environment/doodads/cactus2.png') {
                     imageKey = 'doodads/cactus2';
-                } else if (assetPath === 'environment/doodads/club.png') {
-                    imageKey = 'doodads/club';
+                } else if (assetPath === 'environment/doodads/museum.png') {
+                    imageKey = 'doodads/museum';
                 } else if (assetPath === 'environment/doodads/cube.png') {
                     imageKey = 'doodads/cube';
                 } else if (assetPath === 'environment/doodads/green_shroom.png') {

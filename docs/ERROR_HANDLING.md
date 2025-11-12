@@ -1,6 +1,6 @@
 # Error Handling Guidelines
 
-This document describes the error handling strategy for the Chress codebase.
+This document describes the error handling strategy for the Chesse codebase.
 
 ## Overview
 

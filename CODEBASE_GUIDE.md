@@ -1,4 +1,4 @@
-# Chress Codebase Architecture Guide
+# Chesse Codebase Architecture Guide
 
 ## Overview
 This guide covers 5 key systems for your game development:

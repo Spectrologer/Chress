@@ -1,6 +1,6 @@
-# Chress Documentation
+# Chesse Documentation
 
-Complete documentation for the Chress game project.
+Complete documentation for the Chesse game project.
 
 ## 📋 Quick Navigation
 
@@ -113,9 +113,9 @@ Complete documentation for the Chress game project.
 
 ## 🔗 External Resources
 
-- **Repository**: https://github.com/Spectrologer/Chress
-- **Live Game**: https://spectrologer.github.io/Chress/
-- **Issues**: https://github.com/Spectrologer/Chress/issues
+- **Repository**: https://github.com/Spectrologer/Chesse
+- **Live Game**: https://spectrologer.github.io/Chesse/
+- **Issues**: https://github.com/Spectrologer/Chesse/issues
 
 ## 🤝 Contributing
 

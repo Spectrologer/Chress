@@ -11,7 +11,7 @@ import type { Enemy } from '@entities/Enemy';
  * Available game modes
  */
 export enum GameMode {
-    NORMAL = 'normal',      // Standard Chress gameplay
+    NORMAL = 'normal',      // Standard Chesse gameplay
     CHESS = 'chess',        // Turn-based chess-like mode with unit control
     PUZZLE = 'puzzle',      // Puzzle mode (future)
     TUTORIAL = 'tutorial'   // Tutorial mode (future)

@@ -172,9 +172,9 @@ export class EnemyDefeatFlow {
      */
     private _saveComboRecord(comboCount: number): void {
         try {
-            const prevCombo = parseInt(localStorage.getItem('chress:record:combo') || '0', 10) || 0;
+            const prevCombo = parseInt(localStorage.getItem('chesse:record:combo') || '0', 10) || 0;
             if (comboCount > prevCombo) {
-                localStorage.setItem('chress:record:combo', String(comboCount));
+                localStorage.setItem('chesse:record:combo', String(comboCount));
             }
         } catch (e) {
             // Non-fatal

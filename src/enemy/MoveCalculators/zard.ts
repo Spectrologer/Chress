@@ -9,7 +9,7 @@ import { DistanceUtils, AttackBehaviors, ChargeMoveHelpers } from './BaseAttackB
  * - Moves diagonally only
  * - Can move any distance along diagonal lines
  * - Attacks diagonally adjacent squares
- * - Can charge at player from distance (Chress enhancement)
+ * - Can charge at player from distance (Chesse enhancement)
  * - Uses tactical defensive positioning when threatened
  *
  * Movement: Unlimited diagonal movement

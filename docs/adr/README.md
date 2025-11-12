@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADRs)
 
-This directory contains Architecture Decision Records (ADRs) for the Chress project. ADRs document important architectural decisions made during development, including the context, decision, and consequences.
+This directory contains Architecture Decision Records (ADRs) for the Chesse project. ADRs document important architectural decisions made during development, including the context, decision, and consequences.
 
 ## What is an ADR?
 

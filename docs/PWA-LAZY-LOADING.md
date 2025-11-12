@@ -1,6 +1,6 @@
 # PWA & Lazy Loading Implementation
 
-This document details the Progressive Web App (PWA) and lazy loading implementation for Chress.
+This document details the Progressive Web App (PWA) and lazy loading implementation for Chesse.
 
 ## Overview
 
@@ -101,7 +101,7 @@ setupInstallPrompt()
 
 **Install Flow:**
 1. User visits game (not yet installed)
-2. Banner appears: "Install Chress for offline play!"
+2. Banner appears: "Install Chesse for offline play!"
 3. User clicks "Install"
 4. Browser shows install dialog
 5. App installed to device
@@ -336,7 +336,7 @@ dist/
 npm install -g lighthouse
 
 # Run audit
-lighthouse https://your-domain.com/Chress/ --view
+lighthouse https://your-domain.com/Chesse/ --view
 ```
 
 **Target Scores:**
@@ -369,7 +369,7 @@ caches.keys().then(keys => {
 
 **Clear Specific Cache:**
 ```javascript
-caches.delete('chress-v1.0.0-images');
+caches.delete('chesse-v1.0.0-images');
 ```
 
 ### Debugging
@@ -435,6 +435,6 @@ caches.delete('chress-v1.0.0-images');
 ## Support
 
 For issues or questions:
-- [GitHub Issues](https://github.com/Spectrologer/Chress/issues)
+- [GitHub Issues](https://github.com/Spectrologer/Chesse/issues)
 - [Build Documentation](BUILD.md)
 - [Vite PWA Plugin](https://vite-pwa-org.netlify.app/)

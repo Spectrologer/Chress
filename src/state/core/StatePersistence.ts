@@ -47,11 +47,11 @@ export class StatePersistence {
   private dbError: any;
 
   constructor() {
-    this.INDEXEDDB_NAME = 'ChressDB';
+    this.INDEXEDDB_NAME = 'ChesseDB';
     this.INDEXEDDB_VERSION = 1;
     this.STORE_NAME = 'gameState';
-    this.LOCALSTORAGE_KEY = 'chress_game_state';
-    this.LOCALSTORAGE_BACKUP_KEY = 'chress_game_state_backup';
+    this.LOCALSTORAGE_KEY = 'chesse_game_state';
+    this.LOCALSTORAGE_BACKUP_KEY = 'chesse_game_state_backup';
 
     // Storage limits
     this.MAX_ZONES_TO_KEEP = 100; // Keep only recent/special zones
@@ -587,7 +587,7 @@ export class StatePersistence {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `chress-save-${Date.now()}.json`;
+    a.download = `chesse-save-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }

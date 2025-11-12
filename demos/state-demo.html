@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chress State Management Demo</title>
+  <title>Chesse State Management Demo</title>
   <style>
     body {
       margin: 0;
@@ -123,14 +123,14 @@
 </head>
 <body>
   <div class="container">
-    <h1>🏪 Chress State Management System Demo</h1>
+    <h1>🏪 Chesse State Management System Demo</h1>
 
     <div class="section">
       <h2>📚 Quick Info</h2>
       <p>Press <strong>Ctrl+Shift+D</strong> to open the visual debugger!</p>
       <p>This demo lets you test all features of the centralized state system.</p>
       <div>
-        <button onclick="window.chressDebugger.toggle()">Toggle Visual Debugger</button>
+        <button onclick="window.chesseDebugger.toggle()">Toggle Visual Debugger</button>
         <button onclick="runAllTests()">Run All Tests</button>
         <button onclick="clearOutput()">Clear Output</button>
       </div>
@@ -256,8 +256,8 @@
       assert(typeof StateSelectors !== 'undefined', 'StateSelectors imported');
       assert(typeof persistence !== 'undefined', 'persistence imported');
       assert(typeof stateDebugger !== 'undefined', 'stateDebugger imported');
-      assert(typeof window.chressStore !== 'undefined', 'window.chressStore available');
-      assert(typeof window.chressDebugger !== 'undefined', 'window.chressDebugger available');
+      assert(typeof window.chesseStore !== 'undefined', 'window.chesseStore available');
+      assert(typeof window.chesseDebugger !== 'undefined', 'window.chesseDebugger available');
     };
 
     window.testStateReadWrite = function() {

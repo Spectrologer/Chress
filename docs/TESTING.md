@@ -1,4 +1,4 @@
-# Chress RPG - Testing Documentation
+# Chesse RPG - Testing Documentation
 
 ## Table of Contents
 1. [Test Coverage Status](#test-coverage-status)

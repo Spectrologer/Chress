@@ -109,12 +109,11 @@
   "features": {
     "1,0": "exit_up",
     "9,1": "exit_right",
-    "2,2": "port_cistern",
+    "2,2": "cistern",
     "3,2": "house",
     "4,2": "house",
     "5,2": "house",
     "6,2": "house",
-    "2,3": "cistern",
     "3,3": "house",
     "4,3": "house",
     "5,3": "house",

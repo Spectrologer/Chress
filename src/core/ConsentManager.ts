@@ -30,7 +30,7 @@ export class ConsentManager {
 
   constructor(game: GameInstance) {
     this.game = game;
-    this.consentKey = 'chress_gdpr_consent';
+    this.consentKey = 'chesse_gdpr_consent';
   }
 
   initialize(): void {

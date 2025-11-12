@@ -1,4 +1,4 @@
-# Chress: Chess 2 - The Sequel to Chess
+# Chesse: Chess 2 - The Sequel to Chess
 
 A browser-based RPG game with turn-based combat, zone exploration, and procedural generation.
 
@@ -116,7 +116,7 @@ The game uses a turn-based system where:
 ## 📦 Project Structure
 
 ```
-chress/
+chesse/
 ├── assets/              # Public assets (images, UI, fonts)
 │   ├── characters/     # Character sprites and portraits
 │   ├── environment/    # Floors, walls, doodads, effects
@@ -180,7 +180,7 @@ npm run test:coverage
 Create `.env` file in root (optional):
 ```env
 NODE_ENV=development
-VITE_BASE_URL=/Chress/
+VITE_BASE_URL=/Chesse/
 ```
 
 ### Vite Configuration
@@ -195,8 +195,8 @@ See [vite.config.js](vite.config.js) for build configuration:
 ### GitHub Pages (Automated)
 The project uses GitHub Actions for automatic deployment:
 - Pushes to `main` automatically build and deploy
-- View workflow status: [Actions tab](https://github.com/Spectrologer/Chress/actions)
-- Live site: https://spectrologer.github.io/Chress/
+- View workflow status: [Actions tab](https://github.com/Spectrologer/Chesse/actions)
+- Live site: https://spectrologer.github.io/Chesse/
 
 ### Manual Build
 ```bash
@@ -229,7 +229,7 @@ ISC License - see [LICENSE.txt](LICENSE.txt)
 
 ## 🐛 Bug Reports
 
-Report issues at [GitHub Issues](https://github.com/Spectrologer/Chress/issues)
+Report issues at [GitHub Issues](https://github.com/Spectrologer/Chesse/issues)
 
 Include:
 - Browser and version
@@ -270,4 +270,4 @@ Include:
 
 **Made with ❤️ by Spectrologer**
 
-[Play Now](https://spectrologer.github.io/Chress/) | [Documentation](docs/) | [Report Bug](https://github.com/Spectrologer/Chress/issues)
+[Play Now](https://spectrologer.github.io/Chesse/) | [Documentation](docs/) | [Report Bug](https://github.com/Spectrologer/Chesse/issues)

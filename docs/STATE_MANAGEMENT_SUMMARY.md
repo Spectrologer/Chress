@@ -2,7 +2,7 @@
 
 ## ✅ Completed Implementation
 
-I've successfully implemented a comprehensive centralized state management system for Chress that solves all the identified issues.
+I've successfully implemented a comprehensive centralized state management system for Chesse that solves all the identified issues.
 
 ## 🎯 Problems Solved
 
@@ -62,7 +62,7 @@ I've successfully implemented a comprehensive centralized state management syste
    - Mutation history with diffs
    - State statistics
    - JSON export
-   - Console access via `window.chressStore`
+   - Console access via `window.chesseStore`
 
 ### Documentation & Guides
 6. **[README.md](src/state/README.md)** (427 lines)
@@ -175,12 +175,12 @@ await persistence.load();
 ### 5. Debugging Tools
 ```javascript
 // Console access
-window.chressStore.debugPrint();
-window.chressStore.getMutations(20);
-window.chressStore.getStats();
+window.chesseStore.debugPrint();
+window.chesseStore.getMutations(20);
+window.chesseStore.getStats();
 
 // Visual debugger (Ctrl+Shift+D)
-window.chressDebugger.toggle();
+window.chesseDebugger.toggle();
 ```
 
 ## 📊 Impact
@@ -243,7 +243,7 @@ await persistence.save();
 ### Open Debugger
 Press **Ctrl+Shift+D** or:
 ```javascript
-window.chressDebugger.toggle();
+window.chesseDebugger.toggle();
 ```
 
 ## 📚 Documentation
@@ -323,7 +323,7 @@ STATE_MANAGEMENT_SUMMARY.md    (this file) - Overview
 - [Migration Guide](MIGRATION_GUIDE.md) - Integration steps
 - [Integration Examples](src/state/examples/IntegrationExample.js) - Code samples
 - Press **Ctrl+Shift+D** - Open visual debugger
-- `window.chressStore` - Console access
+- `window.chesseStore` - Console access
 
 ---
 

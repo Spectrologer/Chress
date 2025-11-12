@@ -167,11 +167,11 @@ export class StatsPanelManager {
     private _updatePersistentRecords(): void {
         const visited = this.game.player.getVisitedZones().size;
         const pointsNow = this.game.player.getPoints();
-        const prevZones = parseInt(localStorage.getItem('chress:record:zones') || '0', 10) || 0;
-        const prevPoints = parseInt(localStorage.getItem('chress:record:points') || '0', 10) || 0;
+        const prevZones = parseInt(localStorage.getItem('chesse:record:zones') || '0', 10) || 0;
+        const prevPoints = parseInt(localStorage.getItem('chesse:record:points') || '0', 10) || 0;
 
-        if (visited > prevZones) localStorage.setItem('chress:record:zones', String(visited));
-        if (pointsNow > prevPoints) localStorage.setItem('chress:record:points', String(pointsNow));
+        if (visited > prevZones) localStorage.setItem('chesse:record:zones', String(visited));
+        if (pointsNow > prevPoints) localStorage.setItem('chesse:record:points', String(pointsNow));
     }
 
     /**

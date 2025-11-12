@@ -28,7 +28,7 @@ export class WallTileRenderer {
         const rotation = rotations[coord] || 0;
 
         if (customTexture) {
-            // Strip folder prefix if present (e.g., 'walls/clubwall5' -> 'clubwall5')
+            // Strip folder prefix if present (e.g., 'walls/museumwall5' -> 'museumwall5')
             const textureName = customTexture.includes('/') ? customTexture.split('/')[1] : customTexture;
 
             if (RendererUtils.isImageLoaded(this.images, textureName)) {
@@ -211,9 +211,9 @@ export class WallTileRenderer {
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         }
 
-        // Draw clubwall on top
-        if (RendererUtils.isImageLoaded(this.images, 'clubwall')) {
-            ctx.drawImage(this.images.clubwall, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+        // Draw museumwall on top
+        if (RendererUtils.isImageLoaded(this.images, 'museumwall')) {
+            ctx.drawImage(this.images.museumwall, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             ctx.fillStyle = '#964253'; // Brown fallback
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);

@@ -2,7 +2,7 @@
  * Position.ts
  *
  * A robust position abstraction that handles all position-related operations
- * in the Chress codebase. Provides a consistent API while maintaining backward
+ * in the Chesse codebase. Provides a consistent API while maintaining backward
  * compatibility with existing {x, y} object patterns.
  *
  * Key Features:

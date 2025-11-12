@@ -30,13 +30,20 @@ export class StartOverlayController {
             const overlay = document.getElementById('startOverlay');
             if (!overlay) return;
 
+            // Check saved game state first
+            const hasSaved = await this.hasSavedGame();
+
+            // Reorder buttons BEFORE showing overlay, if saved game exists
+            if (hasSaved) {
+                this.prioritizeContinueButton(overlay);
+            }
+
             // Overlay is already visible, just ensure it's shown
             overlay.style.display = 'flex';
             overlay.style.visibility = 'visible';
             overlay.setAttribute('aria-hidden', 'false');
 
             // Configure continue button based on saved game state
-            const hasSaved = await this.hasSavedGame();
             configureContinueBtn(overlay, hasSaved);
 
             // Set up button handlers
@@ -44,11 +51,6 @@ export class StartOverlayController {
 
             // Pre-render UI elements behind the overlay
             this.preRenderUIElements();
-
-            // Reorder buttons if saved game exists
-            if (hasSaved) {
-                this.prioritizeContinueButton(overlay);
-            }
         } catch (error) {
             logger.error('Error showing start overlay:', error);
         }
@@ -61,12 +63,12 @@ export class StartOverlayController {
         try {
             // Check StorageAdapter (IndexedDB) first
             if (this.game.storageAdapter) {
-                const hasInStorage = await this.game.storageAdapter.has('chress_game_state');
+                const hasInStorage = await this.game.storageAdapter.has('chesse_game_state');
                 if (hasInStorage) return true;
             }
 
             // Fallback to localStorage check
-            return !!(localStorage && localStorage.getItem && localStorage.getItem('chress_game_state'));
+            return !!(localStorage && localStorage.getItem && localStorage.getItem('chesse_game_state'));
         } catch (e) {
             logger.error('Error checking for saved game:', e);
             return false;

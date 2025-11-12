@@ -1,6 +1,6 @@
 # TypeScript Migration Guide
 
-This document outlines the incremental approach to migrating the Chress codebase from JavaScript to TypeScript.
+This document outlines the incremental approach to migrating the Chesse codebase from JavaScript to TypeScript.
 
 ## Overview
 

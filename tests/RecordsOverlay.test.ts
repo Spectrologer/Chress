@@ -33,9 +33,9 @@ afterEach(() => {
 });
 
 test('showRecordsOverlay reads values from localStorage and populates DOM', () => {
-    localStorage.setItem('chress:record:zones', '12');
-    localStorage.setItem('chress:record:points', '345');
-    localStorage.setItem('chress:record:combo', '7');
+    localStorage.setItem('chesse:record:zones', '12');
+    localStorage.setItem('chesse:record:points', '345');
+    localStorage.setItem('chesse:record:combo', '7');
 
     const pm = new PanelManager(global.game);
 

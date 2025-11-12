@@ -73,19 +73,19 @@ Click any test button in the demo:
 Open browser console and try:
 ```javascript
 // Access the store
-window.chressStore.debugPrint()
+window.chesseStore.debugPrint()
 
 // Get state
-window.chressStore.get('persistent.player')
+window.chesseStore.get('persistent.player')
 
 // View mutations
-window.chressStore.getMutations(10)
+window.chesseStore.getMutations(10)
 
 // Get statistics
-window.chressStore.getStats()
+window.chesseStore.getStats()
 
 // Toggle debugger
-window.chressDebugger.toggle()
+window.chesseDebugger.toggle()
 ```
 
 ---
@@ -145,7 +145,7 @@ window.chressDebugger.toggle()
 ✅ **80+ selectors** (type-safe reading)
 ✅ **50+ actions** (semantic writing)
 ✅ **Full JSDoc annotations** (IDE support)
-✅ **Console access** (window.chressStore)
+✅ **Console access** (window.chesseStore)
 ✅ **Comprehensive docs** (5 guides)
 ✅ **10 integration examples** (copy-paste ready)
 ✅ **80+ test cases** (automated & manual)
@@ -171,7 +171,7 @@ Open **http://localhost:3000/state-demo.html** and:
 - [ ] Click "Test Save" - should save successfully
 - [ ] Click "Test Load" - should restore state
 - [ ] Click "Test Compression" - should show compression stats
-- [ ] Open console - try `window.chressStore.debugPrint()`
+- [ ] Open console - try `window.chesseStore.debugPrint()`
 - [ ] Click "Test Export" - should download save file
 
 ---
@@ -264,16 +264,16 @@ await persistence.exportSave();
 ### Console Access
 ```javascript
 // Print entire state
-window.chressStore.debugPrint()
+window.chesseStore.debugPrint()
 
 // Get specific state
-window.chressStore.get('persistent.player')
+window.chesseStore.get('persistent.player')
 
 // View mutations
-window.chressStore.getMutations(20)
+window.chesseStore.getMutations(20)
 
 // Get statistics
-window.chressStore.getStats()
+window.chesseStore.getStats()
 ```
 
 ---
@@ -324,8 +324,8 @@ Should see debugger overlay with state tree
 
 ### Step 4: Console Commands (30 seconds)
 ```javascript
-👉 window.chressStore.debugPrint()
-👉 window.chressStore.getStats()
+👉 window.chesseStore.debugPrint()
+👉 window.chesseStore.getStats()
 ```
 Should see output in console
 

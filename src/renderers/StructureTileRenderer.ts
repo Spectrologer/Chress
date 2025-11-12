@@ -101,9 +101,9 @@ export class StructureTileRenderer {
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        // Then render the club part
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/club')) {
-            // For a 4x3 club, we need to determine which part of the club image to draw
+        // Then render the museum part
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/museum')) {
+            // For a 4x3 museum, we need to determine which part of the museum image to draw
             // Find the house area bounds to determine the position within the house
             const houseInfo = this.multiTileHandler.findHousePosition(x, y, grid);
 
@@ -112,8 +112,8 @@ export class StructureTileRenderer {
                 const partX = x - houseInfo.startX;
                 const partY = y - houseInfo.startY;
 
-                // Draw the corresponding part of the club image using utility
-                const houseImage = this.images['doodads/club'];
+                // Draw the corresponding part of the museum image using utility
+                const houseImage = this.images['doodads/museum'];
                 if (!RendererUtils.renderImageSlice(ctx, houseImage, partX, partY, 4, 3, pixelX, pixelY, TILE_SIZE)) {
                     // Fallback if slicing fails
                     RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_TYPES.HOUSE, 'H');
@@ -417,112 +417,29 @@ export class StructureTileRenderer {
         zoneLevel: number,
         baseRenderer: BaseRenderer
     ): void {
-        // This renders a CISTERN tile.
-        // Check if this is part of a double-bottom cistern (CISTERN + CISTERN)
-        // or a traditional cistern (PORT + CISTERN)
-        const cisternInfo = this.multiTileHandler.findCisternPosition(x, y, grid);
-
-        // Determine if this is the top tile of the cistern structure
-        const isTopTile = cisternInfo && cisternInfo.startY === y;
-
-        // Check if both tiles are CISTERN (double-bottom mode)
-        const getTile = (gx: number, gy: number) => (grid as any).getTile ? (grid as any).getTile(gx, gy) : (grid as any)[gy]?.[gx];
-        const tileAbove = y > 0 ? getTile(x, y - 1) : null;
-        const tileBelow = y < 9 ? getTile(x, y + 1) : null;
-        const isDoubleBottom = (tileAbove === TILE_TYPES.CISTERN || tileBelow === TILE_TYPES.CISTERN);
-
+        // Cistern is now a simple 1x1 grate tile
         // First render dirt background
         baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern')) {
-            const cisternImage = this.images['doodads/cistern'];
-            const partWidth = cisternImage.width; // 16
-            const partHeight = cisternImage.height / 2; // 9
-
-            // Pixel perfect scaling: 16x9 -> 64x36
-            const destW = partWidth * 4; // 64
-            const destH = partHeight * 4; // 36
-            const destX = pixelX; // Left justified
-            const destY = pixelY; // Top of tile
-
-            // Always use the bottom part of the sprite for CISTERN tiles
+        // Render the grate overlay
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/grate')) {
+            const grateImage = this.images['doodads/grate'];
             ctx.drawImage(
-                cisternImage,
-                0, partHeight, // Source position (bottom part)
-                partWidth, partHeight, // Source size
-                destX, destY, // Destination position, aligned to top of tile
-                destW, destH // Destination size
+                grateImage,
+                0, 0,
+                grateImage.width, grateImage.height,
+                pixelX, pixelY,
+                TILE_SIZE, TILE_SIZE
             );
         } else {
-            // Fallback color rendering - semi-transparent slab to show dirt behind
-            const partHeight = 9;
-            const scaleFactor = 4;
-            const destW = 16 * scaleFactor;
-            const destH = partHeight * scaleFactor;
-            const destX = pixelX;
-            const destY = pixelY;
+            // Fallback color rendering
             ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
-            ctx.fillRect(destX, destY, destW, destH);
-            // Debug for gh-pages - show cistern location with 'C'
+            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             ctx.fillStyle = '#ffffeb';
             ctx.font = 'bold 24px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('C', pixelX + TILE_SIZE / 2, pixelY + destH / 2);
-        }
-    }
-
-    renderCisternTop(
-        ctx: CanvasRenderingContext2D,
-        x: number,
-        y: number,
-        pixelX: number,
-        pixelY: number,
-        grid: GridManager | any[][],
-        zoneLevel: number,
-        baseRenderer: BaseRenderer
-    ): void {
-        // This is the TOP part of the cistern (the PORT/entrance).
-
-        // First render dirt background so transparency works
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/cistern')) {
-            const cisternImage = this.images['doodads/cistern'];
-            const partWidth = cisternImage.width; // 16
-            const partHeight = cisternImage.height / 2; // 9
-
-            // Pixel perfect scaling: 16x9 -> 64x36
-            // Position at the bottom of the tile
-            const destW = partWidth * 4; // 64
-            const destH = partHeight * 4; // 36
-            const destX = pixelX; // Left justified
-            const destY = pixelY + TILE_SIZE - destH; // Bottom of tile
-
-            ctx.drawImage(
-                cisternImage,
-                0, 0, // Source position (top part)
-                partWidth, partHeight, // Source size
-                destX, destY, // Destination position, aligned to top of tile
-                destW, destH // Destination size
-            );
-        } else {
-            // Fallback rendering - semi-transparent slab to show dirt behind
-            const partHeight = 9;
-            const scaleFactor = 4;
-            const destW = 16 * scaleFactor;
-            const destH = partHeight * scaleFactor;
-            const destX = pixelX;
-            const destY = pixelY + TILE_SIZE - destH;
-
-            ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.CISTERN].slice(4, -1)}, 0.7)`;
-            ctx.fillRect(destX, destY, destW, destH);
-            // Debug for gh-pages - show cistern top with small 'C'
-            ctx.fillStyle = '#ffffeb';
-            ctx.font = 'bold 18px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('C', destX + destW / 2, destY + destH / 2 + 2);
+            ctx.fillText('C', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
     }
 

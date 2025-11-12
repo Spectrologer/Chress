@@ -23,8 +23,8 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   try {
     // Determine the correct path based on environment
     const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const swPath = isDevelopment ? '/dev-sw.js?dev-sw' : '/Chress/sw.js'; // todo: make this work for preview
-    const swScope = isDevelopment ? '/' : '/Chress/';
+    const swPath = isDevelopment ? '/dev-sw.js?dev-sw' : '/Chesse/sw.js'; // todo: make this work for preview
+    const swScope = isDevelopment ? '/' : '/Chesse/';
 
     const doRegister = (path: string, opts: RegistrationOptions) =>
       navigator.serviceWorker.register(path, opts)
@@ -37,8 +37,8 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       if (!isDevelopment) {
         throw e;
       }
-      return doRegister('/Chress/sw.js', {
-        scope: '/Chress/',
+      return doRegister('/Chesse/sw.js', {
+        scope: '/Chesse/',
         type: 'classic'
       });
     });
@@ -93,7 +93,7 @@ function showUpdateNotification(): void {
       border: 2px solid #7e7e8f;
     ">
       <h3 style="margin: 0 0 8px 0; font-size: 16px;">Update Available</h3>
-      <p style="margin: 0 0 12px 0; font-size: 14px;">A new version of Chress is available!</p>
+      <p style="margin: 0 0 12px 0; font-size: 14px;">A new version of Chesse is available!</p>
       <div style="display: flex; gap: 8px;">
         <button id="pwa-update-button" style="
           flex: 1;
@@ -212,7 +212,7 @@ function showInstallBanner(deferredPrompt: BeforeInstallPromptEvent): void {
       font-family: 'Courier New', monospace;
       border: 2px solid #7e7e8f;
     ">
-      <span style="font-size: 14px;">Install Chress for offline play!</span>
+      <span style="font-size: 14px;">Install Chesse for offline play!</span>
       <button id="pwa-install-button" style="
         padding: 6px 16px;
         background: linear-gradient(135deg, #606070 0%, #7e7e8f 100%);

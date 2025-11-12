@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Chress game now features an **automatic asset discovery system** that eliminates the need to manually register assets in multiple places. Simply add a new image file to the `assets/` directory, and it will be automatically discovered and made available in both the game and the zone editor.
+The Chesse game now features an **automatic asset discovery system** that eliminates the need to manually register assets in multiple places. Simply add a new image file to the `assets/` directory, and it will be automatically discovered and made available in both the game and the zone editor.
 
 ## How It Works
 
@@ -32,7 +32,7 @@ Assets are automatically categorized based on their directory structure:
 
 | Category | Directory | Example |
 |----------|-----------|---------|
-| **Walls** | `environment/walls/` | `clubwall6.png` |
+| **Walls** | `environment/walls/` | `museumwall6.png` |
 | **Floors** | `environment/floors/` | `grass.png` |
 | **Trim** | `environment/trim/` | `bordertrim.png` |
 | **Obstacles** | `environment/obstacles/` | `rock.png` |
@@ -66,15 +66,15 @@ Assets are automatically categorized based on their directory structure:
      2. The appropriate palette array (e.g., `WALL` around line 775)
    - **OR** use the helper script: `npm run assets:discover` to see all discovered assets
 
-### Example: Adding clubwall6
+### Example: Adding museumwall6
 
-When you added `assets/environment/walls/clubwall6.png`, the system automatically:
+When you added `assets/environment/walls/museumwall6.png`, the system automatically:
 
 1. ✅ Discovered it during the build scan (23 walls found)
 2. ✅ Added it to `IMAGE_ASSETS` array
 3. ✅ Categorized it as a wall in `ASSET_CATEGORIES.walls`
-4. ✅ Made it available as `'clubwall6'` in the texture system
-5. ✅ Enabled usage in zone JSON: `"customTexture": "walls/clubwall6"`
+4. ✅ Made it available as `'museumwall6'` in the texture system
+5. ✅ Enabled usage in zone JSON: `"customTexture": "walls/museumwall6"`
 
 **No manual registration required!**
 
@@ -82,20 +82,20 @@ When you added `assets/environment/walls/clubwall6.png`, the system automaticall
 
 ### Using Assets in Zone JSON
 
-After adding a wall asset like `clubwall6.png`, you can immediately use it in zone files:
+After adding a wall asset like `museumwall6.png`, you can immediately use it in zone files:
 
 ```json
 {
   "terrainTextures": {
-    "5,3": "walls/clubwall6",
-    "5,4": "walls/clubwall6"
+    "5,3": "walls/museumwall6",
+    "5,4": "walls/museumwall6"
   }
 }
 ```
 
 The game's [WallTileRenderer](../src/renderers/WallTileRenderer.js) automatically:
-1. Strips the `walls/` prefix → `clubwall6`
-2. Looks up `this.images['clubwall6']`
+1. Strips the `walls/` prefix → `museumwall6`
+2. Looks up `this.images['museumwall6']`
 3. Renders the texture
 
 ### Asset Keys
@@ -104,7 +104,7 @@ Assets are automatically converted to keys:
 
 | Asset Path | Generated Key | Usage in JSON |
 |------------|---------------|---------------|
-| `environment/walls/clubwall6.png` | `clubwall6` | `"walls/clubwall6"` |
+| `environment/walls/museumwall6.png` | `museumwall6` | `"walls/museumwall6"` |
 | `environment/floors/grass.png` | `grass` | `"floors/grass"` |
 | `characters/npcs/penne.png` | `penne` | N/A (used by NPC system) |
 
@@ -264,4 +264,4 @@ Run `npm run assets:discover` to see all discovered assets and their categories,
 
 The automatic asset discovery system makes adding new game assets **effortless**. Simply drop an image into the appropriate directory, and it's immediately available throughout the game. No more manual registration, no more typos, no more forgotten entries.
 
-**Example:** Your `clubwall6.png` is now automatically discovered, loaded, and ready to use! 🎉
+**Example:** Your `museumwall6.png` is now automatically discovered, loaded, and ready to use! 🎉

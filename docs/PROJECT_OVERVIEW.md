@@ -1,8 +1,8 @@
-## Chress — Project Overview
+## Chesse — Project Overview
 
-**Chress** (a playful reference to "Chess 2: The Sequel to Chess") is a browser-based, 2D top-down, turn-based RPG with zone exploration, procedural generation, and chess-inspired enemy AI. It runs in modern browsers and is optimized for both mobile and desktop with a responsive, tile-based UI.
+**Chesse** (a playful reference to "Chess 2: The Sequel to Chess") is a browser-based, 2D top-down, turn-based RPG with zone exploration, procedural generation, and chess-inspired enemy AI. It runs in modern browsers and is optimized for both mobile and desktop with a responsive, tile-based UI.
 
-**Repository**: https://github.com/Spectrologer/Chress
+**Repository**: https://github.com/Spectrologer/Chesse
 **License**: ISC
 **Platform**: Modern browsers (HTML5 Canvas) — no native build required
 **Codebase**: ~55,800 lines of TypeScript (302 .ts files) organized in a modular architecture
@@ -75,7 +75,7 @@ npm run type-check    # Run TypeScript type checking
 
 #### Root Structure
 ```
-Chress/
+Chesse/
 ├── assets/              # All game assets (images, sounds)
 │   ├── characters/     # Character sprites and portraits
 │   │   ├── player/    # Player character animations
@@ -569,7 +569,7 @@ The game features 73+ characters organized into three categories:
 
 ### Contribution & Reporting Issues
 
-- **Issues**: https://github.com/Spectrologer/Chress/issues
+- **Issues**: https://github.com/Spectrologer/Chesse/issues
 - **License**: ISC (see [package.json](package.json))
 - **Author**: Spectrologer
 

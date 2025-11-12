@@ -16,7 +16,7 @@ import { logger } from '@core/logger';
 
 declare global {
   interface Window {
-    chressDebugger: StateDebugger;
+    chesseDebugger: StateDebugger;
   }
 }
 
@@ -605,7 +605,7 @@ export const stateDebugger = new StateDebugger();
 
 // Debug access
 if (typeof window !== 'undefined') {
-  window.chressDebugger = stateDebugger;
+  window.chesseDebugger = stateDebugger;
 
   // Add keyboard shortcut: Ctrl+Shift+D
   document.addEventListener('keydown', (e) => {

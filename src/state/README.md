@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Chress game now uses a **centralized state store** as the single source of truth for all application state. This solves the previous issues of scattered state, difficult debugging, and localStorage limitations.
+The Chesse game now uses a **centralized state store** as the single source of truth for all application state. This solves the previous issues of scattered state, difficult debugging, and localStorage limitations.
 
 ## Architecture
 
@@ -256,7 +256,7 @@ await persistence.save();
 - Visual debugger (Ctrl+Shift+D)
 - Mutation history with diffs
 - State snapshots and time-travel
-- Console access: `window.chressStore`
+- Console access: `window.chesseStore`
 
 ### ✅ Unlimited Storage
 
@@ -354,24 +354,24 @@ component.onDestroy = () => unsubscribe();
 Press **Ctrl+Shift+D** or:
 
 ```javascript
-window.chressDebugger.toggle();
+window.chesseDebugger.toggle();
 ```
 
 ### Console Access
 
 ```javascript
 // Access store
-window.chressStore.get("persistent.player");
-window.chressStore.debugPrint();
+window.chesseStore.get("persistent.player");
+window.chesseStore.debugPrint();
 
 // View mutations
-window.chressStore.getMutations(20);
+window.chesseStore.getMutations(20);
 
 // View history
-window.chressStore.getHistory(10);
+window.chesseStore.getHistory(10);
 
 // Get stats
-window.chressStore.getStats();
+window.chesseStore.getStats();
 ```
 
 ### Export Save for Analysis

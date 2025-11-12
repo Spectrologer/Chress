@@ -9,7 +9,7 @@ import type { MultiTileHandler } from '@renderers/MultiTileHandler.js';
 export class HouseRenderStrategy extends MultiTileRenderStrategy {
     constructor(images: Record<string, HTMLImageElement>, tileSize: number, multiTileHandler: typeof MultiTileHandler) {
         super(images, tileSize, multiTileHandler, {
-            spriteKey: 'doodads/club',
+            spriteKey: 'doodads/museum',
             width: 4,
             height: 3,
             tileType: TILE_TYPES.HOUSE,

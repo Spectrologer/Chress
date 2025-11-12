@@ -108,7 +108,7 @@
   ],
   "features": {
     "4,0": "exit_up",
-    "2,3": "port_cistern",
+    "2,3": "cistern",
     "4,4": "axelotl",
     "9,5": "exit_right"
   },

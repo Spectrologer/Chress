@@ -39,7 +39,7 @@ export class StorageAdapter {
     private useIndexedDB: boolean;
     private compressionEnabled: boolean;
 
-    constructor(dbName = 'ChressGameDB', storeName = 'gameState', localStorageKey = 'chress_game_state') {
+    constructor(dbName = 'ChesseGameDB', storeName = 'gameState', localStorageKey = 'chesse_game_state') {
         this.dbName = dbName;
         this.storeName = storeName;
         this.localStorageKey = localStorageKey;

@@ -295,9 +295,9 @@ export class OverlayButtonHandler {
                 const rp = recordsOverlay.querySelector<HTMLElement>('#record-points');
                 const rc = recordsOverlay.querySelector<HTMLElement>('#record-combo');
 
-                const zones = parseInt(localStorage.getItem('chress:record:zones') || '0', 10) || 0;
-                const points = parseInt(localStorage.getItem('chress:record:points') || '0', 10) || 0;
-                const combo = parseInt(localStorage.getItem('chress:record:combo') || '0', 10) || 0;
+                const zones = parseInt(localStorage.getItem('chesse:record:zones') || '0', 10) || 0;
+                const points = parseInt(localStorage.getItem('chesse:record:points') || '0', 10) || 0;
+                const combo = parseInt(localStorage.getItem('chesse:record:combo') || '0', 10) || 0;
 
                 if (rz) rz.textContent = String(zones);
                 if (rp) rp.textContent = String(points);

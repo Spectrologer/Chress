@@ -1,5 +1,5 @@
 // Official Pear 36 color palette by PineappleOnPizza
-// This is the design bible for all colors used in Chress
+// This is the design bible for all colors used in Chesse
 
 export const PEAR36_PALETTE = {
   // Purple-Magentas

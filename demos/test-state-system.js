@@ -6,7 +6,7 @@
  */
 
 console.log('╔════════════════════════════════════════════════════════╗');
-console.log('║  Chress State Management System - Test Runner         ║');
+console.log('║  Chesse State Management System - Test Runner         ║');
 console.log('╚════════════════════════════════════════════════════════╝');
 console.log('');
 
@@ -54,9 +54,9 @@ console.log('');
 
 console.log('5️⃣  Console Debugging:');
 console.log('   Open browser console and try:');
-console.log('   > window.chressStore.debugPrint()');
-console.log('   > window.chressStore.getStats()');
-console.log('   > window.chressStore.getMutations(10)');
+console.log('   > window.chesseStore.debugPrint()');
+console.log('   > window.chesseStore.getStats()');
+console.log('   > window.chesseStore.getMutations(10)');
 console.log('');
 
 console.log('═'.repeat(60));

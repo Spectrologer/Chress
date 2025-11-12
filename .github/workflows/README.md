@@ -1,6 +1,6 @@
 # GitHub Actions Workflows
 
-This directory contains CI/CD workflows for the Chress project.
+This directory contains CI/CD workflows for the Chesse project.
 
 ## Workflows
 
@@ -66,15 +66,15 @@ Consider adding branch protection rules for `main`:
 ## Workflow Status
 
 You can view the status of all workflows at:
-`https://github.com/Spectrologer/Chress/actions`
+`https://github.com/Spectrologer/Chesse/actions`
 
 ## Badges
 
 Add these badges to your main README.md:
 
 ```markdown
-![CI](https://github.com/Spectrologer/Chress/workflows/CI/badge.svg)
-![Deploy](https://github.com/Spectrologer/Chress/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)
+![CI](https://github.com/Spectrologer/Chesse/workflows/CI/badge.svg)
+![Deploy](https://github.com/Spectrologer/Chesse/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)
 ```
 
 ## Troubleshooting

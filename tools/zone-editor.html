@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chress Zone Editor</title>
+    <title>Chesse Zone Editor</title>
     <style>
         * {
             margin: 0;
@@ -496,7 +496,7 @@
 </head>
 <body>
     <div class="main-panel">
-        <h1>Chress Zone Editor</h1>
+        <h1>Chesse Zone Editor</h1>
 
         <div class="controls">
             <div class="control-grid">
@@ -517,7 +517,7 @@
                 <div class="control-group">
                     <label>Game Mode:</label>
                     <select id="zoneGameMode">
-                        <option value="CHRESS">CHRESS (Default)</option>
+                        <option value="CHESSE">CHESSE (Default)</option>
                         <option value="CHESS">CHESS (Turn-based)</option>
                         <option value="PUZZLE">PUZZLE (Future)</option>
                         <option value="TUTORIAL">TUTORIAL (Future)</option>
@@ -622,11 +622,10 @@
 
         // Multi-tile structure definitions (width, height)
         const multiTileStructures = {
-            'house': { width: 4, height: 3 },    // 4x3 club structure
+            'house': { width: 4, height: 3 },    // 4x3 museum structure
             'shack': { width: 3, height: 3 },    // 3x3 shack
             'deadtree': { width: 2, height: 2 }, // 2x2 dead tree
-            'well': { width: 2, height: 2 },     // 2x2 well
-            'cistern': { width: 1, height: 2 }   // 1x2 cistern (vertical)
+            'well': { width: 2, height: 2 }      // 2x2 well
         };
 
         // Asset path mappings for tiles
@@ -655,12 +654,12 @@
             'walls/boulder': '../assets/environment/walls/boulder.png',
             'walls/bush': '../assets/environment/walls/bush.png',
             'walls/chargedwall': '../assets/environment/walls/chargedwall.png',
-            'walls/clubwall': '../assets/environment/walls/clubwall.png',
-            'walls/clubwall1': '../assets/environment/walls/clubwall1.png',
-            'walls/clubwall2': '../assets/environment/walls/clubwall2.png',
-            'walls/clubwall4': '../assets/environment/walls/clubwall4.png',
-            'walls/clubwall5': '../assets/environment/walls/clubwall5.png',
-            'walls/clubwall6': '../assets/environment/walls/clubwall6.png',
+            'walls/museumwall': '../assets/environment/walls/museumwall.png',
+            'walls/museumwall1': '../assets/environment/walls/museumwall1.png',
+            'walls/museumwall2': '../assets/environment/walls/museumwall2.png',
+            'walls/museumwall4': '../assets/environment/walls/museumwall4.png',
+            'walls/museumwall5': '../assets/environment/walls/museumwall5.png',
+            'walls/museumwall6': '../assets/environment/walls/museumwall6.png',
             'walls/cobble': '../assets/environment/walls/cobble.png',
             'walls/coralwall': '../assets/environment/walls/coralwall.png',
             'doodads/fischers_cube': '../assets/environment/doodads/cube.png',
@@ -689,11 +688,11 @@
             'blue_shroom': '../assets/environment/doodads/blue_shroom.png',
             'cactus': '../assets/environment/doodads/cactus.png',
             'cactus2': '../assets/environment/doodads/cactus2.png',
-            'cistern': '../assets/environment/doodads/cistern.png',
+            'cistern': '../assets/environment/doodads/grate.png',
             'teleport_branch': '../assets/items/misc/branch.png',
             'deadtree': '../assets/environment/doodads/deadtree.png',
             'green_shroom': '../assets/environment/doodads/green_shroom.png',
-            'house': '../assets/environment/doodads/club.png',
+            'house': '../assets/environment/doodads/museum.png',
             'shack': '../assets/environment/doodads/shack.png',
             'sign': '../assets/environment/doodads/sign.png',
             'sign_blank': '../assets/environment/doodads/sign-blank.png',
@@ -712,7 +711,6 @@
             'exit_right': '../assets/ui/arrow.png',
             'exit_up': '../assets/ui/arrow.png',
             'player_spawn': '../assets/ui/pawn_small.png',
-            'port_cistern': '../assets/environment/doodads/cistern.png',
             'port_interior': '⬇',
             'port_stairdown': '../assets/environment/doodads/stairdown.png',
             'port_stairup': '../assets/environment/doodads/stairup.png',
@@ -902,7 +900,7 @@
             PORT: [
                 'exit_down', 'exit_left', 'exit_right', 'exit_up',
                 'player_spawn',
-                'port_cistern', 'port_interior', 'port_stairdown', 'port_stairup',
+                'port_interior', 'port_stairdown', 'port_stairup',
                 null
             ],
             ITEM: [
@@ -1536,7 +1534,7 @@
                     document.getElementById('zoneDescription').value = zoneData.metadata?.description || '';
                     document.getElementById('zoneTags').value = zoneData.metadata?.tags?.join(', ') || '';
                     document.getElementById('zoneDimension').value = zoneData.metadata?.dimension || 0;
-                    document.getElementById('zoneGameMode').value = zoneData.metadata?.gameMode || 'CHRESS';
+                    document.getElementById('zoneGameMode').value = zoneData.metadata?.gameMode || 'CHESSE';
                     document.getElementById('zoneLevel').value = zoneData.metadata?.level || 'home';
                     document.getElementById('zoneRarity').value = zoneData.metadata?.rarity || 5;
 

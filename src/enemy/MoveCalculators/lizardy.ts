@@ -11,7 +11,7 @@ import type { Grid } from '@types/game';
  * CHESS PIECE: PAWN
  * - Moves vertically only (forward/backward based on direction)
  * - Attacks diagonally (like pawn captures)
- * - Flips direction when blocked (unique Chress behavior)
+ * - Flips direction when blocked (unique Chesse behavior)
  * - Simplest movement pattern in the game
  *
  * Movement: 1 square vertically per turn

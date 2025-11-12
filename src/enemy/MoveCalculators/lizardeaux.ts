@@ -9,7 +9,7 @@ import { ChargeMoveHelpers } from './BaseAttackBehaviors';
  * - Moves orthogonally only (horizontal or vertical)
  * - Can move any distance along straight lines
  * - Cannot move or attack diagonally
- * - Powerful charge attack along orthogonal lines (Chress enhancement)
+ * - Powerful charge attack along orthogonal lines (Chesse enhancement)
  *
  * Movement: Unlimited orthogonal (straight line) movement
  * Attack: Orthogonal charge attacks

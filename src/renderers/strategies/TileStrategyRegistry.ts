@@ -17,7 +17,6 @@ import { FoodRenderStrategy } from './FoodRenderStrategy.js';
 import { BombRenderStrategy } from './BombRenderStrategy.js';
 import { SimpleItemRenderStrategy } from './SimpleItemRenderStrategy.js';
 import { PortRenderStrategy } from './PortRenderStrategy.js';
-import { CisternRenderStrategy } from './CisternRenderStrategy.js';
 import { PitfallRenderStrategy } from './PitfallRenderStrategy.js';
 import type { TileRenderStrategy } from './TileRenderStrategy.js';
 import type { ImageCache } from '@renderers/types.js';
@@ -201,7 +200,9 @@ export class TileStrategyRegistry {
         this.register(TILE_TYPES.TABLE, new SimpleOverlayRenderStrategy(
             this.images, this.tileSize, 'doodads/table', TILE_TYPES.TABLE, null, null
         ));
-        this.register(TILE_TYPES.CISTERN, new CisternRenderStrategy(this.images, this.tileSize, this.structureRenderer));
+        this.register(TILE_TYPES.CISTERN, new SimpleOverlayRenderStrategy(
+            this.images, this.tileSize, 'doodads/grate', TILE_TYPES.CISTERN, 'C', { font: '24px Arial', fillStyle: '#ffffeb' }
+        ));
         this.register(TILE_TYPES.PITFALL, new PitfallRenderStrategy(this.images, this.tileSize, this.structureRenderer));
 
         // New doodads

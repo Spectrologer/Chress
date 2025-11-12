@@ -1,4 +1,4 @@
-# Adding New Content to Chress
+# Adding New Content to Chesse
 
 This guide explains how to add new items, NPCs, enemies, and zones to the game using the unified ContentRegistry system.
 

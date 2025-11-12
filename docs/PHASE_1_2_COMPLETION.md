@@ -2,7 +2,7 @@
 
 ## Summary
 
-Successfully completed **Phase 1 (Fix Existing Tests)** and made significant progress on **Phase 2 (UI Component Testing)** for the Chress RPG project.
+Successfully completed **Phase 1 (Fix Existing Tests)** and made significant progress on **Phase 2 (UI Component Testing)** for the Chesse RPG project.
 
 ---
 

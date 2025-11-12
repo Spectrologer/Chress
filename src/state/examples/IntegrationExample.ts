@@ -2,7 +2,7 @@
  * Integration Example
  *
  * Shows how to integrate the new state management system
- * into the existing Chress game.
+ * into the existing Chesse game.
  */
 
 import { store, StateActions, StateSelectors, persistence } from '../index';

@@ -158,10 +158,14 @@ export class ZoneTransitionManager {
 
         if (currentDim === DIMENSION_CONSTANTS.SURFACE) {
             // On the surface, determine where the PORT leads
-            const cisternPos = MultiTileHandler.findCisternPosition(playerPos.x, playerPos.y, gridManager as any);
+            // Check if there's a CISTERN tile below the player's position (cisterns are now 1x1 grate objects)
+            const tileBelow = gridManager.isWithinBounds(playerPos.x, playerPos.y + 1)
+                ? gridManager.getTile(playerPos.x, playerPos.y + 1)
+                : undefined;
+            const isCistern = tileBelow === TILE_TYPES.CISTERN;
             const isHole: boolean = MultiTileHandler.isHole(playerPos.x, playerPos.y, gridManager as any);
 
-            if (cisternPos) {
+            if (isCistern) {
                 // Entering underground via cistern
                 targetDim = DIMENSION_CONSTANTS.UNDERGROUND;
                 portType = 'underground';

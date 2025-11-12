@@ -326,7 +326,7 @@ export class MiniMap {
         const zoneY = currentZone.y + dy - Math.round(this.panY);
         const hk = `${zoneX},${zoneY},${viewDimension}`;
 
-        const shapes = ['circle', 'triangle', 'star', 'diamond', 'heart', 'club', null];
+        const shapes = ['circle', 'triangle', 'star', 'diamond', 'heart', 'museum', null];
         const current = this.highlights?.[hk] ?? null;
         let idx = shapes.indexOf(current);
         if (idx === -1) idx = shapes.length - 1; // treat unknown as blank
@@ -518,13 +518,13 @@ export class MiniMap {
                     ctx.fillText('★', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
                 }
 
-                // Draw club icon for the home zone (0,0) in the overworld
+                // Draw museum icon for the home zone (0,0) in the overworld
                 if (zoneX === 0 && zoneY === 0 && viewDimension === 0) {
                     ctx.fillStyle = '#272736'; // Dark brown for the symbol
                     ctx.font = `bold ${zoneSize * 0.8}px serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    // Draw the club symbol in the center of the tile
+                    // Draw the museum symbol in the center of the tile
                     ctx.fillText('♣', mapX + (zoneSize / 2), mapY + (zoneSize / 2) + 1);
                 }
 
@@ -544,7 +544,7 @@ export class MiniMap {
                 const shape = this.highlights?.[hk];
                 if (shape) {
                     // Map shape names to text glyphs and colors for crisp scaling
-                    const glyphs: Record<string, string> = { circle: '●', triangle: '▲', star: '★', diamond: '◆', heart: '♥', club: '♣' };
+                    const glyphs: Record<string, string> = { circle: '●', triangle: '▲', star: '★', diamond: '◆', heart: '♥', museum: '♣' };
                     const colorMap: Record<string, string> = {
                         // darker/muted, higher contrast against light gray/parchment
                         circle: '#57294B',   // deep red
@@ -552,7 +552,7 @@ export class MiniMap {
                         star: '#BA6156',     // bronze/gold-brown
                         diamond: '#4B5BAB',  // deep purple
                         heart: '#B0305C',    // deep magenta
-                        club: '#3D6E70'      // dark teal
+                        museum: '#3D6E70'      // dark teal
                     };
                     const glyph = glyphs[shape] || null;
                     if (glyph) {

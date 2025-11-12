@@ -1,4 +1,4 @@
-// Global type declarations for the Chress project
+// Global type declarations for the Chesse project
 
 // Extend Window interface for webkit audio context (legacy Safari support)
 interface Window {

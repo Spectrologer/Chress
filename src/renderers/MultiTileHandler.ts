@@ -10,10 +10,10 @@ interface StructurePosition {
 
 export class MultiTileHandler {
     static findHousePosition(targetX: number, targetY: number, gridManager: GridManager, isStrictCheck = false): StructurePosition | null {
-        // Find the top-left corner of the 4x3 club that contains this tile
+        // Find the top-left corner of the 4x3 museum that contains this tile
         for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
             for (let startX = Math.max(0, targetX - 3); startX <= Math.min(GRID_SIZE - 4, targetX); startX++) {
-                // Check if there's a 4x3 club starting at this position
+                // Check if there's a 4x3 museum starting at this position
                 let isHouse = true;
                 for (let y = startY; y < startY + 3 && isHouse; y++) { // 3 tiles high
                     for (let x = startX; x < startX + 4 && isHouse; x++) { // 4 tiles wide
@@ -126,47 +126,14 @@ export class MultiTileHandler {
         return null;
     }
 
-    static findCisternPosition(targetX: number, targetY: number, gridManager: GridManager): StructurePosition | null {
-        // Find the top-left corner of the 1x2 cistern that contains this tile
-        // The structure can be:
-        // 1. PORT (top) + CISTERN (bottom) - traditional cistern with entrance
-        // 2. CISTERN (top) + CISTERN (bottom) - double-bottom cistern (visual only)
-
-        // Check if the current tile is the bottom part of a PORT+CISTERN structure
-        if (targetY > 0 && isCistern(gridManager.getTile(targetX, targetY)) && isPort(gridManager.getTile(targetX, targetY - 1))) {
-            return { startX: targetX, startY: targetY - 1 };
-        }
-
-        // Check if the current tile is the top part of a PORT+CISTERN structure
-        if (targetY < GRID_SIZE - 1 && isPort(gridManager.getTile(targetX, targetY)) && isCistern(gridManager.getTile(targetX, targetY + 1))) {
-            // Before confirming, ensure this isn't a door for a shack or house
-            const shackInfo = this.findShackPosition(targetX, targetY, gridManager, true);
-            const houseInfo = this.findHousePosition(targetX, targetY, gridManager, true);
-            if (!shackInfo && !houseInfo) {
-                return { startX: targetX, startY: targetY };
-            }
-        }
-
-        // Check if this is a double-bottom cistern (CISTERN + CISTERN)
-        if (targetY > 0 && isCistern(gridManager.getTile(targetX, targetY)) && isCistern(gridManager.getTile(targetX, targetY - 1))) {
-            return { startX: targetX, startY: targetY - 1 };
-        }
-        if (targetY < GRID_SIZE - 1 && isCistern(gridManager.getTile(targetX, targetY)) && isCistern(gridManager.getTile(targetX, targetY + 1))) {
-            return { startX: targetX, startY: targetY };
-        }
-
-        return null;
-    }
-
     static isHole(targetX: number, targetY: number, gridManager: GridManager): boolean {
         const tile = gridManager.getTile(targetX, targetY);
         if (!isPort(tile)) {
             return false;
         }
-        const isCisternPos = this.findCisternPosition(targetX, targetY, gridManager);
         const isShack = this.findShackPosition(targetX, targetY, gridManager);
         const isHouse = this.findHousePosition(targetX, targetY, gridManager);
 
-        return !isCisternPos && !isShack && !isHouse;
+        return !isShack && !isHouse;
     }
 }

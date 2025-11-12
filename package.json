@@ -1,5 +1,5 @@
 {
-  "name": "chress",
+  "name": "chesse",
   "version": "1.0.0",
   "description": "A browser-based RPG game with turn-based combat, zone exploration, and procedural generation",
   "keywords": [
@@ -9,13 +9,13 @@
     "html5-canvas",
     "browser-game"
   ],
-  "homepage": "https://github.com/Spectrologer/Chress",
+  "homepage": "https://github.com/Spectrologer/Chesse",
   "bugs": {
-    "url": "https://github.com/Spectrologer/Chress/issues"
+    "url": "https://github.com/Spectrologer/Chesse/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Spectrologer/Chress.git"
+    "url": "https://github.com/Spectrologer/Chesse.git"
   },
   "license": "ISC",
   "author": "Spectrologer",

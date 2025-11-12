@@ -2,7 +2,7 @@
 
 ## Summary
 
-I've set up a comprehensive infrastructure for incrementally enabling TypeScript strict mode in your Chress project. All tools, documentation, and scripts are ready to use.
+I've set up a comprehensive infrastructure for incrementally enabling TypeScript strict mode in your Chesse project. All tools, documentation, and scripts are ready to use.
 
 ## What Was Created
 

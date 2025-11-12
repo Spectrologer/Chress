@@ -36,9 +36,9 @@ export class HouseRenderer extends BaseStructureRenderer {
         // First render dirt background
         this.renderBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel, baseRenderer);
 
-        // Then render the club part
-        if (RendererUtils.isImageLoaded(this.images, 'doodads/club')) {
-            // For a 4x3 club, we need to determine which part of the club image to draw
+        // Then render the museum part
+        if (RendererUtils.isImageLoaded(this.images, 'doodads/museum')) {
+            // For a 4x3 museum, we need to determine which part of the museum image to draw
             const houseInfo = this.multiTileHandler.findHousePosition(x, y, grid);
 
             if (houseInfo) {
@@ -46,8 +46,8 @@ export class HouseRenderer extends BaseStructureRenderer {
                 const partX = x - houseInfo.startX;
                 const partY = y - houseInfo.startY;
 
-                // Draw the corresponding part of the club image
-                const houseImage = this.images['doodads/club'];
+                // Draw the corresponding part of the museum image
+                const houseImage = this.images['doodads/museum'];
                 if (!RendererUtils.renderImageSlice(ctx, houseImage, partX, partY, 4, 3, pixelX, pixelY, TILE_SIZE)) {
                     // Fallback if slicing fails
                     RendererUtils.drawFallbackTile(ctx, pixelX, pixelY, TILE_SIZE, TILE_TYPES.HOUSE, 'H');

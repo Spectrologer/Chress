@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Centralized State Store for Chress
+ * Centralized State Store for Chesse
  *
  * Single source of truth for all application state.
  * Implements a lightweight state management pattern with:
@@ -332,5 +332,5 @@ export const store = new StateStore();
 
 // Debug access in development
 if (typeof window !== 'undefined') {
-    (window as any).chressStore = store;
+    (window as any).chesseStore = store;
 }

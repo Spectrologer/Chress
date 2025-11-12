@@ -1,6 +1,6 @@
 # Board Files
 
-This directory contains the source board files for custom zones in Chress.
+This directory contains the source board files for custom zones in Chesse.
 
 ## Directory Structure
 
@@ -110,8 +110,8 @@ Rotations are in degrees, clockwise:
 - 270°: Rotated 270° clockwise (↑)
 
 ### Corner Pieces
-- `clubwall5`: Designed for top-left corner
-- `clubwall6`: Designed for top-right corner
+- `museumwall5`: Designed for top-left corner
+- `museumwall6`: Designed for top-right corner
 
 When placed in other corners, they should be rotated:
 - Top-left → Top-right: 90°

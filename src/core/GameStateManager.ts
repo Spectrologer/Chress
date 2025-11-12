@@ -16,7 +16,7 @@ import type { PlayerStats } from '@entities/PlayerStats';
 import type { Grid, SavedPlayerData as SharedSavedPlayerData, SavedPlayerStats as SharedSavedPlayerStats, SaveGameData as SharedSaveGameData } from './SharedTypes';
 import type { Coordinates } from './PositionTypes';
 
-const GAME_STATE_KEY = 'chress_game_state';
+const GAME_STATE_KEY = 'chesse_game_state';
 const SAVE_VERSION = 2; // bump if save format changes
 
 export interface SavePayload {

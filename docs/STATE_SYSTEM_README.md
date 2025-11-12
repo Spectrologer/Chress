@@ -134,11 +134,11 @@ const hasAxe = StateSelectors.hasAbility('axe');
 StateActions.addToInventory(item);
 
 // Console debugging
-window.chressStore.debugPrint();
-window.chressStore.getMutations(10);
+window.chesseStore.debugPrint();
+window.chesseStore.getMutations(10);
 
 // Visual debugging
-window.chressDebugger.toggle();
+window.chesseDebugger.toggle();
 ```
 
 ### Backward Compatibility
@@ -252,22 +252,22 @@ await persistence.save();
 ### Visual Debugger
 Press **Ctrl+Shift+D** or:
 ```javascript
-window.chressDebugger.toggle();
+window.chesseDebugger.toggle();
 ```
 
 ### Console Debugging
 ```javascript
 // Print entire state
-window.chressStore.debugPrint();
+window.chesseStore.debugPrint();
 
 // Get specific state
-window.chressStore.get('persistent.player');
+window.chesseStore.get('persistent.player');
 
 // View mutations
-window.chressStore.getMutations(20);
+window.chesseStore.getMutations(20);
 
 // Get statistics
-window.chressStore.getStats();
+window.chesseStore.getStats();
 ```
 
 ### Track State Changes
@@ -388,7 +388,7 @@ A: System uses IndexedDB (unlimited) with localStorage fallback.
 A: No! Migrate gradually. Old and new systems can coexist.
 
 **Q: How do I debug state issues?**
-A: Press Ctrl+Shift+D or use `window.chressStore.debugPrint()`.
+A: Press Ctrl+Shift+D or use `window.chesseStore.debugPrint()`.
 
 **Q: Will this affect performance?**
 A: Generally improves performance via immutable updates.

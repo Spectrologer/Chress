@@ -79,7 +79,7 @@ npm run build
 
 Set the `gameMode` in metadata to control gameplay:
 
-- **`"CHRESS"`** (default) - Standard Chress gameplay with real-time movement
+- **`"CHESSE"`** (default) - Standard Chesse gameplay with real-time movement
 - **`"CHESS"`** - Turn-based chess-like mode with team-based units
 - **`"PUZZLE"`** - Future: Puzzle challenges
 - **`"TUTORIAL"`** - Future: Tutorial mode

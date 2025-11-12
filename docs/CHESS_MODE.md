@@ -1,6 +1,6 @@
 # Chess Mode - Type-Safe Game Mode System
 
-Chess mode is a turn-based strategic game mode that serves as the foundation for future game modes in Chress.
+Chess mode is a turn-based strategic game mode that serves as the foundation for future game modes in Chesse.
 
 ## Board JSON Game Mode Metadata
 
@@ -22,7 +22,7 @@ Custom boards can specify their game mode in the metadata field:
 ```
 
 Supported game modes:
-- `"CHRESS"` (default) - Standard Chress gameplay
+- `"CHESSE"` (default) - Standard Chesse gameplay
 - `"CHESS"` - Turn-based chess-like mode
 - `"PUZZLE"` - Future: Puzzle challenges
 - `"TUTORIAL"` - Future: Tutorial mode
@@ -37,7 +37,7 @@ Chess mode uses a type-safe game mode system defined in `src/core/GameMode.ts`:
 
 ```typescript
 enum GameMode {
-    NORMAL = 'normal',      // Standard Chress gameplay
+    NORMAL = 'normal',      // Standard Chesse gameplay
     CHESS = 'chess',        // Turn-based chess-like mode
     PUZZLE = 'puzzle',      // Future: Puzzle challenges
     TUTORIAL = 'tutorial'   // Future: Tutorial mode
@@ -95,7 +95,7 @@ console.log(config.aiDelayMs); // 500
 
 ## Chess Piece Movement
 
-All pieces follow their Chress movement patterns:
+All pieces follow their Chesse movement patterns:
 
 | Piece | Chess Equivalent | Movement Pattern |
 |-------|------------------|------------------|
@@ -155,7 +155,7 @@ type Team = 'player' | 'enemy';
 
 After checkmate:
 1. A victory/defeat message is displayed
-2. The game returns to normal CHRESS mode
+2. The game returns to normal CHESSE mode
 3. The player is teleported back to where they loaded the chess board (e.g., the museum sign at 0,0 interior)
 
 ## Files

@@ -16,12 +16,12 @@ export class StructureGenerator {
     }
 
     addHouse(zoneX: number, zoneY: number): void {
-        // Place a 4x3 club in the center-left area of zone (0,0)
+        // Place a 4x3 museum in the center-left area of zone (0,0)
         // Position it so the player can spawn in front of it (to the south)
         const houseStartX = ZONE_CONSTANTS.HOUSE_START_POSITION.x;
         const houseStartY = ZONE_CONSTANTS.HOUSE_START_POSITION.y;
 
-        // Place the 4x3 club
+        // Place the 4x3 museum
         for (let y = houseStartY; y < houseStartY + 3; y++) {
             for (let x = houseStartX; x < houseStartX + 4; x++) {
                 // Place a PORT tile at the bottom-middle of the house as an entrance
@@ -31,7 +31,7 @@ export class StructureGenerator {
                         validateAndSetTile(this.gridManager, x, y, TILE_TYPES.PORT);
                     }
                 } else if (x >= 1 && x < GRID_SIZE - 1 && y >= 1 && y < GRID_SIZE - 1) {
-                    // Check bounds for the rest of the club
+                    // Check bounds for the rest of the museum
                     if (!isTileObjectOfType(this.gridManager.getTile(x, y), TILE_TYPES.SIGN)) {
                         validateAndSetTile(this.gridManager, x, y, TILE_TYPES.HOUSE);
                     }
@@ -41,7 +41,7 @@ export class StructureGenerator {
 
         // Clear the area in front of the house (south side) for player spawn
         for (let x = houseStartX; x < houseStartX + 3; x++) {
-            const frontY = houseStartY + 3; // One row south of the club
+            const frontY = houseStartY + 3; // One row south of the museum
             if (frontY < GRID_SIZE - 1) {
                 this.gridManager.setTile(x, frontY, TILE_TYPES.FLOOR);
             }
