@@ -1,5 +1,6 @@
 import { IMAGE_ASSETS, FOOD_ASSETS, TOTAL_IMAGES, TILE_COLORS, TILE_TYPES, TILE_SIZE, GRID_SIZE } from '@core/constants/index';
 import { TextureLoader } from './TextureLoader';
+import { AtlasTextureLoader } from './AtlasTextureLoader';
 import { TextureDetector } from './TextureDetector';
 import { TileRenderer } from './TileRenderer';
 import { MultiTileHandler } from './MultiTileHandler';
@@ -7,14 +8,18 @@ import { logger } from '@core/logger';
 import type { ImageCache } from './types';
 import type { Tile } from '@core/SharedTypes';
 
+// Set this to true to use atlas-based texture loading (recommended for production)
+const USE_ATLAS_LOADING = true;
+
 export class TextureManager {
-    private loader: TextureLoader;
+    private loader: TextureLoader | AtlasTextureLoader;
     renderer: TileRenderer | null = null;
     structureRenderer: unknown = null;
     onAllImagesLoaded: (() => void) | null = null;
 
     constructor() {
-        this.loader = new TextureLoader();
+        this.loader = USE_ATLAS_LOADING ? new AtlasTextureLoader() : new TextureLoader();
+        logger.debug(`[TextureManager] Using ${USE_ATLAS_LOADING ? 'AtlasTextureLoader' : 'TextureLoader'}`);
     }
 
     async loadAssets(): Promise<void> {

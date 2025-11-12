@@ -11,6 +11,7 @@ import { ZoneStateRestorer } from './ZoneStateRestorer';
 import { ZoneRepository } from '@repositories/ZoneRepository';
 import { boardLoader } from './BoardLoader';
 import { createZoneKey } from '@utils/ZoneKeyUtils';
+import { resetToNormalMode } from './GameModeManager';
 import type { GameContext } from './context/GameContextCore';
 import type { PlayerStats } from '@entities/PlayerStats';
 import type { Grid, SavedPlayerData as SharedSavedPlayerData, SavedPlayerStats as SharedSavedPlayerStats, SaveGameData as SharedSaveGameData } from './SharedTypes';
@@ -203,6 +204,10 @@ export class GameStateManager {
         if (gameExt.dialogueState) {
             gameExt.dialogueState.clear(); // Reset NPC dialogue progression
         }
+
+        // Reset chess mode to normal mode
+        resetToNormalMode(this.game);
+
         this.game.player!.reset();
         // IMPORTANT: Clear the array instead of reassigning to preserve EnemyCollection reference
         if (this.game.enemyCollection) {

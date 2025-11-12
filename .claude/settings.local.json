@@ -52,7 +52,9 @@
       "Bash(timeout /t 3 /nobreak)",
       "Bash(move:*)",
       "Bash(test:*)",
-      "Bash(xargs sed:*)"
+      "Bash(xargs sed:*)",
+      "Bash(npm install:*)",
+      "Bash(for f in static/atlases/*.json)"
     ],
     "deny": [],
     "ask": []
