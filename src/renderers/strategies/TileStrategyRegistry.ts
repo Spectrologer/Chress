@@ -11,6 +11,7 @@ import { HouseRenderStrategy } from './HouseRenderStrategy.js';
 import { ShackRenderStrategy } from './ShackRenderStrategy.js';
 import { WellRenderStrategy } from './WellRenderStrategy.js';
 import { DeadTreeRenderStrategy } from './DeadTreeRenderStrategy.js';
+import { BigTreeRenderStrategy } from './BigTreeRenderStrategy.js';
 import { StatueRenderStrategy } from './StatueRenderStrategy.js';
 import { SimpleOverlayRenderStrategy } from './SimpleOverlayRenderStrategy.js';
 import { FoodRenderStrategy } from './FoodRenderStrategy.js';
@@ -71,6 +72,7 @@ export class TileStrategyRegistry {
         this.register(TILE_TYPES.SHACK, new ShackRenderStrategy(this.images, this.tileSize, this.multiTileHandler));
         this.register(TILE_TYPES.WELL, new WellRenderStrategy(this.images, this.tileSize, this.multiTileHandler));
         this.register(TILE_TYPES.DEADTREE, new DeadTreeRenderStrategy(this.images, this.tileSize, this.multiTileHandler));
+        this.register(TILE_TYPES.BIG_TREE, new BigTreeRenderStrategy(this.images, this.tileSize, this.multiTileHandler));
 
         // Statues
         const statueStrategy = new StatueRenderStrategy(this.images, this.tileSize);
@@ -208,9 +210,6 @@ export class TileStrategyRegistry {
         // New doodads
         this.register(TILE_TYPES.ANEMONE, new SimpleOverlayRenderStrategy(
             this.images, this.tileSize, 'doodads/anemone', TILE_TYPES.ANEMONE, null, null
-        ));
-        this.register(TILE_TYPES.BIG_TREE, new SimpleOverlayRenderStrategy(
-            this.images, this.tileSize, 'doodads/big_tree', TILE_TYPES.BIG_TREE, null, null
         ));
         this.register(TILE_TYPES.BLUE_SHROOM, new SimpleOverlayRenderStrategy(
             this.images, this.tileSize, 'doodads/blue_shroom', TILE_TYPES.BLUE_SHROOM, null, null

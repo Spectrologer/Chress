@@ -1,0 +1,190 @@
+MULTI-TILE ENTITY REGISTRATION COMPLETE GUIDE
+==============================================
+
+OVERVIEW:
+All multi-tile entities follow a consistent 4-part registration flow:
+1. Configuration (tile type constants)
+2. Rendering (strategy classes)
+3. Placement (structure generator)
+4. Position Finding (multi-tile handler)
+
+BIG_TREE EXAMPLE (2 wide x 6 tall, upper 4 tiles walkable):
+============================================================
+
+STEP 1: TILE TYPE CONFIGURATION
+Files: src/core/constants/tiles.ts
+Status: ALREADY DONE
+- BIG_TREE: 115 (line 127)
+- Color: #3CA370 (Forest green, line 267)
+
+STEP 2: RENDER STRATEGY
+Files:
+- src/renderers/strategies/BigTreeRenderStrategy.ts (NEW)
+- src/renderers/strategies/TileStrategyRegistry.ts (MODIFY)
+
+Code for BigTreeRenderStrategy.ts:
+```typescript
+import { TILE_TYPES } from '@core/constants/index.js';
+import { MultiTileRenderStrategy } from './MultiTileRenderStrategy.js';
+import type { MultiTileHandler } from '@renderers/MultiTileHandler.js';
+
+export class BigTreeRenderStrategy extends MultiTileRenderStrategy {
+    constructor(images: Record<string, HTMLImageElement>, tileSize: number, multiTileHandler: typeof MultiTileHandler) {
+        super(images, tileSize, multiTileHandler, {
+            spriteKey: 'doodads/big_tree',
+            width: 2,
+            height: 6,
+            tileType: TILE_TYPES.BIG_TREE,
+            positionFinderMethod: 'findBigTreePosition'
+        });
+    }
+}
+```
+
+Register in TileStrategyRegistry.ts (line ~73, after DEADTREE):
+```typescript
+import { BigTreeRenderStrategy } from './BigTreeRenderStrategy.js';
+
+// In initializeStrategies():
+this.register(TILE_TYPES.BIG_TREE, new BigTreeRenderStrategy(this.images, this.tileSize, this.multiTileHandler));
+```
+
+STEP 3: POSITION FINDER
+File: src/renderers/MultiTileHandler.ts
+
+Add methods:
+```typescript
+static findBigTreePosition(targetX: number, targetY: number, gridManager: GridManager): StructurePosition | null {
+    return this._find2x6StructurePosition(targetX, targetY, gridManager, TILE_TYPES.BIG_TREE);
+}
+
+static _find2x6StructurePosition(targetX: number, targetY: number, gridManager: GridManager, tileType: any): StructurePosition | null {
+    for (let startY = Math.max(0, targetY - 5); startY <= Math.min(GRID_SIZE - 6, targetY); startY++) {
+        for (let startX = Math.max(0, targetX - 1); startX <= Math.min(GRID_SIZE - 2, targetX); startX++) {
+            let isStructure = true;
+            for (let y = startY; y < startY + 6 && isStructure; y++) {
+                for (let x = startX; x < startX + 2 && isStructure; x++) {
+                    if (isWithinGrid(x, y) && gridManager.getTile(x, y) !== tileType) {
+                        isStructure = false;
+                    }
+                }
+            }
+            if (isStructure && targetX >= startX && targetX < startX + 2 &&
+                targetY >= startY && targetY < startY + 6) {
+                return { startX, startY };
+            }
+        }
+    }
+    return null;
+}
+```
+
+STEP 4: PLACEMENT LOGIC
+File: src/generators/StructureGenerator.ts
+
+Add method:
+```typescript
+addBigTree(zoneX: number, zoneY: number): void {
+    this._placeStructure(2, 6, TILE_TYPES.BIG_TREE, () => {
+        this.game?.zoneGenState.setSpawnFlag('bigTree', true);
+        logger.log(`Big tree spawned at zone (${zoneX}, ${zoneY})`);
+    });
+}
+```
+
+STEP 5: SPRITE ASSET
+File: public/static/assets/environment/doodads/big_tree.png
+- Must be 128x384 pixels (2 tiles wide x 6 tiles tall x 64px per tile)
+- PNG format with transparency
+- Currently registered in TileStrategyRegistry as 'doodads/big_tree'
+
+STEP 6: WALKABILITY (OPTIONAL)
+For partial walkability (upper 4 tiles behind = walkable):
+
+Option A - Add to WALKABLE_TYPES:
+File: src/core/TileRegistry.ts (line 78-97)
+Add: TILE_TYPES.BIG_TREE to WALKABLE_TYPES array
+
+Option B - Custom walkability logic:
+File: src/entities/PlayerMovement.ts
+In isWalkable() method, add special case:
+```typescript
+if (tileType === TILE_TYPES.BIG_TREE) {
+    const bigTreePos = MultiTileHandler.findBigTreePosition(newX, newY, gridManager);
+    if (bigTreePos) {
+        const relativeY = newY - bigTreePos.startY;
+        return relativeY < 4;  // Upper 4 rows walkable
+    }
+}
+```
+
+EXISTING MULTI-TILE EXAMPLES:
+=============================
+
+2x2 STRUCTURES:
+- WELL: src/renderers/strategies/WellRenderStrategy.ts
+- DEADTREE: src/renderers/strategies/DeadTreeRenderStrategy.ts
+
+3x3 STRUCTURES:
+- SHACK: src/renderers/strategies/ShackRenderStrategy.ts
+  - Has special door handling (PORT tile at position 1,2)
+  - Not walkable
+
+4x3 STRUCTURES:
+- HOUSE: src/renderers/strategies/HouseRenderStrategy.ts
+  - Has special door handling (PORT tile)
+  - Not walkable
+
+KEY PATTERNS:
+=============
+
+1. MultiTileConfig Interface (MultiTileRenderStrategy.ts):
+   - spriteKey: Image cache key (e.g., 'doodads/big_tree')
+   - width/height: Structure dimensions in tiles
+   - tileType: The TILE_TYPES constant
+   - positionFinderMethod: Name of MultiTileHandler method (e.g., 'findBigTreePosition')
+
+2. Position Finder Pattern (MultiTileHandler.ts):
+   - Search window: 2D loop around target tile
+   - Validation: Check if all tiles in rectangle match the tile type
+   - Return: Top-left corner (startX, startY) of structure
+
+3. Rendering Pattern (MultiTileRenderStrategy.ts):
+   1. Render floor background
+   2. Find structure position
+   3. Calculate relative position within structure (partX, partY)
+   4. Draw correct slice of sprite image
+
+4. Placement Pattern (StructureGenerator.ts):
+   - Use findValidPlacement() with width/height constraints
+   - Check allowedTiles (FLOOR, ROCK, SHRUBBERY, GRASS, WATER)
+   - Set all tiles in rectangle to the tile type
+   - Call optional callback when placed
+
+BOARD SAVE/LOAD:
+================
+File: src/core/BoardLoader.ts
+- Multi-tile entities are automatically preserved in the grid
+- No special handling needed
+- Grid is flattened to string for JSON storage
+- Entire grid structure is preserved on load
+
+SUMMARY OF FILES TO MODIFY/CREATE:
+===================================
+CREATE:
+  [ ] src/renderers/strategies/BigTreeRenderStrategy.ts
+
+MODIFY:
+  [ ] src/renderers/strategies/TileStrategyRegistry.ts (add import and register)
+  [ ] src/renderers/MultiTileHandler.ts (add findBigTreePosition and _find2x6StructurePosition)
+  [ ] src/generators/StructureGenerator.ts (add addBigTree)
+  [ ] src/core/TileRegistry.ts (optional: add to WALKABLE_TYPES or custom logic)
+  [ ] src/entities/PlayerMovement.ts (optional: custom walkability check)
+
+ASSET:
+  [ ] public/static/assets/environment/doodads/big_tree.png (128x384px)
+
+ALREADY DONE:
+  [x] src/core/constants/tiles.ts (TILE_TYPES.BIG_TREE: 115)
+  [x] src/core/constants/tiles.ts (TILE_COLORS entry)
+

@@ -709,6 +709,7 @@
         shack: { width: 3, height: 3 }, // 3x3 shack
         deadtree: { width: 2, height: 2 }, // 2x2 dead tree
         well: { width: 2, height: 2 }, // 2x2 well
+        big_tree: { width: 2, height: 3 }, // 2x3 big tree
       };
 
       // Asset path mappings for tiles
@@ -1366,9 +1367,13 @@
         );
 
         // Determine which layer to paint on and which rotation layer to use
-        // FLOOR and WALL paint on terrain layer, TRIM paints on overlay layer, everything else on feature layer
+        // FLOOR and WALL paint on terrain layer
+        // TRIM and overlay structures (big_tree, etc.) paint on overlay layer
+        // Everything else on feature layer
         let targetLayer, targetRotationLayer;
-        if (currentCategory === "TRIM") {
+        const overlayStructures = ['big_tree']; // Structures that should render as overlays
+
+        if (currentCategory === "TRIM" || overlayStructures.includes(selectedValue)) {
           targetLayer = overlayLayer;
           targetRotationLayer = overlayRotationLayer;
         } else if (currentCategory === "FLOOR" || currentCategory === "WALL") {
@@ -1686,14 +1691,6 @@
               if (value.endsWith("_statue") || value.startsWith("black_")) {
                 img.style.filter = "grayscale(100%) brightness(0.7)";
               }
-
-              // Rotate arrow for directional exits
-              if (value === "exit_left") img.style.transform = "rotate(-90deg)";
-              else if (value === "exit_down")
-                img.style.transform = "rotate(180deg)";
-              else if (value === "exit_right")
-                img.style.transform = "rotate(90deg)";
-              // exit_up is default (0deg)
 
               item.appendChild(img);
             } else {

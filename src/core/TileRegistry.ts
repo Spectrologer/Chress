@@ -149,8 +149,9 @@ export class TileRegistry {
 
     /**
      * Check if a tile is walkable
+     * For multi-tile structures like BIG_TREE, position information is needed
      */
-    static isWalkable(tile: number | any): boolean {
+    static isWalkable(tile: number | any, x?: number, y?: number, grid?: any): boolean {
         const tileType = getTileType(tile);
 
         // Signs are explicitly not walkable
@@ -158,8 +159,34 @@ export class TileRegistry {
             return false;
         }
 
+        // Special handling for BIG_TREE: only upper 1 row is walkable
+        if (tileType === TILE_TYPES.BIG_TREE && x !== undefined && y !== undefined && grid !== undefined) {
+            return TileRegistry.isBigTreeWalkable(x, y, grid);
+        }
+
         // Check against walkable types list
         return TileRegistry.WALKABLE_TYPES.includes(tileType);
+    }
+
+    /**
+     * Check if a BIG_TREE tile at the given position is walkable.
+     * BIG_TREE is 2x3 tiles: only the upper 1 row is walkable (row 0 from top),
+     * the bottom 2 rows (rows 1-2) are not walkable.
+     */
+    static isBigTreeWalkable(x: number, y: number, grid: any): boolean {
+        // Import MultiTileHandler dynamically to avoid circular dependencies
+        const { MultiTileHandler } = require('@renderers/MultiTileHandler');
+
+        const positionInfo = MultiTileHandler.findBigTreePosition(x, y, grid);
+        if (!positionInfo) {
+            return false; // Not part of a valid big tree structure
+        }
+
+        // Calculate position within the 2x3 structure
+        const partY = y - positionInfo.startY;
+
+        // Only the top row (0) is walkable, bottom 2 rows (1-2) are not
+        return partY === 0;
     }
 
     /**

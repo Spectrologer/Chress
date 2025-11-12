@@ -481,8 +481,22 @@ export class RenderManager {
         });
 
         // Pass 2: Render overlay textures (trim, etc.) on top of terrain but below features
+        // Track which overlay coords are multi-tile structures to skip in simple overlay pass
+        const renderedOverlayCoords = new Set<string>();
+        const multiTileOverlays = ['big_tree', 'deadtree', 'well', 'museum', 'shack'];
 
+        // Mark multi-tile structure coords to skip them in the simple overlay pass
         for (const [coord, overlayTexture] of Object.entries(overlayTextures)) {
+            if (multiTileOverlays.includes(overlayTexture)) {
+                renderedOverlayCoords.add(coord);
+            }
+        }
+
+        // Render simple overlay textures (trim, etc.) - skip multi-tile structures
+        for (const [coord, overlayTexture] of Object.entries(overlayTextures)) {
+            // Skip if this is a multi-tile structure (render those in Pass 4)
+            if (renderedOverlayCoords.has(coord)) continue;
+
             const [x, y] = coord.split(',').map(Number);
 
             // For overlays, use the full path with environment/ prefix
@@ -532,6 +546,102 @@ export class RenderManager {
                 // Fallback rendering (skip for features to avoid double rendering)
             }
         });
+
+        // Pass 4: Render multi-tile overlay structures on top of features
+        // This allows structures like big_tree to overlay on top of other features
+        const renderedStructureCoords = new Set<string>();
+
+        for (const [coord, overlayTexture] of Object.entries(overlayTextures)) {
+            // Only process multi-tile structures
+            if (!multiTileOverlays.includes(overlayTexture)) continue;
+
+            const [x, y] = coord.split(',').map(Number);
+
+            // Skip if already rendered
+            if (renderedStructureCoords.has(coord)) continue;
+
+            // Convert overlay texture name to tile type
+            const tileTypeMap: Record<string, number> = {
+                'big_tree': TILE_TYPES.BIG_TREE,
+                'deadtree': TILE_TYPES.DEADTREE,
+                'well': TILE_TYPES.WELL,
+                'museum': TILE_TYPES.HOUSE,
+                'shack': TILE_TYPES.SHACK
+            };
+
+            const tileType = tileTypeMap[overlayTexture];
+            if (!tileType) continue;
+
+            // Create a temporary grid containing only this overlay structure's tiles
+            const tempGrid: Tile[][] = [];
+            for (let gy = 0; gy < GRID_SIZE; gy++) {
+                tempGrid[gy] = [];
+                for (let gx = 0; gx < GRID_SIZE; gx++) {
+                    const coordKey = `${gx},${gy}`;
+                    if (overlayTextures[coordKey] === overlayTexture) {
+                        tempGrid[gy][gx] = tileType;
+                    } else {
+                        tempGrid[gy][gx] = TILE_TYPES.FLOOR;
+                    }
+                }
+            }
+
+            // Create a temporary grid manager
+            const tempGridManager = {
+                getTile: (gx: number, gy: number) => {
+                    if (gy >= 0 && gy < tempGrid.length && gx >= 0 && gx < tempGrid[gy].length) {
+                        return tempGrid[gy][gx];
+                    }
+                    return TILE_TYPES.FLOOR;
+                },
+                getSize: () => GRID_SIZE
+            };
+
+            // Find structure dimensions
+            const structureSizes: Record<string, [number, number]> = {
+                'big_tree': [2, 3],
+                'deadtree': [2, 2],
+                'well': [2, 2],
+                'museum': [4, 3],
+                'shack': [3, 3]
+            };
+
+            const [width, height] = structureSizes[overlayTexture] || [1, 1];
+
+            // Find structure origin
+            let originX = x, originY = y;
+            let foundOrigin = false;
+            for (let sy = Math.max(0, y - height + 1); sy <= y && !foundOrigin; sy++) {
+                for (let sx = Math.max(0, x - width + 1); sx <= x && !foundOrigin; sx++) {
+                    let isComplete = true;
+                    for (let dy = 0; dy < height && isComplete; dy++) {
+                        for (let dx = 0; dx < width && isComplete; dx++) {
+                            const checkCoord = `${sx + dx},${sy + dy}`;
+                            if (overlayTextures[checkCoord] !== overlayTexture) {
+                                isComplete = false;
+                            }
+                        }
+                    }
+                    if (isComplete) {
+                        originX = sx;
+                        originY = sy;
+                        foundOrigin = true;
+                    }
+                }
+            }
+
+            // Render the structure
+            if (foundOrigin) {
+                for (let dy = 0; dy < height; dy++) {
+                    for (let dx = 0; dx < width; dx++) {
+                        const tileX = originX + dx;
+                        const tileY = originY + dy;
+                        this.textureManager.renderTile(this.ctx, tileX, tileY, tileType, tempGridManager, zoneLevel, terrainTextures, rotations);
+                        renderedStructureCoords.add(`${tileX},${tileY}`);
+                    }
+                }
+            }
+        }
     }
 
     // Draw a darkened border overlay on the exterior edge of the 8x8 playable area

@@ -1,0 +1,145 @@
+MULTI-TILE ENTITY FILE LOCATIONS AND CODE
+===========================================
+
+CONFIGURATION FILES (Tile Types and Constants)
+===============================================
+
+1. src/core/constants/tiles.ts
+   Line 127: BIG_TREE: 115,
+   Line 267: [TILE_TYPES.BIG_TREE]: '#3CA370',
+
+RENDERING FILES (Strategies and Registry)
+==========================================
+
+2. src/renderers/strategies/TileStrategyRegistry.ts
+   Line 1-26: Imports all strategies
+   Line 56-233: initializeStrategies() method
+   Line 72: DEADTREE registration (reference point)
+   TODO: Add BigTreeRenderStrategy import
+   TODO: Register TILE_TYPES.BIG_TREE strategy
+
+3. src/renderers/strategies/MultiTileRenderStrategy.ts (Abstract Base Class)
+   Line 10-25: MultiTileConfig interface
+   Line 51-171: MultiTileRenderStrategy abstract class
+   - This is what BigTreeRenderStrategy should extend
+
+4. src/renderers/strategies/WellRenderStrategy.ts (2x2 Example)
+   Complete example to follow for BigTreeRenderStrategy
+   
+5. src/renderers/strategies/DeadTreeRenderStrategy.ts (2x2 Example)
+   Alternative complete example
+
+6. src/renderers/strategies/ShackRenderStrategy.ts (3x3 Example)
+   Shows fallbackChar and fallbackColor properties
+
+7. src/renderers/strategies/HouseRenderStrategy.ts (4x3 Example)
+   Larger structure example
+
+PLACEMENT AND POSITION FINDING
+===============================
+
+8. src/renderers/MultiTileHandler.ts
+   Line 12-40: findHousePosition() for 4x3 house
+   Line 42-64: _find2x2StructurePosition() generic 2x2 finder
+   Line 66-68: findWellPosition() simple wrapper
+   Line 70-72: findDeadTreePosition() simple wrapper
+   Line 74-127: findShackPosition() special 3x3 with door logic
+   TODO: Add findBigTreePosition() wrapper
+   TODO: Add _find2x6StructurePosition() helper method
+
+9. src/generators/StructureGenerator.ts
+   Line 98-102: addWell() - simple 2x2 example
+   Line 104-109: addDeadTree() - simple 2x2 example
+   Line 111-160: addShack() - complex 3x3 with door placement
+   Line 18-62: addHouse() - special fixed position structure
+   TODO: Add addBigTree() method
+
+WALKABILITY AND MOVEMENT
+==========================
+
+10. src/core/TileRegistry.ts
+    Line 78-97: WALKABLE_TYPES array
+    Line 153-163: isWalkable() method
+    Status: BIG_TREE not in WALKABLE_TYPES (not walkable by default)
+    TODO: Optionally add for full walkability or add custom logic
+
+11. src/entities/PlayerMovement.ts
+    Line 38-39: isWalkable() call in move() method
+    TODO: Optional - add custom logic for partial walkability
+
+TYPE CHECKING AND UTILITIES
+============================
+
+12. src/utils/TypeChecks.ts (AUTO-GENERATED)
+    Line 280-287: isWalkable() implementation
+    Line 33-411: TileTypeChecker class
+
+BOARD SAVING AND LOADING
+=========================
+
+13. src/core/BoardLoader.ts
+    Line 6-19: BoardData interface
+    Line 98-139: loadBoard() method
+    Status: Automatically handles multi-tile entities (no special code needed)
+
+REAL-WORLD STRUCTURE EXAMPLES
+==============================
+
+WELL (2x2):
+- Tile: TILE_TYPES.WELL (14)
+- Sprite: 'doodads/well' (128x128px)
+- Finder: findWellPosition()
+- Placement: addWell()
+- Walkable: No
+- Files: WellRenderStrategy.ts
+
+DEADTREE (2x2):
+- Tile: TILE_TYPES.DEADTREE (15)
+- Sprite: 'doodads/deadtree' (128x128px)
+- Finder: findDeadTreePosition()
+- Placement: addDeadTree()
+- Walkable: No
+- Files: DeadTreeRenderStrategy.ts
+
+SHACK (3x3):
+- Tile: TILE_TYPES.SHACK (44)
+- Sprite: 'doodads/shack' (192x192px)
+- Finder: findShackPosition() - special door handling
+- Placement: addShack() - special door placement at (x+1, y+2)
+- Walkable: No
+- Door: PORT tile at center-bottom position
+- Files: ShackRenderStrategy.ts
+
+HOUSE (4x3):
+- Tile: TILE_TYPES.HOUSE (5)
+- Sprite: 'doodads/museum' (256x192px)
+- Finder: findHousePosition() - allows HOUSE or PORT tiles
+- Placement: addHouse() - fixed position, always in zone (0,0)
+- Walkable: No
+- Door: PORT tile
+- Files: HouseRenderStrategy.ts
+
+BIG_TREE (2x6) - TO IMPLEMENT:
+- Tile: TILE_TYPES.BIG_TREE (115) - DONE
+- Sprite: 'doodads/big_tree' (128x384px)
+- Finder: findBigTreePosition() - TODO
+- Placement: addBigTree() - TODO
+- Walkable: Upper 4 rows only (partial)
+- Files needed: BigTreeRenderStrategy.ts (NEW)
+
+KEY INTERFACES
+==============
+
+MultiTileConfig (src/renderers/strategies/MultiTileRenderStrategy.ts):
+- spriteKey: string (image key)
+- width: number (tiles)
+- height: number (tiles)
+- tileType: number (TILE_TYPES constant)
+- positionFinderMethod: string (MultiTileHandler method name)
+- fallbackChar?: string (single character for no image)
+- fallbackColor?: string (hex color for fallback)
+
+StructurePosition (src/renderers/MultiTileHandler.ts):
+- startX: number (top-left X of structure)
+- startY: number (top-left Y of structure)
+

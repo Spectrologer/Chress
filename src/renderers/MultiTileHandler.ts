@@ -11,19 +11,28 @@ interface StructurePosition {
 export class MultiTileHandler {
     static findHousePosition(targetX: number, targetY: number, gridManager: GridManager, isStrictCheck = false): StructurePosition | null {
         // Find the top-left corner of the 4x3 museum that contains this tile
+        // Uses a lenient check that allows overlays/decorations on top of the structure
         for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
             for (let startX = Math.max(0, targetX - 3); startX <= Math.min(GRID_SIZE - 4, targetX); startX++) {
-                // Check if there's a 4x3 museum starting at this position
-                let isHouse = true;
-                for (let y = startY; y < startY + 3 && isHouse; y++) { // 3 tiles high
-                    for (let x = startX; x < startX + 4 && isHouse; x++) { // 4 tiles wide
+                // Count how many tiles match HOUSE or PORT
+                let matchingTiles = 0;
+                let totalTiles = 0;
+
+                for (let y = startY; y < startY + 3; y++) { // 3 tiles high
+                    for (let x = startX; x < startX + 4; x++) { // 4 tiles wide
+                        totalTiles++;
                         const tile = gridManager.getTile(x, y);
                         // A house tile can be either HOUSE or a PORT (the door)
-                        if (!(isTileType(tile, TILE_TYPES.HOUSE) || isTileType(tile, TILE_TYPES.PORT))) {
-                            isHouse = false;
+                        if (isTileType(tile, TILE_TYPES.HOUSE) || isTileType(tile, TILE_TYPES.PORT)) {
+                            matchingTiles++;
                         }
                     }
                 }
+
+                // Accept if at least 75% of tiles match (9 out of 12 tiles)
+                // This allows some tiles to be overlaid with decorations
+                const matchThreshold = Math.ceil(totalTiles * 0.75);
+                const isHouse = matchingTiles >= matchThreshold;
 
                 // If doing a strict check (e.g., for Grate detection), ensure the target tile itself is a HOUSE or PORT.
                 if (isStrictCheck && isHouse) {
@@ -69,6 +78,39 @@ export class MultiTileHandler {
 
     static findDeadTreePosition(targetX: number, targetY: number, gridManager: GridManager): StructurePosition | null {
         return this._find2x2StructurePosition(targetX, targetY, gridManager, TILE_TYPES.DEADTREE);
+    }
+
+    static findBigTreePosition(targetX: number, targetY: number, gridManager: GridManager): StructurePosition | null {
+        // Find the top-left corner of the 2x3 big tree that contains this tile
+        // Uses a lenient check that allows overlays/decorations on top of the structure
+        for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
+            for (let startX = Math.max(0, targetX - 1); startX <= Math.min(GRID_SIZE - 2, targetX); startX++) {
+                // Count how many tiles match BIG_TREE
+                let matchingTiles = 0;
+                let totalTiles = 0;
+
+                for (let y = startY; y < startY + 3; y++) { // 3 tiles high
+                    for (let x = startX; x < startX + 2; x++) { // 2 tiles wide
+                        totalTiles++;
+                        const tile = gridManager.getTile(x, y);
+                        if (isTileType(tile, TILE_TYPES.BIG_TREE)) {
+                            matchingTiles++;
+                        }
+                    }
+                }
+
+                // Accept if at least 75% of tiles match (5 out of 6 tiles)
+                // This allows some tiles to be overlaid with decorations
+                const matchThreshold = Math.ceil(totalTiles * 0.75);
+                const isBigTree = matchingTiles >= matchThreshold;
+
+                if (isBigTree && targetX >= startX && targetX < startX + 2 &&
+                    targetY >= startY && targetY < startY + 3) {
+                    return { startX, startY };
+                }
+            }
+        }
+        return null;
     }
 
     static findShackPosition(targetX: number, targetY: number, gridManager: GridManager, isStrictCheck = false): StructurePosition | null {

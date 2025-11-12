@@ -130,7 +130,7 @@ export class PlayerMovement {
         }
 
         const tile = pos.getTile(grid);
-        return TileRegistry.isWalkable(tile);
+        return TileRegistry.isWalkable(tile, x, y, grid);
     }
 
     setPosition(x: number, y: number): void {

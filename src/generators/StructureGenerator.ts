@@ -108,6 +108,13 @@ export class StructureGenerator {
         });
     }
 
+    addBigTree(zoneX: number, zoneY: number): void {
+        this._placeStructure(2, 3, TILE_TYPES.BIG_TREE, () => {
+            this.game?.zoneGenState.setSpawnFlag('bigTree', true);
+            logger.log(`Big tree spawned at zone (${zoneX}, ${zoneY})`);
+        });
+    }
+
     addShack(zoneX: number, zoneY: number): boolean {
         // Place a 3x3 shack with a PORT at the middle bottom
         // Allow placement on floor, grass, rock, shrubbery, and water to ensure reliable spawning in wilds zones
