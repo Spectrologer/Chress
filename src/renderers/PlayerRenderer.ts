@@ -155,9 +155,45 @@ export class PlayerRenderer {
                 const cy = pixelYBase + TILE_SIZE / 2;
                 this.ctx.translate(cx, cy);
                 this.ctx.rotate(backflipAngle);
+
+                // Apply horizontal flip based on facing direction
+                let facingDirection = player.animations?.facingDirection ?? 1;
+
+                // Animate flip if flip animation is active (even during backflip)
+                if (player.animations?.flipAnimation && player.animations.flipAnimation > 0) {
+                    const totalFrames = ANIMATION_CONSTANTS.LIZARDY_FLIP_FRAMES;
+                    const progress = (totalFrames - player.animations.flipAnimation) / totalFrames; // 0 -> 1
+
+                    // Animate from previous direction to current direction
+                    const startScale = -facingDirection; // The direction it was facing
+                    const endScale = facingDirection;
+                    facingDirection = startScale + (endScale - startScale) * progress;
+                }
+
+                this.ctx.scale(facingDirection, 1);
+
                 this.ctx.drawImage(playerImage, -TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
             } else {
-                this.ctx.drawImage(playerImage, pixelXBase, pixelYBase, TILE_SIZE, TILE_SIZE);
+                // Apply horizontal flip based on facing direction (similar to lizardy)
+                let facingDirection = player.animations?.facingDirection ?? 1;
+
+                // Animate flip if flip animation is active
+                if (player.animations?.flipAnimation && player.animations.flipAnimation > 0) {
+                    const totalFrames = ANIMATION_CONSTANTS.LIZARDY_FLIP_FRAMES;
+                    const progress = (totalFrames - player.animations.flipAnimation) / totalFrames; // 0 -> 1
+
+                    // Animate from previous direction to current direction
+                    const startScale = -facingDirection; // The direction it was facing
+                    const endScale = facingDirection;
+                    facingDirection = startScale + (endScale - startScale) * progress;
+                }
+
+                // Translate to center of sprite, apply horizontal flip, then translate back
+                this.ctx.translate(pixelXBase + TILE_SIZE / 2, pixelYBase + TILE_SIZE / 2);
+                this.ctx.scale(facingDirection, 1);
+                this.ctx.translate(-TILE_SIZE / 2, -TILE_SIZE / 2);
+
+                this.ctx.drawImage(playerImage, 0, 0, TILE_SIZE, TILE_SIZE);
             }
 
             this.ctx.filter = 'none';

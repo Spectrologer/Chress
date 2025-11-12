@@ -55,6 +55,8 @@ export class PlayerAnimations {
     public smokeX?: number;
     public smokeY?: number;
     public smokeAnimationFrame?: number;
+    public facingDirection: number; // 1 for right (default), -1 for left
+    public flipAnimation: number; // Frame counter for flip animation
 
     constructor(player: Player) {
         this.player = player;
@@ -76,6 +78,8 @@ export class PlayerAnimations {
         this.liftFrames = 0;
         this.pickupHover = null;
         this.bowShot = null;
+        this.facingDirection = 1; // Default facing right
+        this.flipAnimation = 0;
         this.reset();
     }
 
@@ -98,6 +102,8 @@ export class PlayerAnimations {
         this.liftFrames = 0;
         this.pickupHover = null;
         this.bowShot = null;
+        this.facingDirection = 1; // Reset to default facing right
+        this.flipAnimation = 0;
     }
 
     startBump(deltaX: number, deltaY: number): void {
@@ -217,6 +223,11 @@ export class PlayerAnimations {
         if (this.bowShot) {
             this.bowShot.frames--;
             if (this.bowShot.frames <= 0) this.bowShot = null;
+        }
+
+        // Decrement flip animation counter
+        if (this.flipAnimation > 0) {
+            this.flipAnimation--;
         }
     }
 }

@@ -298,6 +298,9 @@ export class PlayerFacade {
     /** @returns {number} */
     getLiftOffsetY() { return this.stats.getLiftOffsetY(); }
 
+    /** @returns {number} */
+    getFacingDirection() { return this.stats.getFacingDirection(); }
+
     /** @returns {Array<Object>} */
     getSmokeAnimations() { return this.stats.getSmokeAnimations(); }
 

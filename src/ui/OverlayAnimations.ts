@@ -4,12 +4,15 @@
 (function () {
     // Create shimmer tile grid for start overlay
     let animationFrameId: number | null = null;
+    let shouldStopAnimation = false;
+    let timedOutCallbackIds: number[] = [];
 
     function createShimmerTileGrid() {
         const startOverlay = document.getElementById('startOverlay');
         if (!startOverlay) {
             // Retry after a short delay if overlay doesn't exist yet
-            setTimeout(createShimmerTileGrid, 100);
+            const timeoutId = window.setTimeout(createShimmerTileGrid, 100);
+            timedOutCallbackIds.push(timeoutId);
             return;
         }
 
@@ -20,7 +23,8 @@
         // Get the overlay box to determine size
         const overlayBox = startOverlay.querySelector('.start-overlay-box') as HTMLElement;
         if (!overlayBox) {
-            setTimeout(createShimmerTileGrid, 100);
+            const timeoutId = window.setTimeout(createShimmerTileGrid, 100);
+            timedOutCallbackIds.push(timeoutId);
             return;
         }
 
@@ -68,6 +72,12 @@
         const baseColor2 = `rgba(${pinkR}, ${pinkG}, ${pinkB}, 0.1)`;         // Pink (very dim)
 
         function animateWave() {
+            // Check if animation should stop
+            if (shouldStopAnimation) {
+                animationFrameId = null;
+                return;
+            }
+
             offset += waveSpeed;
 
             tiles.forEach((tile) => {
@@ -109,13 +119,44 @@
         animateWave();
     }
 
+    // Function to stop the shimmer animation and clean up resources
+    function stopShimmerAnimation(): void {
+        shouldStopAnimation = true;
+
+        // Cancel any active animation frame
+        if (animationFrameId !== null) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+
+        // Clear all pending setTimeout callbacks
+        for (const timeoutId of timedOutCallbackIds) {
+            clearTimeout(timeoutId);
+        }
+        timedOutCallbackIds = [];
+
+        // Remove the shimmer tiles container from DOM
+        const startOverlay = document.getElementById('startOverlay');
+        if (startOverlay) {
+            const tilesContainer = startOverlay.querySelector('.shimmer-tiles-container');
+            if (tilesContainer) {
+                tilesContainer.remove();
+            }
+        }
+    }
+
+    // Expose cleanup function globally
+    window.stopShimmerAnimation = stopShimmerAnimation;
+
     // Initialize shimmer tiles when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(createShimmerTileGrid, 100);
+            const timeoutId = window.setTimeout(createShimmerTileGrid, 100);
+            timedOutCallbackIds.push(timeoutId);
         });
     } else {
-        setTimeout(createShimmerTileGrid, 100);
+        const timeoutId = window.setTimeout(createShimmerTileGrid, 100);
+        timedOutCallbackIds.push(timeoutId);
     }
 
     function animateOverlayCurl(overlayElement: HTMLElement | null): Promise<void> {
@@ -123,6 +164,9 @@
             if (!overlayElement) return resolve();
 
             try {
+                // Stop the shimmer animation when overlay starts closing
+                stopShimmerAnimation();
+
                 // Ensure overlay is visible so animation can run
                 overlayElement.style.display = overlayElement.style.display || 'flex';
 

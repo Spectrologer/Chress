@@ -95,6 +95,8 @@ export class PathGenerator {
         }
 
         // Step 2: Clear the immediately adjacent inward tile
+        // Any obstacle directly blocking the exit must be cleared to floor
+        // to ensure the player can always access the zone
         const adjacentTile = this.gridManager.getTile(inwardX, inwardY);
         if (isWall(adjacentTile) || isRock(adjacentTile) || isShrubbery(adjacentTile)) {
             this.gridManager.setTile(inwardX, inwardY, TILE_TYPES.FLOOR);
@@ -103,7 +105,7 @@ export class PathGenerator {
         // Step 3: Clear 3x3 area around inward tile for wider entry zone
         for (let dy = -1; dy <= 1; dy++) {
             for (let dx = -1; dx <= 1; dx++) {
-                if (dx === 0 && dy === 0) continue;  // Skip center (already cleared above)
+                if (dx === 0 && dy === 0) continue;  // Skip center (already handled above)
 
                 const nx = inwardX + dx;
                 const ny = inwardY + dy;
@@ -112,7 +114,7 @@ export class PathGenerator {
                 if (nx >= 1 && nx < GRID_SIZE - 1 && ny >= 1 && ny < GRID_SIZE - 1) {
                     const tile = this.gridManager.getTile(nx, ny);
 
-                    // Only clear obstacles, preserve special tiles
+                    // Clear all obstacles to floor for better exit access
                     if (isWall(tile) || isRock(tile) || isShrubbery(tile)) {
                         this.gridManager.setTile(nx, ny, TILE_TYPES.FLOOR);
                     }

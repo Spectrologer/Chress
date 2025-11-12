@@ -365,6 +365,14 @@ export class PlayerStatsFacade {
     }
 
     /**
+     * Get facing direction
+     * @returns Facing direction (1 for right, -1 for left)
+     */
+    getFacingDirection(): number {
+        return this.player.animations?.facingDirection ?? 1;
+    }
+
+    /**
      * Get active smoke animations
      * @returns Array of smoke animation objects (read-only copy)
      */

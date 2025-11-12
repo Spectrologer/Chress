@@ -4,4 +4,6 @@
 interface Window {
   webkitAudioContext?: typeof AudioContext;
   DEBUG?: boolean;
+  animateOverlayCurl?: (overlayElement: HTMLElement | null) => Promise<void>;
+  stopShimmerAnimation?: () => void;
 }

@@ -189,10 +189,11 @@ export class StatsPanelManager {
                 }
             };
 
-            const newConfigButton = this.eventManager.cloneAndReplace(configButton);
-            this.eventManager.add(newConfigButton, 'click', handleConfig);
-            this.eventManager.add(newConfigButton, 'pointerup', handleConfig);
-            this.eventManager.add(newConfigButton, 'touchend', handleConfig);
+            // Remove any existing listeners before adding new ones
+            this.eventManager.removeAllListenersFromElement(configButton);
+            this.eventManager.add(configButton, 'click', handleConfig);
+            this.eventManager.add(configButton, 'pointerup', handleConfig);
+            this.eventManager.add(configButton, 'touchend', handleConfig);
         }
 
         // Return to Museum button (if present)
@@ -212,10 +213,11 @@ export class StatsPanelManager {
                 }
             };
 
-            const newRecordsButton = this.eventManager.cloneAndReplace(recordsButton);
-            this.eventManager.add(newRecordsButton, 'click', handleRecords);
-            this.eventManager.add(newRecordsButton, 'pointerup', handleRecords);
-            this.eventManager.add(newRecordsButton, 'touchend', handleRecords);
+            // Remove any existing listeners before adding new ones
+            this.eventManager.removeAllListenersFromElement(recordsButton);
+            this.eventManager.add(recordsButton, 'click', handleRecords);
+            this.eventManager.add(recordsButton, 'pointerup', handleRecords);
+            this.eventManager.add(recordsButton, 'touchend', handleRecords);
         }
 
         // Restart button

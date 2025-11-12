@@ -94,27 +94,45 @@ export class EventListenerManager {
     }
 
     /**
-     * Clone a button element and replace it to remove all old listeners
-     * Common pattern in OverlayButtonHandler
+     * @deprecated Use setupButton or removeAllListenersFromElement instead
+     * This method creates memory leaks by leaving orphaned DOM nodes
      */
     cloneAndReplace<T extends HTMLElement>(element: T): T {
+        console.warn('[EventListenerManager] cloneAndReplace is deprecated - use proper cleanup instead');
         const clone = element.cloneNode(true) as T;
         element.parentNode?.replaceChild(clone, element);
         return clone;
     }
 
     /**
-     * Setup button handler with clone-and-replace pattern
+     * Remove all tracked listeners from a specific element
+     */
+    removeAllListenersFromElement(element: EventTarget): void {
+        const listenersToRemove = this.listeners.filter(entry => entry.target === element);
+
+        for (const { target, type, listener, options } of listenersToRemove) {
+            target.removeEventListener(type, listener, options);
+        }
+
+        this.listeners = this.listeners.filter(entry => entry.target !== element);
+    }
+
+    /**
+     * Setup button handler with proper cleanup pattern
+     * Removes any existing tracked listeners before adding new ones
      */
     setupButton(
         buttonId: string,
         handler: (e: MouseEvent) => void,
-        options: { once?: boolean; preventDefault?: boolean } = {}
+        options: { once?: boolean; preventDefault?: boolean; replaceExisting?: boolean } = {}
     ): HTMLElement | null {
         const button = document.getElementById(buttonId);
         if (!button) return null;
 
-        const newButton = this.cloneAndReplace(button);
+        // If replaceExisting is true (default), remove all tracked listeners from this button
+        if (options.replaceExisting !== false) {
+            this.removeAllListenersFromElement(button);
+        }
 
         const wrappedHandler = (e: MouseEvent): void => {
             if (options.preventDefault !== false) {
@@ -125,12 +143,12 @@ export class EventListenerManager {
         };
 
         if (options.once) {
-            this.addOnce(newButton, 'click', wrappedHandler);
+            this.addOnce(button, 'click', wrappedHandler);
         } else {
-            this.add(newButton, 'click', wrappedHandler);
+            this.add(button, 'click', wrappedHandler);
         }
 
-        return newButton;
+        return button;
     }
 
     /**

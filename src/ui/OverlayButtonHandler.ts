@@ -252,10 +252,10 @@ export class OverlayButtonHandler {
             // Set up the config panel manager's back button to return to start menu
             const backButton = configOverlay.querySelector<HTMLElement>('#config-back-button');
             if (backButton) {
-                // Clone and replace to ensure clean handler
-                const newBackButton = this.eventManager.cloneAndReplace(backButton);
+                // Remove any existing listeners before adding new ones
+                this.eventManager.removeAllListenersFromElement(backButton);
 
-                this.eventManager.add(newBackButton, 'click', (e: Event) => {
+                this.eventManager.add(backButton, 'click', (e: Event) => {
                     e?.preventDefault?.();
                     e?.stopPropagation?.();
                     configOverlay.classList.remove('show');
@@ -315,10 +315,10 @@ export class OverlayButtonHandler {
             // Set up the records panel manager's back button to return to start menu
             const backButton = recordsOverlay.querySelector<HTMLElement>('#records-back-button');
             if (backButton) {
-                // Clone and replace to ensure clean handler
-                const newBackButton = this.eventManager.cloneAndReplace(backButton);
+                // Remove any existing listeners before adding new ones
+                this.eventManager.removeAllListenersFromElement(backButton);
 
-                this.eventManager.add(newBackButton, 'click', (e: Event) => {
+                this.eventManager.add(backButton, 'click', (e: Event) => {
                     e?.preventDefault?.();
                     e?.stopPropagation?.();
                     recordsOverlay.classList.remove('show');

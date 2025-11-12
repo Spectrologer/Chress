@@ -80,6 +80,25 @@ export class PlayerMovement {
         this.player['_lastPosition'] = this.player['_position'].clone();
         this.player['_position'] = newPos;
 
+        // Update facing direction based on horizontal movement
+        const deltaX = newX - this.player.lastX;
+        if (deltaX > 0) {
+            // Moving right
+            if (this.player.animations.facingDirection !== 1) {
+                // Direction changed, trigger flip animation
+                this.player.animations.flipAnimation = ANIMATION_CONSTANTS.LIZARDY_FLIP_FRAMES;
+            }
+            this.player.animations.facingDirection = 1;
+        } else if (deltaX < 0) {
+            // Moving left
+            if (this.player.animations.facingDirection !== -1) {
+                // Direction changed, trigger flip animation
+                this.player.animations.flipAnimation = ANIMATION_CONSTANTS.LIZARDY_FLIP_FRAMES;
+            }
+            this.player.animations.facingDirection = -1;
+        }
+        // If deltaX === 0 (vertical movement), keep current facing direction
+
         eventBus.emit(EventTypes.PLAYER_MOVED, this.player['_position'].toObject());
 
         const newTile = this.player['_position'].getTile(grid);
