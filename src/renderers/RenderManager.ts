@@ -400,6 +400,9 @@ export class RenderManager {
             this.playerRenderer.drawPlayer();
         }
 
+        // Draw foreground parts of multi-tile structures (after player for depth effect)
+        this.drawMultiTileForegrounds();
+
         // Draw bomb placement indicator if active
         this.uiRenderer.drawBombPlacementIndicator();
 
@@ -446,6 +449,9 @@ export class RenderManager {
             logger.warn('[RenderManager] drawGrid called but grid is null');
             return;
         }
+
+        // Clear foreground structures from previous frame
+        this._foregroundStructures = [];
 
         // Calculate zone level for texture rendering
         const zone = this.game.playerFacade!.getCurrentZone();
@@ -551,6 +557,9 @@ export class RenderManager {
         // This allows structures like big_tree to overlay on top of other features
         const renderedStructureCoords = new Set<string>();
 
+        // Structures that may have foreground rendering (rendered after player for depth effect)
+        const foregroundStructureTypes = ['big_tree', 'museum'];
+
         for (const [coord, overlayTexture] of Object.entries(overlayTextures)) {
             // Only process multi-tile structures
             if (!multiTileOverlays.includes(overlayTexture)) continue;
@@ -632,10 +641,26 @@ export class RenderManager {
 
             // Render the structure
             if (foundOrigin) {
+                // Check if this structure type needs foreground rendering
+                const needsForeground = foregroundStructureTypes.includes(overlayTexture);
+
+                // If it needs foreground rendering, track it for later
+                if (needsForeground) {
+                    this._foregroundStructures.push({ coord, overlayTexture, originX, originY });
+                }
+
                 for (let dy = 0; dy < height; dy++) {
                     for (let dx = 0; dx < width; dx++) {
                         const tileX = originX + dx;
                         const tileY = originY + dy;
+
+                        // If this structure needs foreground rendering, check if this specific tile should be skipped now
+                        if (needsForeground && this.shouldRenderTileInForeground(overlayTexture, tileX, tileY, originX, originY)) {
+                            // Skip rendering this tile now - it will be rendered in drawMultiTileForegrounds()
+                            renderedStructureCoords.add(`${tileX},${tileY}`);
+                            continue;
+                        }
+
                         this.textureManager.renderTile(this.ctx, tileX, tileY, tileType, tempGridManager, zoneLevel, terrainTextures, rotations);
                         renderedStructureCoords.add(`${tileX},${tileY}`);
                     }
@@ -706,5 +731,130 @@ export class RenderManager {
         this.ctx.fillRect(playableStartX + playableWidth - borderWidth, playableStartY, borderWidth, playableHeight);
 
         this.ctx.restore();
+    }
+
+    /**
+     * Storage for multi-tile structures that need foreground rendering
+     * Format: { coord: string, overlayTexture: string, originX: number, originY: number }[]
+     */
+    private _foregroundStructures: Array<{ coord: string; overlayTexture: string; originX: number; originY: number }> = [];
+
+    /**
+     * Determine if a tile within a multi-tile structure should be rendered in the foreground (after player).
+     * This creates a depth effect where the player can walk "behind" certain parts of structures.
+     */
+    private shouldRenderTileInForeground(overlayTexture: string, tileX: number, tileY: number, originX: number, originY: number): boolean {
+        const playerY = this.game.playerFacade?.getPosition()?.y ?? -1;
+
+        // BIG_TREE (2x3): Upper 4 tiles (2 rows) are the canopy, bottom 2 tiles (1 row) are the trunk.
+        // Top 2 rows (y=0,1) render in FOREGROUND (canopy obscures player - player walks behind leaves).
+        // Bottom row (y=2) renders behind player (player walks in front of trunk).
+        if (overlayTexture === 'big_tree') {
+            const relativeY = tileY - originY;
+            // Top 2 rows (y=0,1) render in foreground (canopy over player)
+            if (relativeY <= 1) {
+                return true;
+            }
+            // Bottom row (y=2) never renders in foreground - player appears in front of trunk
+            return false;
+        }
+
+        // MUSEUM/HOUSE (4x3): Top row is the roof - player walks behind it.
+        // Bottom 2 rows are the building body - player walks in front of them.
+        if (overlayTexture === 'museum' || overlayTexture === 'house') {
+            const relativeY = tileY - originY;
+            // Top row (y=0) renders in foreground (roof obscures player)
+            if (relativeY === 0) {
+                return true;
+            }
+            // Bottom 2 rows (y=1,2) never render in foreground - player appears in front
+            return false;
+        }
+
+        // Default: no foreground rendering
+        return false;
+    }
+
+    /**
+     * Draw the foreground parts of multi-tile structures (parts that should render after the player).
+     * This is called after the player is drawn to create depth effects.
+     */
+    drawMultiTileForegrounds(): void {
+        if (this._foregroundStructures.length === 0) return;
+
+        // Calculate zone level for texture rendering
+        const zone = this.game.playerFacade!.getCurrentZone();
+        let zoneLevel: number;
+        if (zone.dimension === 2) {
+            zoneLevel = 6; // Underground zones
+        } else if (zone.dimension === 1) {
+            zoneLevel = 5; // Interior zones
+        } else {
+            const dist = Math.max(Math.abs(zone.x), Math.abs(zone.y));
+            zoneLevel = getZoneLevelFromDistance(dist);
+        }
+
+        const terrainTextures = this.game.zoneGenerator?.terrainTextures || {};
+        const rotations = this.game.zoneGenerator?.rotations || {};
+        const overlayTextures = this.game.zoneGenerator?.overlayTextures || {};
+
+        // Structure definitions
+        const structureSizes: Record<string, [number, number]> = {
+            'big_tree': [2, 3],
+            'museum': [4, 3],
+            'house': [4, 3]
+        };
+
+        const tileTypeMap: Record<string, number> = {
+            'big_tree': TILE_TYPES.BIG_TREE,
+            'museum': TILE_TYPES.HOUSE,
+            'house': TILE_TYPES.HOUSE
+        };
+
+        // Process each foreground structure
+        for (const structure of this._foregroundStructures) {
+            const { overlayTexture, originX, originY } = structure;
+            const [width, height] = structureSizes[overlayTexture] || [1, 1];
+            const tileType = tileTypeMap[overlayTexture];
+            if (!tileType) continue;
+
+            // Create a temporary grid for this structure
+            const tempGrid: Tile[][] = [];
+            for (let gy = 0; gy < GRID_SIZE; gy++) {
+                tempGrid[gy] = [];
+                for (let gx = 0; gx < GRID_SIZE; gx++) {
+                    const coordKey = `${gx},${gy}`;
+                    if (overlayTextures[coordKey] === overlayTexture) {
+                        tempGrid[gy][gx] = tileType;
+                    } else {
+                        tempGrid[gy][gx] = TILE_TYPES.FLOOR;
+                    }
+                }
+            }
+
+            // Create temporary grid manager
+            const tempGridManager = {
+                getTile: (gx: number, gy: number) => {
+                    if (gy >= 0 && gy < tempGrid.length && gx >= 0 && gx < tempGrid[gy].length) {
+                        return tempGrid[gy][gx];
+                    }
+                    return TILE_TYPES.FLOOR;
+                },
+                getSize: () => GRID_SIZE
+            };
+
+            // Render only the foreground tiles
+            for (let dy = 0; dy < height; dy++) {
+                for (let dx = 0; dx < width; dx++) {
+                    const tileX = originX + dx;
+                    const tileY = originY + dy;
+
+                    // Only render this tile if it should be in the foreground
+                    if (this.shouldRenderTileInForeground(overlayTexture, tileX, tileY, originX, originY)) {
+                        this.textureManager.renderTile(this.ctx, tileX, tileY, tileType, tempGridManager, zoneLevel, terrainTextures, rotations);
+                    }
+                }
+            }
+        }
     }
 }
