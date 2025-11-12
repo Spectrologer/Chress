@@ -537,19 +537,10 @@ export class RenderManager {
         }
 
         // Pass 3: Render features (statues, items, NPCs, etc.) on top of overlays
-        const zLayers = this.game.zoneGenerator?.zLayers || {};
         GridIterator.forEach(this.game.grid, (tile: Tile, x: number, y: number) => {
             try {
                 // Only render features in this pass (not terrain)
                 if (tile && tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.WALL) {
-                    // Check if this tile should be rendered in foreground (after player)
-                    const coord = `${x},${y}`;
-                    if (zLayers[coord] === 'above') {
-                        // Defer rendering to foreground pass
-                        this._foregroundFeatures.push({ x, y, tile });
-                        return;
-                    }
-
                     if (isTileType(tile, TILE_TYPES.BOMB)) {
                         this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
                     } else if (typeof tile === 'object' && tile !== null && 'type' in tile && (tile as any).type === TILE_TYPES.FOOD) {

@@ -107,10 +107,6 @@
     "walls/hedge_bottom_right"
   ],
   "overlays": {
-    "3,3": "museum",
-    "4,3": "museum",
-    "5,3": "museum",
-    "6,3": "museum",
     "6,5": "big_tree",
     "7,5": "big_tree",
     "6,6": "big_tree",
@@ -119,14 +115,14 @@
     "7,7": "big_tree"
   },
   "zLayers": {
-    "3,3": "above",
-    "4,3": "above",
-    "5,3": "above",
-    "6,3": "above"
   },
   "features": {
     "4,0": "exit_up",
     "0,3": "exit_left",
+    "3,3": "museum",
+    "4,3": "museum",
+    "5,3": "museum",
+    "6,3": "museum",
     "9,3": "exit_right",
     "2,4": "port_grate",
     "3,4": "museum",
