@@ -10,6 +10,7 @@ interface BoardData {
     overlays?: Record<string, string>;
     rotations?: Record<string, number>;
     overlayRotations?: Record<string, number>;
+    zLayers?: Record<string, string>;
     signMessages?: Record<string, string>;
     metadata?: {
         dimension?: number;
@@ -26,6 +27,7 @@ interface BoardResult {
     overlayTextures?: Record<string, string>;
     rotations: Record<string, number>;
     overlayRotations: Record<string, number>;
+    zLayers?: Record<string, string>;
     metadata?: {
         playerSpawn?: { x: number; y: number };
         gameMode?: string;
@@ -398,6 +400,7 @@ export class BoardLoader {
             overlayTextures: overlayTextures,
             rotations: rotations,
             overlayRotations: overlayRotations,
+            zLayers: boardData.zLayers,
             metadata: {
                 playerSpawn: boardData.metadata?.playerSpawn ? playerSpawn : undefined,
                 gameMode: boardData.metadata?.gameMode

@@ -166,26 +166,6 @@ export class StructureGenerator {
         return false;
     }
 
-    addGrate(zoneX: number, zoneY: number, force: boolean = false): void {
-        // Place a 1x1 Grate (water source)
-        const placeableTiles = [TILE_TYPES.FLOOR, TILE_TYPES.GRASS, TILE_TYPES.ROCK, TILE_TYPES.SHRUBBERY];
-        const pos = findValidPlacement({
-            maxAttempts: 50,
-            minX: 1,
-            minY: 1,
-            maxX: GRID_SIZE - 2,
-            maxY: GRID_SIZE - 2,
-            validate: (x: number, y: number): boolean => {
-                const tile = this.gridManager.getTile(x, y);
-                return isAllowedTile(tile, placeableTiles);
-            }
-        });
-        if (pos) {
-            const { x, y } = pos;
-            this.gridManager.setTile(x, y, TILE_TYPES.Grate);
-        }
-    }
-
     addGrate(zoneX: number, zoneY: number, force: boolean = false, forcedX: number | null = null, forcedY: number | null = null): void {
         // Handle forced placement for home zone
         if (zoneX === 0 && zoneY === 0 && force) {

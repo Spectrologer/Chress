@@ -37,6 +37,7 @@ export class ZoneGenerator {
     public overlayTextures: Record<string, string>;
     public rotations: Record<string, number>;
     public overlayRotations: Record<string, number>;
+    public zLayers: Record<string, string>;
     private foodAssets: string[];
     public currentDimension: number;
 
@@ -52,6 +53,7 @@ export class ZoneGenerator {
         this.overlayTextures = {}; // Store overlay texture names (e.g., 'trim/bordertrim')
         this.rotations = {}; // Store rotation data for terrain tiles
         this.overlayRotations = {}; // Store rotation data for overlay tiles
+        this.zLayers = {}; // Store z-layer data for tiles (e.g., 'above', 'below')
         this.foodAssets = [];
         this.currentDimension = 0;
         // Initialize item locations if they haven't been set for this session
@@ -85,11 +87,12 @@ export class ZoneGenerator {
             if (boardData) {
                 const result = boardLoader.convertBoardToGrid(boardData, this.foodAssets, this.game.chessMode || false);
 
-                // Store terrain textures, overlay textures, rotations, and overlay rotations in the zone generator
+                // Store terrain textures, overlay textures, rotations, overlay rotations, and zLayers in the zone generator
                 this.terrainTextures = result.terrainTextures || {};
                 this.overlayTextures = result.overlayTextures || {};
                 this.rotations = result.rotations || {};
                 this.overlayRotations = result.overlayRotations || {};
+                this.zLayers = result.zLayers || {};
 
                 // logger.log(`Custom board loaded successfully for zone (${zoneX},${zoneY})`);
                 return result;
@@ -131,6 +134,7 @@ export class ZoneGenerator {
         this.enemies = [];
         this.terrainTextures = {}; // Reset for procedural zones
         this.overlayTextures = {}; // Reset for procedural zones
+        this.zLayers = {}; // Reset for procedural zones
         this.rotations = {}; // Reset for procedural zones
         this.overlayRotations = {}; // Reset for procedural zones
         this.addWallBorders();

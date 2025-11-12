@@ -450,8 +450,9 @@ export class RenderManager {
             return;
         }
 
-        // Clear foreground structures from previous frame
+        // Clear foreground structures and features from previous frame
         this._foregroundStructures = [];
+        this._foregroundFeatures = [];
 
         // Calculate zone level for texture rendering
         const zone = this.game.playerFacade!.getCurrentZone();
@@ -536,10 +537,19 @@ export class RenderManager {
         }
 
         // Pass 3: Render features (statues, items, NPCs, etc.) on top of overlays
+        const zLayers = this.game.zoneGenerator?.zLayers || {};
         GridIterator.forEach(this.game.grid, (tile: Tile, x: number, y: number) => {
             try {
                 // Only render features in this pass (not terrain)
                 if (tile && tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.WALL) {
+                    // Check if this tile should be rendered in foreground (after player)
+                    const coord = `${x},${y}`;
+                    if (zLayers[coord] === 'above') {
+                        // Defer rendering to foreground pass
+                        this._foregroundFeatures.push({ x, y, tile });
+                        return;
+                    }
+
                     if (isTileType(tile, TILE_TYPES.BOMB)) {
                         this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
                     } else if (typeof tile === 'object' && tile !== null && 'type' in tile && (tile as any).type === TILE_TYPES.FOOD) {
@@ -740,11 +750,30 @@ export class RenderManager {
     private _foregroundStructures: Array<{ coord: string; overlayTexture: string; originX: number; originY: number }> = [];
 
     /**
+     * Storage for feature tiles that need foreground rendering based on zLayers
+     * Format: { x: number, y: number, tile: Tile }[]
+     */
+    private _foregroundFeatures: Array<{ x: number; y: number; tile: Tile }> = [];
+
+    /**
      * Determine if a tile within a multi-tile structure should be rendered in the foreground (after player).
      * This creates a depth effect where the player can walk "behind" certain parts of structures.
      */
     private shouldRenderTileInForeground(overlayTexture: string, tileX: number, tileY: number, originX: number, originY: number): boolean {
         const playerY = this.game.playerFacade?.getPosition()?.y ?? -1;
+
+        // Check zLayers from board data first
+        const zoneGenerator = this.game.zoneGenerator;
+        if (zoneGenerator?.zLayers) {
+            const coord = `${tileX},${tileY}`;
+            const zLayer = zoneGenerator.zLayers[coord];
+            if (zLayer === 'above') {
+                return true;
+            } else if (zLayer === 'below') {
+                return false;
+            }
+            // If no zLayer is specified for this tile, fall through to hardcoded logic
+        }
 
         // BIG_TREE (2x3): Upper 4 tiles (2 rows) are the canopy, bottom 2 tiles (1 row) are the trunk.
         // Top 2 rows (y=0,1) render in FOREGROUND (canopy obscures player - player walks behind leaves).
@@ -776,11 +805,11 @@ export class RenderManager {
     }
 
     /**
-     * Draw the foreground parts of multi-tile structures (parts that should render after the player).
+     * Draw the foreground parts of multi-tile structures and feature tiles (parts that should render after the player).
      * This is called after the player is drawn to create depth effects.
      */
     drawMultiTileForegrounds(): void {
-        if (this._foregroundStructures.length === 0) return;
+        if (this._foregroundStructures.length === 0 && this._foregroundFeatures.length === 0) return;
 
         // Calculate zone level for texture rendering
         const zone = this.game.playerFacade!.getCurrentZone();
@@ -854,6 +883,22 @@ export class RenderManager {
                         this.textureManager.renderTile(this.ctx, tileX, tileY, tileType, tempGridManager, zoneLevel, terrainTextures, rotations);
                     }
                 }
+            }
+        }
+
+        // Render foreground feature tiles (from zLayers)
+        for (const feature of this._foregroundFeatures) {
+            const { x, y, tile } = feature;
+            try {
+                if (isTileType(tile, TILE_TYPES.BOMB)) {
+                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
+                } else if (typeof tile === 'object' && tile !== null && 'type' in tile && (tile as any).type === TILE_TYPES.FOOD) {
+                    this.textureManager.renderTile(this.ctx, x, y, (tile as any).type, this.game.gridManager, zoneLevel, terrainTextures, rotations);
+                } else {
+                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
+                }
+            } catch (error) {
+                // Fallback: skip rendering
             }
         }
     }

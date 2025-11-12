@@ -11,6 +11,7 @@ export const TILE_TYPES = {
     EXIT: 3,
     ROCK: 4,
     HOUSE: 5,
+    MUSEUM: 5, // Alias for HOUSE
     WATER: 6,
     FOOD: 7,
     ENEMY: 8,

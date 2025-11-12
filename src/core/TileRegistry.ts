@@ -170,6 +170,18 @@ export class TileRegistry {
             return TileRegistry.isBigTreeWalkable(x, y, grid);
         }
 
+        // Special handling for HOUSE tiles: check if they have zLayer "above"
+        // Tiles marked as "above" in zLayers render above the player and should be walkable
+        if (tileType === TILE_TYPES.HOUSE && x !== undefined && y !== undefined) {
+            const gameInstance = (window as any).gameInstance;
+            if (gameInstance && gameInstance.zoneGenerator && gameInstance.zoneGenerator.zLayers) {
+                const coord = `${x},${y}`;
+                if (gameInstance.zoneGenerator.zLayers[coord] === 'above') {
+                    return true;
+                }
+            }
+        }
+
         // Check against walkable types list
         return TileRegistry.WALKABLE_TYPES.includes(tileType);
     }
