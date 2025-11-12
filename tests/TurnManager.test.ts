@@ -62,6 +62,9 @@ describe('TurnManager', () => {
       transientGameState: mockTransientState,
       combatManager: mockCombatManager,
       interactionManager: mockInteractionManager,
+      gameMode: {
+        currentMode: 'normal',
+      },
       isPlayerOnExitTile: vi.fn(() => false),
       isPlayerTurn: true,
       justLeftExitTile: false,

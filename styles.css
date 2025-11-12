@@ -3170,6 +3170,50 @@ h1 {
         0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
+/* Return to Museum button in stats panel */
+.stats-return-button {
+    position: absolute;
+    left: 12px;
+    top: 55px;
+    background: linear-gradient(135deg, #964253, #7a3045);
+    border: 3px solid #57294b;
+    color: #ffffeb;
+    padding: clamp(6px, 1.2vh, 8px) clamp(12px, 2.5vw, 16px);
+    font-weight: 700;
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    font-size: clamp(11px, 2.4vw, 14px);
+    letter-spacing: 0.8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.08) inset,
+        0 3px 0 #3f0d2b,
+        0 5px 12px rgba(0, 0, 0, 0.4),
+        0 0 12px rgba(150, 66, 83, 0.3);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    z-index: 10;
+}
+
+.stats-return-button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #ba6156, #964253);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+        0 4px 0 #3f0d2b,
+        0 6px 16px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(150, 66, 83, 0.4);
+}
+
+.stats-return-button:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.1) inset,
+        0 1px 0 #3f0d2b,
+        0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
 /* Back button inside the config overlay (top-left). Small, consistent with other
    top-left controls and placed above the panel content. */
 .config-back-button {

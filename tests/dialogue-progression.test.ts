@@ -3,7 +3,7 @@
  * Verifies that dialogue state persists across multiple interactions
  */
 
-import { TextBox } from '../ui/textbox';
+import { TextBox } from '../src/ui/textbox';
 import * as NPCLoader from '@core/NPCLoader';
 
 // Mock character data for testing

@@ -59,7 +59,9 @@ describe('InteractionManager melee tap adjacency', () => {
         hasAbility: vi.fn().mockReturnValue(false),
         findInInventory: vi.fn().mockReturnValue(null),
         getPositionObject: mockPlayer.getPositionObject,
-        startAttackAnimation: mockPlayer.startAttackAnimation
+        startAttackAnimation: mockPlayer.startAttackAnimation,
+        setAction: mockPlayer.setAction,
+        startBump: mockPlayer.startBump
       },
       transientGameState: {
         hasPendingCharge: vi.fn().mockReturnValue(false)

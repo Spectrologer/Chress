@@ -1,6 +1,9 @@
 import { PanelEventHandler } from './PanelEventHandler';
 import { safeCall } from '@utils/SafeServiceCall';
 import { EventListenerManager } from '@utils/EventListenerManager';
+import { logger } from '@core/logger';
+import { resetToNormalMode } from '@core/GameModeManager';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 
 interface GameInstance {
     defeatedEnemies?: Set<any>;
@@ -10,6 +13,10 @@ interface GameInstance {
     gameStarted?: boolean;
     previewMode?: boolean;
     overlayManager?: any;
+    playerFacade?: any;
+    generateZone?: () => void;
+    customBoardReturnZone?: any;
+    customBoardName?: string;
 }
 
 /**
@@ -111,12 +118,24 @@ export class StatsPanelManager {
         const thirst = this.game.player.getThirst();
         const totalDiscoveries = this.game.player.getVisitedZones().size - this.game.player.getSpentDiscoveries();
 
+        // Check if we're on a custom board
+        const CUSTOM_BOARD_DIMENSION = 3;
+        const currentZone = this.game.playerFacade?.getCurrentZone?.();
+        const isOnCustomBoard = currentZone?.dimension === CUSTOM_BOARD_DIMENSION;
+        const hasReturnZone = !!this.game.customBoardReturnZone;
+        const showReturnButton = isOnCustomBoard && hasReturnZone;
+
         statsInfoContainer.innerHTML = `
             <div class="stats-header">
                 <div class="stats-header-left">
                     <div class="stats-config">
                         <button id="stats-config-button" class="stats-config-button" title="Config" aria-label="Config">Config ▸</button>
                     </div>
+                    ${showReturnButton ? `
+                    <div class="stats-return-to-museum">
+                        <button id="return-to-museum-button" class="stats-return-button" title="Return to Museum" aria-label="Return to Museum">Return to Museum</button>
+                    </div>
+                    ` : ''}
                     <div class="stats-records">
                         <button id="stats-records-button" class="stats-records-button" title="Records" aria-label="Records">
                             <img src="assets/ui/records.png" alt="Records" class="records-icon" aria-hidden="true">
@@ -156,7 +175,7 @@ export class StatsPanelManager {
     }
 
     /**
-     * Wires up action buttons (config, records, restart)
+     * Wires up action buttons (config, records, restart, return to museum)
      */
     private _wireActionButtons(showConfigCallback: (() => void) | null, showRecordsCallback: (() => void) | null): void {
         // Config button
@@ -174,6 +193,12 @@ export class StatsPanelManager {
             this.eventManager.add(newConfigButton, 'click', handleConfig);
             this.eventManager.add(newConfigButton, 'pointerup', handleConfig);
             this.eventManager.add(newConfigButton, 'touchend', handleConfig);
+        }
+
+        // Return to Museum button (if present)
+        const returnButton = this.statsPanelOverlay?.querySelector<HTMLElement>('#return-to-museum-button');
+        if (returnButton) {
+            this._setupReturnToMuseumButton(returnButton);
         }
 
         // Records button
@@ -292,6 +317,73 @@ export class StatsPanelManager {
 
         this.eventManager.add(playerPortraitContainer, 'click', openStats);
         this.eventManager.add(playerPortraitContainer, 'pointerup', openStats, { passive: false });
+    }
+
+    /**
+     * Sets up the "Return to Museum" button handler
+     */
+    private _setupReturnToMuseumButton(returnBtn: HTMLElement): void {
+        const doReturnToMuseum = (e: Event): void => {
+            e?.preventDefault?.();
+            e?.stopPropagation?.();
+
+            // Return to the stored zone
+            const returnZone = this.game.customBoardReturnZone;
+            if (returnZone && this.game.playerFacade) {
+                logger.info(`[CustomBoard] Returning to zone (${returnZone.x}, ${returnZone.y}) dimension ${returnZone.dimension}`);
+
+                // Close the stats panel first
+                this.hideStatsPanel();
+
+                // Reset to normal mode (in case we were in chess mode)
+                resetToNormalMode(this.game);
+
+                // Set the zone back to the museum
+                this.game.playerFacade.setCurrentZone(returnZone.x, returnZone.y);
+                this.game.playerFacade.setZoneDimension(returnZone.dimension);
+
+                // Clear the return zone and custom board name
+                delete this.game.customBoardReturnZone;
+                delete this.game.customBoardName;
+
+                // Clear the lastExitSide so player spawning logic works correctly
+                (this.game as any).lastExitSide = undefined;
+
+                // Regenerate the zone
+                if (this.game.generateZone) {
+                    this.game.generateZone();
+                }
+
+                // After zone regeneration, find an EXIT tile to spawn the player on
+                const gridManager = (this.game as any).gridManager;
+
+                if (gridManager) {
+                    let exitFound = false;
+                    for (let y = 0; y < GRID_SIZE && !exitFound; y++) {
+                        for (let x = 0; x < GRID_SIZE && !exitFound; x++) {
+                            if (gridManager.isTileType(x, y, TILE_TYPES.EXIT)) {
+                                this.game.playerFacade.setPosition(x, y);
+                                this.game.playerFacade.setLastPosition(x, y);
+                                exitFound = true;
+                                logger.info(`[CustomBoard] Player spawned at EXIT tile (${x}, ${y})`);
+                            }
+                        }
+                    }
+
+                    // Fallback to center if no EXIT tile found
+                    if (!exitFound) {
+                        const centerX = Math.floor(GRID_SIZE / 2);
+                        const centerY = Math.floor(GRID_SIZE / 2);
+                        this.game.playerFacade.setPosition(centerX, centerY);
+                        this.game.playerFacade.setLastPosition(centerX, centerY);
+                        logger.warn(`[CustomBoard] No EXIT tile found, spawning at center (${centerX}, ${centerY})`);
+                    }
+                }
+            }
+        };
+
+        // Use only click event to avoid double-triggering
+        this.eventManager.add(returnBtn, 'click', doReturnToMuseum);
     }
 
     /**

@@ -15,7 +15,8 @@
  * - ZoneGenerationOrchestrator: Zone generation and loading
  * - ZonePersistenceManager: Zone state saving
  */
-import { TILE_TYPES } from '@core/constants/index';
+import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
+import { logger } from '@core/logger';
 import { ZoneTransitionCoordinator } from './ZoneTransitionCoordinator';
 import { ZoneTreasureManager } from './ZoneTreasureManager';
 import { ZoneEventEmitter } from './ZoneEventEmitter';
@@ -117,9 +118,40 @@ export class ZoneManager {
             const returnZone = (this.game as any).customBoardReturnZone;
             if (returnZone) {
                 logger.log(`[CustomBoard] Exiting custom board, returning to zone (${returnZone.x}, ${returnZone.y}) dimension ${returnZone.dimension}`);
+
+                // Reset to normal mode (in case we were in chess mode)
+                const { resetToNormalMode } = require('@core/GameModeManager');
+                resetToNormalMode(this.game);
+
                 playerFacade.setCurrentZone(returnZone.x, returnZone.y);
                 playerFacade.setZoneDimension(returnZone.dimension);
                 this.game.generateZone();
+
+                // Find an EXIT tile to spawn the player on
+                let exitFound = false;
+                for (let y = 0; y < GRID_SIZE && !exitFound; y++) {
+                    for (let x = 0; x < GRID_SIZE && !exitFound; x++) {
+                        if (gridManager?.isTileType(x, y, TILE_TYPES.EXIT)) {
+                            playerFacade.setPosition(x, y);
+                            playerFacade.setLastPosition(x, y);
+                            exitFound = true;
+                        }
+                    }
+                }
+
+                // Fallback to center if no EXIT tile found
+                if (!exitFound) {
+                    const centerX = Math.floor(GRID_SIZE / 2);
+                    const centerY = Math.floor(GRID_SIZE / 2);
+                    playerFacade.setPosition(centerX, centerY);
+                    playerFacade.setLastPosition(centerX, centerY);
+                }
+
+                // Ensure valid position
+                playerFacade.ensureValidPosition(this.game.grid);
+
+                // Render to make player visible
+                this.game.render?.();
 
                 // Clear the return zone and custom board name
                 delete (this.game as any).customBoardReturnZone;

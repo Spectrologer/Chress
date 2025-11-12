@@ -1,4 +1,4 @@
-import { ZoneStateManager } from '../generators/ZoneStateManager';
+import { ZoneStateManager } from '../src/generators/ZoneStateManager';
 
 describe('ZoneStateManager', () => {
   test('getZoneLevel returns correct levels', () => {

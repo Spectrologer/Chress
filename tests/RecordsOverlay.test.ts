@@ -1,4 +1,4 @@
-import { PanelManager } from '../ui/PanelManager';
+import { PanelManager } from '../src/ui/PanelManager';
 
 // Minimal DOM fixture for records overlay
 beforeEach(() => {

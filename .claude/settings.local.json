@@ -50,7 +50,8 @@
       "Bash(node:*)",
       "Bash(del find-empty.js find-truly-empty.js)",
       "Bash(timeout /t 3 /nobreak)",
-      "Bash(move:*)"
+      "Bash(move:*)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []

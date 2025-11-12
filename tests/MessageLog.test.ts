@@ -1,4 +1,4 @@
-import { MessageLog } from '../ui/MessageLog';
+import { MessageLog } from '../src/ui/MessageLog';
 import { createMockGame, setupDOMFixture, teardownDOMFixture } from './helpers/mocks';
 
 describe('MessageLog', () => {

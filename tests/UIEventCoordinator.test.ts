@@ -1,4 +1,4 @@
-import { UIEventCoordinator } from '../ui/UIEventCoordinator';
+import { UIEventCoordinator } from '../src/ui/UIEventCoordinator';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
 

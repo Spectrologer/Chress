@@ -1,6 +1,7 @@
 import type { IGame } from '@core/context';
 import { eventBus } from '@core/EventBus';
 import { EventTypes } from '@core/EventTypes';
+import { logger } from '@core/logger';
 
 interface MessageManager {
     showSignMessage(message: string, portrait: string | null, name: string | null, buttonText: string | null, category?: string, portraitBackground?: string): void;
