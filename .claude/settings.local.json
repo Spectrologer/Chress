@@ -55,7 +55,10 @@
       "Bash(xargs sed:*)",
       "Bash(npm install:*)",
       "Bash(for f in static/atlases/*.json)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(powershell:*)",
+      "Bash(ren scriptsextract-tiles.js extract-tiles.cjs)",
+      "Bash(npm run assets:atlas:*)"
     ],
     "deny": [],
     "ask": []

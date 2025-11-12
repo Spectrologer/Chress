@@ -7,6 +7,8 @@ import { EventTypes } from '@core/EventTypes';
 import { isAdjacent } from '@core/utils/DirectionUtils';
 import type { InventoryItem, ShovelItem, NoteItem, BookOfTimeTravelItem, FischersCubeItem, TeleportBranchItem } from '../ItemMetadata';
 import { DIMENSION_CONSTANTS } from '@core/constants/gameplay';
+import { MultiTileHandler } from '@renderers/MultiTileHandler';
+import type { GridManager } from '@renderers/types';
 
 /**
  * Special effects - Shovel, Note, Book of Time Travel, Fischer's Cube, Teleport Branch
@@ -200,6 +202,28 @@ export class BookOfTimeTravelEffect extends BaseItemEffect {
 }
 
 export class FischersCubeEffect extends BaseItemEffect {
+    /**
+     * Helper to check if a tile is immovable
+     * Handles both simple number tiles and object tiles (e.g., { type: TILE_TYPES.PORT, portKind: 'grate' })
+     */
+    private isImmovableTile(tile: any, immovableTiles: readonly number[]): boolean {
+        if (tile === null || tile === undefined) {
+            return false;
+        }
+
+        // Handle object tiles (e.g., { type: TILE_TYPES.PORT, portKind: 'grate' })
+        if (typeof tile === 'object' && 'type' in tile) {
+            return immovableTiles.includes(tile.type);
+        }
+
+        // Handle simple number tiles
+        if (typeof tile === 'number') {
+            return immovableTiles.includes(tile);
+        }
+
+        return false;
+    }
+
     apply(game: Game, item: InventoryItem, context: ItemEffectContext = {}): ItemEffectResult {
         if (!game.player || !game.grid) {
             return { consumed: false, success: false };
@@ -219,7 +243,8 @@ export class FischersCubeEffect extends BaseItemEffect {
             TILE_TYPES.WALL,
             TILE_TYPES.EXIT,
             TILE_TYPES.GRASS, // Grass is decorative background
-            TILE_TYPES.FLOOR  // Floor is the empty space
+            TILE_TYPES.FLOOR, // Floor is the empty space
+            TILE_TYPES.PORT   // PORT includes holes, doors, grates - keep all of them in place
         ];
 
         // Collect all movable entities and tiles with their positions
@@ -253,13 +278,36 @@ export class FischersCubeEffect extends BaseItemEffect {
             }
         });
 
+        // Create a GridManager adapter for MultiTileHandler
+        const gridManager: GridManager = {
+            getTile: (x: number, y: number) => {
+                if (y >= 0 && y < game.grid!.length && x >= 0 && x < game.grid![y].length) {
+                    return game.grid![y][x];
+                }
+                return undefined;
+            }
+        };
+
         // Collect all other movable tiles from the grid
         for (let y = 0; y < game.grid.length; y++) {
             for (let x = 0; x < (game.grid[y]?.length || 0); x++) {
                 const tile = game.grid[y]?.[x];
 
                 // Skip immovable tiles and positions already accounted for (player/enemies/NPCs)
-                if (tile !== null && tile !== undefined && typeof tile === 'number' && (IMMOVABLE_TILES as readonly number[]).includes(tile)) {
+                if (this.isImmovableTile(tile, IMMOVABLE_TILES)) {
+                    continue;
+                }
+
+                // Check if this tile is part of a multi-tile structure
+                // Skip multi-tile structures: HOUSE (4x3), WELL (2x2), DEADTREE (2x2), SHACK (3x3)
+                // Get the tile type (handle both number and object tiles)
+                const tileType = typeof tile === 'object' && 'type' in tile ? tile.type : tile;
+                const isPartOfHouse = tileType === TILE_TYPES.HOUSE && MultiTileHandler.findHousePosition(x, y, gridManager) !== null;
+                const isPartOfWell = tileType === TILE_TYPES.WELL && MultiTileHandler.findWellPosition(x, y, gridManager) !== null;
+                const isPartOfDeadTree = tileType === TILE_TYPES.DEADTREE && MultiTileHandler.findDeadTreePosition(x, y, gridManager) !== null;
+                const isPartOfShack = tileType === TILE_TYPES.SHACK && MultiTileHandler.findShackPosition(x, y, gridManager) !== null;
+
+                if (isPartOfHouse || isPartOfWell || isPartOfDeadTree || isPartOfShack) {
                     continue;
                 }
 
@@ -276,8 +324,23 @@ export class FischersCubeEffect extends BaseItemEffect {
             return { consumed: false, success: false };
         }
 
-        // Get all positions
-        const positions = entities.map(e => ({ x: e.x, y: e.y }));
+        // Get all positions (only positions that were occupied by movable entities/tiles)
+        // Filter out positions that are on immovable tiles (entities standing on PORTs, etc.)
+        const positions = entities
+            .map(e => ({ x: e.x, y: e.y }))
+            .filter(pos => {
+                const tileAtPos = game.grid![pos.y][pos.x];
+                // Allow this position if the tile is movable OR if it's FLOOR (entity standing on empty space)
+                const isImmovable = this.isImmovableTile(tileAtPos, IMMOVABLE_TILES);
+                return !isImmovable || tileAtPos === TILE_TYPES.FLOOR;
+            });
+
+        // Also filter entities to match the valid positions
+        const validEntities = entities.filter((e) => {
+            const tileAtPos = game.grid![e.y][e.x];
+            const isImmovable = this.isImmovableTile(tileAtPos, IMMOVABLE_TILES);
+            return !isImmovable || tileAtPos === TILE_TYPES.FLOOR;
+        });
 
         // Fisher-Yates shuffle of positions
         for (let i = positions.length - 1; i > 0; i--) {
@@ -286,14 +349,14 @@ export class FischersCubeEffect extends BaseItemEffect {
         }
 
         // Clear old positions on grid (everything except walls/exits/grass)
-        entities.forEach(entity => {
+        validEntities.forEach(entity => {
             if (!entity.isPlayer && !entity.isEnemy && !entity.isNPC && game.grid) {
                 game.grid![entity.y][entity.x] = TILE_TYPES.FLOOR;
             }
         });
 
         // Apply shuffled positions
-        entities.forEach((entity, index) => {
+        validEntities.forEach((entity, index) => {
             const newPos = positions[index];
 
             if (entity.isPlayer && game.player) {

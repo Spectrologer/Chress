@@ -48,8 +48,8 @@ export class OverlayButtonHandler {
         // Records button - repeatable
         this.eventManager.setupButton('recordsButton', () => this.handleRecords(), { once: false });
 
-        // Zone editor button - repeatable
-        this.eventManager.setupButton('zoneEditorButton', () => this.handleZoneEditor(), { once: false });
+        // board editor button - repeatable
+        this.eventManager.setupButton('boardEditorButton', () => this.handleBoardEditor(), { once: false });
 
         // Character editor button - repeatable
         this.eventManager.setupButton('characterEditorButton', () => this.handleCharacterEditor(), { once: false });
@@ -122,22 +122,22 @@ export class OverlayButtonHandler {
     }
 
     /**
-     * Handles opening the zone editor in-app overlay.
+     * Handles opening the board editor in-app overlay.
      */
-    handleZoneEditor(): void {
+    handleBoardEditor(): void {
         try {
-            const overlay = document.getElementById('zoneEditorOverlay');
-            const iframe = document.getElementById('zoneEditorFrame') as HTMLIFrameElement | null;
-            const closeButton = document.getElementById('closeZoneEditor');
+            const overlay = document.getElementById('boardEditorOverlay');
+            const iframe = document.getElementById('boardEditorFrame') as HTMLIFrameElement | null;
+            const closeButton = document.getElementById('closeBoardEditor');
 
             if (!overlay || !iframe) {
-                logger.error('Zone editor overlay elements not found');
+                logger.error('board editor overlay elements not found');
                 return;
             }
 
             // Get base path - use import.meta.env.BASE_URL which comes from Vite config
             const basePath = import.meta.env.BASE_URL;
-            const editorPath = `${basePath}tools/zone-editor.html`;
+            const editorPath = `${basePath}tools/board-editor.html`;
 
             // Set iframe source
             iframe.src = editorPath;
@@ -173,7 +173,7 @@ export class OverlayButtonHandler {
             editorEventManager.add(overlay, 'click', overlayClickHandler);
 
         } catch (error) {
-            logger.error('Error opening zone editor:', error);
+            logger.error('Error opening board editor:', error);
         }
     }
 

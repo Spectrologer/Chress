@@ -4,7 +4,7 @@ import { logger } from '@core/logger';
  * CustomZoneLoader - Loads custom zones from JSON files
  *
  * Handles importing and parsing custom zone definitions created
- * with the zone editor tool.
+ * with the board editor tool.
  */
 export class CustomZoneLoader {
     private loadedZones: Map<string, unknown>;

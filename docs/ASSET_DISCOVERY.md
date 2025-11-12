@@ -2,13 +2,14 @@
 
 ## Overview
 
-The Chesse game now features an **automatic asset discovery system** that eliminates the need to manually register assets in multiple places. Simply add a new image file to the `assets/` directory, and it will be automatically discovered and made available in both the game and the zone editor.
+The Chesse game now features an **automatic asset discovery system** that eliminates the need to manually register assets in multiple places. Simply add a new image file to the `assets/` directory, and it will be automatically discovered and made available in both the game and the board editor.
 
 ## How It Works
 
 ### 1. Build-Time Scanning
 
 The [vite-plugin-asset-discovery.js](../vite-plugin-asset-discovery.js) plugin runs during Vite's build process and:
+
 - Scans the entire `assets/` directory recursively
 - Finds all image files (`.png`, `.jpg`, `.jpeg`, `.gif`)
 - Categorizes them by directory structure
@@ -17,6 +18,7 @@ The [vite-plugin-asset-discovery.js](../vite-plugin-asset-discovery.js) plugin r
 ### 2. Virtual Module
 
 The plugin creates a virtual module `virtual:asset-manifest` that provides:
+
 - `IMAGE_ASSETS` - Array of all discovered asset paths
 - `ASSET_CATEGORIES` - Assets organized by type (walls, floors, characters, etc.)
 - `WALL_ASSETS`, `FLOOR_ASSETS`, etc. - Category-specific arrays
@@ -30,37 +32,39 @@ The [src/core/constants/assets.js](../src/core/constants/assets.js) file now imp
 
 Assets are automatically categorized based on their directory structure:
 
-| Category | Directory | Example |
-|----------|-----------|---------|
-| **Walls** | `environment/walls/` | `museumwall6.png` |
-| **Floors** | `environment/floors/` | `grass.png` |
-| **Trim** | `environment/trim/` | `bordertrim.png` |
-| **Obstacles** | `environment/obstacles/` | `rock.png` |
-| **Doodads** | `environment/doodads/` | `table.png` |
-| **Flora** | `environment/flora/` | `tree.png` |
-| **Effects** | `environment/effects/` | `smoke_frame_1.png` |
-| **Characters** | `characters/` | `player/default.png` |
-| **Items** | `items/` | `equipment/axe.png` |
-| **UI** | `ui/` | `arrow.png` |
-| **Other** | Any other directory | Miscellaneous assets |
+| Category       | Directory                | Example              |
+| -------------- | ------------------------ | -------------------- |
+| **Walls**      | `environment/walls/`     | `museumwall6.png`    |
+| **Floors**     | `environment/floors/`    | `grass.png`          |
+| **Trim**       | `environment/trim/`      | `bordertrim.png`     |
+| **Obstacles**  | `environment/obstacles/` | `rock.png`           |
+| **Doodads**    | `environment/doodads/`   | `table.png`          |
+| **Flora**      | `environment/flora/`     | `tree.png`           |
+| **Effects**    | `environment/effects/`   | `smoke_frame_1.png`  |
+| **Characters** | `characters/`            | `player/default.png` |
+| **Items**      | `items/`                 | `equipment/axe.png`  |
+| **UI**         | `ui/`                    | `arrow.png`          |
+| **Other**      | Any other directory      | Miscellaneous assets |
 
 ## Adding New Assets
 
 ### Quick Start
 
 1. **Add your asset file** to the appropriate directory:
+
    ```
    assets/environment/walls/mynewwall.png
    ```
 
 2. **The asset is now automatically available in-game!** It will be:
+
    - Automatically discovered at build/dev time
    - Available in the game as `'mynewwall'`
    - Usable in zone JSON files as `"customTexture": "walls/mynewwall"`
    - Loaded by TextureLoader without any code changes
 
-3. **For the Zone Editor** (one-time setup after adding assets):
-   - The zone editor requires a manual update for now
+3. **For the board editor** (one-time setup after adding assets):
+   - The board editor requires a manual update for now
    - Simply add your asset to two places in [tools/zone-editor.html](../tools/zone-editor.html):
      1. The `tileAssets` object (around line 653)
      2. The appropriate palette array (e.g., `WALL` around line 775)
@@ -94,6 +98,7 @@ After adding a wall asset like `museumwall6.png`, you can immediately use it in 
 ```
 
 The game's [WallTileRenderer](../src/renderers/WallTileRenderer.js) automatically:
+
 1. Strips the `walls/` prefix → `museumwall6`
 2. Looks up `this.images['museumwall6']`
 3. Renders the texture
@@ -102,29 +107,29 @@ The game's [WallTileRenderer](../src/renderers/WallTileRenderer.js) automaticall
 
 Assets are automatically converted to keys:
 
-| Asset Path | Generated Key | Usage in JSON |
-|------------|---------------|---------------|
-| `environment/walls/museumwall6.png` | `museumwall6` | `"walls/museumwall6"` |
-| `environment/floors/grass.png` | `grass` | `"floors/grass"` |
-| `characters/npcs/penne.png` | `penne` | N/A (used by NPC system) |
+| Asset Path                          | Generated Key | Usage in JSON            |
+| ----------------------------------- | ------------- | ------------------------ |
+| `environment/walls/museumwall6.png` | `museumwall6` | `"walls/museumwall6"`    |
+| `environment/floors/grass.png`      | `grass`       | `"floors/grass"`         |
+| `characters/npcs/penne.png`         | `penne`       | N/A (used by NPC system) |
 
-## Zone Editor Integration
+## board editor Integration
 
-The zone editor can also use automatically discovered assets through the [tools/zone-editor-assets.js](../tools/zone-editor-assets.js) module, which:
+The board editor can also use automatically discovered assets through the [tools/zone-editor-assets.js](../tools/zone-editor-assets.js) module, which:
 
 1. Imports from the virtual asset manifest
-2. Generates `tileAssets` mapping for the zone editor
+2. Generates `tileAssets` mapping for the board editor
 3. Creates default palettes from discovered assets
 
-### Updating Zone Editor (Future Enhancement)
+### Updating board editor (Future Enhancement)
 
-Currently, the zone editor uses a static HTML file with hard-coded assets. To enable full automatic discovery in the zone editor, you would need to:
+Currently, the board editor uses a static HTML file with hard-coded assets. To enable full automatic discovery in the board editor, you would need to:
 
 1. Convert `zone-editor.html` to a module-based approach
 2. Import from `zone-editor-assets.js`
 3. Dynamically populate the tile palette
 
-**Current workaround:** The zone editor still requires manual asset registration in its `tileAssets` object. However, the game itself works fully automatically.
+**Current workaround:** The board editor still requires manual asset registration in its `tileAssets` object. However, the game itself works fully automatically.
 
 ## Build Output
 
@@ -147,6 +152,7 @@ This confirms all assets were discovered successfully.
 ## Hot Module Replacement (HMR)
 
 The plugin supports HMR in development mode:
+
 - Add/remove/modify an asset file
 - The plugin automatically rescans
 - Your app reloads with updated asset lists
@@ -157,15 +163,17 @@ The plugin supports HMR in development mode:
 ### Asset Discovery Script
 
 Use `npm run assets:discover` to run a standalone asset scanner that:
+
 - Scans all assets in the `assets/` directory
 - Shows statistics by category
 - Lists all discovered wall assets
 - Generates a `tools/discovered-assets.js` file with exports
 
 This is useful for:
+
 - Verifying new assets were found
 - Getting a quick overview of available assets
-- Reference when manually updating the zone editor
+- Reference when manually updating the board editor
 
 ## Technical Details
 
@@ -174,7 +182,7 @@ This is useful for:
 Vite resolves `virtual:asset-manifest` through the plugin's `resolveId` and `load` hooks:
 
 ```javascript
-import { IMAGE_ASSETS } from 'virtual:asset-manifest';
+import { IMAGE_ASSETS } from "virtual:asset-manifest";
 ```
 
 This imports the generated manifest at build time.
@@ -182,6 +190,7 @@ This imports the generated manifest at build time.
 ### Asset Scanning Algorithm
 
 The plugin uses Node.js `fs` module to:
+
 1. Recursively scan directories
 2. Filter for image files
 3. Generate relative paths
@@ -210,12 +219,12 @@ The plugin uses Node.js `fs` module to:
 
 ## Files Modified
 
-| File | Purpose |
-|------|---------|
-| [vite-plugin-asset-discovery.js](../vite-plugin-asset-discovery.js) | Vite plugin that scans assets |
-| [vite.config.js](../vite.config.js) | Registers the asset discovery plugin |
-| [src/core/constants/assets.js](../src/core/constants/assets.js) | Now imports from virtual module |
-| [tools/zone-editor-assets.js](../tools/zone-editor-assets.js) | Zone editor asset utilities |
+| File                                                                | Purpose                              |
+| ------------------------------------------------------------------- | ------------------------------------ |
+| [vite-plugin-asset-discovery.js](../vite-plugin-asset-discovery.js) | Vite plugin that scans assets        |
+| [vite.config.js](../vite.config.js)                                 | Registers the asset discovery plugin |
+| [src/core/constants/assets.js](../src/core/constants/assets.js)     | Now imports from virtual module      |
+| [tools/zone-editor-assets.js](../tools/zone-editor-assets.js)       | board editor asset utilities         |
 
 ## Troubleshooting
 
@@ -224,6 +233,7 @@ The plugin uses Node.js `fs` module to:
 **Problem:** Added an asset but it's not loading
 
 **Solution:**
+
 1. Check the asset is in the correct directory (e.g., `assets/environment/walls/`)
 2. Check the file extension is `.png`, `.jpg`, `.jpeg`, or `.gif`
 3. Restart the dev server (`npm run dev`)
@@ -234,26 +244,28 @@ The plugin uses Node.js `fs` module to:
 **Problem:** Asset has unexpected key
 
 **Solution:** The key is derived from the filename without extension. For example:
+
 - `my-wall.png` → `'my-wall'`
 - `MyWall.png` → `'MyWall'` (case-sensitive!)
 
-### Zone Editor Not Updated
+### board editor Not Updated
 
-**Problem:** Asset works in-game but not in zone editor
+**Problem:** Asset works in-game but not in board editor
 
-**Solution:** The zone editor currently requires manual asset registration. You have two options:
+**Solution:** The board editor currently requires manual asset registration. You have two options:
 
 **Option 1: Manual addition**
 Add your asset to two places in `zone-editor.html`:
+
 1. `tileAssets` object (around line 653): `'walls/mynewwall': '../assets/environment/walls/mynewwall.png',`
 2. Appropriate palette array (around line 775): add `'walls/mynewwall'` to the `WALL` array
 
 **Option 2: Use the helper script**
-Run `npm run assets:discover` to see all discovered assets and their categories, then manually add the missing ones to the zone editor.
+Run `npm run assets:discover` to see all discovered assets and their categories, then manually add the missing ones to the board editor.
 
 ## Future Enhancements
 
-- [ ] Full automatic discovery for zone editor
+- [ ] Full automatic discovery for board editor
 - [ ] Asset validation (check for missing files)
 - [ ] Asset optimization (compression, sprites)
 - [ ] Asset manifest viewer tool

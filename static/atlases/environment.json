@@ -1440,7 +1440,7 @@
         "y": 0.5
       }
     },
-    "floors/seaice": {
+    "floors/museum_floor_1": {
       "frame": {
         "x": 903,
         "y": 3,
@@ -1464,7 +1464,7 @@
         "y": 0.5
       }
     },
-    "floors/underbrush": {
+    "floors/museum_floor_2": {
       "frame": {
         "x": 697,
         "y": 39,
@@ -1488,7 +1488,7 @@
         "y": 0.5
       }
     },
-    "obstacles/rock": {
+    "floors/museum_floor_dark_1": {
       "frame": {
         "x": 577,
         "y": 99,
@@ -1512,7 +1512,7 @@
         "y": 0.5
       }
     },
-    "obstacles/shrubbery": {
+    "floors/museum_floor_dark_2": {
       "frame": {
         "x": 3,
         "y": 511,
@@ -1536,7 +1536,7 @@
         "y": 0.5
       }
     },
-    "trim/bordertrim": {
+    "floors/seaice": {
       "frame": {
         "x": 25,
         "y": 489,
@@ -1560,7 +1560,7 @@
         "y": 0.5
       }
     },
-    "walls/90s": {
+    "floors/underbrush": {
       "frame": {
         "x": 63,
         "y": 443,
@@ -1584,7 +1584,7 @@
         "y": 0.5
       }
     },
-    "walls/astrocrag": {
+    "obstacles/rock": {
       "frame": {
         "x": 293,
         "y": 315,
@@ -1608,7 +1608,7 @@
         "y": 0.5
       }
     },
-    "walls/blocklily": {
+    "obstacles/shrubbery": {
       "frame": {
         "x": 125,
         "y": 337,
@@ -1632,7 +1632,7 @@
         "y": 0.5
       }
     },
-    "walls/boulder": {
+    "trim/bordertrim": {
       "frame": {
         "x": 87,
         "y": 383,
@@ -1656,7 +1656,7 @@
         "y": 0.5
       }
     },
-    "walls/bush": {
+    "trim/museum_bottom_trim": {
       "frame": {
         "x": 109,
         "y": 361,
@@ -1680,7 +1680,7 @@
         "y": 0.5
       }
     },
-    "walls/bush2": {
+    "trim/museum_bottom_trim_dark": {
       "frame": {
         "x": 147,
         "y": 297,
@@ -1704,7 +1704,7 @@
         "y": 0.5
       }
     },
-    "walls/bushes": {
+    "trim/museum_left_trim_dark": {
       "frame": {
         "x": 363,
         "y": 258,
@@ -1728,7 +1728,7 @@
         "y": 0.5
       }
     },
-    "walls/chargedwall": {
+    "trim/museum_ne_nook": {
       "frame": {
         "x": 331,
         "y": 280,
@@ -1752,7 +1752,7 @@
         "y": 0.5
       }
     },
-    "walls/cobble": {
+    "trim/museum_ne_trim_dark": {
       "frame": {
         "x": 397,
         "y": 223,
@@ -1776,7 +1776,7 @@
         "y": 0.5
       }
     },
-    "walls/coralwall": {
+    "trim/museum_nw_nook": {
       "frame": {
         "x": 471,
         "y": 177,
@@ -1800,7 +1800,7 @@
         "y": 0.5
       }
     },
-    "walls/deco": {
+    "trim/museum_nw_trim_dark": {
       "frame": {
         "x": 351,
         "y": 163,
@@ -1824,7 +1824,7 @@
         "y": 0.5
       }
     },
-    "walls/fortwall": {
+    "trim/museum_right_trim": {
       "frame": {
         "x": 373,
         "y": 141,
@@ -1848,7 +1848,7 @@
         "y": 0.5
       }
     },
-    "walls/heartstone": {
+    "trim/museum_se_nook": {
       "frame": {
         "x": 397,
         "y": 100,
@@ -1872,7 +1872,7 @@
         "y": 0.5
       }
     },
-    "walls/hedge/hedge_bottom_left": {
+    "trim/museum_se_trim_dark": {
       "frame": {
         "x": 419,
         "y": 85,
@@ -1896,7 +1896,7 @@
         "y": 0.5
       }
     },
-    "walls/hedge/hedge_bottom_right": {
+    "trim/museum_sw_nook": {
       "frame": {
         "x": 443,
         "y": 63,
@@ -1920,7 +1920,7 @@
         "y": 0.5
       }
     },
-    "walls/hedge/hedge_left": {
+    "trim/museum_sw_trim_dark": {
       "frame": {
         "x": 493,
         "y": 167,
@@ -1944,7 +1944,7 @@
         "y": 0.5
       }
     },
-    "walls/hedge/hedge_right": {
+    "walls/90s": {
       "frame": {
         "x": 515,
         "y": 145,
@@ -1968,7 +1968,7 @@
         "y": 0.5
       }
     },
-    "walls/hedge/hedge_top": {
+    "walls/astrocrag": {
       "frame": {
         "x": 539,
         "y": 63,
@@ -1992,7 +1992,7 @@
         "y": 0.5
       }
     },
-    "walls/hedge/hedge_top_left": {
+    "walls/blocklily": {
       "frame": {
         "x": 561,
         "y": 41,
@@ -2016,7 +2016,7 @@
         "y": 0.5
       }
     },
-    "walls/hedge/hedge_top_right": {
+    "walls/boulder": {
       "frame": {
         "x": 887,
         "y": 25,
@@ -2040,7 +2040,7 @@
         "y": 0.5
       }
     },
-    "walls/lavawall": {
+    "walls/brick_wall_1": {
       "frame": {
         "x": 697,
         "y": 63,
@@ -2064,7 +2064,7 @@
         "y": 0.5
       }
     },
-    "walls/museumwall": {
+    "walls/brick_wall_2": {
       "frame": {
         "x": 659,
         "y": 85,
@@ -2088,7 +2088,7 @@
         "y": 0.5
       }
     },
-    "walls/museumwall1": {
+    "walls/brick_wall_3": {
       "frame": {
         "x": 925,
         "y": 3,
@@ -2112,7 +2112,7 @@
         "y": 0.5
       }
     },
-    "walls/museumwall2": {
+    "walls/brick_wall_4": {
       "frame": {
         "x": 719,
         "y": 39,
@@ -2136,7 +2136,7 @@
         "y": 0.5
       }
     },
-    "walls/museumwall4": {
+    "walls/brick_wall_5": {
       "frame": {
         "x": 599,
         "y": 85,
@@ -2160,7 +2160,7 @@
         "y": 0.5
       }
     },
-    "walls/museumwall5": {
+    "walls/brick_wall_6": {
       "frame": {
         "x": 561,
         "y": 121,
@@ -2184,7 +2184,7 @@
         "y": 0.5
       }
     },
-    "walls/museumwall6": {
+    "walls/bush": {
       "frame": {
         "x": 3,
         "y": 533,
@@ -2208,7 +2208,7 @@
         "y": 0.5
       }
     },
-    "walls/rockwall": {
+    "walls/bush2": {
       "frame": {
         "x": 25,
         "y": 511,
@@ -2232,7 +2232,7 @@
         "y": 0.5
       }
     },
-    "walls/stump": {
+    "walls/bushes": {
       "frame": {
         "x": 47,
         "y": 473,
@@ -2256,7 +2256,7 @@
         "y": 0.5
       }
     },
-    "walls/zydeco": {
+    "walls/chargedwall": {
       "frame": {
         "x": 85,
         "y": 443,
@@ -2280,10 +2280,490 @@
         "y": 0.5
       }
     },
-    "doodads/pitfall": {
+    "walls/cobble": {
       "frame": {
         "x": 147,
         "y": 337,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/coralwall": {
+      "frame": {
+        "x": 109,
+        "y": 383,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/deco": {
+      "frame": {
+        "x": 131,
+        "y": 359,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/fortwall": {
+      "frame": {
+        "x": 169,
+        "y": 297,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/heartstone": {
+      "frame": {
+        "x": 385,
+        "y": 245,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/hedge/hedge_bottom_left": {
+      "frame": {
+        "x": 353,
+        "y": 280,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/hedge/hedge_bottom_right": {
+      "frame": {
+        "x": 309,
+        "y": 291,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/hedge/hedge_left": {
+      "frame": {
+        "x": 419,
+        "y": 223,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/hedge/hedge_right": {
+      "frame": {
+        "x": 471,
+        "y": 199,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/hedge/hedge_top": {
+      "frame": {
+        "x": 373,
+        "y": 163,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/hedge/hedge_top_left": {
+      "frame": {
+        "x": 395,
+        "y": 139,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/hedge/hedge_top_right": {
+      "frame": {
+        "x": 419,
+        "y": 107,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/lavawall": {
+      "frame": {
+        "x": 441,
+        "y": 85,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/museum_wall_1": {
+      "frame": {
+        "x": 493,
+        "y": 189,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/museum_wall_2": {
+      "frame": {
+        "x": 515,
+        "y": 167,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/museum_wall_3": {
+      "frame": {
+        "x": 537,
+        "y": 145,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/museum_wall_4": {
+      "frame": {
+        "x": 561,
+        "y": 63,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/rockwall": {
+      "frame": {
+        "x": 887,
+        "y": 47,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/stump": {
+      "frame": {
+        "x": 909,
+        "y": 25,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "walls/zydeco": {
+      "frame": {
+        "x": 681,
+        "y": 85,
+        "w": 16,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 16,
+        "h": 16
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "doodads/pitfall": {
+      "frame": {
+        "x": 599,
+        "y": 107,
         "w": 15,
         "h": 14
       },

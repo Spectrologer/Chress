@@ -76,11 +76,23 @@ export class RadialInventoryUI {
             style.id = 'radial-inventory-ui-styles';
             style.textContent = `
             @keyframes radial-pulse {
-                0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,0,0,0.12); }
-                50% { transform: scale(1.03); box-shadow: 0 0 10px 4px rgba(0,0,0,0.08); }
-                100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,0,0,0.12); }
+                0% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 0 rgba(0,0,0,0.12);
+                }
+                50% {
+                    transform: scale(1.08);
+                    box-shadow: 0 0 10px 4px rgba(0,0,0,0.15);
+                }
+                100% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 0 rgba(0,0,0,0.12);
+                }
             }
-            .radial-slot-bg { animation: radial-pulse 1.6s ease-in-out infinite; }
+            .radial-slot-bg {
+                animation: radial-pulse ${TIMING_CONSTANTS.RADIAL_PULSE_ANIMATION_DURATION} ease-in-out infinite;
+                will-change: transform;
+            }
             `;
             document.head.appendChild(style);
         }

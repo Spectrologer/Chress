@@ -102,6 +102,7 @@ Set the `gameMode` in metadata to control gameplay:
 ```
 
 In CHESS mode:
+
 - Green lizards (no prefix) = player team
 - Black lizards (`black_` prefix) = enemy team
 - Turn-based gameplay
@@ -135,9 +136,9 @@ The `features` object maps coordinates to entities:
 
 ```json
 {
-  "2,3": "lizardo",      // Enemy at (2, 3)
-  "5,5": "sign",         // Sign at (5, 5)
-  "8,8": "treasure"      // Treasure at (8, 8)
+  "2,3": "lizardo", // Enemy at (2, 3)
+  "5,5": "sign", // Sign at (5, 5)
+  "8,8": "treasure" // Treasure at (8, 8)
 }
 ```
 
@@ -152,11 +153,11 @@ Add visual variety with overlays and rotations:
     "4,4": "props/crate"
   },
   "rotations": {
-    "3,3": 90,    // Rotate terrain 90 degrees
-    "4,4": 180    // Rotate terrain 180 degrees
+    "3,3": 90, // Rotate terrain 90 degrees
+    "4,4": 180 // Rotate terrain 180 degrees
   },
   "overlayRotations": {
-    "3,3": 45     // Rotate overlay 45 degrees
+    "3,3": 45 // Rotate overlay 45 degrees
   }
 }
 ```
@@ -199,9 +200,9 @@ There are two ways to load custom boards:
 
 ## Tools
 
-### Zone Editor
+### board editor
 
-Use the zone editor (`/tools/zone-editor.html`) to create boards visually:
+Use the board editor (`/tools/zone-editor.html`) to create boards visually:
 
 1. Design your board layout
 2. Place enemies and objects
@@ -230,11 +231,31 @@ This ensures a seamless gameplay experience.
   "name": "minimal",
   "size": [5, 5],
   "terrain": [
-    null, null, null, null, null,
-    null, null, null, null, null,
-    null, null, null, null, null,
-    null, null, null, null, null,
-    null, null, null, null, null
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
   ],
   "features": {
     "2,2": "lizardo"
@@ -249,15 +270,18 @@ See `static/boards/custom/chess.json` for a complete chess board implementation 
 ## Troubleshooting
 
 **Board doesn't appear in selector**
+
 - Run `npm run boards:manifest` to regenerate the manifest
 - Check that the JSON is valid
 - Ensure the file is in `static/boards/custom/`
 
 **Game mode not working**
+
 - Verify `metadata.gameMode` is set correctly
-- Check that enemy teams are assigned (green vs black_ prefix for chess)
+- Check that enemy teams are assigned (green vs black\_ prefix for chess)
 
 **Board loads but looks wrong**
-- Verify terrain array length matches size[0] * size[1]
+
+- Verify terrain array length matches size[0] \* size[1]
 - Check coordinate format in features (should be "x,y" strings)
 - Ensure texture paths are valid

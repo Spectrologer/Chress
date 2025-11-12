@@ -52,7 +52,7 @@ Board files are JSON files with the following structure:
 
 ### Creating/Editing Boards
 
-1. Open the zone editor at `/tools/zone-editor.html`
+1. Open the board editor at `/tools/zone-editor.html`
 2. Design your board using the visual editor
 3. Export the board (downloads as JSON file)
 4. Save the JSON file to `boards/canon/` or `boards/custom/`
@@ -64,11 +64,13 @@ Board files are JSON files with the following structure:
 The game loads boards from `public/boards/`, but you should edit boards in `boards/` (the source directory).
 
 **Manual sync:**
+
 ```bash
 npm run boards:sync
 ```
 
 **Automatic sync:**
+
 - Boards are automatically synced when running `npm run build`
 - During development, run `npm run boards:sync` after editing boards
 
@@ -78,10 +80,11 @@ Boards must be registered in `src/config/registrations/BoardRegistrations.js`:
 
 ```javascript
 // Register a canon board for the museum (interior at 0,0)
-boardLoader.registerBoard(0, 0, 1, 'museum', 'canon');
+boardLoader.registerBoard(0, 0, 1, "museum", "canon");
 ```
 
 Parameters:
+
 - `zoneX`: Zone X coordinate
 - `zoneY`: Zone Y coordinate
 - `dimension`: 0=surface, 1=interior, 2=underground
@@ -96,6 +99,7 @@ Parameters:
 - **Terrain array**: Row-major order (row 0, then row 1, etc.)
 
 ### Corner Positions
+
 - Top-left: (0,0)
 - Top-right: (9,0)
 - Bottom-left: (0,9)
@@ -104,16 +108,19 @@ Parameters:
 ## Rotation
 
 Rotations are in degrees, clockwise:
+
 - 0°: Original orientation (→)
 - 90°: Rotated 90° clockwise (↓)
 - 180°: Rotated 180° (←)
 - 270°: Rotated 270° clockwise (↑)
 
 ### Corner Pieces
+
 - `museumwall5`: Designed for top-left corner
 - `museumwall6`: Designed for top-right corner
 
 When placed in other corners, they should be rotated:
+
 - Top-left → Top-right: 90°
 - Top-left → Bottom-right: 180°
 - Top-left → Bottom-left: 270°

@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@sentry/browser": "^10.23.0",
+    "canvas": "^3.2.0",
     "lz-string": "^1.5.0"
   },
   "devDependencies": {

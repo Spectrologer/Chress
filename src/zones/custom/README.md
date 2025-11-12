@@ -1,6 +1,6 @@
 # Custom Zones
 
-This directory contains custom zone files created with the zone editor tool.
+This directory contains custom zone files created with the board editor tool.
 
 ## Quick Start
 
@@ -19,13 +19,13 @@ Open `tools/zone-editor.html` in your web browser to design custom zones:
 Open the game console and use:
 
 ```javascript
-loadzone("your_zone_name")
+loadzone("your_zone_name");
 ```
 
 For example, to load the example zone:
 
 ```javascript
-loadzone("example_zone")
+loadzone("example_zone");
 ```
 
 ### 3. Reload After Editing
@@ -33,7 +33,7 @@ loadzone("example_zone")
 If you modify a zone file, reload it with:
 
 ```javascript
-reloadzone("your_zone_name")
+reloadzone("your_zone_name");
 ```
 
 ## Zone File Format
@@ -76,7 +76,7 @@ Custom zones are JSON files with this structure:
 
 ## Extensibility
 
-You can use **any terrain or feature name** in the zone editor, even if it's not implemented yet:
+You can use **any terrain or feature name** in the board editor, even if it's not implemented yet:
 
 - `"tombstone"` - might not render yet, but the data is there
 - `"puddle"` - same thing
@@ -88,6 +88,7 @@ When these features get implemented in the game, they'll automatically work with
 ## Recognized Values
 
 ### Currently Implemented Terrain Types
+
 - floor
 - grass
 - water
@@ -95,22 +96,28 @@ When these features get implemented in the game, they'll automatically work with
 ### Currently Implemented Features
 
 **Structures:**
+
 - wall, exit, house, shack, grate, table, pitfall
 
 **Ports (Transitions):**
+
 - port_stairup, port_stairdown, port_interior, port_grate
 
 **Decorations:**
+
 - shrubbery, deadtree, well, rock, sign
 
 **Items:**
+
 - hammer, axe, shovel, bow, bishop_spear, horse_icon, book_of_time_travel
 - bomb, heart, note, food
 
 **Characters:**
+
 - penne, squig, nib, rune, mark, gouge, crayn, felt, forge, axelotl
 
 **Statues:**
+
 - lizardy_statue, lizardo_statue, lizardeaux_statue, zard_statue, lazerd_statue, lizord_statue
 - bomb_statue, spear_statue, bow_statue, horse_statue, book_statue, shovel_statue
 
@@ -119,6 +126,7 @@ When these features get implemented in the game, they'll automatically work with
 ## Examples
 
 See `example_zone.json` in this folder for a simple working example with:
+
 - Grass terrain
 - Central water pool
 - Walls at corners
@@ -139,18 +147,19 @@ For **real game zones**, see the `tools/` folder which contains exported zones f
 
 ```javascript
 // Load a zone
-loadzone("puzzle_room_1")
+loadzone("puzzle_room_1");
 
 // Reload from disk (after editing)
-reloadzone("puzzle_room_1")
+reloadzone("puzzle_room_1");
 
 // See loaded zones
-loadzone() // Shows usage and loaded zones
+loadzone(); // Shows usage and loaded zones
 ```
 
 ## Future Features to Plan For
 
 When designing zones, you might want to leave space for:
+
 - Enemy spawn points
 - Item spawn locations
 - Trigger zones

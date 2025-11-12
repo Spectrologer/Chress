@@ -35,11 +35,12 @@ Visit `http://localhost:3000` to play!
 - **Progressive Web App** - Install and play offline with auto-updates
 - **Optimized Performance** - Code splitting, lazy loading, and intelligent caching
 - **Character Editor** - Built-in tool for creating and editing NPCs
-- **Zone Editor** - Custom zone creation with visual tools
+- **board editor** - Custom zone creation with visual tools
 
 ## 🚀 Recent Updates
 
 ### TypeScript Migration & Architecture Refactoring (v1.1.0)
+
 - ✅ **Complete TypeScript Migration** - 302 TS files (55,800+ lines), 0 JS files remaining
 - ✅ **GameContext Refactoring** - Eliminated god object anti-pattern
   - Created ManagerRegistry for type-safe service access
@@ -51,6 +52,7 @@ Visit `http://localhost:3000` to play!
 - ✅ **Modular Organization** - Refactored grid operations, combat systems, and constants
 
 ### Build System & PWA (v1.0.0)
+
 - ✅ **Vite Build System** - Modern bundler with HMR and optimization
 - ✅ **Code Splitting** - Automatic chunking for faster loads
 - ✅ **PWA Support** - Install to device, offline play, auto-updates
@@ -58,6 +60,7 @@ Visit `http://localhost:3000` to play!
 - ✅ **Service Worker** - Intelligent caching strategies
 
 **Performance Improvements:**
+
 - 40-60% smaller bundle size
 - 30-40% faster time to interactive
 - 90%+ cache hit rate
@@ -68,11 +71,13 @@ Visit `http://localhost:3000` to play!
 > **See [docs/README.md](docs/README.md) for the complete documentation index**
 
 ### Getting Started
+
 - **[Build & Deployment Guide](docs/BUILD.md)** - Complete build system documentation
 - **[PWA & Lazy Loading Guide](docs/PWA-LAZY-LOADING.md)** - Progressive Web App features
 - **[Project Overview](docs/PROJECT_OVERVIEW.md)** - Architecture and structure
 
 ### Development
+
 - **[TypeScript Quickstart](docs/TYPESCRIPT_QUICKSTART.md)** - Working with TypeScript in the project
 - **[Type Checking Guide](docs/TYPE_CHECKING_MIGRATION_GUIDE.md)** - Runtime type validation
 - **[Testing Guide](docs/TESTING.md)** - Testing strategies and examples
@@ -80,6 +85,7 @@ Visit `http://localhost:3000` to play!
 - **[Refactoring Summary](REFACTORING_SUMMARY.md)** - Recent architecture improvements
 
 ### Architecture
+
 - **[State Management](docs/STATE_MANAGEMENT_SUMMARY.md)** - Game state architecture
 - **[Adding Content](docs/ADDING_CONTENT.md)** - How to add new game content
 - **[Architecture Decision Records](docs/adr/)** - Design decisions
@@ -87,19 +93,23 @@ Visit `http://localhost:3000` to play!
 ## 🎯 Core Concepts
 
 ### Game Loop
+
 The game uses a turn-based system where:
+
 1. Player moves (chess-style movement)
 2. Enemies respond with AI-driven moves
 3. Combat resolves based on position
 4. Inventory and interactions occur between turns
 
 ### Zone System
+
 - Procedurally generated zones
 - Custom boards for special areas
 - Connection system for zone transitions
 - Persistent world state
 
 ### Inventory
+
 - 6-slot inventory system
 - Equipment (weapons, tools)
 - Consumables (food, potions)
@@ -137,26 +147,32 @@ chesse/
 │   ├── utils/          # Utilities and helpers
 │   ├── repositories/   # Data access layer
 │   └── services/       # Business services
-├── tools/              # Development tools (asset viewer, character editor, zone editor)
+├── tools/              # Development tools (asset viewer, character editor, board editor)
 └── tests/              # Test suites (576+ passing tests)
 ```
 
 ## 🎨 Content Creation Tools
 
 ### Asset Viewer
+
 Browse all game assets visually:
+
 ```bash
 npm run asset-viewer
 ```
 
 ### Character Editor
+
 Create and edit NPCs with the built-in character editor:
+
 - Open `tools/character-editor.html` in browser
 - Edit character dialogue, trades, and properties
 - 73+ existing characters: main NPCs, gossip characters, and statues
 
-### Zone Editor
+### board editor
+
 Design custom zones and boards:
+
 - Visual tile placement
 - Custom board definitions in `boards/`
 - Special zones with unique layouts
@@ -177,14 +193,18 @@ npm run test:coverage
 ## 🔧 Configuration
 
 ### Environment Variables
+
 Create `.env` file in root (optional):
+
 ```env
 NODE_ENV=development
 VITE_BASE_URL=/Chesse/
 ```
 
 ### Vite Configuration
+
 See [vite.config.js](vite.config.js) for build configuration:
+
 - Code splitting strategy
 - PWA configuration
 - Asset optimization
@@ -193,12 +213,15 @@ See [vite.config.js](vite.config.js) for build configuration:
 ## 🌐 Deployment
 
 ### GitHub Pages (Automated)
+
 The project uses GitHub Actions for automatic deployment:
+
 - Pushes to `main` automatically build and deploy
 - View workflow status: [Actions tab](https://github.com/Spectrologer/Chesse/actions)
 - Live site: https://spectrologer.github.io/Chesse/
 
 ### Manual Build
+
 ```bash
 # Build for production
 npm run build
@@ -208,6 +231,7 @@ dist/
 ```
 
 ### Other Platforms
+
 - **Build command**: `npm run build`
 - **Publish directory**: `dist`
 - **Node version**: 18.x or higher
@@ -232,6 +256,7 @@ ISC License - see [LICENSE.txt](LICENSE.txt)
 Report issues at [GitHub Issues](https://github.com/Spectrologer/Chesse/issues)
 
 Include:
+
 - Browser and version
 - Steps to reproduce
 - Expected vs actual behavior
@@ -240,12 +265,14 @@ Include:
 ## 🎮 Playing the Game
 
 ### Controls
+
 - **Click** - Move player, interact with objects
 - **Inventory** - Click items to use/equip
 - **Trading** - Click NPCs to open barter window
 - **Map** - View discovered zones
 
 ### Tips
+
 - Manage hunger and thirst by consuming food/water
 - Trade with NPCs for better equipment
 - Explore zones to discover new areas

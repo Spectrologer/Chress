@@ -1,12 +1,12 @@
-// Auto-generated zone editor assets
+// Auto-generated board editor assets
 // This file is generated at build time by scanning the assets directory
-// Import this in zone-editor.html to get automatic asset discovery
+// Import this in board-editor.html to get automatic asset discovery
 
 import { ASSET_CATEGORIES, getAssetKeyWithCategory } from 'virtual:asset-manifest';
 
 /**
- * Generate tile assets mapping for zone editor
- * Converts asset paths to zone editor format
+ * Generate tile assets mapping for board editor
+ * Converts asset paths to board editor format
  */
 export function generateTileAssets(): Record<string, string> {
   const tileAssets: Record<string, string> = {};
@@ -50,7 +50,7 @@ export function generateTileAssets(): Record<string, string> {
   // Process characters (enemies and NPCs)
   ASSET_CATEGORIES.characters.forEach((assetPath: string) => {
     const filename = assetPath.split('/').pop()?.replace(/\.(png|jpg|jpeg|gif)$/, '') || '';
-    // Skip portrait images (they're not used in zone editor)
+    // Skip portrait images (they're not used in board editor)
     if (!filename.includes('face')) {
       tileAssets[filename] = `../assets/${assetPath}`;
     }
@@ -66,7 +66,7 @@ export function generateTileAssets(): Record<string, string> {
 }
 
 /**
- * Generate default palettes for zone editor
+ * Generate default palettes for board editor
  */
 export function generateDefaultPalettes(): Record<string, (string | null)[]> {
   const palettes: Record<string, (string | null)[]> = {};
@@ -157,6 +157,6 @@ export function generateDefaultPalettes(): Record<string, (string | null)[]> {
   return palettes;
 }
 
-// Export for use in zone editor
+// Export for use in board editor
 export const AUTO_TILE_ASSETS = generateTileAssets();
 export const AUTO_PALETTES = generateDefaultPalettes();

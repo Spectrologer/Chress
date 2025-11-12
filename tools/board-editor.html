@@ -1,1627 +1,2102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chesse Zone Editor</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chesse board editor</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Courier New', monospace;
-            background: #8B7355;
-            color: #272736;
-            padding: 10px;
-            max-width: 100vw;
-            overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
+      body {
+        font-family: "Courier New", monospace;
+        background: #8b7355;
+        color: #272736;
+        padding: 10px;
+        max-width: 100vw;
+        overflow-x: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+      }
 
-        .main-panel {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            background: #ffffeb;
-            border: 3px solid #ffb5b5;
-            border-radius: 0;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1.5px 0 #ffb5b5;
-            padding: 18px;
-            position: relative;
-        }
+      .main-panel {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        background: #ffffeb;
+        border: 3px solid #ffb5b5;
+        border-radius: 0;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12), 0 1.5px 0 #ffb5b5;
+        padding: 18px;
+        position: relative;
+      }
 
-        /* Frayed parchment edges */
-        .main-panel::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: inherit;
-            z-index: -1;
-            clip-path: polygon(
-                0% 3%, 2% 0%, 8% 2%, 12% 0%, 18% 3%, 25% 1%,
-                32% 4%, 38% 1%, 45% 2%, 52% 0%, 58% 3%, 65% 1%,
-                72% 3%, 78% 0%, 85% 2%, 92% 0%, 98% 3%, 100% 8%,
-                98% 15%, 100% 22%, 97% 28%, 100% 35%, 98% 42%,
-                100% 48%, 97% 55%, 100% 62%, 98% 68%, 100% 75%,
-                97% 82%, 100% 88%, 98% 95%, 92% 100%, 85% 98%,
-                78% 100%, 72% 97%, 65% 100%, 58% 98%, 52% 100%,
-                45% 97%, 38% 100%, 32% 98%, 25% 100%, 18% 97%,
-                12% 100%, 8% 98%, 2% 100%, 0% 97%, 3% 88%,
-                0% 82%, 2% 75%, 0% 68%, 3% 62%, 0% 55%,
-                2% 48%, 0% 42%, 3% 35%, 0% 28%, 2% 22%, 0% 15%, 3% 8%
-            );
-        }
+      /* Frayed parchment edges */
+      .main-panel::before {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: inherit;
+        z-index: -1;
+        clip-path: polygon(
+          0% 3%,
+          2% 0%,
+          8% 2%,
+          12% 0%,
+          18% 3%,
+          25% 1%,
+          32% 4%,
+          38% 1%,
+          45% 2%,
+          52% 0%,
+          58% 3%,
+          65% 1%,
+          72% 3%,
+          78% 0%,
+          85% 2%,
+          92% 0%,
+          98% 3%,
+          100% 8%,
+          98% 15%,
+          100% 22%,
+          97% 28%,
+          100% 35%,
+          98% 42%,
+          100% 48%,
+          97% 55%,
+          100% 62%,
+          98% 68%,
+          100% 75%,
+          97% 82%,
+          100% 88%,
+          98% 95%,
+          92% 100%,
+          85% 98%,
+          78% 100%,
+          72% 97%,
+          65% 100%,
+          58% 98%,
+          52% 100%,
+          45% 97%,
+          38% 100%,
+          32% 98%,
+          25% 100%,
+          18% 97%,
+          12% 100%,
+          8% 98%,
+          2% 100%,
+          0% 97%,
+          3% 88%,
+          0% 82%,
+          2% 75%,
+          0% 68%,
+          3% 62%,
+          0% 55%,
+          2% 48%,
+          0% 42%,
+          3% 35%,
+          0% 28%,
+          2% 22%,
+          0% 15%,
+          3% 8%
+        );
+      }
 
-        h1 {
-            color: #964253;
-            margin-bottom: 15px;
-            font-size: 22px;
-            text-align: center;
-            font-weight: bold;
-            text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
-        }
+      h1 {
+        color: #964253;
+        margin-bottom: 15px;
+        font-size: 22px;
+        text-align: center;
+        font-weight: bold;
+        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+      }
 
-        .grid-container {
-            background: #ffb5b5;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            box-shadow: 0 2px 12px rgba(139, 69, 19, 0.18);
-        }
+      .grid-container {
+        background: #ffb5b5;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        box-shadow: 0 2px 12px rgba(139, 69, 19, 0.18);
+      }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            grid-template-rows: repeat(10, 1fr);
-            gap: 1px;
-            background: #8B7355;
-            padding: 1px;
-            max-width: 100%;
-            width: 100%;
-            aspect-ratio: 1;
-            margin: 0 auto;
-        }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        grid-template-rows: repeat(10, 1fr);
+        gap: 1px;
+        background: #8b7355;
+        padding: 1px;
+        max-width: 100%;
+        width: 100%;
+        aspect-ratio: 1;
+        margin: 0 auto;
+      }
 
-        .cell {
-            background: #ffb5b5;
-            border: 1px solid #ba6156;
-            cursor: pointer;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            text-align: center;
-            padding: 1px;
-            word-break: break-word;
-            overflow: hidden;
-            touch-action: none;
-            user-select: none;
-            transition: all 0.1s;
-        }
+      .cell {
+        background: #ffb5b5;
+        border: 1px solid #ba6156;
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        text-align: center;
+        padding: 1px;
+        word-break: break-word;
+        overflow: hidden;
+        touch-action: none;
+        user-select: none;
+        transition: all 0.1s;
+      }
 
-        .cell:hover {
-            border-color: #964253;
-            background: #ffb5b5;
-        }
+      .cell:hover {
+        border-color: #964253;
+        background: #ffb5b5;
+      }
 
-        .cell.active {
-            border-color: #964253;
-        }
+      .cell.active {
+        border-color: #964253;
+      }
 
-        .cell-feature {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            line-height: 1;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+      .cell-feature {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        line-height: 1;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-        .cell-feature.terrain-layer {
-            z-index: 1;
-        }
+      .cell-feature.terrain-layer {
+        z-index: 1;
+      }
 
-        .cell-feature.feature-layer {
-            z-index: 2;
-        }
+      .cell-feature.feature-layer {
+        z-index: 2;
+      }
 
-        .controls {
-            background: rgba(230, 211, 163, 0.3);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(226, 207, 162, 0.5);
-        }
+      .controls {
+        background: rgba(230, 211, 163, 0.3);
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(226, 207, 162, 0.5);
+      }
 
-        .control-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
+      .control-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
 
-        .control-group {
-            margin-bottom: 0;
-        }
+      .control-group {
+        margin-bottom: 0;
+      }
 
-        label {
-            display: block;
-            margin-bottom: 4px;
-            color: #964253;
-            font-size: 12px;
-            font-weight: bold;
-        }
+      label {
+        display: block;
+        margin-bottom: 4px;
+        color: #964253;
+        font-size: 12px;
+        font-weight: bold;
+      }
 
-        input[type="text"], input[type="number"], select, textarea {
-            width: 100%;
-            padding: 8px;
-            background: #fffef5;
-            border: 2px solid #ffb5b5;
-            color: #272736;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-        }
+      input[type="text"],
+      input[type="number"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        background: #fffef5;
+        border: 2px solid #ffb5b5;
+        color: #272736;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 13px;
+      }
 
-        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #964253;
-            background: #ffffeb;
-        }
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #964253;
+        background: #ffffeb;
+      }
 
-        textarea {
-            resize: vertical;
-            min-height: 50px;
-        }
+      textarea {
+        resize: vertical;
+        min-height: 50px;
+      }
 
-        button {
-            background: #f2a65e;
-            color: #272736;
-            border: 2px solid #ba6156;
-            padding: 12px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            font-weight: bold;
-            touch-action: manipulation;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(139, 69, 19, 0.2);
-        }
+      button {
+        background: #f2a65e;
+        color: #272736;
+        border: 2px solid #ba6156;
+        padding: 12px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: "Courier New", monospace;
+        font-size: 13px;
+        font-weight: bold;
+        touch-action: manipulation;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(139, 69, 19, 0.2);
+      }
 
-        button:hover {
-            background: #e6b786;
-            border-color: #964253;
-        }
+      button:hover {
+        background: #e6b786;
+        border-color: #964253;
+      }
 
-        button:active {
-            transform: scale(0.98);
-            box-shadow: 0 1px 2px rgba(139, 69, 19, 0.3);
-        }
+      button:active {
+        transform: scale(0.98);
+        box-shadow: 0 1px 2px rgba(139, 69, 19, 0.3);
+      }
 
-        button.secondary {
-            background: #c4b49a;
-            border-color: #ba6156;
-        }
+      button.secondary {
+        background: #c4b49a;
+        border-color: #ba6156;
+      }
 
-        button.secondary:hover {
-            background: #d4c4aa;
-        }
+      button.secondary:hover {
+        background: #d4c4aa;
+      }
 
-        button.danger {
-            background: #d9a574;
-            border-color: #b8855a;
-        }
+      button.danger {
+        background: #d9a574;
+        border-color: #b8855a;
+      }
 
-        button.danger:hover {
-            background: #e6b786;
-        }
+      button.danger:hover {
+        background: #e6b786;
+      }
 
-        .palette {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
+      .palette {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 10px;
+      }
 
-        .palette-item {
-            padding: 4px;
-            background: #fffef5;
-            border: 2px solid #ffb5b5;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 20px;
-            line-height: 1;
-            min-width: 44px;
-            min-height: 44px;
-            width: 44px;
-            height: 44px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s;
-            box-shadow: 0 1px 3px rgba(139, 69, 19, 0.1);
-        }
+      .palette-item {
+        padding: 4px;
+        background: #fffef5;
+        border: 2px solid #ffb5b5;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 20px;
+        line-height: 1;
+        min-width: 44px;
+        min-height: 44px;
+        width: 44px;
+        height: 44px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+        box-shadow: 0 1px 3px rgba(139, 69, 19, 0.1);
+      }
 
-        .palette-item:hover {
-            border-color: #964253;
-            background: #ffffeb;
-            transform: scale(1.05);
-        }
+      .palette-item:hover {
+        border-color: #964253;
+        background: #ffffeb;
+        transform: scale(1.05);
+      }
 
-        .palette-item.selected {
-            background: #f2a65e;
-            border-color: #964253;
-            color: #272736;
-            box-shadow: 0 2px 6px rgba(139, 69, 19, 0.3);
-        }
+      .palette-item.selected {
+        background: #f2a65e;
+        border-color: #964253;
+        color: #272736;
+        box-shadow: 0 2px 6px rgba(139, 69, 19, 0.3);
+      }
 
-        .layer-toggle {
-            display: flex;
-            gap: 0;
-            margin-bottom: 15px;
-            border-bottom: 3px solid #ba6156;
-            flex-wrap: wrap;
-        }
+      .layer-toggle {
+        display: flex;
+        gap: 0;
+        margin-bottom: 15px;
+        border-bottom: 3px solid #ba6156;
+        flex-wrap: wrap;
+      }
 
-        .layer-button {
-            padding: 10px 16px;
-            border: 2px solid #c2c2d1;
-            border-bottom: none;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.2s;
-            white-space: nowrap;
-            border-radius: 6px 6px 0 0;
-            margin-right: -8px;
-            position: relative;
-            z-index: 1;
-            color: #5a4a3a;
-        }
+      .layer-button {
+        padding: 10px 16px;
+        border: 2px solid #c2c2d1;
+        border-bottom: none;
+        cursor: pointer;
+        font-family: "Courier New", monospace;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.2s;
+        white-space: nowrap;
+        border-radius: 6px 6px 0 0;
+        margin-right: -8px;
+        position: relative;
+        z-index: 1;
+        color: #5a4a3a;
+      }
 
-        .layer-button:last-child {
-            margin-right: 0;
-        }
+      .layer-button:last-child {
+        margin-right: 0;
+      }
 
-        .layer-button:hover {
-            z-index: 2;
-        }
+      .layer-button:hover {
+        z-index: 2;
+      }
 
-        /* FLOOR - light sandy beige */
-        .layer-button[data-category="FLOOR"] {
-            background: #d9cdb3;
-            border-color: #c4b8a0;
-        }
-        .layer-button[data-category="FLOOR"]:hover {
-            background: #e6dac0;
-        }
-        .layer-button[data-category="FLOOR"].active {
-            background: #d9cdb3;
-            border-color: #964253;
-            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
-            z-index: 3;
-        }
+      /* FLOOR - light sandy beige */
+      .layer-button[data-category="FLOOR"] {
+        background: #d9cdb3;
+        border-color: #c4b8a0;
+      }
+      .layer-button[data-category="FLOOR"]:hover {
+        background: #e6dac0;
+      }
+      .layer-button[data-category="FLOOR"].active {
+        background: #d9cdb3;
+        border-color: #964253;
+        box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+        z-index: 3;
+      }
 
-        /* WALL - stone gray */
-        .layer-button[data-category="WALL"] {
-            background: #b8b0a0;
-            border-color: #a6a090;
-        }
-        .layer-button[data-category="WALL"]:hover {
-            background: #c5bdad;
-        }
-        .layer-button[data-category="WALL"].active {
-            background: #b8b0a0;
-            border-color: #964253;
-            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
-            z-index: 3;
-        }
+      /* WALL - stone gray */
+      .layer-button[data-category="WALL"] {
+        background: #b8b0a0;
+        border-color: #a6a090;
+      }
+      .layer-button[data-category="WALL"]:hover {
+        background: #c5bdad;
+      }
+      .layer-button[data-category="WALL"].active {
+        background: #b8b0a0;
+        border-color: #964253;
+        box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+        z-index: 3;
+      }
 
-        /* STRUCTURE - warm tan */
-        .layer-button[data-category="STRUCTURE"] {
-            background: #f2a65e;
-            border-color: #c09560;
-        }
-        .layer-button[data-category="STRUCTURE"]:hover {
-            background: #e0b586;
-        }
-        .layer-button[data-category="STRUCTURE"].active {
-            background: #f2a65e;
-            border-color: #964253;
-            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
-            z-index: 3;
-        }
+      /* STRUCTURE - warm tan */
+      .layer-button[data-category="STRUCTURE"] {
+        background: #f2a65e;
+        border-color: #c09560;
+      }
+      .layer-button[data-category="STRUCTURE"]:hover {
+        background: #e0b586;
+      }
+      .layer-button[data-category="STRUCTURE"].active {
+        background: #f2a65e;
+        border-color: #964253;
+        box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+        z-index: 3;
+      }
 
-        /* PORT - muted bronze */
-        .layer-button[data-category="PORT"] {
-            background: #c9b08a;
-            border-color: #b5a078;
-        }
-        .layer-button[data-category="PORT"]:hover {
-            background: #d6bd97;
-        }
-        .layer-button[data-category="PORT"].active {
-            background: #c9b08a;
-            border-color: #964253;
-            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
-            z-index: 3;
-        }
+      /* PORT - muted bronze */
+      .layer-button[data-category="PORT"] {
+        background: #c9b08a;
+        border-color: #b5a078;
+      }
+      .layer-button[data-category="PORT"]:hover {
+        background: #d6bd97;
+      }
+      .layer-button[data-category="PORT"].active {
+        background: #c9b08a;
+        border-color: #964253;
+        box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+        z-index: 3;
+      }
 
-        /* ITEM - golden sand */
-        .layer-button[data-category="ITEM"] {
-            background: #dbb876;
-            border-color: #c7a564;
-        }
-        .layer-button[data-category="ITEM"]:hover {
-            background: #e8c583;
-        }
-        .layer-button[data-category="ITEM"].active {
-            background: #dbb876;
-            border-color: #964253;
-            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
-            z-index: 3;
-        }
+      /* ITEM - golden sand */
+      .layer-button[data-category="ITEM"] {
+        background: #dbb876;
+        border-color: #c7a564;
+      }
+      .layer-button[data-category="ITEM"]:hover {
+        background: #e8c583;
+      }
+      .layer-button[data-category="ITEM"].active {
+        background: #dbb876;
+        border-color: #964253;
+        box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+        z-index: 3;
+      }
 
-        /* ENEMY - dusty rose tan */
-        .layer-button[data-category="ENEMY"] {
-            background: #c9a89a;
-            border-color: #b59888;
-        }
-        .layer-button[data-category="ENEMY"]:hover {
-            background: #d6b5a7;
-        }
-        .layer-button[data-category="ENEMY"].active {
-            background: #c9a89a;
-            border-color: #964253;
-            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
-            z-index: 3;
-        }
+      /* ENEMY - dusty rose tan */
+      .layer-button[data-category="ENEMY"] {
+        background: #c9a89a;
+        border-color: #b59888;
+      }
+      .layer-button[data-category="ENEMY"]:hover {
+        background: #d6b5a7;
+      }
+      .layer-button[data-category="ENEMY"].active {
+        background: #c9a89a;
+        border-color: #964253;
+        box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+        z-index: 3;
+      }
 
-        /* NPC - cool sand */
-        .layer-button[data-category="NPC"] {
-            background: #bfc4b8;
-            border-color: #adb2a6;
-        }
-        .layer-button[data-category="NPC"]:hover {
-            background: #ccd1c5;
-        }
-        .layer-button[data-category="NPC"].active {
-            background: #bfc4b8;
-            border-color: #964253;
-            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
-            z-index: 3;
-        }
+      /* NPC - cool sand */
+      .layer-button[data-category="NPC"] {
+        background: #bfc4b8;
+        border-color: #adb2a6;
+      }
+      .layer-button[data-category="NPC"]:hover {
+        background: #ccd1c5;
+      }
+      .layer-button[data-category="NPC"].active {
+        background: #bfc4b8;
+        border-color: #964253;
+        box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+        z-index: 3;
+      }
 
-        /* STATUE - stone gray-tan */
-        .layer-button[data-category="STATUE"] {
-            background: #b8b0a0;
-            border-color: #a6a090;
-        }
-        .layer-button[data-category="STATUE"]:hover {
-            background: #c5bdad;
-        }
-        .layer-button[data-category="STATUE"].active {
-            background: #b8b0a0;
-            border-color: #964253;
-            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
-            z-index: 3;
-        }
+      /* STATUE - stone gray-tan */
+      .layer-button[data-category="STATUE"] {
+        background: #b8b0a0;
+        border-color: #a6a090;
+      }
+      .layer-button[data-category="STATUE"]:hover {
+        background: #c5bdad;
+      }
+      .layer-button[data-category="STATUE"].active {
+        background: #b8b0a0;
+        border-color: #964253;
+        box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+        z-index: 3;
+      }
 
-        /* TRIM - gold accent */
-        .layer-button[data-category="TRIM"] {
-            background: #d4af37;
-            border-color: #c09d2a;
-        }
-        .layer-button[data-category="TRIM"]:hover {
-            background: #e0bb44;
-        }
-        .layer-button[data-category="TRIM"].active {
-            background: #d4af37;
-            border-color: #964253;
-            box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
-            z-index: 3;
-        }
+      /* TRIM - gold accent */
+      .layer-button[data-category="TRIM"] {
+        background: #d4af37;
+        border-color: #c09d2a;
+      }
+      .layer-button[data-category="TRIM"]:hover {
+        background: #e0bb44;
+      }
+      .layer-button[data-category="TRIM"].active {
+        background: #d4af37;
+        border-color: #964253;
+        box-shadow: 0 -2px 4px rgba(139, 69, 19, 0.2);
+        z-index: 3;
+      }
 
-        .info {
-            background: #2a2a2a;
-            padding: 15px;
-            border-radius: 4px;
-            font-size: 12px;
-            line-height: 1.6;
-            color: #aaa;
-        }
+      .info {
+        background: #2a2a2a;
+        padding: 15px;
+        border-radius: 4px;
+        font-size: 12px;
+        line-height: 1.6;
+        color: #aaa;
+      }
 
+      .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 15px;
+      }
+
+      @media (min-width: 600px) {
         .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 15px;
+          grid-template-columns: repeat(4, 1fr);
         }
+      }
 
-        @media (min-width: 600px) {
-            .action-buttons {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
+      .action-buttons button {
+        width: 100%;
+        margin: 0;
+      }
 
-        .action-buttons button {
-            width: 100%;
-            margin: 0;
-        }
+      .custom-value-input {
+        display: flex;
+        gap: 5px;
+        margin-top: 10px;
+      }
 
-        .custom-value-input {
-            display: flex;
-            gap: 5px;
-            margin-top: 10px;
-        }
+      .custom-value-input input {
+        flex: 1;
+      }
 
-        .custom-value-input input {
-            flex: 1;
-        }
+      .custom-value-input button {
+        margin: 0;
+        white-space: nowrap;
+        padding: 8px 12px;
+      }
 
-        .custom-value-input button {
-            margin: 0;
-            white-space: nowrap;
-            padding: 8px 12px;
-        }
-
-        #coordDisplay {
-            color: #6ab7ff;
-            font-size: 11px;
-            margin-top: 8px;
-            text-align: center;
-        }
+      #coordDisplay {
+        color: #6ab7ff;
+        font-size: 11px;
+        margin-top: 8px;
+        text-align: center;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="main-panel">
-        <h1>Chesse Zone Editor</h1>
+      <h1>Chesse board editor</h1>
 
-        <div class="controls">
-            <div class="control-grid">
-                <div class="control-group">
-                    <label>Zone Name:</label>
-                    <input type="text" id="zoneName" placeholder="my_custom_zone" value="custom_zone_1">
-                </div>
+      <div class="controls">
+        <div class="control-grid">
+          <div class="control-group">
+            <label>Zone Name:</label>
+            <input
+              type="text"
+              id="zoneName"
+              placeholder="my_custom_zone"
+              value="custom_zone_1"
+            />
+          </div>
 
-                <div class="control-group">
-                    <label>Dimension:</label>
-                    <select id="zoneDimension">
-                        <option value="0">Surface</option>
-                        <option value="1">Interior</option>
-                        <option value="2">Underground</option>
-                    </select>
-                </div>
+          <div class="control-group">
+            <label>Dimension:</label>
+            <select id="zoneDimension">
+              <option value="0">Surface</option>
+              <option value="1">Interior</option>
+              <option value="2">Underground</option>
+            </select>
+          </div>
 
-                <div class="control-group">
-                    <label>Game Mode:</label>
-                    <select id="zoneGameMode">
-                        <option value="CHESSE">CHESSE (Default)</option>
-                        <option value="CHESS">CHESS (Turn-based)</option>
-                        <option value="PUZZLE">PUZZLE (Future)</option>
-                        <option value="TUTORIAL">TUTORIAL (Future)</option>
-                    </select>
-                </div>
+          <div class="control-group">
+            <label>Game Mode:</label>
+            <select id="zoneGameMode">
+              <option value="CHESSE">CHESSE (Default)</option>
+              <option value="CHESS">CHESS (Turn-based)</option>
+              <option value="PUZZLE">PUZZLE (Future)</option>
+              <option value="TUTORIAL">TUTORIAL (Future)</option>
+            </select>
+          </div>
 
-                <div class="control-group">
-                    <label>Description (optional):</label>
-                    <textarea id="zoneDescription" placeholder="Add notes..."></textarea>
-                </div>
+          <div class="control-group">
+            <label>Description (optional):</label>
+            <textarea
+              id="zoneDescription"
+              placeholder="Add notes..."
+            ></textarea>
+          </div>
 
-                <div class="control-group">
-                    <label>Level:</label>
-                    <select id="zoneLevel">
-                        <option value="home">Home</option>
-                        <option value="woods">Woods</option>
-                        <option value="wilds">Wilds</option>
-                        <option value="frontier">Frontier</option>
-                    </select>
-                </div>
+          <div class="control-group">
+            <label>Level:</label>
+            <select id="zoneLevel">
+              <option value="home">Home</option>
+              <option value="woods">Woods</option>
+              <option value="wilds">Wilds</option>
+              <option value="frontier">Frontier</option>
+            </select>
+          </div>
 
-                <div class="control-group">
-                    <label>Tags (comma-separated):</label>
-                    <input type="text" id="zoneTags" placeholder="puzzle, underground">
-                </div>
+          <div class="control-group">
+            <label>Tags (comma-separated):</label>
+            <input
+              type="text"
+              id="zoneTags"
+              placeholder="puzzle, underground"
+            />
+          </div>
 
-                <div class="control-group">
-                    <label>Rarity:</label>
-                    <select id="zoneRarity">
-                        <option value="1">1 - Very Common</option>
-                        <option value="2">2 - Common</option>
-                        <option value="3">3 - Uncommon</option>
-                        <option value="4">4 - Semi-Rare</option>
-                        <option value="5" selected>5 - Rare</option>
-                        <option value="6">6 - Very Rare</option>
-                        <option value="7">7 - Epic</option>
-                        <option value="8">8 - Legendary</option>
-                        <option value="9">9 - Mythic</option>
-                        <option value="10">10 - Unique</option>
-                    </select>
-                </div>
-            </div>
+          <div class="control-group">
+            <label>Rarity:</label>
+            <select id="zoneRarity">
+              <option value="1">1 - Very Common</option>
+              <option value="2">2 - Common</option>
+              <option value="3">3 - Uncommon</option>
+              <option value="4">4 - Semi-Rare</option>
+              <option value="5" selected>5 - Rare</option>
+              <option value="6">6 - Very Rare</option>
+              <option value="7">7 - Epic</option>
+              <option value="8">8 - Legendary</option>
+              <option value="9">9 - Mythic</option>
+              <option value="10">10 - Unique</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="layer-toggle">
+          <button class="layer-button active" data-category="FLOOR">
+            FLOOR
+          </button>
+          <button class="layer-button" data-category="WALL">WALL</button>
+          <button class="layer-button" data-category="TRIM">TRIM</button>
+          <button class="layer-button" data-category="STRUCTURE">
+            STRUCTURE
+          </button>
+          <button class="layer-button" data-category="PORT">PORT</button>
+          <button class="layer-button" data-category="ITEM">ITEM</button>
+          <button class="layer-button" data-category="ENEMY">ENEMY</button>
+          <button class="layer-button" data-category="NPC">NPC</button>
+          <button class="layer-button" data-category="STATUE">STATUE</button>
         </div>
 
-        <div class="controls">
-            <div class="layer-toggle">
-                <button class="layer-button active" data-category="FLOOR">FLOOR</button>
-                <button class="layer-button" data-category="WALL">WALL</button>
-                <button class="layer-button" data-category="TRIM">TRIM</button>
-                <button class="layer-button" data-category="STRUCTURE">STRUCTURE</button>
-                <button class="layer-button" data-category="PORT">PORT</button>
-                <button class="layer-button" data-category="ITEM">ITEM</button>
-                <button class="layer-button" data-category="ENEMY">ENEMY</button>
-                <button class="layer-button" data-category="NPC">NPC</button>
-                <button class="layer-button" data-category="STATUE">STATUE</button>
-            </div>
+        <div id="paletteContainer"></div>
 
-            <div id="paletteContainer"></div>
-
-            <div class="custom-value-input">
-                <input type="text" id="customValue" placeholder="Type custom value (e.g., tombstone, puddle)">
-                <button onclick="addCustomValue()">Add to Current Category</button>
-            </div>
-
-            <div id="coordDisplay">Hover over grid to see coordinates</div>
+        <div class="custom-value-input">
+          <input
+            type="text"
+            id="customValue"
+            placeholder="Type custom value (e.g., tombstone, puddle)"
+          />
+          <button onclick="addCustomValue()">Add to Current Category</button>
         </div>
 
-        <div class="grid-container">
-            <div class="grid" id="grid"></div>
-        </div>
+        <div id="coordDisplay">Hover over grid to see coordinates</div>
+      </div>
 
-        <div class="controls">
-            <div class="action-buttons">
-                <button onclick="exportZone()">Export Zone (JSON)</button>
-                <button onclick="clearGrid()" class="secondary">Clear Grid</button>
-                <button onclick="fillAll()" class="secondary">Fill All with Selection</button>
-                <button onclick="importZone()" class="secondary">Import Zone</button>
-                <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="handleFileImport(event)">
-            </div>
+      <div class="grid-container">
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <div class="controls">
+        <div class="action-buttons">
+          <button onclick="exportZone()">Export Zone (JSON)</button>
+          <button onclick="clearGrid()" class="secondary">Clear Grid</button>
+          <button onclick="fillAll()" class="secondary">
+            Fill All with Selection
+          </button>
+          <button onclick="importZone()" class="secondary">Import Zone</button>
+          <input
+            type="file"
+            id="fileInput"
+            accept=".json"
+            style="display: none"
+            onchange="handleFileImport(event)"
+          />
         </div>
+      </div>
     </div>
 
     <script>
-        const GRID_SIZE = 10;
-        let currentLayer = 'terrain';
-        let isPainting = false;
-        let lastPaintedIndex = -1; // Track last painted cell to prevent rotation during drag
+      const GRID_SIZE = 10;
+      let currentLayer = "terrain";
+      let isPainting = false;
+      let lastPaintedIndex = -1; // Track last painted cell to prevent rotation during drag
 
-        // Layered grid system: terrain layer (floors/walls) + feature layer (items/npcs/etc) + overlay layer (trim) + rotations
-        let terrainLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
-        let featureLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
-        let overlayLayer = Array(GRID_SIZE * GRID_SIZE).fill(null); // For decorative overlays like trim
+      // Layered grid system: terrain layer (floors/walls) + feature layer (items/npcs/etc) + overlay layer (trim) + rotations
+      let terrainLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+      let featureLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+      let overlayLayer = Array(GRID_SIZE * GRID_SIZE).fill(null); // For decorative overlays like trim
 
-        // Track rotation separately for each layer since a position can have multiple layers
-        let rotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0); // Rotation for terrain layer
-        let overlayRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0); // Rotation for overlay layer
-        let featureRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0); // Rotation for feature layer
+      // Track rotation separately for each layer since a position can have multiple layers
+      let rotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0); // Rotation for terrain layer
+      let overlayRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0); // Rotation for overlay layer
+      let featureRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0); // Rotation for feature layer
 
-        // Store selected value and current category
-        let selectedValue = null;
-        let currentCategory = 'FLOOR';
+      // Store selected value and current category
+      let selectedValue = null;
+      let currentCategory = "FLOOR";
 
-        // Multi-tile structure definitions (width, height)
-        const multiTileStructures = {
-            'house': { width: 4, height: 3 },    // 4x3 museum structure
-            'shack': { width: 3, height: 3 },    // 3x3 shack
-            'deadtree': { width: 2, height: 2 }, // 2x2 dead tree
-            'well': { width: 2, height: 2 }      // 2x2 well
-        };
+      // Multi-tile structure definitions (width, height)
+      const multiTileStructures = {
+        house: { width: 4, height: 3 }, // 4x3 museum structure
+        shack: { width: 3, height: 3 }, // 3x3 shack
+        deadtree: { width: 2, height: 2 }, // 2x2 dead tree
+        well: { width: 2, height: 2 }, // 2x2 well
+      };
 
-        // Asset path mappings for tiles
-        // Supports both 'folder/filename' and legacy 'filename' formats
-        const tileAssets = {
-            // FLOOR - Walkable floor tiles
-            'floors/bones': '../assets/environment/floors/bones.png',
-            'floors/clouds': '../assets/environment/floors/clouds.png',
-            'floors/crackedseaice': '../assets/environment/floors/crackedseaice.png',
-            'floors/crag': '../assets/environment/floors/crag.png',
-            'floors/desert': '../assets/environment/floors/desert.png',
-            'floors/dirt': '../assets/environment/floors/dirt.png',
-            'floors/dirtpatch': '../assets/environment/floors/dirtpatch.png',
-            'floors/grass': '../assets/environment/floors/grass.png',
-            'floors/gravel': '../assets/environment/floors/gravel.png',
-            'floors/housetile': '../assets/environment/floors/housetile.png',
-            'floors/mulch': '../assets/environment/floors/mulch.png',
-            'floors/seaice': '../assets/environment/floors/seaice.png',
-            'floors/underbrush': '../assets/environment/floors/underbrush.png',
-            'floors/aqua': '../assets/environment/floors/aqua.png',
+      // Asset path mappings for tiles
+      // Supports both 'folder/filename' and legacy 'filename' formats
+      const tileAssets = {
+        // FLOOR - Walkable floor tiles
+        "floors/bones": "../assets/environment/floors/bones.png",
+        "floors/clouds": "../assets/environment/floors/clouds.png",
+        "floors/crackedseaice":
+          "../assets/environment/floors/crackedseaice.png",
+        "floors/crag": "../assets/environment/floors/crag.png",
+        "floors/desert": "../assets/environment/floors/desert.png",
+        "floors/dirt": "../assets/environment/floors/dirt.png",
+        "floors/dirtpatch": "../assets/environment/floors/dirtpatch.png",
+        "floors/grass": "../assets/environment/floors/grass.png",
+        "floors/gravel": "../assets/environment/floors/gravel.png",
+        "floors/housetile": "../assets/environment/floors/housetile.png",
+        "floors/mulch": "../assets/environment/floors/mulch.png",
+        "floors/seaice": "../assets/environment/floors/seaice.png",
+        "floors/underbrush": "../assets/environment/floors/underbrush.png",
+        "floors/aqua": "../assets/environment/floors/aqua.png",
+        "floors/museum_floor_1": "../assets/environment/floors/museum_floor_1.png",
+        "floors/museum_floor_2": "../assets/environment/floors/museum_floor_2.png",
+        "floors/museum_floor_dark_1": "../assets/environment/floors/museum_floor_dark_1.png",
+        "floors/museum_floor_dark_2": "../assets/environment/floors/museum_floor_dark_2.png",
 
-            // WALL - Non-walkable walls
-            'walls/90s': '../assets/environment/walls/90s.png',
-            'walls/astrocrag': '../assets/environment/walls/astrocrag.png',
-            'walls/blocklily': '../assets/environment/walls/blocklily.png',
-            'walls/boulder': '../assets/environment/walls/boulder.png',
-            'walls/bush': '../assets/environment/walls/bush.png',
-            'walls/chargedwall': '../assets/environment/walls/chargedwall.png',
-            'walls/museumwall': '../assets/environment/walls/museumwall.png',
-            'walls/museumwall1': '../assets/environment/walls/museumwall1.png',
-            'walls/museumwall2': '../assets/environment/walls/museumwall2.png',
-            'walls/museumwall4': '../assets/environment/walls/museumwall4.png',
-            'walls/museumwall5': '../assets/environment/walls/museumwall5.png',
-            'walls/museumwall6': '../assets/environment/walls/museumwall6.png',
-            'walls/cobble': '../assets/environment/walls/cobble.png',
-            'walls/coralwall': '../assets/environment/walls/coralwall.png',
-            'doodads/fischers_cube': '../assets/environment/doodads/cube.png',
-            'walls/deco': '../assets/environment/walls/deco.png',
-            'walls/fortwall': '../assets/environment/walls/fortwall.png',
-            'walls/heartstone': '../assets/environment/walls/heartstone.png',
-            'walls/lavawall': '../assets/environment/walls/lavawall.png',
-            'walls/rockwall': '../assets/environment/walls/rockwall.png',
-            'walls/stump': '../assets/environment/walls/stump.png',
-            'walls/succulent': '../assets/environment/walls/succulent.png',
-            'walls/wall': '../assets/environment/walls/rockwall.png',
-            'walls/zydeco': '../assets/environment/walls/zydeco.png',
+        // WALL - Non-walkable walls
+        "walls/90s": "../assets/environment/walls/90s.png",
+        "walls/astrocrag": "../assets/environment/walls/astrocrag.png",
+        "walls/blocklily": "../assets/environment/walls/blocklily.png",
+        "walls/boulder": "../assets/environment/walls/boulder.png",
+        "walls/bush": "../assets/environment/walls/bush.png",
+        "walls/bush2": "../assets/environment/walls/bush2.png",
+        "walls/bushes": "../assets/environment/walls/bushes.png",
+        "walls/chargedwall": "../assets/environment/walls/chargedwall.png",
+        "walls/brick_wall_1": "../assets/environment/walls/brick_wall_1.png",
+        "walls/brick_wall_2": "../assets/environment/walls/brick_wall_2.png",
+        "walls/brick_wall_3": "../assets/environment/walls/brick_wall_3.png",
+        "walls/brick_wall_4": "../assets/environment/walls/brick_wall_4.png",
+        "walls/brick_wall_5": "../assets/environment/walls/brick_wall_5.png",
+        "walls/brick_wall_6": "../assets/environment/walls/brick_wall_6.png",
+        "walls/museum_wall_1": "../assets/environment/walls/museum_wall_1.png",
+        "walls/museum_wall_2": "../assets/environment/walls/museum_wall_2.png",
+        "walls/museum_wall_3": "../assets/environment/walls/museum_wall_3.png",
+        "walls/museum_wall_4": "../assets/environment/walls/museum_wall_4.png",
+        "walls/cobble": "../assets/environment/walls/cobble.png",
+        "walls/coralwall": "../assets/environment/walls/coralwall.png",
+        "doodads/fischers_cube": "../assets/environment/doodads/cube.png",
+        "walls/deco": "../assets/environment/walls/deco.png",
+        "walls/fortwall": "../assets/environment/walls/fortwall.png",
+        "walls/heartstone": "../assets/environment/walls/heartstone.png",
+        "walls/lavawall": "../assets/environment/walls/lavawall.png",
+        "walls/rockwall": "../assets/environment/walls/rockwall.png",
+        "walls/stump": "../assets/environment/walls/stump.png",
+        "walls/succulent": "../assets/environment/walls/succulent.png",
+        "walls/wall": "../assets/environment/walls/rockwall.png",
+        "walls/zydeco": "../assets/environment/walls/zydeco.png",
+        // Hedge walls
+        "walls/hedge_bottom_left": "../assets/environment/walls/hedge/hedge_bottom_left.png",
+        "walls/hedge_bottom_right": "../assets/environment/walls/hedge/hedge_bottom_right.png",
+        "walls/hedge_left": "../assets/environment/walls/hedge/hedge_left.png",
+        "walls/hedge_right": "../assets/environment/walls/hedge/hedge_right.png",
+        "walls/hedge_top": "../assets/environment/walls/hedge/hedge_top.png",
+        "walls/hedge_top_left": "../assets/environment/walls/hedge/hedge_top_left.png",
+        "walls/hedge_top_right": "../assets/environment/walls/hedge/hedge_top_right.png",
 
-            // TRIM - Walkable decorative tiles
-            'trim/bordertrim': '../assets/environment/trim/bordertrim.png',
+        // TRIM - Walkable decorative tiles
+        "trim/bordertrim": "../assets/environment/trim/bordertrim.png",
+        "trim/museum_bottom_trim": "../assets/environment/trim/museum_bottom_trim.png",
+        "trim/museum_bottom_trim_dark": "../assets/environment/trim/museum_bottom_trim_dark.png",
+        "trim/museum_left_trim_dark": "../assets/environment/trim/museum_left_trim_dark.png",
+        "trim/museum_ne_nook": "../assets/environment/trim/museum_ne_nook.png",
+        "trim/museum_ne_trim_dark": "../assets/environment/trim/museum_ne_trim_dark.png",
+        "trim/museum_nw_nook": "../assets/environment/trim/museum_nw_nook.png",
+        "trim/museum_nw_trim_dark": "../assets/environment/trim/museum_nw_trim_dark.png",
+        "trim/museum_right_trim": "../assets/environment/trim/museum_right_trim.png",
+        "trim/museum_se_nook": "../assets/environment/trim/museum_se_nook.png",
+        "trim/museum_se_trim_dark": "../assets/environment/trim/museum_se_trim_dark.png",
+        "trim/museum_sw_nook": "../assets/environment/trim/museum_sw_nook.png",
+        "trim/museum_sw_trim_dark": "../assets/environment/trim/museum_sw_trim_dark.png",
 
-            // OBSTACLES - Blocking objects
-            'obstacles/rock': '../assets/environment/obstacles/rock.png',
-            'obstacles/shrubbery': '../assets/environment/obstacles/shrubbery.png',
-            'hole': '../assets/environment/doodads/hole.png',
-            'pitfall': '../assets/environment/doodads/pitfall.png',
+        // OBSTACLES - Blocking objects
+        "obstacles/rock": "../assets/environment/obstacles/rock.png",
+        "obstacles/shrubbery": "../assets/environment/obstacles/shrubbery.png",
+        hole: "../assets/environment/doodads/hole.png",
+        pitfall: "../assets/environment/doodads/pitfall.png",
 
-            // STRUCTURE
-            'anemone': '../assets/environment/doodads/anemone.png',
-            'big_tree': '../assets/environment/doodads/big_tree.png',
-            'blue_shroom': '../assets/environment/doodads/blue_shroom.png',
-            'cactus': '../assets/environment/doodads/cactus.png',
-            'cactus2': '../assets/environment/doodads/cactus2.png',
-            'teleport_branch': '../assets/items/misc/branch.png',
-            'deadtree': '../assets/environment/doodads/deadtree.png',
-            'green_shroom': '../assets/environment/doodads/green_shroom.png',
-            'house': '../assets/environment/doodads/museum.png',
-            'shack': '../assets/environment/doodads/shack.png',
-            'sign': '../assets/environment/doodads/sign.png',
-            'sign_blank': '../assets/environment/doodads/sign-blank.png',
-            'sign_eaten': '../assets/environment/doodads/sign-eaten.png',
-            'sign_gold': '../assets/environment/doodads/sign-gold.png',
-            'sign_metal': '../assets/environment/doodads/sign-metal.png',
-            'sign_metal_alt': '../assets/environment/doodads/sign-metal-alt.png',
-            'small_evergreen': '../assets/environment/doodads/small_evergreen.png',
-            'table': '../assets/environment/doodads/table.png',
-            'urchin': '../assets/environment/doodads/urchin.png',
-            'well': '../assets/environment/doodads/well.png',
+        // STRUCTURE
+        anemone: "../assets/environment/doodads/anemone.png",
+        big_tree: "../assets/environment/doodads/big_tree.png",
+        blue_shroom: "../assets/environment/doodads/blue_shroom.png",
+        cactus: "../assets/environment/doodads/cactus.png",
+        cactus2: "../assets/environment/doodads/cactus2.png",
+        teleport_branch: "../assets/items/misc/branch.png",
+        deadtree: "../assets/environment/doodads/deadtree.png",
+        green_shroom: "../assets/environment/doodads/green_shroom.png",
+        house: "../assets/environment/doodads/museum.png",
+        shack: "../assets/environment/doodads/shack.png",
+        sign: "../assets/environment/doodads/sign.png",
+        sign_blank: "../assets/environment/doodads/sign-blank.png",
+        sign_eaten: "../assets/environment/doodads/sign-eaten.png",
+        sign_gold: "../assets/environment/doodads/sign-gold.png",
+        sign_metal: "../assets/environment/doodads/sign-metal.png",
+        sign_metal_alt: "../assets/environment/doodads/sign-metal-alt.png",
+        small_evergreen: "../assets/environment/doodads/small_evergreen.png",
+        table: "../assets/environment/doodads/table.png",
+        urchin: "../assets/environment/doodads/urchin.png",
+        well: "../assets/environment/doodads/well.png",
 
-            // PORT (exits with directional arrows)
-            'exit_down': '../assets/ui/arrow.png',
-            'exit_left': '../assets/ui/arrow.png',
-            'exit_right': '../assets/ui/arrow.png',
-            'exit_up': '../assets/ui/arrow.png',
-            'player_spawn': '../assets/ui/pawn_small.png',
-            'port_interior': '⬇',
-            'port_stairdown': '../assets/environment/doodads/stairdown.png',
-            'port_stairup': '../assets/environment/doodads/stairup.png',
-            'port_grate': '../assets/environment/doodads/grate.png',
+        // PORT (exits with directional arrows)
+        exit_down: "../assets/ui/down_arrow.png",
+        exit_left: "../assets/ui/left_arrow.png",
+        exit_right: "../assets/ui/right_arrow.png",
+        exit_up: "../assets/ui/up_arrow.png",
+        player_spawn: "../assets/ui/pawn_small.png",
+        port_interior: "⬇",
+        port_stairdown: "../assets/environment/doodads/stairdown.png",
+        port_stairup: "../assets/environment/doodads/stairup.png",
+        port_grate: "../assets/environment/doodads/grate.png",
 
-            // ITEM
-            'axe': '../assets/items/equipment/axe.png',
-            'bishop_spear': '../assets/items/equipment/spear.png',
-            'bomb': '../assets/items/misc/bomb.png',
-            'book_of_time_travel': '../assets/items/misc/book.png',
-            'bow': '../assets/items/equipment/bow.png',
-            'fischers_cube': '../assets/environment/doodads/cube.png',
-            'food': '../assets/items/consumables/meat.png',
-            'hammer': '../assets/items/equipment/hammer.png',
-            'heart': '../assets/items/misc/heart.png',
-            'horse_icon': '../assets/items/misc/horse.png',
-            'note': '../assets/items/misc/note.png',
-            'random_item': '❓',
-            'random_radial_item': '🎯',
-            'random_food_water': '🍎',
-            'shovel': '../assets/items/equipment/shovel.png',
-            'water_item': '../assets/items/consumables/water.png',
+        // ITEM
+        axe: "../assets/items/equipment/axe.png",
+        bishop_spear: "../assets/items/equipment/spear.png",
+        bomb: "../assets/items/misc/bomb.png",
+        book_of_time_travel: "../assets/items/misc/book.png",
+        bow: "../assets/items/equipment/bow.png",
+        fischers_cube: "../assets/environment/doodads/cube.png",
+        food: "../assets/items/consumables/meat.png",
+        hammer: "../assets/items/equipment/hammer.png",
+        heart: "../assets/items/misc/heart.png",
+        horse_icon: "../assets/items/misc/horse.png",
+        note: "../assets/items/misc/note.png",
+        random_item: "❓",
+        random_radial_item: "🎯",
+        random_food_water: "🍎",
+        shovel: "../assets/items/equipment/shovel.png",
+        water_item: "../assets/items/consumables/water.png",
 
-            // ENEMY
-            'lazerd': '../assets/characters/enemies/lazerd.png',
-            'lizardeaux': '../assets/characters/enemies/lizardeaux.png',
-            'lizardo': '../assets/characters/enemies/lizardo.png',
-            'lizardy': '../assets/characters/enemies/lizardy.png',
-            'lizord': '../assets/characters/enemies/lizord.png',
-            'zard': '../assets/characters/enemies/zard.png',
-            // Grayscale enemy variants
-            'black_lazerd': '../assets/characters/enemies/lazerd.png',
-            'black_lizardeaux': '../assets/characters/enemies/lizardeaux.png',
-            'black_lizardo': '../assets/characters/enemies/lizardo.png',
-            'black_lizardy': '../assets/characters/enemies/lizardy.png',
-            'black_lizord': '../assets/characters/enemies/lizord.png',
-            'black_zard': '../assets/characters/enemies/zard.png',
+        // ENEMY
+        lazerd: "../assets/characters/enemies/lazerd.png",
+        lizardeaux: "../assets/characters/enemies/lizardeaux.png",
+        lizardo: "../assets/characters/enemies/lizardo.png",
+        lizardy: "../assets/characters/enemies/lizardy.png",
+        lizord: "../assets/characters/enemies/lizord.png",
+        zard: "../assets/characters/enemies/zard.png",
+        // Grayscale enemy variants
+        black_lazerd: "../assets/characters/enemies/lazerd.png",
+        black_lizardeaux: "../assets/characters/enemies/lizardeaux.png",
+        black_lizardo: "../assets/characters/enemies/lizardo.png",
+        black_lizardy: "../assets/characters/enemies/lizardy.png",
+        black_lizord: "../assets/characters/enemies/lizord.png",
+        black_zard: "../assets/characters/enemies/zard.png",
 
-            // NPC - Merchants
-            'axelotl': '../assets/characters/npcs/merchant/axolotl.png',
-            'gouge': '../assets/characters/npcs/merchant/gouge.png',
-            'mark': '../assets/characters/npcs/merchant/mark.png',
-            'nib': '../assets/characters/npcs/merchant/nib.png',
-            'penne': '../assets/characters/npcs/merchant/penne.png',
-            'rune': '../assets/characters/npcs/merchant/rune.png',
-            'squig': '../assets/characters/npcs/merchant/squig.png',
-            // NPC - Tutorial
-            'crayn': '../assets/characters/npcs/tutorial/crayn.png',
-            'felt': '../assets/characters/npcs/tutorial/felt.png',
-            'forge': '../assets/characters/npcs/tutorial/forge.png',
-            // NPC - Random generators
-            'random_merchant': '🛒',
-            'random_gossip_npc': '💬',
-            // Gossip NPCs
-            'aster': '../assets/characters/npcs/gossip/aster.png',
-            'bit': '../assets/characters/npcs/gossip/bit.png',
-            'bladder': '../assets/characters/npcs/gossip/bladder.png',
-            'block': '../assets/characters/npcs/gossip/block.png',
-            'blot': '../assets/characters/npcs/gossip/blot.png',
-            'blotter': '../assets/characters/npcs/gossip/blotter.png',
-            'brush': '../assets/characters/npcs/gossip/brush.png',
-            'bullet': '../assets/characters/npcs/gossip/bullet.png',
-            'burin': '../assets/characters/npcs/gossip/burin.png',
-            'calamus': '../assets/characters/npcs/gossip/calamus.png',
-            'calli': '../assets/characters/npcs/gossip/calli.png',
-            'cap': '../assets/characters/npcs/gossip/cap.png',
-            'capybara': '../assets/characters/npcs/gossip/capybara.png',
-            'cartouche': '../assets/characters/npcs/gossip/cartouche.png',
-            'cinnabar': '../assets/characters/npcs/gossip/cinnabar.png',
-            'coursier': '../assets/characters/npcs/gossip/coursier.png',
-            'creta': '../assets/characters/npcs/gossip/creta.png',
-            'crock': '../assets/characters/npcs/gossip/crock.png',
-            'dash': '../assets/characters/npcs/gossip/dash.png',
-            'dinkus': '../assets/characters/npcs/gossip/dinkus.png',
-            'em': '../assets/characters/npcs/gossip/em.png',
-            'fascia': '../assets/characters/npcs/gossip/fascia.png',
-            'fascinus': '../assets/characters/npcs/gossip/fascinus.png',
-            'filum': '../assets/characters/npcs/gossip/filum.png',
-            'flex': '../assets/characters/npcs/gossip/flex.png',
-            'font': '../assets/characters/npcs/gossip/font.png',
-            'fork': '../assets/characters/npcs/gossip/fork.png',
-            'fude': '../assets/characters/npcs/gossip/fude.png',
-            'gel': '../assets/characters/npcs/gossip/gel.png',
-            'gelinka': '../assets/characters/npcs/gossip/gelinka.png',
-            'goma': '../assets/characters/npcs/gossip/goma.png',
-            'gouache': '../assets/characters/npcs/gossip/gouache.png',
-            'grawlix': '../assets/characters/npcs/gossip/grawlix.png',
-            'hane': '../assets/characters/npcs/gossip/hane.png',
-            'highlight': '../assets/characters/npcs/gossip/highlight.png',
-            'hoja': '../assets/characters/npcs/gossip/hoja.png',
-            'kaji': '../assets/characters/npcs/gossip/kaji.png',
-            'kraft': '../assets/characters/npcs/gossip/kraft.png',
-            'lupi': '../assets/characters/npcs/gossip/lupi.png',
-            'merki': '../assets/characters/npcs/gossip/merki.png',
-            'micron': '../assets/characters/npcs/gossip/micron.png',
-            'midori': '../assets/characters/npcs/gossip/midori.png',
-            'nub': '../assets/characters/npcs/gossip/nub.png',
-            'palimpsest': '../assets/characters/npcs/gossip/palimpsest.png',
-            'penni': '../assets/characters/npcs/gossip/penni.png',
-            'pluma': '../assets/characters/npcs/gossip/pluma.png',
-            'plume': '../assets/characters/npcs/gossip/plume.png',
-            'polly': '../assets/characters/npcs/gossip/polly.png',
-            'pulp': '../assets/characters/npcs/gossip/pulp.png',
-            'punto': '../assets/characters/npcs/gossip/punto.png',
-            'quill': '../assets/characters/npcs/gossip/quill.png',
-            'raddle': '../assets/characters/npcs/gossip/raddle.png',
-            'redakt': '../assets/characters/npcs/gossip/redakt.png',
-            'scrape': '../assets/characters/npcs/gossip/scrape.png',
-            'scritch': '../assets/characters/npcs/gossip/scritch.png',
-            'scroll': '../assets/characters/npcs/gossip/scroll.png',
-            'shade': '../assets/characters/npcs/gossip/shade.png',
-            'silver': '../assets/characters/npcs/gossip/silver.png',
-            'sine': '../assets/characters/npcs/gossip/sine.png',
-            'skrib': '../assets/characters/npcs/gossip/skrib.png',
-            'slate': '../assets/characters/npcs/gossip/slate.png',
-            'slick': '../assets/characters/npcs/gossip/slick.png',
-            'slug': '../assets/characters/npcs/gossip/slug.png',
-            'snak': '../assets/characters/npcs/gossip/snak.png',
-            'spectrum': '../assets/characters/npcs/gossip/spectrum.png',
-            'spitze': '../assets/characters/npcs/gossip/spitze.png',
-            'stick': '../assets/characters/npcs/gossip/stick.png',
-            'stylet': '../assets/characters/npcs/gossip/stylet.png',
-            'vellum': '../assets/characters/npcs/gossip/vellum.png',
-            'wash': '../assets/characters/npcs/gossip/wash.png',
-            'y': '../assets/characters/npcs/gossip/y.png',
+        // NPC - Merchants
+        axelotl: "../assets/characters/npcs/merchant/axolotl.png",
+        gouge: "../assets/characters/npcs/merchant/gouge.png",
+        mark: "../assets/characters/npcs/merchant/mark.png",
+        nib: "../assets/characters/npcs/merchant/nib.png",
+        penne: "../assets/characters/npcs/merchant/penne.png",
+        rune: "../assets/characters/npcs/merchant/rune.png",
+        squig: "../assets/characters/npcs/merchant/squig.png",
+        // NPC - Tutorial
+        crayn: "../assets/characters/npcs/tutorial/crayn.png",
+        felt: "../assets/characters/npcs/tutorial/felt.png",
+        forge: "../assets/characters/npcs/tutorial/forge.png",
+        // NPC - Random generators
+        random_merchant: "🛒",
+        random_gossip_npc: "💬",
+        // Gossip NPCs
+        aster: "../assets/characters/npcs/gossip/aster.png",
+        bit: "../assets/characters/npcs/gossip/bit.png",
+        bladder: "../assets/characters/npcs/gossip/bladder.png",
+        block: "../assets/characters/npcs/gossip/block.png",
+        blot: "../assets/characters/npcs/gossip/blot.png",
+        blotter: "../assets/characters/npcs/gossip/blotter.png",
+        brush: "../assets/characters/npcs/gossip/brush.png",
+        bullet: "../assets/characters/npcs/gossip/bullet.png",
+        burin: "../assets/characters/npcs/gossip/burin.png",
+        calamus: "../assets/characters/npcs/gossip/calamus.png",
+        calli: "../assets/characters/npcs/gossip/calli.png",
+        cap: "../assets/characters/npcs/gossip/cap.png",
+        capybara: "../assets/characters/npcs/gossip/capybara.png",
+        cartouche: "../assets/characters/npcs/gossip/cartouche.png",
+        cinnabar: "../assets/characters/npcs/gossip/cinnabar.png",
+        coursier: "../assets/characters/npcs/gossip/coursier.png",
+        creta: "../assets/characters/npcs/gossip/creta.png",
+        crock: "../assets/characters/npcs/gossip/crock.png",
+        dash: "../assets/characters/npcs/gossip/dash.png",
+        dinkus: "../assets/characters/npcs/gossip/dinkus.png",
+        em: "../assets/characters/npcs/gossip/em.png",
+        fascia: "../assets/characters/npcs/gossip/fascia.png",
+        fascinus: "../assets/characters/npcs/gossip/fascinus.png",
+        filum: "../assets/characters/npcs/gossip/filum.png",
+        flex: "../assets/characters/npcs/gossip/flex.png",
+        font: "../assets/characters/npcs/gossip/font.png",
+        fork: "../assets/characters/npcs/gossip/fork.png",
+        fude: "../assets/characters/npcs/gossip/fude.png",
+        gel: "../assets/characters/npcs/gossip/gel.png",
+        gelinka: "../assets/characters/npcs/gossip/gelinka.png",
+        goma: "../assets/characters/npcs/gossip/goma.png",
+        gouache: "../assets/characters/npcs/gossip/gouache.png",
+        grawlix: "../assets/characters/npcs/gossip/grawlix.png",
+        hane: "../assets/characters/npcs/gossip/hane.png",
+        highlight: "../assets/characters/npcs/gossip/highlight.png",
+        hoja: "../assets/characters/npcs/gossip/hoja.png",
+        kaji: "../assets/characters/npcs/gossip/kaji.png",
+        kraft: "../assets/characters/npcs/gossip/kraft.png",
+        lupi: "../assets/characters/npcs/gossip/lupi.png",
+        merki: "../assets/characters/npcs/gossip/merki.png",
+        micron: "../assets/characters/npcs/gossip/micron.png",
+        midori: "../assets/characters/npcs/gossip/midori.png",
+        nub: "../assets/characters/npcs/gossip/nub.png",
+        palimpsest: "../assets/characters/npcs/gossip/palimpsest.png",
+        penni: "../assets/characters/npcs/gossip/penni.png",
+        pluma: "../assets/characters/npcs/gossip/pluma.png",
+        plume: "../assets/characters/npcs/gossip/plume.png",
+        polly: "../assets/characters/npcs/gossip/polly.png",
+        pulp: "../assets/characters/npcs/gossip/pulp.png",
+        punto: "../assets/characters/npcs/gossip/punto.png",
+        quill: "../assets/characters/npcs/gossip/quill.png",
+        raddle: "../assets/characters/npcs/gossip/raddle.png",
+        redakt: "../assets/characters/npcs/gossip/redakt.png",
+        scrape: "../assets/characters/npcs/gossip/scrape.png",
+        scritch: "../assets/characters/npcs/gossip/scritch.png",
+        scroll: "../assets/characters/npcs/gossip/scroll.png",
+        shade: "../assets/characters/npcs/gossip/shade.png",
+        silver: "../assets/characters/npcs/gossip/silver.png",
+        sine: "../assets/characters/npcs/gossip/sine.png",
+        skrib: "../assets/characters/npcs/gossip/skrib.png",
+        slate: "../assets/characters/npcs/gossip/slate.png",
+        slick: "../assets/characters/npcs/gossip/slick.png",
+        slug: "../assets/characters/npcs/gossip/slug.png",
+        snak: "../assets/characters/npcs/gossip/snak.png",
+        spectrum: "../assets/characters/npcs/gossip/spectrum.png",
+        spitze: "../assets/characters/npcs/gossip/spitze.png",
+        stick: "../assets/characters/npcs/gossip/stick.png",
+        stylet: "../assets/characters/npcs/gossip/stylet.png",
+        vellum: "../assets/characters/npcs/gossip/vellum.png",
+        wash: "../assets/characters/npcs/gossip/wash.png",
+        y: "../assets/characters/npcs/gossip/y.png",
 
-            // STATUE (using same assets with overlay indicator)
-            'bomb_statue': '../assets/items/misc/bomb.png',
-            'book_statue': '../assets/items/misc/book.png',
-            'bow_statue': '../assets/items/equipment/bow.png',
-            'horse_statue': '../assets/items/misc/horse.png',
-            'shovel_statue': '../assets/items/equipment/shovel.png',
-            'spear_statue': '../assets/items/equipment/spear.png',
-            'lazerd_statue': '../assets/characters/enemies/lazerd.png',
-            'lizardeaux_statue': '../assets/characters/enemies/lizardeaux.png',
-            'lizardo_statue': '../assets/characters/enemies/lizardo.png',
-            'lizardy_statue': '../assets/characters/enemies/lizardy.png',
-            'lizord_statue': '../assets/characters/enemies/lizord.png',
-            'zard_statue': '../assets/characters/enemies/zard.png'
-        };
+        // STATUE (using same assets with overlay indicator)
+        bomb_statue: "../assets/items/misc/bomb.png",
+        book_statue: "../assets/items/misc/book.png",
+        bow_statue: "../assets/items/equipment/bow.png",
+        horse_statue: "../assets/items/misc/horse.png",
+        shovel_statue: "../assets/items/equipment/shovel.png",
+        spear_statue: "../assets/items/equipment/spear.png",
+        lazerd_statue: "../assets/characters/enemies/lazerd.png",
+        lizardeaux_statue: "../assets/characters/enemies/lizardeaux.png",
+        lizardo_statue: "../assets/characters/enemies/lizardo.png",
+        lizardy_statue: "../assets/characters/enemies/lizardy.png",
+        lizord_statue: "../assets/characters/enemies/lizord.png",
+        zard_statue: "../assets/characters/enemies/zard.png",
+      };
 
-        // Store loaded images
-        const loadedImages = {};
+      // Store loaded images
+      const loadedImages = {};
 
-        function preloadImages() {
-            Object.entries(tileAssets).forEach(([key, path]) => {
-                // Skip emoji/unicode placeholders (they're not image paths)
-                const isEmoji = path && path.length <= 3 && !path.includes('/') && !path.includes('.');
-                if (!isEmoji) {
-                    const img = new Image();
-                    img.src = path;
-                    loadedImages[key] = img;
-                }
+      function preloadImages() {
+        Object.entries(tileAssets).forEach(([key, path]) => {
+          // Skip emoji/unicode placeholders (they're not image paths)
+          const isEmoji =
+            path &&
+            path.length <= 3 &&
+            !path.includes("/") &&
+            !path.includes(".");
+          if (!isEmoji) {
+            const img = new Image();
+            img.src = path;
+            loadedImages[key] = img;
+          }
+        });
+      }
+
+      function getAssetPath(value) {
+        return tileAssets[value] || null;
+      }
+
+      const defaultPalettes = {
+        FLOOR: [
+          "floors/dirt",
+          "floors/grass",
+          "floors/aqua",
+          "floors/desert",
+          "floors/gravel",
+          "floors/mulch",
+          "floors/crag",
+          "floors/bones",
+          "floors/clouds",
+          "floors/crackedseaice",
+          "floors/seaice",
+          "floors/dirtpatch",
+          "floors/housetile",
+          "floors/underbrush",
+          "floors/museum_floor_1",
+          "floors/museum_floor_2",
+          "floors/museum_floor_dark_1",
+          "floors/museum_floor_dark_2",
+          null,
+        ],
+        WALL: [
+          // Wall tiles
+          "walls/wall",
+          "walls/rockwall",
+          "walls/cobble",
+          "walls/brick_wall_1",
+          "walls/brick_wall_2",
+          "walls/brick_wall_3",
+          "walls/brick_wall_4",
+          "walls/brick_wall_5",
+          "walls/brick_wall_6",
+          "walls/museum_wall_1",
+          "walls/museum_wall_2",
+          "walls/museum_wall_3",
+          "walls/museum_wall_4",
+          "walls/fortwall",
+          "walls/coralwall",
+          "walls/lavawall",
+          "walls/heartstone",
+          "walls/chargedwall",
+          "walls/90s",
+          "walls/astrocrag",
+          "walls/deco",
+          "walls/zydeco",
+          // Flora/obstacles in walls folder
+          "walls/blocklily",
+          "walls/boulder",
+          "walls/bush",
+          "walls/bush2",
+          "walls/bushes",
+          "walls/stump",
+          "walls/succulent",
+          // Hedge walls
+          "walls/hedge_top",
+          "walls/hedge_top_left",
+          "walls/hedge_top_right",
+          "walls/hedge_left",
+          "walls/hedge_right",
+          "walls/hedge_bottom_left",
+          "walls/hedge_bottom_right",
+          null,
+        ],
+        TRIM: [
+          "trim/bordertrim",
+          "trim/museum_bottom_trim",
+          "trim/museum_bottom_trim_dark",
+          "trim/museum_left_trim_dark",
+          "trim/museum_ne_nook",
+          "trim/museum_ne_trim_dark",
+          "trim/museum_nw_nook",
+          "trim/museum_nw_trim_dark",
+          "trim/museum_right_trim",
+          "trim/museum_se_nook",
+          "trim/museum_se_trim_dark",
+          "trim/museum_sw_nook",
+          "trim/museum_sw_trim_dark",
+          null,
+        ],
+        STRUCTURE: [
+          "anemone",
+          "big_tree",
+          "blue_shroom",
+          "cactus",
+          "cactus2",
+          "teleport_branch",
+          "deadtree",
+          "green_shroom",
+          "house",
+          "shack",
+          "sign",
+          "sign_blank",
+          "sign_eaten",
+          "sign_gold",
+          "sign_metal",
+          "sign_metal_alt",
+          "small_evergreen",
+          "table",
+          "urchin",
+          "well",
+          // Obstacles
+          "obstacles/rock",
+          "obstacles/shrubbery",
+          "hole",
+          "pitfall",
+          null,
+        ],
+        PORT: [
+          "exit_down",
+          "exit_left",
+          "exit_right",
+          "exit_up",
+          "player_spawn",
+          "port_interior",
+          "port_stairdown",
+          "port_stairup",
+          "port_grate",
+          null,
+        ],
+        ITEM: [
+          "axe",
+          "bishop_spear",
+          "bomb",
+          "book_of_time_travel",
+          "bow",
+          "fischers_wand",
+          "food",
+          "hammer",
+          "heart",
+          "horse_icon",
+          "note",
+          "random_item",
+          "random_radial_item",
+          "random_food_water",
+          "shovel",
+          "water_item",
+          null,
+        ],
+        ENEMY: [
+          "lazerd",
+          "lizardeaux",
+          "lizardo",
+          "lizardy",
+          "lizord",
+          "zard",
+          "black_lazerd",
+          "black_lizardeaux",
+          "black_lizardo",
+          "black_lizardy",
+          "black_lizord",
+          "black_zard",
+          null,
+        ],
+        NPC: [
+          "axelotl",
+          "crayn",
+          "felt",
+          "forge",
+          "gouge",
+          "mark",
+          "nib",
+          "penne",
+          "rune",
+          "squig",
+          "random_merchant",
+          "random_gossip_npc",
+          // Gossip NPCs (alphabetically sorted)
+          "aster",
+          "bit",
+          "bladder",
+          "block",
+          "blot",
+          "blotter",
+          "brush",
+          "bullet",
+          "burin",
+          "calamus",
+          "calli",
+          "cap",
+          "capybara",
+          "cartouche",
+          "cinnabar",
+          "coursier",
+          "creta",
+          "crock",
+          "dash",
+          "dinkus",
+          "em",
+          "fascia",
+          "fascinus",
+          "filum",
+          "flex",
+          "font",
+          "fork",
+          "fude",
+          "gel",
+          "gelinka",
+          "goma",
+          "gouache",
+          "grawlix",
+          "hane",
+          "highlight",
+          "hoja",
+          "kaji",
+          "kraft",
+          "lupi",
+          "merki",
+          "micron",
+          "midori",
+          "nub",
+          "palimpsest",
+          "penni",
+          "pluma",
+          "plume",
+          "polly",
+          "pulp",
+          "punto",
+          "quill",
+          "raddle",
+          "redakt",
+          "scrape",
+          "scritch",
+          "scroll",
+          "shade",
+          "silver",
+          "sine",
+          "skrib",
+          "slate",
+          "slick",
+          "slug",
+          "snak",
+          "spectrum",
+          "spitze",
+          "stick",
+          "stylet",
+          "vellum",
+          "wash",
+          "y",
+          null,
+        ],
+        STATUE: [
+          "bomb_statue",
+          "book_statue",
+          "bow_statue",
+          "horse_statue",
+          "shovel_statue",
+          "spear_statue",
+          "lazerd_statue",
+          "lizardeaux_statue",
+          "lizardo_statue",
+          "lizardy_statue",
+          "lizord_statue",
+          "zard_statue",
+          null,
+        ],
+      };
+
+      let customPalettes = {
+        FLOOR: [],
+        WALL: [],
+        TRIM: [],
+        STRUCTURE: [],
+        PORT: [],
+        ITEM: [],
+        ENEMY: [],
+        NPC: [],
+        STATUE: [],
+      };
+
+      function initGrid() {
+        const grid = document.getElementById("grid");
+        grid.innerHTML = "";
+
+        // Initialize with walls on borders
+        for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+          const row = Math.floor(i / GRID_SIZE);
+          const col = i % GRID_SIZE;
+          // Add wall if on border (first/last row or first/last column)
+          if (
+            row === 0 ||
+            row === GRID_SIZE - 1 ||
+            col === 0 ||
+            col === GRID_SIZE - 1
+          ) {
+            terrainLayer[i] = "wall";
+          }
+        }
+
+        for (let row = 0; row < GRID_SIZE; row++) {
+          for (let col = 0; col < GRID_SIZE; col++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+            cell.dataset.index = row * GRID_SIZE + col;
+
+            cell.addEventListener("mousedown", (e) => {
+              e.preventDefault();
+              isPainting = true;
+              paintCell(cell);
             });
-        }
 
-        function getAssetPath(value) {
-            return tileAssets[value] || null;
-        }
+            cell.addEventListener("mouseenter", (e) => {
+              if (isPainting) {
+                paintCell(cell);
+              }
+              updateCoordDisplay(row, col);
+            });
 
-        const defaultPalettes = {
-            FLOOR: [
-                'floors/dirt', 'floors/grass', 'floors/aqua', 'floors/desert', 'floors/gravel', 'floors/mulch', 'floors/crag',
-                'floors/bones', 'floors/clouds', 'floors/crackedseaice', 'floors/seaice', 'floors/dirtpatch', 'floors/housetile', 'floors/underbrush',
-                null
-            ],
-            WALL: [
-                // Wall tiles
-                'walls/wall', 'walls/rockwall', 'walls/cobble', 'walls/clubwall', 'walls/clubwall1', 'walls/clubwall2', 'walls/clubwall4', 'walls/clubwall5', 'walls/clubwall6',
-                'walls/fortwall', 'walls/coralwall', 'walls/lavawall', 'walls/heartstone', 'walls/chargedwall',
-                'walls/90s', 'walls/astrocrag', 'walls/deco', 'walls/zydeco',
-                // Flora/obstacles in walls folder
-                'walls/blocklily', 'walls/boulder', 'walls/bush', 'walls/stump', 'walls/succulent',
-                null
-            ],
-            TRIM: [
-                'trim/bordertrim',
-                null
-            ],
-            STRUCTURE: [
-                'anemone', 'big_tree', 'blue_shroom', 'cactus', 'cactus2', 'teleport_branch', 'deadtree', 'green_shroom',
-                'house', 'shack', 'sign', 'sign_blank', 'sign_eaten', 'sign_gold', 'sign_metal', 'sign_metal_alt',
-                'small_evergreen', 'table', 'urchin', 'well',
-                // Obstacles
-                'obstacles/rock', 'obstacles/shrubbery', 'hole', 'pitfall',
-                null
-            ],
-            PORT: [
-                'exit_down', 'exit_left', 'exit_right', 'exit_up',
-                'player_spawn',
-                'port_interior', 'port_stairdown', 'port_stairup', 'port_grate',
-                null
-            ],
-            ITEM: [
-                'axe', 'bishop_spear', 'bomb', 'book_of_time_travel', 'bow', 'fischers_wand', 'food', 'hammer',
-                'heart', 'horse_icon', 'note', 'random_item', 'random_radial_item', 'random_food_water', 'shovel', 'water_item',
-                null
-            ],
-            ENEMY: [
-                'lazerd', 'lizardeaux', 'lizardo', 'lizardy', 'lizord', 'zard',
-                'black_lazerd', 'black_lizardeaux', 'black_lizardo', 'black_lizardy', 'black_lizord', 'black_zard',
-                null
-            ],
-            NPC: [
-                'axelotl', 'crayn', 'felt', 'forge', 'gouge', 'mark', 'nib', 'penne', 'rune', 'squig', 'random_merchant', 'random_gossip_npc',
-                // Gossip NPCs (alphabetically sorted)
-                'aster', 'bit', 'bladder', 'block', 'blot', 'blotter', 'brush', 'bullet', 'burin', 'calamus', 'calli', 'cap', 'capybara',
-                'cartouche', 'cinnabar', 'coursier', 'creta', 'crock', 'dash', 'dinkus', 'em', 'fascia', 'fascinus', 'filum', 'flex', 'font', 'fork', 'fude', 'gel', 'gelinka',
-                'goma', 'gouache', 'grawlix', 'hane', 'highlight', 'hoja', 'kaji', 'kraft', 'lupi', 'merki', 'micron', 'midori', 'nub',
-                'palimpsest', 'penni', 'pluma', 'plume', 'polly', 'pulp', 'punto', 'quill', 'raddle', 'redakt', 'scrape',
-                'scritch', 'scroll', 'shade', 'silver', 'sine', 'skrib', 'slate', 'slick', 'slug', 'snak', 'spectrum', 'spitze',
-                'stick', 'stylet', 'vellum', 'wash', 'y',
-                null
-            ],
-            STATUE: [
-                'bomb_statue', 'book_statue', 'bow_statue', 'horse_statue', 'shovel_statue', 'spear_statue',
-                'lazerd_statue', 'lizardeaux_statue', 'lizardo_statue', 'lizardy_statue', 'lizord_statue', 'zard_statue',
-                null
-            ]
-        };
+            cell.addEventListener("mouseleave", () => {
+              updateCoordDisplay(row, col);
+            });
 
-        let customPalettes = {
-            FLOOR: [],
-            WALL: [],
-            TRIM: [],
-            STRUCTURE: [],
-            PORT: [],
-            ITEM: [],
-            ENEMY: [],
-            NPC: [],
-            STATUE: []
-        };
+            // Touch support for mobile drag-painting
+            cell.addEventListener("touchstart", (e) => {
+              e.preventDefault();
+              isPainting = true;
+              paintCell(cell);
+            });
 
-        function initGrid() {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = '';
-
-            // Initialize with walls on borders
-            for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-                const row = Math.floor(i / GRID_SIZE);
-                const col = i % GRID_SIZE;
-                // Add wall if on border (first/last row or first/last column)
-                if (row === 0 || row === GRID_SIZE - 1 || col === 0 || col === GRID_SIZE - 1) {
-                    terrainLayer[i] = 'wall';
+            cell.addEventListener("touchmove", (e) => {
+              e.preventDefault();
+              if (isPainting) {
+                const touch = e.touches[0];
+                const element = document.elementFromPoint(
+                  touch.clientX,
+                  touch.clientY
+                );
+                if (element && element.classList.contains("cell")) {
+                  paintCell(element);
                 }
+              }
+            });
+
+            cell.addEventListener("touchend", (e) => {
+              e.preventDefault();
+              isPainting = false;
+            });
+
+            grid.appendChild(cell);
+          }
+        }
+        updateGrid();
+      }
+
+      // Stop painting when mouse/touch is released anywhere
+      document.addEventListener("mouseup", () => {
+        isPainting = false;
+        lastPaintedIndex = -1; // Reset to allow rotation on next click
+      });
+
+      document.addEventListener("touchend", () => {
+        isPainting = false;
+        lastPaintedIndex = -1; // Reset to allow rotation on next click
+      });
+
+      document.addEventListener("touchcancel", () => {
+        isPainting = false;
+        lastPaintedIndex = -1; // Reset to allow rotation on next click
+      });
+
+      function updateCoordDisplay(row, col) {
+        document.getElementById(
+          "coordDisplay"
+        ).textContent = `Coordinate: [${col}, ${row}]`;
+      }
+
+      function paintCell(cell) {
+        const index = parseInt(cell.dataset.index);
+        const row = parseInt(cell.dataset.row);
+        const col = parseInt(cell.dataset.col);
+
+        console.log(
+          `Painting cell [${col},${row}] with value: "${selectedValue}" from ${currentCategory}`
+        );
+
+        // Determine which layer to paint on and which rotation layer to use
+        // FLOOR and WALL paint on terrain layer, TRIM paints on overlay layer, everything else on feature layer
+        let targetLayer, targetRotationLayer;
+        if (currentCategory === "TRIM") {
+          targetLayer = overlayLayer;
+          targetRotationLayer = overlayRotationLayer;
+        } else if (currentCategory === "FLOOR" || currentCategory === "WALL") {
+          targetLayer = terrainLayer;
+          targetRotationLayer = rotationLayer;
+        } else {
+          targetLayer = featureLayer;
+          targetRotationLayer = featureRotationLayer;
+        }
+        const currentValue = targetLayer[index];
+
+        // Check if clicking the same tile with the same value -> rotate it
+        // Don't rotate if we're dragging to a different cell (lastPaintedIndex is different and isPainting is true)
+        const isDragging =
+          isPainting && lastPaintedIndex !== -1 && lastPaintedIndex !== index;
+
+        if (
+          currentValue === selectedValue &&
+          selectedValue !== null &&
+          !isDragging
+        ) {
+          // Rotate by 90 degrees
+          targetRotationLayer[index] = (targetRotationLayer[index] + 90) % 360;
+          console.log(
+            `Rotating tile at [${col},${row}] to ${targetRotationLayer[index]}°`
+          );
+          updateGrid();
+          lastPaintedIndex = index; // Update for next click
+          return;
+        }
+
+        // Update last painted index
+        lastPaintedIndex = index;
+
+        // Reset rotation when placing a new tile (only if replacing existing value on this layer)
+        if (currentValue !== null && currentValue !== selectedValue) {
+          // Replacing a different tile, reset rotation
+          targetRotationLayer[index] = 0;
+        }
+
+        // Check if this is a multi-tile structure
+        if (selectedValue && multiTileStructures[selectedValue]) {
+          const structure = multiTileStructures[selectedValue];
+
+          // Check if structure fits in grid
+          if (
+            col + structure.width > GRID_SIZE ||
+            row + structure.height > GRID_SIZE
+          ) {
+            console.warn(
+              `Structure ${selectedValue} doesn't fit at [${col},${row}]`
+            );
+            return;
+          }
+
+          // Paint all cells for this structure
+          for (let dy = 0; dy < structure.height; dy++) {
+            for (let dx = 0; dx < structure.width; dx++) {
+              const cellIndex = (row + dy) * GRID_SIZE + (col + dx);
+              targetLayer[cellIndex] = selectedValue;
+              targetRotationLayer[cellIndex] = 0;
+            }
+          }
+        } else {
+          // Single-tile placement
+          targetLayer[index] = selectedValue;
+        }
+
+        updateGrid();
+      }
+
+      function renderTile(value, index, container, layerClass, rotation = 0) {
+        if (!value) return;
+
+        const row = Math.floor(index / GRID_SIZE);
+        const col = index % GRID_SIZE;
+
+        const assetPath = getAssetPath(value);
+
+        // Check if assetPath is an emoji/unicode character (not a file path)
+        const isEmoji =
+          assetPath &&
+          assetPath.length <= 3 &&
+          !assetPath.includes("/") &&
+          !assetPath.includes(".");
+
+        if (isEmoji) {
+          // Display emoji directly
+          const emojiDiv = document.createElement("div");
+          emojiDiv.className = `cell-feature ${layerClass}`;
+          emojiDiv.textContent = assetPath;
+          emojiDiv.title = value;
+          emojiDiv.style.fontSize = "20px";
+          emojiDiv.style.display = "flex";
+          emojiDiv.style.alignItems = "center";
+          emojiDiv.style.justifyContent = "center";
+          emojiDiv.style.width = "100%";
+          emojiDiv.style.height = "100%";
+          if (rotation !== 0) {
+            emojiDiv.style.transform = `rotate(${rotation}deg)`;
+          }
+          container.appendChild(emojiDiv);
+        } else if (assetPath && loadedImages[value]) {
+          // Check if this is a multi-tile structure
+          const structure = multiTileStructures[value];
+
+          if (structure) {
+            // Find the top-left corner of this structure
+            const terrainOrFeature =
+              terrainLayer[index] === value ? terrainLayer : featureLayer;
+            const topLeftCol = findStructureTopLeft(
+              col,
+              row,
+              value,
+              structure,
+              terrainOrFeature
+            ).col;
+            const topLeftRow = findStructureTopLeft(
+              col,
+              row,
+              value,
+              structure,
+              terrainOrFeature
+            ).row;
+
+            // Calculate this cell's position within the structure
+            const offsetX = col - topLeftCol;
+            const offsetY = row - topLeftRow;
+
+            // Create a container div for the sliced sprite
+            const wrapper = document.createElement("div");
+            wrapper.className = `cell-feature ${layerClass}`;
+            wrapper.style.width = "100%";
+            wrapper.style.height = "100%";
+            wrapper.style.overflow = "hidden";
+            wrapper.style.position = "relative";
+            wrapper.title = value;
+
+            // Create the image and position it to show only the relevant slice
+            const img = document.createElement("img");
+            img.src = assetPath;
+            img.style.position = "absolute";
+            img.style.imageRendering = "pixelated";
+
+            // Scale the image to be structure.width times the cell width
+            img.style.width = `${structure.width * 100}%`;
+            img.style.height = `${structure.height * 100}%`;
+
+            // Offset to show the correct slice
+            img.style.left = `${-offsetX * 100}%`;
+            img.style.top = `${-offsetY * 100}%`;
+
+            wrapper.appendChild(img);
+            container.appendChild(wrapper);
+          } else {
+            // Single-tile rendering
+            const img = document.createElement("img");
+            img.src = assetPath;
+            img.className = `cell-feature ${layerClass}`;
+            img.title = value;
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.objectFit = "contain";
+            img.style.imageRendering = "pixelated";
+
+            // Apply gray filter for statues and black enemies
+            if (value.endsWith("_statue") || value.startsWith("black_")) {
+              img.style.filter = "grayscale(100%) brightness(0.7)";
             }
 
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.dataset.row = row;
-                    cell.dataset.col = col;
-                    cell.dataset.index = row * GRID_SIZE + col;
-
-                    cell.addEventListener('mousedown', (e) => {
-                        e.preventDefault();
-                        isPainting = true;
-                        paintCell(cell);
-                    });
-
-                    cell.addEventListener('mouseenter', (e) => {
-                        if (isPainting) {
-                            paintCell(cell);
-                        }
-                        updateCoordDisplay(row, col);
-                    });
-
-                    cell.addEventListener('mouseleave', () => {
-                        updateCoordDisplay(row, col);
-                    });
-
-                    // Touch support for mobile drag-painting
-                    cell.addEventListener('touchstart', (e) => {
-                        e.preventDefault();
-                        isPainting = true;
-                        paintCell(cell);
-                    });
-
-                    cell.addEventListener('touchmove', (e) => {
-                        e.preventDefault();
-                        if (isPainting) {
-                            const touch = e.touches[0];
-                            const element = document.elementFromPoint(touch.clientX, touch.clientY);
-                            if (element && element.classList.contains('cell')) {
-                                paintCell(element);
-                            }
-                        }
-                    });
-
-                    cell.addEventListener('touchend', (e) => {
-                        e.preventDefault();
-                        isPainting = false;
-                    });
-
-                    grid.appendChild(cell);
-                }
+            // Apply rotation (except for directional arrows which have their own sprites)
+            if (rotation !== 0) {
+              // Don't rotate directional exit arrows - they have dedicated sprites for each direction
+              const isDirectionalArrow = value === "exit_up" || value === "exit_down" ||
+                                        value === "exit_left" || value === "exit_right";
+              if (!isDirectionalArrow) {
+                img.style.transform = `rotate(${rotation}deg)`;
+              }
             }
-            updateGrid();
-        }
 
-        // Stop painting when mouse/touch is released anywhere
-        document.addEventListener('mouseup', () => {
-            isPainting = false;
-            lastPaintedIndex = -1; // Reset to allow rotation on next click
+            container.appendChild(img);
+          }
+        } else {
+          // Fallback to text if no asset
+          const valueDiv = document.createElement("div");
+          valueDiv.className = `cell-feature ${layerClass}`;
+          valueDiv.textContent = value;
+          valueDiv.title = value;
+          valueDiv.style.fontSize = "8px";
+          valueDiv.style.wordBreak = "break-all";
+          if (rotation !== 0) {
+            valueDiv.style.transform = `rotate(${rotation}deg)`;
+          }
+          container.appendChild(valueDiv);
+        }
+      }
+
+      function updateGrid() {
+        const cells = document.querySelectorAll(".cell");
+        cells.forEach((cell, index) => {
+          const terrainValue = terrainLayer[index];
+          const overlayValue = overlayLayer[index];
+          const featureValue = featureLayer[index];
+          cell.innerHTML = "";
+
+          // Render terrain layer first (floors/walls)
+          if (terrainValue) {
+            renderTile(
+              terrainValue,
+              index,
+              cell,
+              "terrain-layer",
+              rotationLayer[index] || 0
+            );
+          }
+
+          // Render overlay layer on top of terrain (trim/decorative)
+          if (overlayValue) {
+            renderTile(
+              overlayValue,
+              index,
+              cell,
+              "terrain-layer",
+              overlayRotationLayer[index] || 0
+            );
+          }
+
+          // Render feature layer on top (items/npcs/etc)
+          if (featureValue) {
+            renderTile(
+              featureValue,
+              index,
+              cell,
+              "feature-layer",
+              featureRotationLayer[index] || 0
+            );
+          }
         });
+      }
 
-        document.addEventListener('touchend', () => {
-            isPainting = false;
-            lastPaintedIndex = -1; // Reset to allow rotation on next click
-        });
-
-        document.addEventListener('touchcancel', () => {
-            isPainting = false;
-            lastPaintedIndex = -1; // Reset to allow rotation on next click
-        });
-
-        function updateCoordDisplay(row, col) {
-            document.getElementById('coordDisplay').textContent = `Coordinate: [${col}, ${row}]`;
-        }
-
-        function paintCell(cell) {
-            const index = parseInt(cell.dataset.index);
-            const row = parseInt(cell.dataset.row);
-            const col = parseInt(cell.dataset.col);
-
-            console.log(`Painting cell [${col},${row}] with value: "${selectedValue}" from ${currentCategory}`);
-
-            // Determine which layer to paint on and which rotation layer to use
-            // FLOOR and WALL paint on terrain layer, TRIM paints on overlay layer, everything else on feature layer
-            let targetLayer, targetRotationLayer;
-            if (currentCategory === 'TRIM') {
-                targetLayer = overlayLayer;
-                targetRotationLayer = overlayRotationLayer;
-            } else if (currentCategory === 'FLOOR' || currentCategory === 'WALL') {
-                targetLayer = terrainLayer;
-                targetRotationLayer = rotationLayer;
-            } else {
-                targetLayer = featureLayer;
-                targetRotationLayer = featureRotationLayer;
-            }
-            const currentValue = targetLayer[index];
-
-            // Check if clicking the same tile with the same value -> rotate it
-            // Don't rotate if we're dragging to a different cell (lastPaintedIndex is different and isPainting is true)
-            const isDragging = isPainting && lastPaintedIndex !== -1 && lastPaintedIndex !== index;
-
-            if (currentValue === selectedValue && selectedValue !== null && !isDragging) {
-                // Rotate by 90 degrees
-                targetRotationLayer[index] = (targetRotationLayer[index] + 90) % 360;
-                console.log(`Rotating tile at [${col},${row}] to ${targetRotationLayer[index]}°`);
-                updateGrid();
-                lastPaintedIndex = index; // Update for next click
-                return;
-            }
-
-            // Update last painted index
-            lastPaintedIndex = index;
-
-            // Reset rotation when placing a new tile (only if replacing existing value on this layer)
-            if (currentValue !== null && currentValue !== selectedValue) {
-                // Replacing a different tile, reset rotation
-                targetRotationLayer[index] = 0;
-            }
-
-            // Check if this is a multi-tile structure
-            if (selectedValue && multiTileStructures[selectedValue]) {
-                const structure = multiTileStructures[selectedValue];
-
-                // Check if structure fits in grid
-                if (col + structure.width > GRID_SIZE || row + structure.height > GRID_SIZE) {
-                    console.warn(`Structure ${selectedValue} doesn't fit at [${col},${row}]`);
-                    return;
+      // Helper function to find the top-left corner of a multi-tile structure
+      function findStructureTopLeft(col, row, value, structure, layer) {
+        // Search backwards to find where this structure starts
+        for (
+          let testRow = Math.max(0, row - structure.height + 1);
+          testRow <= row;
+          testRow++
+        ) {
+          for (
+            let testCol = Math.max(0, col - structure.width + 1);
+            testCol <= col;
+            testCol++
+          ) {
+            // Check if all cells of the structure from this position match
+            let allMatch = true;
+            for (let dy = 0; dy < structure.height; dy++) {
+              for (let dx = 0; dx < structure.width; dx++) {
+                const checkIndex = (testRow + dy) * GRID_SIZE + (testCol + dx);
+                if (layer[checkIndex] !== value) {
+                  allMatch = false;
+                  break;
                 }
-
-                // Paint all cells for this structure
-                for (let dy = 0; dy < structure.height; dy++) {
-                    for (let dx = 0; dx < structure.width; dx++) {
-                        const cellIndex = (row + dy) * GRID_SIZE + (col + dx);
-                        targetLayer[cellIndex] = selectedValue;
-                        targetRotationLayer[cellIndex] = 0;
-                    }
-                }
-            } else {
-                // Single-tile placement
-                targetLayer[index] = selectedValue;
+              }
+              if (!allMatch) break;
             }
-
-            updateGrid();
+            if (allMatch) {
+              return { col: testCol, row: testRow };
+            }
+          }
         }
+        return { col, row }; // Fallback to current position
+      }
 
-        function renderTile(value, index, container, layerClass, rotation = 0) {
-            if (!value) return;
+      function renderPalette() {
+        const container = document.getElementById("paletteContainer");
+        const palette = [
+          ...defaultPalettes[currentCategory],
+          ...customPalettes[currentCategory],
+        ];
 
-            const row = Math.floor(index / GRID_SIZE);
-            const col = index % GRID_SIZE;
+        container.innerHTML = `<label>Select ${currentCategory}:</label><div class="palette"></div>`;
+        const paletteDiv = container.querySelector(".palette");
 
+        palette.forEach((value) => {
+          const item = document.createElement("div");
+          item.className = "palette-item";
+          item.title = value === null ? "Eraser" : value;
+          if (value === selectedValue) item.classList.add("selected");
+
+          if (value === null) {
+            item.textContent = "🚫";
+          } else {
             const assetPath = getAssetPath(value);
 
             // Check if assetPath is an emoji/unicode character (not a file path)
-            const isEmoji = assetPath && assetPath.length <= 3 && !assetPath.includes('/') && !assetPath.includes('.');
+            const isEmoji =
+              assetPath &&
+              assetPath.length <= 3 &&
+              !assetPath.includes("/") &&
+              !assetPath.includes(".");
 
             if (isEmoji) {
-                // Display emoji directly
-                const emojiDiv = document.createElement('div');
-                emojiDiv.className = `cell-feature ${layerClass}`;
-                emojiDiv.textContent = assetPath;
-                emojiDiv.title = value;
-                emojiDiv.style.fontSize = '20px';
-                emojiDiv.style.display = 'flex';
-                emojiDiv.style.alignItems = 'center';
-                emojiDiv.style.justifyContent = 'center';
-                emojiDiv.style.width = '100%';
-                emojiDiv.style.height = '100%';
-                if (rotation !== 0) {
-                    emojiDiv.style.transform = `rotate(${rotation}deg)`;
-                }
-                container.appendChild(emojiDiv);
+              // Display emoji directly
+              item.textContent = assetPath;
+              item.style.fontSize = "24px";
             } else if (assetPath && loadedImages[value]) {
-                // Check if this is a multi-tile structure
-                const structure = multiTileStructures[value];
+              const img = document.createElement("img");
+              img.src = assetPath;
+              img.style.width = "100%";
+              img.style.height = "100%";
+              img.style.objectFit = "contain";
+              img.style.imageRendering = "pixelated";
 
-                if (structure) {
-                    // Find the top-left corner of this structure
-                    const terrainOrFeature = terrainLayer[index] === value ? terrainLayer : featureLayer;
-                    const topLeftCol = findStructureTopLeft(col, row, value, structure, terrainOrFeature).col;
-                    const topLeftRow = findStructureTopLeft(col, row, value, structure, terrainOrFeature).row;
+              // Apply gray filter for statues and black enemies
+              if (value.endsWith("_statue") || value.startsWith("black_")) {
+                img.style.filter = "grayscale(100%) brightness(0.7)";
+              }
 
-                    // Calculate this cell's position within the structure
-                    const offsetX = col - topLeftCol;
-                    const offsetY = row - topLeftRow;
+              // Rotate arrow for directional exits
+              if (value === "exit_left") img.style.transform = "rotate(-90deg)";
+              else if (value === "exit_down")
+                img.style.transform = "rotate(180deg)";
+              else if (value === "exit_right")
+                img.style.transform = "rotate(90deg)";
+              // exit_up is default (0deg)
 
-                    // Create a container div for the sliced sprite
-                    const wrapper = document.createElement('div');
-                    wrapper.className = `cell-feature ${layerClass}`;
-                    wrapper.style.width = '100%';
-                    wrapper.style.height = '100%';
-                    wrapper.style.overflow = 'hidden';
-                    wrapper.style.position = 'relative';
-                    wrapper.title = value;
-
-                    // Create the image and position it to show only the relevant slice
-                    const img = document.createElement('img');
-                    img.src = assetPath;
-                    img.style.position = 'absolute';
-                    img.style.imageRendering = 'pixelated';
-
-                    // Scale the image to be structure.width times the cell width
-                    img.style.width = `${structure.width * 100}%`;
-                    img.style.height = `${structure.height * 100}%`;
-
-                    // Offset to show the correct slice
-                    img.style.left = `${-offsetX * 100}%`;
-                    img.style.top = `${-offsetY * 100}%`;
-
-                    wrapper.appendChild(img);
-                    container.appendChild(wrapper);
-                } else {
-                    // Single-tile rendering
-                    const img = document.createElement('img');
-                    img.src = assetPath;
-                    img.className = `cell-feature ${layerClass}`;
-                    img.title = value;
-                    img.style.width = '100%';
-                    img.style.height = '100%';
-                    img.style.objectFit = 'contain';
-                    img.style.imageRendering = 'pixelated';
-
-                    // Apply gray filter for statues and black enemies
-                    if (value.endsWith('_statue') || value.startsWith('black_')) {
-                        img.style.filter = 'grayscale(100%) brightness(0.7)';
-                    }
-
-                    // Apply rotation
-                    if (rotation !== 0) {
-                        img.style.transform = `rotate(${rotation}deg)`;
-                    } else {
-                        // Rotate arrow for directional exits (only if no custom rotation)
-                        if (value === 'exit_left') img.style.transform = 'rotate(-90deg)';
-                        else if (value === 'exit_down') img.style.transform = 'rotate(180deg)';
-                        else if (value === 'exit_right') img.style.transform = 'rotate(90deg)';
-                        // exit_up is default (0deg)
-                    }
-
-                    container.appendChild(img);
-                }
+              item.appendChild(img);
             } else {
-                // Fallback to text if no asset
-                const valueDiv = document.createElement('div');
-                valueDiv.className = `cell-feature ${layerClass}`;
-                valueDiv.textContent = value;
-                valueDiv.title = value;
-                valueDiv.style.fontSize = '8px';
-                valueDiv.style.wordBreak = 'break-all';
-                if (rotation !== 0) {
-                    valueDiv.style.transform = `rotate(${rotation}deg)`;
-                }
-                container.appendChild(valueDiv);
+              // Fallback to text
+              item.textContent = value.substring(0, 4);
+              item.style.fontSize = "10px";
             }
-        }
+          }
 
-        function updateGrid() {
-            const cells = document.querySelectorAll('.cell');
-            cells.forEach((cell, index) => {
-                const terrainValue = terrainLayer[index];
-                const overlayValue = overlayLayer[index];
-                const featureValue = featureLayer[index];
-                cell.innerHTML = '';
-
-                // Render terrain layer first (floors/walls)
-                if (terrainValue) {
-                    renderTile(terrainValue, index, cell, 'terrain-layer', rotationLayer[index] || 0);
-                }
-
-                // Render overlay layer on top of terrain (trim/decorative)
-                if (overlayValue) {
-                    renderTile(overlayValue, index, cell, 'terrain-layer', overlayRotationLayer[index] || 0);
-                }
-
-                // Render feature layer on top (items/npcs/etc)
-                if (featureValue) {
-                    renderTile(featureValue, index, cell, 'feature-layer', featureRotationLayer[index] || 0);
-                }
-            });
-        }
-
-        // Helper function to find the top-left corner of a multi-tile structure
-        function findStructureTopLeft(col, row, value, structure, layer) {
-            // Search backwards to find where this structure starts
-            for (let testRow = Math.max(0, row - structure.height + 1); testRow <= row; testRow++) {
-                for (let testCol = Math.max(0, col - structure.width + 1); testCol <= col; testCol++) {
-                    // Check if all cells of the structure from this position match
-                    let allMatch = true;
-                    for (let dy = 0; dy < structure.height; dy++) {
-                        for (let dx = 0; dx < structure.width; dx++) {
-                            const checkIndex = (testRow + dy) * GRID_SIZE + (testCol + dx);
-                            if (layer[checkIndex] !== value) {
-                                allMatch = false;
-                                break;
-                            }
-                        }
-                        if (!allMatch) break;
-                    }
-                    if (allMatch) {
-                        return { col: testCol, row: testRow };
-                    }
-                }
-            }
-            return { col, row }; // Fallback to current position
-        }
-
-        function renderPalette() {
-            const container = document.getElementById('paletteContainer');
-            const palette = [...defaultPalettes[currentCategory], ...customPalettes[currentCategory]];
-
-            container.innerHTML = `<label>Select ${currentCategory}:</label><div class="palette"></div>`;
-            const paletteDiv = container.querySelector('.palette');
-
-            palette.forEach(value => {
-                const item = document.createElement('div');
-                item.className = 'palette-item';
-                item.title = value === null ? 'Eraser' : value;
-                if (value === selectedValue) item.classList.add('selected');
-
-                if (value === null) {
-                    item.textContent = '🚫';
-                } else {
-                    const assetPath = getAssetPath(value);
-
-                    // Check if assetPath is an emoji/unicode character (not a file path)
-                    const isEmoji = assetPath && assetPath.length <= 3 && !assetPath.includes('/') && !assetPath.includes('.');
-
-                    if (isEmoji) {
-                        // Display emoji directly
-                        item.textContent = assetPath;
-                        item.style.fontSize = '24px';
-                    } else if (assetPath && loadedImages[value]) {
-                        const img = document.createElement('img');
-                        img.src = assetPath;
-                        img.style.width = '100%';
-                        img.style.height = '100%';
-                        img.style.objectFit = 'contain';
-                        img.style.imageRendering = 'pixelated';
-
-                        // Apply gray filter for statues and black enemies
-                        if (value.endsWith('_statue') || value.startsWith('black_')) {
-                            img.style.filter = 'grayscale(100%) brightness(0.7)';
-                        }
-
-                        // Rotate arrow for directional exits
-                        if (value === 'exit_left') img.style.transform = 'rotate(-90deg)';
-                        else if (value === 'exit_down') img.style.transform = 'rotate(180deg)';
-                        else if (value === 'exit_right') img.style.transform = 'rotate(90deg)';
-                        // exit_up is default (0deg)
-
-                        item.appendChild(img);
-                    } else {
-                        // Fallback to text
-                        item.textContent = value.substring(0, 4);
-                        item.style.fontSize = '10px';
-                    }
-                }
-
-                item.addEventListener('click', () => {
-                    selectedValue = value;
-                    console.log(`Selected "${value}" from ${currentCategory}`);
-                    renderPalette();
-                });
-
-                paletteDiv.appendChild(item);
-            });
-        }
-
-        function addCustomValue() {
-            const input = document.getElementById('customValue');
-            const value = input.value.trim();
-
-            if (value && !defaultPalettes[currentCategory].includes(value) && !customPalettes[currentCategory].includes(value)) {
-                customPalettes[currentCategory].push(value);
-                input.value = '';
-                renderPalette();
-            }
-        }
-
-        function switchCategory(category) {
-            currentCategory = category;
-
-            document.querySelectorAll('.layer-button').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.category === category);
-            });
-
-            console.log(`Switched to ${category} category`);
+          item.addEventListener("click", () => {
+            selectedValue = value;
+            console.log(`Selected "${value}" from ${currentCategory}`);
             renderPalette();
+          });
+
+          paletteDiv.appendChild(item);
+        });
+      }
+
+      function addCustomValue() {
+        const input = document.getElementById("customValue");
+        const value = input.value.trim();
+
+        if (
+          value &&
+          !defaultPalettes[currentCategory].includes(value) &&
+          !customPalettes[currentCategory].includes(value)
+        ) {
+          customPalettes[currentCategory].push(value);
+          input.value = "";
+          renderPalette();
+        }
+      }
+
+      function switchCategory(category) {
+        currentCategory = category;
+
+        document.querySelectorAll(".layer-button").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.category === category);
+        });
+
+        console.log(`Switched to ${category} category`);
+        renderPalette();
+      }
+
+      function clearGrid() {
+        if (confirm("Clear entire grid? This cannot be undone.")) {
+          terrainLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+          featureLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+          overlayLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+          rotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
+          overlayRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
+          featureRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
+          // Add default walls on borders
+          for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+            const row = Math.floor(i / GRID_SIZE);
+            const col = i % GRID_SIZE;
+            if (
+              row === 0 ||
+              row === GRID_SIZE - 1 ||
+              col === 0 ||
+              col === GRID_SIZE - 1
+            ) {
+              terrainLayer[i] = "wall";
+            }
+          }
+          updateGrid();
+        }
+      }
+
+      function fillAll() {
+        if (selectedValue) {
+          let targetLayer, targetRotationLayer;
+          if (currentCategory === "TRIM") {
+            targetLayer = overlayLayer;
+            targetRotationLayer = overlayRotationLayer;
+          } else if (
+            currentCategory === "FLOOR" ||
+            currentCategory === "WALL"
+          ) {
+            targetLayer = terrainLayer;
+            targetRotationLayer = rotationLayer;
+          } else {
+            targetLayer = featureLayer;
+            targetRotationLayer = featureRotationLayer;
+          }
+          for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+            targetLayer[i] = selectedValue;
+            targetRotationLayer[i] = 0;
+          }
+          updateGrid();
+        } else {
+          alert("Select a value first!");
+        }
+      }
+
+      function exportZone() {
+        const zoneName =
+          document.getElementById("zoneName").value.trim() || "unnamed_zone";
+        const description = document
+          .getElementById("zoneDescription")
+          .value.trim();
+        const tags = document
+          .getElementById("zoneTags")
+          .value.split(",")
+          .map((t) => t.trim())
+          .filter((t) => t);
+        const dimension = parseInt(
+          document.getElementById("zoneDimension").value
+        );
+        const gameMode = document.getElementById("zoneGameMode").value;
+        const level = document.getElementById("zoneLevel").value; // String: home, woods, wilds, frontier
+        const rarity = parseInt(document.getElementById("zoneRarity").value);
+
+        // Build terrain, overlays, and features from layers
+        const terrain = [];
+        const overlays = {};
+        const features = {};
+        const rotations = {};
+        const overlayRotations = {};
+        let playerSpawn = null;
+
+        for (let index = 0; index < GRID_SIZE * GRID_SIZE; index++) {
+          const row = Math.floor(index / GRID_SIZE);
+          const col = index % GRID_SIZE;
+          const terrainValue = terrainLayer[index];
+          const overlayValue = overlayLayer[index];
+          const featureValue = featureLayer[index];
+
+          // Push terrain (or null if empty)
+          terrain.push(terrainValue || null);
+
+          // Add overlay if present
+          if (overlayValue) {
+            overlays[`${col},${row}`] = overlayValue;
+          }
+
+          // Check if this is a player spawn marker
+          if (featureValue === "player_spawn") {
+            playerSpawn = { x: col, y: row };
+          } else if (featureValue) {
+            // Add feature if present (and not player_spawn)
+            features[`${col},${row}`] = featureValue;
+          }
+
+          // Add terrain rotation if non-zero
+          if (
+            terrainValue &&
+            rotationLayer[index] &&
+            rotationLayer[index] !== 0
+          ) {
+            rotations[`${col},${row}`] = rotationLayer[index];
+          }
+
+          // Add overlay rotation if non-zero
+          if (
+            overlayValue &&
+            overlayRotationLayer[index] &&
+            overlayRotationLayer[index] !== 0
+          ) {
+            overlayRotations[`${col},${row}`] = overlayRotationLayer[index];
+          }
         }
 
-        function clearGrid() {
-            if (confirm('Clear entire grid? This cannot be undone.')) {
-                terrainLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
-                featureLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
-                overlayLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
-                rotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
-                overlayRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
-                featureRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
-                // Add default walls on borders
-                for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-                    const row = Math.floor(i / GRID_SIZE);
-                    const col = i % GRID_SIZE;
-                    if (row === 0 || row === GRID_SIZE - 1 || col === 0 || col === GRID_SIZE - 1) {
-                        terrainLayer[i] = 'wall';
-                    }
-                }
-                updateGrid();
-            }
+        const zoneData = {
+          name: zoneName,
+          size: [GRID_SIZE, GRID_SIZE],
+          terrain: terrain,
+          overlays: Object.keys(overlays).length > 0 ? overlays : undefined,
+          features: features,
+          rotations: Object.keys(rotations).length > 0 ? rotations : undefined,
+          overlayRotations:
+            Object.keys(overlayRotations).length > 0
+              ? overlayRotations
+              : undefined,
+          metadata: {
+            description: description || undefined,
+            tags: tags.length > 0 ? tags : undefined,
+            dimension: dimension,
+            gameMode: gameMode,
+            level: level,
+            rarity: rarity,
+            playerSpawn: playerSpawn || undefined,
+            created: new Date().toISOString(),
+          },
+        };
+
+        // Remove undefined metadata fields
+        Object.keys(zoneData.metadata).forEach((key) => {
+          if (zoneData.metadata[key] === undefined)
+            delete zoneData.metadata[key];
+        });
+
+        const json = JSON.stringify(zoneData, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${zoneName}.json`;
+        a.click();
+
+        URL.revokeObjectURL(url);
+      }
+
+      function migrateTerrainFormat(terrain) {
+        // If already has folder prefix, return as-is
+        if (terrain.includes("/")) {
+          return terrain;
         }
 
-        function fillAll() {
-            if (selectedValue) {
-                let targetLayer, targetRotationLayer;
-                if (currentCategory === 'TRIM') {
-                    targetLayer = overlayLayer;
-                    targetRotationLayer = overlayRotationLayer;
-                } else if (currentCategory === 'FLOOR' || currentCategory === 'WALL') {
-                    targetLayer = terrainLayer;
-                    targetRotationLayer = rotationLayer;
-                } else {
-                    targetLayer = featureLayer;
-                    targetRotationLayer = featureRotationLayer;
-                }
-                for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-                    targetLayer[i] = selectedValue;
-                    targetRotationLayer[i] = 0;
-                }
-                updateGrid();
-            } else {
-                alert('Select a value first!');
-            }
+        // Wall items -> add 'walls/' prefix
+        const wallItems = [
+          "wall",
+          "90s",
+          "astrocrag",
+          "blocklily",
+          "bordertrim",
+          "boulder",
+          "bush",
+          "chargedwall",
+          "clubwall",
+          "clubwall1",
+          "clubwall2",
+          "clubwall4",
+          "clubwall5",
+          "clubwall6",
+          "cobble",
+          "coralwall",
+          "deco",
+          "fortwall",
+          "heartstone",
+          "lavawall",
+          "rockwall",
+          "stump",
+          "succulent",
+          "zydeco",
+        ];
+
+        // Obstacle items -> add 'obstacles/' prefix
+        const obstacleItems = ["rock", "shrubbery"];
+
+        // Doodad items (teleport_branch, hole, pitfall, etc.) - no prefix needed
+        const doodadItems = ["teleport_branch", "hole", "pitfall"];
+
+        // Floor items -> add 'floors/' prefix
+        const floorItems = [
+          "dirt",
+          "grass",
+          "aqua",
+          "desert",
+          "gravel",
+          "mulch",
+          "crag",
+          "bones",
+          "clouds",
+          "crackedseaice",
+          "seaice",
+          "dirtpatch",
+          "housetile",
+          "underbrush",
+        ];
+
+        if (wallItems.includes(terrain)) {
+          return `walls/${terrain}`;
+        } else if (obstacleItems.includes(terrain)) {
+          return `obstacles/${terrain}`;
+        } else if (doodadItems.includes(terrain)) {
+          return `doodads/${terrain}`;
+        } else if (floorItems.includes(terrain)) {
+          return `floors/${terrain}`;
         }
 
-        function exportZone() {
-            const zoneName = document.getElementById('zoneName').value.trim() || 'unnamed_zone';
-            const description = document.getElementById('zoneDescription').value.trim();
-            const tags = document.getElementById('zoneTags').value.split(',').map(t => t.trim()).filter(t => t);
-            const dimension = parseInt(document.getElementById('zoneDimension').value);
-            const gameMode = document.getElementById('zoneGameMode').value;
-            const level = document.getElementById('zoneLevel').value; // String: home, woods, wilds, frontier
-            const rarity = parseInt(document.getElementById('zoneRarity').value);
+        // Unknown terrain, return as-is
+        return terrain;
+      }
 
-            // Build terrain, overlays, and features from layers
-            const terrain = [];
-            const overlays = {};
-            const features = {};
-            const rotations = {};
-            const overlayRotations = {};
-            let playerSpawn = null;
+      function importZone() {
+        document.getElementById("fileInput").click();
+      }
 
-            for (let index = 0; index < GRID_SIZE * GRID_SIZE; index++) {
-                const row = Math.floor(index / GRID_SIZE);
-                const col = index % GRID_SIZE;
-                const terrainValue = terrainLayer[index];
-                const overlayValue = overlayLayer[index];
-                const featureValue = featureLayer[index];
+      function handleFileImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-                // Push terrain (or null if empty)
-                terrain.push(terrainValue || null);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const zoneData = JSON.parse(e.target.result);
 
-                // Add overlay if present
-                if (overlayValue) {
-                    overlays[`${col},${row}`] = overlayValue;
-                }
+            // Load zone data
+            document.getElementById("zoneName").value = zoneData.name || "";
+            document.getElementById("zoneDescription").value =
+              zoneData.metadata?.description || "";
+            document.getElementById("zoneTags").value =
+              zoneData.metadata?.tags?.join(", ") || "";
+            document.getElementById("zoneDimension").value =
+              zoneData.metadata?.dimension || 0;
+            document.getElementById("zoneGameMode").value =
+              zoneData.metadata?.gameMode || "CHESSE";
+            document.getElementById("zoneLevel").value =
+              zoneData.metadata?.level || "home";
+            document.getElementById("zoneRarity").value =
+              zoneData.metadata?.rarity || 5;
 
-                // Check if this is a player spawn marker
-                if (featureValue === 'player_spawn') {
-                    playerSpawn = { x: col, y: row };
-                } else if (featureValue) {
-                    // Add feature if present (and not player_spawn)
-                    features[`${col},${row}`] = featureValue;
-                }
+            // Load into separate layers
+            terrainLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+            featureLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+            overlayLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
+            rotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
+            overlayRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
+            featureRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
 
-                // Add terrain rotation if non-zero
-                if (terrainValue && rotationLayer[index] && rotationLayer[index] !== 0) {
-                    rotations[`${col},${row}`] = rotationLayer[index];
-                }
-
-                // Add overlay rotation if non-zero
-                if (overlayValue && overlayRotationLayer[index] && overlayRotationLayer[index] !== 0) {
-                    overlayRotations[`${col},${row}`] = overlayRotationLayer[index];
-                }
-            }
-
-            const zoneData = {
-                name: zoneName,
-                size: [GRID_SIZE, GRID_SIZE],
-                terrain: terrain,
-                overlays: Object.keys(overlays).length > 0 ? overlays : undefined,
-                features: features,
-                rotations: Object.keys(rotations).length > 0 ? rotations : undefined,
-                overlayRotations: Object.keys(overlayRotations).length > 0 ? overlayRotations : undefined,
-                metadata: {
-                    description: description || undefined,
-                    tags: tags.length > 0 ? tags : undefined,
-                    dimension: dimension,
-                    gameMode: gameMode,
-                    level: level,
-                    rarity: rarity,
-                    playerSpawn: playerSpawn || undefined,
-                    created: new Date().toISOString()
-                }
-            };
-
-            // Remove undefined metadata fields
-            Object.keys(zoneData.metadata).forEach(key => {
-                if (zoneData.metadata[key] === undefined) delete zoneData.metadata[key];
+            // Apply terrain layer with format migration
+            (zoneData.terrain || []).forEach((terrain, index) => {
+              if (terrain) {
+                // Migrate old format to new format (add folder prefix if missing)
+                terrainLayer[index] = migrateTerrainFormat(terrain);
+              }
             });
 
-            const json = JSON.stringify(zoneData, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
+            // Apply overlay layer (trim tiles)
+            Object.entries(zoneData.overlays || {}).forEach(
+              ([coord, overlay]) => {
+                const [col, row] = coord.split(",").map(Number);
+                const index = row * GRID_SIZE + col;
+                overlayLayer[index] = overlay;
+              }
+            );
 
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${zoneName}.json`;
-            a.click();
+            // Apply feature layer
+            Object.entries(zoneData.features || {}).forEach(
+              ([coord, feature]) => {
+                const [col, row] = coord.split(",").map(Number);
+                const index = row * GRID_SIZE + col;
+                featureLayer[index] = feature;
+              }
+            );
 
-            URL.revokeObjectURL(url);
-        }
+            // Apply terrain rotations
+            Object.entries(zoneData.rotations || {}).forEach(
+              ([coord, rotation]) => {
+                const [col, row] = coord.split(",").map(Number);
+                const index = row * GRID_SIZE + col;
+                rotationLayer[index] = rotation;
+              }
+            );
 
-        function migrateTerrainFormat(terrain) {
-            // If already has folder prefix, return as-is
-            if (terrain.includes('/')) {
-                return terrain;
+            // Apply overlay rotations
+            Object.entries(zoneData.overlayRotations || {}).forEach(
+              ([coord, rotation]) => {
+                const [col, row] = coord.split(",").map(Number);
+                const index = row * GRID_SIZE + col;
+                overlayRotationLayer[index] = rotation;
+              }
+            );
+
+            // Apply feature rotations
+            Object.entries(zoneData.featureRotations || {}).forEach(
+              ([coord, rotation]) => {
+                const [col, row] = coord.split(",").map(Number);
+                const index = row * GRID_SIZE + col;
+                featureRotationLayer[index] = rotation;
+              }
+            );
+
+            // Load player spawn from metadata
+            if (zoneData.metadata && zoneData.metadata.playerSpawn) {
+              const { x, y } = zoneData.metadata.playerSpawn;
+              const index = y * GRID_SIZE + x;
+              featureLayer[index] = "player_spawn";
             }
 
-            // Wall items -> add 'walls/' prefix
-            const wallItems = [
-                'wall', '90s', 'astrocrag', 'blocklily', 'bordertrim', 'boulder', 'bush',
-                'chargedwall', 'clubwall', 'clubwall1', 'clubwall2', 'clubwall4', 'clubwall5', 'clubwall6',
-                'cobble', 'coralwall', 'deco', 'fortwall', 'heartstone',
-                'lavawall', 'rockwall', 'stump', 'succulent', 'zydeco'
-            ];
+            updateGrid();
+            alert("Zone imported successfully!");
+          } catch (err) {
+            alert("Error importing zone: " + err.message);
+          }
+        };
+        reader.readAsText(file);
 
-            // Obstacle items -> add 'obstacles/' prefix
-            const obstacleItems = ['rock', 'shrubbery'];
+        // Reset file input
+        event.target.value = "";
+      }
 
-            // Doodad items (teleport_branch, hole, pitfall, etc.) - no prefix needed
-            const doodadItems = ['teleport_branch', 'hole', 'pitfall'];
+      // Category toggle event listeners
+      document.querySelectorAll(".layer-button").forEach((btn) => {
+        btn.addEventListener("click", () =>
+          switchCategory(btn.dataset.category)
+        );
+      });
 
-            // Floor items -> add 'floors/' prefix
-            const floorItems = [
-                'dirt', 'grass', 'aqua', 'desert', 'gravel', 'mulch', 'crag',
-                'bones', 'clouds', 'crackedseaice', 'seaice', 'dirtpatch', 'housetile', 'underbrush'
-            ];
-
-            if (wallItems.includes(terrain)) {
-                return `walls/${terrain}`;
-            } else if (obstacleItems.includes(terrain)) {
-                return `obstacles/${terrain}`;
-            } else if (doodadItems.includes(terrain)) {
-                return `doodads/${terrain}`;
-            } else if (floorItems.includes(terrain)) {
-                return `floors/${terrain}`;
-            }
-
-            // Unknown terrain, return as-is
-            return terrain;
-        }
-
-        function importZone() {
-            document.getElementById('fileInput').click();
-        }
-
-        function handleFileImport(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const zoneData = JSON.parse(e.target.result);
-
-                    // Load zone data
-                    document.getElementById('zoneName').value = zoneData.name || '';
-                    document.getElementById('zoneDescription').value = zoneData.metadata?.description || '';
-                    document.getElementById('zoneTags').value = zoneData.metadata?.tags?.join(', ') || '';
-                    document.getElementById('zoneDimension').value = zoneData.metadata?.dimension || 0;
-                    document.getElementById('zoneGameMode').value = zoneData.metadata?.gameMode || 'CHESSE';
-                    document.getElementById('zoneLevel').value = zoneData.metadata?.level || 'home';
-                    document.getElementById('zoneRarity').value = zoneData.metadata?.rarity || 5;
-
-                    // Load into separate layers
-                    terrainLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
-                    featureLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
-                    overlayLayer = Array(GRID_SIZE * GRID_SIZE).fill(null);
-                    rotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
-                    overlayRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
-                    featureRotationLayer = Array(GRID_SIZE * GRID_SIZE).fill(0);
-
-                    // Apply terrain layer with format migration
-                    (zoneData.terrain || []).forEach((terrain, index) => {
-                        if (terrain) {
-                            // Migrate old format to new format (add folder prefix if missing)
-                            terrainLayer[index] = migrateTerrainFormat(terrain);
-                        }
-                    });
-
-                    // Apply overlay layer (trim tiles)
-                    Object.entries(zoneData.overlays || {}).forEach(([coord, overlay]) => {
-                        const [col, row] = coord.split(',').map(Number);
-                        const index = row * GRID_SIZE + col;
-                        overlayLayer[index] = overlay;
-                    });
-
-                    // Apply feature layer
-                    Object.entries(zoneData.features || {}).forEach(([coord, feature]) => {
-                        const [col, row] = coord.split(',').map(Number);
-                        const index = row * GRID_SIZE + col;
-                        featureLayer[index] = feature;
-                    });
-
-                    // Apply terrain rotations
-                    Object.entries(zoneData.rotations || {}).forEach(([coord, rotation]) => {
-                        const [col, row] = coord.split(',').map(Number);
-                        const index = row * GRID_SIZE + col;
-                        rotationLayer[index] = rotation;
-                    });
-
-                    // Apply overlay rotations
-                    Object.entries(zoneData.overlayRotations || {}).forEach(([coord, rotation]) => {
-                        const [col, row] = coord.split(',').map(Number);
-                        const index = row * GRID_SIZE + col;
-                        overlayRotationLayer[index] = rotation;
-                    });
-
-                    // Apply feature rotations
-                    Object.entries(zoneData.featureRotations || {}).forEach(([coord, rotation]) => {
-                        const [col, row] = coord.split(',').map(Number);
-                        const index = row * GRID_SIZE + col;
-                        featureRotationLayer[index] = rotation;
-                    });
-
-                    // Load player spawn from metadata
-                    if (zoneData.metadata && zoneData.metadata.playerSpawn) {
-                        const { x, y } = zoneData.metadata.playerSpawn;
-                        const index = y * GRID_SIZE + x;
-                        featureLayer[index] = 'player_spawn';
-                    }
-
-                    updateGrid();
-                    alert('Zone imported successfully!');
-                } catch (err) {
-                    alert('Error importing zone: ' + err.message);
-                }
-            };
-            reader.readAsText(file);
-
-            // Reset file input
-            event.target.value = '';
-        }
-
-        // Category toggle event listeners
-        document.querySelectorAll('.layer-button').forEach(btn => {
-            btn.addEventListener('click', () => switchCategory(btn.dataset.category));
+      // Custom value input - allow Enter key
+      document
+        .getElementById("customValue")
+        .addEventListener("keypress", (e) => {
+          if (e.key === "Enter") addCustomValue();
         });
 
-        // Custom value input - allow Enter key
-        document.getElementById('customValue').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addCustomValue();
-        });
-
-        // Initialize
-        preloadImages();
-        initGrid();
-        renderPalette();
+      // Initialize
+      preloadImages();
+      initGrid();
+      renderPalette();
     </script>
-</body>
+  </body>
 </html>

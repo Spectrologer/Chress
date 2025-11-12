@@ -122,21 +122,25 @@ export class AtlasTextureLoader {
                 canvas.width = frameData.sourceSize.w;
                 canvas.height = frameData.sourceSize.h;
 
-                const ctx = canvas.getContext('2d');
+                const ctx = canvas.getContext('2d', { alpha: true });
                 if (!ctx) {
                     logger.error(`[AtlasTextureLoader] Failed to get canvas context for sprite: ${spriteName}`);
                     continue;
                 }
 
-                // Draw the sprite from the atlas
+                // Explicitly clear the canvas to ensure transparency
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Draw the sprite from the atlas using spriteSourceSize for proper positioning
+                // This accounts for trimmed sprites where frame size differs from source size
                 ctx.drawImage(
                     atlasImage,
                     frameData.frame.x,
                     frameData.frame.y,
                     frameData.frame.w,
                     frameData.frame.h,
-                    0,
-                    0,
+                    frameData.spriteSourceSize.x,
+                    frameData.spriteSourceSize.y,
                     frameData.frame.w,
                     frameData.frame.h
                 );

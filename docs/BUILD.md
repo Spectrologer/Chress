@@ -5,6 +5,7 @@ This project uses **Vite** as a modern build tool for optimal performance, code 
 ## Quick Start
 
 ### Development
+
 ```bash
 npm install
 npm run dev
@@ -13,6 +14,7 @@ npm run dev
 This starts the Vite development server at `http://localhost:3000` with hot module replacement (HMR).
 
 ### Production Build
+
 ```bash
 npm run build
 ```
@@ -20,6 +22,7 @@ npm run build
 This creates an optimized production build in the `dist/` directory.
 
 ### Preview Production Build
+
 ```bash
 npm run preview
 ```
@@ -29,12 +32,14 @@ This serves the production build locally at `http://localhost:4173` for testing.
 ## Build Features
 
 ### Code Optimization
+
 - **Minification**: Uses Terser to minimize JavaScript bundle size
 - **Tree Shaking**: Removes unused code automatically
 - **Dead Code Elimination**: Removes unreachable code
 - **Source Maps**: Included for debugging production issues
 
 ### Code Splitting Strategy
+
 The build automatically splits code into optimized chunks:
 
 - `game-core.js` - Core game logic and constants
@@ -45,6 +50,7 @@ The build automatically splits code into optimized chunks:
 - `utils.js` - Utility functions (lazy loaded)
 
 ### Asset Optimization
+
 - **Automatic hashing**: Assets get content-based hashes for cache busting
 - **Inline small assets**: Assets under 4KB are inlined as base64
 - **Organized output**: Assets are automatically organized by type
@@ -55,6 +61,7 @@ The build automatically splits code into optimized chunks:
 ### Performance Benefits
 
 **Before (Direct ES Modules)**
+
 - All code loads upfront
 - No minification
 - No tree-shaking
@@ -62,6 +69,7 @@ The build automatically splits code into optimized chunks:
 - Slower initial load
 
 **After (Vite Build)**
+
 - Code split into optimal chunks
 - Minified and optimized
 - Dead code removed
@@ -71,6 +79,7 @@ The build automatically splits code into optimized chunks:
 ## Build Scripts
 
 ### Available Commands
+
 ```bash
 npm run dev              # Start development server
 npm run build            # Build for production
@@ -82,9 +91,11 @@ npm run asset-viewer     # Run asset viewer tool
 ## Deployment
 
 ### GitHub Pages
+
 The build is pre-configured for GitHub Pages deployment:
 
 1. Build the project:
+
    ```bash
    npm run build
    ```
@@ -92,6 +103,7 @@ The build is pre-configured for GitHub Pages deployment:
 2. The `dist/` folder contains the complete production build
 
 3. Deploy the `dist/` folder to GitHub Pages:
+
    ```bash
    # Using gh-pages (if installed)
    npx gh-pages -d dist
@@ -104,10 +116,12 @@ The build is pre-configured for GitHub Pages deployment:
 ### Other Platforms
 
 **Netlify / Vercel**
+
 - Build command: `npm run build`
 - Publish directory: `dist`
 
 **Static Server**
+
 - Simply serve the `dist/` directory
 - Ensure SPA fallback is enabled (all routes → index.html)
 
@@ -130,12 +144,13 @@ Key configuration options:
 ```
 
 ### Path Aliases
+
 Convenient import aliases are configured:
 
 ```javascript
-import { foo } from '@/utils/foo.js'       // = src/utils/foo.js
-import { bar } from '@core/bar.js'         // = src/core/bar.js
-import { baz } from '@managers/baz.js'     // = src/managers/baz.js
+import { foo } from "@/utils/foo.js"; // = src/utils/foo.js
+import { bar } from "@core/bar.js"; // = src/core/bar.js
+import { baz } from "@managers/baz.js"; // = src/managers/baz.js
 ```
 
 ## Build Analysis
@@ -147,6 +162,7 @@ npm run build:analyze
 ```
 
 This generates a visual report showing:
+
 - Bundle size breakdown
 - Chunk composition
 - Dependency sizes
@@ -155,15 +171,19 @@ This generates a visual report showing:
 ## Troubleshooting
 
 ### Issue: Module not found
+
 **Solution**: Ensure all imports don't include `?v=` query parameters
 
 ### Issue: Assets not loading
+
 **Solution**: Check that assets are in the `assets/` directory (Vite's public directory)
 
 ### Issue: Build size too large
+
 **Solution**: Run `npm run build:analyze` to identify large dependencies
 
 ### Issue: Source maps missing
+
 **Solution**: Ensure `sourcemap: true` in vite.config.js
 
 ## Migration from live-server
@@ -171,13 +191,15 @@ This generates a visual report showing:
 The old development setup used `live-server` with manual cache busting. This has been replaced with Vite:
 
 **Old**:
+
 ```javascript
-import foo from '/src/foo.js?v=5'  // Manual cache busting
+import foo from "/src/foo.js?v=5"; // Manual cache busting
 ```
 
 **New**:
+
 ```javascript
-import foo from '/src/foo.js'       // Automatic cache busting via content hashes
+import foo from "/src/foo.js"; // Automatic cache busting via content hashes
 ```
 
 All `?v=` parameters have been removed as Vite handles cache busting automatically during builds.
@@ -198,16 +220,19 @@ Chesse is now a fully-featured PWA with offline support!
 ### PWA Features
 
 **Offline Support**
+
 - Game assets are cached automatically
 - Play without an internet connection
 - Background sync for game saves
 
 **Install to Device**
+
 - Install on mobile/desktop as a native app
 - Runs in standalone mode (no browser UI)
 - App icon on home screen/desktop
 
 **Auto Updates**
+
 - Service worker checks for updates automatically
 - Users are notified when updates are available
 - Seamless update experience
@@ -215,35 +240,41 @@ Chesse is now a fully-featured PWA with offline support!
 ### Caching Strategy
 
 **Static Assets** (CacheFirst)
+
 - Images, fonts, icons cached indefinitely
 - 200 image limit, 30-day expiration
 - Immediate load from cache
 
 **JavaScript/CSS** (StaleWhileRevalidate)
+
 - Serve from cache, update in background
 - 60 file limit, 7-day expiration
 - Always up-to-date
 
 **External Resources** (CacheFirst)
+
 - Google Fonts cached for 1 year
 - 10 entry limit per cache
 
 ### Installing as PWA
 
 **Desktop (Chrome/Edge)**
+
 1. Visit the game URL
 2. Click install icon in address bar
 3. Or use "Install Chesse" from menu
 
 **Mobile (iOS/Android)**
+
 1. Visit the game URL
 2. Tap share button
 3. Select "Add to Home Screen"
 
 **Verification**
 Check if running as PWA:
+
 ```javascript
-window.matchMedia('(display-mode: standalone)').matches
+window.matchMedia("(display-mode: standalone)").matches;
 ```
 
 ## Lazy Loading
@@ -253,6 +284,7 @@ Critical performance optimization through code splitting and lazy loading.
 ### What Gets Lazy Loaded
 
 **UI Components**
+
 - Barter Window (loads on first NPC interaction)
 - Statue Info Window (loads when viewing statues)
 - Message Log (loads when opened)
@@ -260,18 +292,21 @@ Critical performance optimization through code splitting and lazy loading.
 - Config/Records Panels (loads on demand)
 
 **Heavy Utilities**
+
 - Enemy pathfinding (loads with first enemy)
 - Line of sight calculations (loads when needed)
 
 **Editor Tools**
-- Zone Editor (loads only when opened)
+
+- board editor (loads only when opened)
 - Character Editor (loads only when opened)
 
 ### How It Works
 
 The `LazyLoader` utility provides:
+
 ```javascript
-import { LazyUI } from '@/utils/LazyLoader.js';
+import { LazyUI } from "@/utils/LazyLoader.js";
 
 // Lazy load a component
 const { BarterWindow } = await LazyUI.loadBarterWindow();
@@ -280,6 +315,7 @@ const { BarterWindow } = await LazyUI.loadBarterWindow();
 ### Preloading Strategy
 
 Critical modules are preloaded during idle time:
+
 - Uses `requestIdleCallback` when available
 - Preloads commonly used UI components
 - Doesn't block initial render
@@ -287,10 +323,12 @@ Critical modules are preloaded during idle time:
 ### Performance Impact
 
 **Before Lazy Loading**
+
 - All code loads upfront
 - ~500 KB initial bundle
 
 **After Lazy Loading**
+
 - Only critical code loads initially
 - ~300 KB initial bundle (40% reduction)
 - Additional chunks load on demand
@@ -309,5 +347,6 @@ Additional optimizations available:
 ## Support
 
 For issues or questions:
+
 - [Vite Documentation](https://vite.dev)
 - [Project Issues](https://github.com/Spectrologer/Chesse/issues)

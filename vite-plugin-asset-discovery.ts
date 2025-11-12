@@ -181,25 +181,25 @@ export const IMAGE_ASSETS = ${JSON.stringify(scannedAssets, null, 2)};
 export const ASSET_CATEGORIES = ${JSON.stringify(categorizedAssets, null, 2)};
 
 /**
- * Wall assets for zone editor
+ * Wall assets for board editor
  * @type {string[]}
  */
 export const WALL_ASSETS = ${JSON.stringify(categorizedAssets.walls, null, 2)};
 
 /**
- * Floor assets for zone editor
+ * Floor assets for board editor
  * @type {string[]}
  */
 export const FLOOR_ASSETS = ${JSON.stringify(categorizedAssets.floors, null, 2)};
 
 /**
- * Flora assets for zone editor
+ * Flora assets for board editor
  * @type {string[]}
  */
 export const FLORA_ASSETS = ${JSON.stringify(categorizedAssets.flora, null, 2)};
 
 /**
- * Doodad assets for zone editor
+ * Doodad assets for board editor
  * @type {string[]}
  */
 export const DOODAD_ASSETS = ${JSON.stringify(categorizedAssets.doodads, null, 2)};

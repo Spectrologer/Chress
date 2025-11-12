@@ -17,14 +17,18 @@ interface GameInstance {
 export class ConfigPanelManager {
     private game: GameInstance;
     private configOverlay: HTMLElement | null;
+    private aboutOverlay: HTMLElement | null;
     private configHandlersAttached = false;
     private configOpenTime: number | null = null;
     private eventManager: EventListenerManager;
+    private aboutEventManager: EventListenerManager;
 
     constructor(game: GameInstance) {
         this.game = game;
         this.configOverlay = document.getElementById('configOverlay');
+        this.aboutOverlay = document.getElementById('aboutOverlay');
         this.eventManager = new EventListenerManager();
+        this.aboutEventManager = new EventListenerManager();
     }
 
     /**
@@ -57,7 +61,8 @@ export class ConfigPanelManager {
         this._setupGlobalClickHandler();
 
         // Install capture blocker to prevent immediate re-clicks
-        PanelEventHandler.installCaptureBlocker(300);
+        // Allow clicks within the config panel
+        PanelEventHandler.installCaptureBlocker(300, inner);
 
         // Attach handlers once
         if (!this.configHandlersAttached) {
@@ -79,8 +84,12 @@ export class ConfigPanelManager {
             PanelEventHandler.clearAnimations(inner);
         }
 
-        // Cleanup all event listeners
+        // Cleanup only transient event listeners (outside click handler)
+        // Keep button handlers since they're permanent
         this.eventManager.cleanup();
+
+        // Reset handlers attached flag so they can be re-attached next time
+        this.configHandlersAttached = false;
 
         this.configOpenTime = null;
     }
@@ -119,7 +128,7 @@ export class ConfigPanelManager {
         // Prevent clicks inside the inner panel from closing the overlay
         const cfgPanel = this.configOverlay?.querySelector<HTMLElement>('.stats-panel');
         if (cfgPanel) {
-            PanelEventHandler.preventInnerPanelClicks(cfgPanel);
+            this.eventManager.preventClickPropagation(cfgPanel);
         }
 
         // Attach back button handler
@@ -136,6 +145,76 @@ export class ConfigPanelManager {
                 }
             });
         }
+
+        // Attach About button handler - register it on the button directly, not the panel
+        const aboutBtn = this.configOverlay?.querySelector<HTMLButtonElement>('#about-button');
+        if (aboutBtn) {
+            this.eventManager.add(aboutBtn, 'click', (e: MouseEvent) => {
+                logger.log('[ConfigPanelManager] About button clicked!');
+                e?.preventDefault?.();
+                e?.stopPropagation?.();
+                this.showAboutOverlay();
+            });
+        }
+    }
+
+    /**
+     * Shows the About overlay
+     */
+    showAboutOverlay(): void {
+        logger.log('[ConfigPanelManager] showAboutOverlay called');
+        if (!this.aboutOverlay) {
+            logger.error('[ConfigPanelManager] aboutOverlay element not found!');
+            return;
+        }
+
+        // Make overlay visible
+        this.aboutOverlay.classList.add('show');
+
+        // Show inner panel immediately (animations removed)
+        const inner = this.aboutOverlay.querySelector<HTMLElement>('.about-modal');
+        if (inner) {
+            PanelEventHandler.clearAnimations(inner);
+            PanelEventHandler.preventInnerPanelClicks(inner);
+        }
+
+        // Install capture blocker to prevent immediate re-clicks
+        // Allow clicks within the about modal
+        PanelEventHandler.installCaptureBlocker(300, inner);
+
+        // Setup close button handler
+        const closeBtn = this.aboutOverlay.querySelector<HTMLButtonElement>('#about-close-button');
+        if (closeBtn) {
+            this.aboutEventManager.add(closeBtn, 'click', (e: MouseEvent) => {
+                e?.preventDefault?.();
+                e?.stopPropagation?.();
+                this.hideAboutOverlay();
+            });
+        }
+
+        // Set up click outside to close
+        this.aboutEventManager.addOutsideClickHandler(
+            this.aboutOverlay,
+            () => this.hideAboutOverlay(),
+            { debounceMs: 300, capturePhase: true }
+        );
+    }
+
+    /**
+     * Hides the About overlay
+     */
+    hideAboutOverlay(): void {
+        if (!this.aboutOverlay) return;
+
+        const inner = this.aboutOverlay.querySelector<HTMLElement>('.about-modal');
+        this.aboutOverlay.classList.remove('show');
+
+        if (inner) {
+            PanelEventHandler.clearAnimations(inner);
+        }
+
+        // Cleanup event listeners
+        this.aboutEventManager.cleanup();
     }
 
     /**
@@ -144,6 +223,7 @@ export class ConfigPanelManager {
      */
     cleanup(): void {
         this.eventManager.cleanup();
+        this.aboutEventManager.cleanup();
     }
 
     /**

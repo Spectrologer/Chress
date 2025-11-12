@@ -26,7 +26,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        'zone-editor': resolve(__dirname, 'tools/zone-editor.html'),
+        'board-editor': resolve(__dirname, 'tools/board-editor.html'),
         'character-editor': resolve(__dirname, 'tools/character-editor.html'),
       },
       output: {

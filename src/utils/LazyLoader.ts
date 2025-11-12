@@ -106,8 +106,8 @@ export const LazyUI = {
  * Note: Editors are loaded via iframe, not as ES modules
  */
 export const LazyEditors = {
-    loadZoneEditor: async () => {
-        logger.log('Zone editor loaded via iframe');
+    loadBoardEditor: async () => {
+        logger.log('board editor loaded via iframe');
         return { default: null };
     },
 

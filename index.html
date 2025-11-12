@@ -1,325 +1,516 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Chésse: Chess 2: The Sequel to Chess</title>
 
     <!-- PWA Meta Tags -->
-    <meta name="description" content="A browser-based RPG game with turn-based combat, zone exploration, and procedural generation">
-    <meta name="theme-color" content="#3e2347">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Chésse">
+    <meta
+      name="description"
+      content="A browser-based RPG game with turn-based combat, zone exploration, and procedural generation"
+    />
+    <meta name="theme-color" content="#3e2347" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Chésse" />
 
     <!-- PWA Icons -->
-    <link rel="apple-touch-icon" href="icon-apple-touch.png">
-    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icon-apple-touch.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
     <script>
-        // Set random NPC favicon
-        const npcSprites = [
-            // Tutorial NPCs
-            { name: 'felt', path: 'tutorial/felt' },
-            { name: 'crayn', path: 'tutorial/crayn' },
-            { name: 'forge', path: 'tutorial/forge' },
-            // Merchant NPCs
-            { name: 'nib', path: 'merchant/nib' },
-            { name: 'mark', path: 'merchant/mark' },
-            { name: 'rune', path: 'merchant/rune' },
-            { name: 'penne', path: 'merchant/penne' },
-            { name: 'gouge', path: 'merchant/gouge' },
-            { name: 'axolotl', path: 'merchant/axolotl' },
-            { name: 'squig', path: 'merchant/squig' },
-            // Gossip NPCs (sample)
-            { name: 'dragon', path: 'gossip/dragon' },
-            { name: 'calli', path: 'gossip/calli' },
-            { name: 'brush', path: 'gossip/brush' },
-            { name: 'quill', path: 'gossip/quill' },
-            { name: 'capybara', path: 'gossip/capybara' }
-        ];
-        const randomNPC = npcSprites[Math.floor(Math.random() * npcSprites.length)];
-        const link = document.createElement('link');
-        link.rel = 'icon';
-        link.type = 'image/png';
-        link.href = `assets/characters/npcs/${randomNPC.path}.png`;
-        document.head.appendChild(link);
+      // Set random NPC favicon
+      const npcSprites = [
+        // Tutorial NPCs
+        { name: "felt", path: "tutorial/felt" },
+        { name: "crayn", path: "tutorial/crayn" },
+        { name: "forge", path: "tutorial/forge" },
+        // Merchant NPCs
+        { name: "nib", path: "merchant/nib" },
+        { name: "mark", path: "merchant/mark" },
+        { name: "rune", path: "merchant/rune" },
+        { name: "penne", path: "merchant/penne" },
+        { name: "gouge", path: "merchant/gouge" },
+        { name: "axolotl", path: "merchant/axolotl" },
+        { name: "squig", path: "merchant/squig" },
+        // Gossip NPCs (sample)
+        { name: "dragon", path: "gossip/dragon" },
+        { name: "calli", path: "gossip/calli" },
+        { name: "brush", path: "gossip/brush" },
+        { name: "quill", path: "gossip/quill" },
+        { name: "capybara", path: "gossip/capybara" },
+      ];
+      const randomNPC =
+        npcSprites[Math.floor(Math.random() * npcSprites.length)];
+      const link = document.createElement("link");
+      link.rel = "icon";
+      link.type = "image/png";
+      link.href = `assets/characters/npcs/${randomNPC.path}.png`;
+      document.head.appendChild(link);
     </script>
 
     <!-- Sentry CDN - Only load in production -->
     <script>
-        // Only load Sentry in production
-        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            const script = document.createElement('script');
-            script.src = 'https://js-de.sentry-cdn.com/2d2383cc5fdaf52165ff0b7c57dfa857.min.js';
-            script.crossOrigin = 'anonymous';
-            script.onload = function() {
-                if (typeof Sentry !== 'undefined') {
-                    Sentry.init({ enabled: true });
-                }
-            };
-            document.head.appendChild(script);
-        }
+      // Only load Sentry in production
+      if (
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+      ) {
+        const script = document.createElement("script");
+        script.src =
+          "https://js-de.sentry-cdn.com/2d2383cc5fdaf52165ff0b7c57dfa857.min.js";
+        script.crossOrigin = "anonymous";
+        script.onload = function () {
+          if (typeof Sentry !== "undefined") {
+            Sentry.init({ enabled: true });
+          }
+        };
+        document.head.appendChild(script);
+      }
     </script>
 
     <script>
-        // Ensure a base href is present early so module scripts and asset loads
-        // resolve correctly when hosted under a GitHub Pages project site.
-        if (window.location.hostname.includes('github.io')) {
-            var base = document.createElement('base');
-            base.href = '/Chesse/';
-            document.head.appendChild(base);
-        }
+      // Ensure a base href is present early so module scripts and asset loads
+      // resolve correctly when hosted under a GitHub Pages project site.
+      if (window.location.hostname.includes("github.io")) {
+        var base = document.createElement("base");
+        base.href = "/Chesse/";
+        document.head.appendChild(base);
+      }
     </script>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
     <script type="module" src="/src/main.ts"></script>
     <style>
-        .barter-window button {
-            padding: clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px);
-            font-size: clamp(0.9em, 2.5vw, 1.1em);
-        }
-        .barter-window button:disabled {
-            background: #999 !important;
-            color: #ddd !important;
-            cursor: not-allowed;
-            opacity: 0.6;
-            border-color: #666 !important;
-            box-shadow: none !important;
-        }
-        .large-portrait {
-            /* Allow larger portraits but keep them responsive to the barter panel size */
-            width: clamp(90px, 30%, 180px);
-            height: auto;
-            aspect-ratio: 1 / 1;
-            box-sizing: border-box;
-        }
-        .large-portrait .player-portrait,
-        .large-portrait .barter-portrait {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        .squig-portrait-adjust {
-            transform-origin: center center;
-            transform: scale(0.85); /* Make squig portrait slightly smaller without causing overflow */
-        }
+      .barter-window button {
+        padding: clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px);
+        font-size: clamp(0.9em, 2.5vw, 1.1em);
+      }
+      .barter-window button:disabled {
+        background: #999 !important;
+        color: #ddd !important;
+        cursor: not-allowed;
+        opacity: 0.6;
+        border-color: #666 !important;
+        box-shadow: none !important;
+      }
+      .large-portrait {
+        /* Allow larger portraits but keep them responsive to the barter panel size */
+        width: clamp(90px, 30%, 180px);
+        height: auto;
+        aspect-ratio: 1 / 1;
+        box-sizing: border-box;
+      }
+      .large-portrait .player-portrait,
+      .large-portrait .barter-portrait {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .squig-portrait-adjust {
+        transform-origin: center center;
+        transform: scale(
+          0.85
+        ); /* Make squig portrait slightly smaller without causing overflow */
+      }
     </style>
-</head>
-<body>
-    <div class="main-content-wrapper game-parchment" style="position:relative;">
-        <div class="content-inner">
-            <div class="header-area">
-                <!-- AI INSTRUCTION: This is the Main Panel. It contains the player's portrait, health (hearts), points, hunger and thirst bars, inventory, and a minimap of the world showing discovered zones. -->
-                <div class="character-card-container">
-                    <div id="messageOverlay" class="message-overlay"></div>
-                    <!-- Container for stacked note messages (map notes, small transient notes) -->
-                    <div id="noteStack" class="note-stack" aria-live="polite" aria-atomic="false"></div>
-                    <div id="barterOverlay" class="barter-overlay">
-                        <div class="barter-window">
-                            <h2 id="barterNPCName">NPC Name</h2>
-                            <div class="barter-main-content">
-                                <div class="barter-info">
-                                    <div class="barter-portrait-container large-portrait">
-                                        <img id="barterNPCPortrait" src="" alt="NPC Portrait" class="barter-portrait">
-                                    </div>
-                                    <p id="barterNPCMessage">Message</p>
-                                </div>
-                                <div id="barterOffers" class="barter-offers-container"></div>
-                            </div>
-                            <!-- Cancel button moved into individual trade offers -->
-                        </div>
+  </head>
+  <body>
+    <div class="main-content-wrapper game-parchment" style="position: relative">
+      <div class="content-inner">
+        <div class="header-area">
+          <!-- AI INSTRUCTION: This is the Main Panel. It contains the player's portrait, health (hearts), points, hunger and thirst bars, inventory, and a minimap of the world showing discovered zones. -->
+          <div class="character-card-container">
+            <div id="messageOverlay" class="message-overlay"></div>
+            <!-- Container for stacked note messages (map notes, small transient notes) -->
+            <div
+              id="noteStack"
+              class="note-stack"
+              aria-live="polite"
+              aria-atomic="false"
+            ></div>
+            <div id="barterOverlay" class="barter-overlay">
+              <div class="barter-window">
+                <h2 id="barterNPCName">NPC Name</h2>
+                <div class="barter-main-content">
+                  <div class="barter-info">
+                    <div class="barter-portrait-container large-portrait">
+                      <img
+                        id="barterNPCPortrait"
+                        src=""
+                        alt="NPC Portrait"
+                        class="barter-portrait"
+                      />
                     </div>
-                    <!-- Records overlay: trophy icon top-right -->
-                    <div id="recordsOverlay" class="stats-panel-overlay">
-                        <div class="stats-panel game-parchment">
-                            <!-- Small back button (top-left) to return to the stats panel -->
-                            <button id="records-back-button" class="config-back-button" aria-label="Back">◂ Back</button>
-                            <div class="stats-main-content">
-                                <div class="stats-info">
-                                    <h2>Records</h2>
-                                    <div class="config-list records-list">
-                                        <div class="config-item"><span class="stat-label">Most Discoveries:</span><span id="record-zones" class="stat-value">0</span></div>
-                                        <div class="config-item"><span class="stat-label">Most Points:</span><span id="record-points" class="stat-value">0</span></div>
-                                        <div class="config-item"><span class="stat-label">Highest Combo:</span><span id="record-combo" class="stat-value">0</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="statueOverlay" class="statue-overlay">
-                        <div class="statue-window">
-                            <!-- Content will be populated by JS -->
-                        </div>
-                    </div>
-                    <!-- AI INSTRUCTION: This is the Player Stats panel. It is revealed when the player character is clicked on the board. -->
-                    <div id="statsPanelOverlay" class="stats-panel-overlay">
-                        <div class="stats-panel game-parchment">
-                            <div class="stats-main-content">
-                                <div class="stats-info"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Config overlay: separate overlay like statsPanelOverlay -->
-                    <div id="configOverlay" class="stats-panel-overlay">
-                        <div class="stats-panel game-parchment">
-                            <!-- Small back button (top-left) to return to the stats panel -->
-                            <button id="config-back-button" class="config-back-button" aria-label="Back">◂ Back</button>
-                            <div class="stats-main-content">
-                                <div class="stats-info">
-                                    <h2>Config</h2>
-                                    <div class="config-list">
-                                        <div class="config-item">
-                                            <span class="stat-label">Music:</span>
-                                            <label class="setting-toggle">
-                                                <input type="checkbox" id="music-toggle" checked>
-                                                <span class="toggle-slider"></span>
-                                            </label>
-                                        </div>
-                                        <div class="config-item">
-                                            <span class="stat-label">SFX:</span>
-                                            <label class="setting-toggle">
-                                                <input type="checkbox" id="sfx-toggle" checked>
-                                                <span class="toggle-slider"></span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="player-card-content" class="character-card modern-player-card" style="position:relative;z-index:3;">
-                        <div class="player-header">
-                            <div class="player-portrait-container">
-                                <img src="assets/characters/player/faceset.png" alt="Player Portrait" class="player-portrait">
-                            </div>
-                            <div class="player-stats-main">
-                                <div class="health-points-wrapper">
-                                    <div class="player-health">
-                                        <img src="assets/items/misc/heart.png" alt="Heart" class="heart-icon">
-                                        <img src="assets/items/misc/heart.png" alt="Heart" class="heart-icon">
-                                        <img src="assets/items/misc/heart.png" alt="Heart" class="heart-icon">
-                                        <img src="assets/items/equipment/axe.png" alt="Axe Ability" class="axe-ability-icon">
-                                        <img src="assets/items/equipment/hammer.png" alt="Hammer Ability" class="hammer-ability-icon">
-                                    </div>
-                                    <div id="player-points" class="player-points">
-                                        <img src="assets/items/misc/points.png" alt="Points" class="points-icon">
-                                        <span class="points-value">0</span>
-                                    </div>
-                                </div>
-                                <div class="player-bars">
-                                    <div class="bar hunger-bar">
-                                        <span class="bar-label">Hunger</span>
-                                        <div class="bar-track">
-                                            <div id="hunger-progress" class="progress-fill"></div>
-                                        </div>
-                                    </div>
-                                    <div class="bar thirst-bar">
-                                        <span class="bar-label">Thirst</span>
-                                        <div class="bar-track">
-                                            <div id="thirst-progress" class="progress-fill"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="player-details">
-                            <div class="map-inventory-wrapper">
-                                <div class="player-map">
-                                    <div id="message-log-button" class="message-log-button">Message Log</div>
-                                    <canvas id="zoneMap"></canvas>
-                                    <div id="map-info" class="map-info"></div>
-                                </div>
-                                <div class="player-inventory">
-                                    <div class="inventory-list">
-                                        <div class="inventory-slot"></div>
-                                        <div class="inventory-slot"></div>
-                                        <div class="inventory-slot"></div>
-                                        <div class="inventory-slot"></div>
-                                        <div class="inventory-slot"></div>
-                                        <div class="inventory-slot"></div>
-                                    </div>
-                                    <div id="inventory-tooltip" class="inventory-tooltip"></div>
-                                </div>
-                            </div>
-                        </div>
-                                <!-- Start overlay: sits over the player card so the board remains visible as a preview behind it -->
-                                <div id="startOverlay" class="start-overlay" aria-hidden="false">
-                                    <div class="start-overlay-box">
-                                        <div class="start-overlay-title">
-                                            CHÉSSE
-                                        </div>
-                                        <div id="loadingIndicator" class="loading-indicator">
-                                            <div class="loading-spinner"></div>
-                                            <div class="loading-text">Loading...</div>
-                                        </div>
-                                        <div id="startMenuGrid" class="start-menu-grid" style="display: none;">
-                                            <button id="startButton" class="start-button-native start-overlay-action start-btn-new start-btn-large">New Game</button>
-                                            <button id="continueButton" class="start-button-native start-overlay-action start-btn-continue start-btn-large">Continue</button>
-                                            <button id="configButton" class="start-button-native start-overlay-action start-btn-config">Config</button>
-                                            <button id="recordsButton" class="start-button-native start-overlay-action start-btn-records">Records</button>
-                                            <button id="characterEditorButton" class="start-button-native start-overlay-action start-btn-character">Character Editor</button>
-                                            <button id="zoneEditorButton" class="start-button-native start-overlay-action start-btn-editor">Zone Editor</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Message Log overlay moved inside player card so it overlays the player panel like NPC messages -->
-                                <div id="messageLogOverlay" class="message-log-overlay">
-                                    <div class="message-log-box">
-                                        <button id="closeMessageLogButton" class="message-log-close" aria-label="Close">×</button>
-                                        <div id="messageLogContent" class="message-log-content"></div>
-                                    </div>
-                                </div>
-                    </div>
+                    <p id="barterNPCMessage">Message</p>
+                  </div>
+                  <div id="barterOffers" class="barter-offers-container"></div>
                 </div>
+                <!-- Cancel button moved into individual trade offers -->
+              </div>
             </div>
-            <!-- AI INSTRUCTION: This is The Board. It is the main game grid where the player moves, interacts with the world, and where enemies and items are generated. -->
-            <div class="game-area">
-                <div class="game-parchment">
-                    <canvas id="gameCanvas"></canvas>
-                    <div id="gameLoadingPlaceholder" class="game-loading-placeholder">
-                        <div class="game-loading-text">Y is it taking so long?</div>
+            <!-- Records overlay: trophy icon top-right -->
+            <div id="recordsOverlay" class="stats-panel-overlay">
+              <div class="stats-panel game-parchment">
+                <!-- Small back button (top-left) to return to the stats panel -->
+                <button
+                  id="records-back-button"
+                  class="config-back-button"
+                  aria-label="Back"
+                >
+                  ◂ Back
+                </button>
+                <div class="stats-main-content">
+                  <div class="stats-info">
+                    <h2>Records</h2>
+                    <div class="config-list records-list">
+                      <div class="config-item">
+                        <span class="stat-label">Most Discoveries:</span
+                        ><span id="record-zones" class="stat-value">0</span>
+                      </div>
+                      <div class="config-item">
+                        <span class="stat-label">Most Points:</span
+                        ><span id="record-points" class="stat-value">0</span>
+                      </div>
+                      <div class="config-item">
+                        <span class="stat-label">Highest Combo:</span
+                        ><span id="record-combo" class="stat-value">0</span>
+                      </div>
                     </div>
-                    <div id="regionNotification" class="region-notification-overlay"></div>
+                  </div>
                 </div>
+              </div>
             </div>
+            <div id="statueOverlay" class="statue-overlay">
+              <div class="statue-window">
+                <!-- Content will be populated by JS -->
+              </div>
+            </div>
+            <!-- AI INSTRUCTION: This is the Player Stats panel. It is revealed when the player character is clicked on the board. -->
+            <div id="statsPanelOverlay" class="stats-panel-overlay">
+              <div class="stats-panel game-parchment">
+                <div class="stats-main-content">
+                  <div class="stats-info"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Config overlay: separate overlay like statsPanelOverlay -->
+            <div id="configOverlay" class="stats-panel-overlay">
+              <div class="stats-panel game-parchment">
+                <!-- Small back button (top-left) to return to the stats panel -->
+                <button
+                  id="config-back-button"
+                  class="config-back-button"
+                  aria-label="Back"
+                >
+                  ◂ Back
+                </button>
+                <div class="stats-main-content">
+                  <div class="stats-info">
+                    <h2>Options</h2>
+                    <div class="config-list">
+                      <div class="config-item">
+                        <span class="stat-label">Music:</span>
+                        <label class="setting-toggle">
+                          <input type="checkbox" id="music-toggle" checked />
+                          <span class="toggle-slider"></span>
+                        </label>
+                      </div>
+                      <div class="config-item">
+                        <span class="stat-label">SFX:</span>
+                        <label class="setting-toggle">
+                          <input type="checkbox" id="sfx-toggle" checked />
+                          <span class="toggle-slider"></span>
+                        </label>
+                      </div>
+                      <div class="config-item config-button-item">
+                        <button id="about-button" class="config-action-button">
+                          Credits
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- About modal overlay -->
+            <div id="aboutOverlay" class="about-modal-overlay">
+              <div class="about-modal game-parchment">
+                <button
+                  id="about-close-button"
+                  class="config-back-button"
+                  aria-label="Close"
+                >
+                  ✕ Close
+                </button>
+                <div class="about-content">
+                  <h2>Credits</h2>
+                  <div class="about-credits">
+                    <div class="credit-item">
+                      <span class="credit-role">Designer:</span>
+                      <div class="credit-name-container">
+                        <span class="credit-name">Hauntologist</span>
+                        <a href="https://github.com/Spectrologer" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+                      </div>
+                    </div>
+                    <div class="credit-item">
+                      <span class="credit-role">Artist:</span>
+                      <div class="credit-name-container">
+                        <span class="credit-name">Hiddenist</span>
+                        <a href="https://github.com/hiddenist" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              id="player-card-content"
+              class="character-card modern-player-card"
+              style="position: relative; z-index: 3"
+            >
+              <div class="player-header">
+                <div class="player-portrait-container">
+                  <img
+                    src="assets/characters/player/faceset.png"
+                    alt="Player Portrait"
+                    class="player-portrait"
+                  />
+                </div>
+                <div class="player-stats-main">
+                  <div class="health-points-wrapper">
+                    <div class="player-health">
+                      <img
+                        src="assets/items/misc/heart.png"
+                        alt="Heart"
+                        class="heart-icon"
+                      />
+                      <img
+                        src="assets/items/misc/heart.png"
+                        alt="Heart"
+                        class="heart-icon"
+                      />
+                      <img
+                        src="assets/items/misc/heart.png"
+                        alt="Heart"
+                        class="heart-icon"
+                      />
+                      <img
+                        src="assets/items/equipment/axe.png"
+                        alt="Axe Ability"
+                        class="axe-ability-icon"
+                      />
+                      <img
+                        src="assets/items/equipment/hammer.png"
+                        alt="Hammer Ability"
+                        class="hammer-ability-icon"
+                      />
+                    </div>
+                    <div id="player-points" class="player-points">
+                      <img
+                        src="assets/items/misc/points.png"
+                        alt="Points"
+                        class="points-icon"
+                      />
+                      <span class="points-value">0</span>
+                    </div>
+                  </div>
+                  <div class="player-bars">
+                    <div class="bar hunger-bar">
+                      <span class="bar-label">Hunger</span>
+                      <div class="bar-track">
+                        <div id="hunger-progress" class="progress-fill"></div>
+                      </div>
+                    </div>
+                    <div class="bar thirst-bar">
+                      <span class="bar-label">Thirst</span>
+                      <div class="bar-track">
+                        <div id="thirst-progress" class="progress-fill"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="player-details">
+                <div class="map-inventory-wrapper">
+                  <div class="player-map">
+                    <div id="message-log-button" class="message-log-button">
+                      Message Log
+                    </div>
+                    <canvas id="zoneMap"></canvas>
+                    <div id="map-info" class="map-info"></div>
+                  </div>
+                  <div class="player-inventory">
+                    <div class="inventory-list">
+                      <div class="inventory-slot"></div>
+                      <div class="inventory-slot"></div>
+                      <div class="inventory-slot"></div>
+                      <div class="inventory-slot"></div>
+                      <div class="inventory-slot"></div>
+                      <div class="inventory-slot"></div>
+                    </div>
+                    <div id="inventory-tooltip" class="inventory-tooltip"></div>
+                  </div>
+                </div>
+              </div>
+              <!-- Start overlay: sits over the player card so the board remains visible as a preview behind it -->
+              <div id="startOverlay" class="start-overlay" aria-hidden="false">
+                <div class="start-overlay-box">
+                  <div class="start-overlay-title">CHÉSSE</div>
+                  <div id="loadingIndicator" class="loading-indicator">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Loading...</div>
+                  </div>
+                  <div
+                    id="startMenuGrid"
+                    class="start-menu-grid"
+                    style="display: none"
+                  >
+                    <button
+                      id="startButton"
+                      class="start-button-native start-overlay-action start-btn-new start-btn-large"
+                    >
+                      New Game
+                    </button>
+                    <button
+                      id="continueButton"
+                      class="start-button-native start-overlay-action start-btn-continue start-btn-large"
+                    >
+                      Continue
+                    </button>
+                    <button
+                      id="configButton"
+                      class="start-button-native start-overlay-action start-btn-config"
+                    >
+                      Options
+                    </button>
+                    <button
+                      id="recordsButton"
+                      class="start-button-native start-overlay-action start-btn-records"
+                    >
+                      Records
+                    </button>
+                    <button
+                      id="characterEditorButton"
+                      class="start-button-native start-overlay-action start-btn-character"
+                    >
+                      Character Editor
+                    </button>
+                    <button
+                      id="boardEditorButton"
+                      class="start-button-native start-overlay-action start-btn-editor"
+                    >
+                      Board Editor
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Message Log overlay moved inside player card so it overlays the player panel like NPC messages -->
+              <div id="messageLogOverlay" class="message-log-overlay">
+                <div class="message-log-box">
+                  <button
+                    id="closeMessageLogButton"
+                    class="message-log-close"
+                    aria-label="Close"
+                  >
+                    ×
+                  </button>
+                  <div id="messageLogContent" class="message-log-content"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+        <!-- AI INSTRUCTION: This is The Board. It is the main game grid where the player moves, interacts with the world, and where enemies and items are generated. -->
+        <div class="game-area">
+          <div class="game-parchment">
+            <canvas id="gameCanvas"></canvas>
+            <div id="gameLoadingPlaceholder" class="game-loading-placeholder">
+              <div class="game-loading-text">Y is it taking so long?</div>
+            </div>
+            <div
+              id="regionNotification"
+              class="region-notification-overlay"
+            ></div>
+          </div>
+        </div>
+      </div>
     </div>
-        <div id="messageBox" class="message-box message-overlay"></div>
-        
-        <div id="game-over-overlay" class="game-over-overlay">
-            <div class="game-over-box">
-                <h1>Game Over</h1>
-                <p>DISCOVERIES: <span id="zones-discovered">0</span></p>
-                <button id="restart-button" class="restart-button" aria-label="Reset game">
-                    <span>Reset</span>
-                </button>
-            </div>
-        </div>
-        <div id="expandedMapOverlay">
-            <div class="expanded-map-container">
-                <canvas id="expandedMapCanvas"></canvas>
-                <button id="mapZLevelUp" class="map-zlevel-btn map-zlevel-up" aria-label="View level above">
-                    <img src="static/assets/ui/indicator.png" alt="Up" />
-                </button>
-                <button id="mapZLevelDown" class="map-zlevel-btn map-zlevel-down" aria-label="View level below">
-                    <img src="static/assets/ui/indicator.png" alt="Down" />
-                </button>
-                <div id="mapZLevelIndicator" class="map-zlevel-indicator"></div>
-            </div>
-        </div>
-        <div id="zoneEditorOverlay" class="zone-editor-overlay" style="display: none;">
-            <div class="zone-editor-container">
-                <button id="closeZoneEditor" class="zone-editor-close" aria-label="Close">×</button>
-                <iframe id="zoneEditorFrame" src="" class="zone-editor-frame"></iframe>
-            </div>
-        </div>
-        <div id="characterEditorOverlay" class="zone-editor-overlay" style="display: none;">
-            <div class="zone-editor-container">
-                <button id="closeCharacterEditor" class="zone-editor-close" aria-label="Close">×</button>
-                <iframe id="characterEditorFrame" src="" class="zone-editor-frame"></iframe>
-            </div>
-        </div>
+    <div id="messageBox" class="message-box message-overlay"></div>
+
+    <div id="game-over-overlay" class="game-over-overlay">
+      <div class="game-over-box">
+        <h1>Game Over</h1>
+        <p>DISCOVERIES: <span id="zones-discovered">0</span></p>
+        <button
+          id="restart-button"
+          class="restart-button"
+          aria-label="Reset game"
+        >
+          <span>Reset</span>
+        </button>
+      </div>
+    </div>
+    <div id="expandedMapOverlay">
+      <div class="expanded-map-container">
+        <canvas id="expandedMapCanvas"></canvas>
+        <button
+          id="mapZLevelUp"
+          class="map-zlevel-btn map-zlevel-up"
+          aria-label="View level above"
+        >
+          <img src="static/assets/ui/indicator.png" alt="Up" />
+        </button>
+        <button
+          id="mapZLevelDown"
+          class="map-zlevel-btn map-zlevel-down"
+          aria-label="View level below"
+        >
+          <img src="static/assets/ui/indicator.png" alt="Down" />
+        </button>
+        <div id="mapZLevelIndicator" class="map-zlevel-indicator"></div>
+      </div>
+    </div>
+    <div
+      id="boardEditorOverlay"
+      class="board-editor-overlay"
+      style="display: none"
+    >
+      <div class="board-editor-container">
+        <button
+          id="closeBoardEditor"
+          class="board-editor-close"
+          aria-label="Close"
+        >
+          ×
+        </button>
+        <iframe id="boardEditorFrame" src="" class="board-editor-frame"></iframe>
+      </div>
+    </div>
+    <div
+      id="characterEditorOverlay"
+      class="board-editor-overlay"
+      style="display: none"
+    >
+      <div class="board-editor-container">
+        <button
+          id="closeCharacterEditor"
+          class="board-editor-close"
+          aria-label="Close"
+        >
+          ×
+        </button>
+        <iframe
+          id="characterEditorFrame"
+          src=""
+          class="board-editor-frame"
+        ></iframe>
+      </div>
+    </div>
     <script type="module" src="/src/ui/OverlayAnimations.js"></script>
-</body>
+  </body>
 </html>

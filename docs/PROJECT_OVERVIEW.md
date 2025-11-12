@@ -46,12 +46,14 @@ npm run type-check    # Run TypeScript type checking
 ### Technology Stack
 
 **Frontend**:
+
 - TypeScript 5.9.3 (ES2020 target with ES Modules)
 - HTML5 Canvas 2D rendering
 - Modern CSS with Grid/Flexbox
 - Web Audio API for sound
 
 **Build & Development**:
+
 - **Bundler**: Vite 6.x with HMR and code splitting
 - **Testing**: Vitest 4.x with happy-dom
 - **Type Checking**: TypeScript with strict type safety
@@ -59,10 +61,12 @@ npm run type-check    # Run TypeScript type checking
 - **PWA**: vite-plugin-pwa with Workbox
 
 **Dependencies**:
+
 - **Runtime**: @sentry/browser (error tracking), lz-string (compression)
 - **Dev**: TypeScript, Vitest, ESLint, rollup-plugin-visualizer
 
 **Architecture Patterns**:
+
 - Dependency Injection via `ServiceContainer`
 - Event-driven architecture via `EventBus`
 - Strategy pattern for item effects and rendering
@@ -74,6 +78,7 @@ npm run type-check    # Run TypeScript type checking
 ### Directory Structure & Key Systems
 
 #### Root Structure
+
 ```
 Chesse/
 ├── assets/              # All game assets (images, sounds)
@@ -127,11 +132,13 @@ Chesse/
 ```
 
 #### Root Files
+
 - [index.html](index.html) — Main entry point with canvas and UI overlays
 - [styles.css](styles.css) — Global styling
 - [package.json](package.json) — Dependencies and scripts
 
 #### Core Systems ([src/core/](src/core/))
+
 - **GameContext Architecture** (Refactored from god object):
   - [GameContextCore.ts](src/core/context/GameContextCore.ts) — Refactored main game context
   - [ManagerRegistry.ts](src/core/context/ManagerRegistry.ts) — Type-safe service locator for all managers
@@ -153,6 +160,7 @@ Chesse/
 #### Managers ([[managers/](src/managers/](src/managers/)) — 30+ Specialized Managers
 
 **Combat System** ([managers/combat/](managers/combat/)):
+
 - **CollisionDetectionSystem.ts** — Collision detection and resolution
 - **EnemyMovementHandler.ts** — Enemy movement coordination
 - **PlayerCombatHandler.ts** — Player combat actions
@@ -161,18 +169,21 @@ Chesse/
 - **[[EnemyDefeatFlow.ts](src/managers/](src/managers/EnemyDefeatFlow.ts)** — Defeat logic, rewards, combo tracking
 
 **Grid Operations** ([managers/grid/](managers/grid/)):
+
 - **CachedGridManager.ts** — Grid state caching
 - **GridCoreOperations.ts** — Core grid operations
 - **GridIterationOperations.ts** — Grid iteration utilities
 - **GridQueryOperations.ts** — Grid queries and lookups
 
 **Interaction**:
+
 - **[[InteractionManager.ts](src/managers/](src/managers/InteractionManager.ts)** — Player tile interactions
 - **[[NPCInteractionManager.ts](src/managers/](src/managers/NPCInteractionManager.ts)** — NPC dialogue and barter
 - **[[EnvironmentalInteractionManager.ts](src/managers/](src/managers/EnvironmentalInteractionManager.ts)** — Environmental tiles (pits, etc.)
 - **[[TerrainInteractionManager.ts](src/managers/](src/managers/TerrainInteractionManager.ts)** — Terrain-specific interactions
 
 **Inventory & Items**:
+
 - **[[ItemManager.js](src/managers/](src/managers/ItemManager.js)** — Item pickup and placement
 - **[[ItemPickupManager.js](src/managers/](src/managers/ItemPickupManager.js)** — Item collection mechanics
 - **Inventory Architecture** ([[managers/inventory/](src/managers/](src/managers/inventory/)):
@@ -188,17 +199,20 @@ Chesse/
     - [[SpecialEffects.js](src/managers/](src/managers/inventory/effects/SpecialEffects.js) — Shovel, Note, Book of Time Travel
 
 **World & Zones**:
+
 - **[[ZoneManager.js](src/managers/](src/managers/ZoneManager.js)** — Zone generation and caching
 - **[[ZoneTransitionManager.js](src/managers/](src/managers/ZoneTransitionManager.js)** — Movement between zones
 - **[[ConnectionManager.js](src/managers/](src/managers/ConnectionManager.js)** — Zone connections and exits
 - **[[RadialPersistence.js](src/managers/](src/managers/RadialPersistence.js)** — Radial inventory save/load
 
 **Input & Audio**:
+
 - **[[InputManager.js](src/managers/](src/managers/InputManager.js)** — Input handling facade
 - **[[ActionManager.js](src/managers/](src/managers/ActionManager.js)** — Player action execution
 - **[[SoundManager.js](src/managers/](src/managers/SoundManager.js)** — Audio playback
 
 #### Entities ([[entities/](src/entities/](src/entities/) & [enemy/](enemy/))
+
 - **[[Player.js](src/entities/](src/entities/Player.js)** — Player character with Position class, stats, inventory, abilities
 - **[BaseEnemy.js](enemy/BaseEnemy.js)** — Enemy base class with animations and attributes
 - **[[Enemy.js](src/entities/](src/entities/Enemy.js)** — Enemy factory and type registry
@@ -211,6 +225,7 @@ Chesse/
   - [MoveCalculators.js](enemy/MoveCalculators.js) — Move strategy factory
 
 #### Generators ([[generators/](src/generators/](src/generators/))
+
 - **[[ZoneGenerator.js](src/generators/](src/generators/ZoneGenerator.js)** — Main orchestrator
 - **[[FeatureGenerator.js](src/generators/](src/generators/FeatureGenerator.js)** — Terrain features (grass, rocks, holes, pits)
 - **[[StructureGenerator.js](src/generators/](src/generators/StructureGenerator.js)** — Building/structure placement
@@ -221,6 +236,7 @@ Chesse/
 - **[[ZoneStateManager.js](src/generators/](src/generators/ZoneStateManager.js)** — Zone state persistence
 
 #### Rendering ([[renderers/](src/renderers/](src/renderers/))
+
 - **[[RenderManager.js](src/renderers/](src/renderers/RenderManager.js)** — Main render loop coordinator
 - **[[TileRenderer.js](src/renderers/](src/renderers/TileRenderer.js)** — Base tile rendering
 - **[[BaseTileRenderer.js](src/renderers/](src/renderers/BaseTileRenderer.js)** — Floor and wall tiles
@@ -236,12 +252,15 @@ Chesse/
 - **[[TextureDetector.js](src/renderers/](src/renderers/TextureDetector.js)** — Tile type to texture mapping
 
 #### UI System ([[ui/](src/ui/](src/ui/)) — 30+ Components
+
 **Core Managers**:
+
 - **[[UIManager.js](src/ui/](src/ui/UIManager.js)** — Central UI orchestrator
 - **[[OverlayManager.js](src/ui/](src/ui/OverlayManager.js)** — Modal overlay management
 - **[[PanelManager.js](src/ui/](src/ui/PanelManager.js)** — Player card and panel management
 
 **Components**:
+
 - **Inventory**: [[InventoryUI.js](src/ui/InventoryUI.js), [RadialInventoryUI.js](src/ui/](src/ui/RadialInventoryUI.js)
 - **Stats**: [[PlayerStatsUI.js](src/ui/PlayerStatsUI.js), [StatsPanelManager.js](src/ui/StatsPanelManager.js), [RecordsPanelManager.js](src/ui/](src/ui/RecordsPanelManager.js)
 - **Config**: [[ConfigPanelManager.js](src/ui/ConfigPanelManager.js), [VoiceSettings.js](src/ui/](src/ui/VoiceSettings.js)
@@ -252,6 +271,7 @@ Chesse/
 - **Effects**: [[StatueInfoWindow.js](src/ui/StatueInfoWindow.js), [RadialMenu.js](src/ui/](src/ui/RadialMenu.js)
 
 #### Input Controllers ([[controllers/](src/controllers/](src/controllers/))
+
 - **[[InputController.js](src/controllers/](src/controllers/InputController.js)** — Main input coordinator (keyboard, mouse, touch, gestures)
 - **[[KeyboardHandler.js](src/controllers/](src/controllers/KeyboardHandler.js)** — Keyboard events
 - **[[PathfindingController.js](src/controllers/](src/controllers/PathfindingController.js)** — BFS pathfinding with Position class
@@ -260,6 +280,7 @@ Chesse/
 - **[[ZoneTransitionController.js](src/controllers/](src/controllers/ZoneTransitionController.js)** — Zone transition input
 
 #### Characters & NPCs ([src/characters/](src/characters/))
+
 - **Character System**: 73 JSON character definitions organized by type
   - **Main Characters** (10): crayn.json, felt.json, forge.json, axelotl.json, mark.json, nib.json, rune.json, penne.json, squig.json, gouge.json
   - **Gossip NPCs** ([gossip/](gossip/), 50+): aster, bit, block, brush, calli, capybara, cinnabar, etc.
@@ -268,10 +289,12 @@ Chesse/
 - **[BaseNPC.ts](src/npc/BaseNPC.ts)** — Base NPC class implementation
 
 #### Content & Configuration ([config/](config/))
+
 - **[ContentRegistrations.ts](config/ContentRegistrations.ts)** — Unified registry for items, NPCs, enemies, zones
 - **[NPCConfig.ts](config/NPCConfig.ts)** — NPC configuration and registration
 
 #### Utilities ([[utils/](src/utils/](src/utils/))
+
 - **[[Position.js](src/utils/](src/utils/Position.js)** — Rich position abstraction (40+ methods, 99/99 tests passing)
   - Distance metrics (Chebyshev, Manhattan, Euclidean)
   - Neighbor generation, adjacency checks
@@ -286,12 +309,15 @@ Chesse/
 - **[[SafeServiceCall.js](src/utils/](src/utils/SafeServiceCall.js)** — Safe method invocation
 
 #### Assets
+
 - **[assets/](assets/)** — Game images, sprites, tiles
 - **[Sounds/](Sounds/)** & **[sfx/](sfx/)** — Audio files
 - **[fonts/](fonts/)** — Custom game fonts
 
 #### Facades ([src/facades/](src/facades/))
+
 Domain-specific API facades for cleaner access patterns:
+
 - **CombatFacade.ts** — Combat system operations
 - **InteractionFacade.ts** — Interaction handling
 - **PlayerFacade.ts** — Player state and operations
@@ -302,10 +328,12 @@ Domain-specific API facades for cleaner access patterns:
 - **EnemyCollection.ts** — Enemy management
 
 #### Repositories & Services
+
 - **[ZoneRepository.ts](src/repositories/ZoneRepository.ts)** — Zone data access layer
 - **[CompressionService.ts](src/services/CompressionService.ts)** — Data compression utilities
 
 #### Tests ([tests/](tests/))
+
 - **576+ passing tests** covering managers, generators, and core systems
 - **[Position.test.ts](tests/Position.test.ts)** — 99 tests for Position class
 - **[FischersWand.test.ts](tests/FischersWand.test.ts)** — Fischer's Wand feature tests
@@ -315,36 +343,43 @@ Domain-specific API facades for cleaner access patterns:
 ### Game Loop Flow
 
 1. **Input Handling**: [[InputController.js](src/controllers/](src/controllers/InputController.js) processes keyboard, mouse, touch, and gestures
+
    - Delegates to specialized handlers ([[KeyboardHandler.js](src/controllers/KeyboardHandler.js), [GestureDetector.js](src/controllers/](src/controllers/GestureDetector.js))
    - [[InputManager.js](src/managers/](src/managers/InputManager.js) provides facade for game systems
 
 2. **Action Execution**: [[ActionManager.js](src/managers/](src/managers/ActionManager.js) executes player actions
+
    - Movement validated and processed
    - Interactions handled by [[InteractionManager.js](src/managers/](src/managers/InteractionManager.js) and specialized interaction managers
 
 3. **Turn System**: [[TurnManager.js](src/core/](src/core/TurnManager.js) manages turn order
+
    - Player moves first
    - Then all enemies move via [[CombatManager.js](src/managers/](src/managers/CombatManager.js)
    - Individual combat actions via [[CombatActionManager.js](src/managers/](src/managers/CombatActionManager.js)
 
 4. **Enemy AI**: Chess-inspired tactical movement
+
    - Line of sight via [EnemyLineOfSight.js](enemy/EnemyLineOfSight.js)
    - Movement calculation via [MoveCalculators.js](enemy/MoveCalculators.js)
    - Tactical decisions via [TacticalAI.js](enemy/TacticalAI.js)
 
 5. **Zone Management**:
+
    - [[ZoneManager.js](src/managers/](src/managers/ZoneManager.js) handles current zone
    - [[ZoneTransitionManager.js](src/managers/](src/managers/ZoneTransitionManager.js) handles movement between zones
    - [[ConnectionManager.js](src/managers/](src/managers/ConnectionManager.js) manages zone connections and exits
    - Procedural generation via [[ZoneGenerator.js](src/core/](src/core/ZoneGenerator.js)
 
 6. **Rendering**: [[RenderManager.js](src/renderers/](src/renderers/RenderManager.js) orchestrates rendering
+
    - Tile rendering via specialized renderers ([[BaseTileRenderer.js](src/renderers/BaseTileRenderer.js), [ItemTileRenderer.js](src/renderers/](src/renderers/ItemTileRenderer.js), etc.)
    - Player via [[PlayerRenderer.js](src/renderers/](src/renderers/PlayerRenderer.js)
    - Enemies via [[EnemyRenderer.js](src/renderers/](src/renderers/EnemyRenderer.js)
    - UI overlays via [[UIManager.js](src/ui/](src/ui/UIManager.js)
 
 7. **Events**: [[EventBus.js](src/core/](src/core/EventBus.js) coordinates cross-system communication
+
    - Decouples systems via publish-subscribe pattern
    - Event types: zone transitions, combat, UI updates, sound effects
 
@@ -356,12 +391,14 @@ Domain-specific API facades for cleaner access patterns:
 ### Adding New Content
 
 See [ADDING_CONTENT.md](docs/ADDING_CONTENT.md) for detailed guides on:
+
 - Adding new items with custom effects
 - Creating new NPCs with dialogue or barter
 - Registering new enemy types
 - Configuring new zone types
 
 **Quick Example - Adding a New Item**:
+
 1. Register in [ContentRegistrations.js](config/ContentRegistrations.js)
 2. Create effect class in [[managers/inventory/effects/](src/managers/](src/managers/inventory/effects/)
 3. Add texture to [assets/](assets/)
@@ -369,17 +406,20 @@ See [ADDING_CONTENT.md](docs/ADDING_CONTENT.md) for detailed guides on:
 ### Design Bible & Visual Style
 
 ---
+
 **🎨 AI NOTE: PEAR36 COLOR PALETTE RESTRICTION**
 
 **CRITICAL:** This project uses **ONLY** the **Pear36 color palette** by pinetreepizza (36 colors).
 
 When implementing any features, UI elements, styling, or visual effects:
+
 - ✅ **USE ONLY** colors from the Pear36 palette (see full list below)
 - ❌ **DO NOT** introduce any hex colors outside this palette
 - ✅ **VERIFY** all color values against the official Pear36 palette
 - 📖 **REFERENCE**: https://lospec.com/palette-list/pear36
 
 **Complete Pear36 Palette (36 colors):**
+
 - **Purples/Magentas**: `#5e315b`, `#8c3f5d`, `#ba6156`
 - **Warm Tones**: `#f2a65e`, `#ffe478`, `#cfff70`
 - **Greens**: `#8fde5d`, `#3ca370`, `#3d6e70`
@@ -390,13 +430,16 @@ When implementing any features, UI elements, styling, or visual effects:
 ---
 
 **Color Palette - Muted Sonoran Desert Pastels**:
+
 - **Primary Colors**:
+
   - Dusty Rose/Coral: `#D4A5A5`, `#C48B8B`
   - Muted Lavender/Purple: `#C4A8C4`, `#A88BA8`
   - Mauve/Dusty Pink: `#D4B5C4`, `#C49AB4`
   - Sandy Beige: `#F5E8E0`, `#EDD8CF`, `#E8D5D5`
 
 - **Accent Colors**:
+
   - Deep Mauve: `#6B4858` (text)
   - Dusty Rose: `#8B6B7A` (secondary text)
   - Border Mauve: `#D4A8B8`
@@ -407,11 +450,13 @@ When implementing any features, UI elements, styling, or visual effects:
   - Buttons: Individual Sonoran pastel gradients (see below)
 
 **Button Color Scheme** ([styles.css:375-402](styles.css#L375-L402)):
+
 - **New Game**: Dusty rose/coral (`#D4A5A5` → `#C48B8B`)
 - **Continue**: Muted lavender/purple (`#C4A8C4` → `#A88BA8`)
-- **Zone Editor**: Mauve/dusty pink (`#D4B5C4` → `#C49AB4`)
+- **board editor**: Mauve/dusty pink (`#D4B5C4` → `#C49AB4`)
 
 **Adobe Texture Effect** ([styles.css:108-126](styles.css#L108-L126), [styles.css:318-347](styles.css#L318-L347)):
+
 - Cross-hatched diagonal patterns (45° and -45°) for stucco appearance
 - Radial gradient overlays for organic adobe irregularities
 - Subtle horizontal banding for surface roughness
@@ -419,6 +464,7 @@ When implementing any features, UI elements, styling, or visual effects:
 - Applied to: Start menu background, all buttons
 
 **Typography**:
+
 - **Title Font**: MedievalSharp (serif) — Bold, fantasy style
 - **Button Font**: Cinzel (serif) — Elegant, uppercase
 - **Body Font**: Courier New (monospace) — Readable, retro
@@ -426,17 +472,20 @@ When implementing any features, UI elements, styling, or visual effects:
 - **Text Shadow**: Soft white shadow (`rgba(255, 255, 255, 0.4)`) for legibility on textured backgrounds
 
 **Material Effects**:
+
 - **Border Radius**: 3-4px for buttons (angular, adobe-brick feel)
 - **Box Shadows**: Layered with inset highlights for depth
 - **Frayed Edges**: Clip-path polygons for irregular, hand-made adobe appearance
 - **Z-index Layering**: Interactive elements above textures (z-index: 1)
 
 **Responsive Design** ([styles.css:313-315](styles.css#L313-L315)):
+
 - Buttons: `width: clamp(160px, 50%, 220px)` — Scales 160-220px
 - Font sizes: `clamp(0.85em, 2.5vw, 1em)` — Mobile-optimized
 - Max width: 90% for narrow screens
 
 **Design Philosophy**:
+
 - Sonoran desert aesthetic: purple, pink, sandy tones inspired by desert sunsets, prickly pear blooms, and twilight landscapes
 - Adobe/stucco texture: Authentic earthen material feel throughout UI
 - Muted pastels: Sophisticated, not oversaturated
@@ -478,12 +527,14 @@ When implementing any features, UI elements, styling, or visual effects:
 Based on recent commits, the project has undergone significant modernization:
 
 **TypeScript Migration (2024-2025)**:
+
 - ✅ **100% Complete**: 302 TypeScript files (55,800+ lines), 0 JavaScript files remaining
 - ✅ **Type Safety**: Migrated from loose JavaScript to TypeScript
 - ✅ **Modern Tooling**: Full IDE support with autocomplete and type checking
 - ✅ **Constants Organization**: Refactored into 14 organized constant files
 
 **Architecture Refactoring**:
+
 - ✅ **GameContext Refactoring**: Eliminated god object anti-pattern
   - Created ManagerRegistry for type-safe service access
   - Introduced 8 domain facades (combat, inventory, zones, actions, etc.)
@@ -495,18 +546,21 @@ Based on recent commits, the project has undergone significant modernization:
 - ✅ **Combat Refactoring**: Separated combat system into specialized modules
 
 **Character System**:
+
 - ✅ **JSON Character Definitions**: 73 character definitions in structured hierarchy
   - 10 main NPCs, 50+ gossip characters, 13 interactive statues
 - ✅ **Character Editor**: Built-in tool for creating and editing characters
 - ✅ **Character Organization**: Dedicated src/characters/ directory structure
 
 **Build System & Performance**:
+
 - ✅ **Vite Migration**: From live-server to modern Vite build system
 - ✅ **PWA Support**: Offline play with service workers
 - ✅ **Code Splitting**: Optimized bundle sizes
-- ✅ **Development Tools**: Asset viewer, character editor, zone editor
+- ✅ **Development Tools**: Asset viewer, character editor, board editor
 
 **Recent Features**:
+
 - ✅ **Custom Boards**: Support for pre-designed zones (Fischer's cube, etc.)
 - ✅ **Fischer's Wand**: Special item with unique mechanics
 - ✅ **Z-Level Maps**: Multi-level zone support
@@ -516,36 +570,40 @@ Based on recent commits, the project has undergone significant modernization:
 ### Items & Abilities
 
 **Consumables**:
+
 - **Aguamelin** (Food) — Restores hunger
 - **Water** — Restores thirst
 - **Heart** — Restores health
 
 **Tools**:
+
 - **Axe** — Chop trees and wooden obstacles
 - **Hammer** — Break rocks and stone obstacles
 - **Shovel** — Dig holes and create terrain
 
 **Weapons**:
+
 - **Bomb** — Area damage
 - **Bow** — Ranged attack
 - **Bishop Spear** — Diagonal attack pattern
 - **Horse Icon** — Special movement/attack
 
 **Special Items**:
+
 - **Note** — Mark locations on map
 - **Book of Time Travel** — Special time manipulation
 - Various quest items and collectibles
 
 ### Enemy Types
 
-| Enemy | Points | Difficulty |
-|-------|--------|------------|
-| lizardy | 1 | Basic |
-| lizardo | 3 | Medium |
-| lizord | 3 | Medium |
-| zard | 3 | Medium |
-| lizardeaux | 5 | Strong |
-| lazerd | 9 | Boss |
+| Enemy      | Points | Difficulty |
+| ---------- | ------ | ---------- |
+| lizardy    | 1      | Basic      |
+| lizardo    | 3      | Medium     |
+| lizord     | 3      | Medium     |
+| zard       | 3      | Medium     |
+| lizardeaux | 5      | Strong     |
+| lazerd     | 9      | Boss       |
 
 Each enemy type has unique tactical AI behaviors and movement patterns inspired by chess pieces.
 
@@ -554,15 +612,18 @@ Each enemy type has unique tactical AI behaviors and movement patterns inspired 
 The game features 73+ characters organized into three categories:
 
 **Main NPCs** (10) - Primary traders and dialogue characters:
+
 - **Trading**: Penne, Squig, Rune, Nib, Mark, Axelotl, Gouge
 - **Dialogue**: Crayn, Felt, Forge
 
 **Gossip NPCs** (50+) - Background characters with dialogue:
+
 - Aster, Bit, Block, Brush, Calli, Capybara, Cinnabar, and 43+ more
 - Add flavor and world-building through conversations
 - Located in various zones throughout the game
 
 **Interactive Statues** (13) - Lore-providing statues:
+
 - Bomb, Book, Bow, Horse, Lazerd, Lizardeaux, Lizardo, Lizardy, Lizord, Shovel, Spear, Zard, Default
 - Provide backstory and item information
 - Decorative and educational elements
@@ -583,6 +644,7 @@ The game features 73+ characters organized into three categories:
 ---
 
 **Last Updated**: November 9, 2025 — Updated to reflect:
+
 - 302 TypeScript files (55,800+ lines)
 - 73 JSON character definitions with character editor
 - Modular architecture refactoring (grid, combat, constants)
