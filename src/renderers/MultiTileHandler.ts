@@ -12,6 +12,11 @@ export class MultiTileHandler {
     static findHousePosition(targetX: number, targetY: number, gridManager: GridManager, isStrictCheck = false): StructurePosition | null {
         // Find the top-left corner of the 4x3 museum that contains this tile
         // Uses a lenient check that allows overlays/decorations on top of the structure
+        // IMPORTANT: Always return the top-leftmost valid structure to ensure consistent rendering
+
+        let bestMatch: StructurePosition | null = null;
+        let bestMatchCount = 0;
+
         for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
             for (let startX = Math.max(0, targetX - 3); startX <= Math.min(GRID_SIZE - 4, targetX); startX++) {
                 // Count how many tiles match HOUSE or PORT
@@ -39,13 +44,20 @@ export class MultiTileHandler {
                     const targetTile = gridManager.getTile(targetX, targetY);
                     if (!(isTileType(targetTile, TILE_TYPES.HOUSE) || isTileType(targetTile, TILE_TYPES.PORT))) continue;
                 }
+
                 if (isHouse && targetX >= startX && targetX < startX + 4 &&
                     targetY >= startY && targetY < startY + 3) {
-                    return { startX, startY };
+                    // Prefer matches with more tiles, and prefer top-left positions when counts are equal
+                    if (!bestMatch || matchingTiles > bestMatchCount ||
+                        (matchingTiles === bestMatchCount && (startY < bestMatch.startY ||
+                         (startY === bestMatch.startY && startX < bestMatch.startX)))) {
+                        bestMatch = { startX, startY };
+                        bestMatchCount = matchingTiles;
+                    }
                 }
             }
         }
-        return null;
+        return bestMatch;
     }
 
     static _find2x2StructurePosition(targetX: number, targetY: number, gridManager: GridManager, tileType: any): StructurePosition | null {
