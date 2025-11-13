@@ -146,8 +146,9 @@ export class AtlasTextureLoader {
                 );
 
                 // Convert canvas to image and store it
+                // Explicitly specify PNG format to ensure transparency is preserved
                 const img = new Image();
-                img.src = canvas.toDataURL();
+                img.src = canvas.toDataURL('image/png');
 
                 // Store with full path as key
                 this.images[spriteName] = img;

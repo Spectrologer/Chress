@@ -52,6 +52,15 @@
     "leaveAfterTrade": false
   },
   "audio": {
-    "voicePitch": 110
+    "voicePitch": 110,
+    "voicePattern": {
+      "notes": [174.61, 207.65, 233.08, 277.18],
+      "wave1": "triangle",
+      "wave2": "sawtooth",
+      "rhythmVariation": [1.0, 0.85, 1.15, 1.0],
+      "gain": 0.61,
+      "attack": 0.006,
+      "decay": 0.11
+    }
   }
 }

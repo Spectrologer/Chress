@@ -160,7 +160,8 @@ export class BarterWindow {
         if (this.barterNPCMessage) {
             // Set message HTML then run the typewriter effect so merchant text
             // appears character-by-character liketextbox messages.
-            this.barterNPCMessage.innerHTML = `<div class="dialogue-text">${message}</div>`;
+            // Include hidden character-name span with the NPC type/ID so TypewriterController can detect the character
+            this.barterNPCMessage.innerHTML = `<span class="character-name" style="display:none;">${npcType}</span><div class="dialogue-text">${message}</div>`;
             // Ensure the element has the dialogue class for styling parity
             this.barterNPCMessage.classList.add('dialogue-text');
             // Fit dialogue text to the message container (exclude lists which may scroll)
@@ -176,7 +177,7 @@ export class BarterWindow {
 
                     // Start typewriter for merchant dialogue
                     // The typewriter controller will automatically detect the character name
-                    // and apply appropriate voice settings
+                    // from the hidden .character-name span and apply appropriate voice settings
                     mm.typewriterController.start(this.barterNPCMessage, () => {
                         // Typewriter complete
                     });

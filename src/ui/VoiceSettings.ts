@@ -55,7 +55,13 @@ export function getVoiceSettingsForName(name: string | null, customPitch?: numbe
     const lower = n.trim().toLowerCase();
 
     // First, check if character JSON has a voice pattern
-    const characterData = getNPCCharacterData(lower);
+    // Try with original name, then with normalized version (remove special chars for display names)
+    let characterData = getNPCCharacterData(lower);
+    if (!characterData) {
+        // Try normalized version (e.g., "axe-o-lot'l" -> "axelotl")
+        const normalized = lower.replace(/[^a-z]/g, '');
+        characterData = getNPCCharacterData(normalized);
+    }
     if (characterData?.audio?.voicePattern) {
         const jsonPattern = characterData.audio.voicePattern;
         // Convert JSON pattern to VoicePatternConfig

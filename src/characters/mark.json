@@ -51,6 +51,15 @@
     "walkable": false
   },
   "audio": {
-    "voicePitch": 100
+    "voicePitch": 100,
+    "voicePattern": {
+      "notes": [146.83, 164.81, 196.00, 220.00],
+      "wave1": "sine",
+      "wave2": "sine",
+      "rhythmVariation": [1.0, 1.0, 1.0, 1.0],
+      "gain": 0.58,
+      "attack": 0.005,
+      "decay": 0.10
+    }
   }
 }

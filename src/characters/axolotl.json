@@ -70,6 +70,15 @@
     "leaveAfterTrade": true
   },
   "audio": {
-    "voicePitch": 180
+    "voicePitch": 180,
+    "voicePattern": {
+      "notes": [293.66, 349.23, 392.00, 440.00],
+      "wave1": "sine",
+      "wave2": "triangle",
+      "rhythmVariation": [1.0, 0.95, 1.05, 1.0],
+      "gain": 0.60,
+      "attack": 0.003,
+      "decay": 0.08
+    }
   }
 }

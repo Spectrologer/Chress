@@ -81,6 +81,9 @@ export function renderOverlay(
     }
 
     // Fallback: draw colored square and optional text/emoji
+    // Log which images are failing to load for debugging
+    logger.warn(`[renderOverlay] Image not loaded: "${imageKey}" - using fallback color ${fallbackColor}`);
+
     if (fullTile) {
         ctx.fillStyle = fallbackColor;
         ctx.fillRect(pixelX + offsetX, pixelY + offsetY, tileSize, tileSize);
