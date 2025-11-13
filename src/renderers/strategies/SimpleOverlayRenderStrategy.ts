@@ -38,12 +38,8 @@ export class SimpleOverlayRenderStrategy extends TileRenderStrategy {
         zoneLevel: number,
         baseRenderer: BaseRenderer
     ): void {
-        // First draw the base tile
-        if (zoneLevel >= 4 && zoneLevel !== 5 && zoneLevel !== 6 && baseRenderer.images.desert && baseRenderer.images.desert.complete) {
-            ctx.drawImage(baseRenderer.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else {
-            baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
-        }
+        // Note: Floor tiles are now rendered in Pass 1 by RenderManager, so we don't re-render them here
+        // This prevents covering up custom terrain textures (like museum floors)
 
         // Try to draw the overlay image if loaded, otherwise use fallback
         renderOverlay(

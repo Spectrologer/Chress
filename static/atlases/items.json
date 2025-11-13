@@ -456,7 +456,7 @@
         "y": 0.5
       }
     },
-    "misc/horse": {
+    "misc/heart": {
       "frame": {
         "x": 91,
         "y": 25,
@@ -480,7 +480,7 @@
         "y": 0.5
       }
     },
-    "misc/points": {
+    "misc/horse": {
       "frame": {
         "x": 113,
         "y": 3,
@@ -504,7 +504,7 @@
         "y": 0.5
       }
     },
-    "misc/red_check": {
+    "misc/note": {
       "frame": {
         "x": 3,
         "y": 135,
@@ -528,7 +528,7 @@
         "y": 0.5
       }
     },
-    "misc/time-bomb-active": {
+    "misc/points": {
       "frame": {
         "x": 25,
         "y": 113,
@@ -552,7 +552,7 @@
         "y": 0.5
       }
     },
-    "misc/time-bomb-inactive": {
+    "misc/red_check": {
       "frame": {
         "x": 47,
         "y": 91,
@@ -576,48 +576,48 @@
         "y": 0.5
       }
     },
-    "misc/heart": {
+    "misc/time-bomb-active": {
       "frame": {
         "x": 69,
         "y": 66,
-        "w": 14,
-        "h": 12
+        "w": 16,
+        "h": 16
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 14,
-        "h": 12
+        "w": 16,
+        "h": 16
       },
       "sourceSize": {
-        "w": 14,
-        "h": 12
+        "w": 16,
+        "h": 16
       },
       "pivot": {
         "x": 0.5,
         "y": 0.5
       }
     },
-    "misc/note": {
+    "misc/time-bomb-inactive": {
       "frame": {
         "x": 91,
         "y": 47,
-        "w": 12,
-        "h": 9
+        "w": 16,
+        "h": 16
       },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 12,
-        "h": 9
+        "w": 16,
+        "h": 16
       },
       "sourceSize": {
-        "w": 12,
-        "h": 9
+        "w": 16,
+        "h": 16
       },
       "pivot": {
         "x": 0.5,

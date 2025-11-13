@@ -17,6 +17,9 @@ export abstract class BaseStructureRenderer {
 
     /**
      * Render the base tile (floor/dirt) before rendering the structure
+     * NOTE: This is now deprecated - floor tiles are rendered in Pass 1 by RenderManager
+     * to avoid covering up custom terrain textures. This method is kept for backwards
+     * compatibility but does nothing.
      */
     protected renderBaseTile(
         ctx: CanvasRenderingContext2D,
@@ -28,7 +31,9 @@ export abstract class BaseStructureRenderer {
         zoneLevel: number,
         baseRenderer: BaseRenderer
     ): void {
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        // Floor tiles are now rendered in Pass 1 by RenderManager
+        // This prevents covering up custom terrain textures (like museum floors)
+        // Intentionally left empty
     }
 
     /**

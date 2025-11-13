@@ -396,13 +396,16 @@ export class RenderManager {
             gameWithNPC.npcRenderer.drawNPCs();
         }
 
+        // Draw foreground floor tiles (before player so player appears on top of floors)
+        this.drawForegroundFloors();
+
         // Draw player (sprite, smoke, exit indicators) - hide in chess mode
         if (!this.game.chessMode) {
             this.playerRenderer.drawPlayer();
         }
 
         // Draw foreground parts of multi-tile structures (after player for depth effect)
-        this.drawMultiTileForegrounds();
+        this.drawForegroundFeatures();
 
         // Draw bomb placement indicator if active
         this.uiRenderer.drawBombPlacementIndicator();
@@ -442,7 +445,8 @@ export class RenderManager {
         }
 
         // Draw darkened exterior border overlay (after all other rendering)
-        this.drawExteriorBorderOverlay();
+        // TEMPORARILY DISABLED
+        // this.drawExteriorBorderOverlay();
     }
 
     drawGrid(): void {
@@ -451,9 +455,10 @@ export class RenderManager {
             return;
         }
 
-        // Clear foreground structures and features from previous frame
+        // Clear foreground structures, features, and floors from previous frame
         this._foregroundStructures = [];
         this._foregroundFeatures = [];
+        this._foregroundFloors = [];
 
         // Calculate zone level for texture rendering
         const zone = this.game.playerFacade!.getCurrentZone();
@@ -473,13 +478,25 @@ export class RenderManager {
         const rotations = this.game.zoneGenerator?.rotations || {};
         const overlayRotations = this.game.zoneGenerator?.overlayRotations || {};
 
+        // Set current zone on renderer for checkerboard overlay logic
+        if (this.textureManager.renderer) {
+            this.textureManager.renderer.currentZone = zone;
+        }
+
         // Three-pass rendering to ensure proper layering:
         // Pass 1: Render terrain only (floors and walls)
         GridIterator.forEach(this.game.grid, (tile: Tile, x: number, y: number) => {
             try {
-                // Only render terrain in this pass
-                if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.WALL) {
-                    this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
+                const coord = `${x},${y}`;
+                const hasTerrainTexture = terrainTextures[coord] !== undefined;
+
+                // Render terrain in this pass if:
+                // 1. The tile is a floor or wall type, OR
+                // 2. There's a custom terrain texture defined for this position (even if it has a feature)
+                if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.WALL || hasTerrainTexture) {
+                    // If there's a terrain texture, render floor type so the texture gets applied
+                    const tileToRender = hasTerrainTexture ? TILE_TYPES.FLOOR : tile;
+                    this.textureManager.renderTile(this.ctx, x, y, tileToRender, this.game.gridManager, zoneLevel, terrainTextures, rotations);
                 }
             } catch (error) {
                 // Fallback rendering
@@ -763,6 +780,12 @@ export class RenderManager {
     private _foregroundFeatures: Array<{ x: number; y: number; tile: Tile }> = [];
 
     /**
+     * Storage for floor tiles that need foreground rendering (e.g., under museum roof)
+     * Format: { x: number, y: number }[]
+     */
+    private _foregroundFloors: Array<{ x: number; y: number }> = [];
+
+    /**
      * Determine if a tile within a multi-tile structure should be rendered in the foreground (after player).
      * This creates a depth effect where the player can walk "behind" certain parts of structures.
      */
@@ -818,10 +841,45 @@ export class RenderManager {
     }
 
     /**
+     * Draw foreground floor tiles (parts that should render before the player).
+     * This ensures the player appears on top of floor tiles.
+     */
+    drawForegroundFloors(): void {
+        if (this._foregroundFloors.length === 0) return;
+
+        // Calculate zone level for texture rendering
+        const zone = this.game.playerFacade!.getCurrentZone();
+        let zoneLevel: number;
+        if (zone.dimension === 2) {
+            zoneLevel = 6; // Underground zones
+        } else if (zone.dimension === 1) {
+            zoneLevel = 5; // Interior zones
+        } else {
+            const dist = Math.max(Math.abs(zone.x), Math.abs(zone.y));
+            zoneLevel = getZoneLevelFromDistance(dist);
+        }
+
+        const terrainTextures = this.game.zoneGenerator?.terrainTextures || {};
+        const rotations = this.game.zoneGenerator?.rotations || {};
+
+        // Render foreground floor tiles
+        for (const floor of this._foregroundFloors) {
+            const { x, y } = floor;
+            try {
+                this.textureManager.renderTile(this.ctx, x, y, TILE_TYPES.FLOOR, this.game.gridManager, zoneLevel, terrainTextures, rotations);
+            } catch (error) {
+                // Fallback: render a simple floor tile
+                this.ctx.fillStyle = '#ffe478';
+                this.ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        }
+    }
+
+    /**
      * Draw the foreground parts of multi-tile structures and feature tiles (parts that should render after the player).
      * This is called after the player is drawn to create depth effects.
      */
-    drawMultiTileForegrounds(): void {
+    drawForegroundFeatures(): void {
         if (this._foregroundStructures.length === 0 && this._foregroundFeatures.length === 0) return;
 
         // Check if player is off-screen (during entrance animations)
@@ -905,7 +963,7 @@ export class RenderManager {
         }
         }
 
-        // Render foreground feature tiles (from zLayers)
+        // Render foreground feature tiles (from zLayers) on top of floor tiles and player
         for (const feature of this._foregroundFeatures) {
             const { x, y, tile } = feature;
             try {

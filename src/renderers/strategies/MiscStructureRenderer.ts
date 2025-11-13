@@ -22,12 +22,8 @@ export class EnemyTileRenderer extends BaseStructureRenderer {
         const tile = (gridManager as any).getTile ? (gridManager as any).getTile(x, y) : (gridManager as any)[y]?.[x];
         let enemyKey = 'lizardy';
 
-        // First draw the base tile
-        if (zoneLevel >= 4 && zoneLevel !== 5 && zoneLevel !== 6 && RendererUtils.isImageLoaded(this.images, 'desert')) {
-            ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-        } else {
-            baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel);
-        }
+        // Note: Floor tiles are now rendered in Pass 1 by RenderManager, so we don't re-render them here
+        // This prevents covering up custom terrain textures (like museum floors)
 
         // Draw the enemy
         renderOverlay(ctx, this.images, enemyKey, pixelX, pixelY, TILE_SIZE, TILE_COLORS[TILE_TYPES.ENEMY], '🦎', { font: '32px Arial', fillStyle: '#BD4882' }, { fullTile: true });
