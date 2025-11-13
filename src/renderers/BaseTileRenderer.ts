@@ -80,13 +80,15 @@ export class BaseTileRenderer {
             return;
         }
 
+        // Skip checkerboard overlay for all HOME surface zones (zone level 1)
+        if (zoneLevel === 1) {
+            return;
+        }
+
         let darkTint = 'rgba(0, 0, 0, 0.05)';
         let lightTint = 'rgba(255, 255, 255, 0.05)';
 
-        if (zoneLevel === 1) { // Surface home zones - visible checkerboard on dirt
-            darkTint = 'rgba(0, 0, 0, 0.15)';
-            lightTint = 'rgba(255, 255, 255, 0.15)';
-        } else if (zoneLevel === 5) { // Interior/Home - subtle checkerboard on housetile
+        if (zoneLevel === 5) { // Interior/Home - subtle checkerboard on housetile
             darkTint = 'rgba(0, 0, 0, 0.1)';
             lightTint = 'rgba(255, 255, 255, 0.05)';
         } else if (zoneLevel === 6) { // Underground - strong white tint for visibility on dark gravel
@@ -128,6 +130,15 @@ export class BaseTileRenderer {
         if (zoneLevel === 6) {
             if (RendererUtils.isImageLoaded(this.images, 'gravel')) {
                 ctx.drawImage(this.images.gravel, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            return;
+        }
+        // Home surface zones (level 1) use alternating white museum floor tiles
+        if (zoneLevel === 1) {
+            const isFloor1 = (x + y) % 2 === 0;
+            const floorImage = isFloor1 ? 'white_mus_floor_1' : 'white_mus_floor_2';
+            if (RendererUtils.isImageLoaded(this.images, floorImage)) {
+                ctx.drawImage(this.images[floorImage], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             }
             return;
         }
@@ -256,6 +267,24 @@ export class BaseTileRenderer {
             } else {
                 ctx.save();
                 ctx.fillStyle = '#7e7e8f'; // Gray fallback
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                ctx.restore();
+            }
+            this.applyCheckerShading(ctx, x, y, pixelX, pixelY, zoneLevel);
+            return;
+        }
+
+        // Home surface zones (level 1) use alternating white museum floor tiles
+        if (zoneLevel === 1) {
+            // Determine which tile to use based on checkerboard pattern
+            const isFloor1 = (x + y) % 2 === 0;
+            const floorImage = isFloor1 ? 'white_mus_floor_1' : 'white_mus_floor_2';
+
+            if (RendererUtils.isImageLoaded(this.images, floorImage)) {
+                ctx.drawImage(this.images[floorImage], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.save();
+                ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
                 ctx.restore();
             }

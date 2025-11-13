@@ -32,12 +32,19 @@ export class WallTileRenderer {
             const textureName = customTexture.includes('/') ? customTexture.split('/')[1] : customTexture;
 
             if (RendererUtils.isImageLoaded(this.images, textureName)) {
-                // First draw background dirt so transparency works properly
-                if (RendererUtils.isImageLoaded(this.images, 'dirt')) {
-                    ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-                } else {
-                    ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
-                    ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                // Check if this is a museum exterior wall (these should NOT draw a background)
+                // Museum exterior walls are transparent overlays that show the floor underneath
+                const isMuseumExterior = textureName.startsWith('white_mus_wall_') ||
+                                        textureName.startsWith('black_mus_exterior_tile_');
+
+                if (!isMuseumExterior) {
+                    // For regular walls, draw background dirt so transparency works properly
+                    if (RendererUtils.isImageLoaded(this.images, 'dirt')) {
+                        ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    } else {
+                        ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                        ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    }
                 }
 
                 // Then draw the wall texture on top
