@@ -37,8 +37,6 @@
         const cols = Math.ceil(window.innerWidth / tileSize) + 2;
         const rows = Math.ceil(window.innerHeight / tileSize) + 2;
 
-        console.log('Creating shimmer grid:', cols, 'x', rows, 'tiles');
-
         // Create tiles
         const tiles: HTMLElement[] = [];
         for (let row = 0; row < rows; row++) {
@@ -56,7 +54,6 @@
 
         // Insert tiles container before the overlay box
         startOverlay.insertBefore(tilesContainer, overlayBox);
-        console.log('Shimmer tiles created:', tiles.length);
 
         // Animate tiles - each tile lights up and fades as the wave passes over it
         let offset = 0;

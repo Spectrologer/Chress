@@ -176,8 +176,11 @@ export class BaseTileRenderer {
             ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
             // For tinted floors or when dirt image is not loaded, use the tile color
+            // Wrap in save/restore to prevent canvas state pollution
+            ctx.save();
             ctx.fillStyle = TILE_COLORS[tileType] || '#ffe478';
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            ctx.restore();
         }
     }
 
@@ -195,8 +198,10 @@ export class BaseTileRenderer {
             if (RendererUtils.isImageLoaded(this.images, 'housetile')) {
                 ctx.drawImage(this.images.housetile, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
+                ctx.save();
                 ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                ctx.restore();
             }
             this.applyCheckerShading(ctx, x, y, pixelX, pixelY, zoneLevel);
             return;
@@ -207,8 +212,10 @@ export class BaseTileRenderer {
             if (RendererUtils.isImageLoaded(this.images, 'desert')) {
                 ctx.drawImage(this.images.desert, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
+                ctx.save();
                 ctx.fillStyle = '#F2A65E'; // Tarnished gold for desert
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                ctx.restore();
             }
             this.applyCheckerShading(ctx, x, y, pixelX, pixelY, zoneLevel);
             return;
@@ -219,8 +226,10 @@ export class BaseTileRenderer {
             if (RendererUtils.isImageLoaded(this.images, 'grass')) {
                 ctx.drawImage(this.images.grass, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
+                ctx.save();
                 ctx.fillStyle = '#8FDE5D'; // Light green fallback
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                ctx.restore();
             }
             this.applyCheckerShading(ctx, x, y, pixelX, pixelY, zoneLevel);
             return;
@@ -231,8 +240,10 @@ export class BaseTileRenderer {
             if (RendererUtils.isImageLoaded(this.images, 'mulch')) {
                 ctx.drawImage(this.images.mulch, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
+                ctx.save();
                 ctx.fillStyle = '#964253'; // Brown fallback
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                ctx.restore();
             }
             this.applyCheckerShading(ctx, x, y, pixelX, pixelY, zoneLevel);
             return;
@@ -243,8 +254,10 @@ export class BaseTileRenderer {
             if (RendererUtils.isImageLoaded(this.images, 'gravel')) {
                 ctx.drawImage(this.images.gravel, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             } else {
+                ctx.save();
                 ctx.fillStyle = '#7e7e8f'; // Gray fallback
                 ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                ctx.restore();
             }
             this.applyCheckerShading(ctx, x, y, pixelX, pixelY, zoneLevel);
             return;
@@ -254,8 +267,10 @@ export class BaseTileRenderer {
         if (RendererUtils.isImageLoaded(this.images, 'dirt')) {
             ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
+            ctx.save();
             ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            ctx.restore();
         }
         this.applyCheckerShading(ctx, x, y, pixelX, pixelY, zoneLevel);
     }

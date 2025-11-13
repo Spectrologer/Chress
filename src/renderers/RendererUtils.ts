@@ -162,6 +162,8 @@ export class RendererUtils {
         colorOrKey: string | number,
         emoji: string | null = null
     ): void {
+        // Wrap in save/restore to prevent canvas state pollution
+        ctx.save();
         ctx.fillStyle = (typeof colorOrKey === 'number' || typeof colorOrKey === 'string' && TILE_COLORS[colorOrKey])
             ? (TILE_COLORS[colorOrKey] || colorOrKey)
             : colorOrKey;
@@ -173,5 +175,6 @@ export class RendererUtils {
             ctx.textBaseline = 'middle';
             ctx.fillText(emoji, pixelX + tileSize / 2, pixelY + tileSize / 2);
         }
+        ctx.restore();
     }
 }

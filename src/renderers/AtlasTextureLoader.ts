@@ -51,9 +51,9 @@ export class AtlasTextureLoader {
             this.onAllImagesLoaded = resolve;
 
             // Load all atlases first
-            this.loadAllAtlases().then(() => {
+            this.loadAllAtlases().then(async () => {
                 // After atlases are loaded, create virtual images for each sprite
-                this.createVirtualImages();
+                await this.createVirtualImages();
 
                 if (this.onAllImagesLoaded) {
                     this.onAllImagesLoaded();
@@ -111,7 +111,9 @@ export class AtlasTextureLoader {
      * Create virtual image elements by extracting sprites from atlases
      * Also creates key aliases to match TextureLoader's key generation logic
      */
-    private createVirtualImages(): void {
+    private async createVirtualImages(): Promise<void> {
+        const imagePromises: Promise<void>[] = [];
+
         for (const [atlasName, atlas] of Object.entries(this.atlasData)) {
             const atlasImage = this.atlasImages[atlasName];
             if (!atlasImage) continue;
@@ -122,11 +124,14 @@ export class AtlasTextureLoader {
                 canvas.width = frameData.sourceSize.w;
                 canvas.height = frameData.sourceSize.h;
 
-                const ctx = canvas.getContext('2d', { alpha: true });
+                const ctx = canvas.getContext('2d', { alpha: true, willReadFrequently: false });
                 if (!ctx) {
                     logger.error(`[AtlasTextureLoader] Failed to get canvas context for sprite: ${spriteName}`);
                     continue;
                 }
+
+                // Disable image smoothing for pixel art
+                ctx.imageSmoothingEnabled = false;
 
                 // Explicitly clear the canvas to ensure transparency
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -146,9 +151,20 @@ export class AtlasTextureLoader {
                 );
 
                 // Convert canvas to image and store it
-                // Explicitly specify PNG format to ensure transparency is preserved
+                // Use toDataURL which preserves transparency
                 const img = new Image();
+
+                // Create a promise that resolves when the image is loaded
+                const loadPromise = new Promise<void>((resolve, reject) => {
+                    img.onload = () => resolve();
+                    img.onerror = () => {
+                        logger.error(`[AtlasTextureLoader] Failed to load virtual image for sprite: ${spriteName}`);
+                        reject();
+                    };
+                });
+
                 img.src = canvas.toDataURL('image/png');
+                imagePromises.push(loadPromise);
 
                 // Store with full path as key
                 this.images[spriteName] = img;
@@ -160,7 +176,9 @@ export class AtlasTextureLoader {
             }
         }
 
-        logger.debug(`[AtlasTextureLoader] Created ${this.imagesLoaded} virtual images from atlases`);
+        // Wait for all images to finish loading
+        await Promise.all(imagePromises);
+        logger.debug(`[AtlasTextureLoader] Created and loaded ${this.imagesLoaded} virtual images from atlases`);
     }
 
     /**

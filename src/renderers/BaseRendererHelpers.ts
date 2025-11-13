@@ -84,6 +84,9 @@ export function renderOverlay(
     // Log which images are failing to load for debugging
     logger.warn(`[renderOverlay] Image not loaded: "${imageKey}" - using fallback color ${fallbackColor}`);
 
+    // Wrap fallback rendering in save/restore to prevent canvas state pollution
+    ctx.save();
+
     if (fullTile) {
         ctx.fillStyle = fallbackColor;
         ctx.fillRect(pixelX + offsetX, pixelY + offsetY, tileSize, tileSize);
@@ -100,5 +103,7 @@ export function renderOverlay(
         ctx.textBaseline = 'middle';
         ctx.fillText(fallbackText, pixelX + tileSize / 2 + offsetX, pixelY + tileSize / 2 + offsetY);
     }
+
+    ctx.restore();
     return false;
 }

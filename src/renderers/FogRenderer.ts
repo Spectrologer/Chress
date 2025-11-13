@@ -109,7 +109,7 @@ export class FogRenderer {
                 const c = document.createElement('canvas');
                 c.width = sw;
                 c.height = sh;
-                const cx = c.getContext('2d');
+                const cx = c.getContext('2d', { alpha: true });
                 if (cx) {
                     // Draw the source image stretched to the scaled size
                     cx.drawImage(fogImg, 0, 0, sw, sh);

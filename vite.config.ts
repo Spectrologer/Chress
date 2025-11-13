@@ -284,7 +284,7 @@ export default defineConfig({
       },
 
       devOptions: {
-        enabled: true, // Enable in dev to test PWA features (set to false if caching becomes an issue)
+        enabled: false, // Disabled in dev to prevent Service Worker caching issues
         type: 'module',
         navigateFallback: 'index.html'
       }

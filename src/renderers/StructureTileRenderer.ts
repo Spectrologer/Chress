@@ -432,7 +432,8 @@ export class StructureTileRenderer {
                 TILE_SIZE, TILE_SIZE
             );
         } else {
-            // Fallback color rendering
+            // Fallback color rendering - wrap in save/restore to prevent canvas state pollution
+            ctx.save();
             ctx.fillStyle = `rgba${TILE_COLORS[TILE_TYPES.Grate].slice(4, -1)}, 0.7)`;
             ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
             ctx.fillStyle = '#ffffeb';
@@ -440,6 +441,7 @@ export class StructureTileRenderer {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('C', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
+            ctx.restore();
         }
     }
 

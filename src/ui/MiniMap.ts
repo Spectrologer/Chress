@@ -68,7 +68,7 @@ export class MiniMap {
         const overlay = document.getElementById('expandedMapOverlay');
         this.expandedCanvas = document.getElementById('expandedMapCanvas') as HTMLCanvasElement | null;
         if (this.expandedCanvas) {
-            this.expandedCtx = this.expandedCanvas.getContext('2d');
+            this.expandedCtx = this.expandedCanvas.getContext('2d', { alpha: true });
         }
 
         if (!smallCanvas || !overlay || !this.expandedCanvas) {

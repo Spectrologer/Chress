@@ -41,8 +41,24 @@ class InteriorHandler extends BaseZoneHandler {
     generateShackInterior(): any {
         // Shack interior now uses custom board (boards/canon/gouges.json)
         // Board system handles all layout, NPCs, items, and ports
-        logger.warn('[InteriorHandler] Shack interior should use board system (gouges.json), not procedural generation');
-        return this.buildHomeResult();
+        const boardData = boardLoader.getBoardSync(this.zoneX, this.zoneY, 1);
+        if (boardData) {
+            const result = boardLoader.convertBoardToGrid(boardData, this.foodAssets);
+            // Return the full result including terrainTextures, overlayTextures, rotations, and overlayRotations
+            return {
+                grid: result.grid,
+                enemies: [],
+                playerSpawn: result.playerSpawn,
+                terrainTextures: result.terrainTextures,
+                overlayTextures: result.overlayTextures,
+                rotations: result.rotations,
+                overlayRotations: result.overlayRotations
+            };
+        } else {
+            // Fallback to previous behavior if board is missing
+            logger.warn('[InteriorHandler] Shack interior should use board system (gouges.json), not procedural generation');
+            return this.buildHomeResult();
+        }
     }
 
     buildHomeResult(): any {

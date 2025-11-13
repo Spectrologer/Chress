@@ -39,94 +39,111 @@ export function createCavePattern(): Pattern<any> {
 
 /**
  * Peaceful interior music - Warm, welcoming
+ * Extended 10-second loop with melodic variation
  */
 export function createPeacefulPattern(): Pattern<any> {
     return stack(
-        // Chord progression - fuller sound
-        seq("c3", "g3", "a3", "f3", "e3", "g3", "c3", "f3").note()
-            .sound("triangle")
-            .room(0.7)
-            .gain(0.13)
-            .lpf(1400)
-            .slow(4),
+        // Main melody - A D F A D F A C B G F G A D C E D (first phrase)
 
-        // Lively melody with rhythmic variation using fast()
-        seq("c4", "c4", "d4", "e4", "e4", "g4", "f4", "f4", "e4", "d4", "d4", "c4").note()
+        // Variation melody - Extended phrase for more movement
+        seq("a4", "d5", "f5", "a4", "d5", "f5", "a4", "c5", "b4", "g4", "f4", "g4", "a4", "d5", "c5", "e5", "d5", "f5", "e5", "d5", "c5", "a4", "g4", "f4", "e4", "d4").note()
             .sound("triangle")
-            .room(0.5)
-            .gain(0.2)
-            .slow(2),
+            .room(0.6)
+            .gain(0.18)
+            .lpf(2100)
+            .slow(8.5),
 
-        // Gentle walking bassline with more movement
-        seq("c2", "g2", "g2", "a2", "f2", "f2").note()
+
+        // Bass line - warm foundation following the melody
+        seq("d2", "a2", "d2", "f2", "a2", "f2", "c2", "g2", "e2", "a2", "d2", "c2", "e2", "d2").note()
             .sound("sawtooth")
-            .gain(0.1)
+            .gain(0.2)
             .room(0.5)
-            .slow(4),
+            .lpf(350)
+            .slow(8),
 
-        // Additional bell-like layer for sparkle
-        seq("e5", "g5", "c6", "d6").note()
+        // Mid-range harmony - adds warmth
+        seq("f3", "a3", "d4", "f3", "c4", "g3", "e3", "a3", "d4", "c4", "e4", "d4").note()
             .sound("triangle")
-            .room(0.8)
-            .gain(0.08)
-            .lpf(2400)
-            .slow(6)
+            .room(0.65)
+            .gain(0.15)
+            .lpf(1600)
+            .slow(8.5),
+
+       
+
+        // Rhythmic pulse - gentle movement
+        seq("d1", "a1", "f1", "c1", "g1", "e1", "a1", "d1").note()
+            .sound("sawtooth")
+            .gain(0.16)
+            .room(0.6)
+            .lpf(280)
+            .slow(8),
+
+        // Sub-bass warmth
+        seq("d0", "a0", "f0", "c0", "g0", "e0").note()
+            .sound("sine")
+            .room(0.7)
+            .gain(0.14)
+            .lpf(200)
+            .slow(8)
     ).cpm(68);  // Slightly faster, more upbeat tempo
 }
 
 /**
  * Tension/Surface music - Dreamy, welcoming Twin Peaks atmosphere
+ * Extended 5-second loop with more melodic variation
  */
 export function createTensionPattern(): Pattern<any> {
     return stack(
-        // Warm jazzy chords - major tonality with gentle chromatic touches
-        seq("c3", "e3", "a3", "f3", "c3", "g3", "d3", "e3").note()
+        // Warm jazzy chords - expanded progression with more chromatic movement
+        seq("c3", "e3", "a3", "f3", "c3", "g3", "d3", "e3", "a3", "g3", "f3", "d3", "e3", "g3", "c3", "e3").note()
             .sound("triangle")
             .room(0.92)
             .gain(0.12)
             .lpf(1400)
-            .slow(4),
+            .slow(5),
 
-        // Hopeful, nostalgic melody - warm and inviting
-        seq("c4", "e4", "g4", "a4", "c5", "a4", "g4", "e4").note()
+        // Hopeful, nostalgic melody - more variation and movement
+        seq("c4", "e4", "g4", "a4", "c5", "a4", "g4", "e4", "d4", "f4", "a4", "g4", "e4", "c4", "d4", "e4").note()
             .sound("triangle")
             .room(0.88)
             .gain(0.14)
             .lpf(1800)
-            .slow(4),
+            .slow(5),
 
-        // Gentle bass - warm foundation
-        seq("c1", "g1", "c1", "g1").note()
+        // Gentle bass - more rhythmic variation
+        seq("c1", "g1", "c1", "g1", "a1", "g1", "f1", "e1", "c1", "g1").note()
             .sound("sawtooth")
             .room(0.82)
             .gain(0.17)
             .lpf(260)
-            .slow(4),
+            .slow(5),
 
-        // Bright shimmer - welcoming sparkle
-        seq("c5", "e5", "g5", "c6", "g5", "e5").note()
-            .sound("triangle")
-            .room(0.95)
-            .gain(0.1)
-            .lpf(3000)
-            .slow(6),
-
-        // Warm mid-range harmony - comforting
-        seq("e3", "g3", "a3", "g3", "e3", "g3").note()
+        // Warm mid-range harmony - expanded with rhythmic interest
+        seq("e3", "g3", "a3", "g3", "e3", "g3", "f3", "a3", "c4", "a3", "g3", "e3").note()
             .sound("triangle")
             .room(0.85)
             .gain(0.11)
             .lpf(1600)
-            .slow(6),
+            .slow(7.5),
 
-        // Gentle rhythmic pulse - inviting
-        seq("c2", "e2", "g2", "e2").note()
+        // Gentle rhythmic pulse - more variation and movement
+        seq("c2", "e2", "g2", "e2", "d2", "f2", "a2", "f2", "e2", "g2").note()
             .sound("sawtooth")
             .room(0.8)
             .gain(0.1)
             .lpf(500)
-            .slow(4)
-    ).cpm(64);  // Slightly more upbeat and welcoming
+            .slow(5),
+
+        // New subtle bass harmony - warmth and richness
+        seq("c0", "g0", "a0", "f0", "c0", "e0").note()
+            .sound("sine")
+            .room(0.75)
+            .gain(0.12)
+            .lpf(180)
+            .slow(5)
+    ).cpm(60);  //
 }
 
 /**

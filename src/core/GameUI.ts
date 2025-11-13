@@ -60,9 +60,9 @@ export class GameUI {
      */
     initializeCanvas(canvasId = 'gameCanvas', mapCanvasId = 'zoneMap'): void {
         this.canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
-        this.ctx = this.canvas?.getContext('2d') || null;
+        this.ctx = this.canvas?.getContext('2d', { alpha: true }) || null;
         this.mapCanvas = document.getElementById(mapCanvasId) as HTMLCanvasElement | null;
-        this.mapCtx = this.mapCanvas?.getContext('2d') || null;
+        this.mapCtx = this.mapCanvas?.getContext('2d', { alpha: true }) || null;
     }
 
     /**

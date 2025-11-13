@@ -235,7 +235,6 @@ export class ZoneGenerationOrchestrator {
 
         // In chess mode, player is already off-board - don't reposition
         if (this.game.gameMode.currentMode === GameMode.CHESS) {
-            console.log('[Chess] Skipping player spawn - player already off-board');
             return;
         }
 
@@ -324,21 +323,13 @@ export class ZoneGenerationOrchestrator {
         const EnemyClass = (this.game as any).Enemy;
         const defeatedEnemies = (this.game as any).defeatedEnemies;
 
-        console.log('[Chess] Zone has', (zoneData.enemies || []).length, 'enemies in data');
         const allEnemies = (zoneData.enemies || []).map((e: Enemy) => new EnemyClass(e));
-        console.log('[Chess] Created', allEnemies.length, 'enemy instances');
-
-        // Log first few enemies
-        allEnemies.slice(0, 5).forEach((e: Enemy) => {
-            console.log('[Chess] Enemy:', e.enemyType, 'at', e.x, e.y, 'team:', e.team);
-        });
 
         const livingEnemies = allEnemies.filter((enemy: Enemy) => {
             if (!enemy.id) return true; // Include enemies without id
             const defeatedKey = `${enemy.id}`;
             return !defeatedEnemies.has(defeatedKey);
         });
-        console.log('[Chess] After filtering defeated:', livingEnemies.length, 'living enemies');
         enemyCollection.replaceAll(livingEnemies, false);
     }
 
@@ -375,7 +366,6 @@ export class ZoneGenerationOrchestrator {
                 }
                 // Save the repaired zone data
                 this.game.zoneRepository.setByKey(zoneKey, zoneData);
-                console.log(`[ZoneRepair] Fixed missing terrain textures for zone ${zoneKey}`);
             }
         }
 

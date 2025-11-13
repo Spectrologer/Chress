@@ -118,7 +118,6 @@ export class MusicController {
                 // Interior or underground: use dimension directly
                 musicSelector = dimension;
             }
-            console.log(`[MusicController] Setting music - Dimension: ${dimension}, Zone Level: ${zoneLevel}, Music Selector: ${musicSelector}`);
             this.playStrudelForDimension(musicSelector);
         } else {
             // Use traditional .ogg files
@@ -186,13 +185,8 @@ export class MusicController {
         if (this.useStrudel && this.currentDimension !== null) {
             // Only switch if combat state changed
             if (this.inCombat !== combat) {
-                console.log(`[MusicController] Combat state changing: ${this.inCombat} → ${combat} (dimension: ${this.currentDimension})`);
                 this.playStrudelForDimension(this.currentDimension, combat);
-            } else {
-                console.log(`[MusicController] Combat state unchanged: ${combat} (dimension: ${this.currentDimension})`);
             }
-        } else {
-            console.log(`[MusicController] Cannot set combat music - useStrudel: ${this.useStrudel}, currentDimension: ${this.currentDimension}`);
         }
     }
 

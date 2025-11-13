@@ -63,7 +63,8 @@
       "Bash(git push:*)",
       "Bash(if exist staticnul dir static)",
       "Bash(npm i:*)",
-      "Bash(del \"c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chesse\\src\\core\\sound\\StrudelVoiceManager.ts\")"
+      "Bash(del \"c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chesse\\src\\core\\sound\\StrudelVoiceManager.ts\")",
+      "Bash(timeout /t 5 /nobreak)"
     ],
     "deny": [],
     "ask": []
