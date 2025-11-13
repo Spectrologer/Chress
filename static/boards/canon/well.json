@@ -108,12 +108,12 @@
   ],
   "features": {
     "4,0": "exit_up",
-    "2,3": "port_stairup",
+    "2,4": "port_stairup",
     "4,4": "axelotl",
     "9,5": "exit_right"
   },
   "rotations": {
-    "2,3": 90
+    "2,4": 90
   },
   "metadata": {
     "description": "Under the museum.",
