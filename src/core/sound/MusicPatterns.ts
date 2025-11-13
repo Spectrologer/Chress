@@ -1,5 +1,31 @@
 /**
  * Music Patterns - Strudel Pattern objects for procedural game music
+ *
+ * IMPORTANT - AI CODING ASSISTANT NOTES:
+ *
+ * 1. seq() SYNTAX: Use comma-separated notes, NOT space-separated strings!
+ *    ✅ CORRECT:   seq("g4", "a4", "b4", "c5").note()
+ *    ❌ INCORRECT: seq("g4 a4 b4 c5").note()
+ *
+ * 2. GM INSTRUMENT NAMES: Use the correct Strudel soundfont naming:
+ *    ✅ CORRECT:   "gm_piano", "gm_flute", "gm_acoustic_bass"
+ *    ❌ INCORRECT: "gm_acoustic_grand_piano", "piano", "flute"
+ *
+ * 3. RESTS WITH GM SOUNDFONTS: You CANNOT use "~" or "" for rests with GM instruments!
+ *    When using .sound("gm_*"), rests will cause errors. Instead:
+ *    ✅ CORRECT:   Use shorter sequences with adjusted .slow() values to create natural gaps
+ *                  Example: seq("c4", "d4", "e4").slow(4) instead of seq("c4", "~", "d4", "~", "e4", "~").slow(2)
+ *    ✅ CORRECT:   Reduce note count and increase .slow() for breathing room between phrases
+ *    ❌ INCORRECT: seq("c4", "~", "d4").sound("gm_piano") - will throw "not a note" error
+ *
+ * 4. AVAILABLE GM INSTRUMENTS (partial list):
+ *    - Piano: gm_piano
+ *    - Strings: gm_violin, gm_viola, gm_cello, gm_contrabass, gm_string_ensemble_1
+ *    - Woodwinds: gm_flute, gm_oboe, gm_clarinet, gm_bassoon, gm_piccolo, gm_english_horn
+ *    - Brass: gm_trumpet, gm_trombone, gm_tuba, gm_french_horn, gm_brass_section
+ *    - Percussion: gm_timpani, gm_xylophone, gm_glockenspiel, gm_vibraphone, gm_marimba
+ *    - Others: gm_acoustic_bass, gm_acoustic_guitar_nylon, gm_acoustic_guitar_steel,
+ *              gm_choir_aahs, gm_music_box, gm_celesta, gm_harmonica, gm_orchestral_harp
  */
 
 import { note, stack, seq, type Pattern } from '@strudel/core';
@@ -7,10 +33,6 @@ import { note, stack, seq, type Pattern } from '@strudel/core';
 import '@strudel/tonal';
 // @ts-ignore - Strudel soundfonts for GM instruments
 import '@strudel/soundfonts';
-
-// Available GM brass/horn instruments:
-// gm_trumpet, gm_trombone, gm_tuba, gm_muted_trumpet
-// gm_french_horn, gm_brass_section, gm_synth_brass_1, gm_synth_brass_2
 
 /**
  * Cave/Underground music - Cavernous, mysterious with glimmer of hope
@@ -141,65 +163,62 @@ export function createPeacefulPattern(): Pattern<any> {
 }
 
 /**
- * Tension/Surface music - Home surface theme
- * Upbeat, catchy pop-style home theme with energetic melodies
- * Poppy, accessible home feeling
+ * Home Surface music - Adventurous, Hyrule Field-inspired overworld theme
+ * Heroic and open-world feel for exploration.
  */
-export function createTensionPattern(): Pattern<any> {
+export function createHomePattern(): Pattern<any> {
     return stack(
-        // Catchy pop guitar riff - bright and energetic
-        seq("c4", "e4", "g4", "c5", "e5", "g5", "a5", "g5",
-            "e5", "c5", "e4", "g4", "c4", "e4", "g4", "c5").note()
-            .sound("gm_acoustic_guitar_steel")
-            .gain(0.38)
-            .room(0.55)
-            .slow(4),
+        // Heroic main melody - Oboe with a sense of adventure (shorter phrases for breathing room)
+        seq("g4", "b4", "d5", "g5", "f5", "e5",
+            "c5", "d5", "e5", "g5", "f5", "e5",
+            "b4", "c5", "d5", "f5", "e5", "d5",
+            "a4", "b4", "c5", "e5", "d5", "c5").note()
+            .sound("gm_oboe")
+            .gain(0.35)
+            .room(0.75)
+            .lpf(2000)
+            .slow(12),
 
-        // Upbeat pop bass - bouncy and punchy
-        seq("c2", "c2", "c3", "c2", "g2", "g2", "g3", "g2").note()
+        // Driving bass line - Acoustic bass providing a steady, adventurous rhythm
+        seq("g2", "d3", "g2", "b2", "c2", "g2", "c2", "e2",
+            "f2", "c3", "f2", "a2", "d2", "a2", "d2", "g2").note()
             .sound("gm_acoustic_bass")
             .gain(0.4)
-            .room(0.45)
-            .lpf(500)
-            .slow(4),
-
-        // Bright pop flute melody - catchy and cheerful
-        seq("e5", "g5", "c6", "e6", "c6", "g5", "e5", "g5", "f5", "a5", "c6", "a5").note()
-            .sound("gm_flute")
-            .gain(0.32)
-            .room(0.65)
-            .lpf(2400)
-            .slow(6),
-
-        // Upbeat xylophone - rhythmic sparkle
-        seq("c5", "e5", "g5", "c6", "e6", "g6", "a6", "g6").note()
-            .sound("gm_xylophone")
-            .gain(0.3)
             .room(0.6)
+            .lpf(450)
             .slow(4),
 
-        // Punchy glockenspiel - pop brightness
-        seq("e5", "g5", "c6", "e6", "g6", "c6").note()
-            .sound("gm_glockenspiel")
-            .gain(0.28)
-            .room(0.65)
-            .slow(5),
-
-        // Rhythmic cello - pop beat foundation
-        seq("c2", "g2", "e2", "c2", "f2", "g2").note()
-            .sound("gm_cello")
-            .gain(0.26)
-            .room(0.5)
-            .lpf(750)
-            .slow(6),
-
-        // Bright harmonica-like pad - poppy character
-        seq("c4", "e4", "g4", "c5").note()
-            .sound("gm_harmonica")
-            .gain(0.22)
+        // Rhythmic string accompaniment - Violins with a galloping feel (sparser pattern)
+        seq("g3", "d4", "c3", "g3", "f3", "c4", "d3", "a3").note()
+            .sound("gm_violin")
+            .gain(0.3)
             .room(0.7)
+            .lpf(1500)
+            .slow(4),
+
+        // Low string harmony - Cello reinforcing the chord progression
+        seq("g2", "g2", "c2", "c2", "f2", "f2", "d2", "d2").note()
+            .sound("gm_cello")
+            .gain(0.32)
+            .room(0.7)
+            .lpf(800)
+            .slow(4),
+
+        // Heroic brass chords - French horn for a grander feel (slower for more space)
+        seq("g3", "c3", "f3", "d3").note()
+            .sound("gm_french_horn")
+            .gain(0.28)
+            .room(0.8)
+            .lpf(1200)
+            .slow(12),
+
+        // Epic percussion - Timpani for dramatic accents
+        seq("g1", "c1", "f1", "d1").note()
+            .sound("gm_timpani")
+            .gain(0.25)
+            .room(0.8)
             .slow(8)
-    ).cpm(92); // Upbeat, poppy tempo
+    ).cpm(110); // Adventurous, marching tempo
 }
 
 /**
@@ -768,73 +787,76 @@ export function createFrontierCombatPattern(): Pattern<any> {
 }
 
 /**
- * Museum music - Upbeat pop gallery/lounge style
- * Bright, engaging atmosphere with catchy poppy touches
- * Energetic background music for gallery spaces
+ * Museum music - Pokemon Center-inspired
+ * Calm, welcoming, and peaceful with varied melodic development
+ * Uplifting but soothing, perfect for restoration and safety
  */
 export function createMuseumPattern(): Pattern<any> {
     return stack(
-        // Catchy pop guitar - upbeat chord progression
-        seq("g3", "b3", "d4", "g4", "b4", "d5", "b4", "g4",
-            "e3", "g3", "b3", "e4", "g4", "b4", "g4", "e4").note()
-            .sound("gm_acoustic_guitar_steel")
-            .gain(0.36)
-            .room(0.6)
-            .slow(5),
-
-        // Punchy pop bass - rhythmic and bouncy
-        seq("g2", "b2", "d3", "g3", "e2", "g2", "b2", "e3").note()
-            .sound("gm_acoustic_bass")
-            .gain(0.38)
-            .room(0.5)
-            .lpf(500)
-            .slow(5),
-
-        // Bright xylophone chords - pop sparkle
-        seq("g4", "b4", "d5", "g5", "b5", "d6").note()
-            .sound("gm_xylophone")
-            .gain(0.32)
-            .room(0.65)
-            .slow(5),
-
-        // Perky glockenspiel - upbeat accents
-        seq("d5", "g5", "b5", "d6", "b5", "g5", "d5", "b4").note()
-            .sound("gm_glockenspiel")
-            .gain(0.3)
-            .room(0.7)
-            .slow(6),
-
-        // Bright pop flute melody - catchy and energetic
-        seq("b4", "d5", "g5", "b5", "a5", "g5", "e5", "g5", "b5", "d6", "g6", "b6").note()
+        // Main melody - Gentle flute, Pokemon Center theme with more development
+        seq("c5", "d5", "e5", "g5", "a5", "g5", "e5", "d5",
+            "d5", "e5", "f5", "a5", "c6", "a5", "f5", "e5",
+            "e5", "f5", "g5", "c6", "b5", "a5", "g5", "f5",
+            "c5", "e5", "g5", "c6", "g5", "e5", "c5", "d5").note()
             .sound("gm_flute")
-            .gain(0.28)
+            .gain(0.32)
+            .room(0.72)
+            .lpf(2200)
+            .slow(2.5),
+
+        // Warm bass - steady with more harmonic movement
+        seq("c3", "g2", "c3", "g2", "f2", "c3", "f2", "c3",
+            "a2", "e2", "a2", "e2", "g2", "c3", "g2", "d3",
+            "c3", "g2", "c3", "g2", "f2", "c3", "e2", "f2").note()
+            .sound("gm_acoustic_bass")
+            .gain(0.35)
             .room(0.65)
-            .lpf(2300)
-            .slow(7),
+            .lpf(350)
+            .slow(1.5),
 
-        // Pop beat cello foundation - rhythmic drive
-        seq("g2", "d3", "b2", "g2", "e2", "b2").note()
-            .sound("gm_cello")
-            .gain(0.26)
-            .room(0.55)
-            .lpf(700)
-            .slow(5),
-
-        // Bright harmonica - poppy character
-        seq("g4", "b4", "d5", "g5", "d5", "b4").note()
-            .sound("gm_harmonica")
-            .gain(0.24)
+        // Piano harmony - exploring different chord areas
+        seq("c4", "e4", "g4", "c5", "f3", "a3", "c4", "f4",
+            "a3", "c4", "e4", "a4", "e4", "c4", "a3", "e3",
+            "g3", "b3", "d4", "g4", "d4", "b3", "g3", "d4",
+            "c4", "e4", "g4", "e4", "c4", "g3", "c4", "e4").note()
+            .sound("gm_piano")
+            .gain(0.28)
             .room(0.7)
-            .slow(6),
+            .lpf(1300)
+            .slow(2),
 
-        // Energetic string accent - pop vibrancy
-        seq("g3", "b3", "d4", "g4").note()
+        // Glockenspiel sparkle - more melodic interest
+        seq("e5", "g5", "c6", "e6", "d5", "f5", "a5", "d6",
+            "c5", "e5", "g5", "c6", "b5", "a5", "g5", "e5",
+            "f5", "a5", "d6", "f6", "e6", "d6", "c6", "a5",
+            "g5", "c6", "e6", "g6", "e6", "c6", "g5", "e5").note()
+            .sound("gm_glockenspiel")
+            .gain(0.25)
+            .room(0.78)
+            .lpf(2600)
+            .slow(2),
+
+        // Sustained strings - peaceful pad with motion
+        seq("c4", "e4", "g4", "c5", "a3", "d4", "f4", "a4",
+            "e4", "a4", "c5", "e5", "c5", "a4", "e4", "c4",
+            "g3", "b3", "d4", "g4", "b4", "d5", "b4", "g4",
+            "c4", "e4", "g4", "c5", "g4", "e4", "c4", "g3").note()
             .sound("gm_string_ensemble_1")
             .gain(0.2)
+            .room(0.82)
+            .lpf(1100)
+            .slow(1.8),
+
+        // Celesta bell - healing resonance with variation
+        seq("c5", "g5", "c6", "g5", "a4", "e5", "a5", "e5",
+            "d5", "a5", "d6", "a5", "c5", "g5", "c6", "g5",
+            "e5", "c6", "e6", "c6", "g5", "d6", "g6", "d6",
+            "c5", "g5", "c6", "e6", "c6", "g5", "e5", "c5").note()
+            .sound("gm_celesta")
+            .gain(0.18)
             .room(0.75)
-            .lpf(1400)
-            .slow(8)
-    ).cpm(86); // Upbeat, poppy tempo
+            .slow(2.5)
+    ).cpm(60); // Slow, spacious tempo for ~60 second loop
 }
 
 /**
@@ -849,32 +871,32 @@ export function createMuseumPattern(): Pattern<any> {
 export function getMusicPatternForDimension(dimensionOrLevel: number, combat: boolean = false): Pattern<any> {
     if (combat) {
         // Zone levels (offset by 10)
-        if (dimensionOrLevel === 11) return createTensionCombatPattern(); // Home (surface)
+        if (dimensionOrLevel === 11) return createTensionCombatPattern(); // Home
         if (dimensionOrLevel === 12) return createWoodsCombatPattern(); // Woods
         if (dimensionOrLevel === 13) return createWildsCombatPattern(); // Wilds
         if (dimensionOrLevel === 14) return createFrontierCombatPattern(); // Frontier
 
         // Dimensions
-        if (dimensionOrLevel === 0) return createTensionCombatPattern(); // Surface (fallback)
+        if (dimensionOrLevel === 0) return createTensionCombatPattern(); // Surface (fallback for home)
         if (dimensionOrLevel === 1) return createPeacefulCombatPattern(); // Interior
         if (dimensionOrLevel === 2) return createCaveCombatPattern(); // Underground
 
-        // Default: surface/tension
+        // Default: home/tension
         return createTensionCombatPattern();
     }
 
     // Non-combat music
     // Zone levels (offset by 10)
-    if (dimensionOrLevel === 11) return createTensionPattern(); // Home (surface)
+    if (dimensionOrLevel === 11) return createHomePattern(); // Home (surface)
     if (dimensionOrLevel === 12) return createWoodsPattern(); // Woods
     if (dimensionOrLevel === 13) return createWildsPattern(); // Wilds
     if (dimensionOrLevel === 14) return createFrontierPattern(); // Frontier
 
     // Dimensions
-    if (dimensionOrLevel === 0) return createTensionPattern(); // Surface (fallback)
+    if (dimensionOrLevel === 0) return createHomePattern(); // Surface (fallback)
     if (dimensionOrLevel === 1) return createPeacefulPattern(); // Interior
     if (dimensionOrLevel === 2) return createCavePattern(); // Underground
-
-    // Default: surface/tension
-    return createTensionPattern();
+    
+    // Default: home
+    return createHomePattern();
 }

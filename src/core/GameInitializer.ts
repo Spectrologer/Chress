@@ -145,8 +145,13 @@ export class GameInitializer {
      * Prevents multiple initializations and delegates to init().
      */
     startGame(): void {
-        if (this.game.gameStarted) return; // Prevent multiple inits
+        logger.debug('[GameInitializer] startGame() called - gameStarted:', this.game.gameStarted);
+        if (this.game.gameStarted) {
+            logger.warn('[GameInitializer] Game already started - ignoring call');
+            return; // Prevent multiple inits
+        }
         this.game.gameStarted = true;
+        logger.debug('[GameInitializer] Set gameStarted = true, calling init()');
 
         // Canvas visibility is already handled by main.ts after loading screen
         this.init();

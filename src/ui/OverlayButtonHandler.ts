@@ -61,6 +61,8 @@ export class OverlayButtonHandler {
      */
     async handleStartGame(overlay: HTMLElement): Promise<void> {
         try {
+            logger.debug('[NewGame] Button clicked - gameStarted:', this.game.gameStarted);
+
             // Exit preview mode to show player
             this.game.previewMode = false;
 
@@ -73,11 +75,16 @@ export class OverlayButtonHandler {
             // Reset the game (clear saved state)
             this.resetGameState();
 
+            logger.debug('[NewGame] After reset - gameStarted:', this.game.gameStarted);
+
             // Animate overlay away
             await this.startOverlayController.hideOverlay(overlay);
 
+            logger.debug('[NewGame] Overlay hidden - calling startGame()');
             // Start new game
             this.game.gameInitializer.startGame();
+
+            logger.debug('[NewGame] startGame() completed - gameStarted:', this.game.gameStarted);
         } catch (error) {
             logger.error('Error handling start game:', error);
             // Still try to start

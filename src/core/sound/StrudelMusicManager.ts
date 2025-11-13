@@ -49,8 +49,10 @@ export class StrudelMusicManager {
             this.scheduler = replInstance.scheduler;
             this.audioContextInitialized = true;
 
-            // Load soundfonts (non-blocking)
-            this.loadSoundfonts().catch(e => {
+            // Load soundfonts (non-blocking but ensure it's called)
+            this.loadSoundfonts().then(() => {
+                // Soundfonts loaded successfully
+            }).catch(e => {
                 errorHandler.handle(e, ErrorSeverity.WARNING, {
                     component: 'StrudelMusicManager',
                     action: 'initializeAudio',
@@ -69,18 +71,23 @@ export class StrudelMusicManager {
      * Load soundfonts for General MIDI instruments
      */
     private async loadSoundfonts(): Promise<void> {
-        try {
-            if (this.soundfontsLoaded) return;
+        if (this.soundfontsLoaded) return Promise.resolve();
 
+        try {
             // Wrap in additional promise handling to catch any delayed errors
-            await registerSoundfonts().catch((sfError: unknown) => {
-                // Soundfont loading errors are non-critical - synth sounds still work
-                errorHandler.handle(sfError, ErrorSeverity.WARNING, {
-                    component: 'StrudelMusicManager',
-                    action: 'registerSoundfonts',
-                    message: 'Soundfont sample loading failed (using synth fallback)'
+            const result = registerSoundfonts();
+
+            // Check if registerSoundfonts actually returned a Promise
+            if (result && typeof result.catch === 'function') {
+                await result.catch((sfError: unknown) => {
+                    // Soundfont loading errors are non-critical - synth sounds still work
+                    errorHandler.handle(sfError, ErrorSeverity.WARNING, {
+                        component: 'StrudelMusicManager',
+                        action: 'registerSoundfonts',
+                        message: 'Soundfont sample loading failed (using synth fallback)'
+                    });
                 });
-            });
+            }
 
             this.soundfontsLoaded = true;
         } catch (e: unknown) {

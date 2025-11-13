@@ -91,9 +91,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const gameLoadingPlaceholder = document.getElementById('gameLoadingPlaceholder');
     const gameCanvas = document.getElementById('gameCanvas');
 
-    // Keep canvas hidden initially to prevent artifacts during preview rendering
+    // Show canvas immediately for preview rendering
     if (gameCanvas) {
-        gameCanvas.style.visibility = 'hidden';
+        gameCanvas.style.visibility = 'visible';
     }
 
     if (gameLoadingPlaceholder) {
@@ -103,13 +103,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (gameLoadingPlaceholder.parentNode) {
                 gameLoadingPlaceholder.parentNode.removeChild(gameLoadingPlaceholder);
             }
-            // Show canvas after a brief delay to skip initial rendering artifacts
-            // Wait for a couple of frames to let the preview rendering stabilize
-            setTimeout(() => {
-                if (gameCanvas) {
-                    gameCanvas.style.visibility = 'visible';
-                }
-            }, 100);
         }, 800);
     }
     // Also fade out the canvas background image
