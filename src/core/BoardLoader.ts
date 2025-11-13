@@ -271,6 +271,13 @@ export class BoardLoader {
                         grid[y][x] = TILE_TYPES.BIG_TREE;
                     }
                 }
+                // stump overlays should also be non-walkable walls
+                if (overlay === 'stump') {
+                    const [x, y] = coord.split(',').map(Number);
+                    if (x >= 0 && x < width && y >= 0 && y < height && grid[y]) {
+                        grid[y][x] = TILE_TYPES.WALL;
+                    }
+                }
             });
         }
 
