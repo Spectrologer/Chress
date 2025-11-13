@@ -498,8 +498,13 @@ export class RenderManager {
                 // 4. The tile is NOT a floor or wall (items, NPCs, etc. need floor underneath)
                 const isFeatureTile = tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.WALL;
                 if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.WALL || hasTerrainTexture || hasOverlayTexture || isFeatureTile) {
-                    // If there's a terrain texture, overlay, or feature tile, render floor type so the texture gets applied
-                    const tileToRender = (hasTerrainTexture || hasOverlayTexture || isFeatureTile) ? TILE_TYPES.FLOOR : tile;
+                    // If there's a terrain texture, overlay, or feature tile, determine the tile type to render
+                    // Keep walls as walls so WallTileRenderer can handle them with custom textures
+                    // Only convert non-wall tiles to FLOOR if they have textures
+                    let tileToRender = tile;
+                    if ((hasTerrainTexture || hasOverlayTexture || isFeatureTile) && tile !== TILE_TYPES.WALL) {
+                        tileToRender = TILE_TYPES.FLOOR;
+                    }
                     this.textureManager.renderTile(this.ctx, x, y, tileToRender, this.game.gridManager, zoneLevel, terrainTextures, rotations);
                 }
             } catch (error) {

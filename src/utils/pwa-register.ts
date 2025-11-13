@@ -23,6 +23,12 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   try {
     // Determine the correct path based on environment
     const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    // Skip service worker registration in development mode
+    if (isDevelopment && import.meta.env.DEV) {
+      logger.log('[PWA] Service worker registration skipped in development mode');
+      return null;
+    }
     const swPath = isDevelopment ? '/dev-sw.js?dev-sw' : '/Chesse/sw.js'; // todo: make this work for preview
     const swScope = isDevelopment ? '/' : '/Chesse/';
 

@@ -45,6 +45,16 @@ export class WallTileRenderer {
                         ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
                         ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
                     }
+                } else {
+                    // For museum exterior walls, render the appropriate floor based on checkerboard pattern
+                    const isFloor1 = (x + y) % 2 === 0;
+                    const floorImage = isFloor1 ? 'white_mus_floor_1' : 'white_mus_floor_2';
+                    if (RendererUtils.isImageLoaded(this.images, floorImage)) {
+                        ctx.drawImage(this.images[floorImage], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    } else {
+                        ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                        ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    }
                 }
 
                 // Then draw the wall texture on top
