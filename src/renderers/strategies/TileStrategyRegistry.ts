@@ -242,10 +242,14 @@ export class TileStrategyRegistry {
             'CROCK', 'FILUM', 'FORK', 'GEL', 'GOUACHE', 'HANE', 'KRAFT', 'MERKI',
             'MICRON', 'PENNI', 'PLUMA', 'PLUME', 'QUILL', 'RADDLE', 'SCRITCH',
             'SILVER', 'SINE', 'SLATE', 'SLICK', 'SLUG', 'STYLET', 'VELLUM',
-            // New gossip NPCs
+            // New gossip NPCs (second batch)
             'BIT', 'BLOCK', 'CALLI', 'CAPYBARA', 'FLEX', 'GELINKA', 'GOMA', 'HIGHLIGHT',
             'HOJA', 'MIDORI', 'NUB', 'POLLY', 'PULP', 'REDAKT', 'SCRAPE', 'SCROLL',
-            'SHADE', 'SKRIB', 'STICK', 'WASH'
+            'SHADE', 'SKRIB', 'STICK', 'WASH',
+            // Newest gossip NPCs (third batch - added 2025-11-11)
+            'FUDE', 'SPITZE', 'LUPI', 'DINKUS', 'CARTOUCHE', 'CRETA', 'KAJI', 'DASH',
+            'EM', 'FASCIA', 'BULLET', 'COURSIER', 'PUNTO', 'Y', 'SPECTRUM', 'PALIMPSEST',
+            'BLADDER', 'FASCINUS', 'FONT', 'GRAWLIX'
         ];
 
         gossipNPCs.forEach(npcName => {
