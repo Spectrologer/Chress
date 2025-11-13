@@ -41,7 +41,7 @@
         "id": "msg_2",
         "text": "I never saw anything! I don't know what's going on.",
         "buttonText": "I have to get going."
-      },   
+      },
       {
         "id": "msg_4",
         "text": "Please don't tell anyone you saw me.",
@@ -60,6 +60,29 @@
     "leaveAfterTrade": true
   },
   "audio": {
-    "voicePitch": 90
+    "voicePitch": 90,
+    "voicePattern": {
+      "notes": [
+        493.88,
+        554.37,
+        523.25,
+        587.33,
+        554.37,
+        493.88
+      ],
+      "wave1": "triangle",
+      "wave2": "sine",
+      "rhythmVariation": [
+        0.9,
+        1.1,
+        0.85,
+        1.15,
+        0.95,
+        1.05
+      ],
+      "gain": 0.19,
+      "attack": 0.001,
+      "decay": 0.05
+    }
   }
 }

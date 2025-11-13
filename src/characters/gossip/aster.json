@@ -9,9 +9,9 @@
     "category": "gossip"
   },
   "display": {
-  "sprite": "characters/npcs/gossip/aster.png",
-  "portrait": "characters/npcs/portraits/asterface.png",
-  "portraitBackground": "#272736",
+    "sprite": "characters/npcs/gossip/aster.png",
+    "portrait": "characters/npcs/portraits/asterface.png",
+    "portraitBackground": "#272736",
     "tileType": "ASTER"
   },
   "placement": {
@@ -49,6 +49,29 @@
     "walkable": false
   },
   "audio": {
-    "voicePitch": 100
+    "voicePitch": 100,
+    "voicePattern": {
+      "notes": [
+        293.66,
+        349.23,
+        392,
+        466.16,
+        440,
+        392
+      ],
+      "wave1": "triangle",
+      "wave2": "sine",
+      "rhythmVariation": [
+        1,
+        1.1,
+        0.9,
+        1.05,
+        0.95,
+        1
+      ],
+      "gain": 0.18,
+      "attack": 0.005,
+      "decay": 0.1
+    }
   }
 }

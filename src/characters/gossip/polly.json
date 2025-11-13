@@ -49,6 +49,29 @@
     "walkable": false
   },
   "audio": {
-    "voicePitch": 115
+    "voicePitch": 115,
+    "voicePattern": {
+      "notes": [
+        369.99,
+        415.3,
+        466.16,
+        554.37,
+        493.88,
+        415.3
+      ],
+      "wave1": "square",
+      "wave2": "triangle",
+      "rhythmVariation": [
+        1,
+        0.8,
+        1.2,
+        0.9,
+        1.1,
+        1
+      ],
+      "gain": 0.2,
+      "attack": 0.003,
+      "decay": 0.07
+    }
   }
 }

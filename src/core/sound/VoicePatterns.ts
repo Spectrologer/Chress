@@ -127,6 +127,70 @@ export const FRIENDLY_PATTERN: VoicePatternConfig = {
 };
 
 /**
+ * Generic nervous/anxious pattern for worried, jittery NPCs
+ */
+export const NERVOUS_PATTERN: VoicePatternConfig = {
+    id: 'nervous',
+    name: 'Nervous',
+    description: 'Anxious, worried, jittery personality',
+    notes: [493.88, 554.37, 523.25, 587.33, 554.37, 493.88], // B4, C#5, C5, D5, C#5, B4
+    wave1: 'triangle',
+    wave2: 'sine',
+    rhythmVariation: [0.9, 1.1, 0.85, 1.15, 0.95, 1.05], // Erratic timing
+    gain: 0.19,
+    attack: 0.001,
+    decay: 0.05
+};
+
+/**
+ * Generic grumpy/angry pattern for frustrated, harsh NPCs
+ */
+export const GRUMPY_PATTERN: VoicePatternConfig = {
+    id: 'grumpy',
+    name: 'Grumpy',
+    description: 'Frustrated, angry, harsh personality',
+    notes: [220.00, 246.94, 261.63, 293.66], // A3, B3, C4, D4
+    wave1: 'sawtooth',
+    wave2: 'square',
+    rhythmVariation: [1.0, 1.0, 1.0, 1.0], // Blunt, consistent
+    gain: 0.22,
+    attack: 0.005,
+    decay: 0.11
+};
+
+/**
+ * Generic sophisticated pattern for refined, cultured NPCs
+ */
+export const SOPHISTICATED_PATTERN: VoicePatternConfig = {
+    id: 'sophisticated',
+    name: 'Sophisticated',
+    description: 'Refined, elegant, cultured personality',
+    notes: [349.23, 392.00, 440.00, 493.88, 523.25], // F4, G4, A4, B4, C5
+    wave1: 'sine',
+    wave2: 'triangle',
+    rhythmVariation: [1.0, 1.0, 1.0, 1.0, 1.0], // Smooth, even
+    gain: 0.17,
+    attack: 0.008,
+    decay: 0.12
+};
+
+/**
+ * Generic quirky/odd pattern for eccentric, weird NPCs
+ */
+export const QUIRKY_PATTERN: VoicePatternConfig = {
+    id: 'quirky',
+    name: 'Quirky',
+    description: 'Eccentric, weird, unusual personality',
+    notes: [369.99, 415.30, 466.16, 554.37, 493.88, 415.30], // F#4, G#4, Bb4, C#5, B4, G#4
+    wave1: 'square',
+    wave2: 'triangle',
+    rhythmVariation: [1.0, 0.8, 1.2, 0.9, 1.1, 1.0], // Unpredictable timing
+    gain: 0.20,
+    attack: 0.003,
+    decay: 0.07
+};
+
+/**
  * Get voice pattern by character ID or personality type
  */
 export function getVoicePatternForCharacter(characterId: string, personalityType?: string): VoicePatternConfig | null {
@@ -149,6 +213,18 @@ export function getVoicePatternForCharacter(characterId: string, personalityType
         if (type === 'friendly' || type === 'merchant' || type === 'helpful') {
             return FRIENDLY_PATTERN;
         }
+        if (type === 'nervous' || type === 'anxious' || type === 'worried' || type === 'jittery') {
+            return NERVOUS_PATTERN;
+        }
+        if (type === 'grumpy' || type === 'angry' || type === 'frustrated' || type === 'harsh') {
+            return GRUMPY_PATTERN;
+        }
+        if (type === 'sophisticated' || type === 'refined' || type === 'elegant' || type === 'cultured') {
+            return SOPHISTICATED_PATTERN;
+        }
+        if (type === 'quirky' || type === 'odd' || type === 'eccentric' || type === 'weird') {
+            return QUIRKY_PATTERN;
+        }
     }
 
     // No melodic pattern - fall back to traditional Web Audio API
@@ -164,5 +240,9 @@ export const VOICE_PATTERNS: Record<string, VoicePatternConfig> = {
     forge: FORGE_PATTERN,
     cheerful: CHEERFUL_PATTERN,
     mysterious: MYSTERIOUS_PATTERN,
-    friendly: FRIENDLY_PATTERN
+    friendly: FRIENDLY_PATTERN,
+    nervous: NERVOUS_PATTERN,
+    grumpy: GRUMPY_PATTERN,
+    sophisticated: SOPHISTICATED_PATTERN,
+    quirky: QUIRKY_PATTERN
 };

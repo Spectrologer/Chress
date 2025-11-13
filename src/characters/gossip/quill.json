@@ -9,9 +9,9 @@
     "category": "gossip"
   },
   "display": {
-  "sprite": "characters/npcs/gossip/quill.png",
-  "portrait": "characters/npcs/portraits/quillface.png",
-  "portraitBackground": "#ffffeb",
+    "sprite": "characters/npcs/gossip/quill.png",
+    "portrait": "characters/npcs/portraits/quillface.png",
+    "portraitBackground": "#ffffeb",
     "tileType": "QUILL"
   },
   "placement": {
@@ -49,6 +49,27 @@
     "walkable": false
   },
   "audio": {
-    "voicePitch": 86
+    "voicePitch": 86,
+    "voicePattern": {
+      "notes": [
+        349.23,
+        392,
+        440,
+        493.88,
+        523.25
+      ],
+      "wave1": "sine",
+      "wave2": "triangle",
+      "rhythmVariation": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "gain": 0.17,
+      "attack": 0.008,
+      "decay": 0.12
+    }
   }
 }

@@ -65,7 +65,9 @@
       "Bash(npm i:*)",
       "Bash(del \"c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chesse\\src\\core\\sound\\StrudelVoiceManager.ts\")",
       "Bash(timeout /t 5 /nobreak)",
-      "Bash(npm info:*)"
+      "Bash(npm info:*)",
+      "Bash(ren:*)",
+      "Bash(del update-gossip-voices.cjs)"
     ],
     "deny": [],
     "ask": []

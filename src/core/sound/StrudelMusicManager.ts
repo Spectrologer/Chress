@@ -6,7 +6,7 @@
  */
 
 import { repl, type Pattern, type Scheduler } from '@strudel/core';
-import { getAudioContext, webaudioOutput, initAudioOnFirstClick, samples } from '@strudel/webaudio';
+import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
 import { registerSynthSounds } from 'superdough';
 import { registerSoundfonts } from '@strudel/soundfonts';
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler.js';
@@ -16,14 +16,14 @@ export class StrudelMusicManager {
     private currentPattern: Pattern<any> | null = null;
     private isPlaying: boolean = false;
     private audioContextInitialized: boolean = false;
-    private samplesLoaded: boolean = false;
+    private soundfontsLoaded: boolean = false;
 
     constructor() {
         this.scheduler = null;
         this.currentPattern = null;
         this.isPlaying = false;
         this.audioContextInitialized = false;
-        this.samplesLoaded = false;
+        this.soundfontsLoaded = false;
     }
 
     /**
@@ -33,12 +33,11 @@ export class StrudelMusicManager {
         try {
             if (this.audioContextInitialized) return;
 
-            // Initialize audio context and register synth sounds
-            await Promise.all([
-                initAudioOnFirstClick(),
-                registerSynthSounds(),
-                registerSoundfonts()
-            ]);
+            // Initialize audio context
+            await initAudioOnFirstClick();
+
+            // Register synth sounds first
+            await registerSynthSounds();
 
             // Create scheduler with repl
             const ctx = getAudioContext();
@@ -50,10 +49,14 @@ export class StrudelMusicManager {
             this.scheduler = replInstance.scheduler;
             this.audioContextInitialized = true;
 
-            // Load GM samples for richer instruments
-            if (!this.samplesLoaded) {
-                await this.loadGMSamples();
-            }
+            // Load soundfonts (non-blocking)
+            this.loadSoundfonts().catch(e => {
+                errorHandler.handle(e, ErrorSeverity.WARNING, {
+                    component: 'StrudelMusicManager',
+                    action: 'initializeAudio',
+                    message: 'Failed to load soundfonts'
+                });
+            });
         } catch (e: unknown) {
             errorHandler.handle(e, ErrorSeverity.WARNING, {
                 component: 'StrudelMusicManager',
@@ -63,29 +66,32 @@ export class StrudelMusicManager {
     }
 
     /**
-     * Load necessary samples for music playback
-     * Loads basic drum samples (bd, hh) from Dirt-Samples repository
+     * Load soundfonts for General MIDI instruments
      */
-    private async loadGMSamples(): Promise<void> {
+    private async loadSoundfonts(): Promise<void> {
         try {
-            // Load only the basic samples we need from the Dirt-Samples repository
-            await samples({
-                bd: ['bd/BT0A0A7.wav', 'bd/BT0AADA.wav', 'bd/BT0AAD0.wav'],
-                hh: ['hh/000_hh3closedhh.wav', 'hh/001_hh3openhh.wav', 'hh/002_hh3closedhh.wav',
-                     'hh/003_hh3closedhh.wav', 'hh/004_hh3pedalhh.wav', 'hh/005_hh3openhh.wav',
-                     'hh/006_hh3openhh.wav', 'hh/007_hh3closedhh.wav']
-            }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
+            if (this.soundfontsLoaded) return;
 
-            this.samplesLoaded = true;
+            // Wrap in additional promise handling to catch any delayed errors
+            await registerSoundfonts().catch((sfError: unknown) => {
+                // Soundfont loading errors are non-critical - synth sounds still work
+                errorHandler.handle(sfError, ErrorSeverity.WARNING, {
+                    component: 'StrudelMusicManager',
+                    action: 'registerSoundfonts',
+                    message: 'Soundfont sample loading failed (using synth fallback)'
+                });
+            });
+
+            this.soundfontsLoaded = true;
         } catch (e: unknown) {
             errorHandler.handle(e, ErrorSeverity.WARNING, {
                 component: 'StrudelMusicManager',
-                action: 'loadGMSamples',
-                message: 'Failed to load samples, falling back to basic synths'
+                action: 'loadSoundfonts',
+                message: 'Failed to load soundfonts'
             });
-            // Continue without samples - basic synths will still work
         }
     }
+
 
     /**
      * Play a Strudel pattern
@@ -97,6 +103,9 @@ export class StrudelMusicManager {
             if (!this.audioContextInitialized) {
                 await this.initializeAudio();
             }
+
+            // Always ensure soundfonts are loaded before playing (wait for the promise to resolve)
+            await this.loadSoundfonts();
 
             if (!this.scheduler) {
                 throw new Error('Scheduler not initialized');

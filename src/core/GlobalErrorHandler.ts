@@ -124,6 +124,25 @@ export class GlobalErrorHandler {
    * Handle an uncaught error
    */
   handleUncaughtError(error: Error, context: ErrorContext = {}): void {
+    const errorMessage = error.message || String(error);
+
+    // Check if this is a non-critical audio decoding error from Strudel
+    // These errors happen when soundfont samples fail to load, but synth sounds still work
+    const isAudioDecodingError =
+      errorMessage.includes('decodeAudioData') ||
+      errorMessage.includes('invalid content which cannot be decoded');
+
+    if (isAudioDecodingError) {
+      // Log as warning only, don't show to user or increment error count
+      errorHandler.handle(error, ErrorSeverity.WARNING, {
+        component: 'GlobalErrorHandler',
+        action: 'Audio decoding warning (non-critical)',
+        ...context,
+        message: 'Soundfont sample failed to load - synth sounds will be used instead'
+      });
+      return; // Don't increment error count or show to user
+    }
+
     this.errorCount++;
 
     // Log critical error

@@ -9,9 +9,9 @@
     "category": "gossip"
   },
   "display": {
-  "sprite": "characters/npcs/gossip/cinnabar.png",
-  "portrait": "characters/npcs/portraits/cinnabarface.png",
-  "portraitBackground": "#3ca370",
+    "sprite": "characters/npcs/gossip/cinnabar.png",
+    "portrait": "characters/npcs/portraits/cinnabarface.png",
+    "portraitBackground": "#3ca370",
     "tileType": "CINNABAR"
   },
   "placement": {
@@ -27,21 +27,21 @@
     "type": "dialogue",
     "cycleMode": "sequential",
     "dialogueTree": [
-    {
-    "id": "msg_0",
-    "text": "誰も私のことを理解してくれない... いつも一人ぼっちだわ。",
-    "buttonText": "I understand"
-    },
-    {
-    "id": "msg_1",
-    "text": "私の気持ちを分かってくれる人なんていない。寂しいの...。",
-    "buttonText": "That's rough"
-    },
-    {
-    "id": "msg_2",
-    "text": "みんなに見捨てられた気分。誰も私の世界に入ってこないの。",
-    "buttonText": "I hear you"
-    }
+      {
+        "id": "msg_0",
+        "text": "誰も私のことを理解してくれない... いつも一人ぼっちだわ。",
+        "buttonText": "I understand"
+      },
+      {
+        "id": "msg_1",
+        "text": "私の気持ちを分かってくれる人なんていない。寂しいの...。",
+        "buttonText": "That's rough"
+      },
+      {
+        "id": "msg_2",
+        "text": "みんなに見捨てられた気分。誰も私の世界に入ってこないの。",
+        "buttonText": "I hear you"
+      }
     ]
   },
   "behavior": {
@@ -49,6 +49,29 @@
     "walkable": false
   },
   "audio": {
-    "voicePitch": 102
+    "voicePitch": 102,
+    "voicePattern": {
+      "notes": [
+        493.88,
+        554.37,
+        523.25,
+        587.33,
+        554.37,
+        493.88
+      ],
+      "wave1": "triangle",
+      "wave2": "sine",
+      "rhythmVariation": [
+        0.9,
+        1.1,
+        0.85,
+        1.15,
+        0.95,
+        1.05
+      ],
+      "gain": 0.19,
+      "attack": 0.001,
+      "decay": 0.05
+    }
   }
 }

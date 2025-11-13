@@ -9,9 +9,9 @@
     "category": "gossip"
   },
   "display": {
-  "sprite": "characters/npcs/gossip/gouache.png",
-  "portrait": "characters/npcs/portraits/gouacheface.png",
-  "portraitBackground": "#cfff70",
+    "sprite": "characters/npcs/gossip/gouache.png",
+    "portrait": "characters/npcs/portraits/gouacheface.png",
+    "portraitBackground": "#cfff70",
     "tileType": "GOUACHE"
   },
   "placement": {
@@ -49,6 +49,27 @@
     "walkable": false
   },
   "audio": {
-    "voicePitch": 96
+    "voicePitch": 96,
+    "voicePattern": {
+      "notes": [
+        349.23,
+        392,
+        440,
+        493.88,
+        523.25
+      ],
+      "wave1": "sine",
+      "wave2": "triangle",
+      "rhythmVariation": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "gain": 0.17,
+      "attack": 0.008,
+      "decay": 0.12
+    }
   }
 }

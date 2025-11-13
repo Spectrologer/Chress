@@ -9,9 +9,9 @@
     "category": "gossip"
   },
   "display": {
-  "sprite": "characters/npcs/gossip/bit.png",
-  "portrait": "characters/npcs/portraits/bitface.png",
-  "portraitBackground": "#43434f",
+    "sprite": "characters/npcs/gossip/bit.png",
+    "portrait": "characters/npcs/portraits/bitface.png",
+    "portraitBackground": "#43434f",
     "tileType": "BIT"
   },
   "placement": {
@@ -49,6 +49,29 @@
     "walkable": false
   },
   "audio": {
-    "voicePitch": 140
+    "voicePitch": 140,
+    "voicePattern": {
+      "notes": [
+        493.88,
+        554.37,
+        523.25,
+        587.33,
+        554.37,
+        493.88
+      ],
+      "wave1": "triangle",
+      "wave2": "sine",
+      "rhythmVariation": [
+        0.9,
+        1.1,
+        0.85,
+        1.15,
+        0.95,
+        1.05
+      ],
+      "gain": 0.19,
+      "attack": 0.001,
+      "decay": 0.05
+    }
   }
 }

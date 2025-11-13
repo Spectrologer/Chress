@@ -202,10 +202,17 @@ export function ensureTypingAudio(manager: MessageManager): void {
     }
 }
 
-// Play a Strudel-based blip using the Strudel library
+// Play a Strudel-based blip - fallback to Web Audio API with note-based synthesis
 function playStrudelBlip(vs: VoiceSettings, manager: MessageManager): void {
     const pattern = vs.strudelPattern;
     if (!pattern || !pattern.enabled) return;
+
+    // For now, convert Strudel pattern notes to frequencies and use Web Audio API
+    // This avoids the complexity of manual Strudel hap triggering
+    ensureTypingAudio(manager);
+    const ctx = manager._typingAudioContext;
+    const master = manager._typingMasterGain;
+    if (!ctx || !master) return;
 
     try {
         // Get or initialize cached voice settings for pattern tracking
@@ -218,7 +225,7 @@ function playStrudelBlip(vs: VoiceSettings, manager: MessageManager): void {
             // Initialize pattern index
             derived = {
                 name: vs.name || 'unknown',
-                base: 440, // Not used for Strudel
+                base: 440,
                 wave1: 'sine',
                 wave2: 'sine',
                 bandMul: 1.0,
@@ -237,80 +244,72 @@ function playStrudelBlip(vs: VoiceSettings, manager: MessageManager): void {
             }
         }
 
-        // Use the game's Strudel music manager if available
-        const musicController = manager.game?.soundManager?.getMusicController;
-        const strudelManager = musicController?.strudelManager;
-        if (!strudelManager) {
-            console.warn('[VoiceSettings] StrudelMusicManager not available, skipping Strudel blip');
-            return;
+        const now = ctx.currentTime;
+        const patternIndex = derived.patternIndex;
+
+        // Convert note string to frequency (simple mapping for common notes)
+        const currentNote = pattern.notes[patternIndex % pattern.notes.length];
+        const freq = noteToFrequency(currentNote);
+        const rhythmMult = pattern.rhythmVariation
+            ? pattern.rhythmVariation[patternIndex % pattern.rhythmVariation.length]
+            : 1.0;
+
+        // Create a simple synth voice based on the pattern type
+        const o1 = ctx.createOscillator();
+        const g = ctx.createGain();
+
+        // Use triangle wave for flute-like sounds, sine for others
+        o1.type = pattern.type === 'melodic' ? 'triangle' : 'sine';
+        o1.frequency.setValueAtTime(freq, now);
+
+        // Configure envelope with rhythm variation
+        const attack = (pattern.attack || 0.005) * rhythmMult;
+        const decay = (pattern.decay || 0.08) * rhythmMult;
+        const gain = (pattern.gain || 0.4) * rhythmMult;
+
+        g.gain.setValueAtTime(0.001, now);
+        g.gain.linearRampToValueAtTime(gain, now + attack);
+        g.gain.exponentialRampToValueAtTime(0.00005, now + decay);
+
+        // Connect audio graph
+        o1.connect(g);
+        g.connect(master);
+
+        // Start and stop oscillator
+        o1.start(now);
+        o1.stop(now + Math.max(0.06, decay * 0.9));
+
+        // Advance pattern index for next blip
+        derived.patternIndex = (patternIndex + 1) % pattern.notes.length;
+        if (manager._voiceCache && derived.name) {
+            manager._voiceCache.set(derived.name, derived);
         }
-
-        // Import Strudel dynamically and play the blip
-        Promise.all([
-            import('@strudel/core'),
-            import('@strudel/webaudio')
-        ]).then(async ([coreModule, webaudioModule]) => {
-            const { note, s, gain: gainFunc, room: roomFunc, lpf: lpfFunc, attack: attackFunc, decay: decayFunc } = coreModule;
-            const { getAudioContext, webaudioOutput } = webaudioModule;
-
-            // Get current note from pattern
-            const patternIndex = derived!.patternIndex;
-            const currentNote = pattern.notes[patternIndex % pattern.notes.length];
-            const rhythmMult = pattern.rhythmVariation
-                ? pattern.rhythmVariation[patternIndex % pattern.rhythmVariation.length]
-                : 1.0;
-
-            // Get audio context
-            const ctx = getAudioContext();
-            if (!ctx || ctx.state !== 'running') {
-                console.warn('[VoiceSettings] Audio context not ready');
-                return;
-            }
-
-            try {
-                // Build a one-cycle pattern for a single note
-                let notePattern = note(currentNote)
-                    .s(pattern.sound)
-                    .gain((pattern.gain || 0.4) * rhythmMult);
-
-                // Add optional effects
-                if (pattern.room !== undefined) {
-                    notePattern = notePattern.room(pattern.room);
-                }
-                if (pattern.lpf !== undefined) {
-                    notePattern = notePattern.lpf(pattern.lpf);
-                }
-                if (pattern.attack !== undefined) {
-                    notePattern = notePattern.attack(pattern.attack);
-                }
-                if (pattern.decay !== undefined) {
-                    notePattern = notePattern.decay(pattern.decay * rhythmMult);
-                }
-
-                // Query a single cycle (0 to 1) to get events (haps)
-                const haps = notePattern.queryArc(0, 1);
-
-                // Trigger each hap directly using webaudioOutput
-                const output = webaudioOutput();
-                for (const hap of haps) {
-                    await output.trigger(ctx.currentTime, hap, ctx, () => {});
-                }
-            } catch (e) {
-                console.warn('[VoiceSettings] Failed to trigger Strudel blip:', e);
-            }
-
-            // Advance pattern index for next blip
-            derived!.patternIndex = (patternIndex + 1) % pattern.notes.length;
-            if (manager._voiceCache && derived!.name) {
-                manager._voiceCache.set(derived!.name, derived!);
-            }
-        }).catch((e) => {
-            console.warn('[VoiceSettings] Strudel import failed:', e);
-        });
     } catch (e) {
-        // Strudel might not be available or might fail - silently fall back
-        console.warn('[VoiceSettings] Strudel blip setup failed:', e);
+        // Web Audio API can fail - silently ignore
     }
+}
+
+// Helper function to convert note strings like "e5", "g5" to frequencies
+function noteToFrequency(note: string): number {
+    const noteMap: { [key: string]: number } = {
+        'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11
+    };
+
+    // Parse note string (e.g., "e5", "c#4", "bb3")
+    const match = note.toLowerCase().match(/^([a-g])(#|b)?(\d+)$/);
+    if (!match) return 440; // Default to A4
+
+    const [, noteName, accidental, octaveStr] = match;
+    const octave = parseInt(octaveStr, 10);
+
+    let semitone = noteMap[noteName];
+    if (accidental === '#') semitone++;
+    if (accidental === 'b') semitone--;
+
+    // Calculate frequency using A4 = 440 Hz as reference
+    // Formula: f = 440 * 2^((semitone - 9 + 12 * (octave - 4)) / 12)
+    const semitonesFromA4 = semitone - 9 + 12 * (octave - 4);
+    return 440 * Math.pow(2, semitonesFromA4 / 12);
 }
 
 // Play a melodic blip using a character's voice pattern

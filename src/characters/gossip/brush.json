@@ -9,9 +9,9 @@
     "category": "gossip"
   },
   "display": {
-  "sprite": "characters/npcs/gossip/brush.png",
-  "portrait": "characters/npcs/portraits/brushface.png",
-  "portraitBackground": "#66ffe3",
+    "sprite": "characters/npcs/gossip/brush.png",
+    "portrait": "characters/npcs/portraits/brushface.png",
+    "portraitBackground": "#66ffe3",
     "tileType": "BRUSH"
   },
   "placement": {
@@ -49,6 +49,27 @@
     "walkable": false
   },
   "audio": {
-    "voicePitch": 105
+    "voicePitch": 105,
+    "voicePattern": {
+      "notes": [
+        349.23,
+        392,
+        440,
+        493.88,
+        523.25
+      ],
+      "wave1": "sine",
+      "wave2": "triangle",
+      "rhythmVariation": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "gain": 0.17,
+      "attack": 0.008,
+      "decay": 0.12
+    }
   }
 }

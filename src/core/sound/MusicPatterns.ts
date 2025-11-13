@@ -142,103 +142,64 @@ export function createPeacefulPattern(): Pattern<any> {
 
 /**
  * Tension/Surface music - Home surface theme
- * Calm forest village ambience with gentle pastoral strings and woodwinds
- * Peaceful, natural atmosphere for a safe haven
+ * Upbeat, catchy pop-style home theme with energetic melodies
+ * Poppy, accessible home feeling
  */
 export function createTensionPattern(): Pattern<any> {
     return stack(
-        // Gentle violin melody - pastoral, wandering through the forest
-        seq("d5", "a4", "f4", "a4", "d5", "e5", "f5", "e5",
-            "d5", "c5", "a4", "f4", "e4", "f4", "a4", "d5",
-            "c5", "a4", "g4", "a4", "c5", "d5", "e5", "f5").note()
-            .sound("gm_violin")
+        // Catchy pop guitar riff - bright and energetic
+        seq("c4", "e4", "g4", "c5", "e5", "g5", "a5", "g5",
+            "e5", "c5", "e4", "g4", "c4", "e4", "g4", "c5").note()
+            .sound("gm_acoustic_guitar_steel")
+            .gain(0.38)
+            .room(0.55)
+            .slow(4),
+
+        // Upbeat pop bass - bouncy and punchy
+        seq("c2", "c2", "c3", "c2", "g2", "g2", "g3", "g2").note()
+            .sound("gm_acoustic_bass")
+            .gain(0.4)
+            .room(0.45)
+            .lpf(500)
+            .slow(4),
+
+        // Bright pop flute melody - catchy and cheerful
+        seq("e5", "g5", "c6", "e6", "c6", "g5", "e5", "g5", "f5", "a5", "c6", "a5").note()
+            .sound("gm_flute")
+            .gain(0.32)
+            .room(0.65)
+            .lpf(2400)
+            .slow(6),
+
+        // Upbeat xylophone - rhythmic sparkle
+        seq("c5", "e5", "g5", "c6", "e6", "g6", "a6", "g6").note()
+            .sound("gm_xylophone")
+            .gain(0.3)
+            .room(0.6)
+            .slow(4),
+
+        // Punchy glockenspiel - pop brightness
+        seq("e5", "g5", "c6", "e6", "g6", "c6").note()
+            .sound("gm_glockenspiel")
             .gain(0.28)
-            .room(0.75)
-            .lpf(1800)
-            .slow(24),
+            .room(0.65)
+            .slow(5),
 
-        // Soft viola harmony - warm middle voice
-        seq("f3", "d3", "a3", "f3", "d3", "a3", "c4", "a3",
-            "f3", "g3", "a3", "d4").note()
-            .sound("gm_viola")
-            .gain(0.24)
-            .room(0.78)
-            .lpf(1400)
-            .slow(28),
-
-        // Tender cello - gentle bass line
-        seq("d2", "a2", "d3", "a2", "f2", "c3", "f2", "c3",
-            "g2", "d3", "a2", "e3", "d2", "a2", "f2", "d2").note()
+        // Rhythmic cello - pop beat foundation
+        seq("c2", "g2", "e2", "c2", "f2", "g2").note()
             .sound("gm_cello")
             .gain(0.26)
-            .room(0.72)
-            .lpf(600)
-            .slow(32),
+            .room(0.5)
+            .lpf(750)
+            .slow(6),
 
-        // Breathy flute - bird-like calls
-        seq("a5", "f5", "d5", "f5", "a5", "d6", "c6", "a5",
-            "f5", "e5", "d5", "a4").note()
-            .sound("gm_flute")
+        // Bright harmonica-like pad - poppy character
+        seq("c4", "e4", "g4", "c5").note()
+            .sound("gm_harmonica")
             .gain(0.22)
-            .room(0.85)
-            .lpf(2400)
-            .slow(36),
-
-        // Warm clarinet - soft woodwind pad
-        seq("f4", "a4", "d5", "a4", "f4", "e4", "g4", "e4",
-            "d4", "f4", "a4", "c5").note()
-            .sound("gm_clarinet")
-            .gain(0.2)
-            .room(0.82)
-            .lpf(1600)
-            .slow(40),
-
-        // Delicate harp - gentle plucks
-        seq("d4", "f4", "a4", "d5", "a4", "f4",
-            "c4", "e4", "g4", "c5", "g4", "e4").note()
-            .sound("gm_orchestral_harp")
-            .gain(0.18)
-            .room(0.8)
-            .slow(20),
-
-        // Soft acoustic guitar - village warmth
-        seq("d3", "a3", "f3", "d3", "c3", "g3", "e3", "c3").note()
-            .sound("gm_acoustic_guitar_nylon")
-            .gain(0.16)
             .room(0.7)
-            .slow(32),
-
-        // Peaceful oboe - distant pastoral melody
-        seq("a4", "d5", "f5", "e5", "d5", "c5", "a4", "g4",
-            "f4", "a4", "d5", "c5").note()
-            .sound("gm_oboe")
-            .gain(0.19)
-            .room(0.88)
-            .lpf(1700)
-            .slow(44),
-
-        // Gentle pizzicato - soft accents
-        seq("d4", "a4", "f4", "d4", "c4", "g4", "e4", "c4").note()
-            .sound("gm_pizzicato_strings")
-            .gain(0.15)
-            .room(0.68)
-            .slow(24),
-
-        // Soft string ensemble pad - ambient warmth
-        seq("d3", "f3", "a3", "d4").note()
-            .sound("gm_string_ensemble_1")
-            .gain(0.22)
-            .room(0.85)
-            .lpf(1200)
-            .slow(48),
-
-        // Very soft glockenspiel - occasional sparkle
-        seq("d6", "a5", "f5", "d5").note()
-            .sound("gm_glockenspiel")
-            .gain(0.12)
-            .room(0.82)
-            .slow(56)
-    ).cpm(58); // Calm, peaceful tempo
+            .slow(8)
+    ).cpm(92); // Upbeat, poppy tempo
 }
 
 /**
@@ -807,64 +768,73 @@ export function createFrontierCombatPattern(): Pattern<any> {
 }
 
 /**
- * Museum music - Casual elevator/Pokémon Center style
- * Gentle, soothing atmosphere with simple melodic patterns
- * Calming background music for relaxation
+ * Museum music - Upbeat pop gallery/lounge style
+ * Bright, engaging atmosphere with catchy poppy touches
+ * Energetic background music for gallery spaces
  */
 export function createMuseumPattern(): Pattern<any> {
     return stack(
-        // Simple, friendly flute melody - Pokémon Center style
-        seq("d5", "a4", "f4", "g4", "a4", "d5", "e5", "f5").note()
-            .sound("gm_flute")
+        // Catchy pop guitar - upbeat chord progression
+        seq("g3", "b3", "d4", "g4", "b4", "d5", "b4", "g4",
+            "e3", "g3", "b3", "e4", "g4", "b4", "g4", "e4").note()
+            .sound("gm_acoustic_guitar_steel")
+            .gain(0.36)
+            .room(0.6)
+            .slow(5),
+
+        // Punchy pop bass - rhythmic and bouncy
+        seq("g2", "b2", "d3", "g3", "e2", "g2", "b2", "e3").note()
+            .sound("gm_acoustic_bass")
+            .gain(0.38)
+            .room(0.5)
+            .lpf(500)
+            .slow(5),
+
+        // Bright xylophone chords - pop sparkle
+        seq("g4", "b4", "d5", "g5", "b5", "d6").note()
+            .sound("gm_xylophone")
             .gain(0.32)
             .room(0.65)
-            .lpf(2000)
-            .slow(4),
+            .slow(5),
 
-        // Warm acoustic guitar arpeggios - gentle picking
-        seq("d3", "f3", "a3", "d4", "a3", "f3").note()
-            .sound("gm_acoustic_guitar_nylon")
-            .gain(0.28)
-            .room(0.6)
-            .slow(3),
-
-        // Soft bass line - simple walking pattern
-        seq("d2", "d2", "a2", "f2", "g2", "a2").note()
-            .sound("gm_acoustic_bass")
-            .gain(0.3)
-            .room(0.5)
-            .lpf(400)
-            .slow(6),
-
-        // Gentle electric piano chords - warm and comforting
-        seq("d4", "f4", "a4").note()
-            .sound("gm_electric_piano_1")
-            .gain(0.26)
-            .room(0.7)
-            .slow(8),
-
-        // Soothing vibraphone - soft accents
-        seq("a4", "f4", "d4", "f4", "a4", "d5").note()
-            .sound("gm_vibraphone")
-            .gain(0.24)
-            .room(0.75)
-            .slow(6),
-
-        // Bright glockenspiel - cheerful sparkles
-        seq("d6", "a5", "f5", "a5").note()
+        // Perky glockenspiel - upbeat accents
+        seq("d5", "g5", "b5", "d6", "b5", "g5", "d5", "b4").note()
             .sound("gm_glockenspiel")
-            .gain(0.22)
+            .gain(0.3)
             .room(0.7)
-            .slow(8),
+            .slow(6),
 
-        // Soft string pad - comforting background
-        seq("d3", "a3", "f3").note()
+        // Bright pop flute melody - catchy and energetic
+        seq("b4", "d5", "g5", "b5", "a5", "g5", "e5", "g5", "b5", "d6", "g6", "b6").note()
+            .sound("gm_flute")
+            .gain(0.28)
+            .room(0.65)
+            .lpf(2300)
+            .slow(7),
+
+        // Pop beat cello foundation - rhythmic drive
+        seq("g2", "d3", "b2", "g2", "e2", "b2").note()
+            .sound("gm_cello")
+            .gain(0.26)
+            .room(0.55)
+            .lpf(700)
+            .slow(5),
+
+        // Bright harmonica - poppy character
+        seq("g4", "b4", "d5", "g5", "d5", "b4").note()
+            .sound("gm_harmonica")
+            .gain(0.24)
+            .room(0.7)
+            .slow(6),
+
+        // Energetic string accent - pop vibrancy
+        seq("g3", "b3", "d4", "g4").note()
             .sound("gm_string_ensemble_1")
             .gain(0.2)
             .room(0.75)
-            .lpf(1200)
-            .slow(12)
-    ).cpm(72); // Gentle, relaxed tempo
+            .lpf(1400)
+            .slow(8)
+    ).cpm(86); // Upbeat, poppy tempo
 }
 
 /**
