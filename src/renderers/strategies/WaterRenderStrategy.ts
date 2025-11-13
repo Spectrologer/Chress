@@ -14,8 +14,9 @@ export class WaterRenderStrategy extends TileRenderStrategy {
         zoneLevel: number,
         baseRenderer: BaseRenderer
     ): void {
-        // First draw the directional floor background (like rock, shrubbery, etc.)
-        baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
+        // Floor tiles are now rendered in Pass 1 by RenderManager
+        // This prevents covering up custom terrain textures (like museum floors)
+        // baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
         // Try to draw the water image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'water')) {

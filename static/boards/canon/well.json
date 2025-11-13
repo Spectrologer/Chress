@@ -9,7 +9,7 @@
     "walls/cobble",
     "walls/cobble",
     "walls/cobble",
-    "wall",
+    "floors/gravel",
     "walls/cobble",
     "walls/cobble",
     "walls/cobble",
@@ -64,7 +64,7 @@
     "floors/gravel",
     "floors/gravel",
     "floors/gravel",
-    "wall",
+    "floors/gravel",
     "walls/cobble",
     "walls/cobble",
     "floors/aqua",
@@ -108,16 +108,19 @@
   ],
   "features": {
     "4,0": "exit_up",
-    "2,3": "port_grate",
+    "2,3": "port_stairup",
     "4,4": "axelotl",
     "9,5": "exit_right"
   },
-  "_comment": "Note: 'axelotl' is intentionally spelled differently from the asset filename 'axolotl.png' - this is the character name variant",
+  "rotations": {
+    "2,3": 90
+  },
   "metadata": {
     "description": "Under the museum.",
     "dimension": 2,
+    "gameMode": "CHESSE",
     "level": "home",
     "rarity": 5,
-    "created": "2025-11-01T04:01:15.108Z"
+    "created": "2025-11-13T02:01:52.681Z"
   }
 }
