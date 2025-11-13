@@ -99,21 +99,30 @@ export class SoundLifecycleManager {
     /**
      * Resume audio context (call from user gesture)
      */
-    resumeAudioContext(): Promise<void> {
+    async resumeAudioContext(): Promise<void> {
         try {
             const audioContext = this.musicController.getAudioContext();
-            if (!audioContext) {
-                return Promise.resolve();
-            }
-            return safeCallAsync(audioContext, 'resume')?.catch(err => {
-                errorHandler.handle(err, ErrorSeverity.WARNING, {
-                    component: 'SoundLifecycleManager',
-                    action: 'resume audio context'
+            if (audioContext) {
+                await safeCallAsync(audioContext, 'resume')?.catch(err => {
+                    errorHandler.handle(err, ErrorSeverity.WARNING, {
+                        component: 'SoundLifecycleManager',
+                        action: 'resume audio context'
+                    });
                 });
-            }) || Promise.resolve();
+            }
+
+            // Also initialize Strudel audio on user interaction
+            const strudelManager = (this.musicController as any).strudelManager;
+            if (strudelManager && typeof strudelManager.initializeAudio === 'function') {
+                await strudelManager.initializeAudio().catch((err: unknown) => {
+                    errorHandler.handle(err, ErrorSeverity.WARNING, {
+                        component: 'SoundLifecycleManager',
+                        action: 'initialize Strudel audio'
+                    });
+                });
+            }
         } catch (e) {
             // ignore
         }
-        return Promise.resolve();
     }
 }

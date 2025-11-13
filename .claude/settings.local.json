@@ -58,7 +58,11 @@
       "Bash(npx tsx:*)",
       "Bash(powershell:*)",
       "Bash(ren scriptsextract-tiles.js extract-tiles.cjs)",
-      "Bash(npm run assets:atlas:*)"
+      "Bash(npm run assets:atlas:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(if exist staticnul dir static)",
+      "Bash(npm i:*)"
     ],
     "deny": [],
     "ask": []

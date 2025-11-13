@@ -8,6 +8,8 @@
 
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler.js';
 import { VOLUME_CONSTANTS } from '@core/constants/audio.js';
+import { StrudelMusicManager } from './StrudelMusicManager.js';
+import { getMusicPatternForDimension } from './MusicPatterns.js';
 
 export class MusicController {
     public audioContext: AudioContext | null;
@@ -17,6 +19,10 @@ export class MusicController {
     public currentMusicVolume: number;
     public currentMusicTrack: string | null;
     public musicEnabled: boolean;
+    private strudelManager: StrudelMusicManager;
+    private useStrudel: boolean;
+    private currentDimension: number | null;
+    private inCombat: boolean;
 
     constructor() {
         this.audioContext = null;
@@ -26,6 +32,10 @@ export class MusicController {
         this.currentMusicVolume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME;
         this.currentMusicTrack = null;
         this.musicEnabled = true;
+        this.strudelManager = new StrudelMusicManager();
+        this.useStrudel = true; // Set to false to use .ogg files instead
+        this.currentDimension = null;
+        this.inCombat = false;
     }
 
     /**
@@ -88,27 +98,102 @@ export class MusicController {
     }
 
     /**
-     * Set music for zone dimension
+     * Set music for zone dimension and level
      * @param {Object} options - Zone options
      * @param {number} [options.dimension] - Zone dimension (0=surface, 1=interior, 2=underground)
+     * @param {number} [options.zoneLevel] - Zone level (1=home, 2=woods, 3=wilds, 4=frontier)
      * @returns {void}
      */
-    setMusicForZone({ dimension = 0 }: { dimension?: number } = {}): void {
-        const peacefulPath = 'sfx/music/peaceful.ogg';
-        const tensionPath = 'sfx/music/tension.ogg';
-        const cavePath = 'sfx/music/cave.ogg';
-        const crossfadeMs = 800;
+    setMusicForZone({ dimension = 0, zoneLevel }: { dimension?: number; zoneLevel?: number } = {}): void {
+        if (this.useStrudel) {
+            // Use Strudel for procedural music
+            // Surface zones (dimension=0): Use zone level for region-specific music (home/woods/wilds/frontier)
+            // Interior/Underground zones: Use dimension for location-specific music (peaceful/cave)
+            // Note: We offset zone levels by 10 to avoid collision with dimensions
+            let musicSelector: number;
+            if (dimension === 0 && zoneLevel) {
+                // Surface zone: use zone level + 10 to distinguish from dimensions
+                musicSelector = zoneLevel + 10;
+            } else {
+                // Interior or underground: use dimension directly
+                musicSelector = dimension;
+            }
+            console.log(`[MusicController] Setting music - Dimension: ${dimension}, Zone Level: ${zoneLevel}, Music Selector: ${musicSelector}`);
+            this.playStrudelForDimension(musicSelector);
+        } else {
+            // Use traditional .ogg files
+            const peacefulPath = 'sfx/music/peaceful.ogg';
+            const tensionPath = 'sfx/music/tension.ogg';
+            const cavePath = 'sfx/music/cave.ogg';
+            const crossfadeMs = 800;
 
-        let filePath;
-        if (dimension === 1) filePath = peacefulPath;
-        else if (dimension === 2) filePath = cavePath;
-        else filePath = tensionPath;
+            let filePath;
+            if (dimension === 1) filePath = peacefulPath;
+            else if (dimension === 2) filePath = cavePath;
+            else filePath = tensionPath;
 
-        this.currentMusicTrack = filePath;
+            this.currentMusicTrack = filePath;
 
-        if (this.musicEnabled === false) return;
+            if (this.musicEnabled === false) return;
 
-        this.playBackgroundContinuous(filePath, this.currentMusicVolume, crossfadeMs);
+            this.playBackgroundContinuous(filePath, this.currentMusicVolume, crossfadeMs);
+        }
+    }
+
+    /**
+     * Play Strudel pattern for zone dimension or level
+     * @param {number} dimension - Zone dimension (0=surface, 1=interior, 2=underground) or zone level (1=home, 2=woods, 3=wilds, 4=frontier)
+     * @param {boolean} combat - Whether to play combat music
+     * @returns {void}
+     */
+    private async playStrudelForDimension(dimension: number, combat: boolean = false): Promise<void> {
+        try {
+            if (this.musicEnabled === false) return;
+
+            // Only change music if dimension or combat state has actually changed
+            if (this.currentDimension === dimension && this.inCombat === combat && this.strudelManager.getIsPlaying()) {
+                return; // Already playing correct music for this dimension and combat state
+            }
+
+            this.currentDimension = dimension;
+            this.inCombat = combat;
+            const pattern = getMusicPatternForDimension(dimension, combat);
+
+            // Stop traditional audio if playing
+            this.stopBackground();
+
+            // Set volume before playing
+            this.strudelManager.setVolume(this.currentMusicVolume);
+
+            // Play Strudel pattern
+            await this.strudelManager.play(pattern);
+        } catch (e: unknown) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'MusicController',
+                action: 'playStrudelForDimension',
+                dimension,
+                combat
+            });
+        }
+    }
+
+    /**
+     * Set combat state for music
+     * @param {boolean} combat - Whether enemies are present
+     * @returns {void}
+     */
+    setCombatMusic(combat: boolean): void {
+        if (this.useStrudel && this.currentDimension !== null) {
+            // Only switch if combat state changed
+            if (this.inCombat !== combat) {
+                console.log(`[MusicController] Combat state changing: ${this.inCombat} → ${combat} (dimension: ${this.currentDimension})`);
+                this.playStrudelForDimension(this.currentDimension, combat);
+            } else {
+                console.log(`[MusicController] Combat state unchanged: ${combat} (dimension: ${this.currentDimension})`);
+            }
+        } else {
+            console.log(`[MusicController] Cannot set combat music - useStrudel: ${this.useStrudel}, currentDimension: ${this.currentDimension}`);
+        }
     }
 
     /**
@@ -229,6 +314,10 @@ export class MusicController {
         this.musicEnabled = !!enabled;
         try {
             if (!this.musicEnabled) {
+                // Stop Strudel if using it
+                if (this.useStrudel) {
+                    this.strudelManager.stop();
+                }
                 // Mute or pause background
                 if (this.backgroundGain) {
                     try { this.backgroundGain.gain.setValueAtTime(0, this.audioContext ? this.audioContext.currentTime : 0); } catch (e: unknown) {
@@ -248,7 +337,14 @@ export class MusicController {
                 }
             } else {
                 // Restore music
-                if (this.backgroundGain && this.backgroundAudioElement) {
+                if (this.useStrudel && this.strudelManager.getCurrentPattern()) {
+                    // Resume Strudel
+                    const pattern = this.strudelManager.getCurrentPattern();
+                    if (pattern) {
+                        this.strudelManager.play(pattern);
+                        this.strudelManager.setVolume(this.currentMusicVolume);
+                    }
+                } else if (this.backgroundGain && this.backgroundAudioElement) {
                     try { this.backgroundGain.gain.setValueAtTime(this.currentMusicVolume || VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, this.audioContext!.currentTime); } catch (e: unknown) {
                         errorHandler.handle(e, ErrorSeverity.WARNING, {
                             component: 'MusicController',

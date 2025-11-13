@@ -3,6 +3,7 @@ import { EventTypes } from '@core/EventTypes';
 import { TILE_TYPES } from '@core/constants/index';
 import type { Enemy } from '@entities/Enemy';
 import { logger } from '@core/logger';
+import { StateActions } from '@state/core/StateActions';
 
 /**
  * EnemyCollection
@@ -34,6 +35,14 @@ export class EnemyCollection {
     constructor(enemiesArray: any[] = [], game: any = null) {
         this._enemies = enemiesArray;
         this._game = game;
+    }
+
+    /**
+     * Sync enemies to state store
+     * @private
+     */
+    private _syncToState(): void {
+        StateActions.setEnemies([...this._enemies]);
     }
 
     /**
@@ -125,6 +134,7 @@ export class EnemyCollection {
         }
 
         this._enemies.push(enemy);
+        this._syncToState();
 
         if (emitEvent) {
             eventBus.emit(EventTypes.ENEMY_SPAWNED, {
@@ -153,6 +163,7 @@ export class EnemyCollection {
         const enemyY = enemy.y;
 
         this._enemies.splice(index, 1);
+        this._syncToState();
 
         // Clear the grid tile where the enemy was standing to prevent blocking
         // This ensures exit tiles and floor tiles are restored properly after enemy removal
@@ -221,6 +232,7 @@ export class EnemyCollection {
     clear(emitEvent: boolean = true): void {
         const count = this._enemies.length;
         this._enemies.length = 0;
+        this._syncToState();
 
         if (emitEvent && count > 0) {
             eventBus.emit(EventTypes.ENEMIES_CLEARED, { count });
@@ -236,6 +248,7 @@ export class EnemyCollection {
         const oldCount = this._enemies.length;
         this._enemies.length = 0;
         this._enemies.push(...newEnemies);
+        this._syncToState();
 
         if (emitEvent) {
             eventBus.emit(EventTypes.ENEMIES_REPLACED, {

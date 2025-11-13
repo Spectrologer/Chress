@@ -15,6 +15,9 @@ import { VOLUME_CONSTANTS } from './constants/audio';
 import { MusicController } from './sound/MusicController';
 import { ProceduralSoundGenerator } from './sound/ProceduralSoundGenerator';
 import { SoundLifecycleManager } from './sound/SoundLifecycleManager';
+import { CombatEvents } from './events/CombatEvents';
+import { StateSelectors } from '@state/core/StateSelectors';
+import { getZoneLevelFromDistance } from './constants/zones';
 
 export class SoundManager {
     private sounds: Record<string, HTMLAudioElement>;
@@ -45,14 +48,75 @@ export class SoundManager {
         this._unsubscribers.push(
             eventBus.on(EventTypes.MUSIC_CHANGE, (data: any) => {
                 this.setMusicForZone({ dimension: data.dimension });
+                // Check for enemies when zone music changes
+                this.updateCombatMusic();
             })
         );
 
         this._unsubscribers.push(
             eventBus.on(EventTypes.ZONE_CHANGED, (data: any) => {
-                this.setMusicForZone({ dimension: data.dimension });
+                // Calculate zone level from coordinates
+                let zoneLevel: number | undefined;
+                if (typeof data.x === 'number' && typeof data.y === 'number') {
+                    const dist = Math.max(Math.abs(data.x), Math.abs(data.y));
+                    zoneLevel = getZoneLevelFromDistance(dist);
+                    logger.info(`[SoundManager] Zone changed to (${data.x},${data.y}) - Level: ${zoneLevel}, Dimension: ${data.dimension}`);
+                }
+                this.setMusicForZone({ dimension: data.dimension, zoneLevel });
+                // Check for enemies when zone changes
+                this.updateCombatMusic();
             })
         );
+
+        // Combat music transitions
+        this._unsubscribers.push(
+            eventBus.on(CombatEvents.ENEMY_SPAWNED, () => {
+                logger.info('[SoundManager] Enemy spawned, updating combat music');
+                this.updateCombatMusic();
+            })
+        );
+
+        this._unsubscribers.push(
+            eventBus.on(CombatEvents.ENEMY_DEFEATED, () => {
+                logger.info('[SoundManager] Enemy defeated, updating combat music');
+                this.updateCombatMusic();
+            })
+        );
+
+        this._unsubscribers.push(
+            eventBus.on(CombatEvents.ENEMY_REMOVED, () => {
+                logger.info('[SoundManager] Enemy removed, updating combat music');
+                this.updateCombatMusic();
+            })
+        );
+
+        this._unsubscribers.push(
+            eventBus.on(CombatEvents.ENEMIES_CLEARED, () => {
+                logger.info('[SoundManager] Enemies cleared, updating combat music');
+                this.updateCombatMusic();
+            })
+        );
+
+        this._unsubscribers.push(
+            eventBus.on(CombatEvents.ENEMIES_REPLACED, () => {
+                logger.info('[SoundManager] Enemies replaced, updating combat music');
+                this.updateCombatMusic();
+            })
+        );
+    }
+
+    /**
+     * Update music based on current enemy count
+     * Uses a small delay to allow state to update after zone changes
+     */
+    private updateCombatMusic(): void {
+        // Add a small delay to allow state to propagate after zone changes
+        setTimeout(() => {
+            const enemies = StateSelectors.getCurrentEnemies();
+            const hasEnemies = enemies && enemies.length > 0;
+            logger.info(`[SoundManager] Updating combat music - Enemies: ${enemies?.length || 0}, HasEnemies: ${hasEnemies}`);
+            this.musicController.setCombatMusic(hasEnemies);
+        }, 100);
     }
 
     async loadSounds(): Promise<void> {
@@ -96,8 +160,8 @@ export class SoundManager {
         this.musicController.stopBackground();
     }
 
-    setMusicForZone({ dimension = 0 }: { dimension?: number } = {}): void {
-        this.musicController.setMusicForZone({ dimension });
+    setMusicForZone({ dimension = 0, zoneLevel }: { dimension?: number; zoneLevel?: number } = {}): void {
+        this.musicController.setMusicForZone({ dimension, zoneLevel });
     }
 
     playBackgroundContinuous(filePath: string, volume = VOLUME_CONSTANTS.DEFAULT_MUSIC_VOLUME, crossfadeMs = VOLUME_CONSTANTS.DEFAULT_CROSSFADE_DURATION): void {
