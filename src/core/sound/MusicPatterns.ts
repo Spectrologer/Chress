@@ -11,30 +11,24 @@ export function createCavePattern(): Pattern<any> {
     return stack(
         // Main melodic line with rhythmic variation and harmony
         seq("c3", "eb3", "f3", "ab3").note()
-            .sound("sawtooth")
-            .room(0.95)
-            .gain(0.13)
+            .sound("square")
+            .room(15)
+            .gain(.03)
             .lpf(900)
             .slow(4)
             .struct("1*<1 2 1 1>"),  // Rhythmic variation - speed up on 2nd beat
 
-        // Arpeggiated countermelody for movement
-        seq("g4", "c5", "eb5", "g5", "f5", "c5").note()
-            .sound("triangle")
-            .room(0.9)
-            .gain(0.1)
-            .lpf(1200)
-            .slow(3),
+
 
         // Deep bass with rhythmic pulse
         seq("c1", "g1", "f1", "eb1").note()
-            .sound("sawtooth")
-            .room(0.85)
+            .sound("square")
+            .room(5.85)
             .gain(0.2)
             .lpf(250)
-            .slow(4)
+            .slow(2)
             .struct("1*<1 1 2 1>")  // Add pulse on 3rd beat
-    ).cpm(58);  // Slightly faster tempo
+    ).cpm(120);  // Slightly faster tempo
 }
 
 /**

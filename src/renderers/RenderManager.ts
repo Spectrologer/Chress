@@ -489,13 +489,15 @@ export class RenderManager {
             try {
                 const coord = `${x},${y}`;
                 const hasTerrainTexture = terrainTextures[coord] !== undefined;
+                const hasOverlayTexture = overlayTextures[coord] !== undefined;
 
                 // Render terrain in this pass if:
                 // 1. The tile is a floor or wall type, OR
-                // 2. There's a custom terrain texture defined for this position (even if it has a feature)
-                if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.WALL || hasTerrainTexture) {
-                    // If there's a terrain texture, render floor type so the texture gets applied
-                    const tileToRender = hasTerrainTexture ? TILE_TYPES.FLOOR : tile;
+                // 2. There's a custom terrain texture defined for this position (even if it has a feature), OR
+                // 3. There's an overlay texture (like big_tree) that needs floor underneath
+                if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.WALL || hasTerrainTexture || hasOverlayTexture) {
+                    // If there's a terrain texture or overlay, render floor type so the texture gets applied
+                    const tileToRender = (hasTerrainTexture || hasOverlayTexture) ? TILE_TYPES.FLOOR : tile;
                     this.textureManager.renderTile(this.ctx, x, y, tileToRender, this.game.gridManager, zoneLevel, terrainTextures, rotations);
                 }
             } catch (error) {

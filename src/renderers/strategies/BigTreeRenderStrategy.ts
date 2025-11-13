@@ -21,7 +21,10 @@ export class BigTreeRenderStrategy extends MultiTileRenderStrategy {
     }
 
     /**
-     * Override render to skip floor background for overlay functionality
+     * Override render to skip floor background and render tree with transparency.
+     * Big_tree is rendered in Pass 4, after floors (Pass 1) and features (Pass 3),
+     * so the floor and any underlying structures (like museum) are already rendered.
+     * We only need to draw the tree image with transparency on top.
      */
     render(
         ctx: CanvasRenderingContext2D,
@@ -33,7 +36,15 @@ export class BigTreeRenderStrategy extends MultiTileRenderStrategy {
         zoneLevel: number,
         baseRenderer: BaseRenderer
     ): void {
-        // Skip floor background rendering - render directly on top of existing content
+        // Skip floor background rendering - floor was already rendered in Pass 1
+        // This allows the tree to overlay on top of floors AND other structures (like museum)
+
+        // Save canvas state to ensure transparency is preserved
+        ctx.save();
+
+        // Ensure proper alpha blending for transparency
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1.0;
 
         // Render the multi-tile structure part
         if (RendererUtils.isImageLoaded(this.images, this.config.spriteKey)) {
@@ -49,13 +60,16 @@ export class BigTreeRenderStrategy extends MultiTileRenderStrategy {
                 const image = this.images[this.config.spriteKey];
 
                 this.renderImageSlice(ctx, image, partX, partY, pixelX, pixelY);
+                ctx.restore();
                 return; // Successfully rendered
             }
             // Position not found - skip rendering silently for overlays
+            ctx.restore();
             return;
         }
 
         // Fallback rendering (without floor background) - should rarely reach here
         this.renderFallback(ctx, pixelX, pixelY);
+        ctx.restore();
     }
 }
