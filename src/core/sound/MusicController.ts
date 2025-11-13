@@ -19,7 +19,7 @@ export class MusicController {
     public currentMusicVolume: number;
     public currentMusicTrack: string | null;
     public musicEnabled: boolean;
-    private strudelManager: StrudelMusicManager;
+    public strudelManager: StrudelMusicManager;
     private useStrudel: boolean;
     private currentDimension: number | null;
     private inCombat: boolean;

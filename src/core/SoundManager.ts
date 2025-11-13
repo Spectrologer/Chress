@@ -186,6 +186,12 @@ export class SoundManager {
         this.musicController.setMusicEnabled(value);
     }
 
+    // ========== Access to Sub-Managers ==========
+
+    get getMusicController(): MusicController {
+        return this.musicController;
+    }
+
     // ========== Lifecycle ==========
 
     resumeAudioContext(): Promise<void> {

@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * StrudelMusicManager - Manages Strudel-based procedural music
  *
@@ -6,15 +5,14 @@
  * dynamic, generative background music.
  */
 
-import { repl, type Pattern } from '@strudel/core';
+import { repl, type Pattern, type Scheduler } from '@strudel/core';
 import { getAudioContext, webaudioOutput, initAudioOnFirstClick, samples } from '@strudel/webaudio';
 import { registerSynthSounds } from 'superdough';
-// @ts-ignore - Strudel soundfonts for GM instruments
 import { registerSoundfonts } from '@strudel/soundfonts';
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler.js';
 
 export class StrudelMusicManager {
-    private scheduler: any | null = null;
+    private scheduler: Scheduler | null = null;
     private currentPattern: Pattern<any> | null = null;
     private isPlaying: boolean = false;
     private audioContextInitialized: boolean = false;
@@ -38,11 +36,9 @@ export class StrudelMusicManager {
             // Initialize audio context and register synth sounds
             await Promise.all([
                 initAudioOnFirstClick(),
-                registerSynthSounds()
+                registerSynthSounds(),
+                registerSoundfonts()
             ]);
-
-            // Register GM soundfonts
-            registerSoundfonts();
 
             // Create scheduler with repl
             const ctx = getAudioContext();
@@ -73,7 +69,6 @@ export class StrudelMusicManager {
     private async loadGMSamples(): Promise<void> {
         try {
             // Load only the basic samples we need from the Dirt-Samples repository
-            // @ts-ignore - samples function exists at runtime
             await samples({
                 bd: ['bd/BT0A0A7.wav', 'bd/BT0AADA.wav', 'bd/BT0AAD0.wav'],
                 hh: ['hh/000_hh3closedhh.wav', 'hh/001_hh3openhh.wav', 'hh/002_hh3closedhh.wav',

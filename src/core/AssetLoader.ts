@@ -19,10 +19,15 @@ export class AssetLoader {
 
     /**
      * Loads all game assets and filters available food items.
+     * Also initializes audio system for Strudel music.
      */
     async loadAssets(): Promise<void> {
         try {
-            await this.game.textureManager!.loadAssets();
+            // Load textures and initialize audio in parallel
+            await Promise.all([
+                this.game.textureManager!.loadAssets(),
+                this.initializeAudio()
+            ]);
 
             // Filter food assets to only those that loaded successfully
             this.availableFoodAssets = FOOD_ASSETS.filter(foodAsset => {
@@ -37,6 +42,41 @@ export class AssetLoader {
             logger.error('Error loading assets:', error);
             this.availableFoodAssets = [];
             (this.game as any).availableFoodAssets = [];
+        }
+    }
+
+    /**
+     * Initializes the audio system for Strudel music.
+     * GM soundfont instruments will be lazy-loaded as needed during gameplay.
+     */
+    private async initializeAudio(): Promise<void> {
+        try {
+            const soundManager = this.game.soundManager;
+            if (!soundManager) {
+                logger.warn('[AssetLoader] SoundManager not available for audio initialization');
+                return;
+            }
+
+            // Access the MusicController's StrudelMusicManager
+            const musicController = (soundManager as any).musicController;
+            if (!musicController) {
+                logger.warn('[AssetLoader] MusicController not available for audio initialization');
+                return;
+            }
+
+            const strudelManager = musicController.strudelManager;
+            if (!strudelManager) {
+                logger.warn('[AssetLoader] StrudelMusicManager not available for audio initialization');
+                return;
+            }
+
+            // Initialize audio system (GM instruments will lazy-load on first use)
+            logger.info('[AssetLoader] Initializing audio system...');
+            await strudelManager.initializeAudio();
+            logger.info('[AssetLoader] Audio system initialized successfully');
+        } catch (error) {
+            logger.warn('[AssetLoader] Failed to initialize audio system:', error);
+            // Non-fatal error - game can continue without audio
         }
     }
 

@@ -4,6 +4,19 @@ import { VOICE_CONSTANTS } from '@core/constants/audio';
 import { getVoicePatternForCharacter, type VoicePatternConfig } from '@core/sound/VoicePatterns';
 import { getNPCCharacterData } from '@core/NPCLoader';
 
+export interface StrudelPatternConfig {
+    enabled: boolean;
+    type: 'melodic' | 'percussive';
+    notes: string[]; // Strudel note names like "e5", "g5", "c6"
+    sound: string; // Strudel sound name like "gm_flute", "gm_glockenspiel"
+    gain?: number;
+    room?: number;
+    lpf?: number;
+    attack?: number;
+    decay?: number;
+    rhythmVariation?: number[];
+}
+
 interface VoiceSettings {
     name?: string;
     base?: number;
@@ -20,6 +33,8 @@ interface VoiceSettings {
     // New: Melodic pattern support
     melodicPattern?: VoicePatternConfig;
     patternIndex?: number; // Current position in pattern
+    // New: Strudel pattern support
+    strudelPattern?: StrudelPatternConfig;
 }
 
 interface DerivedVoiceSettings {
@@ -38,6 +53,8 @@ interface DerivedVoiceSettings {
     // New: Melodic pattern support
     melodicPattern?: VoicePatternConfig;
     patternIndex: number; // Current position in pattern
+    // New: Strudel pattern support
+    strudelPattern?: StrudelPatternConfig;
 }
 
 interface MessageManager {
@@ -62,6 +79,17 @@ export function getVoiceSettingsForName(name: string | null, customPitch?: numbe
         const normalized = lower.replace(/[^a-z]/g, '');
         characterData = getNPCCharacterData(normalized);
     }
+
+    // Check for Strudel pattern first (highest priority)
+    if (characterData?.audio?.strudelPattern?.enabled) {
+        const strudelPattern = characterData.audio.strudelPattern;
+        return {
+            name: n,
+            strudelPattern: strudelPattern,
+            patternIndex: 0
+        };
+    }
+
     if (characterData?.audio?.voicePattern) {
         const jsonPattern = characterData.audio.voicePattern;
         // Convert JSON pattern to VoicePatternConfig
@@ -174,6 +202,117 @@ export function ensureTypingAudio(manager: MessageManager): void {
     }
 }
 
+// Play a Strudel-based blip using the Strudel library
+function playStrudelBlip(vs: VoiceSettings, manager: MessageManager): void {
+    const pattern = vs.strudelPattern;
+    if (!pattern || !pattern.enabled) return;
+
+    try {
+        // Get or initialize cached voice settings for pattern tracking
+        let derived: DerivedVoiceSettings | null = null;
+        if (vs.name && manager._voiceCache?.has(vs.name)) {
+            derived = manager._voiceCache.get(vs.name) || null;
+        }
+
+        if (!derived) {
+            // Initialize pattern index
+            derived = {
+                name: vs.name || 'unknown',
+                base: 440, // Not used for Strudel
+                wave1: 'sine',
+                wave2: 'sine',
+                bandMul: 1.0,
+                peak: 0.2,
+                harmonicRatio: 1.0,
+                detuneRange: 0,
+                pan: 0,
+                attack: pattern.attack || 0.005,
+                decay: pattern.decay || 0.08,
+                masterGain: 1.0,
+                strudelPattern: pattern,
+                patternIndex: 0
+            };
+            if (derived.name && manager._voiceCache) {
+                manager._voiceCache.set(derived.name, derived);
+            }
+        }
+
+        // Use the game's Strudel music manager if available
+        const musicController = manager.game?.soundManager?.getMusicController;
+        const strudelManager = musicController?.strudelManager;
+        if (!strudelManager) {
+            console.warn('[VoiceSettings] StrudelMusicManager not available, skipping Strudel blip');
+            return;
+        }
+
+        // Import Strudel dynamically and play the blip
+        Promise.all([
+            import('@strudel/core'),
+            import('@strudel/webaudio')
+        ]).then(async ([coreModule, webaudioModule]) => {
+            const { note, s, gain: gainFunc, room: roomFunc, lpf: lpfFunc, attack: attackFunc, decay: decayFunc } = coreModule;
+            const { getAudioContext, webaudioOutput } = webaudioModule;
+
+            // Get current note from pattern
+            const patternIndex = derived!.patternIndex;
+            const currentNote = pattern.notes[patternIndex % pattern.notes.length];
+            const rhythmMult = pattern.rhythmVariation
+                ? pattern.rhythmVariation[patternIndex % pattern.rhythmVariation.length]
+                : 1.0;
+
+            // Get audio context
+            const ctx = getAudioContext();
+            if (!ctx || ctx.state !== 'running') {
+                console.warn('[VoiceSettings] Audio context not ready');
+                return;
+            }
+
+            try {
+                // Build a one-cycle pattern for a single note
+                let notePattern = note(currentNote)
+                    .s(pattern.sound)
+                    .gain((pattern.gain || 0.4) * rhythmMult);
+
+                // Add optional effects
+                if (pattern.room !== undefined) {
+                    notePattern = notePattern.room(pattern.room);
+                }
+                if (pattern.lpf !== undefined) {
+                    notePattern = notePattern.lpf(pattern.lpf);
+                }
+                if (pattern.attack !== undefined) {
+                    notePattern = notePattern.attack(pattern.attack);
+                }
+                if (pattern.decay !== undefined) {
+                    notePattern = notePattern.decay(pattern.decay * rhythmMult);
+                }
+
+                // Query a single cycle (0 to 1) to get events (haps)
+                const haps = notePattern.queryArc(0, 1);
+
+                // Trigger each hap directly using webaudioOutput
+                const output = webaudioOutput();
+                for (const hap of haps) {
+                    await output.trigger(ctx.currentTime, hap, ctx, () => {});
+                }
+            } catch (e) {
+                console.warn('[VoiceSettings] Failed to trigger Strudel blip:', e);
+            }
+
+            // Advance pattern index for next blip
+            derived!.patternIndex = (patternIndex + 1) % pattern.notes.length;
+            if (manager._voiceCache && derived!.name) {
+                manager._voiceCache.set(derived!.name, derived!);
+            }
+        }).catch((e) => {
+            console.warn('[VoiceSettings] Strudel import failed:', e);
+        });
+    } catch (e) {
+        // Strudel might not be available or might fail - silently fall back
+        console.warn('[VoiceSettings] Strudel blip setup failed:', e);
+    }
+}
+
 // Play a melodic blip using a character's voice pattern
 function playMelodicBlip(ctx: AudioContext, master: GainNode, vs: VoiceSettings, manager: MessageManager): void {
     const pattern = vs.melodicPattern;
@@ -270,6 +409,14 @@ export function playTypingBlip(manager: MessageManager, voiceSettings?: VoiceSet
         return;
     }
 
+    const vs = voiceSettings || {};
+
+    // ===== PRIORITY 1: Check for Strudel pattern =====
+    if (vs.strudelPattern?.enabled) {
+        playStrudelBlip(vs, manager);
+        return;
+    }
+
     ensureTypingAudio(manager);
     const ctx = manager._typingAudioContext;
     const master = manager._typingMasterGain;
@@ -278,9 +425,8 @@ export function playTypingBlip(manager: MessageManager, voiceSettings?: VoiceSet
     // Web Audio API operations can fail in various browser contexts
     try {
         const now = ctx.currentTime;
-        const vs = voiceSettings || {};
 
-        // ===== NEW: Check if this character uses a melodic pattern =====
+        // ===== PRIORITY 2: Check if this character uses a melodic pattern =====
         if (vs.melodicPattern) {
             playMelodicBlip(ctx, master, vs, manager);
             return;

@@ -55,6 +55,18 @@ interface NPCData {
             attack?: number;              // Attack time in seconds
             decay?: number;               // Decay time in seconds
         };
+        strudelPattern?: {
+            enabled: boolean;             // Whether to use Strudel for this character
+            type: 'melodic' | 'percussive'; // Type of pattern
+            notes: string[];              // Strudel note names like "e5", "g5", "c6"
+            sound: string;                // Strudel sound name like "gm_flute", "gm_glockenspiel"
+            gain?: number;                // Volume (0-1)
+            room?: number;                // Reverb amount (0-1)
+            lpf?: number;                 // Low-pass filter frequency in Hz
+            attack?: number;              // Attack time in seconds
+            decay?: number;               // Decay time in seconds
+            rhythmVariation?: number[];   // Optional timing multipliers per note
+        };
     };
     placement?: {
         zone?: string;
