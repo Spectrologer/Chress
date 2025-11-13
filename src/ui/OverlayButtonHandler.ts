@@ -9,6 +9,7 @@ interface GameInstance {
     soundManager: any;
     gameStateManager: any;
     gameInitializer: any;
+    uiManager: any;
 }
 
 /**
@@ -237,42 +238,18 @@ export class OverlayButtonHandler {
      */
     handleConfig(): void {
         try {
-            const configOverlay = document.getElementById('configOverlay');
-            if (!configOverlay) {
-                logger.error('Config overlay element not found');
-                return;
-            }
+            // Delegate to ConfigPanelManager to ensure proper initialization
+            if (this.game.uiManager?.panelManager) {
+                this.game.uiManager.panelManager.showConfigOverlay();
 
-            // Show config overlay
-            configOverlay.classList.add('show');
-
-            // Mark that config was opened from start menu
-            configOverlay.dataset.openedFromStart = 'true';
-
-            // Set up the config panel manager's back button to return to start menu
-            const backButton = configOverlay.querySelector<HTMLElement>('#config-back-button');
-            if (backButton) {
-                // Remove any existing listeners before adding new ones
-                this.eventManager.removeAllListenersFromElement(backButton);
-
-                this.eventManager.add(backButton, 'click', (e: Event) => {
-                    e?.preventDefault?.();
-                    e?.stopPropagation?.();
-                    configOverlay.classList.remove('show');
-                    delete configOverlay.dataset.openedFromStart;
-                });
-            }
-
-            // Set up overlay click to close
-            const handleOverlayClick = (e: MouseEvent): void => {
-                const panel = configOverlay.querySelector<HTMLElement>('.stats-panel');
-                if (!panel || !panel.contains(e.target as Node)) {
-                    configOverlay.classList.remove('show');
-                    delete configOverlay.dataset.openedFromStart;
-                    this.eventManager.cleanup();
+                // Mark that config was opened from start menu for back button behavior
+                const configOverlay = document.getElementById('configOverlay');
+                if (configOverlay) {
+                    configOverlay.dataset.openedFromStart = 'true';
                 }
-            };
-            this.eventManager.add(configOverlay, 'click', handleOverlayClick);
+            } else {
+                logger.error('UIManager or PanelManager not available');
+            }
         } catch (error) {
             logger.error('Error opening config from start menu:', error);
         }

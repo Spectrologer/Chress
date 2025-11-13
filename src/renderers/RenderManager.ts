@@ -767,7 +767,13 @@ export class RenderManager {
      * This creates a depth effect where the player can walk "behind" certain parts of structures.
      */
     private shouldRenderTileInForeground(overlayTexture: string, tileX: number, tileY: number, originX: number, originY: number): boolean {
-        const playerY = this.game.playerFacade?.getPosition()?.y ?? -1;
+        const playerPos = this.game.playerFacade?.getPosition();
+        const playerY = playerPos?.y ?? -1;
+
+        // If player is off-screen, don't render anything in foreground to avoid artifacts
+        if (!playerPos || playerPos.x < 0 || playerPos.x >= GRID_SIZE || playerY < 0 || playerY >= GRID_SIZE) {
+            return false;
+        }
 
         // Check zLayers from board data first
         const zoneGenerator = this.game.zoneGenerator;
@@ -818,6 +824,10 @@ export class RenderManager {
     drawMultiTileForegrounds(): void {
         if (this._foregroundStructures.length === 0 && this._foregroundFeatures.length === 0) return;
 
+        // Check if player is off-screen (during entrance animations)
+        const playerPos = this.game.playerFacade?.getPosition();
+        const playerOffScreen = !playerPos || playerPos.x < 0 || playerPos.x >= GRID_SIZE || playerPos.y < 0 || playerPos.y >= GRID_SIZE;
+
         // Calculate zone level for texture rendering
         const zone = this.game.playerFacade!.getCurrentZone();
         let zoneLevel: number;
@@ -847,12 +857,13 @@ export class RenderManager {
             'house': TILE_TYPES.HOUSE
         };
 
-        // Process each foreground structure
-        for (const structure of this._foregroundStructures) {
-            const { overlayTexture, originX, originY } = structure;
-            const [width, height] = structureSizes[overlayTexture] || [1, 1];
-            const tileType = tileTypeMap[overlayTexture];
-            if (!tileType) continue;
+        // Process each foreground structure (skip overlay structures when player is off-screen to prevent artifacts)
+        if (!playerOffScreen) {
+            for (const structure of this._foregroundStructures) {
+                const { overlayTexture, originX, originY } = structure;
+                const [width, height] = structureSizes[overlayTexture] || [1, 1];
+                const tileType = tileTypeMap[overlayTexture];
+                if (!tileType) continue;
 
             // Create a temporary grid for this structure
             const tempGrid: Tile[][] = [];
@@ -891,6 +902,7 @@ export class RenderManager {
                     }
                 }
             }
+        }
         }
 
         // Render foreground feature tiles (from zLayers)
