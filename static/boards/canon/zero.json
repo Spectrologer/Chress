@@ -15,7 +15,7 @@
     "walls/white_mus_wall_12",
     "walls/white_mus_wall_9",
     "walls/white_mus_wall_9",
-    "walls/white_mus_wall_13",
+    "walls/white_mus_wall_5",
     "floors/white_mus_floor_1",
     "floors/white_mus_floor_2",
     "floors/white_mus_floor_1",
@@ -98,9 +98,9 @@
     "walls/white_mus_wall_10",
     "walls/white_mus_wall_9",
     "walls/white_mus_wall_9",
-    "walls/white_mus_wall_9",
+    "walls/white_mus_wall_11",
     "floors/white_mus_floor_2",
-    "walls/white_mus_wall_9",
+    "walls/white_mus_wall_12",
     "walls/white_mus_wall_9",
     "walls/white_mus_wall_9",
     "walls/white_mus_wall_9",
@@ -143,6 +143,6 @@
     "gameMode": "CHESSE",
     "level": "home",
     "rarity": 5,
-    "created": "2025-11-13T17:26:33.695Z"
+    "created": "2025-11-13T18:07:17.395Z"
   }
 }
