@@ -46,6 +46,15 @@ interface NPCData {
     };
     audio?: {
         voicePitch?: number;
+        voicePattern?: {
+            notes: number[];              // Array of frequencies in Hz
+            wave1?: string;               // Primary waveform: 'sine', 'triangle', 'sawtooth', 'square'
+            wave2?: string;               // Secondary waveform
+            rhythmVariation?: number[];   // Optional timing multipliers per note
+            gain?: number;                // Volume (0-1)
+            attack?: number;              // Attack time in seconds
+            decay?: number;               // Decay time in seconds
+        };
     };
     placement?: {
         zone?: string;

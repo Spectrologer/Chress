@@ -108,6 +108,15 @@
     "walkable": false
   },
   "audio": {
-    "voicePitch": 85
+    "voicePitch": 85,
+    "voicePattern": {
+      "notes": [87.31, 103.83, 130.81, 155.56],
+      "wave1": "sawtooth",
+      "wave2": "square",
+      "rhythmVariation": [1.0, 1.05, 0.95, 1.0],
+      "gain": 0.66,
+      "attack": 0.006,
+      "decay": 0.12
+    }
   }
 }

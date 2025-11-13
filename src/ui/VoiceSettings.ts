@@ -2,6 +2,7 @@
 // Helpers for voice settings, audio context, and typing SFX for MessageManager
 import { VOICE_CONSTANTS } from '@core/constants/audio';
 import { getVoicePatternForCharacter, type VoicePatternConfig } from '@core/sound/VoicePatterns';
+import { getNPCCharacterData } from '@core/NPCLoader';
 
 interface VoiceSettings {
     name?: string;
@@ -53,7 +54,31 @@ export function getVoiceSettingsForName(name: string | null, customPitch?: numbe
     const n = (name || '').toString();
     const lower = n.trim().toLowerCase();
 
-    // Check if character has a melodic pattern
+    // First, check if character JSON has a voice pattern
+    const characterData = getNPCCharacterData(lower);
+    if (characterData?.audio?.voicePattern) {
+        const jsonPattern = characterData.audio.voicePattern;
+        // Convert JSON pattern to VoicePatternConfig
+        const pattern: VoicePatternConfig = {
+            id: lower,
+            name: n,
+            description: `Voice pattern for ${n}`,
+            notes: jsonPattern.notes,
+            wave1: (jsonPattern.wave1 || 'triangle') as OscillatorType,
+            wave2: (jsonPattern.wave2 || 'sine') as OscillatorType,
+            rhythmVariation: jsonPattern.rhythmVariation,
+            gain: jsonPattern.gain,
+            attack: jsonPattern.attack,
+            decay: jsonPattern.decay
+        };
+        return {
+            name: n,
+            melodicPattern: pattern,
+            patternIndex: 0
+        };
+    }
+
+    // Second, check if character has a hardcoded melodic pattern
     const melodicPattern = getVoicePatternForCharacter(lower);
     if (melodicPattern) {
         // Return settings that indicate this character uses a melodic pattern
