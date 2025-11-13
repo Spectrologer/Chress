@@ -13,7 +13,7 @@ export function createCavePattern(): Pattern<any> {
         seq("c3", "eb3", "f3", "ab3").note()
             .sound("sawtooth")
             .room(0.95)
-            .gain(0.2)
+            .gain(0.13)
             .lpf(900)
             .slow(4)
             .struct("1*<1 2 1 1>"),  // Rhythmic variation - speed up on 2nd beat
@@ -22,7 +22,7 @@ export function createCavePattern(): Pattern<any> {
         seq("g4", "c5", "eb5", "g5", "f5", "c5").note()
             .sound("triangle")
             .room(0.9)
-            .gain(0.15)
+            .gain(0.1)
             .lpf(1200)
             .slow(3),
 
@@ -30,7 +30,7 @@ export function createCavePattern(): Pattern<any> {
         seq("c1", "g1", "f1", "eb1").note()
             .sound("sawtooth")
             .room(0.85)
-            .gain(0.3)
+            .gain(0.2)
             .lpf(250)
             .slow(4)
             .struct("1*<1 1 2 1>")  // Add pulse on 3rd beat
@@ -46,7 +46,7 @@ export function createPeacefulPattern(): Pattern<any> {
         seq("c3", "g3", "a3", "f3", "e3", "g3", "c3", "f3").note()
             .sound("triangle")
             .room(0.7)
-            .gain(0.2)
+            .gain(0.13)
             .lpf(1400)
             .slow(4),
 
@@ -54,13 +54,13 @@ export function createPeacefulPattern(): Pattern<any> {
         seq("c4", "c4", "d4", "e4", "e4", "g4", "f4", "f4", "e4", "d4", "d4", "c4").note()
             .sound("triangle")
             .room(0.5)
-            .gain(0.3)
+            .gain(0.2)
             .slow(2),
 
         // Gentle walking bassline with more movement
         seq("c2", "g2", "g2", "a2", "f2", "f2").note()
             .sound("sawtooth")
-            .gain(0.15)
+            .gain(0.1)
             .room(0.5)
             .slow(4),
 
@@ -68,7 +68,7 @@ export function createPeacefulPattern(): Pattern<any> {
         seq("e5", "g5", "c6", "d6").note()
             .sound("triangle")
             .room(0.8)
-            .gain(0.12)
+            .gain(0.08)
             .lpf(2400)
             .slow(6)
     ).cpm(68);  // Slightly faster, more upbeat tempo
@@ -83,7 +83,7 @@ export function createTensionPattern(): Pattern<any> {
         seq("c3", "e3", "a3", "f3", "c3", "g3", "d3", "e3").note()
             .sound("triangle")
             .room(0.92)
-            .gain(0.19)
+            .gain(0.12)
             .lpf(1400)
             .slow(4),
 
@@ -91,7 +91,7 @@ export function createTensionPattern(): Pattern<any> {
         seq("c4", "e4", "g4", "a4", "c5", "a4", "g4", "e4").note()
             .sound("triangle")
             .room(0.88)
-            .gain(0.22)
+            .gain(0.14)
             .lpf(1800)
             .slow(4),
 
@@ -99,7 +99,7 @@ export function createTensionPattern(): Pattern<any> {
         seq("c1", "g1", "c1", "g1").note()
             .sound("sawtooth")
             .room(0.82)
-            .gain(0.26)
+            .gain(0.17)
             .lpf(260)
             .slow(4),
 
@@ -107,7 +107,7 @@ export function createTensionPattern(): Pattern<any> {
         seq("c5", "e5", "g5", "c6", "g5", "e5").note()
             .sound("triangle")
             .room(0.95)
-            .gain(0.15)
+            .gain(0.1)
             .lpf(3000)
             .slow(6),
 
@@ -115,7 +115,7 @@ export function createTensionPattern(): Pattern<any> {
         seq("e3", "g3", "a3", "g3", "e3", "g3").note()
             .sound("triangle")
             .room(0.85)
-            .gain(0.17)
+            .gain(0.11)
             .lpf(1600)
             .slow(6),
 
@@ -123,7 +123,7 @@ export function createTensionPattern(): Pattern<any> {
         seq("c2", "e2", "g2", "e2").note()
             .sound("sawtooth")
             .room(0.8)
-            .gain(0.16)
+            .gain(0.1)
             .lpf(500)
             .slow(4)
     ).cpm(64);  // Slightly more upbeat and welcoming
@@ -138,7 +138,7 @@ export function createCaveCombatPattern(): Pattern<any> {
         seq("c3", "eb3", "f3", "ab3", "g3", "f3", "eb3", "c3").note()
             .sound("sawtooth")
             .room(0.6)
-            .gain(0.28)
+            .gain(0.18)
             .lpf(1200)
             .slow(2)
             .struct("1*<1 2 2 1>"),
@@ -147,7 +147,7 @@ export function createCaveCombatPattern(): Pattern<any> {
         seq("g4", "c5", "eb5", "g5", "f5", "eb5", "c5", "g4", "c5", "eb5", "g5", "c6").note()
             .sound("triangle")
             .room(0.5)
-            .gain(0.22)
+            .gain(0.14)
             .lpf(1600)
             .slow(2),
 
@@ -155,7 +155,7 @@ export function createCaveCombatPattern(): Pattern<any> {
         seq("c1", "c1", "g1", "c1", "c1", "f1", "c1", "c1").note()
             .sound("sawtooth")
             .room(0.4)
-            .gain(0.35)
+            .gain(0.23)
             .lpf(300)
             .slow(2),
 
@@ -163,7 +163,7 @@ export function createCaveCombatPattern(): Pattern<any> {
         seq("c2", "c2", "eb2", "c2", "f2", "c2", "g2", "c2").note()
             .sound("sawtooth")
             .room(0.3)
-            .gain(0.3)
+            .gain(0.2)
             .lpf(400)
             .slow(1)
     ).cpm(78);  // Fast, intense tempo
@@ -178,7 +178,7 @@ export function createPeacefulCombatPattern(): Pattern<any> {
         seq("c3", "e3", "g3", "c3", "d3", "f3", "a3", "d3").note()
             .sound("triangle")
             .room(0.5)
-            .gain(0.26)
+            .gain(0.17)
             .lpf(1600)
             .slow(2),
 
@@ -186,7 +186,7 @@ export function createPeacefulCombatPattern(): Pattern<any> {
         seq("c4", "d4", "e4", "g4", "a4", "g4", "e4", "d4", "e4", "g4", "a4", "c5").note()
             .sound("triangle")
             .room(0.4)
-            .gain(0.3)
+            .gain(0.2)
             .lpf(1800)
             .slow(2),
 
@@ -194,7 +194,7 @@ export function createPeacefulCombatPattern(): Pattern<any> {
         seq("c2", "g2", "c2", "g2", "c2", "a2", "c2", "g2").note()
             .sound("sawtooth")
             .room(0.3)
-            .gain(0.3)
+            .gain(0.2)
             .lpf(500)
             .slow(2),
 
@@ -202,7 +202,7 @@ export function createPeacefulCombatPattern(): Pattern<any> {
         seq("e5", "g5", "c6", "e6", "d6", "c6", "g5", "e5").note()
             .sound("triangle")
             .room(0.6)
-            .gain(0.18)
+            .gain(0.12)
             .lpf(2600)
             .slow(3)
     ).cpm(84);  // Brisk, alert tempo
@@ -217,7 +217,7 @@ export function createTensionCombatPattern(): Pattern<any> {
         seq("c3", "e3", "a3", "f3", "c3", "g3", "d3", "e3").note()
             .sound("triangle")
             .room(0.7)
-            .gain(0.25)
+            .gain(0.16)
             .lpf(1700)
             .slow(2),
 
@@ -225,7 +225,7 @@ export function createTensionCombatPattern(): Pattern<any> {
         seq("c4", "e4", "g4", "a4", "c5", "d5", "c5", "a4", "g4", "e4", "g4", "e4").note()
             .sound("triangle")
             .room(0.75)
-            .gain(0.27)
+            .gain(0.18)
             .lpf(2000)
             .slow(3),
 
@@ -233,7 +233,7 @@ export function createTensionCombatPattern(): Pattern<any> {
         seq("c1", "c1", "g1", "g1", "c1", "c1", "a1", "g1").note()
             .sound("sawtooth")
             .room(0.55)
-            .gain(0.3)
+            .gain(0.2)
             .lpf(320)
             .slow(2),
 
@@ -241,7 +241,7 @@ export function createTensionCombatPattern(): Pattern<any> {
         seq("c5", "e5", "g5", "c6", "d6", "c6", "g5", "e5").note()
             .sound("triangle")
             .room(0.8)
-            .gain(0.2)
+            .gain(0.13)
             .lpf(2800)
             .slow(3),
 
@@ -249,7 +249,7 @@ export function createTensionCombatPattern(): Pattern<any> {
         seq("e3", "g3", "a3", "c4", "a3", "g3").note()
             .sound("triangle")
             .room(0.65)
-            .gain(0.22)
+            .gain(0.14)
             .lpf(1800)
             .slow(3),
 
@@ -257,7 +257,7 @@ export function createTensionCombatPattern(): Pattern<any> {
         seq("c0", "g0", "c0", "g0").note()
             .sound("sine")
             .room(0.65)
-            .gain(0.24)
+            .gain(0.16)
             .lpf(200)
             .slow(4),
 
@@ -265,7 +265,7 @@ export function createTensionCombatPattern(): Pattern<any> {
         seq("c2", "e2", "g2", "e2").note()
             .sound("sawtooth")
             .room(0.5)
-            .gain(0.23)
+            .gain(0.15)
             .lpf(600)
             .slow(2)
     ).cpm(78);  // Upbeat and encouraging
@@ -280,7 +280,7 @@ export function createWoodsPattern(): Pattern<any> {
         seq("d3", "f3", "a3", "d4", "c4", "a3", "f3", "d3").note()
             .sound("triangle")
             .room(0.85)
-            .gain(0.22)
+            .gain(0.14)
             .lpf(1300)
             .slow(4),
 
@@ -288,7 +288,7 @@ export function createWoodsPattern(): Pattern<any> {
         seq("f4", "a4", "d5", "f5", "e5", "d5", "a4", "f4").note()
             .sound("triangle")
             .room(0.75)
-            .gain(0.18)
+            .gain(0.12)
             .lpf(1900)
             .slow(3),
 
@@ -296,7 +296,7 @@ export function createWoodsPattern(): Pattern<any> {
         seq("d2", "a2", "d2", "f2").note()
             .sound("sawtooth")
             .room(0.6)
-            .gain(0.26)
+            .gain(0.17)
             .lpf(400)
             .slow(4),
 
@@ -304,7 +304,7 @@ export function createWoodsPattern(): Pattern<any> {
         seq("a5", "d6", "f6", "a5").note()
             .sound("triangle")
             .room(0.9)
-            .gain(0.14)
+            .gain(0.09)
             .lpf(2500)
             .slow(8)
     ).cpm(62);
@@ -319,7 +319,7 @@ export function createWoodsCombatPattern(): Pattern<any> {
         seq("d3", "f3", "a3", "d4", "c4", "a3", "g3", "f3", "d3", "f3", "a3", "c4").note()
             .sound("triangle")
             .room(0.6)
-            .gain(0.28)
+            .gain(0.18)
             .lpf(1500)
             .slow(2),
 
@@ -327,7 +327,7 @@ export function createWoodsCombatPattern(): Pattern<any> {
         seq("f4", "a4", "d5", "f5", "e5", "d5", "c5", "a4").note()
             .sound("triangle")
             .room(0.5)
-            .gain(0.24)
+            .gain(0.16)
             .lpf(2000)
             .slow(2),
 
@@ -335,7 +335,7 @@ export function createWoodsCombatPattern(): Pattern<any> {
         seq("d2", "d2", "a2", "d2", "d2", "f2", "d2", "d2").note()
             .sound("sawtooth")
             .room(0.4)
-            .gain(0.32)
+            .gain(0.21)
             .lpf(500)
             .slow(2),
 
@@ -343,7 +343,7 @@ export function createWoodsCombatPattern(): Pattern<any> {
         seq("a5", "d6", "f6", "a6", "g6", "f6").note()
             .sound("triangle")
             .room(0.6)
-            .gain(0.18)
+            .gain(0.12)
             .lpf(2800)
             .slow(3)
     ).cpm(80);
@@ -358,7 +358,7 @@ export function createWildsPattern(): Pattern<any> {
         seq("g3", "bb3", "d4", "f4", "g4", "a4", "bb4", "d5", "f5", "g5", "a5", "bb5").note()
             .sound("triangle")
             .room(0.85)
-            .gain(0.25)
+            .gain(0.16)
             .lpf(1600)
             .slow(3),
 
@@ -366,7 +366,7 @@ export function createWildsPattern(): Pattern<any> {
         seq("g3", "bb3", "d4", "g3", "a3", "d4", "f4", "a3").note()
             .sound("triangle")
             .room(0.75)
-            .gain(0.22)
+            .gain(0.14)
             .lpf(1400)
             .slow(2),
 
@@ -374,7 +374,7 @@ export function createWildsPattern(): Pattern<any> {
         seq("g1", "g1", "d2", "g1", "g1", "a1", "bb1", "d2").note()
             .sound("sawtooth")
             .room(0.65)
-            .gain(0.3)
+            .gain(0.2)
             .lpf(380)
             .slow(2),
 
@@ -382,7 +382,7 @@ export function createWildsPattern(): Pattern<any> {
         seq("d5", "g5", "bb5", "d6", "f6", "g6", "bb6", "d7").note()
             .sound("triangle")
             .room(0.9)
-            .gain(0.18)
+            .gain(0.12)
             .lpf(2600)
             .slow(4),
 
@@ -390,7 +390,7 @@ export function createWildsPattern(): Pattern<any> {
         seq("bb3", "d4", "f4", "g4", "a4", "bb4", "d5", "f5").note()
             .sound("triangle")
             .room(0.8)
-            .gain(0.19)
+            .gain(0.12)
             .lpf(1800)
             .slow(3),
 
@@ -398,7 +398,7 @@ export function createWildsPattern(): Pattern<any> {
         seq("g2", "g2", "d3", "bb2", "g2", "a2", "bb2", "d3").note()
             .sound("sawtooth")
             .room(0.7)
-            .gain(0.24)
+            .gain(0.16)
             .lpf(550)
             .slow(2)
     ).cpm(72);  // Upbeat, adventurous tempo
@@ -413,7 +413,7 @@ export function createWildsCombatPattern(): Pattern<any> {
         seq("g3", "bb3", "d4", "f4", "g4", "a4", "bb4", "d5").note()
             .sound("triangle")
             .room(0.6)
-            .gain(0.32)
+            .gain(0.21)
             .lpf(1700)
             .slow(2),
 
@@ -421,7 +421,7 @@ export function createWildsCombatPattern(): Pattern<any> {
         seq("g4", "bb4", "d5", "f5", "g5", "a5", "bb5", "d6", "f6", "g6", "a6", "bb6").note()
             .sound("triangle")
             .room(0.55)
-            .gain(0.28)
+            .gain(0.18)
             .lpf(2200)
             .slow(2),
 
@@ -429,7 +429,7 @@ export function createWildsCombatPattern(): Pattern<any> {
         seq("g1", "g1", "d2", "g1", "g1", "a1", "bb1", "d2").note()
             .sound("sawtooth")
             .room(0.45)
-            .gain(0.36)
+            .gain(0.23)
             .lpf(420)
             .slow(1.5),
 
@@ -437,7 +437,7 @@ export function createWildsCombatPattern(): Pattern<any> {
         seq("d6", "g6", "bb6", "d7", "f7", "g7", "bb7", "d8").note()
             .sound("triangle")
             .room(0.65)
-            .gain(0.22)
+            .gain(0.14)
             .lpf(3000)
             .slow(2.5),
 
@@ -445,7 +445,7 @@ export function createWildsCombatPattern(): Pattern<any> {
         seq("bb3", "d4", "f4", "g4", "a4", "bb4", "d5", "f5").note()
             .sound("triangle")
             .room(0.55)
-            .gain(0.26)
+            .gain(0.17)
             .lpf(1900)
             .slow(2),
 
@@ -453,7 +453,7 @@ export function createWildsCombatPattern(): Pattern<any> {
         seq("g2", "g2", "d3", "bb2", "g2", "a2", "bb2", "d3").note()
             .sound("sawtooth")
             .room(0.5)
-            .gain(0.3)
+            .gain(0.2)
             .lpf(650)
             .slow(1.5)
     ).cpm(88);  // Fast, thrilling tempo
@@ -468,7 +468,7 @@ export function createFrontierPattern(): Pattern<any> {
         seq("a3", "c4", "e4", "a4", "g4", "e4", "c4", "a3").note()
             .sound("triangle")
             .room(0.8)
-            .gain(0.23)
+            .gain(0.15)
             .lpf(1500)
             .slow(4),
 
@@ -476,7 +476,7 @@ export function createFrontierPattern(): Pattern<any> {
         seq("e4", "a4", "c5", "e5", "d5", "c5", "a4", "e4").note()
             .sound("triangle")
             .room(0.7)
-            .gain(0.21)
+            .gain(0.14)
             .lpf(1800)
             .slow(3),
 
@@ -484,7 +484,7 @@ export function createFrontierPattern(): Pattern<any> {
         seq("a2", "e2", "a2", "c3", "a2", "e2").note()
             .sound("sawtooth")
             .room(0.5)
-            .gain(0.28)
+            .gain(0.18)
             .lpf(450)
             .slow(4),
 
@@ -492,7 +492,7 @@ export function createFrontierPattern(): Pattern<any> {
         seq("a5", "c6", "e6", "a6").note()
             .sound("triangle")
             .room(0.9)
-            .gain(0.15)
+            .gain(0.1)
             .lpf(2400)
             .slow(8)
     ).cpm(66);
@@ -507,7 +507,7 @@ export function createFrontierCombatPattern(): Pattern<any> {
         seq("a3", "c4", "e4", "a4", "g4", "f4", "e4", "c4").note()
             .sound("triangle")
             .room(0.5)
-            .gain(0.29)
+            .gain(0.19)
             .lpf(1700)
             .slow(2),
 
@@ -515,7 +515,7 @@ export function createFrontierCombatPattern(): Pattern<any> {
         seq("e4", "a4", "c5", "e5", "d5", "c5", "b4", "a4", "c5", "e5", "a5", "c6").note()
             .sound("triangle")
             .room(0.4)
-            .gain(0.27)
+            .gain(0.18)
             .lpf(2100)
             .slow(2),
 
@@ -523,7 +523,7 @@ export function createFrontierCombatPattern(): Pattern<any> {
         seq("a2", "a2", "e2", "a2", "a2", "c3", "a2", "a2").note()
             .sound("sawtooth")
             .room(0.3)
-            .gain(0.34)
+            .gain(0.22)
             .lpf(550)
             .slow(1.5),
 
@@ -531,7 +531,7 @@ export function createFrontierCombatPattern(): Pattern<any> {
         seq("a5", "c6", "e6", "a6", "g6", "e6", "c6", "a5").note()
             .sound("triangle")
             .room(0.5)
-            .gain(0.22)
+            .gain(0.14)
             .lpf(2900)
             .slow(2),
 
@@ -539,7 +539,7 @@ export function createFrontierCombatPattern(): Pattern<any> {
         seq("a1", "a1", "e1", "a1").note()
             .sound("sawtooth")
             .room(0.4)
-            .gain(0.32)
+            .gain(0.21)
             .lpf(280)
             .slow(3)
     ).cpm(86);

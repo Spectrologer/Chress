@@ -1,6 +1,7 @@
 // VoiceSettings.ts
 // Helpers for voice settings, audio context, and typing SFX for MessageManager
 import { VOICE_CONSTANTS } from '@core/constants/audio';
+import { getVoicePatternForCharacter, type VoicePatternConfig } from '@core/sound/VoicePatterns';
 
 interface VoiceSettings {
     name?: string;
@@ -15,6 +16,9 @@ interface VoiceSettings {
     attack?: number;
     decay?: number;
     masterGain?: number;
+    // New: Melodic pattern support
+    melodicPattern?: VoicePatternConfig;
+    patternIndex?: number; // Current position in pattern
 }
 
 interface DerivedVoiceSettings {
@@ -30,6 +34,9 @@ interface DerivedVoiceSettings {
     attack: number;
     decay: number;
     masterGain: number;
+    // New: Melodic pattern support
+    melodicPattern?: VoicePatternConfig;
+    patternIndex: number; // Current position in pattern
 }
 
 interface MessageManager {
@@ -44,12 +51,24 @@ interface MessageManager {
 export function getVoiceSettingsForName(name: string | null, customPitch?: number): VoiceSettings | null {
     if (!name) return null;
     const n = (name || '').toString();
-    // simple hash: sum of char codes
+    const lower = n.trim().toLowerCase();
+
+    // Check if character has a melodic pattern
+    const melodicPattern = getVoicePatternForCharacter(lower);
+    if (melodicPattern) {
+        // Return settings that indicate this character uses a melodic pattern
+        return {
+            name: n,
+            melodicPattern: melodicPattern,
+            patternIndex: 0
+        };
+    }
+
+    // simple hash: sum of char codes (for non-melodic characters)
     let hash = 0;
     for (let i = 0; i < n.length; i++) {
         hash = (hash * 31 + n.charCodeAt(i)) >>> 0;
     }
-    const lower = n.trim().toLowerCase();
 
     // Use custom pitch if provided, otherwise use character-specific defaults
     if (lower === 'crayn' || lower.indexOf('crayn') !== -1) {
@@ -124,6 +143,92 @@ export function ensureTypingAudio(manager: MessageManager): void {
     }
 }
 
+// Play a melodic blip using a character's voice pattern
+function playMelodicBlip(ctx: AudioContext, master: GainNode, vs: VoiceSettings, manager: MessageManager): void {
+    const pattern = vs.melodicPattern;
+    if (!pattern) return;
+
+    // Get or initialize cached voice settings for this character
+    let derived: DerivedVoiceSettings | null = null;
+    if (vs.name && manager._voiceCache?.has(vs.name)) {
+        derived = manager._voiceCache.get(vs.name) || null;
+    }
+
+    if (!derived) {
+        // Initialize pattern index
+        derived = {
+            name: vs.name || 'unknown',
+            base: pattern.notes[0],
+            wave1: pattern.wave1,
+            wave2: pattern.wave2 || 'sine',
+            bandMul: 1.8,
+            peak: pattern.gain || 0.20,
+            harmonicRatio: 1.5,
+            detuneRange: 8,
+            pan: 0,
+            attack: pattern.attack || 0.002,
+            decay: pattern.decay || 0.06,
+            masterGain: 1.2,
+            melodicPattern: pattern,
+            patternIndex: 0
+        };
+        if (derived.name && manager._voiceCache) {
+            manager._voiceCache.set(derived.name, derived);
+        }
+    }
+
+    const now = ctx.currentTime;
+    const patternIndex = derived.patternIndex;
+    const base = pattern.notes[patternIndex % pattern.notes.length];
+    const rhythmMult = pattern.rhythmVariation ? pattern.rhythmVariation[patternIndex % pattern.rhythmVariation.length] : 1.0;
+
+    // Create oscillators
+    const o1 = ctx.createOscillator();
+    const o2 = ctx.createOscillator();
+    const merger = ctx.createGain();
+    const band = ctx.createBiquadFilter();
+    const g = ctx.createGain();
+
+    // Configure oscillators with melodic frequencies
+    o1.type = pattern.wave1;
+    o2.type = pattern.wave2 || 'sine';
+    o1.frequency.setValueAtTime(base, now);
+    o2.frequency.setValueAtTime(base * 1.5, now); // Perfect fifth harmony
+
+    // Configure filter - brighter for melodic patterns
+    band.type = 'bandpass';
+    band.frequency.setValueAtTime(base * 2.0, now);
+    band.Q.setValueAtTime(2.5, now);
+
+    // Configure envelope with rhythm variation
+    const attack = (pattern.attack || 0.002) * rhythmMult;
+    const decay = (pattern.decay || 0.06) * rhythmMult;
+    const gain = pattern.gain || 0.20;
+
+    g.gain.setValueAtTime(0.001, now);
+    g.gain.linearRampToValueAtTime(gain, now + attack);
+    g.gain.exponentialRampToValueAtTime(0.00005, now + decay);
+
+    // Connect audio graph
+    o1.connect(merger);
+    o2.connect(merger);
+    merger.connect(band);
+    band.connect(g);
+    g.connect(master);
+
+    // Start and stop oscillators
+    o1.start(now);
+    o2.start(now);
+    o1.stop(now + Math.max(0.06, decay * 0.9));
+    o2.stop(now + Math.max(0.06, decay * 0.9));
+
+    // Advance pattern index for next blip
+    derived.patternIndex = (patternIndex + 1) % pattern.notes.length;
+    if (manager._voiceCache && derived.name) {
+        manager._voiceCache.set(derived.name, derived);
+    }
+}
+
 // Play a short, characterful blip for per-letter typing sound.
 // Accepts optional voiceSettings (from getVoiceSettingsForName) to tune pitch/timbre.
 export function playTypingBlip(manager: MessageManager, voiceSettings?: VoiceSettings | null): void {
@@ -142,12 +247,20 @@ export function playTypingBlip(manager: MessageManager, voiceSettings?: VoiceSet
     // Web Audio API operations can fail in various browser contexts
     try {
         const now = ctx.currentTime;
+        const vs = voiceSettings || {};
+
+        // ===== NEW: Check if this character uses a melodic pattern =====
+        if (vs.melodicPattern) {
+            playMelodicBlip(ctx, master, vs, manager);
+            return;
+        }
+
+        // ===== EXISTING: Standard procedural voice =====
         const o1 = ctx.createOscillator();
         const o2 = ctx.createOscillator();
         const merger = ctx.createGain();
         const band = ctx.createBiquadFilter();
         const g = ctx.createGain();
-        const vs = voiceSettings || {};
         let derived: DerivedVoiceSettings | null = null;
 
         // Try to retrieve cached voice settings
@@ -178,7 +291,8 @@ export function playTypingBlip(manager: MessageManager, voiceSettings?: VoiceSet
                 pan: typeof vs.pan === 'number' ? vs.pan : (rand(-0.5, 0.5)),
                 attack: (typeof vs.attack === 'number') ? vs.attack : (0.004 + rand(0, 0.008)),
                 decay: (typeof vs.decay === 'number') ? vs.decay : (0.09 + rand(0, 0.06)),
-                masterGain: (typeof vs.masterGain === 'number') ? vs.masterGain : (1.0 + rand(-0.25, 0.6))
+                masterGain: (typeof vs.masterGain === 'number') ? vs.masterGain : (1.0 + rand(-0.25, 0.6)),
+                patternIndex: 0
             };
             // Cache the derived voice settings for reuse
             if (derived?.name && manager._voiceCache) {
