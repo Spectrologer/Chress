@@ -129,7 +129,7 @@ export class StatsPanelManager {
             <div class="stats-header">
                 <div class="stats-header-left">
                     <div class="stats-config">
-                        <button id="stats-config-button" class="stats-config-button" title="Config" aria-label="Config">Config ▸</button>
+                        <button id="stats-config-button" class="stats-config-button" title="Options" aria-label="Options">Options ▸</button>
                     </div>
                     ${showReturnButton ? `
                     <div class="stats-return-to-museum">
