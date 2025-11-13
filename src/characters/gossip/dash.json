@@ -41,6 +41,11 @@
         "id": "msg_2",
         "text": "*I've broken every bone in my body at least once.",
         "buttonText": "Careful!"
+      },
+      {
+        "id": "msg_3",
+        "text": "My brain hurts.",
+        "buttonText": "Feel that."
       }
     ]
   },

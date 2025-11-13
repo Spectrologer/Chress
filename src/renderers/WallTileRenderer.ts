@@ -38,12 +38,24 @@ export class WallTileRenderer {
                                         textureName.startsWith('black_mus_exterior_tile_');
 
                 if (!isMuseumExterior) {
-                    // For regular walls, draw background dirt so transparency works properly
-                    if (RendererUtils.isImageLoaded(this.images, 'dirt')) {
-                        ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    // For HOME zone (zone level 1), use checkerboard floor pattern
+                    if (zoneLevel === 1) {
+                        const isFloor1 = (x + y) % 2 === 0;
+                        const floorImage = isFloor1 ? 'white_mus_floor_1' : 'white_mus_floor_2';
+                        if (RendererUtils.isImageLoaded(this.images, floorImage)) {
+                            ctx.drawImage(this.images[floorImage], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                        } else {
+                            ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                        }
                     } else {
-                        ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
-                        ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                        // For regular walls in other zones, draw background dirt so transparency works properly
+                        if (RendererUtils.isImageLoaded(this.images, 'dirt')) {
+                            ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                        } else {
+                            ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                            ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                        }
                     }
                 } else {
                     // For museum exterior walls, render the appropriate floor based on checkerboard pattern
@@ -151,7 +163,28 @@ export class WallTileRenderer {
             }
             return;
         }
-        // First draw background dirt
+        // HOME zone (level 1) uses checkerboard museum floor pattern
+        else if (zoneLevel === 1) {
+            // First draw checkerboard museum floor
+            const isFloor1 = (x + y) % 2 === 0;
+            const floorImage = isFloor1 ? 'white_mus_floor_1' : 'white_mus_floor_2';
+            if (RendererUtils.isImageLoaded(this.images, floorImage)) {
+                ctx.drawImage(this.images[floorImage], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            // Then draw bush on top
+            if (RendererUtils.isImageLoaded(this.images, 'bush')) {
+                ctx.drawImage(this.images.bush, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            } else {
+                ctx.fillStyle = TILE_COLORS[TILE_TYPES.WALL];
+                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            }
+            return;
+        }
+
+        // Default fallback for other zones: draw background dirt
         if (RendererUtils.isImageLoaded(this.images, 'dirt')) {
             ctx.drawImage(this.images.dirt, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
         } else {
