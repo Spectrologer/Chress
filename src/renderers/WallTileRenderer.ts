@@ -99,23 +99,6 @@ export class WallTileRenderer {
             return;
         }
 
-        // Home surface zones (level 1) use alternating museum floor tiles
-        if (zoneLevel === 1) {
-            const isFloor1 = (x + y) % 2 === 0;
-            const floorImage = isFloor1 ? 'white_mus_floor_1' : 'white_mus_floor_2';
-            if (RendererUtils.isImageLoaded(this.images, floorImage)) {
-                ctx.drawImage(this.images[floorImage], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-            } else {
-                ctx.fillStyle = TILE_COLORS[TILE_TYPES.FLOOR];
-                ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-            }
-            // Then draw wall texture on top
-            if (RendererUtils.isImageLoaded(this.images, 'white_mus_wall_1')) {
-                ctx.drawImage(this.images.white_mus_wall_1, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-            }
-            return;
-        }
-        
         // Frontier zones (level >=4) use desert background and succulent on top
         if (zoneLevel >= 4) {
             if (RendererUtils.isImageLoaded(this.images, 'desert')) {
