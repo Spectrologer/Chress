@@ -141,6 +141,41 @@ export class MultiTileHandler {
         return null;
     }
 
+    static findMuseumPosition(targetX: number, targetY: number, grid: GridLike): StructurePosition | null {
+        // Find the top-left corner of the 4x3 museum that contains this tile
+        // Uses a lenient check that allows overlays/decorations on top of the structure
+        // Similar to findBigTreePosition but for 4x3 structures
+        for (let startY = Math.max(0, targetY - 2); startY <= Math.min(GRID_SIZE - 3, targetY); startY++) {
+            for (let startX = Math.max(0, targetX - 3); startX <= Math.min(GRID_SIZE - 4, targetX); startX++) {
+                // Count how many tiles match HOUSE or PORT
+                let matchingTiles = 0;
+                let totalTiles = 0;
+
+                for (let y = startY; y < startY + 3; y++) { // 3 tiles high
+                    for (let x = startX; x < startX + 4; x++) { // 4 tiles wide
+                        totalTiles++;
+                        const tile = this.getTileFromGrid(grid, x, y);
+                        // A house tile can be either HOUSE or a PORT (the door)
+                        if (isTileType(tile, TILE_TYPES.HOUSE) || isTileType(tile, TILE_TYPES.PORT)) {
+                            matchingTiles++;
+                        }
+                    }
+                }
+
+                // Accept if at least 75% of tiles match (9 out of 12 tiles)
+                // This allows some tiles to be overlaid with decorations
+                const matchThreshold = Math.ceil(totalTiles * 0.75);
+                const isMuseum = matchingTiles >= matchThreshold;
+
+                if (isMuseum && targetX >= startX && targetX < startX + 4 &&
+                    targetY >= startY && targetY < startY + 3) {
+                    return { startX, startY };
+                }
+            }
+        }
+        return null;
+    }
+
     static findShackPosition(targetX: number, targetY: number, gridManager: GridManager, isStrictCheck = false): StructurePosition | null {
         // Handle gridManager validity
         const targetTileInitial = gridManager.getTile(targetX, targetY);

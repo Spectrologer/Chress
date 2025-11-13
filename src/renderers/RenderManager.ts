@@ -12,6 +12,7 @@ import { logger } from '@core/logger';
 import type { TapFeedback } from './types';
 import type { IGame } from '@core/context';
 import type { Grid, Tile } from '@core/SharedTypes';
+import { MultiTileHandler } from './MultiTileHandler';
 
 interface Zone {
     x: number;
@@ -541,7 +542,22 @@ export class RenderManager {
             try {
                 // Only render features in this pass (not terrain)
                 if (tile && tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.WALL) {
-                    if (isTileType(tile, TILE_TYPES.BOMB)) {
+                    // Check if this is a MUSEUM tile that needs foreground rendering
+                    if (isTileType(tile, TILE_TYPES.MUSEUM)) {
+                        // Find the museum structure position
+                        const museumPos = MultiTileHandler.findHousePosition(x, y, this.game.gridManager);
+                        if (museumPos) {
+                            const relativeY = y - museumPos.startY;
+                            // Top row (y=0) needs foreground rendering (roof)
+                            if (relativeY === 0) {
+                                // Store for foreground rendering after player
+                                this._foregroundFeatures.push({ x, y, tile });
+                                return; // Skip rendering now, will render in foreground pass
+                            }
+                        }
+                        // Bottom rows or no structure found - render normally
+                        this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
+                    } else if (isTileType(tile, TILE_TYPES.BOMB)) {
                         this.textureManager.renderTile(this.ctx, x, y, tile, this.game.gridManager, zoneLevel, terrainTextures, rotations);
                     } else if (typeof tile === 'object' && tile !== null && 'type' in tile && (tile as any).type === TILE_TYPES.FOOD) {
                         this.textureManager.renderTile(this.ctx, x, y, (tile as any).type, this.game.gridManager, zoneLevel, terrainTextures, rotations);
