@@ -50,6 +50,7 @@
   "dependencies": {
     "@sentry/browser": "^10.23.0",
     "@strudel/core": "^1.2.5",
+    "@strudel/soundfonts": "^1.2.6",
     "@strudel/tonal": "^1.2.5",
     "@strudel/webaudio": "^1.2.6",
     "canvas": "^3.2.0",

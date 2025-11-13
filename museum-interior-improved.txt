@@ -1,0 +1,63 @@
+// Museum Interior Loop - Improved Choir Harmony
+setcpm(60)
+
+stack(
+  //  piano
+  note("a3 d4 f4 a3 d4 f4 a3 c4 b3 g3 f3 g3 a3 d4 c4 e4 d4 f4 a3 d4")
+    .s("piano")
+    .gain(0.12)
+    .room(1.8)
+    .delay(0.3)
+    .lpf(1200),
+  
+  // Harmonic pad layer
+  note("a2 d3 f3 c3 g2 f2")
+    .s("sawtooth")
+    .gain(0.15)
+    .cutoff(800)
+    .room(0.9)
+    .slow(4),
+  
+  // Bass - More movement and walking pattern
+  note("a1 b1 a1 g1 f2 e2 d2 c2 d2 e2 f2 g2 a1 c2 a1 b1 d2 f2 a1 g1 f1 g1 a1 d2 f2 a1")
+    .s("sine")
+    .gain(0.35)
+    .room(0.6)
+    .slow(4)
+    .lpf(300),
+  
+  // bell 
+  note("a4 f4 d5 c5 g4")
+    .s("gm_tubular_bells")
+    .gain(0.0)
+    .room(0.9)
+    .delay(0.4)
+    .slow(6),
+  
+  // Soft strings
+  note("d3 a3 f3 g3 c3 e3")
+    .s("gm_string_ensemble_1")
+    .gain(0.12)
+    .room(0.85)
+    .lpf(1000)
+    .slow(5),
+  
+  // Choir - Main melodic layer
+  note("a3@3 d4@2 f4 a3@2 d4 c4@3 b3 g3@2 f3 g3 a3@4 d4@2 c4 e4@3 d4@2 a3@4")
+    .s("gm_choir_aahs")
+    .gain(0.45)
+    .room(0.95)
+    .slow(6)
+    .delay(0.2)
+    .lpf(2000),
+  
+  // Backup choir - Sustained harmonic foundation (synced with main choir cycle)
+  // Holds root/harmony notes aligned with main chord progression
+  note("a2@24 d3@24 f3@24 c3@24 g2@24 f2@24")
+    .s("gm_choir_aahs")
+    .gain(0.28)
+    .room(0.98)
+    .delay(0.55)
+    .lpf(2500)
+    .slow(6)
+)

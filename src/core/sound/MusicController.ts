@@ -9,7 +9,7 @@
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler.js';
 import { VOLUME_CONSTANTS } from '@core/constants/audio.js';
 import { StrudelMusicManager } from './StrudelMusicManager.js';
-import { getMusicPatternForDimension } from './MusicPatterns.js';
+import { getMusicPatternForDimension, createMuseumPattern } from './MusicPatterns.js';
 
 export class MusicController {
     public audioContext: AudioContext | null;
@@ -106,6 +106,16 @@ export class MusicController {
      */
     setMusicForZone({ dimension = 0, zoneLevel }: { dimension?: number; zoneLevel?: number } = {}): void {
         if (this.useStrudel) {
+            // Special case: Use museum pattern for interior dimension (museum board)
+            if (dimension === 1) {
+                this.currentDimension = dimension;
+                if (this.musicEnabled === false) return;
+
+                // Play museum pattern with Strudel
+                this.playStrudelPattern(createMuseumPattern());
+                return;
+            }
+
             // Use Strudel for procedural music
             // Surface zones (dimension=0): Use zone level for region-specific music (home/woods/wilds/frontier)
             // Interior/Underground zones: Use dimension for location-specific music (peaceful/cave)
@@ -120,7 +130,19 @@ export class MusicController {
             }
             this.playStrudelForDimension(musicSelector);
         } else {
-            // Use traditional .ogg files
+            // Use traditional .ogg files or museum.wav
+            if (dimension === 1) {
+                // Special case: Use museum.wav for interior dimension
+                const museumPath = 'static/sfx/music/museum.wav';
+                this.currentMusicTrack = museumPath;
+                this.currentDimension = dimension;
+
+                if (this.musicEnabled === false) return;
+
+                this.playBackgroundContinuous(museumPath, this.currentMusicVolume, 800);
+                return;
+            }
+
             const peacefulPath = 'sfx/music/peaceful.ogg';
             const tensionPath = 'sfx/music/tension.ogg';
             const cavePath = 'sfx/music/cave.ogg';
@@ -136,6 +158,31 @@ export class MusicController {
             if (this.musicEnabled === false) return;
 
             this.playBackgroundContinuous(filePath, this.currentMusicVolume, crossfadeMs);
+        }
+    }
+
+    /**
+     * Play a specific Strudel pattern
+     * @param {Pattern<any>} pattern - The Strudel pattern to play
+     * @returns {void}
+     */
+    private async playStrudelPattern(pattern: any): Promise<void> {
+        try {
+            if (this.musicEnabled === false) return;
+
+            // Stop traditional audio if playing
+            this.stopBackground();
+
+            // Set volume before playing
+            this.strudelManager.setVolume(this.currentMusicVolume);
+
+            // Play Strudel pattern
+            await this.strudelManager.play(pattern);
+        } catch (e: unknown) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'MusicController',
+                action: 'playStrudelPattern'
+            });
         }
     }
 

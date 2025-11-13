@@ -64,7 +64,8 @@
       "Bash(if exist staticnul dir static)",
       "Bash(npm i:*)",
       "Bash(del \"c:\\Users\\virgi\\OneDrive\\Desktop\\Apps\\Chesse\\src\\core\\sound\\StrudelVoiceManager.ts\")",
-      "Bash(timeout /t 5 /nobreak)"
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(npm info:*)"
     ],
     "deny": [],
     "ask": []

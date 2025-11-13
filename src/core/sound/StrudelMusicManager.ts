@@ -7,8 +7,10 @@
  */
 
 import { repl, type Pattern } from '@strudel/core';
-import { getAudioContext, webaudioOutput, initAudioOnFirstClick } from '@strudel/webaudio';
+import { getAudioContext, webaudioOutput, initAudioOnFirstClick, samples } from '@strudel/webaudio';
 import { registerSynthSounds } from 'superdough';
+// @ts-ignore - Strudel soundfonts for GM instruments
+import { registerSoundfonts } from '@strudel/soundfonts';
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler.js';
 
 export class StrudelMusicManager {
@@ -16,12 +18,14 @@ export class StrudelMusicManager {
     private currentPattern: Pattern<any> | null = null;
     private isPlaying: boolean = false;
     private audioContextInitialized: boolean = false;
+    private samplesLoaded: boolean = false;
 
     constructor() {
         this.scheduler = null;
         this.currentPattern = null;
         this.isPlaying = false;
         this.audioContextInitialized = false;
+        this.samplesLoaded = false;
     }
 
     /**
@@ -37,6 +41,9 @@ export class StrudelMusicManager {
                 registerSynthSounds()
             ]);
 
+            // Register GM soundfonts
+            registerSoundfonts();
+
             // Create scheduler with repl
             const ctx = getAudioContext();
             const replInstance = repl({
@@ -46,11 +53,42 @@ export class StrudelMusicManager {
 
             this.scheduler = replInstance.scheduler;
             this.audioContextInitialized = true;
+
+            // Load GM samples for richer instruments
+            if (!this.samplesLoaded) {
+                await this.loadGMSamples();
+            }
         } catch (e: unknown) {
             errorHandler.handle(e, ErrorSeverity.WARNING, {
                 component: 'StrudelMusicManager',
                 action: 'initializeAudio'
             });
+        }
+    }
+
+    /**
+     * Load necessary samples for music playback
+     * Loads basic drum samples (bd, hh) from Dirt-Samples repository
+     */
+    private async loadGMSamples(): Promise<void> {
+        try {
+            // Load only the basic samples we need from the Dirt-Samples repository
+            // @ts-ignore - samples function exists at runtime
+            await samples({
+                bd: ['bd/BT0A0A7.wav', 'bd/BT0AADA.wav', 'bd/BT0AAD0.wav'],
+                hh: ['hh/000_hh3closedhh.wav', 'hh/001_hh3openhh.wav', 'hh/002_hh3closedhh.wav',
+                     'hh/003_hh3closedhh.wav', 'hh/004_hh3pedalhh.wav', 'hh/005_hh3openhh.wav',
+                     'hh/006_hh3openhh.wav', 'hh/007_hh3closedhh.wav']
+            }, 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/');
+
+            this.samplesLoaded = true;
+        } catch (e: unknown) {
+            errorHandler.handle(e, ErrorSeverity.WARNING, {
+                component: 'StrudelMusicManager',
+                action: 'loadGMSamples',
+                message: 'Failed to load samples, falling back to basic synths'
+            });
+            // Continue without samples - basic synths will still work
         }
     }
 

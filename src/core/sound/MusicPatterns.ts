@@ -3,6 +3,10 @@
  */
 
 import { note, s, stack, seq, type Pattern } from '@strudel/core';
+// @ts-ignore - Strudel types are incomplete
+import '@strudel/tonal';
+// @ts-ignore - Strudel soundfonts for GM instruments
+import '@strudel/soundfonts';
 
 /**
  * Cave/Underground music - Cavernous, mysterious with glimmer of hope
@@ -85,59 +89,63 @@ export function createPeacefulPattern(): Pattern<any> {
 }
 
 /**
- * Tension/Surface music - Dreamy, welcoming Twin Peaks atmosphere
- * Extended 5-second loop with more melodic variation
+ * Tension/Surface music - Adventurous overworld theme inspired by Hyrule Field
+ * Galloping rhythm, heroic melody, sense of exploration and open skies
  */
 export function createTensionPattern(): Pattern<any> {
     return stack(
-        // Warm jazzy chords - expanded progression with more chromatic movement
-        seq("c3", "e3", "a3", "f3", "c3", "g3", "d3", "e3", "a3", "g3", "f3", "d3", "e3", "g3", "c3", "e3").note()
-            .sound("triangle")
-            .room(0.92)
-            .gain(0.12)
-            .lpf(1400)
-            .slow(5),
+        // Main heroic melody (Hyrule Field inspired)
+        seq("d4", "a4", "d5", "a4", "g4", "a4", "g4", "f4", "e4", "d4", "e4", "f4", "g4", "a4", "bb4", "a4").note()
+            .sound("sawtooth")
+            .lpf(1200)
+            .gain(0.22)
+            .room(0.6)
+            .slow(8),
 
-        // Hopeful, nostalgic melody - more variation and movement
-        seq("c4", "e4", "g4", "a4", "c5", "a4", "g4", "e4", "d4", "f4", "a4", "g4", "e4", "c4", "d4", "e4").note()
+        // Counter melody - flute-like
+        seq("f4", "g4", "a4", "bb4", "a4", "g4", "f4", "e4").note()
             .sound("triangle")
-            .room(0.88)
-            .gain(0.14)
             .lpf(1800)
-            .slow(5),
+            .gain(0.18)
+            .room(0.5)
+            .slow(4),
 
-        // Gentle bass - more rhythmic variation
-        seq("c1", "g1", "c1", "g1", "a1", "g1", "f1", "e1", "c1", "g1").note()
-            .sound("sawtooth")
-            .room(0.82)
-            .gain(0.17)
-            .lpf(260)
-            .slow(5),
-
-        // Warm mid-range harmony - expanded with rhythmic interest
-        seq("e3", "g3", "a3", "g3", "e3", "g3", "f3", "a3", "c4", "a3", "g3", "e3").note()
-            .sound("triangle")
-            .room(0.85)
-            .gain(0.11)
-            .lpf(1600)
-            .slow(7.5),
-
-        // Gentle rhythmic pulse - more variation and movement
-        seq("c2", "e2", "g2", "e2", "d2", "f2", "a2", "f2", "e2", "g2").note()
-            .sound("sawtooth")
-            .room(0.8)
-            .gain(0.1)
-            .lpf(500)
-            .slow(5),
-
-        // New subtle bass harmony - warmth and richness
-        seq("c0", "g0", "a0", "f0", "c0", "e0").note()
+        // Galloping rhythm bass (horses galloping across fields)
+        seq("d2", "d3", "d2", "a2", "a3", "a2", "bb2", "bb3", "bb2", "f2", "f3", "f2").note()
             .sound("sine")
-            .room(0.75)
-            .gain(0.12)
-            .lpf(180)
-            .slow(5)
-    ).cpm(60);  //
+            .gain(0.28)
+            .lpf(300)
+            .room(0.4)
+            .slow(3),
+
+        // Chord pad for open sky feeling
+        seq("d3", "a3", "bb3", "f3").note()
+            .sound("sawtooth")
+            .gain(0.16)
+            .lpf(900)
+            .room(0.8)
+            .slow(8),
+
+        // Sparkling harp-like arpeggios
+        seq("d5", "f5", "a5", "d6", "a5", "f5").note()
+            .sound("sine")
+            .gain(0.15)
+            .room(0.7)
+            // @ts-ignore - decay for plucked sound
+            .decay(0.4)
+            .slow(2),
+
+        // Mid-range harmonies
+        seq("a3", "d4", "f4", "a4").note()
+            .sound("square")
+            .lpf(1000)
+            .gain(0.14)
+            .room(0.6)
+            .slow(4),
+
+        // Rhythmic pulse
+        s("bd").gain(0.18).room(0.5).slow(4)
+    ).cpm(72);
 }
 
 /**
@@ -554,6 +562,84 @@ export function createFrontierCombatPattern(): Pattern<any> {
             .lpf(280)
             .slow(3)
     ).cpm(86);
+}
+
+/**
+ * Museum music - Quirky ambient overworld, melancholic but whimsical
+ * Uses General MIDI soundfonts for rich orchestral sound
+ * Warm, gentle atmosphere with orchestral instruments
+ */
+export function createMuseumPattern(): Pattern<any> {
+    return stack(
+        // Warm, curious horn melody - flowing phrases
+        seq("d4", "~", "f4", "~", "~", "a4", "~", "g4", "~", "~", "bb4", "~", "~", "a4", "~", "~",
+            "f4", "~", "g4", "~", "~", "a4", "~", "~", "~", "d5", "~", "c5", "~", "~", "a4", "~",
+            "g4", "~", "bb4", "~", "~", "d5", "~", "~", "c5", "~", "a4", "~", "~", "g4", "~", "f4",
+            "d4", "~", "~", "f4", "~", "e4", "~", "~", "~", "~", "d4", "~", "~", "~", "~", "~").note()
+            .sound("gm_french_horn")
+            .gain(0.28)
+            .room(0.7)
+            .lpf(1200)
+            .slow(4),
+
+        // Playful pizzicato accents - sparse and bouncy
+        seq("~", "a4", "~", "d4", "~", "g4", "~", "f4", "~", "a4", "~", "bb4", "~", "g4", "~", "f4").note()
+            .sound("gm_pizzicato_strings")
+            .gain(0.4)
+            .room(0.4)
+            .slow(4),
+
+        // Warm pad strings - gentle chord progression
+        seq("d3", "d3", "d3", "d3", "f3", "f3", "f3", "f3", "bb3", "bb3", "bb3", "bb3", "a3", "a3", "a3", "a3").note()
+            .sound("gm_string_ensemble_1")
+            .gain(0.3)
+            .lpf(1400)
+            .room(0.75)
+            .slow(4),
+
+        // Whimsical glockenspiel sparkles - delicate high notes
+        seq("~", "~", "d5", "~", "~", "a5", "~", "~", "~", "f5", "~", "~", "~", "g5", "~", "~").note()
+            .sound("gm_glockenspiel")
+            .gain(0.35)
+            .room(0.6)
+            .slow(2),
+
+        // Bouncy bassline - walking pattern
+        seq("d2", "~", "d3", "~", "f2", "~", "f3", "~", "bb2", "~", "bb3", "~", "a2", "~", "a3", "~").note()
+            .sound("gm_contrabass")
+            .gain(0.35)
+            .lpf(400)
+            .room(0.5)
+            .slow(4),
+
+        // Quirky marimba rhythm - percussive accents
+        seq("~", "~", "d4", "~", "~", "a4", "~").note()
+            .sound("gm_marimba")
+            .gain(0.22)
+            .room(0.5)
+            .slow(2),
+
+        // Gentle woodwind counter-melody - breathy and soft
+        seq("~", "~", "a4", "~", "~", "d5", "~", "~", "~", "f4", "~", "~", "~", "g4", "~", "~").note()
+            .sound("gm_flute")
+            .gain(0.4)
+            .lpf(1600)
+            .room(0.6)
+            .slow(2),
+
+        // Soft timpani pulse - subtle rhythm
+        s("bd, ~, ~, ~, ~, ~, ~, bd").gain(0.2).room(0.7).slow(8),
+
+        // Occasional chime - bell tones
+        seq("~", "~", "~", "~", "~", "~", "d5", "~").note()
+            .sound("gm_tubular_bells")
+            .gain(0.22)
+            .room(0.8)
+            .slow(4),
+
+        // Light cymbal atmosphere - sparse texture
+        s("~, ~, ~, ~, ~, ~, ~, hh").gain(0.18).room(0.8).slow(4)
+    ).cpm(58);
 }
 
 /**
