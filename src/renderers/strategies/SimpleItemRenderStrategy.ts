@@ -49,6 +49,11 @@ export class SimpleItemRenderStrategy extends TileRenderStrategy {
         // First draw the base tile
         baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
+        // Save canvas state and ensure proper alpha blending
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1.0;
+
         // Try to draw the item image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, this.spriteKey)) {
             const itemImage = this.images[this.spriteKey];
@@ -63,6 +68,8 @@ export class SimpleItemRenderStrategy extends TileRenderStrategy {
         } else {
             this.renderFallback(ctx, pixelX, pixelY);
         }
+
+        ctx.restore();
     }
 
     private renderRotated(ctx: CanvasRenderingContext2D, image: HTMLImageElement, pixelX: number, pixelY: number): void {

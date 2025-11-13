@@ -18,6 +18,11 @@ export class WaterRenderStrategy extends TileRenderStrategy {
         // This prevents covering up custom terrain textures (like museum floors)
         // baseRenderer.renderFloorTileWithDirectionalTextures(ctx, x, y, pixelX, pixelY, grid, zoneLevel);
 
+        // Save canvas state and ensure proper alpha blending
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1.0;
+
         // Try to draw the water image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, 'water')) {
             // Scale water to 70% to make it slightly smaller
@@ -37,5 +42,7 @@ export class WaterRenderStrategy extends TileRenderStrategy {
             ctx.textBaseline = 'middle';
             ctx.fillText('💧', pixelX + TILE_SIZE / 2, pixelY + TILE_SIZE / 2);
         }
+
+        ctx.restore();
     }
 }

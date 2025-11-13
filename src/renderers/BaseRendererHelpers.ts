@@ -37,6 +37,11 @@ export function renderOverlay(
         const img = images[imageKey];
         try {
             ctx.save();
+
+            // Ensure proper alpha blending for transparency
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 1.0;
+
             if (filter) ctx.filter = filter;
 
             // If a rotation is requested, draw with transform around the tile center.

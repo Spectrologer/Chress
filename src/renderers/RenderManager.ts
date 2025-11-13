@@ -484,7 +484,7 @@ export class RenderManager {
         }
 
         // Three-pass rendering to ensure proper layering:
-        // Pass 1: Render terrain only (floors and walls)
+        // Pass 1: Render terrain (floors and walls) under ALL tiles
         GridIterator.forEach(this.game.grid, (tile: Tile, x: number, y: number) => {
             try {
                 const coord = `${x},${y}`;
@@ -494,10 +494,12 @@ export class RenderManager {
                 // Render terrain in this pass if:
                 // 1. The tile is a floor or wall type, OR
                 // 2. There's a custom terrain texture defined for this position (even if it has a feature), OR
-                // 3. There's an overlay texture (like big_tree) that needs floor underneath
-                if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.WALL || hasTerrainTexture || hasOverlayTexture) {
-                    // If there's a terrain texture or overlay, render floor type so the texture gets applied
-                    const tileToRender = (hasTerrainTexture || hasOverlayTexture) ? TILE_TYPES.FLOOR : tile;
+                // 3. There's an overlay texture (like big_tree) that needs floor underneath, OR
+                // 4. The tile is NOT a floor or wall (items, NPCs, etc. need floor underneath)
+                const isFeatureTile = tile !== TILE_TYPES.FLOOR && tile !== TILE_TYPES.WALL;
+                if (tile === TILE_TYPES.FLOOR || tile === TILE_TYPES.WALL || hasTerrainTexture || hasOverlayTexture || isFeatureTile) {
+                    // If there's a terrain texture, overlay, or feature tile, render floor type so the texture gets applied
+                    const tileToRender = (hasTerrainTexture || hasOverlayTexture || isFeatureTile) ? TILE_TYPES.FLOOR : tile;
                     this.textureManager.renderTile(this.ctx, x, y, tileToRender, this.game.gridManager, zoneLevel, terrainTextures, rotations);
                 }
             } catch (error) {

@@ -30,6 +30,9 @@ export class BombRenderStrategy extends TileRenderStrategy {
             // Active bomb object - render with pulsation
             if (bombImage && bombImage.complete) {
                 ctx.save();
+                // Ensure proper alpha blending for transparency
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.globalAlpha = 1.0;
                 // Only animate if bomb is not just placed
                 if (!tile.justPlaced) {
                     const scale = 1 + Math.sin(Date.now() * ANIMATION_CONSTANTS.BOMB_PULSE_FREQUENCY) * ANIMATION_CONSTANTS.BOMB_PULSE_AMPLITUDE;
@@ -47,7 +50,11 @@ export class BombRenderStrategy extends TileRenderStrategy {
             }
         } else if (bombImage && bombImage.complete) {
             // Primitive bomb (inactive pickup item) - render normally without animation
+            ctx.save();
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 1.0;
             ctx.drawImage(bombImage, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            ctx.restore();
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.BOMB], '💣');
             logger.debug('Using fallback for primitive bomb');

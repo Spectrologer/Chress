@@ -35,28 +35,34 @@ export class PortRenderStrategy extends TileRenderStrategy {
      * @returns true if a sprite was rendered, false otherwise
      */
     private renderPortKindSprite(ctx: CanvasRenderingContext2D, portKind: PortKind, pixelX: number, pixelY: number): boolean {
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1.0;
+
         switch (portKind) {
             case 'stairdown':
                 if (RendererUtils.isImageLoaded(this.images, 'stairdown')) {
                     ctx.drawImage(this.images.stairdown, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    ctx.restore();
                     return true;
                 }
                 break;
             case 'stairup':
                 if (RendererUtils.isImageLoaded(this.images, 'stairup')) {
                     ctx.drawImage(this.images.stairup, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    ctx.restore();
                     return true;
                 }
                 break;
             case 'grate':
                 if (RendererUtils.isImageLoaded(this.images, 'doodads/grate')) {
                     ctx.drawImage(this.images['doodads/grate'], pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+                    ctx.restore();
                     return true;
                 }
                 break;
             case 'interior':
                 // Draw a visual indicator for interior exit ports
-                ctx.save();
                 ctx.fillStyle = 'rgba(139, 69, 19, 0.4)'; // Semi-transparent brown
                 ctx.fillRect(pixelX + 8, pixelY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
                 ctx.strokeStyle = 'rgba(205, 133, 63, 0.7)'; // Lighter brown border
@@ -65,6 +71,8 @@ export class PortRenderStrategy extends TileRenderStrategy {
                 ctx.restore();
                 return true;
         }
+
+        ctx.restore();
         return false;
     }
 
@@ -121,7 +129,11 @@ export class PortRenderStrategy extends TileRenderStrategy {
             }
         }
         if (RendererUtils.isImageLoaded(this.images, 'hole')) {
+            ctx.save();
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 1.0;
             ctx.drawImage(this.images.hole, pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+            ctx.restore();
         }
     }
 

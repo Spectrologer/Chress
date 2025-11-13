@@ -29,6 +29,11 @@ export class FoodRenderStrategy extends TileRenderStrategy {
         // First draw the base tile
         baseRenderer.renderItemBaseTile(ctx, x, y, pixelX, pixelY, gridManager, zoneLevel);
 
+        // Save canvas state and ensure proper alpha blending
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1.0;
+
         // Try to draw the food image if loaded, otherwise use fallback
         if (RendererUtils.isImageLoaded(this.images, foodKey)) {
             if (foodAsset === 'items/consumables/aguamelin.png') {
@@ -44,6 +49,8 @@ export class FoodRenderStrategy extends TileRenderStrategy {
         } else {
             this.renderFallback(ctx, pixelX, pixelY, TILE_COLORS[TILE_TYPES.FOOD], '🥖');
         }
+
+        ctx.restore();
     }
 
     private renderFallback(ctx: CanvasRenderingContext2D, pixelX: number, pixelY: number, color: string, emoji: string): void {
