@@ -96,10 +96,29 @@ export class DialogueManager {
     }
 
     /**
+     * Format dialogue text by coloring CAPS LOCK words with character color
+     */
+    private _formatDialogueText(text: string, characterColor?: string): string {
+        if (!characterColor) {
+            return text;
+        }
+
+        // Match words that are all uppercase (2 or more consecutive capital letters)
+        const capsLockPattern = /\b[A-Z]{2,}\b/g;
+
+        return text.replace(capsLockPattern, (match) => {
+            return `<span style="color: ${characterColor}">${match}</span>`;
+        });
+    }
+
+    /**
     * Build dialogue HTML content
     */
     private _buildDialogueHTML(text: string, imageSrc: string | null, name: string | null, btnText: string, category: string, portraitBackground?: string): void {
         if (!this.messageOverlay) return;
+
+        // Format text with colored CAPS LOCK words
+        const formattedText = this._formatDialogueText(text, portraitBackground);
 
         // Add assets/ prefix if imageSrc doesn't already include it
         const imgPath = imageSrc && !imageSrc.startsWith('assets/') ? `assets/${imageSrc}` : imageSrc;
@@ -115,7 +134,7 @@ export class DialogueManager {
             </div>
             <div class="character-name" style="${portraitBackground ? `color: ${portraitBackground};` : ''}">${name}</div>
         </div>
-        <div class="dialogue-text" style="text-align: left; font-size: 1.35em; line-height: 1.45; padding: 10px 15px; flex-grow: 1; overflow: auto; max-height: 100%;">${text}</div>
+        <div class="dialogue-text" style="text-align: left; font-size: 1.35em; line-height: 1.45; padding: 10px 15px; flex-grow: 1; overflow: auto; max-height: 100%;">${formattedText}</div>
         </div>
         <div id="dialogue-button-container" style="text-align: center; margin-top: 15px; flex-shrink: 0; opacity: 0; pointer-events: none;">
         <button class="dialogue-close-button" style="padding: 10px 20px; font-size: 1.2em; cursor: pointer; background-color: #964253; color: white; border: 2px solid #57294b; border-radius: 5px;">${btnText}</button>
@@ -136,14 +155,14 @@ export class DialogueManager {
 
             this.messageOverlay.innerHTML = /*html*/`
                 <img src="${imgPath}" style="${imgStyle}">
-                <div class="dialogue-text" style="text-align:center;">${text}</div>
+                <div class="dialogue-text" style="text-align:center;">${formattedText}</div>
                 <div id="dialogue-button-container" style="text-align: center; margin-top: 20px;">
                     <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #964253; color: white; border: 2px solid #57294b; border-radius: 5px;">${btnText}</button>
                 </div>`;
         } else {
             //textbox without image
             this.messageOverlay.innerHTML = /*html*/`
-                <div class="dialogue-text" style="text-align:center;">${text}</div>
+                <div class="dialogue-text" style="text-align:center;">${formattedText}</div>
                 <div id="dialogue-button-container" style="text-align: center; margin-top: 20px;">
                     <button class="dialogue-close-button" style="padding: 8px 16px; font-size: 1.2em; cursor: pointer; background-color: #964253; color: white; border: 2px solid #57294b; border-radius: 5px;">${btnText}</button>
                 </div>`;

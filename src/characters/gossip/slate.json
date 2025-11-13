@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm gonna be a boulder one day. Just gotta believe. And maybe accumulate some sediment.",
-        "buttonText": "You got this."
+        "text": "One day I'll be too big to carry up a hill. You'll need to push me up and it's gonnna be a problem",
+        "buttonText": "Dream."
       },
       {
         "id": "msg_1",
-        "text": "Been working on my size. Growing slow but steady. It's all about the long game, you know?",
-        "buttonText": "Nice."
+        "text": "Are you getting enough MINERALS?",
+        "buttonText": "Idk."
       },
       {
         "id": "msg_2",
-        "text": "Other rocks laugh, but I have DREAMS. Big dreams. Boulder-sized dreams. I'll show them all.",
+        "text": "I got caught in someone's shoe once.",
         "buttonText": "Inspiring."
       }
     ]

@@ -41,7 +41,13 @@
         "id": "msg_2",
         "text": "'Y' is your score so low?",
         "buttonText": "Whatever."
+      },
+      {
+        "id": "msg_3",
+        "text": "It's me, 'Y', from the LOADING SCREEN. 'Y'-o-u need to DREAM to think it.",
+        "buttonText": "I see."
       }
+        
     ]
   },
   "behavior": {

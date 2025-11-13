@@ -27,15 +27,11 @@ export class StartOverlayController {
         setupButtonHandlers: (overlay: HTMLElement, hasSaved: boolean) => void
     ): Promise<void> {
         try {
+            logger.debug('[StartOverlayController] showStartOverlay called');
             const overlay = document.getElementById('startOverlay');
-            if (!overlay) return;
-
-            // Check saved game state first
-            const hasSaved = await this.hasSavedGame();
-
-            // Reorder buttons BEFORE showing overlay, if saved game exists
-            if (hasSaved) {
-                this.prioritizeContinueButton(overlay);
+            if (!overlay) {
+                logger.error('[StartOverlayController] Overlay element not found!');
+                return;
             }
 
             // Overlay is already visible, just ensure it's shown
@@ -43,11 +39,24 @@ export class StartOverlayController {
             overlay.style.visibility = 'visible';
             overlay.setAttribute('aria-hidden', 'false');
 
+            // CRITICAL: Set up button handlers IMMEDIATELY before any async operations
+            // This prevents the "double-tap" issue where users click before handlers are ready
+            logger.debug('[StartOverlayController] Setting up button handlers FIRST (before async checks)');
+            setupButtonHandlers(overlay, false); // Pass false initially, will update continue button state later
+            logger.debug('[StartOverlayController] Button handlers registered');
+
+            // Check saved game state (async operation)
+            logger.debug('[StartOverlayController] Checking for saved game...');
+            const hasSaved = await this.hasSavedGame();
+            logger.debug('[StartOverlayController] hasSavedGame result:', hasSaved);
+
+            // Reorder buttons if saved game exists
+            if (hasSaved) {
+                this.prioritizeContinueButton(overlay);
+            }
+
             // Configure continue button based on saved game state
             configureContinueBtn(overlay, hasSaved);
-
-            // Set up button handlers
-            setupButtonHandlers(overlay, hasSaved);
 
             // Pre-render UI elements behind the overlay
             this.preRenderUIElements();

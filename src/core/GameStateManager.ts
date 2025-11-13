@@ -181,7 +181,7 @@ export class GameStateManager {
         gameExt._newGameSpawnPosition = null; // Stores exit tile position for entrance animation
     }
 
-    resetGame(): void {
+    async resetGame(): Promise<void> {
         const gameExt = this.game as unknown as GameContextExtended;
         const playerExt = this.game.player as unknown as PlayerExtended;
 
@@ -192,7 +192,7 @@ export class GameStateManager {
         };
 
         // Clear saved state since game over should reset everything
-        this.clearSavedState();
+        await this.clearSavedState();
 
         // Reset all game state
         gameExt.zoneRepository.clear();
@@ -257,10 +257,8 @@ export class GameStateManager {
             regionName: this.game.currentRegion
         });
 
-        // Now trigger the entrance animation (flag already set above)
-        if (shouldTriggerEntrance) {
-            this.game.gameInitializer!.triggerNewGameEntrance();
-        }
+        // Don't trigger entrance animation here - it will be triggered by GameInitializer.init()
+        // when startGame() is called. Triggering it here causes race conditions with the overlay dismissal.
 
         // Ensure background music matches the new starting zone so any previous
         // underground track doesn't continue playing after a respawn/reset.

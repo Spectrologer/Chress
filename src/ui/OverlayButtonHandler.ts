@@ -61,30 +61,23 @@ export class OverlayButtonHandler {
      */
     async handleStartGame(overlay: HTMLElement): Promise<void> {
         try {
-            logger.debug('[NewGame] Button clicked - gameStarted:', this.game.gameStarted);
-
             // Exit preview mode to show player
             this.game.previewMode = false;
-
-            // Resume audio context on user gesture
-            await this.resumeAudioContext();
 
             // Apply music preference
             this.musicToggle.applyMusicPreference();
 
-            // Reset the game (clear saved state)
-            this.resetGameState();
+            // Start all async operations in parallel for maximum responsiveness
+            // This allows the visual feedback to start immediately while reset happens
+            const resetPromise = this.resetGameState();
+            const hidePromise = this.startOverlayController.hideOverlay(overlay);
+            this.resumeAudioContext(); // Fire and forget - audio will resume in background
 
-            logger.debug('[NewGame] After reset - gameStarted:', this.game.gameStarted);
+            // Wait for both reset and overlay animation to complete
+            await Promise.all([resetPromise, hidePromise]);
 
-            // Animate overlay away
-            await this.startOverlayController.hideOverlay(overlay);
-
-            logger.debug('[NewGame] Overlay hidden - calling startGame()');
             // Start new game
             this.game.gameInitializer.startGame();
-
-            logger.debug('[NewGame] startGame() completed - gameStarted:', this.game.gameStarted);
         } catch (error) {
             logger.error('Error handling start game:', error);
             // Still try to start
@@ -107,8 +100,9 @@ export class OverlayButtonHandler {
             // Load saved game state before resuming audio
             this.loadGameState();
 
-            // Resume audio context on user gesture
-            await this.resumeAudioContext();
+            // Resume audio context in background (don't await - let it happen asynchronously)
+            // This prevents blocking the game start on audio initialization
+            this.resumeAudioContext();
 
             // Apply music preference (may override saved preference)
             this.musicToggle.applyMusicPreference();
@@ -327,23 +321,34 @@ export class OverlayButtonHandler {
 
     /**
      * Resumes the audio context after user gesture.
+     * Returns immediately - audio will resume in the background.
      */
     private async resumeAudioContext(): Promise<void> {
         try {
-            await safeCallAsync(this.game.soundManager, 'resumeAudioContext');
+            // Add a timeout to prevent hanging indefinitely
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Audio context resume timeout')), 2000)
+            );
+
+            const resumePromise = safeCallAsync(this.game.soundManager, 'resumeAudioContext');
+
+            await Promise.race([resumePromise, timeoutPromise]);
         } catch (e) {
-            logger.error('Error resuming audio context:', e);
+            logger.warn('Error/timeout resuming audio context (non-critical):', e);
+            // Continue anyway - audio issues shouldn't block game start
         }
     }
 
     /**
      * Resets the game state (clears saved data).
      */
-    private resetGameState(): void {
+    private async resetGameState(): Promise<void> {
         try {
-            const reset = safeCall(this.game.gameStateManager, 'resetGame');
+            const reset = safeCallAsync(this.game.gameStateManager, 'resetGame');
             if (!reset) {
-                safeCall(this.game.gameStateManager, 'clearSavedState');
+                await safeCallAsync(this.game.gameStateManager, 'clearSavedState');
+            } else {
+                await reset;
             }
         } catch (e) {
             logger.error('Error resetting game state:', e);

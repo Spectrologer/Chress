@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "You been drinking the water around here? *ribbit* Tastes funny. Chemical-funny. Not ha-ha funny.",
+        "text": "Don't drink the water around here.",
         "buttonText": "Hmm."
       },
       {
         "id": "msg_1",
-        "text": "I wasn't always rainbow-colored, you know. Used to be regular green. Then I drank the water...",
+        "text": "You need a strong filter to get the xenoestrogens out of your microplastics out of your water.",
         "buttonText": "Oh no."
       },
       {
         "id": "msg_2",
-        "text": "*ribbit* The well's been acting strange. Glowing at night. I'm staying away from it. You should too.",
-        "buttonText": "Thanks."
+        "text": "Are you getting enough IODINE?",
+        "buttonText": "I'll take 30."
       }
     ]
   },

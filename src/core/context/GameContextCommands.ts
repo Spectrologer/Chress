@@ -142,8 +142,8 @@ export abstract class GameContextCommands {
         this.zoneManager!.spawnTreasuresOnGrid(treasures);
     }
 
-    resetGame(): void {
-        this.gameInitializer!.resetGame();
+    async resetGame(): Promise<void> {
+        await this.gameInitializer!.resetGame();
     }
 
     /**

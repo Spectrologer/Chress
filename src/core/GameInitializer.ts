@@ -86,36 +86,57 @@ export class GameInitializer {
      */
     async loadAssets(): Promise<void> {
         try {
+            // Show overlay early to register button handlers BEFORE menu is visible
+            // This prevents the "double-tap" issue where users click before handlers are ready
+            if (this.game.overlayManager) {
+                this.game.overlayManager.showStartOverlay();
+            } else {
+                logger.error('[GameInitializer] overlayManager is null!');
+            }
+
             // Delegate to AssetLoader
             await this.game.assetLoader!.loadAssets();
 
-            // Show overlay
-            this.game.overlayManager!.showStartOverlay();
-        } catch (error) {
-            logger.error('Error loading assets:', error);
-            // Show overlay on failure
-            this.game.overlayManager!.showStartOverlay();
-        }
+            // Start preview rendering AFTER assets finish loading
+            // This ensures all textures are loaded before preview renders
+            await this.startPreviewMode();
 
-        // Preview render loop
-        // Draws board behind overlay
+            // Hide loading screen and show menu now that everything is ready
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const startMenuGrid = document.getElementById('startMenuGrid');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+            if (startMenuGrid) {
+                startMenuGrid.style.display = '';
+            }
+        } catch (error) {
+            logger.error('[GameInitializer] Error loading assets:', error);
+            // Show overlay on failure (handlers will be registered)
+            if (this.game.overlayManager) {
+                this.game.overlayManager.showStartOverlay();
+            }
+        }
+    }
+
+    /**
+     * Starts preview mode to show the game board while the overlay is visible
+     */
+    private async startPreviewMode(): Promise<void> {
+        // Preview render loop - draws board behind overlay
         if (!this.game.gameStarted) {
             // Temp zone for preview
             if (!this.game.grid) {
                 try {
-                    // Try to load saved game first to show last board
-                    const hasSavedGame = await this.game.gameStateManager!.loadGameState();
-                    if (!hasSavedGame) {
-                        // No saved game, generate surface zone (0,0 dimension 0) for preview
-                        // Ensure player is at surface zone (0,0 dimension 0)
-                        this.game.player!.currentZone = { x: 0, y: 0, dimension: 0, depth: 0 };
+                    // Generate fresh surface zone for preview (don't load saved game yet)
+                    // This shows users what a new game will look like
+                    // Ensure player is at surface zone (0,0 dimension 0)
+                    this.game.player!.currentZone = { x: 0, y: 0, dimension: 0, depth: 0 };
 
-                        this.game.generateZone();
+                    this.game.generateZone();
 
-                        // Verify grid was created
-                        if (!this.game.grid) {
-                            logger.error('[Preview] Zone generation failed - grid is null');
-                        }
+                    if (!this.game.grid) {
+                        logger.error('[Preview] Zone generation failed - grid is null');
                     }
                 } catch (error) {
                     logger.error('[Preview] Error during preview zone generation:', error);
@@ -145,13 +166,11 @@ export class GameInitializer {
      * Prevents multiple initializations and delegates to init().
      */
     startGame(): void {
-        logger.debug('[GameInitializer] startGame() called - gameStarted:', this.game.gameStarted);
         if (this.game.gameStarted) {
             logger.warn('[GameInitializer] Game already started - ignoring call');
             return; // Prevent multiple inits
         }
         this.game.gameStarted = true;
-        logger.debug('[GameInitializer] Set gameStarted = true, calling init()');
 
         // Canvas visibility is already handled by main.ts after loading screen
         this.init();
@@ -170,14 +189,13 @@ export class GameInitializer {
         // Food assets must be ready
         this.game.assetLoader!.refreshFoodAssets();
 
-        // Check if game was already loaded during preview (to avoid double loading)
-        let loaded: boolean = this.game.grid !== null && this.game.grid !== undefined;
-        if (!loaded) {
-            loaded = await this.game.gameStateManager!.loadGameState();
-        }
+        // Try to load saved game state
+        // Note: Even if grid exists from preview, we need to check saved state
+        // to determine if this is a new game or continuing
+        let loaded: boolean = await this.game.gameStateManager!.loadGameState();
         let isNewGame: boolean = false;
         if (!loaded) {
-            // No save - generate zone
+            // No save - generate zone (this is a new game)
             isNewGame = true;
             this.game.generateZone();
 
@@ -257,7 +275,7 @@ export class GameInitializer {
      * Player hops from off-screen onto exit tile, then paths to museum entrance.
      */
     triggerNewGameEntrance(): void {
-        logger.debug(`[Entrance] triggerNewGameEntrance called`);
+        logger.log(`[Entrance] triggerNewGameEntrance called`);
         // Disable input during entrance animation (may already be set by resetGame)
         if (!(this.game as any)._entranceAnimationInProgress) {
             (this.game as any)._entranceAnimationInProgress = true;
@@ -294,13 +312,13 @@ export class GameInitializer {
             try {
                 const playerPos = this.game.player!.getPosition();
                 const currentZone = this.game.player!.getCurrentZone();
-                logger.debug(`[Entrance] Player at (${playerPos.x},${playerPos.y}), zone (${currentZone.x},${currentZone.y},${currentZone.dimension})`);
+                logger.log(`[Entrance] Player at (${playerPos.x},${playerPos.y}), zone (${currentZone.x},${currentZone.y},${currentZone.dimension})`);
 
                 // Only trigger for home surface zone (0,0,0,0)
                 if (currentZone.x === 0 && currentZone.y === 0 && currentZone.dimension === 0) {
                     // Get the stored spawn position (the exit tile)
                     const exitSpawn = (this.game as any)._newGameSpawnPosition;
-                    logger.debug(`[Entrance] Exit spawn position: ${exitSpawn ? `(${exitSpawn.x},${exitSpawn.y})` : 'null'}`);
+                    logger.log(`[Entrance] Exit spawn position: ${exitSpawn ? `(${exitSpawn.x},${exitSpawn.y})` : 'null'}`);
 
                     if (!exitSpawn) {
                         logger.error(`[Entrance] No _newGameSpawnPosition found - aborting entrance animation`);
@@ -314,7 +332,7 @@ export class GameInitializer {
                     let clubEntranceY: number | null = null;
 
                     // Search for interior port tile
-                    logger.debug(`[Entrance] Searching for interior port in grid...`);
+                    logger.log(`[Entrance] Searching for interior port in grid...`);
                     for (let y: number = 0; y < GRID_SIZE; y++) {
                         for (let x: number = 0; x < GRID_SIZE; x++) {
                             const tile = this.game.gridManager?.getTile(x, y);
@@ -323,7 +341,7 @@ export class GameInitializer {
                             if (isPort && tile && typeof tile === 'object' && 'portKind' in tile && tile.portKind === 'interior') {
                                 clubEntranceX = x;
                                 clubEntranceY = y;
-                                logger.debug(`[Entrance] Found interior port at (${x},${y})`);
+                                logger.log(`[Entrance] Found interior port at (${x},${y})`);
                                 break;
                             }
                         }
@@ -336,7 +354,7 @@ export class GameInitializer {
                         clubEntranceX = 4;
                         clubEntranceY = 6;
                     } else {
-                        logger.debug(`[Entrance] Museum entrance target: (${clubEntranceX},${clubEntranceY})`);
+                        logger.log(`[Entrance] Museum entrance target: (${clubEntranceX},${clubEntranceY})`);
                     }
 
                     // Stage 1: Path from off-screen to exit tile
@@ -369,10 +387,10 @@ export class GameInitializer {
                         const index: number = activeListeners.indexOf(unsubscribeHop);
                         if (index > -1) activeListeners.splice(index, 1);
                         unsubscribeHop();
-                        logger.debug(`[Entrance] Stage 1 complete - hopped to exit tile`);
+                        logger.log(`[Entrance] Stage 1 complete - hopped to exit tile`);
 
                         // Stage 2: Path from exit tile to museum entrance
-                        logger.debug(`[Entrance] Stage 2 - finding path from (${currentPos.x},${currentPos.y}) to museum entrance (${clubEntranceX},${clubEntranceY})`);
+                        logger.log(`[Entrance] Stage 2 - finding path from (${currentPos.x},${currentPos.y}) to museum entrance (${clubEntranceX},${clubEntranceY})`);
                         const pathToClub = this.game.inputManager?.findPath(
                             currentPos.x,
                             currentPos.y,
@@ -387,7 +405,7 @@ export class GameInitializer {
                             return;
                         }
 
-                        logger.debug(`[Entrance] Found path to club with ${pathToClub.length} steps, executing...`);
+                        logger.log(`[Entrance] Found path to club with ${pathToClub.length} steps, executing...`);
 
                         // Subscribe to completion of walk to club
                         const unsubscribeWalk: () => void = eventBus.on(EventTypes.INPUT_PATH_COMPLETED, () => {
@@ -404,7 +422,7 @@ export class GameInitializer {
                             const index: number = activeListeners.indexOf(unsubscribeWalk);
                             if (index > -1) activeListeners.splice(index, 1);
                             unsubscribeWalk();
-                            logger.debug(`[Entrance] Stage 2 complete - reached club entrance`);
+                            logger.log(`[Entrance] Stage 2 complete - reached club entrance`);
                             clearTimeout(safetyTimeout);
                             enableInput();
                         });
@@ -414,7 +432,7 @@ export class GameInitializer {
                     });
                     activeListeners.push(unsubscribeHop);
 
-                    logger.debug(`[Entrance] Starting entrance animation - executing path to exit tile`);
+                    logger.log(`[Entrance] Starting entrance animation - executing path to exit tile`);
                     this.game.inputManager!.executePath(pathToExit);
                 } else {
                     clearTimeout(safetyTimeout);
@@ -539,9 +557,9 @@ export class GameInitializer {
     /**
      * Resets the entire game state.
      */
-    resetGame(): void {
+    async resetGame(): Promise<void> {
         // Reset session data
         this.game.zoneGenState.reset(); // Use instance method (replaces ZoneStateManager.resetSessionData())
-        this.game.gameStateManager!.resetGame();
+        await this.game.gameStateManager!.resetGame();
     }
 }

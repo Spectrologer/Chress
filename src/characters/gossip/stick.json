@@ -29,13 +29,13 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "There's a right way and a wrong way. I always choose the right way.",
-        "buttonText": "Admirable."
+        "text": "I've got a world to save.",
+        "buttonText": "What's wrong with your body?"
       },
       {
         "id": "msg_1",
-        "text": "Flexibility is overrated. Structure keeps everything in order!",
-        "buttonText": "Fair point."
+        "text": "Have you seen the BLACK MUSEUM?",
+        "buttonText": "Maybe."
       },
       {
         "id": "msg_2",

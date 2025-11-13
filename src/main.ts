@@ -77,15 +77,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     updateLoadingText('Loading save data...');
     await game.storageAdapter.init();
 
-    // Check if saved game exists and reorder buttons BEFORE showing menu
+    // Check if saved game exists and reorder buttons
     const hasSavedGame = await checkForSavedGame(game);
     if (hasSavedGame && startMenuGrid) {
         prioritizeContinueButton(startMenuGrid);
     }
 
-    // Hide loading indicator and show menu
-    if (loadingIndicator) loadingIndicator.style.display = 'none';
-    if (startMenuGrid) startMenuGrid.style.display = '';
+    // Keep menu hidden and loading indicator visible - will be swapped by GameInitializer after assets load
+    // (Both loadingIndicator and startMenuGrid visibility are controlled by GameInitializer.loadAssets)
 
     // Fade out the game loading placeholder
     const gameLoadingPlaceholder = document.getElementById('gameLoadingPlaceholder');

@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Oh, YOU again. Watch where you're stepping. Some of us have SPINES, you know.",
+        "text": "Try not to get pricked. I'm so sorry man but i'm covered in spines. My whole life.",
         "buttonText": "Sorry."
       },
       {
         "id": "msg_1",
-        "text": "*bristles* Don't get too close. I'm not responsible for what happens if you touch my quills.",
+        "text": "I'm cool having spines it just sucks when someone falls on them or tries to touch me.",
         "buttonText": "Noted."
       },
       {
         "id": "msg_2",
-        "text": "Everyone thinks they can just waltz up to a sea urchin. Well, I'M the point of this conversation!",
-        "buttonText": "Ha."
+        "text": "I'm always the talk of conversation at your local party. Even if I am a bit prickly!",
+        "buttonText": "I bet."
       }
     ]
   },

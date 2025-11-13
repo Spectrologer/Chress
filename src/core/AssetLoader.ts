@@ -72,8 +72,19 @@ export class AssetLoader {
 
             // Initialize audio system (GM instruments will lazy-load on first use)
             logger.info('[AssetLoader] Initializing audio system...');
-            await strudelManager.initializeAudio();
-            logger.info('[AssetLoader] Audio system initialized successfully');
+
+            // Add timeout to prevent hanging indefinitely
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Audio initialization timeout')), 3000)
+            );
+
+            try {
+                await Promise.race([strudelManager.initializeAudio(), timeoutPromise]);
+                logger.info('[AssetLoader] Audio system initialized successfully');
+            } catch (timeoutError) {
+                logger.warn('[AssetLoader] Audio initialization timed out (non-critical):', timeoutError);
+                // Continue anyway - audio will initialize on first user interaction
+            }
         } catch (error) {
             logger.warn('[AssetLoader] Failed to initialize audio system:', error);
             // Non-fatal error - game can continue without audio

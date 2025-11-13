@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Wanna taste? I'm banana-flavored! No really, try it! It's what I'm here for! Come on!",
-        "buttonText": "No thanks."
+        "text": "Everyone wants a taste of Slug!",
+        "buttonText": "Explain?"
       },
       {
         "id": "msg_1",
-        "text": "Everyone's curious but nobody commits. Just one lick! I promise it's... well, it's an experience!",
-        "buttonText": "I'm good."
+        "text": "The sweet banana flavor is enough to drive a guy wild!",
+        "buttonText": "What do you mean."
       },
       {
         "id": "msg_2",
-        "text": "My whole existence is sharing this flavor and everyone's too cowardly! TASTE THE SLUG!",
+        "text": "Toss me in a sundae and call me SHIRLEY!",
         "buttonText": "Hard pass."
       }
     ]

@@ -8,7 +8,7 @@ import { TILE_TYPES, GRID_SIZE } from '@core/constants/index';
 interface GameInstance {
     defeatedEnemies?: Set<any>;
     player: any;
-    resetGame: () => void;
+    resetGame: () => Promise<void>;
     gameLoop?: () => void;
     gameStarted?: boolean;
     previewMode?: boolean;
