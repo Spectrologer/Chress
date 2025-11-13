@@ -170,6 +170,11 @@ export class TileRegistry {
             return TileRegistry.isBigTreeWalkable(x, y, grid);
         }
 
+        // Special handling for MUSEUM/HOUSE: only top row is walkable (behind the roof)
+        if (tileType === TILE_TYPES.MUSEUM && x !== undefined && y !== undefined && grid !== undefined) {
+            return TileRegistry.isMuseumWalkable(x, y, grid);
+        }
+
         // Check against walkable types list
         return TileRegistry.WALKABLE_TYPES.includes(tileType);
     }
@@ -190,6 +195,25 @@ export class TileRegistry {
 
         // Only the top 2 rows (0-1) are walkable, bottom row (2) is not
         return partY < 2;
+    }
+
+    /**
+     * Check if a MUSEUM/HOUSE tile at the given position is walkable.
+     * MUSEUM is 4x3 tiles: only the top row (row 0) is walkable (behind the roof),
+     * the bottom 2 rows (rows 1-2) are not walkable (building body).
+     */
+    static isMuseumWalkable(x: number, y: number, grid: any): boolean {
+        const positionInfo = MultiTileHandler.findMuseumPosition(x, y, grid);
+        if (!positionInfo) {
+            return false; // Not part of a valid museum structure
+        }
+
+        // Calculate position within the 4x3 structure
+        const partY = y - positionInfo.startY;
+
+        // Only the top row (0) is walkable (player walks behind the roof)
+        // Bottom 2 rows (1-2) are not walkable (building body)
+        return partY === 0;
     }
 
     /**
