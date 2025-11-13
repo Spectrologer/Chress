@@ -93,7 +93,7 @@
     "floors/white_mus_floor_2",
     "floors/white_mus_floor_1",
     "floors/white_mus_floor_2",
-    "walls/stump",
+    "floors/white_mus_floor_1",
     "walls/white_mus_wall_6",
     "walls/white_mus_wall_10",
     "walls/white_mus_wall_9",
@@ -112,7 +112,8 @@
     "6,6": "big_tree",
     "7,6": "big_tree",
     "6,7": "big_tree",
-    "7,7": "big_tree"
+    "7,7": "big_tree",
+    "7,8": "stump"
   },
   "features": {
     "6,0": "exit_up",
