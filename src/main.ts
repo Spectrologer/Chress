@@ -90,6 +90,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Fade out the game loading placeholder
     const gameLoadingPlaceholder = document.getElementById('gameLoadingPlaceholder');
     const gameCanvas = document.getElementById('gameCanvas');
+
+    // Keep canvas hidden initially to prevent artifacts during preview rendering
+    if (gameCanvas) {
+        gameCanvas.style.visibility = 'hidden';
+    }
+
     if (gameLoadingPlaceholder) {
         gameLoadingPlaceholder.classList.add('fade-out');
         // Remove the placeholder after fade animation completes
@@ -97,6 +103,13 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (gameLoadingPlaceholder.parentNode) {
                 gameLoadingPlaceholder.parentNode.removeChild(gameLoadingPlaceholder);
             }
+            // Show canvas after a brief delay to skip initial rendering artifacts
+            // Wait for a couple of frames to let the preview rendering stabilize
+            setTimeout(() => {
+                if (gameCanvas) {
+                    gameCanvas.style.visibility = 'visible';
+                }
+            }, 100);
         }, 800);
     }
     // Also fade out the canvas background image

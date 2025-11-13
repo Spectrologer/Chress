@@ -147,6 +147,8 @@ export class GameInitializer {
     startGame(): void {
         if (this.game.gameStarted) return; // Prevent multiple inits
         this.game.gameStarted = true;
+
+        // Canvas visibility is already handled by main.ts after loading screen
         this.init();
     }
 
