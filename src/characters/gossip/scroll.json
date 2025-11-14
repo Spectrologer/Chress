@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I HAVE LEGS! Do you see them?! LEGS! On a SNAIL! This is WILD!",
+        "text": "You gotta get in on this tiny house thing! No rents!",
         "buttonText": "Very unique."
       },
       {
         "id": "msg_1",
-        "text": "Everyone else is sliding around on slime and I'm just WALKING! Like, with ACTUAL LEGS!",
-        "buttonText": "That's... great?"
+        "text": "I got myself a mobile home! Can go wherever I want!",
+        "buttonText": "That's great."
       },
       {
         "id": "msg_2",
-        "text": "I can't stop thinking about it! I'm a snail! WITH LEGS! HOW IS THIS REAL?!",
-        "buttonText": "Calm down."
+        "text": "Do you have a gym membership I can use? I gotta go to the bathroom.",
+        "buttonText": "Sorry."
       }
     ]
   },

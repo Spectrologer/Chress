@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Don't leave. Please. I get so lonely. You're not leaving, right? RIGHT?",
+        "text": "Just where do you think you're going?",
         "buttonText": "Uh..."
       },
       {
         "id": "msg_1",
-        "text": "Everyone always leaves me. But not you! You're different! You'll stay... won't you?",
+        "text": "Can I come with you?",
         "buttonText": "This is awkward."
       },
       {
         "id": "msg_2",
-        "text": "*phases through walls following you* Where are you going? I just want to be close... forever...",
-        "buttonText": "Yikes."
+        "text": "Oh, you're leaving? That's fine.",
+        "buttonText": "Hmm."
       }
     ]
   },

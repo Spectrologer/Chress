@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Placeholder text.*",
-        "buttonText": "Calm down."
+        "text": "Be sure to deliver your happiness with that special ZEST.*",
+        "buttonText": "Right."
       },
       {
         "id": "msg_1",
-        "text": "*Placeholder text",
-        "buttonText": "Okay then."
+        "text": "*Give it a sun-shiny twist!",
+        "buttonText": "Right."
       },
       {
         "id": "msg_2",
-        "text": "Placeholder text!",
-        "buttonText": "Sure buddy."
+        "text": "Did I get in your DAY? Ex-Squeeze me!",
+        "buttonText": "Sure."
       }
     ]
   },

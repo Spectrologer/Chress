@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*does pratfall* See? Comedy GOLD! Nobody laughs. Tough crowd. Every crowd is tough.",
-        "buttonText": "Oof."
+        "text": "Hey big guy! Where's my smile!?",
+        "buttonText": "Uhh."
       },
       {
         "id": "msg_1",
-        "text": "I got the makeup, the act, the whole package. But no respect. Story of my life, pal.",
-        "buttonText": "Sorry."
+        "text": "Cheer up! People have worse problems!",
+        "buttonText": "Sure!"
       },
       {
         "id": "msg_2",
-        "text": "*honks nose sadly* Even my horn sounds depressing. Can't catch a break in this business.",
-        "buttonText": "Rough."
+        "text": "*honk honk honk* Just don't be sad!",
+        "buttonText": "Nice."
       }
     ]
   },

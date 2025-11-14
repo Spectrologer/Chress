@@ -35,11 +35,11 @@
       {
         "id": "msg_1",
         "text": "Have you seen the BLACK MUSEUM?",
-        "buttonText": "Maybe."
+        "buttonText": "Not implemented yet."
       },
       {
         "id": "msg_2",
-        "text": "Some call me rigid. I call it being consistent and principled.",
+        "text": "Have you met GELINKA? I need to find them for my QUEST.",
         "buttonText": "Understood."
       }
     ]

@@ -3,7 +3,7 @@
   "name": "Shade",
   "type": "dialogue",
   "metadata": {
-    "description": "Dark, mysterious, wisp who's best friends with the npc Vellum. Wants you to say NO to drugs.",
+    "description": "Dark, mysterious, wisp who wants you to say NO to drugs.",
     "created": "2025-11-03T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Stay in the shadows, stay safe. And seriously, say NO to drugs. Vellum and I are on a mission.",
+        "text": "I dare you NOT to do DRUGS!",
         "buttonText": "Good message."
       },
       {
         "id": "msg_1",
-        "text": "Vellum's my best friend. We go way back. Together we spread awareness about the dangers of substance abuse.",
-        "buttonText": "Noble cause."
+        "text": "Don't do HALLUCINOGENS! Some drugs, can induce a state of euphoria lasting for a day, and send you to a fantasy world, even if many don't have a downside!",
+        "buttonText": "Oh no."
       },
       {
         "id": "msg_2",
-        "text": "Darkness isn't bad. It's protective. Just like making good life choices. NO DRUGS!",
+        "text": "Some drugs can make you really hungry and relaxed! But watch out!! They can also make you a little paranoid!",
         "buttonText": "Got it."
       }
     ]

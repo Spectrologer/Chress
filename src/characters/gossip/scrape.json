@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Welcome! Best cuts in town! Fresh meat daily! Why is everyone backing away?",
-        "buttonText": "Your... head..."
+        "text": "I always used to feel like the main character, now I'm just some guy!",
+        "buttonText": "Oh."
       },
       {
         "id": "msg_1",
-        "text": "People keep running when they see me. Is it the cleaver? The apron? I'm very hygienic!",
-        "buttonText": "It's the skull."
+        "text": "I cut up all the meat you find! That's me, that's my job.",
+        "buttonText": "Questions."
       },
       {
         "id": "msg_2",
-        "text": "I don't understand why folks find me intimidating. I'm just a friendly butcher! *waves cleaver*",
-        "buttonText": "Sure thing."
+        "text": "Where do I get it? I make it from scratch, just like my pa used to do!",
+        "buttonText": "Oh."
       }
     ]
   },

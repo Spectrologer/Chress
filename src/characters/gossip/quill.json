@@ -29,18 +29,23 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Diversified my portfolio this morning. Seventeen different seeds. Very bullish on sunflower futures.",
-        "buttonText": "Smart."
+        "text": "What do you know about ECONOMIC GAME THEORY?",
+        "buttonText": "A lot."
       },
       {
         "id": "msg_1",
-        "text": "The market's volatile today. By market I mean the birdbath economy. Someone spilled. Catastrophic.",
+        "text": "Sometimes, you just can't win! The only way to win is to not play.",
         "buttonText": "Rough."
       },
       {
         "id": "msg_2",
-        "text": "Hedge funds? I literally invest in hedges. It's about location, location, nesting location.",
-        "buttonText": "Nice."
+        "text": "But if you want to win, you've got to play.",
+        "buttonText": "Right."
+      },
+      {
+        "id": "msg_3",
+        "text": "When I step on the BOARD I get out my charts. What can they do? What can I do? What's LIZARDY up to?",
+        "buttonText": "Rough."
       }
     ]
   },

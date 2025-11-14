@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Yeah, I'm a sign. But I've got PERSONALITY.",
+        "text": "Hey! Need directions? Info? I'm your guy.",
         "buttonText": "Sure."
       },
       {
         "id": "msg_1",
-        "text": "Other signs? Basic. Me? I bring VIBES. I bring ENERGY. I'm thetextbox people remember.",
+        "text": "I offer more than that though. I provide commentary and insight.",
         "buttonText": "Cool."
       },
       {
         "id": "msg_2",
-        "text": "You want directions? Ask someone else. I'm here to provide INSIGHT. To make you THINK.",
+        "text": "To the up is north, south is down there. To the left? West. Head right to go to the eastern regions.",
         "buttonText": "Alright."
       }
     ]

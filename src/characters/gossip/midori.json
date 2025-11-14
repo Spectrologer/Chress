@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Everything is SO BIG and LOUD! I was just born yesterday and THIS IS TERRIFYING!",
-        "buttonText": "It's okay..."
+        "text": "I'm named MIDORI and I was born yesterday!",
+        "buttonText": "Hi."
       },
       {
         "id": "msg_1",
-        "text": "What is that sound?! Is that normal?! Am I supposed to know what that is?! HELP!",
-        "buttonText": "Calm down."
+        "text": "Everything is so big and new and scary!",
+        "buttonText": "True."
       },
       {
         "id": "msg_2",
-        "text": "I don't understand ANYTHING! Why is everything moving?! Why am I here?! AHHH!",
-        "buttonText": "Deep breaths."
+        "text": "I don't even know all the RULES yet!",
+        "buttonText": "It's fine."
       }
     ]
   },

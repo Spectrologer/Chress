@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "You ever read comics? The REAL stuff? Noir, crime, mystery... that's where it's at!",
-        "buttonText": "Classic."
+        "text": "I love comics!",
+        "buttonText": "What kind?"
       },
       {
         "id": "msg_1",
-        "text": "People don't appreciate the old dime novels anymore. Cheap paper, great stories!",
-        "buttonText": "Fair point."
+        "text": "When there were newspapers, I read every comic!",
+        "buttonText": "Oh."
       },
       {
         "id": "msg_2",
-        "text": "I've got a collection of vintage pulps. Detective stories, sci-fi... I'm talking GOLDEN AGE material!",
+        "text": "I love the one about the talking cat! I got so deep into the lore wikis!",
         "buttonText": "Impressive."
       }
     ]

@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*nervously steaming* Okay so I heard something but I'm NOT supposed to spill the beans! Get it? Beans?",
-        "buttonText": "Nice one."
+        "text": "FORK and POLLY used to DATE!!!",
+        "buttonText": "Wow."
       },
       {
         "id": "msg_1",
-        "text": "*swirling anxiously* It's REALLY hot gossip though. Like, espresso-level hot. But I can't tell you!",
-        "buttonText": "I understand."
+        "text": "*Have you met DASH? We go way back! He used to serve me when there was a cafe!",
+        "buttonText": "What happened?"
       },
       {
         "id": "msg_2",
-        "text": "Okay fine! Between you and me... *whispers* ...wait, no! I almost spilled! That was close!",
-        "buttonText": "Almost."
+        "text": "I wasn't always a teacup! But I've always had the tea!",
+        "buttonText": "Alright."
       }
     ]
   },

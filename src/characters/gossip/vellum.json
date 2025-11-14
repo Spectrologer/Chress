@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*drifts lazily* Whoa, man. Everything's connected. You, me, the universe. It's all just... vibes.",
+        "text": "Everythings connected man. I've seen it. It's all love brother.",
         "buttonText": "Sure..."
       },
       {
         "id": "msg_1",
-        "text": "*swirls gently* Time is a construct. Also I forgot what we were talking about. What were we talking about?",
-        "buttonText": "Uh-huh."
+        "text": "You met SHADE? He's my boy. We're tight af",
+        "buttonText": "Oh."
       },
       {
         "id": "msg_2",
-        "text": "*floats aimlessly* I'm literally made of smoke. How wild is that? Like, LITERALLY. Mind. Blown.",
+        "text": "𝅘𝅥𝅮Leavin on a jet plane...𝅘𝅥𝅮",
         "buttonText": "Yeah."
       }
     ]

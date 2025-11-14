@@ -29,18 +29,13 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm returning to the earth. The cycle of life and death continues.",
+        "text": "I'm returning to the earth. The flesh is weak but the cycle continues.",
         "buttonText": "Cool."
       },
       {
         "id": "msg_1",
-        "text": "Don't help me! I'm getting paid to do this.*",
-        "buttonText": "Gross."
-      },
-      {
-        "id": "msg_2",
-        "text": "Time is a flat circle.",
-        "buttonText": "Sure..."
+        "text": "Don't help me. I'm getting paid to do this.*",
+        "buttonText": "..."
       }
     ]
   },

@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Should I go left? Or right? Maybe up? Actually, what about down? I can't decide!",
-        "buttonText": "Pick one."
+        "text": "H̷i̸!",
+        "buttonText": "Hey."
       },
       {
         "id": "msg_1",
-        "text": "I could do this... or that... or maybe something else entirely? Too many options! HELP!",
-        "buttonText": "Just choose."
+        "text": "D̴o̴ ̷y̴o̵u̴ ̶s̵p̸e̵a̸k̴ D̷̨̤͘ȗ̵̘̇t̵̍̽ͅc̸͍̮̈́͠h̷̡̠͒́!",
+        "buttonText": "Hmmm."
       },
       {
         "id": "msg_2",
-        "text": "What if I make the wrong choice? What if I regret it? What if... oh no, I'm spiraling again...",
+        "text": "F̶̧̆i̸͇̱͆̉j̵͇̙͌͝n̷͖͎̓̈́ẻ̸̡̤ ̵̨́d̶͍̂à̴̛̩g̵͎̗̔̾.",
         "buttonText": "It's okay."
       }
     ]

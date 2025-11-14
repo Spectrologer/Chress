@@ -29,24 +29,15 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*glances around nervously* You didn't see me. I wasn't here. This conversation never happened.",
-        "buttonText": "Okay..."
-      },
-      {
-        "id": "msg_1",
-        "text": "The crimes? Can't talk about 'em. Attorney said keep quiet. Five states though. That's impressive, right?",
-        "buttonText": "I guess?"
-      },
-      {
-        "id": "msg_2",
-        "text": "Look, I'm not saying I did anything. But hypothetically, those cheese wheels had it coming.",
-        "buttonText": "Sure..."
+        "text": "I gotta get going! Always in a rush!",
+        "buttonText": "Okay."
       }
     ]
   },
   "behavior": {
     "movementType": "stationary",
-    "walkable": false
+    "walkable": false,
+    "leaveAfterTrade": true
   },
   "audio": {
     "voicePitch": 122,

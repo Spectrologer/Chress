@@ -3,7 +3,7 @@
   "name": "Merki",
   "type": "dialogue",
   "metadata": {
-    "description": "A blue wolf who has a fan zine  on angelfire.",
+    "description": "A blue wolf who has a fan zine.",
     "created": "2025-10-31T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Check out my Angelfire site! It's got spinning skulls AND a guestbook! 47 hits!",
-        "buttonText": "Retro."
+        "text": "You should check out my zine!",
+        "buttonText": "Sure."
       },
       {
         "id": "msg_1",
-        "text": "Been updating my zine since 2003. HTML tables? Still the BEST layout method. Fight me.",
+        "text": "We haven't had a release in 1 year! But we're due next month!",
         "buttonText": "Sure."
       },
       {
         "id": "msg_2",
-        "text": "My webring has THREE whole members! We're basically Internet famous! *marquee text intensifies*",
+        "text": "It's the next thing in flash fiction, we're gonna blow up!",
         "buttonText": "Cool."
       }
     ]

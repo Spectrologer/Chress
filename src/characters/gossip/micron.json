@@ -39,23 +39,8 @@
       },
       {
         "id": "msg_2",
-        "text": "I  code my games off top in assembly.",
+        "text": "I  code my games off top in assembly. Write them right to the graphics card. It's the only way to do it.",
         "buttonText": "Respect."
-      },
-      {
-        "id": "msg_3",
-        "text": "I wrote a blockchain once. Took me six months. Stored one username. Still think it was worth it.",
-        "buttonText": "Oof."
-      },
-      {
-        "id": "msg_4",
-        "text": "My nephew asked me to help with his Python homework. I rewrote it in COBOL to teach him respect.",
-        "buttonText": "Harsh."
-      },
-      {
-        "id": "msg_5",
-        "text": "Real programmers don't need syntax highlighting. I code in white text on white background. Builds character.",
-        "buttonText": "Wild."
       }
     ]
   },

@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Your posture is terrible. Also, you have something in your teeth. Just thought you should know.",
+        "text": "Did you know you're walking wrong? Your posture is all off.",
         "buttonText": "Thanks?"
       },
       {
         "id": "msg_1",
-        "text": "I'm just saying what everyone else is thinking. Someone needs to point these things out.",
-        "buttonText": "Brutal honesty."
+        "text": "You should try combing your hair to the other side. That doesn't work for you.",
+        "buttonText": "Oh."
       },
       {
         "id": "msg_2",
-        "text": "Is that what you're wearing? Interesting choice. Not good, just... interesting.",
-        "buttonText": "Rude."
+        "text": "You have something in your teeth. Oh, sorry, don't have a mirror on me.",
+        "buttonText": "Right."
       }
     ]
   },

@@ -29,24 +29,25 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Four weeks left! Isn't that AMAZING? So much to do! Every moment is precious! I'm SO ALIVE!",
-        "buttonText": "Um..."
+        "text": "Doctor said I only got 4 weeks left. Best news of my life - Every second counts now.",
+        "buttonText": "Oh..."
       },
       {
         "id": "msg_1",
-        "text": "Death? Natural part of life! I'm THRILLED about it! This is great! Everything's GREAT!",
-        "buttonText": "You okay?"
+        "text": "What a beautiful day! No one appreciates these moments more than me!",
+        "buttonText": "Yeah..."
       },
       {
         "id": "msg_2",
-        "text": "Why be sad when you can be OPTIMISTIC about your inevitable demise? It's all about PERSPECTIVE!",
-        "buttonText": "Concerning."
+        "text": "We all live longer in memories.",
+        "buttonText": "Wait..."
       }
     ]
   },
   "behavior": {
     "movementType": "stationary",
-    "walkable": false
+    "walkable": false,
+    "leaveAfterTrade": true
   },
   "audio": {
     "voicePitch": 88,

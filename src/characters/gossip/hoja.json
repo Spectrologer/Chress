@@ -29,7 +29,7 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "I'm on of the top TEN food groups!",
+        "text": "I'm one of the top TEN food groups!",
         "buttonText": "Okay..."
       },
       {
@@ -39,7 +39,7 @@
       },
       {
         "id": "msg_2",
-        "text": "Skipping breakfast is IMMORAL.",
+        "text": "Skipping breakfast is actually IMMORAL.",
         "buttonText": "Got it."
       }
     ]

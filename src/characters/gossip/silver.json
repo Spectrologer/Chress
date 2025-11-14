@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Came from beyond the stars. Now I'm hooked on Judge Judy. The galaxy had nothing this good.",
+        "text": "I love low concept stuff.",
         "buttonText": "Fair."
       },
       {
         "id": "msg_1",
-        "text": "My species traveled light-years for knowledge. I use it to understand soap opera plots. No regrets.",
+        "text": "I used to have a big collection of films. For me it's about the themes.",
         "buttonText": "Nice."
       },
       {
         "id": "msg_2",
-        "text": "Earth TV is WILD. Back home we only had educational broadcasts. This? This is living.",
+        "text": "Can't tell you what the last thing I read was about. But it made me feel more myself as a service industry worker.",
         "buttonText": "Cool."
       }
     ]

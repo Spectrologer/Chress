@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Before you ask - NO. I'm not related to those lizard enemies. I'm a COMPLETELY different lizard.",
-        "buttonText": "Okay."
+        "text": "You didn't try to CAPTURE me? Did you?",
+        "buttonText": "Maybe."
       },
       {
         "id": "msg_1",
-        "text": "Just because I'm green and scaly doesn't mean- Wait, are you about to ask about the enemies again?",
+        "text": "I have nothing to do with the lizards. I'm my own thing.",
         "buttonText": "No?"
       },
       {
         "id": "msg_2",
-        "text": "I'm so tired of this. 'Oh are you a Lizardy?' NO. Different species. Different genus. We share nothing.",
+        "text": "Every time I look at a LIZARDY I get sick. Ruins my day. Move left and right or something. Jesus.",
         "buttonText": "Got it."
       }
     ]

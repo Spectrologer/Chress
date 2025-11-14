@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*tail wags slowly* I've seen what lies beyond. The Other Side. It's... it's mostly just more of this side.",
+        "text": "*wags tail",
         "buttonText": "Oh."
       },
       {
         "id": "msg_1",
-        "text": "Don't be fooled by the cute. I know truths that would shatter your reality. Want a belly rub anyway?",
-        "buttonText": "Sure."
+        "text": "*sniffs you excitedly*",
+        "buttonText": "Hi."
       },
       {
         "id": "msg_2",
-        "text": "The veil between worlds is thinner than you think. Also I can smell fear. You're doing great though!",
-        "buttonText": "Thanks?"
+        "text": "I'm PENNI the CORGI! I've seen GOD.",
+        "buttonText": "Oh."
       }
     ]
   },

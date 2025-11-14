@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "They're watching. Always watching. The bag? Protection from their mind-reading satellites.",
-        "buttonText": "Okay..."
+        "text": "They're more scared of you than you are of them. Believe me.",
+        "buttonText": "Who?"
       },
       {
         "id": "msg_1",
-        "text": "Don't trust the signs. Especially the official ones. That's how they GET you.",
-        "buttonText": "Sure."
+        "text": "Black and White museum are two sides of the same chip. You'll see.",
+        "buttonText": "Lore."
       },
       {
         "id": "msg_2",
-        "text": "Wake up! Open your eyes! Or... keep them closed. That's probably safer actually.",
+        "text": "Wake up sherson.",
         "buttonText": "Right."
       }
     ]
