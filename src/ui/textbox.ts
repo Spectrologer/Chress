@@ -2,6 +2,7 @@ import { TILE_TYPES } from '@core/constants/index';
 import { getNPCCharacterData, getStatueData } from '@core/NPCLoader';
 import type { IGame } from '@core/context';
 import { logger } from '@core/logger';
+import { ContentRegistry } from '@core/ContentRegistry';
 
 // Type-safe asset paths
 type PortraitPath = `assets/characters/${string}.png`;
@@ -153,9 +154,8 @@ export class TextBox {
     static hideMessageForSign(gameInstance: GameInstance): void {
         const transientState = gameInstance.transientGameState;
 
-        // Check if we're closing axolotl post-trade dialogue
-        const signData = transientState?.getDisplayingSignMessage();
-        const shouldAxolotlLeave = signData?.message === "Thanks a lot'l.";
+        // Get NPC position before clearing it
+        const npcPosition = transientState?.getCurrentNPCPosition();
 
         let didHide = false;
 
@@ -182,38 +182,103 @@ export class TextBox {
             }
         }
 
-        // Make axolotl walk off after post-trade dialogue
-        if (shouldAxolotlLeave) {
-            TextBox.makeAxolotlLeave(gameInstance);
+        // Check if NPC should leave after interaction
+        if (npcPosition) {
+            TextBox.makeNPCLeaveIfNeeded(gameInstance, npcPosition.x, npcPosition.y);
         }
     }
 
     /**
-     * Helper method to make axolotl walk to exit and disappear
+     * Check if NPC at given position should leave, and make them leave if needed
      */
-    static makeAxolotlLeave(gameInstance: GameInstance): void {
-        const grid = gameInstance.grid;
-        const npcManager = gameInstance.npcManager;
+    static makeNPCLeaveIfNeeded(gameInstance: GameInstance, npcX: number, npcY: number): void {
         const gridManager = gameInstance.gridManager;
+        const npcManager = gameInstance.npcManager;
 
-        if (!npcManager) {
-            logger.warn('NPC Manager not available');
+        if (!gridManager || !npcManager) {
             return;
         }
 
-        if (!gridManager) {
-            logger.warn('Grid Manager not available');
+        // Get the tile type at the NPC position
+        const tileType = gridManager.getTile(npcX, npcY);
+
+        // Look up NPC configuration
+        const npcConfig = ContentRegistry.getNPCByTileType(tileType);
+
+        if (!npcConfig) {
+            return;
+        }
+
+        // Check if this NPC has leaveAfterTrade behavior
+        const characterData = npcConfig.metadata?.characterData;
+        const shouldLeave = characterData?.behavior?.leaveAfterTrade === true;
+
+        if (!shouldLeave) {
+            return;
+        }
+
+        // Get NPC ID from character data
+        const npcId = characterData?.id;
+        if (!npcId) {
+            return;
+        }
+
+        // For dialogue NPCs, check if they've reached their last message
+        if (npcConfig.action === 'dialogue') {
+            const dialogueData = TextBox.getDialogueNpcData(npcId, gameInstance);
+            if (dialogueData) {
+                const isLastMessage = dialogueData.currentMessageIndex >= dialogueData.messages.length - 1;
+                const isSequential = dialogueData.cycleMode === 'sequential';
+
+                // Only leave if:
+                // 1. It's sequential mode AND we've shown the last message, OR
+                // 2. It's not sequential (single message or loop mode)
+                if (!(isSequential && isLastMessage) && dialogueData.messages.length > 1) {
+                    return; // Don't leave yet, more dialogue to show
+                }
+            }
+        }
+
+        // For barter NPCs or dialogue NPCs that have finished, make them leave
+        // Find the NPC entity at this position
+        const npc = npcManager.getNPCAt(npcX, npcY);
+        if (!npc) {
+            return;
+        }
+
+        TextBox.makeNPCLeave(gameInstance, npc);
+    }
+
+    /**
+     * Helper method to make any NPC walk to exit and disappear
+     * @deprecated Use makeNPCLeave instead - keeping for backwards compatibility
+     */
+    static makeAxolotlLeave(gameInstance: GameInstance): void {
+        const npcManager = gameInstance.npcManager;
+        if (!npcManager) {
             return;
         }
 
         // Find axolotl NPC
         const axolotls = npcManager.getByType('axelotl');
         if (axolotls.length === 0) {
-            logger.warn('No axolotl NPC found');
             return;
         }
 
-        const axolotl = axolotls[0];
+        TextBox.makeNPCLeave(gameInstance, axolotls[0]);
+    }
+
+    /**
+     * Generic helper method to make any NPC walk to exit and disappear
+     */
+    static makeNPCLeave(gameInstance: GameInstance, npc: any): void {
+        const gridManager = gameInstance.gridManager;
+        const npcManager = gameInstance.npcManager;
+
+        if (!npcManager || !gridManager) {
+            logger.warn('NPC Manager or Grid Manager not available');
+            return;
+        }
 
         // Find exit on the right side (well board has exit at 9,5)
         let exitX: number | null = null;
@@ -233,19 +298,19 @@ export class TextBox {
         }
 
         if (exitX === null) {
-            // No exit found, just remove axolotl immediately
-            npcManager.removeNPC(axolotl);
+            // No exit found, just remove NPC immediately
+            npcManager.removeNPC(npc);
             if (gameInstance.render) {
                 gameInstance.render();
             }
             return;
         }
 
-        // Animate axolotl walking to exit with hop animation
+        // Animate NPC walking to exit with hop animation
         const walkToExit = (): void => {
-            if (axolotl.x === exitX && axolotl.y === exitY) {
-                // Reached exit, remove axolotl and restore the exit tile
-                npcManager.removeNPC(axolotl);
+            if (npc.x === exitX && npc.y === exitY) {
+                // Reached exit, remove NPC and restore the exit tile
+                npcManager.removeNPC(npc);
                 // Restore the exit tile (removeNPC sets it to FLOOR)
                 gridManager.setTile(exitX!, exitY!, TILE_TYPES.EXIT);
                 if (gameInstance.render) {
@@ -255,8 +320,8 @@ export class TextBox {
             }
 
             // Calculate next position (move towards exit)
-            let newX = axolotl.x;
-            let newY = axolotl.y;
+            let newX = npc.x;
+            let newY = npc.y;
 
             if (newX < exitX!) {
                 newX++;
@@ -271,7 +336,7 @@ export class TextBox {
             }
 
             // Move NPC (this automatically sets lastX/lastY and starts lift animation)
-            npcManager.moveNPC(axolotl, newX, newY);
+            npcManager.moveNPC(npc, newX, newY);
             if (gameInstance.render) {
                 gameInstance.render();
             }
