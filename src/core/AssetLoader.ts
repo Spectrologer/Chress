@@ -48,6 +48,7 @@ export class AssetLoader {
     /**
      * Initializes the audio system for Strudel music.
      * GM soundfont instruments will be lazy-loaded as needed during gameplay.
+     * Note: This just sets up the click listener. Actual initialization happens on first user click.
      */
     private async initializeAudio(): Promise<void> {
         try {
@@ -70,23 +71,12 @@ export class AssetLoader {
                 return;
             }
 
-            // Initialize audio system (GM instruments will lazy-load on first use)
-            logger.info('[AssetLoader] Initializing audio system...');
-
-            // Add timeout to prevent hanging indefinitely
-            const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Audio initialization timeout')), 3000)
-            );
-
-            try {
-                await Promise.race([strudelManager.initializeAudio(), timeoutPromise]);
-                logger.info('[AssetLoader] Audio system initialized successfully');
-            } catch (timeoutError) {
-                logger.warn('[AssetLoader] Audio initialization timed out (non-critical):', timeoutError);
-                // Continue anyway - audio will initialize on first user interaction
-            }
+            // Don't initialize now - it requires user interaction
+            // The initAudioOnFirstClick() will set up a click listener that waits for user interaction
+            // Audio will actually initialize when user clicks "Start Game" or "Continue"
+            logger.info('[AssetLoader] Audio system ready (will initialize on first user interaction)');
         } catch (error) {
-            logger.warn('[AssetLoader] Failed to initialize audio system:', error);
+            logger.warn('[AssetLoader] Failed to prepare audio system:', error);
             // Non-fatal error - game can continue without audio
         }
     }

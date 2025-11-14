@@ -47,7 +47,13 @@ export class SoundManager {
     setupEventListeners(): void {
         this._unsubscribers.push(
             eventBus.on(EventTypes.MUSIC_CHANGE, (data: any) => {
-                this.setMusicForZone({ dimension: data.dimension });
+                // Calculate zone level from coordinates if available
+                let zoneLevel: number | undefined;
+                if (typeof data.x === 'number' && typeof data.y === 'number') {
+                    const dist = Math.max(Math.abs(data.x), Math.abs(data.y));
+                    zoneLevel = getZoneLevelFromDistance(dist);
+                }
+                this.setMusicForZone({ dimension: data.dimension, zoneLevel });
                 // Check for enemies when zone music changes
                 this.updateCombatMusic();
             })

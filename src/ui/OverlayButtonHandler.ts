@@ -61,12 +61,20 @@ export class OverlayButtonHandler {
      */
     async handleStartGame(overlay: HTMLElement): Promise<void> {
         try {
-            // Resume audio FIRST while we have the user gesture (critical for browser autoplay)
-            // Use a direct call without timeout to take advantage of the click event
+            // Initialize Strudel audio context in background during user gesture
+            // Don't await - let it happen asynchronously to avoid blocking the UI
+            const musicController = (this.game.soundManager as any)?.musicController;
+            if (musicController?.strudelManager) {
+                musicController.strudelManager.initializeAudio().catch((e: any) => {
+                    logger.warn('Strudel audio initialization warning:', e);
+                });
+            }
+
+            // Also resume regular audio context (quick operation)
             try {
                 await Promise.race([
                     safeCallAsync(this.game.soundManager, 'resumeAudioContext'),
-                    new Promise(resolve => setTimeout(resolve, 100)) // Only wait 100ms max
+                    new Promise(resolve => setTimeout(resolve, 100))
                 ]);
             } catch (e) {
                 // Non-critical, continue
@@ -119,6 +127,14 @@ export class OverlayButtonHandler {
 
             // Load saved game state before resuming audio
             this.loadGameState();
+
+            // Initialize Strudel audio in background during user gesture (don't block UI)
+            const musicController = (this.game.soundManager as any)?.musicController;
+            if (musicController?.strudelManager) {
+                musicController.strudelManager.initializeAudio().catch((e: any) => {
+                    logger.warn('Strudel audio initialization warning:', e);
+                });
+            }
 
             // Resume audio context in background (don't await - let it happen asynchronously)
             // This prevents blocking the game start on audio initialization

@@ -105,13 +105,18 @@ export class MusicController {
      * @returns {void}
      */
     setMusicForZone({ dimension = 0, zoneLevel }: { dimension?: number; zoneLevel?: number } = {}): void {
+        console.log('[DEBUG] MusicController.setMusicForZone - dimension:', dimension, 'zoneLevel:', zoneLevel, 'musicEnabled:', this.musicEnabled);
         if (this.useStrudel) {
             // Special case: Use museum pattern for interior dimension (museum board)
             if (dimension === 1) {
                 this.currentDimension = dimension;
-                if (this.musicEnabled === false) return;
+                if (this.musicEnabled === false) {
+                    console.log('[DEBUG] Music disabled, not playing museum pattern');
+                    return;
+                }
 
                 // Play museum pattern with Strudel
+                console.log('[DEBUG] Playing museum pattern');
                 this.playStrudelPattern(createMuseumPattern());
                 return;
             }
@@ -128,6 +133,7 @@ export class MusicController {
                 // Interior or underground: use dimension directly
                 musicSelector = dimension;
             }
+            console.log('[DEBUG] Calculated musicSelector:', musicSelector, 'calling playStrudelForDimension');
             this.playStrudelForDimension(musicSelector);
         } else {
             // Use traditional .ogg files or museum.wav

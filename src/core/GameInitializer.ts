@@ -512,6 +512,7 @@ export class GameInitializer {
         try {
             const currentZone = safeCall<object>(this.game.player, 'getCurrentZone');
             const dimension: number = safeGet(currentZone, 'dimension', 0) ?? 0;
+            const zoneLevel: number | undefined = safeGet(currentZone, 'zoneLevel');
 
             // Apply player settings
             const musicEnabled: boolean = safeGet(this.game, 'player.stats.musicEnabled', false) ?? false;
@@ -520,8 +521,8 @@ export class GameInitializer {
             safeCall(this.game.soundManager, 'setMusicEnabled', !!musicEnabled);
             safeCall(this.game.soundManager, 'setSfxEnabled', !!sfxEnabled);
 
-            // Zone music
-            safeCall(this.game.soundManager, 'setMusicForZone', { dimension });
+            // Zone music - include zoneLevel for proper music selection
+            safeCall(this.game.soundManager, 'setMusicForZone', { dimension, zoneLevel });
         } catch (e) {
             logger.error('Error setting up zone music:', e);
         }

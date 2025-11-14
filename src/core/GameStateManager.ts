@@ -267,8 +267,10 @@ export class GameStateManager {
             const dimension: number = currentZone && typeof currentZone.dimension === 'number'
                 ? currentZone.dimension
                 : 0;
+            const x: number = currentZone && typeof currentZone.x === 'number' ? currentZone.x : 0;
+            const y: number = currentZone && typeof currentZone.y === 'number' ? currentZone.y : 0;
             // Emit music change event instead of calling soundManager directly
-            eventBus.emit(EventTypes.MUSIC_CHANGE, { dimension });
+            eventBus.emit(EventTypes.MUSIC_CHANGE, { dimension, x, y });
         } catch (e) { /* non-fatal */ }
     }
 
