@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Oh wow oh wow oh - / Have you seen the sky today? / Colors! So many!",
-        "buttonText": "Nice haiku."
+        "text": "Oh! Nice to meet you! / I'm Hane! What are you called by? / I love the outdoors!",
+        "buttonText": "*Introduction*"
       },
       {
         "id": "msg_1",
-        "text": "Friend! You are my friend! / We just met but I love you! / Five seven five YEAH!",
-        "buttonText": "Energetic."
+        "text": "The world is so big! / There's so many things to do! / There's so much to see! ",
+        "buttonText": "True."
       },
       {
         "id": "msg_2",
-        "text": "Everything's exciting! / Even boring things are great! / Life is amazing!",
-        "buttonText": "Calm down."
+        "text": "I am so hungry! / I should find a juicy bug! / Cartiliginous!",
+        "buttonText": "Okay."
       }
     ]
   },

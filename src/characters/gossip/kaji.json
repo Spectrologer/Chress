@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "CUCKOO! CUCKOO! The limes are RIPE! The limes are TAKING OVER! *flaps wildly*",
+        "text": "Placeholder text.*",
         "buttonText": "Calm down."
       },
       {
         "id": "msg_1",
-        "text": "*pecks at air* Time is a flat circle made of CITRUS! I've seen the FUTURE and it's SOUR! CUCKOO!",
+        "text": "*Placeholder text",
         "buttonText": "Okay then."
       },
       {
         "id": "msg_2",
-        "text": "The clock strikes LIME O'CLOCK! *spins around* Every hour is lime hour when you're made of LIMES!",
+        "text": "Placeholder text!",
         "buttonText": "Sure buddy."
       }
     ]

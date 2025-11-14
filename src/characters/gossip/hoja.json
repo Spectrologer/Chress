@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Breakfast is the MOST important meal of the day! You can't skip it! I'm serious!",
+        "text": "I'm on of the top TEN food groups!",
         "buttonText": "Okay..."
       },
       {
         "id": "msg_1",
-        "text": "Did you eat breakfast today? No? How are you even FUNCTIONING right now?!",
+        "text": "Remember to eat breakfast! You don't,  your whole day is SCRAMBLED.",
         "buttonText": "I'm fine?"
       },
       {
         "id": "msg_2",
-        "text": "Pancakes, waffles, flapjacks - they're all essential! Don't you DARE skip breakfast!",
+        "text": "Skipping breakfast is IMMORAL.",
         "buttonText": "Got it."
       }
     ]

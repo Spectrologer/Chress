@@ -24,7 +24,7 @@
   },
   "interaction": {
     "type": "barter",
-    "greeting": "Wanna chop down trees? Show me some new places.",
+    "greeting": "I've always been the AXE-O-LOT'L. Do you have something to AXE me?",
     "trades": [
       {
         "id": "axelotl_axe",

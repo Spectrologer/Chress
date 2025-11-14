@@ -34,13 +34,13 @@
       },
       {
         "id": "msg_1",
-        "text": "Everyone draws hearts, but I am misrepresented.",
-        "buttonText": "Correct."
+        "text": "Everyone draws hearts, but I am often misrepresented.",
+        "buttonText": "Tragedy."
       },
       {
         "id": "msg_2",
         "text": "*For me, Valentine's day is every day.",
-        "buttonText": "Congrats."
+        "buttonText": "Me too thanks."
       }
     ]
   },

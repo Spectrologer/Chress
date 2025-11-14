@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "It's YOU! The prophecy foretold your arrival! You are THE CHOSEN ONE!",
+        "text": "You look like the HERO from the prophecy!",
         "buttonText": "Me?"
       },
       {
         "id": "msg_1",
-        "text": "I have been waiting centuries for this moment! Your destiny awaits! Probably!",
-        "buttonText": "Um..."
+        "text": "I'm here to guide you to the BLACK MUSEUM!",
+        "buttonText": "That's not implemented yet."
       },
       {
         "id": "msg_2",
-        "text": "The stars aligned, the moon whispered your name... or maybe that was just my imagination. Either way, YOU'RE SPECIAL!",
-        "buttonText": "Thanks?"
+        "text": "We have to collect 10 CRYSTALS to open the GATEWAY to the DARK DIMENSION!",
+        "buttonText": "Big."
       }
     ]
   },

@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Ah, you wouldn't understand my artistic process. It's very... complex. Very misunderstood.",
-        "buttonText": "Uh-huh."
+        "text": "I'm huge in the ART WORLD.",
+        "buttonText": "How do you get there?"
       },
       {
         "id": "msg_1",
-        "text": "I only consume artisanal water. Sourced from a specific cloud. You've probably never heard of it.",
+        "text": "You should see some of my latest pieces. They're all a shape and light study of GOURDS.",
         "buttonText": "Sure."
       },
       {
         "id": "msg_2",
-        "text": "My therapist says I'm 'difficult.' I prefer 'discerning.' They clearly lack refinement.",
-        "buttonText": "Okay."
+        "text": "I've never seen you around here before. Don't get to the ARTS DISTRICT often?",
+        "buttonText": "This is just another board."
       }
     ]
   },

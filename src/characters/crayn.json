@@ -28,7 +28,7 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "You dropped your axe down the well.",
+        "text": "I last saw your axe in the well.",
         "buttonText": "Oh..."
       },
       {

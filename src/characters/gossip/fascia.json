@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*undulates softly* Excuse me... do you know of any good rocks? Dark, damp ones? I need a home.",
-        "buttonText": "Not really."
+        "text": "Have you had enough to eat today?",
+        "buttonText": "Yeah."
       },
       {
         "id": "msg_1",
-        "text": "*slides along* Been traveling for days. Every rock is taken. Every crevice occupied. So tired...",
-        "buttonText": "Sorry."
+        "text": "*How is your INTESTINAL HEALTH?",
+        "buttonText": "Probably good."
       },
       {
         "id": "msg_2",
-        "text": "*flattens against ground* Just need a nice flat surface to rest on. Is that too much to ask? *sighs*",
-        "buttonText": "Good luck."
+        "text": "Come back later, I have to go, but I'll leave you some SPAGHETTI",
+        "buttonText": "Grazie."
       }
     ]
   },

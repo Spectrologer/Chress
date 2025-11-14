@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Ooh, hi! Where are you from?!",
-        "buttonText": "Over there."
+        "text": "You look cool! Wanna be friends?",
+        "buttonText": "Okay."
       },
       {
         "id": "msg_1",
-        "text": "What's your favorite color?!",
+        "text": "What's your favorite color? What's your sign? I'm an AQUARIUS.",
         "buttonText": "Hmmmm."
       },
       {
         "id": "msg_2",
-        "text": "You're SO interesting! Have you always been this interesting? What's your backstory? Can we be friends?",
-        "buttonText": "Sure?"
+        "text": "Have you met FASCIA? Total dweeb!",
+        "buttonText": "Aww."
       }
     ]
   },

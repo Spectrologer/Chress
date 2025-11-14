@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*grins and dances* Hey there! *spins* I know something you don't know! *winks mischievously*",
-        "buttonText": "What's that?"
+        "text": "Get your back of the WALL and get on the DANCE FLOOR.",
+        "buttonText": "Too thirsty."
       },
       {
         "id": "msg_1",
-        "text": "*twirls* Not telling! *giggles* But it's JUICY! And maybe a little bit naughty! *dances away*",
-        "buttonText": "Come on."
+        "text": "My troupe is all the rage in the EUROZONE",
+        "buttonText": "I bet."
       },
       {
         "id": "msg_2",
-        "text": "*does a little jig* You'll find out eventually! Everyone always does! *winks* That's what makes it FUN!",
-        "buttonText": "Tease."
+        "text": "Dancing is easy, you just have to move your body!",
+        "buttonText": "Never thought of that."
       }
     ]
   },

@@ -9,7 +9,7 @@
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler.js';
 import { VOLUME_CONSTANTS } from '@core/constants/audio.js';
 import { StrudelMusicManager } from './StrudelMusicManager.js';
-import { getMusicPatternForDimension, createMuseumPattern } from './MusicPatterns.js';
+import { getMusicPatternForDimension } from './MusicPatterns.js';
 
 export class MusicController {
     public audioContext: AudioContext | null;
@@ -33,7 +33,7 @@ export class MusicController {
         this.currentMusicTrack = null;
         this.musicEnabled = true;
         this.strudelManager = new StrudelMusicManager();
-        this.useStrudel = true; // Set to false to use .ogg files instead
+        this.useStrudel = false; // Set to true to use Strudel for procedural music
         this.currentDimension = null;
         this.inCombat = false;
     }
@@ -107,20 +107,6 @@ export class MusicController {
     setMusicForZone({ dimension = 0, zoneLevel }: { dimension?: number; zoneLevel?: number } = {}): void {
         console.log('[DEBUG] MusicController.setMusicForZone - dimension:', dimension, 'zoneLevel:', zoneLevel, 'musicEnabled:', this.musicEnabled);
         if (this.useStrudel) {
-            // Special case: Use museum pattern for interior dimension (museum board)
-            if (dimension === 1) {
-                this.currentDimension = dimension;
-                if (this.musicEnabled === false) {
-                    console.log('[DEBUG] Music disabled, not playing museum pattern');
-                    return;
-                }
-
-                // Play museum pattern with Strudel
-                console.log('[DEBUG] Playing museum pattern');
-                this.playStrudelPattern(createMuseumPattern());
-                return;
-            }
-
             // Use Strudel for procedural music
             // Surface zones (dimension=0): Use zone level for region-specific music (home/woods/wilds/frontier)
             // Interior/Underground zones: Use dimension for location-specific music (peaceful/cave)

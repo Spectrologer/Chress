@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*tentacles wiggling* Ooh! What's that? Is it shiny? Can I touch it? What does it taste like?",
-        "buttonText": "Curious one."
+        "text": "The see is such a big magical place!",
+        "buttonText": "Probably."
       },
       {
         "id": "msg_1",
-        "text": "*floats closer* Did you know that if you swim upside down, the world looks completely different? I tried it!",
-        "buttonText": "Interesting."
+        "text": "Welcome to the coral shallows!",
+        "buttonText": "But..."
       },
       {
         "id": "msg_2",
-        "text": "I wonder what's beyond the reef... Have you been there? What's it like? Is it scary? Exciting? Both?",
-        "buttonText": "Maybe both."
+        "text": "I love swimming in the big ocean!",
+        "buttonText": "True."
       }
     ]
   },

@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Nose much about what's going on around here? *snort*?",
-        "buttonText": "Ha ha."
+        "text": "Hope I'm not too NOSEY!",
+        "buttonText": "Ha ha you're great."
       },
       {
         "id": "msg_1",
-        "text": "I'd tell you a joke about paper, but it's tearable!",
-        "buttonText": "Groan."
+        "text": "I can repel any CURSE.",
+        "buttonText": "Wow."
       },
       {
         "id": "msg_2",
-        "text": "Why did the nose cross the road?",
-        "buttonText": "Please stop."
+        "text": "I know the way to all the best smells.",
+        "buttonText": "I bet."
       }
     ]
   },

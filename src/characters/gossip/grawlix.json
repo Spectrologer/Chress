@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "@#$%! Can you believe the @#$%ing weather today? It's so @#$%ed up!",
-        "buttonText": "Language!"
+        "text": "@#$%!",
+        "buttonText": "Hmmm!"
       },
       {
         "id": "msg_1",
-        "text": "What the @#$% do you want? I'm busy being @#$%ing angry over here!",
-        "buttonText": "Yikes."
+        "text": "@#$%@#$%@ #$%@#$%@ #$% @#$%@#$%@#$%@ #$%@#$%@#$ %@#$%!",
+        "buttonText": "Wow."
       },
       {
         "id": "msg_2",
-        "text": "Life's a @#$%ing journey, you know? Full of @#$% and more @#$%. Beautiful!",
-        "buttonText": "Okay then."
+        "text": "Why that dumb look? Don't you speak DUTCH?",
+        "buttonText": "Oh."
       }
     ]
   },

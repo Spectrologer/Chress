@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "See that? THAT right there! That's what matters! Pay attention!",
+        "text": "No! Never met you before! You've never seen me! Get oudda here!",
         "buttonText": "Okay, okay!"
       },
       {
         "id": "msg_1",
-        "text": "I make sure the important stuff stands out. Otherwise how would you even notice?",
-        "buttonText": "Good point."
+        "text": "What's the big idea? Over here on my side of the BOARD? Where's your heart at pal?",
+        "buttonText": "Easy."
       },
       {
         "id": "msg_2",
-        "text": "Yellow is my favorite color. Bright, bold, impossible to ignore!",
-        "buttonText": "Very you."
+        "text": "But no really how's your day? Caves crazy damp today. Chaffing like a motha!",
+        "buttonText": "Same."
       }
     ]
   },

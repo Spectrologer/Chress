@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Psst! Hey you! Yeah, you with the face! Wanna hear what the big toe's been up to?",
-        "buttonText": "Sure?"
+        "text": "Theres trouble AFOOT.",
+        "buttonText": "Right."
       },
       {
         "id": "msg_1",
-        "text": "Being the pinky toe ain't easy, but someone's gotta keep tabs on everyone else!",
+        "text": "I'm a great ACCOUNTANT, but I'm not much of an ATHLETE foot.",
         "buttonText": "Right."
       },
       {
         "id": "msg_2",
-        "text": "You didn't hear this from me, but the heel's planning something. Something BIG.",
+        "text": "All my little piggies went to market.",
         "buttonText": "Noted."
       }
     ]

@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*floats awkwardly* ...pffft... *drifts slightly to the left*",
+        "text": "pPbbbt*",
         "buttonText": "..."
       },
       {
         "id": "msg_1",
-        "text": "...bloop... *expels gas and wobbles upward* ...uhhh...",
+        "text": "*wheeze* *squeak*",
         "buttonText": "Are you okay?"
       },
       {
         "id": "msg_2",
-        "text": "*bumps into wall* ...oop... *farts and floats away*",
+        "text": "*honk honk honk*",
         "buttonText": "Yikes."
       }
     ]

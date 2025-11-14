@@ -34,12 +34,12 @@
       },
       {
         "id": "msg_1",
-        "text": "Help me find my mom then?",
+        "text": "Help me FIND my mom, then?",
         "buttonText": "Sounds like a bad idea."
       },
       {
         "id": "msg_2",
-        "text": "*blinks* !",
+        "text": "*blinks*!",
         "buttonText": "..."
       }
     ]

@@ -29,12 +29,12 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Oh, beautiful, yes, stand just like that, your face at that angle",
+        "text": "Oh, beautiful, yes, stand just like that, your face at that angle...",
         "buttonText": "Huh?"
       },
       {
         "id": "msg_1",
-        "text": "It's the golden hour. The sun is setting and the sky is on fire. It burns in your eyes.",
+        "text": "I love how the light dances in your eyes.",
         "buttonText": "Ummm?"
       },
       {

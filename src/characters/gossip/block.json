@@ -29,7 +29,7 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Getting around is so hard here! I'm trying to get squared away.",
+        "text": "Getting around is so hard here! But I'm trying to get squared away.",
         "buttonText": "Stop."
       },
       {
@@ -39,8 +39,8 @@
       },
       {
         "id": "msg_2",
-        "text": "I'm a cube.",
-        "buttonText": "Yeah."
+        "text": "I'm a cube. But you're a square.",
+        "buttonText": "It's hip to be square."
       }
     ]
   },

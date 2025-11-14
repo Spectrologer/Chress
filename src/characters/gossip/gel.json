@@ -29,12 +29,12 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*thousand-yard stare* Can't unsee them... Can't get it out of my head.",
+        "text": "*thousand-yard stare* Can't unsee it... Can't get it out of my head.",
         "buttonText": "You okay?"
       },
       {
         "id": "msg_1",
-        "text": "Sometimes I just... shift into dark corners. The stuff I've seen. It never leaves.",
+        "text": "The stuff I've seen. It never leaves.",
         "buttonText": "..."
       },
       {

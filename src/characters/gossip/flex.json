@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*chewing* Mmm! I love candy!",
+        "text": "Yumm! I love candy!",
         "buttonText": "Uh..."
       },
       {
         "id": "msg_1",
-        "text": "Best thing about being made of candy? You're never far from a snack!",
+        "text": "I'll never go hungry!",
         "buttonText": "True."
       },
       {
         "id": "msg_2",
-        "text": "Do you want a bite? *wiggles*",
+        "text": "Put your teeth on me! So squishy!",
         "buttonText": "Hold on now."
       }
     ]

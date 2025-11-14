@@ -43,8 +43,8 @@
       },
       {
         "id": "msg_3",
-        "text": "Did you get a chance to play with the horse icons in here a minute ago?",
-        "buttonText": "Okay..."
+        "text": "I'm a certified marriage counselor.",
+        "buttonText": "Also wow."
       },
       {
         "id": "msg_4",
@@ -78,7 +78,7 @@
       },
       {
         "id": "msg_10",
-        "text": "Sometimes Crayn goes fishing.",
+        "text": "Always file your taxes as married. It's just common sense.",
         "buttonText": "Okay..."
       },
       {
@@ -93,13 +93,13 @@
       },
       {
         "id": "msg_13",
-        "text": "The world is a sphere. Go far enough east, you'll end up back at the start from the west.",
-        "buttonText": "Okay..."
+        "text": "The world is a cube. And you're a square.",
+        "buttonText": "Probably..."
       },
       {
         "id": "msg_14",
         "text": "If you don't score points for 100 boards, you might find a secret.",
-        "buttonText": "Okay..."
+        "buttonText": "Hmm."
       }
     ]
   },

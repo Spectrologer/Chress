@@ -29,18 +29,18 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Bonjour! Learn la belle langue française!",
-        "buttonText": "Sorry, no."
+        "text": "Parles-tu français?!",
+        "buttonText": "Trying."
       },
       {
         "id": "msg_1",
-        "text": "*beep beep* I am a COURSIER! C'est différent!",
-        "buttonText": "My bad."
+        "text": "Je pars plus tard pour le grand rassemblement!",
+        "buttonText": "Pardon?"
       },
       {
         "id": "msg_2",
-        "text": "Sacré bleu! Mon dieu! This is une tragédie!",
-        "buttonText": "Oui oui."
+        "text": "Votre prononciation me donne le tournis !",
+        "buttonText": "Mercy."
       }
     ]
   },

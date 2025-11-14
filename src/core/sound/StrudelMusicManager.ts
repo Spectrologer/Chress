@@ -5,21 +5,23 @@
  * dynamic, generative background music.
  */
 
-import { repl, type Pattern, type Scheduler } from '@strudel/core';
-import { getAudioContext, webaudioOutput } from '@strudel/webaudio';
-import { registerSynthSounds } from 'superdough';
+import * as strudel from '@strudel/web';
+// Import soundfonts module
 import { registerSoundfonts } from '@strudel/soundfonts';
 import { errorHandler, ErrorSeverity } from '@core/ErrorHandler.js';
 
+type Pattern = any;
+type Scheduler = any;
+
 export class StrudelMusicManager {
-    private scheduler: Scheduler | null = null;
-    private currentPattern: Pattern<any> | null = null;
+    private repl: any = null;
+    private currentPattern: Pattern | null = null;
     private isPlaying: boolean = false;
     private audioContextInitialized: boolean = false;
     private soundfontsLoaded: boolean = false;
 
     constructor() {
-        this.scheduler = null;
+        this.repl = null;
         this.currentPattern = null;
         this.isPlaying = false;
         this.audioContextInitialized = false;
@@ -28,79 +30,63 @@ export class StrudelMusicManager {
 
     /**
      * Initialize Web Audio context and scheduler (call on user interaction)
+     * Based on the pattern from Material Tower Defense's strudel.js
      */
     async initializeAudio(): Promise<void> {
         try {
             if (this.audioContextInitialized) return;
 
-            // Get or create the audio context directly (should be called during user gesture)
-            const ctx = getAudioContext();
+            console.log('[DEBUG] Starting Strudel initialization...');
 
-            // Resume the context if it's suspended (due to autoplay policy)
-            if (ctx.state === 'suspended') {
-                await ctx.resume();
-            }
+            // Step 1: Initialize audio on first click (handles browser autoplay policy)
+            await strudel.initAudioOnFirstClick();
+            console.log('[DEBUG] Audio context initialized');
 
-            // Register synth sounds first
-            await registerSynthSounds();
+            // Step 2: Initialize mini notation strings
+            strudel.miniAllStrings();
+            console.log('[DEBUG] Mini notation initialized');
 
-            // Create scheduler with repl
-            const replInstance = repl({
-                defaultOutput: webaudioOutput,
-                getTime: () => ctx.currentTime
+            // Step 3: Create REPL with webaudio output
+            this.repl = await strudel.webaudioRepl({
+                transpiler: strudel.transpiler
             });
+            console.log('[DEBUG] REPL created');
 
-            this.scheduler = replInstance.scheduler;
+            // Step 4: Use defaultPrebake to load core modules and register synth sounds
+            console.log('[DEBUG] Running defaultPrebake (loading core modules and synth sounds)...');
+            await strudel.defaultPrebake();
+            console.log('[DEBUG] defaultPrebake complete');
+
+            // Step 5: Register soundfonts (synchronous - registers sound handlers that load fonts on-demand)
+            console.log('[DEBUG] Registering soundfonts...');
+            registerSoundfonts();
+            console.log('[DEBUG] Soundfonts registered (fonts will load on-demand from CDN)');
+
+            // Step 6: Set time function AFTER sounds are registered
+            strudel.setTime(() => this.repl.scheduler.now());
+            console.log('[DEBUG] Time function set');
+
             this.audioContextInitialized = true;
+            this.soundfontsLoaded = true;
 
-            // Load soundfonts (non-blocking but ensure it's called)
-            this.loadSoundfonts().then(() => {
-                // Soundfonts loaded successfully
-            }).catch(e => {
-                errorHandler.handle(e, ErrorSeverity.WARNING, {
-                    component: 'StrudelMusicManager',
-                    action: 'initializeAudio',
-                    message: 'Failed to load soundfonts'
-                });
-            });
+            console.log('[DEBUG] Strudel fully initialized');
         } catch (e: unknown) {
             errorHandler.handle(e, ErrorSeverity.WARNING, {
                 component: 'StrudelMusicManager',
                 action: 'initializeAudio'
             });
+            console.error('[DEBUG] Strudel initialization failed:', e);
+            // Even if there's an error, mark as initialized to avoid infinite loops
+            this.audioContextInitialized = true;
         }
     }
 
     /**
-     * Load soundfonts for General MIDI instruments
+     * Load soundfonts for General MIDI instruments (now handled in initializeAudio)
      */
     private async loadSoundfonts(): Promise<void> {
-        if (this.soundfontsLoaded) return Promise.resolve();
-
-        try {
-            // Wrap in additional promise handling to catch any delayed errors
-            const result = registerSoundfonts();
-
-            // Check if registerSoundfonts actually returned a Promise
-            if (result && typeof result.catch === 'function') {
-                await result.catch((sfError: unknown) => {
-                    // Soundfont loading errors are non-critical - synth sounds still work
-                    errorHandler.handle(sfError, ErrorSeverity.WARNING, {
-                        component: 'StrudelMusicManager',
-                        action: 'registerSoundfonts',
-                        message: 'Soundfont sample loading failed (using synth fallback)'
-                    });
-                });
-            }
-
-            this.soundfontsLoaded = true;
-        } catch (e: unknown) {
-            errorHandler.handle(e, ErrorSeverity.WARNING, {
-                component: 'StrudelMusicManager',
-                action: 'loadSoundfonts',
-                message: 'Failed to load soundfonts'
-            });
-        }
+        // This is now handled in initializeAudio(), keeping method for compatibility
+        return Promise.resolve();
     }
 
 
@@ -108,7 +94,7 @@ export class StrudelMusicManager {
      * Play a Strudel pattern
      * @param pattern - The Strudel Pattern object to play
      */
-    async play(pattern: Pattern<any>): Promise<void> {
+    async play(pattern: Pattern): Promise<void> {
         console.log('[DEBUG] StrudelMusicManager.play() called, audioContextInitialized:', this.audioContextInitialized);
         try {
             // Initialize audio if needed
@@ -118,27 +104,21 @@ export class StrudelMusicManager {
                 console.log('[DEBUG] Audio initialized');
             }
 
-            // Always ensure soundfonts are loaded before playing (wait for the promise to resolve)
-            console.log('[DEBUG] Loading soundfonts...');
-            await this.loadSoundfonts();
-            console.log('[DEBUG] Soundfonts loaded');
-
-            if (!this.scheduler) {
-                console.log('[DEBUG] ERROR: Scheduler not initialized');
-                throw new Error('Scheduler not initialized');
+            if (!this.repl) {
+                console.log('[DEBUG] ERROR: REPL not initialized');
+                throw new Error('REPL not initialized');
             }
 
             // Stop current pattern if playing
             if (this.isPlaying) {
                 console.log('[DEBUG] Stopping current pattern...');
-                this.scheduler.stop();
+                this.repl.stop();
             }
 
-            // Set and start the new pattern
+            // Set and start the new pattern using the repl
             console.log('[DEBUG] Setting and starting new pattern...');
             this.currentPattern = pattern;
-            this.scheduler.setPattern(pattern);
-            this.scheduler.start();
+            this.repl.setPattern(pattern, true);
 
             this.isPlaying = true;
             console.log('[DEBUG] Music is now playing');
@@ -155,9 +135,9 @@ export class StrudelMusicManager {
      */
     async stop(): Promise<void> {
         try {
-            if (!this.scheduler || !this.isPlaying) return;
+            if (!this.repl || !this.isPlaying) return;
 
-            this.scheduler.stop();
+            this.repl.stop();
             this.isPlaying = false;
             this.currentPattern = null;
         } catch (e: unknown) {
@@ -178,7 +158,7 @@ export class StrudelMusicManager {
     /**
      * Get current pattern
      */
-    getCurrentPattern(): Pattern<any> | null {
+    getCurrentPattern(): Pattern | null {
         return this.currentPattern;
     }
 
@@ -187,14 +167,13 @@ export class StrudelMusicManager {
      */
     setVolume(volume: number): void {
         try {
-            const audioContext = getAudioContext();
-            if (!audioContext) return;
+            if (!this.repl) return;
 
             const clampedVolume = Math.max(0, Math.min(1, volume));
 
-            // Get the master gain node if available
-            if (audioContext.destination && (audioContext.destination as any).gain) {
-                (audioContext.destination as any).gain.value = clampedVolume;
+            // Use Strudel's gain control on patterns if available
+            if (this.currentPattern) {
+                this.currentPattern = this.currentPattern.gain(clampedVolume);
             }
         } catch (e: unknown) {
             errorHandler.handle(e, ErrorSeverity.WARNING, {

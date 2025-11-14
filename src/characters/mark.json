@@ -25,7 +25,7 @@
   },
   "interaction": {
     "type": "barter",
-    "greeting": "Show me some new places.",
+    "greeting": "Show me some new places or something.",
     "trades": [
       {
         "id": "mark_meat",
