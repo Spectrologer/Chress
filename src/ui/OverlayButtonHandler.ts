@@ -79,25 +79,24 @@ export class OverlayButtonHandler {
             this.musicToggle.applyMusicPreference();
 
             // Start music immediately while we have the user gesture
+            // Pass zoneLevel: 1 for home zone (new games always start at 0,0)
             if (this.game.soundManager) {
                 try {
-                    safeCall(this.game.soundManager, 'setMusicForZone', { dimension: 0 });
+                    safeCall(this.game.soundManager, 'setMusicForZone', { dimension: 0, zoneLevel: 1 });
                 } catch (e) {
                     logger.warn('Failed to start music immediately:', e);
                 }
             }
 
             // Start overlay animation immediately for instant visual feedback
-            // Don't wait for reset - let it happen during/after animation
-            const hidePromise = this.startOverlayController.hideOverlay(overlay);
+            // Don't wait for reset - just trigger it and move on
+            this.startOverlayController.hideOverlay(overlay).catch(e => logger.error('Hide overlay error:', e));
 
             // Start reset in background (don't block the animation)
             this.resetGameState().catch(e => logger.error('Reset game error:', e));
 
-            // Wait only for overlay animation
-            await hidePromise;
-
-            // Start new game (reset should be complete or nearly complete by now)
+            // Start new game immediately - don't wait for animation or reset
+            // The animation will play while the game is starting
             this.game.gameInitializer.startGame();
         } catch (error) {
             logger.error('Error handling start game:', error);
