@@ -61,22 +61,43 @@ export class OverlayButtonHandler {
      */
     async handleStartGame(overlay: HTMLElement): Promise<void> {
         try {
-            // Exit preview mode to show player
+            // Resume audio FIRST while we have the user gesture (critical for browser autoplay)
+            // Use a direct call without timeout to take advantage of the click event
+            try {
+                await Promise.race([
+                    safeCallAsync(this.game.soundManager, 'resumeAudioContext'),
+                    new Promise(resolve => setTimeout(resolve, 100)) // Only wait 100ms max
+                ]);
+            } catch (e) {
+                // Non-critical, continue
+            }
+
+            // Exit preview mode to show player immediately
             this.game.previewMode = false;
 
-            // Apply music preference
+            // Apply music preference and start music immediately
             this.musicToggle.applyMusicPreference();
 
-            // Start all async operations in parallel for maximum responsiveness
-            // This allows the visual feedback to start immediately while reset happens
-            const resetPromise = this.resetGameState();
+            // Start music immediately while we have the user gesture
+            if (this.game.soundManager) {
+                try {
+                    safeCall(this.game.soundManager, 'setMusicForZone', { dimension: 0 });
+                } catch (e) {
+                    logger.warn('Failed to start music immediately:', e);
+                }
+            }
+
+            // Start overlay animation immediately for instant visual feedback
+            // Don't wait for reset - let it happen during/after animation
             const hidePromise = this.startOverlayController.hideOverlay(overlay);
-            this.resumeAudioContext(); // Fire and forget - audio will resume in background
 
-            // Wait for both reset and overlay animation to complete
-            await Promise.all([resetPromise, hidePromise]);
+            // Start reset in background (don't block the animation)
+            this.resetGameState().catch(e => logger.error('Reset game error:', e));
 
-            // Start new game
+            // Wait only for overlay animation
+            await hidePromise;
+
+            // Start new game (reset should be complete or nearly complete by now)
             this.game.gameInitializer.startGame();
         } catch (error) {
             logger.error('Error handling start game:', error);

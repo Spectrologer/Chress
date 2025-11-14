@@ -29,17 +29,17 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*spins thread elegantly* Ah, bon jour mon ami! Punto at your service. May I sew you are looking magnifique today?",
+        "text": "Watch me spin! And watch me swirl.",
         "buttonText": "Thank you."
       },
       {
         "id": "msg_1",
-        "text": "They say I am quite the sharp dresser, no? *twirls* I keep everything... in stitches! *winks*",
+        "text": "It's easier to put an eye through a camel than a rich man through the hole of a needle.",
         "buttonText": "Smooth."
       },
       {
         "id": "msg_2",
-        "text": "Come closer, let me weave you a tale of romance and thread. I promise not to string you along!",
+        "text": "Come with me for adventure! And romance!",
         "buttonText": "Charming."
       }
     ]

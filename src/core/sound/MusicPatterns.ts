@@ -789,72 +789,83 @@ export function createFrontierCombatPattern(): Pattern<any> {
 /**
  * Museum music - Pokemon Center-inspired
  * Warm, welcoming, peaceful healing space
- * Traditional Pokemon Center theme with iconic melody and chord progression
+ * Enhanced Pokemon Center theme with iconic melody and chord progression
  */
 export function createMuseumPattern(): Pattern<any> {
     return stack(
-        // Main melody - Classic Pokemon Center theme on piano
-        seq("e5", "g5", "c6", "e6", "c6", "g5", "e5", "d5",
-            "d5", "f5", "b5", "d6", "b5", "f5", "d5", "c5",
-            "c5", "e5", "a5", "c6", "a5", "e5", "c5", "b4",
-            "e5", "g5", "c6", "e6", "g6", "e6", "c6", "g5").note()
-            .sound("gm_piano")
-            .gain(0.35)
-            .room(0.7)
-            .lpf(2000)
-            .slow(2),
-
-        // Soft melody harmony - Glockenspiel adds gentle brightness
-        seq("c6", "e6", "g6", "c7", "g6", "e6", "c6", "b5",
-            "b5", "d6", "f6", "b6", "f6", "d6", "b5", "a5",
-            "a5", "c6", "e6", "a6", "e6", "c6", "a5", "g5",
-            "c6", "e6", "g6", "c7", "e7", "c7", "g6", "e6").note()
-            .sound("gm_glockenspiel")
+        // Main melody - Iconic Pokemon Center theme on music box
+        seq("c5", "e5", "g5", "c6", "e6", "c6", "g5", "e5",
+            "b4", "d5", "g5", "b5", "d6", "b5", "g5", "d5",
+            "a4", "c5", "e5", "a5", "c6", "a5", "e5", "c5",
+            "c5", "e5", "g5", "c6", "g5", "e5", "c5", "g4").note()
+            .sound("gm_music_box")
             .gain(0.26)
-            .room(0.75)
-            .lpf(2600)
-            .slow(2),
-
-        // Warm bass foundation - steady and supportive
-        seq("c2", "c3", "c2", "c3", "b1", "b2", "b1", "b2",
-            "b1", "b2", "b1", "b2", "a1", "a2", "a1", "a2",
-            "a1", "a2", "a1", "a2", "g1", "g2", "g1", "g2",
-            "c2", "c3", "c2", "c3", "e2", "e3", "e2", "e3").note()
-            .sound("gm_acoustic_bass")
-            .gain(0.38)
-            .room(0.62)
-            .lpf(380)
-            .slow(1.5),
-
-        // String pad - warm underlying harmony
-        seq("c4", "e4", "g4", "c5", "g4", "e4", "c4", "b3",
-            "b3", "d4", "f4", "b4", "f4", "d4", "b3", "a3",
-            "a3", "c4", "e4", "a4", "e4", "c4", "a3", "g3",
-            "c4", "e4", "g4", "c5", "e5", "c5", "g4", "e4").note()
-            .sound("gm_string_ensemble_1")
-            .gain(0.24)
-            .room(0.78)
-            .lpf(1100)
-            .slow(2),
-
-        // Celesta sparkle - healing bell resonance
-        seq("e5", "g5", "c6", "e6", "d6", "b5", "a5", "g5").note()
-            .sound("gm_celesta")
-            .gain(0.22)
-            .room(0.82)
+            .room(0.8)
+            .lpf(2200)
             .slow(3),
 
-        // Violin countermelody - gentle warmth
-        seq("g5", "c6", "e6", "g6", "e6", "c6", "g5", "f5",
-            "f5", "a5", "d6", "f6", "d6", "a5", "f5", "e5",
-            "e5", "g5", "c6", "e6", "c6", "g5", "e5", "d5",
-            "g5", "c6", "e6", "g6", "c7", "g6", "e6", "c6").note()
-            .sound("gm_violin")
+        // Harmony bells - Celesta for that healing sparkle
+        seq("e5", "g5", "c6", "e6", "g6", "e6", "c6", "g5",
+            "d5", "g5", "b5", "d6", "g6", "d6", "b5", "g5",
+            "c5", "e5", "a5", "c6", "e6", "c6", "a5", "e5",
+            "e5", "g5", "c6", "e6", "c6", "g5", "e5", "c5").note()
+            .sound("gm_celesta")
             .gain(0.2)
+            .room(0.85)
+            .lpf(2600)
+            .slow(3.5),
+
+        // Gentle piano chords - Supporting harmony
+        seq("c4", "e4", "g4", "c4", "b3", "d4", "g4", "b3",
+            "a3", "c4", "e4", "a3", "g3", "c4", "e4", "g3").note()
+            .sound("gm_piano")
+            .gain(0.16)
             .room(0.72)
+            .lpf(1500)
+            .slow(4),
+
+        // Warm bass foundation - Steady healing rhythm
+        seq("c2", "g2", "b1", "g2", "a1", "e2", "g1", "d2",
+            "f1", "c2", "e1", "b1", "d1", "a1", "g1", "d2").note()
+            .sound("gm_acoustic_bass")
+            .gain(0.24)
+            .room(0.65)
+            .lpf(340)
+            .slow(3),
+
+        // Glockenspiel accents - Bright healing chimes
+        seq("g5", "c6", "e6", "g6", "b5", "d6", "g6", "b6").note()
+            .sound("gm_glockenspiel")
+            .gain(0.18)
+            .room(0.88)
+            .lpf(2800)
+            .slow(6),
+
+        // String pad - Warm underlying comfort
+        seq("c3", "e3", "g3", "c4", "b2", "d3", "g3", "b3",
+            "a2", "c3", "e3", "a3", "g2", "c3", "e3", "g3").note()
+            .sound("gm_string_ensemble_1")
+            .gain(0.14)
+            .room(0.82)
+            .lpf(900)
+            .slow(4),
+
+        // Soft flute melody - Gentle countermelody
+        seq("e5", "g5", "c6", "e6", "d5", "g5", "b5", "d6",
+            "c5", "e5", "a5", "c6", "g5", "c6", "e6", "g6").note()
+            .sound("gm_flute")
+            .gain(0.13)
+            .room(0.75)
             .lpf(1800)
-            .slow(2.5)
-    ).cpm(68); // Calm, reassuring tempo
+            .slow(5),
+
+        // Vibraphone shimmer - Ethereal healing presence
+        seq("c5", "g5", "e5", "c5", "b4", "g5", "d5", "b4").note()
+            .sound("gm_vibraphone")
+            .gain(0.14)
+            .room(0.9)
+            .slow(8)
+    ).cpm(58); // Slower, more meditative tempo
 }
 
 /**
