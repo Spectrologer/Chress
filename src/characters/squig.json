@@ -42,14 +42,29 @@
           "displayName": "Water",
           "icon": "items/consumables/water.png"
         },
-        "repeatable": true
+        "repeatable": false,
+        "onComplete": {
+          "message": "Thanks!",
+          "dialogue": {
+            "text": "I can only make so much water!",
+            "action": "leave"
+          }
+        }
+      }
+    ],
+    "postTradeDialogue": [
+      {
+        "id": "post_trade",
+        "text": "I can only make so much water!",
+        "buttonText": "Bye!",
+        "condition": "hasCompletedTrade:squig_water"
       }
     ]
   },
   "behavior": {
     "movementType": "stationary",
     "walkable": false,
-    "leaveAfterTrade": false
+    "leaveAfterTrade": true
   },
   "audio": {
     "voicePitch": 200,

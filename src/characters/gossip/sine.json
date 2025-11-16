@@ -41,12 +41,18 @@
         "id": "msg_2",
         "text": "To the up is north, south is down there. To the left? West. Head right to go to the eastern regions.",
         "buttonText": "Alright."
+      },
+      {
+        "id": "msg_3",
+        "text": "You're welcome for everything.",
+        "buttonText": "Thank you so much."
       }
     ]
   },
   "behavior": {
     "movementType": "stationary",
-    "walkable": false
+    "walkable": false,
+    "leaveAfterTrade": true
   },
   "audio": {
     "voicePitch": 110,

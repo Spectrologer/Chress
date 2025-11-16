@@ -42,13 +42,29 @@
           "displayName": "Meat",
           "icon": "items/consumables/meat.png"
         },
-        "repeatable": true
+        "repeatable": false,
+        "onComplete": {
+          "message": "Cool.",
+          "dialogue": {
+            "text": "Okay bye.",
+            "action": "leave"
+          }
+        }
+      }
+    ],
+    "postTradeDialogue": [
+      {
+        "id": "post_trade",
+        "text": "Okay bye.",
+        "buttonText": "Bye.",
+        "condition": "hasCompletedTrade:mark_meat"
       }
     ]
   },
   "behavior": {
     "movementType": "stationary",
-    "walkable": false
+    "walkable": false,
+    "leaveAfterTrade": true
   },
   "audio": {
     "voicePitch": 100,

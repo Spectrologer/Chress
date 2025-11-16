@@ -29,7 +29,7 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "*wags tail",
+        "text": "*wags tail*",
         "buttonText": "Oh."
       },
       {

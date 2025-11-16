@@ -3,7 +3,7 @@
   "name": "Fascia",
   "type": "dialogue",
   "metadata": {
-    "description": "A flatworm looking for a place to stay.",
+    "description": "A snake looking for a place to stay.",
     "created": "2025-11-11T00:00:00.000Z",
     "version": "1.0.0",
     "category": "gossip"
@@ -29,13 +29,13 @@
     "dialogueTree": [
       {
         "id": "msg_0",
-        "text": "Have you had enough to eat today?",
-        "buttonText": "Yeah."
+        "text": "I'm a snake?",
+        "buttonText": "Okay."
       },
       {
         "id": "msg_1",
-        "text": "*How is your INTESTINAL HEALTH?",
-        "buttonText": "Probably good."
+        "text": "*I'm not a worm, I'm a snake.",
+        "buttonText": "Got it."
       },
       {
         "id": "msg_2",

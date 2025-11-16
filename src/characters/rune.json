@@ -42,14 +42,29 @@
           "displayName": "Random Weapon",
           "icon": "items/misc/chest.png"
         },
-        "repeatable": false
+        "repeatable": false,
+        "onComplete": {
+          "message": "I must leave.",
+          "dialogue": {
+            "text": "Okay.",
+            "action": "leave"
+          }
+        }
+      }
+    ],
+    "postTradeDialogue": [
+      {
+        "id": "post_trade",
+        "text": "I must leave.",
+        "buttonText": "Peace.",
+        "condition": "hasCompletedTrade:rune_item"
       }
     ]
   },
   "behavior": {
     "movementType": "stationary",
     "walkable": false,
-    "leaveAfterTrade": false
+    "leaveAfterTrade": true
   },
   "audio": {
     "voicePitch": 70,

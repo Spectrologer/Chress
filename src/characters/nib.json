@@ -42,14 +42,29 @@
           "displayName": "Random Trinket",
           "icon": "items/misc/chest.png"
         },
-        "repeatable": false
+        "repeatable": false,
+        "onComplete": {
+          "message": "Cool.",
+          "dialogue": {
+            "text": "Later, sucker!",
+            "action": "leave"
+          }
+        }
+      }
+    ],
+    "postTradeDialogue": [
+      {
+        "id": "post_trade",
+        "text": "Later, sucker!",
+        "buttonText": "Later!",
+        "condition": "hasCompletedTrade:nib_item"
       }
     ]
   },
   "behavior": {
     "movementType": "stationary",
     "walkable": false,
-    "leaveAfterTrade": false
+    "leaveAfterTrade": true
   },
   "audio": {
     "voicePitch": 110,
